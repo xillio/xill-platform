@@ -154,25 +154,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.4.1</version>
-                <configuration>
-                    <rules>
-                        <requireMavenVersion>
-                            <version>${prerequisites.maven}</version>
-                        </requireMavenVersion>
-                    </rules>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 </project>
