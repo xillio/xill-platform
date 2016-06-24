@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Connect to a SQLite database.
+To connect to SQLite you need to provide a connection string that contains all the required information.
+The simple format of the connection string is:
+
+    jdbc:sqlite:[database_specifier]
+
+The default behavior is to locate the file at the path of in the url and use it as a database. The preferable
+way to
+locate your database is by using an abstract path.
+
+    jdbc:sqlite:C:/tmp/sqlite.db
+
+If you do not want to save your database you can simply create an in-memory database.
+*Note the double colon after sqlite*
+
+    jdbc:sqlite::memory:
+
+You can also access your database from an external resource using a url.
+
+    jdbc:sqlite:resource:http://example.com/sqlite.db
+
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Create an in-memory database</header>
+            <code>
+                use SQLite as db;
+
+                db.connect("jdbc:sqlite::memory:");
+
+                // Now you can use the SQLite constructs
+                // To interact with the database
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>query</reference>
+    </references>
+    <searchTags>
+        sqlite, connection, database, memory
+    </searchTags>
+</function>

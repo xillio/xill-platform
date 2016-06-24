@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Finds a single document using the specified `query` and `options` and updates it with `update`. Also returns the document that was updated.
+If multiple documents match the query, the first document in the result will be updated.
+If no documents match the `query` it will return `null`.
+
+The `options` parameter may contain the following options:
+
+| Option       | Description |
+| ------------ | ----------- |
+| `projection` | A document describing the fields to return for the matching document. |
+| `sort`       | A document with sort criteria to apply to the query. The default is `null`, which means that the documents will be returned in an undefined order. |
+| `upsert`     | If set to `true`, creates a new document if no document matches the query, or if documents match the query, performs an update. To avoid multiple upserts, ensure that the query fields are uniquely indexed. The default is `false`. |
+| `returnNew`  | If set to `true`, returns the modified document rather than the original. The default is `false`. |
+| `maxTime`    | The maximum execution time in milliseconds for this operation. |
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Update the oldest document in the `documents` collection</header>
+            <code>
+                use Mongo;
+                use System;
+                use Date;
+                Mongo.connect("udm_default");
+
+                // Change the contentType to a postcard.
+                var update = {
+                    "$set": { "contentType": "postcard" }
+                };
+
+                // Sort by timestamp (oldest first).
+                var sort = {
+                    "sort": { "target.timestamp": 1 }
+                };
+
+                // Update the earliest document.
+                var result = Mongo.findOneAndUpdate("documents", {}, update, sort);
+
+                System.print ("Updated document with id: " :: result._id :: ", contentType: " :: result.contentType :: ", timestamp: " :: result.target.timestamp);
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>update</reference>
+        <reference>connect</reference>
+        <reference>find</reference>
+        <reference>findOneAndDelete</reference>
+        <reference>findOneAndReplace</reference>
+    </references>
+    <tags>
+        mongodb, query, update, filter
+    </tags>
+</function>

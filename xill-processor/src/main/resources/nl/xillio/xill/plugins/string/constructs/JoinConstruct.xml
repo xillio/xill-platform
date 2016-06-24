@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Joins the elements of `list`, optionally separated by `delimiter`. Returns the result as one string.
+
+If `list` only contains one string, `join` returns that string. If an element contains an OBJECT, its string representation is used.
+    </description>
+    <examples>
+        <example title="Usage">
+            <code>
+                use System, String;
+
+                System.print(String.join(["a", "b", "c"]));      // Result: abc
+                System.print(String.join(["a", "b", "c"], "_")); // Result: a_b_c
+                System.print(String.join(["a", {"b": "value b"}])); // Result: a{"b":"value b"}
+            </code>
+        </example>
+    </examples>
+</function>

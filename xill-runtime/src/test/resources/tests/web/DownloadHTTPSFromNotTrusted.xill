@@ -1,0 +1,46 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/*
+ * Specification: downloading with HTTPS protocol from a non trusted URL should never fail because of security reasons
+ * Input: the test URL protocol has to be HTTPS, the domain should have no valid certificate in the local trust chain
+ * Output: the downloaded content is immaterial, no exception is raised
+ */
+
+use Web;
+use Assert;
+
+var testURL = "https://bugs.xillio.nl";
+var invalidURL = "x";
+var fileName = "WebPluginDownloadHTTPSNotTrusted.txt";
+var errorMsgInvalidURL = "<empty>";
+
+// determine the Invalid URL error message
+do {
+    Web.download(invalidURL, fileName);
+} fail(errorMsg) {
+    errorMsgInvalidURL = errorMsg.message;
+}
+
+// Test the HTTPS URL
+do {
+    Web.download(testURL, fileName);
+} fail(errorMsg) {
+    if(errorMsg.message == errorMsgInvalidURL) {
+        Assert.error("The test URL \"" :: testURL :: "\" is unreachable, please make sure it is available. this is not a test failure");
+    } else {
+        Assert.error("HTTPS trust fail: this should never happen");
+    }
+}

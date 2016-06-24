@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Fetch read/write/execute permissions for a specific file or folder on a group and user basis.
+The output structure of this construct will be the same on all operating systems. It will output all the declared
+permissions for the file. So __not__ the effective permissions (i.e. automatic inheritance of of the group/user tree).
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Get the permissions</header>
+            <code>
+                use System, File, Stream;
+
+                // This creates a test file which we can work with.
+                var path = "TestFile.txt";
+                var testFile = File.openWrite(path);
+                Stream.write("test", testFile);
+
+                var permissions = File.getPermissions(path);
+                var json = System.toJSON(permissions, true);
+                System.print(json);
+
+                /* This will output:
+                {
+                "groups" : {
+                "BUILTIN\\Administrators" : {
+                "read" : true,
+                "write" : true,
+                "execute" : true
+                },
+                "NT AUTHORITY\\SYSTEM" : {
+                "read" : true,
+                "write" : true,
+                "execute" : true
+                }
+                },
+                "users" : {
+                "USER" : {
+                "read" : true,
+                "write" : true,
+                "execute" : true
+                }
+                }
+                */
+            </code>
+        </example>
+    </examples>
+    <tags>
+        permissions, read, write, execute
+    </tags>
+</function>

@@ -1,0 +1,40 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/* 
+* Specification: 
+*   A nested foreach MUST iterate properly. (So the inner foreach is executed in each loop of the outer)
+* Input: Two lists with both three elements and two counters with value 0
+* Expected: Lists are not changed. The outer loop is executed 3 times. The inner loop is executed 3 times for each loop of the outer (3x3=9)
+*/
+
+use Assert;
+
+var list1 = [1,2,3];
+var list2 = [1,2,3];
+var incr1 = 0;
+var incr2 = 0;
+
+foreach(v1 in list1) {
+	incr1++;
+	foreach(v2 in list2) {
+		incr2++;
+	}
+}
+
+Assert.equal(incr1, 3);
+Assert.equal(incr2, 9);
+Assert.equal(list1, [1,2,3]);
+Assert.equal(list2, [1,2,3]);

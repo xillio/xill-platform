@@ -1,0 +1,54 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/* 
+* Specification: The function given to peek is called exactly once for each item, and leaves iterators untouched.
+* Input: All types of variables, containing strings.
+* Expected: The function given to peek is called once for each iteration. When called on null, the function is not invoked.
+*/
+
+use Assert;
+
+// All types of variables.
+var nullVar;
+var atomic = "atomic";
+var list = [ "lorem", "foo", "something" ];
+var object = { "a": "true", "b": "false" };
+
+// How many times the function passed to peek was called.
+var count = 0;
+
+var p = peek<shouldBeEmpty>(nullVar);
+consume(p);
+
+doAssertions(nullVar);
+doAssertions(atomic);
+doAssertions(list);
+doAssertions(object);
+
+function doAssertions(iterate) {
+    count = 0;
+    var p = peek<doCount>(iterate);
+    var consumed = consume(p);
+    Assert.equal(count, consumed);
+}
+
+function doCount(item) {
+    count++;
+}
+
+function shouldBeEmpty(item) {
+    Assert.error("Iterator should be empty.");
+}

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<?import javafx.scene.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.*?>
+<?import nl.xillio.migrationtool.gui.*?>
+
+<AnchorPane fx:id="apnBot" minHeight="0.0" minWidth="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+	<children>
+		<VBox fx:id="vbxBot" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+			<children>
+				<HBox fx:id="hbxBot" VBox.vgrow="ALWAYS">
+					<children>
+						<SplitPane fx:id="spnBotPanes" dividerPositions="0.7" focusTraversable="false" HBox.hgrow="ALWAYS">
+							<items>
+								<AnchorPane fx:id="apnBotLeft" VBox.vgrow="ALWAYS">
+									<children>
+										<SplitPane fx:id="spnBotLeft" focusTraversable="false" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+											<items>
+												<EditorPane fx:id="editorPane" />
+												<ConsolePane fx:id="consolePane" />
+											</items>
+										</SplitPane>
+									</children>
+								</AnchorPane>
+								<VBox fx:id="vbxDebugpane" styleClass="sidePane">
+									<children>
+										<DebugPane fx:id="debugpane" VBox.vgrow="ALWAYS" />
+										<HBox fx:id="hbxBotRightBottom" fillHeight="false" VBox.vgrow="NEVER">
+											<children>
+												<Button fx:id="btnHideDebugPane" mnemonicParsing="false" onAction="#hideButtonPressed" text="Hide panel">
+													<graphic>
+														<Pane styleClass="icon" />
+													</graphic>
+													<styleClass>
+														<String fx:value="iconButton" />
+														<String fx:value="toggleVisibilityRight" />
+													</styleClass>
+													<tooltip>
+														<Tooltip text="Hide panel" />
+													</tooltip>
+												</Button>
+											</children>
+										</HBox>
+									</children>
+								</VBox>
+							</items>
+						</SplitPane>
+						<VBox fx:id="vbxDebugHidden" alignment="BOTTOM_CENTER" styleClass="hiddenPaneBar" HBox.hgrow="NEVER">
+							<children>
+								<Group fx:id="grpDebugHiddenLabel">
+									<children>
+										<Label fx:id="lblDebugHiddenLabel" focusTraversable="false" rotate="-90.0" text="Debug panel" />
+									</children>
+								</Group>
+								<Button fx:id="btnShowDebugPane" mnemonicParsing="false" onAction="#showButtonPressed" text="Hide panel">
+									<graphic>
+										<Pane styleClass="icon" />
+									</graphic>
+									<styleClass>
+										<String fx:value="iconButton" />
+										<String fx:value="toggleVisibilityLeft" />
+									</styleClass>
+									<tooltip>
+										<Tooltip text="Hide panel" />
+									</tooltip>
+								</Button>
+							</children>
+						</VBox>
+					</children>
+				</HBox>
+				<StatusBar fx:id="apnStatusBar" VBox.vgrow="NEVER" />
+			</children>
+		</VBox>
+	</children>
+</AnchorPane>

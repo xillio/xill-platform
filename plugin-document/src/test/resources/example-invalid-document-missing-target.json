@@ -1,0 +1,12 @@
+{
+  "contentType": "Test",
+  "source": {
+    "current": {
+      "version": 1,
+      "user": {
+        "name": "Hello World"
+      }
+    },
+    "versions": []
+  }
+}

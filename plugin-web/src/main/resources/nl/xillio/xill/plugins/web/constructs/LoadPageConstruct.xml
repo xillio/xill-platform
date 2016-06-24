@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Loads a web page, identified by `url` and returns it as a `page` object.
+Local (X)HTML files are also supported with the `file://` protocol.
+
+The optional `options` argument contains additional attributes or modifiers for the page loading:
+
+| Option               | Description | Notes |
+|----------------------|-------------|-------|
+|proxyhost             |If using a proxy, the proxy hostname or ip.| |
+|proxyport             |If using a proxy, the proxy host port.| |
+|proxyuser             |If using a proxy, the proxy authentication username.|optional|
+|proxypass             |If using a proxy, the proxy authentication password.|optional|
+|proxytype             |If using a proxy, the proxy type.|[http,socks5] optional, default: http|
+|enablejs              |Enable JavaScript loading and events to be triggered during page load.|[true,false] default: true|
+|enablewebsecurity     |Enables web security measures, forbidding cross-site scripts.|[true,false] default: true|
+|loadimages            |Allow loading of images referenced on the page.|[true,false] default: true|
+|insecuressl           |Ignore SSL trust failures, thus allowing the load of non trusted resources.|[true,false] default:false|
+|sslprotocol           |Protocol to use for HTTPS requests.|[sslv3,sslv2,tlsv1,any] default: sslv3|
+|user                  |If HTTP authentication is required, the user name.| |
+|pass                  |If HTTP authentication is required, the password.| |
+|timeout               |Timeout for load, in milliseconds.| |
+
+*Note:* Usually it is a good idea to reduce loading time by setting up the options to ({"loadimages"=false, "enablejs"=false}) when calling Web.loadPage().
+This deactivates JavaScript and image loading, drastically reducing load times for the page.
+
+*Usage on non-windows machines:* To use the Web.loadPage() function on a non-windows machine an installation of PhantomJS is required.
+Downloads and documentation can be found at *phantomjs.org/download.html*.
+Make sure you add the binary to your `PATH` environment variable.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Load a web page</header>
+            <code>
+                use Web;
+                use System;
+
+                var page = Web.loadPage("http://www.xillio.com/", {"enablejs":true, "loadimages":false});
+
+                var mainmenutitles = Web.xPath(page, '//ul[@class="active-branch"]/li/a/text()');
+                System.print(mainmenutitles);
+                var mainmenuurls = Web.xPath(page, '//ul[@class="active-branch"]/li/a[@href]');
+                System.print(mainmenuurls);
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>xPath</reference>
+    </references>
+    <tags>
+        load, page, web, xpath, phantomjs, file
+    </tags>
+</function>

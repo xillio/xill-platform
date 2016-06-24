@@ -1,0 +1,69 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/* Specification: when specified as identity, the content types are correctly stored in the database udm_<identity>.
+ * Input: a content type definition stored in the udm_dbName database
+ * Expected: udm_dbName is present and contains the contentType just stored
+ * Expected2: udm_default does not have the contentType just stored 
+ */
+
+use Document, Assert, Mongo, ContentType;
+
+include testresources.lib.NoTestCleanup;
+
+//Define decorator and content type
+var targetUDMIdentity = "db1";
+var targetUDMDatabase = "udm_" :: targetUDMIdentity;
+var decoratorName = "test_decorator";
+var contentTypeName = "test_content_type";
+var decoratorDefinition = {
+    "field1": { "type":"STRING", "required": true }
+};
+
+// save to udm_db1
+var decorator = ContentType.decorator(decoratorName, decoratorDefinition, targetUDMIdentity);
+ContentType.save(contentTypeName, [decoratorName], targetUDMIdentity);
+
+// Verify decorator
+Mongo.connect(targetUDMDatabase);
+var count = 0;
+var decoratorFromDB = Mongo.find("decoratorDefinitions", {"_id" : decoratorName});
+
+foreach(d in decoratorFromDB) {
+    count++;
+    Assert.equal(d._id, decoratorName, "The _id does not match the decorator name");
+    Assert.equal(d[decoratorName], decoratorDefinition, "The decorator definitions do not match");
+}
+
+Assert.equal(1, count, "Decorator count failure, should be exactly 1");
+
+// Verify content type
+var contentTypeFromDB = Mongo.find("contentTypes", {"_id" : contentTypeName});
+count = 0;
+foreach(c in contentTypeFromDB) {
+    count++;
+    Assert.equal(c._id, contentTypeName, "The _id does not match the content type name");
+    Assert.equal(c[contentTypeName], [decoratorName], "The content type definition does not match");
+}
+
+Assert.equal(count, 1, "Content type count failure, should be exactly 1");
+
+// Verify udm_default is empty
+var conn = Mongo.connect("udm_default");
+Assert.equal(Mongo.count("decoratorDefinitions", {"_id" : decoratorName}, conn), 0, "udm_default database has the decorator definition, should be clean");
+Assert.equal(Mongo.count("contentTypes", {"_id" : contentTypeName}, conn), 0, "udm_default database has the content type definition, should be clean");
+
+// cleanup
+cleanupUDM(targetUDMDatabase);

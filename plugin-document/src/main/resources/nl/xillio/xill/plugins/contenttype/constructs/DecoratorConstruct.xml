@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Temporarily store a decorator definition in cache.
+
+A decorator defines a set of fields, their types and whether they are mandatory or not. A content type is defined as
+a set of these decorators. Any document stored in the Universal Data Model, must specify a content type, which is then
+used to check if all decorator constraints are met.
+
+This construct will not push and persist the definition. This should be done using the `ContentType.save()` construct.
+Every field inside the decorator must contain 3 values: the name, the type and the optionality. In the examples
+below you can see how to build up these decorators.
+
+The identity parameter determines which decorator cache will be used and to which database the decorators will be saved
+when `ContentType.save()` is called. For example, when identity is `default`, the `udm_default` database will be used.
+
+Supported decorator types: BOOLEAN, STRING, NUMBER, DATE, LIST
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Define a decorator</header>
+            <code>
+                use ContentType;
+
+                // Build the body
+                var userDecorator = {
+                    "id": {
+                        "type": "NUMBER",
+                        "required": true
+                    },
+                    "username": {
+                        "type": "STRING",
+                        "required": true
+                    },
+                    "password": {
+                        "type": "STRING",
+                        "required": true
+                    }
+                };
+
+                // Add to cache
+                ContentType.decorator("user", userDecorator);
+
+                // Define content type
+                ContentType.save("CustomPage", ["user"]);
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>save</reference>
+        <reference>Document.save</reference>
+    </references>
+    <tags>
+        udm, persist, define, save
+    </tags>
+</function>

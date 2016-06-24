@@ -1,0 +1,60 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/* Specification: if not specified otherwise, the content types are stored in the database udm_default
+ * Input: a content type definition stored in the default database
+ * Expected: udm_default is present and contains the contentType just stored
+ */
+use Document, Assert, Mongo, ContentType;
+
+include testresources.lib.NoTestCleanup;
+
+//Define decorator and content type
+var decoratorName = "test_decorator";
+var contentTypeName = "test_content_type";
+var decoratorDefinition = {
+    "field1": { "type":"STRING", "required": true }
+};
+var decorator = ContentType.decorator(decoratorName, decoratorDefinition);
+
+// save to default DB
+ContentType.save(contentTypeName, [decoratorName]);
+
+// Verify decorator
+Mongo.connect("udm_default");
+var count = 0;
+var decoratorFromDB = Mongo.find("decoratorDefinitions", {"_id" : decoratorName});
+
+foreach(d in decoratorFromDB) {
+    count++;
+    Assert.equal(d._id, decoratorName, "The _id does not match the decorator name");
+    Assert.equal(d[decoratorName], decoratorDefinition, "The decorator definition does not match");
+}
+
+Assert.equal(1, count, "Decorator count failure, should be exactly 1");
+
+// Verify content type
+var contentTypeFromDB = Mongo.find("contentTypes", {"_id" : contentTypeName});
+count = 0;
+foreach(c in contentTypeFromDB) {
+    count++;
+    Assert.equal(c._id, contentTypeName, "The _id does not match the content type name");
+    Assert.equal(c[contentTypeName], [decoratorName], "The content type definition does not match");
+}
+
+Assert.equal(count, 1, "Content type count failure, should be exactly 1");
+
+// Cleanup
+cleanupUDM("default");

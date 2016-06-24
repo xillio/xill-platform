@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Splits `string` into a LIST of strings, based on the provided `delimiter`.
+
+`delimiter` is interpreted as a Java Regular expression. Since all backslash "\" characters will be interpreted (by the Xill IDE) as an escape character, all forward slashes you want to be evaluated by the regex have to be doubled.
+This means that "\\" would denote a single literal backslash "\" and "\*" would denote a literal asterisk "*".
+
+Empty entries are skipped by default. You can optionally set `keepempty` to `true` to also add empty entries to the resulting list.
+Read more about Java regular expressions here:
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Splitting a string</header>
+            <code>
+                use System, String;
+
+                System.print(String.split("a--b---c", "-"));
+                // Result: ["a", "b", "c"]
+
+                System.print(String.split("a--b---c", "-", true));
+                // Result: ["a", "", "b", "", "", "c"]
+            </code>
+        </example>
+    </examples>
+</function>

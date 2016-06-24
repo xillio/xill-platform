@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Runs an application and returns the output.
+
+The result will contain a list of errors, a list of output, the runtime in milliseconds and the process' exit code.
+The directory parameter is the working directory where you would like the command to be executed.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>
+            Running on windows.
+
+            Possible output: {"errors":[],"output":["test"],"runtime":14,"exitCode":0}.
+            </header>
+            <code>
+                use System;
+
+                var result = System.exec(["cmd.exe", "/C", "echo test"]);
+                System.print(result);
+            </code>
+        </example>
+        <example title="Usage">
+            <header>
+            Copying a file in a specified working directory. In this specific example,
+            the working directory is specified by C:/tmp. The source file source.jpg is copied and
+            the name of the new file is target.jpg. The copy, i.e. target.jpg, is created in the
+            specified working directory, in this case C:/tmp.
+
+            Possible output: {"errors":[],"output":["        1 file(s) copied."],"runtime":19,"exitCode":0}.
+            </header>
+            <code>
+                use System;
+
+                System.exec(["cmd.exe", "/C", "copy source.jpg target.jpg"], "C:/tmp")
+            </code>
+        </example>
+    </examples>
+    <searchTags>
+        run, program, cmd, terminal, execute
+    </searchTags>
+</function>

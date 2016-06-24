@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Encode a stream or string to base64.
+If the input is a string then the output is the encoded base64 string.
+If the input is a stream then the output is a base64 encoded stream.
+
+The charset parameter is only relevant when a string is provided and determines what character set should be used
+for the input string.
+    </description>
+    <examples>
+        <example title="Usage">
+            <p>Assuming we have a file 'note.xml' containing 'Hello World'</p>
+            <code>
+                use Encode, File, Stream;
+
+                var file = File.openRead("C:/tmp/note.xml");
+                var base64Read = Encode.toBase64(file);
+
+                var targetFile = File.openWrite("C:/tmp/output.txt");
+                Stream.write(base64Read, targetFile);
+
+                // Results in a file named 'output.txt' containing: SGVsbG8gV29ybGQ=
+            </code>
+            <header>Encode an in-memory string</header>
+            <code>
+                use Encode, System;
+
+                var text = "Hello World";
+                var base64 = Encode.toBase64(text);
+
+                // Prints: SGVsbG8gV29ybGQ=
+                System.print(base64);
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>Decode.fromBase64</reference>
+    </references>
+    <searchTags>
+        encode, file, decode, base64
+    </searchTags>
+</function>

@@ -1,0 +1,29 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/*
+* Specification: Getting the length in bytes with an invalid encoding should throw an error
+* Expected: An error is thrown and the code after the construct call in the do-block is not executed
+* Input: String "foo" and (invalid) encoding "bar"
+*/
+
+use String, Assert;
+
+do {
+    String.byteLength("foo", "bar");
+    Assert.error("String.byteLength with invalid encoding did not error.");
+} success {
+    Assert.error("String.byteLength with invalid encoding was successful.");
+}

@@ -1,0 +1,47 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/* Specification: Document.save should add a default version if it wasn't there yet
+ * Input: the document
+ * Expected: the inserted document
+ */
+
+ use Document, Assert, ContentType;
+
+ include testresources.lib.NoTestCleanup;
+
+ var identity = "IT";
+
+ // First we insert the empty content type
+ ContentType.save("IntegrationTest", [], identity);
+
+ var current = {
+     "decorator": {
+         "field": "Value"
+     }
+ };
+
+ // Insert the document
+ var doc = Document.new("IntegrationTest", current);
+ Document.save(doc, identity);
+
+ // Fetch the Document
+ foreach(document in Document.find({"_id": doc._id}, {}, identity)) {
+     Assert.equal(document.source.current.version, 1, "The source's default version is not 1");
+     Assert.equal(document.target.current.version, 1, "The target's default version is not 1");
+ }
+
+ // Clean up
+ cleanupUDM(identity);

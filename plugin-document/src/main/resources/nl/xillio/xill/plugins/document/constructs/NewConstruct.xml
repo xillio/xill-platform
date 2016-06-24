@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Build a document, returns an object, containing the complete document.
+
+This construct is a convenience function, it will NOT persist or validate a document. It simply provides an easy
+way to build a document.
+
+There are three possible parameters for this construct: The content type name, the body of the current version
+and an optional list of bodies for the version history.
+    </description>
+    <examples>
+        <example title="Usage">
+
+            <header>Create a new document</header>
+            <code>
+                use Document;
+
+                Document.saveContentType("CustomPage", []);
+
+                // Build the document
+                var doc = Document.new(
+                    "CustomPage",
+                    {
+                        "version": 2,
+                        "user": {
+                            "id": 54,
+                            "username": "lancelot34",
+                            "password": "IAmASafePassword"
+                        }
+                    },
+                    [
+                        {
+                            "version": 1,
+                            "user": {
+                                "id": 54,
+                                "username": "lancelot34",
+                                "password": "HelloWorld"
+                            }
+                        }
+                    ]
+                );
+
+                // Save the document
+                Document.save(doc);
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>Document.saveContentType</reference>
+        <reference>Document.new</reference>
+        <reference>get</reference>
+        <reference>save</reference>
+    </references>
+    <tags>
+        udm, define, build, create, instantiate, assemble
+    </tags>
+</function>

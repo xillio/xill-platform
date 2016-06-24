@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Get a list with various pieces of information about your system.  
+
+This list contains information about the file system, the running robot and the current runtime.
+    </description>
+    <examples>
+        <example title="Usage">
+            <code>
+                use System;
+
+                System.print(System.info());
+
+                /*
+                    Outputs:
+                        {
+                            "robotPath":"D:\\Code\\CT\\Xill 3.0\\projects\\tmp.xill",
+                            "rootRobotPath":"D:\\Code\\CT\\Xill 3.0\\projects\\tmp.xill",
+                            "projectPath":"D:\\Code\\CT\\Xill 3.0",
+                            "availableProcessors":8,
+                            "memory":{
+                                "free":281276656,
+                                "total":468713472,
+                                "max":3.799515136E9,
+                                "used":187436816
+                            },
+                            "filesystem":[
+                                {
+                                    "path":"C:\\",
+                                    "storage":{
+                                        "total":1.26956335104E11,
+                                        "free":3.1427985408E10,
+                                        "used":9.5528349696E10
+                                    }
+                                },
+                                {
+                                    "path":"D:\\",
+                                    "storage":{
+                                        "total":9.80801286144E11,
+                                        "free":7.85992876032E11,
+                                        "used":1.94808410112E11
+                                    }
+                                }
+                            ]
+                        }
+                */
+            </code>
+        </example>
+    </examples>
+    <searchTags>
+        info, ram, memory, space, drive, project, path
+    </searchTags>
+</function>

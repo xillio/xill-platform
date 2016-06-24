@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>Xill</name>
+    <description>The Xill Build Configuration</description>
+
+    <groupId>nl.xillio.xill</groupId>
+    <artifactId>xill-build</artifactId>
+    <version>3.04.00-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <inceptionYear>2014</inceptionYear>
+
+    <organization>
+        <name>Xillio</name>
+        <url>https://www.xillio.com</url>
+    </organization>
+
+    <url>http://xill.io/</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <issueManagement>
+        <system>Jira</system>
+        <url>http://xillio.atlassian.net/browse/CTC</url>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.org/xillio/xill.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/xillio/xill.git</developerConnection>
+        <url>https://bitbucket.org/xillio/xill.git</url>
+    </scm>
+
+    <prerequisites>
+        <maven>3.3.9</maven>
+    </prerequisites>
+
+    <modules>
+        <module>xill-api</module>
+        <module>xill-assemblies</module>
+        <module>xill-parent</module>
+        <module>xill-plugins-parent</module>
+        <module>xill-testutils</module>
+    </modules>
+
+    <profiles>
+        <profile>
+            <id>enable-xill-runtime</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>xill-runtime</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>enable-xill-ide</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>xill-ide-core</module>
+                <module>xill-ide-launcher</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>enable-xill-cli</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>xill-cli</module>
+            </modules>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
+                    <properties>
+                        <owner>Xillio</owner>
+                        <email>support@xillio.com</email>
+                    </properties>
+                    <strictCheck>true</strictCheck>
+                    <useDefaultExcludes>true</useDefaultExcludes>
+                    <aggregate>true</aggregate>
+                    <excludes>
+                        <exclude>xill-api/src/**/IdentityArrayList.java</exclude>
+                        <exclude>xill-ide-core/src/main/resources/ace/**</exclude>
+                        <exclude>**/build.xml</exclude>
+                        <exclude>**/maven-build.xml</exclude>
+                        <exclude>**/maven-build.properties</exclude>
+                        <exclude>xill-api/**/.mimetypes</exclude>
+                        <exclude>xill-api/**/.extension_categories</exclude>
+                        <exclude>**/**.ttf</exclude>
+                        <exclude>**/**.xilt</exclude>
+                        <exclude>**/**.xlsx</exclude>
+                        <exclude>.gitattributes</exclude>
+                        <exclude>LICENSE</exclude>
+                        <exclude>plugin-web/**/LICENSE.BSD</exclude>
+                    </excludes>
+                    <mapping>
+                        <fxml>XML_STYLE</fxml>
+                        <xill>SHARPSTAR_STYLE</xill>
+                    </mapping>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate-license-headers</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>generate-license-headers</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.4.1</version>
+                <configuration>
+                    <rules>
+                        <requireMavenVersion>
+                            <version>${prerequisites.maven}</version>
+                        </requireMavenVersion>
+                    </rules>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Find all documents that match a filter and/or a sort query.
+
+This construct expects a mongo filter and a mongo sort query. It will iterate over all documents that match that filter.
+It will then be sorted afterwards. If no filter is provided this construct will iterate over all results.
+If no sort query is provided this construct will iterate without sorting it.
+
+The identity parameter determines which database will be used.
+For example, when identity is `default`, the `udm_default` database will be used.
+    </description>
+    <examples>
+        <example title="Usage">
+
+            <header>Iterate over all CustomPages</header>
+            <code>
+                use Document;
+                use System;
+
+                // Run the query
+                var filterObj = {"contentType": "CustomPage"};
+                var sortObj = {"_id": 1};
+
+                var pages = Document.find(filterObj, sortObj);
+
+                foreach(page in pages) {
+                    System.print(page._id);
+                }
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>get</reference>
+        <reference>save</reference>
+        <reference>deleteWhere</reference>
+    </references>
+    <tags>
+        udm, create, bulk, filter, sort, query
+    </tags>
+</function>

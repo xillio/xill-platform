@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Gets the content of a cell from an Excel sheet.
+    </description>
+    <examples>
+        <example title="Getting the content">
+            <header>Alphabetic Column Notation</header>
+            <code>
+                use Excel;
+                var workbook = Excel.loadWorkbook("workbook.xlsx");
+                var sheet = Excel.loadSheet(workbook, "firstsheet");
+                var cell = Excel.getCell(sheet, "A", 1);
+            </code>
+            <header>Numeric Column Notation</header>
+            <code>
+                use Excel;
+                var workbook = Excel.loadWorkbook("workbook.xlsx");
+                var sheet = Excel.loadSheet(workbook, "firstsheet");
+                var cell = Excel.getCell(sheet, 1, 1);
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>loadWorkbook</reference>
+        <reference>loadSheet</reference>
+        <reference>System.print</reference>
+        <reference>setCell</reference>
+    </references>
+    <tags>
+        Excel, workbook, sheet, spreadsheet, cell, load, get, value, extract
+    </tags>
+</function>

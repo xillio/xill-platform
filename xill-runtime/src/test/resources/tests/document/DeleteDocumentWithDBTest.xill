@@ -1,0 +1,51 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/* Specification: deleting an existing document by id specifying an identity should remove the document from the underlying udm_<identity> database
+ * Input: an existing document id on the specified database
+ * Output: the document has been removed from udm_default
+ */
+use Document, Assert, ContentType;
+
+include testresources.lib.NoTestCleanup;
+
+var targetDB = "tezt";
+
+// Create empty content type
+ContentType.save("contentTypeTest", [], targetDB);
+
+var doc = {
+    "version": "1.0",
+    "decorator": {
+        "field": "Value"
+    }
+};
+
+// Insert the document
+var insertedDoc = Document.new("contentTypeTest", doc);
+var docId = Document.save(insertedDoc, targetDB);
+
+Document.get(docId, targetDB); //will error if not found
+
+Document.delete(docId, targetDB);
+
+// Document.get should be an error, but Assert doesn't let us check that.
+// Use find instead and check the result set is empty.
+foreach(page in Document.find({"_id" : docId}, {}, targetDB)) {
+    // This should not happen.
+    Assert.error("The document has not been deleted");
+}
+
+cleanupUDM(targetDB);

@@ -1,0 +1,70 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/* Document.find should be able to retrieve an existing document by its properties and should not throw an exception
+ * if its arguments are formally valid but no document matches the criteria.
+ * Input: a UDM database with two documents
+ * Output: the document can be found, on non matching criteria, no document is returned
+ */
+use System, Document, Collection, Assert, ContentType;
+
+include testresources.lib.NoTestCleanup;
+
+var identity = "IT";
+var targetDB = "udm_" :: identity;
+
+// First we insert the empty content type
+ContentType.save("IntegrationTest", [], identity);
+
+// Insert the documents
+var doc = Document.new("IntegrationTest", {
+    "version": "1.0",
+    "decorator": {
+        "field": "Value1"
+    }
+});
+doc["_id"] = "myid1";
+Document.save(doc, identity);
+
+doc = Document.new("IntegrationTest", {
+    "version": "1.0",
+    "decorator": {
+        "field": "Value2"
+    }
+});
+doc["_id"] = "myid2";
+Document.save(doc, identity);
+
+// Find them by _id
+var foundDocs = Document.find({"_id": "myid2"}, {}, identity);
+var count = 0;
+foreach(foundDoc in foundDocs) {
+    count++;
+}
+Assert.equal(count, 1, "Find by id returned more than one document");
+
+// Find them all and sort on decorator.field
+var expectIds = ["myid1", "myid2"];
+foundDocs = Document.find({"source.current.decorator.field": {"$regex": "^Value.?$"}}, {}, identity);
+count = 0;
+foreach(foundDoc in foundDocs) {
+    Assert.equal(foundDoc["_id"], expectIds[count++]);
+}
+Assert.equal(count, 2);
+
+// Find does not throw exception if no document is found
+Document.find({"_id": "bogus"}, {}, identity);
+
+cleanupUDM(targetDB);

@@ -1,0 +1,50 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/* Document.get, should be able to retrieve an existing document by its _id
+ * throwing an exception if the document does not exist.
+ * Input: a UDM database with one document
+ * Output: the document can be found, on non matching criteria, exception is
+ */
+use System, Document, Collection, Assert, ContentType;
+
+include testresources.lib.NoTestCleanup;
+
+// First we insert the empty content type
+ContentType.save("IntegrationTest", []);
+
+// Insert the documents
+var doc = Document.new("IntegrationTest", {
+    "version": "1.0",
+    "decorator": {
+        "field": "Value1"
+    }
+});
+doc["_id"] = "myid1";
+Document.save(doc);
+
+Assert.isTrue(Document.get("myid1"));
+
+do {
+    Document.get("bogus");
+}
+fail(e) {
+    System.print(e);// Expected
+}
+success {
+    Assert.error("Get did not fail on non existent _id");
+}
+
+cleanupUDM("udm_default");

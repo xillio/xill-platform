@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Perform an options request and return the response from the server.
+
+## Request
+
+### Options
+To set various options for the request you can use the options parameter. The passed value should be an object containing
+option names as keys and their respective values as values.
+Check out the code examples for more information about the options.
+
+| Option Name         | Value                                                                             | Description                                                                       |
+| ------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| basicAuth           | An object containing a username and a password                                    | Set these credentials to perform basic authentication                             |
+| proxy               | An object contains at least a host but optionally a port or username and password | Set these options to connect through a proxy                                      |
+| timeout             | An integer that represents the timeout in milliseconds                            | Set this option to limit the time a request can take                              |
+| headers             | An object containing the headers                                                  | Set this option to add custom headers to your request                             |
+| insecure            | A boolean *default: false*                                                        | Set this option to true if you want to skip hostname validation                   |
+| responseContentType | A String describing a content type                                                | Set this option to override the the response type auto detector                   |
+| logging             | A String (debug, info, warn or error) *default: none*                             | Set this option to enable logging of requests and responses                       |
+
+## Response
+If the request is performed without errors the return value will be an object that describes the response.
+
+### Status
+The *status* field contains an object that has a *code* field that contains the HTTP Status Code
+and a *phrase* field that contains the description.
+
+    {
+        "status": {
+            "code": 200,
+            "phrase": "OK"
+        },
+        ...
+    }
+
+### Headers
+The *headers* field contains an object that has the header names as keys and header values as values.
+
+    {
+        "headers" : {
+            "Content-Type" : "application/json; charset=UTF-8",
+            "access-control-allow-origin" : "*",
+            "Vary" : "Accept-Encoding",
+            "Date" : "Thu, 18 Feb 2016 09:10:46 GMT",
+            "Server" : "Google Frontend",
+            "Cache-Control" : "private",
+            "Alt-Svc" : "quic=\":443\"; ma=2592000; v=\"30,29,28,27,26,25\"",
+            "Transfer-Encoding" : "chunked"
+        },
+        ...
+    }
+
+### Version
+The *version* field contains a string describing the current HTTP protocol version.
+
+    {
+        "version": "HTTP/1.1",
+        ...
+    }
+
+### Body
+The *body* field contains the response body. The type of content in here is auto detected form the Content-Type
+header which can be overridden using the *responseContentType* option.
+
+| Content-Type    | Result                                         |
+| --------------- | ---------------------------------------------- |
+| Contains "json" | The json parsed to an expression               |
+| Contains "xml"  | An XML node that can be used by the XML plugin |
+| Contains "text" | A plain text string                            |
+| Otherwise       | A stream containing the data                   |
+
+    // JSON
+    {
+        "body": {
+            "data": ["It's, "a", "good", "day"]
+        },
+        ...
+    }
+    // XML
+    {
+        "body": "XML Document[first node = Data]",
+        ...
+    }
+    // TEXT
+    {
+        "body": "Hello World",
+        ...
+    )
+    // STREAM
+    {
+        "body": "[Stream application/octet-stream]",
+        ...
+    }
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Check available methods</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.options(
+                    "http://jsonplaceholder.typicode.com/posts"
+                );
+
+                System.print(response.headers["Access-Control-Allow-Methods"]);
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>delete</reference>
+        <reference>head</reference>
+        <reference>patch</reference>
+        <reference>post</reference>
+        <reference>get</reference>
+        <reference>put</reference>
+    </references>
+    <tags>
+        REST, options, request, response, JSON
+    </tags>
+</function>

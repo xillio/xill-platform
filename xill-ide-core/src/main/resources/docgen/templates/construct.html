@@ -1,0 +1,176 @@
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>${packageName}.${identity}</title>
+    <link rel="stylesheet" type="text/css" href="${jarFile}editor.css">
+    <link rel="stylesheet" type="text/css" href="${jarFile}docgen/resources/_assets/css/style.css">
+
+    <style>
+        @font-face {
+        font-family: 'Ubuntu Mono';
+        src: url('${jarFile}fonts/UbuntuMono Regular.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+        }
+        @font-face {
+        font-family: 'Ubuntu Mono';
+        src: url('${jarFile}fonts/UbuntuMono Bold.ttf') format('truetype');
+        font-weight: bold;
+        font-style: normal;
+        }
+        @font-face {
+        font-family: 'Ubuntu Mono';
+        src: url('${jarFile}fonts/UbuntuMono BoldItalic.ttf') format('truetype');
+        font-weight: bold;
+        font-style: italic;
+        }
+        @font-face {
+        font-family: 'Ubuntu Mono';
+        src: url('${jarFile}fonts/UbuntuMono RegularItalic.ttf') format('truetype');
+        font-weight: normal;
+        font-style: italic;
+        }
+        @font-face {
+        font-family: 'Glober SemiBold';
+        src: url('${jarFile}fonts/Glober SemiBold.ttf') format('truetype');
+        }
+        @font-face {
+        font-family: 'Glober xBold';
+        src: url('${jarFile}fonts/Glober xBold.ttf') format('truetype');
+        }
+        @font-face {
+        font-family: 'Glober Light';
+        src: url('${jarFile}fonts/Glober Light.ttf') format('truetype');
+        }
+    </style>
+
+</head>
+<body>
+<main>
+    <section id="header">
+        <header><h1><a href="../${packageName}/_index.html">${packageName}</a>.${identity}</h1></header>
+        <p class="construct-description">${description}</p>
+    </section>
+    <#if deprecated>
+        <section id="deprecated-description">
+            <header><h2>Deprecated</h2></header>
+            <p id="construct-deprecated">${deprecateDescription}</p>
+        </section>
+    </#if>
+    <section id="signature">
+        <header><h2>Signature</h2></header>
+        <div class="signature-content">
+            <span class="package-name">${packageName}</span>.<span class="construct-name">${identity}</span><#list parameters>(
+                <span class="parameters">
+                    <br>
+                    <#items as parameter>
+                    <span class="parameter">
+                        <span class="parameter-type">${parameter.type}</span> <span class="parameter-name">${parameter.name}</span><#if parameter.defaultValue??><span class="parameter-default"> = ${parameter.defaultValue}</span></#if><#sep>,</#sep>
+                    </span>
+                    <br>
+                    </#items>
+                </span>
+                );
+            <#else>();
+            </#list>
+            </span>
+        </div>
+        <table>
+        </table>
+    </section>
+
+    <#if examples?? && examples?size != 0>
+    <section id="examples">
+        <header><h2>Examples</h2></header>
+        <#list examples as example>
+            <#if example.title??>
+            <h3>${example.title}</h3>
+            </#if>
+            <div class="example">
+                <#list example.nodes as node>
+                <div class="example-node ${node.tag}"><#if node.contents??>${node.contents}</#if></div>
+                </#list>
+            </div>
+        </#list>
+    </section>
+    </#if>
+
+    <#if references?? && references?size != 0>
+    <section id="references">
+        <header><h2>See Also</h2></header>
+        <#list references as reference>
+        <#if reference.package??>
+            <a href="../${reference.package}/${reference.construct}.html">${reference.package}.${reference.construct}</a>
+        </#if>
+        <#if !(reference.package??)>
+            <a href="${reference.construct}.html">${packageName}.${reference.construct}</a>
+        </#if>
+        </#list>
+    </section>
+    </#if>
+</main>
+<script src="${jarFile}xillCore.js" type="text/javascript" charset="utf-8"></script>
+<script src="${jarFile}ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="${jarFile}ace/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    function loadEditors() {
+        initConsole();
+        var counter = 0;
+        var nodes = document.getElementsByClassName("code");
+
+        for (var i = 0; i < nodes.length; i++) {
+            var node = nodes.item(i);
+            if (!node.id) {
+                node.id = "editor" + counter++;
+            }
+            loadEditor(node.id);
+        }
+    }
+
+
+    function loadEditor(id) {
+        console.log("Loading editor: " + id);
+        // Create editor
+        var editor = ace.edit(id);
+
+        // Load syntax
+        editor.setTheme("ace/theme/xillio");
+        editor.getSession().setMode("ace/mode/xill");
+
+        // Auto height
+        editor.setOptions({
+            maxLines: Infinity
+        });
+
+        // Text wrapping
+        editor.setOptions({
+            wrap: true
+        });
+
+        // Read Only
+        editor.setReadOnly(true)
+        editor.getSession().setUseWorker(false);
+
+        console.log("done");
+    }
+</script>
+</body>
+</html>

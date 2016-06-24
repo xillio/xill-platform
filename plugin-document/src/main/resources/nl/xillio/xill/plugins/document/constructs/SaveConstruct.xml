@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Save a document to the database. Returns the id of the document.
+
+This construct will create a new document. If the document id already exists, the document will be updated.
+Before saving, the document will be validated for constraints defined in its content type and decorators.
+If no version field is provided for a version it is set to 1 by default.
+
+The identity parameter determines which database will be used.
+For example, when identity is `default`, the `udm_default` database will be used.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Make a change to a document</header>
+            <code>
+                use System;
+                use Document;
+
+                // Fetch the document
+                var doc = Document.get("7ece5644-8d36-4937-b95b-285804598729");
+
+                // Prepend a title
+                doc.target.current.author.name ::= "Sir ";
+
+                // Save the document
+                System.print(Document.save(doc));
+                // Prints: 7ece5644-8d36-4937-b95b-285804598729
+            </code>
+
+            <header>Create a new document</header>
+            <code>
+                use System;
+                use Document;
+
+                // Create an empty content type
+                Document.saveContentType("CustomPage", []);
+
+                // Build the document
+                var doc = Document.new(
+                    "CustomPage",
+                    {
+                        "version": 2,
+                        "user": {
+                            "id": 54,
+                            "username": "lancelot34",
+                            "password": "IAmASafePassword"
+                        }
+                    }
+                );
+
+                // Save the document
+                System.print(Document.save(doc));
+                // Prints: 7ece5644-8d36-4937-b95b-285804598729
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>Document.saveContentType</reference>
+        <reference>Document.saveDecorator</reference>
+        <reference>new</reference>
+        <reference>get</reference>
+    </references>
+    <tags>
+        udm, persist, define, save, create, update, get
+    </tags>
+</function>

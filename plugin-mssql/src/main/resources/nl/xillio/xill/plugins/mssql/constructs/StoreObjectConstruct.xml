@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+This construct provides a convenient way to insert or update a row in the database.
+
+## What operation will be performed?
+| Scenario                                   | Operation |
+| ------------------------------------------ | --------- |
+| No keys are provided                       | Insert    |
+| A matching row is found based on the keys  | Update    |
+| No matching row is found based on the keys | Insert    |
+
+You can prevent updates from happening by setting the allowUpdate parameter to false. If you do this and an entry is
+found in the database this construct will throw an error.
+
+The database parameter is optional. The last made connection will be used if no database is given.
+The return value of this construct is true if the operation finished successfully. Otherwise it will throw an error and
+return null.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Insert a new row</header>
+            <code>
+                use MSSQL as db;
+
+                // Connect to the database
+                db.connect(
+                    "jdbc:jtds:sqlserver://localhost/Database" ::
+                    ";user=MyUserName" ::
+                    ";password=MyPassword"
+                );
+
+                var person = {
+                    "firstName": "John",
+                    "lastName": "Doe"
+                };
+
+                db.storeObject("people", person);
+            </code>
+            <header>Update a person if it exists otherwise insert</header>
+            <code>
+                use MSSQL as db;
+
+                // Connect to the database
+                db.connect(
+                    "jdbc:jtds:sqlserver://localhost/Database" ::
+                    ";user=MyUserName" ::
+                    ";password=MyPassword"
+                );
+
+                var person = {
+                    "firstName": "John",
+                    "lastName": "Doe"
+                };
+
+                db.storeObject("people", person, ["firstName", "lastName"]);
+            </code>
+            <header>Update an item by id</header>
+            <code>
+                use MSSQL as db, File;
+
+                // Connect to the database
+                db.connect(
+                    "jdbc:jtds:sqlserver://localhost/Database" ::
+                    ";user=MyUserName" ::
+                    ";password=MyPassword"
+                );
+
+                var file = {
+                    "id": 246354246,
+                    "data": File.openRead("path/to/file.pdf")
+                };
+
+                db.storeObject("documents", file, ["id"]);
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>connect</reference>
+        <reference>query</reference>
+        <reference>getObject</reference>
+    </references>
+</function>

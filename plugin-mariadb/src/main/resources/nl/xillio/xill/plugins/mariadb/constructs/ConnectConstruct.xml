@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Connect to a MariaDB server.
+To connect to a MariaDB server you need to provide a connection string that contains all the required
+information.
+The simple format of the connection string is:
+
+    jdbc:mariadb://[host]/[database]?[properties]
+
+Some examples:
+
+    jdbc:mariadb://localhost:3306/test
+    jdbc:mariadb://localhost/test?user=root&amp;password=root
+
+Read more at the: [MariaDB Connection String
+Specification](https://mariadb.com/kb/en/mariadb/about-mariadb-connector-j/)
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Connect to a database using credentials</header>
+            <code>
+                use MariaDB as db;
+
+                db.connect(
+                    "jdbc:mariadb://localhost/my-database" ::
+                    "?user=root" ::
+                    "&amp;password=super1secret"
+                );
+
+                // Now you can use the MariaDB constructs
+                // To interact with the database
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>query</reference>
+    </references>
+    <searchTags>
+        MySQL, mariadb, connection, database
+    </searchTags>
+</function>

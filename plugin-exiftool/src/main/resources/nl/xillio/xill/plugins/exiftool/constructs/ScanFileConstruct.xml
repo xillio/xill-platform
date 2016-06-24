@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Extract exif tags from a single file and returns an *OBJECT* containing the tags and their values.
+
+## Projection
+The projection parameter accepts an *OBJECT* containing exif tag names as keys and a boolean flag as a value.
+This value
+denotes whether or not the tag should be included in the result or not.
+Whenever you specify a tag that should be included in the projection all other tags will default to false.
+### Examples
+To get only the MIME Type tag:
+
+    {
+    "mimeType": true
+    }
+
+To get everything except the MIME Type:
+
+    {
+    "mimeType": false
+    }
+
+To get multiple tags:
+
+    {
+    "mimeType": true,
+    "megapixels": true,
+    "bitsPerSample": true
+    }
+
+## Options
+To set options for this construct you can provide an *OBJECT* that contains the options as a key and values as
+the setting.
+
+| Option | Description | Value |
+| ---------- | ----------- | ----- |
+| nameConvention | The naming convention that should be applied to the tags | Default: *lowerCamelCase (lcc)*, upperCamelCase (ucc) or capitalWord (cw) |
+
+## Usage on a non-windows machine
+To use the Exiftool plugin on a non-windows machine some setup is required. Below you can find
+the steps to install the required files.
+
+### Linux
+Install the package through your system's package manager and restart Xill or follow the instructions below.
+* Download the exiftool perl source from *sno.phy.queensu.ca/~phil/exiftool/* (top link)
+* Extract the archive to your hard drive
+* Set your system's environmental variable *exiftool_bin* to the absolute path of the exiftool file or
+add the directory containing exiftool to your PATH environmental variable
+* (Optional) Set your systems's envirionmental variable *perl_bin* to the path of the perl installation.
+(Defaults to */usr/bin/perl*)
+* Restart Xill IDE
+
+### Mac OSX
+* Download the exiftool osx executable from *sno.phy.queensu.ca/~phil/exiftool/* (bottom link)
+* Install the application
+* (Optional) Set your system's environmental variable *exiftool_bin* to the absolute path of the
+exiftool file or add the directory containing exiftool to your PATH environmental variable
+(Defaults to */usr/local/bin/exiftool*)
+* Restart Xill IDE
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Get all available tags on a file</header>
+            <code>
+                use ExifTool, System;
+
+                var info = ExifTool.scanFile("D:\\temp\\myFile.png");
+                var json = System.toJSON(info, true);
+
+                System.print(json);
+                /* Outputs:
+                {
+                "filePath": "D:\\Temp\\myFile.png",
+                "fileType": "PNG",
+                "fileSize" : "4.4 kB",
+                ...
+                }
+                */
+            </code>
+            <header>Get the file type tag on a file</header>
+            <code>
+                use ExifTool, System;
+
+                var info = ExifTool.scanFile(
+                "D:\\temp\\myFile.png",
+                {
+                "fileType": true
+                }
+                );
+                var json = System.toJSON(info, true);
+
+                System.print(json);
+                /* Outputs:
+                {
+                "filePath": "D:\\Temp\\myFile.png",
+                "fileType": "PNG"
+                }
+                */
+            </code>
+
+            <header>Get all tags on a file with capitalized tag names</header>
+            <code>
+                use ExifTool, System;
+
+                var info = ExifTool.scanFile(
+                "D:\\temp\\myFile.png",
+                {},
+                {
+                "nameConvention": "capitalWord"
+                }
+                );
+                var json = System.toJSON(info, true);
+
+                System.print(json);
+                /* Outputs:
+                {
+                "File Path": "D:\\Temp\\myFile.png",
+                "File Type": "PNG",
+                "File Size" : "4.4 kB",
+                ...
+                }
+                */
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>scanFolder</reference>
+    </references>
+    <tags>
+        meta, data, metadata, exif
+    </tags>
+</function>

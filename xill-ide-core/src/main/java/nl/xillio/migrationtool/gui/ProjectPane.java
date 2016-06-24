@@ -1,0 +1,1240 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package nl.xillio.migrationtool.gui;
+
+import freemarker.template.TemplateException;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.shape.SVGPath;
+import javafx.stage.FileChooser;
+import javafx.util.Pair;
+import me.biesaart.utils.FileUtils;
+import me.biesaart.utils.Log;
+import nl.xillio.migrationtool.dialogs.*;
+import nl.xillio.migrationtool.gui.WatchDir.FolderListener;
+import nl.xillio.migrationtool.template.Templater;
+import nl.xillio.xill.api.XillEnvironment;
+import nl.xillio.xill.api.components.RobotID;
+import nl.xillio.xill.util.HotkeysHandler;
+import nl.xillio.xill.util.settings.ProjectSettings;
+import nl.xillio.xill.util.settings.Settings;
+import nl.xillio.xill.util.settings.SettingsHandler;
+import org.slf4j.Logger;
+
+import javax.swing.filechooser.FileFilter;
+import java.awt.*;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.WatchEvent;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+
+public class ProjectPane extends AnchorPane implements FolderListener, ListChangeListener<TreeItem<Pair<File, String>>>, EventHandler<Event> {
+    // Icons.
+    private static final String newProjectIcon = "M228.734,0C102.41,0,0,102.41,0,228.735C0,355.06,102.41,457.469,228.734,457.469 c126.325,0,228.735-102.409,228.735-228.734C457.47,102.41,355.06,0,228.734,0z M359.268,265.476h-97.326v97.315 c0,16.668-13.506,30.186-30.181,30.186c-16.668,0-30.189-13.518-30.189-30.186v-97.315h-97.309 c-16.674,0-30.192-13.512-30.192-30.187c0-16.674,13.518-30.188,30.192-30.188h97.315v-97.31c0-16.674,13.515-30.183,30.189-30.183 c16.675,0,30.187,13.509,30.187,30.183v97.315h97.314c16.669,0,30.192,13.515,30.192,30.188 C389.46,251.97,375.937,265.476,359.268,265.476z";
+    private static final String newFolderIcon = "M394.42,160.758h-0.916v-42.421c0-14.641-11.916-26.551-26.563-26.551H135.017l-17.209-45.167 c-1.797-4.69-6.289-7.793-11.31-7.793H12.105c-3.227,0-6.312,1.283-8.588,3.57C1.248,44.683-0.023,47.773,0,51.001l0.074,67.335 v227.955c0,14.641,11.916,26.551,26.551,26.551h340.321c0.261,0,0.509-0.07,0.763-0.076h26.717c9.522,0,17.241-7.714,17.241-17.242 V177.991C411.655,168.472,403.942,160.758,394.42,160.758z M369.287,160.758H68.891c-9.52,0-17.236,7.714-17.236,17.239v170.635 H26.614c-1.289,0-2.344-1.053-2.344-2.341V118.266l-0.157-55.23h74.029l17.215,45.164c1.785,4.69,6.289,7.796,11.313,7.796h240.258 c1.295,0,2.347,1.052,2.347,2.341v42.421H369.287z";
+    private static final String newFileIcon = "M327.081,0H90.231c-15.9,0-28.85,12.959-28.85,28.859v412.863c0,15.924,12.95,28.863,28.85,28.863H380.35 c15.911,0,28.855-12.939,28.855-28.863V89.234L327.081,0z M333.891,43.187l35.996,39.118h-35.996V43.187z M384.978,441.723 c0,2.542-2.087,4.629-4.628,4.629H90.231c-2.547,0-4.616-2.087-4.616-4.629V28.859c0-2.548,2.069-4.613,4.616-4.613h219.414v70.181 c0,6.682,5.443,12.099,12.129,12.099h63.198v335.196H384.978z";
+
+    private static final SettingsHandler settings = SettingsHandler.getSettingsHandler();
+    private static final String DEFAULT_PROJECT_NAME = "Samples";
+    private static final String DEFAULT_PROJECT_PATH = "samples";
+    private static final Logger LOGGER = Log.get();
+    private static WatchDir watcher;
+
+    private static Templater TEMPLATER;
+
+    @FXML
+    private TreeView<Pair<File, String>> trvProjects;
+
+    @FXML
+    private Button btnUpload;
+    @FXML
+    private Button btnNew;
+
+    @FXML
+    private ContextMenu testMenu;
+
+    private final BotFileFilter robotFileFilter = new BotFileFilter();
+    private final TreeItem<Pair<File, String>> root = new TreeItem<>(new Pair<>(new File("."), "Projects"));
+    private final List<File> expandedFiles = new ArrayList<>();
+    private FXController controller;
+
+    // Context menu items.
+    private MenuItem menuCut, menuCopy, menuPaste, menuRename, menuDelete, menuOpenFolder;
+    private List<File> bulkFiles = new ArrayList<>(); // Files to copy or cut.
+    private boolean copy = false; // True: copy, false: cut.
+
+    // "New" button context menu items.
+    private Menu menuNewBotFromTemplate;
+    private MenuItem menuNewFolder, menuNewBot;
+
+    /**
+     * Initialize UI stuff
+     */
+    public ProjectPane() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ProjectPane.fxml"));
+            loader.setClassLoader(getClass().getClassLoader());
+            loader.setController(this);
+            Node ui = loader.load();
+            getChildren().add(ui);
+            TEMPLATER = new Templater();
+        } catch (IOException e) {
+            LOGGER.error("Error loading project pane: " + e.getMessage(), e);
+        }
+
+        trvProjects.setRoot(root);
+        trvProjects.getSelectionModel().getSelectedItems().addListener(this);
+        trvProjects.setShowRoot(false);
+        trvProjects.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        root.setExpanded(true);
+
+        try {
+            watcher = new WatchDir();
+            watcher.createThread().start();
+        } catch (IOException e) {
+            LOGGER.error("IOException when creating the WatchDir.", e);
+        }
+
+        trvProjects.setCellFactory(treeView -> new CustomTreeCell());
+
+        // Add event listeners.
+        this.addEventFilter(KeyEvent.KEY_PRESSED, this);
+        this.addEventFilter(MouseEvent.MOUSE_PRESSED, this);
+
+        // Register the hasRun setting which is being used to add the default project on first run
+        settings.simple().register(Settings.INFO, Settings.HasRun, "false", "Whether the IDE has run before.");
+
+        loadProjects();
+        addContextMenu();
+        addNewButtonContextMenu();
+    }
+
+    private void addContextMenu() {
+        // Cut.
+        menuCut = new MenuItem("Cut");
+        menuCut.setOnAction(e -> cut());
+
+        // Copy.
+        menuCopy = new MenuItem("Copy");
+        menuCopy.setOnAction(e -> copy());
+
+        // Paste.
+        menuPaste = new MenuItem("Paste");
+        menuPaste.setOnAction(e -> paste());
+
+        // Rename.
+        menuRename = new MenuItem("Rename...");
+        menuRename.setOnAction(e -> renameButtonPressed());
+
+        // Delete.
+        menuDelete = new MenuItem("Delete...");
+        menuDelete.setOnAction(e -> deleteButtonPressed());
+
+        // Upload.
+        MenuItem menuUpload = new MenuItem("Upload...");
+        menuUpload.setOnAction(e -> uploadButtonPressed());
+
+        menuOpenFolder = new MenuItem("Open containing folder");
+        menuOpenFolder.setOnAction(e -> {
+            try {
+                Desktop.getDesktop().open(getCurrentItem().getValue().getKey().getParentFile());
+            } catch (IOException ex) {
+                LOGGER.error("Failed to open containing folder.", ex);
+            }
+        });
+
+        // Create the context menu.
+        ContextMenu menu = new ContextMenu(menuCut, menuCopy, menuPaste, menuRename, menuDelete, menuUpload);
+        if (Desktop.isDesktopSupported()) {
+            menu.getItems().add(menuOpenFolder);
+        }
+
+        trvProjects.setContextMenu(menu);
+        // Only paste when there is just 1 item selected (the paste location) and there are files to paste.
+        trvProjects.setOnContextMenuRequested(e -> menuPaste.setDisable(getAllCurrentItems().size() != 1 || bulkFiles.isEmpty()));
+    }
+
+    private void addNewButtonContextMenu() {
+        MenuItem menuNewProject = new MenuItem("New project", ProjectPane.createIcon(ProjectPane.newProjectIcon));
+        menuNewProject.setOnAction(e -> newProjectButtonPressed());
+
+        menuNewFolder = new MenuItem("New folder", ProjectPane.createIcon(ProjectPane.newFolderIcon));
+        menuNewFolder.setOnAction(e -> newFolderButtonPressed());
+
+        menuNewBot = new MenuItem("New robot", ProjectPane.createIcon(ProjectPane.newFileIcon));
+        menuNewBot.setOnAction(e -> newBot(null));
+
+        menuNewBotFromTemplate = new Menu("New robot from template...");
+
+        ContextMenu menu = new ContextMenu(menuNewProject, menuNewFolder, menuNewBot, menuNewBotFromTemplate);
+        btnNew.setOnAction(e -> {
+            Bounds bounds = btnNew.localToScreen(btnNew.getBoundsInParent());
+            generateTemplateMenu();
+            menu.show(btnNew, bounds.getMinX(), bounds.getMaxY());
+        });
+    }
+
+    public void generateTemplateMenu() {
+        menuNewBotFromTemplate.getItems().clear();
+        try {
+            TEMPLATER.getTemplateNames().stream().map(MenuItem::new).forEach(menuNewBotFromTemplate.getItems()::add);
+            menuNewBotFromTemplate.getItems().forEach(item -> item.setOnAction(event -> newBot(item.getText())));
+        } catch (IOException e) {
+            MenuItem errorItem = new MenuItem("Error while reading template folder");
+            errorItem.getStyleClass().add("menu-item-error");
+            menuNewBotFromTemplate.getItems().add(errorItem);
+            LOGGER.error("Error while reading template folder", e);
+        }
+
+        // add default empty bot template
+        menuNewBotFromTemplate.getItems().add(0, new SeparatorMenuItem());
+        MenuItem emptyBot = new MenuItem("empty robot");
+        emptyBot.setOnAction(event -> newBot(null));
+        menuNewBotFromTemplate.getItems().add(0, emptyBot);
+    }
+
+    private static Group createIcon(final String shape) {
+        SVGPath path = new SVGPath();
+        path.setFill(javafx.scene.paint.Color.DARKGRAY);
+        path.setScaleX(0.04);
+        path.setScaleY(0.04);
+        path.setContent(shape);
+        return new Group(path);
+    }
+
+    /* Bulk file functionality. */
+
+    private void cut() {
+        copy = false;
+        bulkFiles = getAllCurrentFiles();
+    }
+
+    private void copy() {
+        copy = true;
+        bulkFiles = getAllCurrentFiles();
+    }
+
+    private void paste() {
+        paste(getCurrentItem().getValue().getKey(), bulkFiles, copy);
+        // If the files were moved (not copied), clear the bulk files.
+        if (!copy) {
+            bulkFiles.clear();
+        }
+    }
+
+    protected void paste(File pasteLoc, List<File> files, boolean copy) {
+        // Get the directory to paste in.
+        final File destDir = pasteLoc.isDirectory() ? pasteLoc : pasteLoc.getParentFile();
+
+        for (File oldFile : files) {
+            // Check if the source file exists. If not is is probably already copied by moving a parent folder.
+            if (!oldFile.exists()) {
+                continue;
+            }
+
+            // Check if the file already exists. (This does not throw an IOException in FileUtils, so we need to check it here.)
+            File destFile = new File(destDir, oldFile.getName());
+            if (destFile.exists()) {
+                // Show a dialog.
+                AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR,
+                        "File already exists", "",
+                        "The destination file (" + destFile.toString() + ") already exists. Press OK to continue or Cancel to abort.",
+                        ButtonType.OK, ButtonType.CANCEL);
+                final Optional<ButtonType> result = dialog.showAndWait();
+
+                // Skip this file or abort if cancel was pressed.
+                if (result.isPresent() && result.get() == ButtonType.CANCEL) {
+                    break;
+                }
+                continue;
+            }
+
+            try {
+                // Copy or move the file or directory.
+                if (copy) {
+                    if (oldFile.isDirectory()) {
+                        FileUtils.copyDirectoryToDirectory(oldFile, destDir);
+                    } else {
+                        FileUtils.copyFileToDirectory(oldFile, destDir);
+                    }
+                } else {
+                    if (oldFile.isDirectory()) {
+                        FileUtils.moveDirectoryToDirectory(oldFile, destDir, false);
+                    } else {
+                        FileUtils.moveFileToDirectory(oldFile, destDir, false);
+                    }
+                }
+            } catch (IOException e) {
+                // Show the error.
+                LOGGER.error("IOException while moving files.", e);
+                AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error while pasting files.", "",
+                        "An error occurred while pasting files. Press OK to continue or Cancel to abort.\n" + e.getMessage(),
+                        ButtonType.OK, ButtonType.CANCEL);
+                final Optional<ButtonType> result = error.showAndWait();
+
+                // If cancel was pressed, abort.
+                if (result.isPresent() && result.get() == ButtonType.CANCEL) {
+                    break;
+                }
+            }
+        }
+    }
+
+    /* End of bulk file functionality. */
+
+    @FXML
+    private void newProjectButtonPressed() {
+        NewProjectDialog dlg = new NewProjectDialog(this);
+        dlg.showAndWait();
+    }
+
+    @FXML
+    private void newFolderButtonPressed() {
+        new NewFolderDialog(this, getCurrentItem()).show();
+    }
+
+    @FXML
+    private void uploadButtonPressed() {
+        new UploadToServerDialog(this, getAllCurrentItems()).show();
+    }
+
+    private void renameButtonPressed() {
+        TreeItem<Pair<File, String>> item = getCurrentItem();
+        RobotTab tab = (RobotTab) controller.findTab(item.getValue().getKey());
+
+        // Check if a robot is still running, show a dialog to stop them.
+        if (checkRobotsRunning(Collections.singletonList(item), false, false)) {
+            AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING,
+                    "Rename running robot",
+                    "You are trying to rename a running robot or a folder containing running robots.",
+                    "Do you want to stop the robot so you can rename it?",
+                    ButtonType.YES, ButtonType.NO
+            );
+            final Optional<ButtonType> result = dialog.showAndWait();
+            if (!result.isPresent() || result.get() != ButtonType.YES) {
+                return;
+            }
+        }
+
+        // Get the old name, show the rename dialog, get the new name.
+        String oldName = item.getValue().getValue();
+        new RenameDialog(item).showAndWait();
+        String newName = item.getValue().getValue();
+
+        // Check if the name changed.
+        if (!oldName.equals(newName)) {
+            // Stop any running robots, close tabs.
+            checkRobotsRunning(Collections.singletonList(item), true, true);
+
+            // If the tab was previously open, close and reopen it.
+            if (tab != null) {
+                boolean wasSelected = controller.getSelectedTab() == tab;
+                controller.closeTab(tab);
+                RobotTab newTab = controller.openFile(item.getValue().getKey());
+                if (wasSelected) {
+                    controller.showTab(newTab);
+                }
+            }
+        }
+    }
+
+    private void deleteButtonPressed() {
+        // Get selected items and reverse them so the right element will be selected
+        ObservableList<TreeItem<Pair<File, String>>> selectedItems = FXCollections.observableArrayList(getAllCurrentItems());
+        FXCollections.reverse(selectedItems);
+        // Check if there are any robots running
+        boolean running = checkRobotsRunning(selectedItems, false, false);
+
+        // Check if projects or files/folders are being deleted
+        if (selectedItems.stream().allMatch(file -> getProject(file) == file)) {
+            int projectCount = selectedItems.size();
+
+            // Set up dialog
+            AlertDialog alert = new AlertDialog(Alert.AlertType.CONFIRMATION,
+                    "Delete",
+                    "Are you sure you want to delete " + projectCount + " " + ((projectCount > 1) ? "projects" : "project") + "?" +
+                            ((running) ? "\nOne or more robots are still running, deleting will terminate them." : ""),
+                    ""
+            );
+
+            // Set up dialog content
+            CheckBox checkBox = new CheckBox("Delete project contents from disk");
+            Label prjText = new Label(selectedItems.stream().map(file -> file.getValue().getKey().getPath())
+                    .collect(Collectors.joining("\n")));
+            prjText.setWrapText(true);
+
+            GridPane gridPane = new GridPane();
+            GridPane.setMargin(checkBox, new javafx.geometry.Insets(20, 0, 0, 0));
+            gridPane.add(prjText, 0, 0);
+            gridPane.add(checkBox, 0, 1);
+
+            alert.getDialogPane().setContent(gridPane);
+
+            alert.showAndWait()
+                    .filter(response -> response == ButtonType.OK)
+                    .ifPresent(response -> deleteItems(selectedItems, checkBox.isSelected()));
+
+        } else if (selectedItems.stream().allMatch(file -> getProject(file) != file)) {
+            long folderCount = selectedItems.stream().filter(file -> file.getValue().getKey().isDirectory()).count();
+            long fileCount = selectedItems.size() - folderCount;
+
+            // Set up dialog
+            AlertDialog alert = new AlertDialog(Alert.AlertType.CONFIRMATION, "Delete",
+                    "Are you sure you want to delete " +
+                            (folderCount > 0 ? folderCount + " folder" + (folderCount > 1 ? "s" : "") : "") +
+                            (fileCount > 0 ? (folderCount > 0 && fileCount > 0 ? " and " : "") + fileCount + " file" + (fileCount > 1 ? "s" : "") : "")
+                            + "?" +
+                            (running ? "\nOne or more robots are still running, deleting will terminate them." : ""),
+                    folderCount > 0 ? "Selected files, including all files in selected folders, will be deleted." : "");
+
+            alert.showAndWait()
+                    .filter(response -> response == ButtonType.OK)
+                    .ifPresent(response -> deleteItems(selectedItems, true));
+        }
+    }
+
+    public void newBot(String templateFile) {
+        // New file can only be created under a project.
+        if (getCurrentProject() == null || getCurrentItem() == null) {
+            return;
+        }
+        File projectFile = getCurrentProject().getValue().getKey();
+
+        // Select initial directory.
+        File initialFolder = getCurrentItem().getValue().getKey();
+        if (initialFolder.isFile()) {
+            initialFolder = initialFolder.getParentFile();
+        }
+
+        // Open a file chooser to save the robot file.
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(initialFolder);
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
+                String.format("Xill Robot (*%s)", XillEnvironment.ROBOT_EXTENSION),
+                String.format("*%s", XillEnvironment.ROBOT_EXTENSION)));
+        fileChooser.setTitle("New Robot");
+        File chosen = fileChooser.showSaveDialog(this.getScene().getWindow());
+
+        // Check if no file was chosen.
+        if (chosen == null) {
+            return;
+        }
+
+        // Check if the new file is in the project.
+        if (chosen.getParent().startsWith(projectFile.getAbsolutePath())) {
+            // On Linux the FileChooser does not automatically add xill extension.
+            if (!chosen.getName().endsWith(XillEnvironment.ROBOT_EXTENSION)) {
+                chosen = new File(chosen.getPath() + XillEnvironment.ROBOT_EXTENSION);
+            }
+
+            try {
+                Map<String, Object> model = Templater.getDefaultModel();
+                model.put("fileName", chosen.getName());
+                model.put("filePath", chosen.getCanonicalPath());
+                model.put("projectName", projectFile.getName());
+                model.put("projectPath", projectFile.getCanonicalPath());
+                TEMPLATER.render(templateFile, model, Paths.get(chosen.toURI()));
+                controller.viewOrOpenRobot(RobotID.getInstance(chosen, projectFile));
+            } catch (IOException e) {
+                LOGGER.error("Failed to create robot file.", e);
+            } catch (TemplateException e) {
+                new AlertDialog(Alert.AlertType.ERROR, "Invalid template", "The template you want to use could not be processed!", e.getMessage()).show();
+                controller.viewOrOpenRobot(RobotID.getInstance(chosen, projectFile));
+            }
+        } else {
+            // Inform the user about the file being created outside of a project.
+            new AlertDialog(Alert.AlertType.ERROR, "Project path error", "", "Robots can only be created inside projects.").show();
+        }
+    }
+
+    @Override
+    public void handle(Event event) {
+        // Request focus on mouse press.
+        if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
+            this.requestFocus();
+        }
+
+        // Key presses.
+        if (event.getEventType() == KeyEvent.KEY_PRESSED) {
+            KeyEvent keyEvent = (KeyEvent) event;
+
+            // Hotkeys.
+            HotkeysHandler.Hotkeys hk = FXController.hotkeys.getHotkey(keyEvent);
+            if (hk != null) {
+                switch (hk) {
+                    case CUT:
+                        if (!menuCut.isDisable()) {
+                            cut();
+                        }
+                        break;
+                    case COPY:
+                        if (!menuCopy.isDisable()) {
+                            copy();
+                        }
+                        break;
+                    case PASTE:
+                        if (!menuPaste.isDisable()) {
+                            paste();
+                        }
+                        break;
+                    case RENAME:
+                        if (!menuRename.isDisable()) {
+                            renameButtonPressed();
+                        }
+                        break;
+                }
+            }
+
+            // Keypresses.
+            if (keyEvent.getCode() == KeyCode.DELETE && !menuDelete.isDisable()) {
+                deleteButtonPressed();
+            }
+        }
+    }
+
+    /**
+     * Check if there are any robots running.
+     *
+     * @param items    The items to check.
+     * @param stop     Whether to stop the running robots.
+     * @param closeTab Whether to close open robot tabs.
+     * @return True if any items or sub-items are running robots.
+     */
+    private boolean checkRobotsRunning(List<TreeItem<Pair<File, String>>> items, boolean stop, boolean closeTab) {
+        boolean running = false;
+
+        for (TreeItem<Pair<File, String>> item : items) {
+            // Check if the robot tab is open and the robot is running.
+            RobotTab tab = (RobotTab) controller.findTab(item.getValue().getKey());
+            if (tab != null) {
+                running |= tab.getEditorPane().getControls().robotRunning();
+                // Stop the robot.
+                if (stop) {
+                    tab.getEditorPane().getControls().stop();
+                }
+                // Close the tab.
+                if (closeTab) {
+                    controller.closeTab(controller.findTab(item.getValue().getKey()));
+                }
+            }
+
+            // Recursively check all children of the item.
+            running |= checkRobotsRunning(item.getChildren(), stop, closeTab);
+        }
+
+        return running;
+    }
+
+    /**
+     * Delete multiple items from the tree view.
+     *
+     * @param toDelete           The items to delete.
+     * @param hardDeleteProjects Whether to delete the projects from disk.
+     */
+    private void deleteItems(List<TreeItem<Pair<File, String>>> toDelete, boolean hardDeleteProjects) {
+        // Copy the list (because javafx will select other items when some are deleted, screwing things over.
+        List<TreeItem<Pair<File, String>>> items = new ArrayList<>(toDelete);
+
+        // First stop all robots and close the tabs.
+        checkRobotsRunning(items, true, true);
+
+        items.forEach(item -> {
+            File file = item.getValue().getKey();
+
+            // Check if the file exists.
+            if (file.exists()) {
+                try {
+                    //If it is a file, remove it. If it is a folder only remove it if it is not a project or we should hard delete projects.
+                    if (file.isFile() || file.isDirectory() && (item != getProject(item) || hardDeleteProjects)) {
+                        FileUtils.forceDelete(file);
+                    }
+                } catch (IOException e) {
+                    LOGGER.error("Could not delete " + file.toString(), e);
+                    AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error while deleting files.", "",
+                            "An error occurred while deleting files.\n" + e.getMessage(), ButtonType.OK);
+                    error.showAndWait();
+                }
+            }
+
+            // If the item is a project, remove it.
+            if (item == getProject(item)) {
+                removeProject(item);
+            }
+        });
+    }
+
+    /* Projects */
+
+    private void loadProjects() {
+        Platform.runLater(() -> {
+            List<ProjectSettings> projects = settings.project().getAll();
+
+            // When this is the first time the IDE runs, add the samples project
+            File defaultProjectPath = new File(DEFAULT_PROJECT_PATH);
+            if (!settings.simple().getBoolean(Settings.INFO, Settings.HasRun)) {
+                if (defaultProjectPath.exists()) {
+                    // Projects must have an absolute directory
+                    newProject(DEFAULT_PROJECT_NAME, defaultProjectPath.getAbsolutePath(), "");
+                }
+                // Mark that the IDE has run for the first time
+                settings.simple().save(Settings.INFO, Settings.HasRun, true);
+                settings.commit();
+            }
+
+
+            if (projects.isEmpty()) {
+                disableAllButtons(true);
+                return;
+            }
+
+            projects.forEach(this::addProject);
+
+            root.getChildren().forEach(node -> node.setExpanded(false));
+            root.setExpanded(true);
+        });
+    }
+
+    /**
+     * Removes an item from the project list and keeps the files.
+     *
+     * @param item the item to remove
+     */
+    public void removeProject(final TreeItem<Pair<File, String>> item) {
+        root.getChildren().remove(item);
+        settings.project().delete(item.getValue().getValue());
+        select(root);
+    }
+
+    /**
+     * Creates a new project.
+     *
+     * @param name        the name of the new project
+     * @param folder      the folder representing the project
+     * @param description the description of the project
+     * @return whether creating the project was successful
+     */
+    public boolean newProject(final String name, final String folder, final String description) {
+        // Check if the project is already opened
+        boolean projectDoesntExist = root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
+                && findItemByPath(root, folder) == null;
+
+        if (!projectDoesntExist || "".equals(name) || "".equals(folder)) {
+            AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error", "",
+                    "Make sure the name and folder are not empty, and do not exist as a project yet.", ButtonType.OK);
+            error.show();
+            return false;
+        }
+
+        // Check if project folder already exists under different capitalization
+        File projectFolder = new File(folder);
+        if (projectFolder.exists()) {
+            try {
+                String canonicalFileName = projectFolder.getCanonicalFile().getName();
+                String fileName = projectFolder.getName();
+
+                if (!canonicalFileName.equals(fileName)) {
+                    AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Project already exists", "",
+                            "The selected directory already exists with a different case. Please use \"" + canonicalFileName + "\" or rename your project.", ButtonType.OK);
+                    error.show();
+                    return false;
+                }
+            } catch (IOException e) {
+                LOGGER.error("Failed to read directory", e);
+            }
+        }
+
+        // Create the project.
+        ProjectSettings project = new ProjectSettings(name, folder, description);
+        settings.project().save(project);
+        try {
+            FileUtils.forceMkdir(new File(project.getFolder()));
+        } catch (IOException e) {
+            LOGGER.error("Failed to create project directory", e);
+        }
+        addProject(project);
+
+        return true;
+    }
+
+    @SuppressWarnings("squid:S1166")
+    // The error message thrown is minimalistic (as wanted) but has all the necessary information.
+    private void addProject(final ProjectSettings project) {
+        // Check if the project still exists
+        if (project.getFolder() == null) {
+            return;
+        }
+
+        TreeItem<Pair<File, String>> projectNode = new ProjectTreeItem(new File(project.getFolder()), project.getName());
+        root.getChildren().add(projectNode);
+
+        if (watcher != null) {
+            try {
+                watcher.addFolderListener(this, Paths.get(project.getFolder()));
+            } catch (IOException e) {
+                LOGGER.error("Could not register project: " + project.getFolder() + ". Did you remove or rename the project folder?");
+            }
+        }
+        projectNode.setExpanded(false);
+        select(projectNode);
+    }
+
+    /* End of projects */
+
+    /* Selection of TreeItems */
+
+    /**
+     * Selects an item in the treeview corresponding to given a path.
+     *
+     * @param path The path of the item to select.
+     */
+    public void select(final String path) {
+        select(path != null ? findItemByPath(root, path) : null);
+    }
+
+    private TreeItem<Pair<File, String>> findItemByPath(final TreeItem<Pair<File, String>> parent, final String path) {
+        for (TreeItem<Pair<File, String>> item : parent.getChildren()) {
+            if (path.equals(item.getValue().getKey().getPath())) {
+                return item;
+            } else {
+                TreeItem<Pair<File, String>> child = findItemByPath(item, path);
+                if (child != null) {
+                    return child;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Select an item from the treeview.
+     *
+     * @param item The item to select.
+     */
+    public void select(final TreeItem<Pair<File, String>> item) {
+        if (item != null) {
+            trvProjects.getSelectionModel().clearSelection();
+            trvProjects.getSelectionModel().select(item);
+        }
+    }
+
+    /* End of selection. */
+
+    /**
+     * Create a directory if it does not exist.
+     *
+     * @param item The tree item for which to create the directory.
+     */
+    public void makeDirIfNotExists(TreeItem<Pair<File, String>> item) {
+        File dir = item.getValue().getKey();
+
+        if (!dir.exists()) {
+            try {
+                // Create the directory.
+                FileUtils.forceMkdir(dir);
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage(), e);
+                // Show an error.
+                AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Could not create folder", "",
+                        e.getMessage(), ButtonType.OK);
+                error.show();
+            }
+
+            // Re-add the folder listener.
+            try {
+
+                watcher.addFolderListener(this, Paths.get(getProject(item).getValue().getKey().getPath()));
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+    }
+
+    /**
+     * Called when the outside change to the robot file has been done
+     * Check if the outside change to the robot file should lead to asking user about loading new content and if so then do it
+     *
+     * @param child The path to the robot file
+     */
+    public void robotFileChanged(final File child) {
+
+        RobotTab tab = (RobotTab) controller.findTab(child);
+        if (tab == null) {
+            return;
+        }
+
+        // Test of content change
+        String newContent = "";
+        try {
+            if (Files.exists(child.toPath())) {
+                newContent = new String(Files.readAllBytes(child.toPath()));
+            }
+        } catch (IOException e) {
+            LOGGER.warn("Failed to read changed robot content", e);
+        }
+
+        if (!tab.getEditorPane().checkChangedCode(newContent)) {
+            return;
+        }
+
+        tab.requestFocus();
+
+        // This must be done in the FX application thread.
+        final Runnable showDialog = () -> {
+            // Create and show an alert dialog saying the content has been changed.
+            AlertDialog alert = new AlertDialog(Alert.AlertType.WARNING, "Robot file content change",
+                    "The robot file has been modified outside the editor.", "Do you want reload the robot file?",
+                    ButtonType.YES, ButtonType.NO);
+
+            final Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.YES) {
+                tab.reload();
+            }
+        };
+        Platform.runLater(showDialog);
+    }
+
+    @Override
+    public void folderChanged(final Path dir, final Path child, final WatchEvent<Path> event) {
+        for (TreeItem<Pair<File, String>> item : root.getChildren()) {
+            if (item instanceof ProjectTreeItem) {
+                ProjectTreeItem project = (ProjectTreeItem) item;
+                if (dir.startsWith(project.getValue().getKey().getAbsolutePath())) {
+                    if (event.kind() != ENTRY_MODIFY) {
+                        // The files in project directory has changed (i.e. some file(s) has been removed / renamed / added).
+                        Platform.runLater(() -> selectNewItem(dir, child, project));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * refresh the project and select the right item. This is the newly created robot/folder or the parent of the deleted robot/folder
+     *
+     * @param parent  the parent of the item
+     * @param child   the item
+     * @param project the project to be refreshed
+     */
+    public void selectNewItem(Path parent, Path child, ProjectTreeItem project) {
+        project.refresh();
+        TreeItem<Pair<File, String>> item = findItemByPath(getRoot(), child.toString());
+        if (item == null) {
+            item = findItemByPath(getRoot(), parent.toString());
+        }
+        select(item);
+    }
+
+    /**
+     * Returns the root of the tree.
+     *
+     * @return the root of the tree
+     */
+
+    public TreeItem<Pair<File, String>> getRoot() {
+        return root;
+    }
+
+    /**
+     * @return the currently selected node
+     */
+    public TreeItem<Pair<File, String>> getCurrentItem() {
+        return trvProjects.getSelectionModel().getSelectedItem();
+    }
+
+    /**
+     * @return All currently selected nodes.
+     */
+    public ObservableList<TreeItem<Pair<File, String>>> getAllCurrentItems() {
+        return trvProjects.getSelectionModel().getSelectedItems();
+    }
+
+    public List<File> getAllCurrentFiles() {
+        return getAllCurrentItems().stream().map(t -> t.getValue().getKey()).collect(Collectors.toList());
+    }
+
+    /**
+     * Gets the first project node above the childItem.
+     *
+     * @param childItem The childItem to find the project for.
+     * @return the project node
+     */
+    public TreeItem<Pair<File, String>> getProject(final TreeItem<Pair<File, String>> childItem) {
+        TreeItem<Pair<File, String>> item = childItem;
+        if (item == root) {
+            return null;
+        }
+
+        while (item != null && item.getParent() != root) {
+            item = item.getParent();
+        }
+        return item;
+    }
+
+    /**
+     * Gets the first project node above the selected item.
+     *
+     * @return project node
+     */
+    public TreeItem<Pair<File, String>> getCurrentProject() {
+        return getProject(getCurrentItem());
+    }
+
+    /**
+     * Gets the project path of a node.
+     *
+     * @param file The file to get the project path for.
+     * @return The project path if it exists
+     */
+    public Optional<String> getProjectPath(final File file) {
+        Optional<String> projectPath = Optional.empty();
+
+        // Find the tree item.
+        TreeItem<Pair<File, String>> item = findItemByPath(root, file.getAbsolutePath());
+
+        // Check if the item is a part of the tree, only then should we try to get the project.
+        if (item != null) {
+            select(item);
+            TreeItem<Pair<File, String>> project = getCurrentProject();
+
+            if (project != null) {
+                projectPath = Optional.of(project.getValue().getKey().getPath());
+            }
+        }
+
+        return projectPath;
+    }
+
+    /**
+     * Stops the folder watcher.
+     */
+    public static void stop() {
+        if (watcher != null) {
+            watcher.stop();
+        }
+    }
+
+    protected void setGlobalController(final FXController controller) {
+        this.controller = controller;
+    }
+
+    /**
+     * A filefilter filtering on the FXController.BOT_EXTENSION extension.
+     */
+    protected class BotFileFilter extends FileFilter implements FilenameFilter {
+        @Override
+        public boolean accept(final File file) {
+            return file.isDirectory() && !file.getName().startsWith(".") || file.getName().endsWith(XillEnvironment.ROBOT_EXTENSION);
+        }
+
+        @Override
+        public String getDescription() {
+            return String.format("Xillio bot script files (*%s)", XillEnvironment.ROBOT_EXTENSION);
+        }
+
+        @Override
+        public boolean accept(final File directory, final String fileName) {
+            return accept(new File(directory, fileName));
+        }
+    }
+
+    private class ProjectTreeItem extends TreeItem<Pair<File, String>> {
+
+        private boolean isLeaf;
+        private boolean isFirstTimeChildren = true;
+        private boolean isFirstTimeLeaf = true;
+
+        public ProjectTreeItem(final File file, final String name) {
+            super(new Pair<>(file, name));
+        }
+
+        @Override
+        public ObservableList<TreeItem<Pair<File, String>>> getChildren() {
+            if (isFirstTimeChildren) {
+                isFirstTimeChildren = false;
+                super.getChildren().setAll(buildChildren(this));
+            }
+            return super.getChildren();
+        }
+
+        @Override
+        public boolean isLeaf() {
+            if (isFirstTimeLeaf) {
+                isFirstTimeLeaf = false;
+                isLeaf = getValue().getKey().isFile();
+            }
+            return isLeaf;
+        }
+
+        public void refresh() {
+            // Update all children.
+            expandedFiles.clear();
+            storeAllExpanded(root);
+            getChildren().setAll(buildChildren(this));
+        }
+
+        /**
+         * Build the children of a tree item.
+         *
+         * @param treeItem The root item to build the children for.
+         * @return A list of tree items that are the children of the given tree item.
+         */
+        private List<TreeItem<Pair<File, String>>> buildChildren(final TreeItem<Pair<File, String>> treeItem) {
+            File f = treeItem.getValue().getKey();
+            List<TreeItem<Pair<File, String>>> children = new ArrayList<>();
+
+            if (f != null && f.isDirectory()) {
+                // Get a list with all files in the directory.
+                File[] files = f.listFiles(robotFileFilter);
+
+                // Sort the list of files.
+                Arrays.sort(files, (o1, o2) -> {
+                    // Put directories above files.
+                    if (o1.isDirectory() && o2.isFile()) {
+                        return -1;
+                    } else if (o1.isFile() && o2.isDirectory()) {
+                        return 1;
+                        // Both are the same type, compare them normally.
+                    } else {
+                        return o1.compareTo(o2);
+                    }
+                });
+
+                // Create tree items from all files, add them to the list
+                for (File file : files) {
+                    ProjectTreeItem sub = new ProjectTreeItem(file, file.getName());
+                    if (expandedFiles.contains(file)) {
+                        sub.setExpanded(true);
+                    }
+                    children.add(sub);
+                }
+            }
+
+            return children;
+        }
+    }
+
+
+    /**
+     * store all files that are expanded so they can be expanded when the projecttree is rebuild.
+     *
+     * @param treeItem the root treeItem to check from
+     */
+    public void storeAllExpanded(final TreeItem<Pair<File, String>> treeItem) {
+        if (treeItem.getValue().getKey().isDirectory()) {
+            if (treeItem.isExpanded()) {
+                expandedFiles.add(treeItem.getValue().getKey());
+            }
+            treeItem.getChildren().forEach(this::storeAllExpanded);
+        }
+    }
+
+    /**
+     * This method is called when the selection in the tree view is changed
+     */
+    @Override
+    public void onChanged(Change<? extends TreeItem<Pair<File, String>>> newObject) {
+        // Update all buttons to their default state.
+        disableAllButtons(false);
+        disableFileButtons(false);
+
+        int selectedSize = getAllCurrentItems().size();
+        if (selectedSize == 0) {
+            // No item is selected.
+            disableAllButtons(true);
+            disableFileButtons(true);
+        }
+
+        // Check if more than 1 item is selected.
+        if (selectedSize > 1) {
+            menuRename.setDisable(true);
+            menuOpenFolder.setDisable(true);
+            disableFileButtons(true);
+        }
+
+        // If a project is selected disable the cut menu item.
+        if (projectSelected()) {
+            menuCut.setDisable(true);
+            menuRename.setDisable(true);
+        }
+
+        // Disable deleting projects and folders/files at the same time
+        if (getAllCurrentItems().stream().map(file -> getProject(file) == file).distinct().count() == 2) {
+            menuDelete.setDisable(true);
+        }
+    }
+
+    /**
+     * Whether the current selection contains one or more projects.
+     */
+    private boolean projectSelected() {
+        for (TreeItem<Pair<File, String>> item : getAllCurrentItems()) {
+            if (item != null && item == getProject(item)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Enable or disable all buttons.
+     *
+     * @param disable Whether to disable or enable the buttons.
+     */
+    private void disableAllButtons(boolean disable) {
+        btnUpload.setDisable(disable);
+        menuDelete.setDisable(disable);
+        menuRename.setDisable(disable);
+        menuOpenFolder.setDisable(disable);
+        menuCut.setDisable(disable);
+        menuNewBot.setDisable(disable);
+    }
+
+    /**
+     * Update the New File and Open File buttons.
+     *
+     * @param disable Whether to disable or enable the buttons.
+     */
+    private void disableFileButtons(boolean disable) {
+        controller.disableNewFileButton(disable);
+        controller.disableOpenFileButton(disable);
+        menuNewFolder.setDisable(disable);
+        menuNewBotFromTemplate.setDisable(disable);
+    }
+
+    /**
+     * Get the number of projects
+     *
+     * @return the number of projects present
+     */
+    public int getProjectsCount() {
+        return settings.project().getAll().size();
+    }
+
+    /**
+     * A custom tree cell which opens a robot tab on double-click and supports drag&drop.
+     */
+    private class CustomTreeCell extends TreeCell<Pair<File, String>> implements EventHandler<Event> {
+        private static final String dragOverClass = "drag-over";
+
+        public CustomTreeCell() {
+            // Subscribe to drag events.
+            this.setOnDragDetected(this);
+            this.setOnDragOver(this);
+            this.setOnDragDropped(this);
+            this.setOnDragEntered(this);
+            this.setOnDragExited(this);
+        }
+
+        @Override
+        protected void updateItem(final Pair<File, String> pair, final boolean empty) {
+            super.updateItem(pair, empty);
+
+            // Check if the pair or the string is null, set the text.
+            if (pair == null || pair.getValue() == null) {
+                setText("");
+                return;
+            }
+            this.setText(pair.getValue());
+
+            setOnMouseClicked(event -> {
+                // Double click.
+                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1) {
+                    if (pair.getKey() != null && pair.getKey().exists() && pair.getKey().isFile()) {
+                        // Open new tab from file.
+                        controller.openFile(pair.getKey());
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void handle(Event event) {
+            if (event instanceof MouseEvent) {
+                MouseEvent mouseEvent = (MouseEvent) event;
+
+                if (mouseEvent.getEventType() == MouseEvent.DRAG_DETECTED && canDrag()) {
+                    // Start dragging.
+                    Dragboard board = this.startDragAndDrop(TransferMode.MOVE);
+
+                    // Set the clipboard content.
+                    ClipboardContent content = new ClipboardContent();
+                    content.putFiles(getAllCurrentFiles());
+                    board.setContent(content);
+
+                    event.consume();
+                }
+            } else if (event instanceof DragEvent) {
+                if (!canDrop()) {
+                    return;
+                }
+
+                DragEvent dragEvent = (DragEvent) event;
+
+                if (dragEvent.getEventType() == DragEvent.DRAG_OVER) {
+                    // Dragging over.
+                    dragEvent.acceptTransferModes(TransferMode.MOVE);
+                } else if (dragEvent.getEventType() == DragEvent.DRAG_ENTERED) {
+                    this.getStyleClass().add(dragOverClass);
+                } else if (dragEvent.getEventType() == DragEvent.DRAG_EXITED) {
+                    this.getStyleClass().remove(dragOverClass);
+                } else if (dragEvent.getEventType() == DragEvent.DRAG_DROPPED) {
+                    // Dropping.
+                    Dragboard board = dragEvent.getDragboard();
+                    if (board.hasFiles()) {
+                        paste(this.getItem().getKey(), board.getFiles(), false);
+                        dragEvent.setDropCompleted(true);
+                    }
+
+                    event.consume();
+                }
+            }
+        }
+
+        private boolean canDrag() {
+            // Projects cannot be moved.
+            return !projectSelected();
+        }
+
+        private boolean canDrop() {
+            return this.getTreeItem() != null;
+        }
+    }
+}

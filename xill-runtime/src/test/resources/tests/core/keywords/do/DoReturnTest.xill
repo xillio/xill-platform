@@ -1,0 +1,44 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/* 
+* Specification: 
+*   When the do block has a return: the correct blocks MUST be executed before returning and the variable MAY still be referenced.
+* Input: Empty list
+* Expected: 
+*   Do, successful and finally are triggered and are added to the list. See comment for further information upon
+*   the return of that variable.
+*  
+*   Since a list variable is just a reference, the list entries are not protected.
+*   Thus we do expect to have these changes. It is not a new assignment but an addition to the current value.
+*/
+
+use Assert;
+
+Assert.equal(testReturn(),["do","success","finally"]);
+function testReturn(){
+	var result = [];
+	do {
+		result[] = "do";
+		return result;
+	} fail {
+		Assert.error("No error should have been thrown.");
+	} success {
+		result[] = "success";
+	} finally {
+		result[] = "finally";
+	}
+	Assert.error("Should not be thrown since return was called.");
+}

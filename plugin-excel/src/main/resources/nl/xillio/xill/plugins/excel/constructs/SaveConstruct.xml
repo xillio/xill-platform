@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Saves a workbook to the file system.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Saving the current workbook to the same file</header>
+            <code>
+                use Excel;
+                var workbook = Excel.loadWorkbook("workbook.xlsx");
+                var sheet = Excel.loadSheet(workbook, "firstsheet");
+                Excel.setCell(sheet, "A", 9, 42);
+                Excel.save(workbook);
+            </code>
+            <header>Saving the current workbook as a new file</header>
+            <code>
+                use Excel;
+                var workbook = Excel.loadWorkbook("workbook.xlsx");
+                var sheet = Excel.loadSheet(workbook, "firstsheet");
+                Excel.setCell(sheet, "A", 9, 42);
+                Excel.save(workbook, "newworkbook.xlsx");
+            </code>
+        </example>
+        <example title="Creating a copy">
+            <header>Creating a new, not read-only copy of the workbook</header>
+            <code>
+                use Excel;
+                var readonly = Excel.loadWorkbook("workbook.xlsx");
+                var writable = Excel.save(readonly, "newworkbook.xlsx");
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>columnCount</reference>
+        <reference>loadSheet</reference>
+        <reference>createSheet</reference>
+        <reference>createWorkbook</reference>
+        <reference>loadWorkbook</reference>
+        <reference>save</reference>
+        <reference>System.print</reference>
+    </references>
+    <tags>
+        Excel, save, workbook, disk, file system, read-only, read only, writable
+    </tags>
+</function>

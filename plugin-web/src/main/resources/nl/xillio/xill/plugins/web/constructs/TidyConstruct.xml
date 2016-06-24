@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Parses HTML from a string and tidies it. When tidying, missing end tags are added and the input is changed to conform to either the HTML5 or XHTML standard.
+
+The fullHTML, syntax and prettyPrint parameters are optional.
+When fullHTML is true, the input will be parsed as a full HTML document and the output will at least contain html, head and body tags. When it is false, the input will be parsed as a body fragment and no tags will be added to the output.
+The syntax parameter can either be "xhtml", for XHTML compliant output or "html" for HTML5 compliant output.
+When the prettyPrint parameter is true, the output is formatted to be easier to read, but the output will be larger.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Tidy incorrect HTML</header>
+            <code>
+                use Web;
+                use System;
+
+                var html = "&lt;p&gt;test";
+                System.print(Web.tidy(html));
+            </code>
+        </example>
+    </examples>
+    <references>
+    </references>
+    <tags>
+        web, format, html, xhtml
+    </tags>
+</function>

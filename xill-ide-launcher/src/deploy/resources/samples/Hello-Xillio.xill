@@ -1,0 +1,97 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/*
+Author:     Xillio
+Modified:   7-9-2015
+
+Description:
+        The Xill scripting language has a javascript like syntax.
+        It is an imperative language without user-defined classes and inheritance.
+*/
+
+// To start off this robot we will have to declare all the plugins we use
+use System;
+use String;
+
+// Literal strings must always be enclosed in either double or single quotes
+// Each command is closed with a semicolon ;
+var message1 = "Hello";
+var message2 = "Xillio";
+
+// Plugin functions are called with zero or more comma-separated arguments: System.print("Hello");
+// Strings can be concatenated using the :: operator
+System.print(message1 :: " " :: message2);
+
+// Operators can be used to perform simple actions like concatenating, multiplying;
+var b = 5;
+var a = b + 1;
+System.print(a);
+
+// Curly braces are used to enclose code blocks that are executed when specific conditions 
+// are met, such as in if, foreach, while and routine.
+if(true) {
+	System.print("Hello!");
+} else {
+	System.print("Goodbye!");
+}
+
+// Lists and Objects can be defined using json notation
+var emptyList = [];
+var emptyObject = {};
+
+var simpleList = ["a", "b", "c"];
+var simpleObject = {
+    "first": "a",
+    "second": "b",
+    "third": "c",
+    "this is a complex key": "d"
+};
+
+var nestedList = {
+    "first": {
+        "seventh": "a",
+        "tenth": "b" 
+    },
+    "second": "c",
+};
+
+// Accessing list elements
+System.print(simpleList[0]);
+System.print(nestedList.first.tenth);
+System.print(nestedList.second);
+System.print(simpleObject["this is a complex key"]);
+
+// Handling lists with foreach
+foreach(key,value in simpleObject) { 
+	System.print(key :: "\t" :: value); 
+}
+
+// When robots grow and get more complex you will want to create your own routines for 
+// repeating tasks and to keep your code maintainable. Consider the following.
+function removeDiacritics(str) {
+	// Use the built in replace function with regular expressions
+	str = String.replace(str, "[éèêë]", "e");
+	str = String.replace(str, "[óòôö]", "o");
+	str = String.replace(str, "[áàâä]", "a");
+	str = String.replace(str, "[úùûü]", "u");
+	str = String.replace(str, "[íìîï]", "i");
+	str = String.replace(str, "[ýÿ]", "y");
+	return(str);
+}
+
+System.print(removeDiacritics("Why livë lìfe tö the mâx when you can livê it to the méân."),"warn");
+
+// Happy coding, from the team at Xillio

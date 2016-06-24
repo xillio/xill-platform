@@ -1,0 +1,41 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/* 
+* Specification: 
+*   The correct blocks MUST be executed when the do is unsuccesful (and other blocks MUST NOT be executed)
+*   The fail error variable MUST have the correct error message and error line if the do block is unsuccesful
+* Input: Error in do block
+* Expected: 
+*   Do, Fail and finally blocks are triggered. Success is not.
+*   The error variable has the correct error massage in it and points to the right line.
+*/
+
+use Assert;
+
+var result = [];
+do {
+	result[] = "do";
+	Assert.error("Throw error.");
+} fail(e) {
+	result[] = "fail";
+	Assert.equal(e.message, "Throw error.", "Error object e not returning correct message.");
+	Assert.equal(e.line, 16, "Error object e not returning correct line number.");
+} success {
+    Assert.error("An error should have been caught by the fail block.");
+} finally {
+	result[] = "finally";
+}
+Assert.equal(result,["do","fail","finally"]);

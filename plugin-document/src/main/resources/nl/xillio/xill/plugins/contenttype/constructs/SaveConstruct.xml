@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Define a new content type and persist it in the database.
+
+A content type is defined as a set of decorators. A decorator defines a set of fields, their types and whether
+they are mandatory or not. Any document stored in the Universal Data Model, must specify a content type, which is then
+used to check if all decorator constraints are met.
+
+To define a content type you need to provide 2 parameters: The name of the content type and a list of 1 or more decorator
+names. These decorators must have been defined first, using `ContentType.decorator()`.
+
+The identity parameter determines which decorator cache will be used and to which database the content type and decorators
+will be saved. For example, when identity is `default`, the `udm_default` database will be used.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Define a Content Type</header>
+            <code>
+                use ContentType;
+
+                // Build the body
+                var userDecorator = {
+                    ...
+                };
+
+                // Add to cache
+                ContentType.decorator("user", userDecorator);
+
+                // Define content type
+                ContentType.save("CustomPage", ["user"]);
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>decorator</reference>
+        <reference>Document.save</reference>
+    </references>
+    <tags>
+        udm, persist, define, save, decorator, content, type
+    </tags>
+</function>

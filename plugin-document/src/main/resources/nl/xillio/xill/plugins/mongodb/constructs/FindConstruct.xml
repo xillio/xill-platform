@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Selects all documents in a collection and returns an iterator with the selected documents.
+If `query` is not empty it will only select documents that match the query.
+Using the `projection` parameter you can select fields to include or exclude. By default all fields are included.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Iterate over all documents which have the contentType "page".</header>
+            <code>
+                use Mongo;
+                use System;
+                Mongo.connect("udm_default");
+
+                var documents = Mongo.find(
+                    "documents",
+                    {
+                        "contentType": "page"
+                    }
+                );
+
+                foreach(document in documents) {
+                    System.print(document._id);
+                }
+            </code>
+            <header>Iterate over sorted documents</header>
+            <code>
+                use Mongo;
+                use System;
+                Mongo.connect("udm_default");
+
+                var documents = Mongo.find(
+                    "documents", {}, {},
+                    {
+                        // Positive for ascending order, negative for descending order.
+                        "_id": 1
+                    }
+                );
+
+                foreach(document in documents) {
+                    System.print(document._id);
+                }
+            </code>
+            <header>Iterate over all documents, excluding the contentType field</header>
+            <code>
+                use Mongo;
+                use System;
+                Mongo.connect("udm_default");
+
+                var documents = Mongo.find(
+                    "documents", {},
+                    {
+                        "contentType": false
+                    }
+                );
+
+                foreach(document in documents) {
+                    System.print(document._id);
+                }
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>connect</reference>
+        <reference>update</reference>
+        <reference>insert</reference>
+        <reference>remove</reference>
+        <reference>findOne</reference>
+        <reference>findOneAndDelete</reference>
+        <reference>findOneAndReplace</reference>
+        <reference>findOneAndUpdate</reference>
+    </references>
+    <tags>
+        mongodb, query, search, fields, filter
+    </tags>
+</function>

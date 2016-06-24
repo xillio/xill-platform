@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Extract exif tags from multiple files inside a folder. This will return an iterator that you can iterate to get
+results.
+
+## Projection
+The projection parameter accepts an *OBJECT* containing exif tag names as keys and a boolean flag as a value.
+For examples check out [ExifTool.scanFile](./scanFile.html).
+
+## Options
+To set options for this construct you can provide an *OBJECT* that contains the options as a key and values as
+the setting.
+
+| Option | Description | Value |
+| ---------- | ----------- | ----- |
+| nameConvention | The naming convention that should be applied to the tags | Default: *lowerCamelCase (lcc)*, upperCamelCase (ucc) or capitalWord (cw) |
+| recursive | Scan the folder recursively | true / false. Default: *true* |
+| extensions | A filter that selects which extensions to scan or skip | A [projection](./scanFile.html) with file extensions as keys |
+
+## Usage on a non-windows machine
+To use the Exiftool plugin on a non-windows machine some setup is required. Below you can find
+the steps to install the required files.
+
+### Linux
+Install the package through your system's package manager and restart Xill or follow the instructions below.
+* Download the exiftool perl source from *sno.phy.queensu.ca/~phil/exiftool/* (top link)
+* Extract the archive to your hard drive
+* Set your system's environmental variable *exiftool_bin* to the absolute path of the exiftool file or
+add the directory containing exiftool to your PATH environmental variable
+* (Optional) Set your systems's envirionmental variable *perl_bin* to the path of the perl installation.
+(Defaults to */usr/bin/perl*)
+* Restart Xill IDE
+
+### Mac OSX
+* Download the exiftool osx executable from *sno.phy.queensu.ca/~phil/exiftool/* (bottom link)
+* Install the application
+* (Optional) Set your system's environmental variable *exiftool_bin* to the absolute path of the exiftool file
+or add the directory containing exiftool to your PATH environmental variable
+(Defaults to */usr/local/bin/exiftool*)
+* Restart Xill IDE
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Get all available tags on all files in a folder</header>
+            <code>
+                use ExifTool, System;
+
+                var result = ExifTool.scanFolder("D:\\temp");
+
+                foreach(file in result) {
+                var json = System.toJSON(file);
+
+                System.print(file.filePath);
+                }
+
+                /* Outputs:
+                D:\\temp\\myFile.png
+                D:\\temp\\avatar.jpg
+                D:\\temp\\download.zip
+                ...
+                */
+            </code>
+            <header>Get file size of all jpg and png files in a folder</header>
+            <code>
+                use ExifTool, System;
+
+                var result = ExifTool.scanFolder(
+                "D:\\temp",
+                {
+                "fileSize": true
+                },
+                {
+                "extensions": {
+                "jpg": true,
+                "png": true
+                }
+                }
+                );
+
+                foreach(file in result) {
+                var json = System.toJSON(file);
+
+                System.print(file.filePath :: ": " :: file.fileSize);
+                }
+
+                /* Outputs:
+                D:\\temp\\myFile.png: 5 KB
+                D:\\temp\\avatar.jpg: 1 MB
+                ...
+                */
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>scanFolder</reference>
+    </references>
+    <tags>
+        meta, data, metadata, exif
+    </tags>
+</function>

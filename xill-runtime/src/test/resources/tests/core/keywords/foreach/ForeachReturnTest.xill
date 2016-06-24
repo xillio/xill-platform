@@ -1,0 +1,43 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/* 
+* Specification: 
+*   Calling return in a foreach MUST break out of the foreach loop and the function.
+*   Also code after the return MUST NOT be executed, and the correct value MUST be returned.
+* Input: List with three elements, counter with value 0
+* Expected: List has not changed. Counter has value 1 (and is returned), and the errors are not reached.
+*/
+
+use Assert;
+
+var increment = 0;
+var list = [1,2,3];
+
+Assert.equal(Execute(), 1, "The foreach loop is executed more than once");
+Assert.equal(list, [1,2,3]);
+Assert.equal(increment, 1);
+
+function Execute(){
+    foreach(v in list) {
+    	increment++;
+    	return increment;
+    	list[] = 4;
+    	Assert.error("Code after return should be ignored");
+    }
+    
+    list[] = 4;
+    Assert.error("Code after return should be ignored");
+}

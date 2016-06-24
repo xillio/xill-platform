@@ -1,0 +1,28 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/*
+* Specification: Each iteration of the foreach MUST increase the index variable.
+* Input: List with three elements.
+* Expected: In every iteration the index is the same as the item, thus the index is increased as it should.
+*/
+
+use Assert;
+
+var list = [0, 1, 2];
+foreach (index, item in list) {
+    Assert.equal(index, item);
+    continue;
+}

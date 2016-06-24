@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Changes the value of a given cell to the provided formula. The `column` parameter can be either given as numbers or letters (e.g. "A", "AB"), the `row` have to be given as numbers.
+
+Formulas can be given in the following form:
+
+        SUM(C4:E4)
+
+Formulas are evaluated when the sheet is opened in a spreadsheet program.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Changing a cell formula</header>
+            <code>
+                use Excel;
+                var workbook = Excel.createWorkbook("workbook.xlsx");
+                var sheet = Excel.createSheet(workbook, "firstsheet");
+                Excel.setCellFormula(sheet, "A", 1, "SQRT(42)");
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>setCellValue</reference>
+        <reference>loadSheet</reference>
+        <reference>loadWorkbook</reference>
+        <reference>getCell</reference>
+        <reference>createWorkbook</reference>
+        <reference>loadWorkbook</reference>
+        <reference>save</reference>
+        <reference>System.print</reference>
+    </references>
+    <tags>
+        Excel, cell, change, value, set, formula
+    </tags>
+</function>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Execute a single SQL query.
+The connection parameter is optional, if not given the last created connection will be used.
+the timeout parameter is optional. The default is set to 30 seconds. when the query takes longer than the given
+timeout it will stop. A timeout of 0 means that there is no limit.
+The return value of this construct depends on the type of query. If the query results in a result set it will return
+an iterator that will iterate over every row in that set. If the query is an update, insert or delete query it
+will return the number of affected rows.
+
+## Parameters
+If your query requires input it is generally bad practice to use string concatenation to build your own queries.
+The correct way to do this it by using parameterization. This you can do in two ways.
+
+### Named Parameters
+To create parameters that are labeled, you can use the colon-syntax.
+
+SELECT * from table WHERE column = :name
+
+If you do this, the parameters input has to be an object containing all the used parameter labels as keys.
+
+### Ordered Parameters
+An other way is to not use labels but order your list for input parameters.
+
+SELECT * from table WHERE column = ? AND other = ?
+
+If you use this syntax, your parameters input should be a list containing the same amount of elements as question marks.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Create a table and insert data</header>
+            <code>
+                use SQLite as db, System;
+
+                // First we connect to a database
+                db.connect("jdbc:sqlite::memory:");
+
+                // Then we create a table
+                db.query("CREATE TABLE test (id VARCHAR(20))");
+
+                // And insert some data
+                var insertQuery = "INSERT INTO test (id) VALUES (?)";
+                var count = db.query(insertQuery, ["Hello"]);
+                count += db.query(insertQuery, ["World"]);
+
+                System.print("Inserted " :: count :: " rows");
+
+                // Now we can query that data
+                var rows = db.query("SELECT * FROM test");
+
+                foreach(row in rows) {
+                    System.print("Item: " :: row.id);
+                }
+            </code>
+            <header>Explicitly pass a connection</header>
+            <code>
+                use SQLite as db;
+
+                // Connect to your database
+                db.connect("jdbc:sqlite::memory:");
+
+                // Now we can use this connection explicitly
+                db.query("CREATE TABLE test (id VARCHAR(20))");
+                db.query("INSERT INTO test (id) VALUES (?)", ["Doe"]);
+            </code>
+            <header>Use an object as parameters</header>
+            <code>
+                use SQLite as db,System;
+                // Connect to your database
+                db.connect("jdbc:sqlite::memory:");
+
+                var object = {
+                "id": "John",
+                "name": "Doe"
+                };
+
+                //create TABLE
+                db.query("CREATE TABLE test (id VARCHAR(20),name VARCHAR(20))");
+
+                // Insert a row. Notice that we now use a different notation for the parameters
+                db.query("INSERT INTO test (id, name) VALUES (:id, :name)", object);
+
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>connect</reference>
+    </references>
+</function>

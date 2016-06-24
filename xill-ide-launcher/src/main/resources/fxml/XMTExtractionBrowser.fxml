@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.web.*?>
+<AnchorPane fx:id="apnRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" styleClass="root" xmlns:fx="http://javafx.com/fxml"
+	fx:controller="nl.xillio.migrationtool.gui.ExtractionBrowserController"
+>
+	<children>
+		<TabPane fx:id="tpnPreviewMode" prefHeight="800.0" prefWidth="1280.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+			AnchorPane.topAnchor="0.0"
+		>
+			<tabs>
+				<Tab closable="false" text="Test XPath">
+					<content>
+						<AnchorPane id="Content">
+							<children>
+								<VBox fx:id="vbxContainer" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+									<children>
+										<AnchorPane fx:id="apnMid" VBox.vgrow="ALWAYS">
+											<children>
+												<VBox id="vbxConsole" fx:id="vbxExtractionPane" prefHeight="794.0" prefWidth="1274.0" styleClass="sidePane" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0"
+													AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="3.0"
+												>
+													<children>
+														<AnchorPane id="apnConsoleBody" fx:id="apnExtractionPaneBody" VBox.vgrow="ALWAYS">
+															<children>
+																<VBox id="vbxConsoleBody" fx:id="vbxExtractionPaneBody" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																	<children>
+																		<SplitPane fx:id="spnMid" dividerPositions="0.549777117384844" focusTraversable="true" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+																			<items>
+																				<AnchorPane id="AnchorPane" styleClass="dragPane">
+																					<children>
+																						<VBox id="vbxContainer" styleClass="sidePane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																							<children>
+																								<AnchorPane id="apnConsoleHeader" prefWidth="711.0" styleClass="paneHeader">
+																									<children>
+																										<Label id="lblConsoleHeader" text="XML/HTML Preview" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="0.0" />
+																										<Button id="btnCloseConsole" mnemonicParsing="false" styleClass="closePaneButton" text="Close" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																											<graphic>
+																												<Pane styleClass="icon" />
+																											</graphic>
+																											<tooltip>
+																												<Tooltip text="Close" />
+																											</tooltip>
+																										</Button>
+																									</children>
+																								</AnchorPane>
+																								<AnchorPane fx:id="apnPreviewBrowser" VBox.vgrow="ALWAYS">
+																									<padding>
+																										<Insets bottom="3.0" left="3.0" right="3.0" top="3.0" fx:id="x1" />
+																									</padding>
+																								</AnchorPane>
+																							</children>
+																						</VBox>
+																					</children>
+																				</AnchorPane>
+																				<AnchorPane id="AnchorPane" padding="$x1" styleClass="dragPane">
+																					<children>
+																						<VBox id="vbxContainer" styleClass="sidePane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																							<children>
+																								<AnchorPane id="apnConsoleHeader" prefWidth="711.0" styleClass="paneHeader">
+																									<children>
+																										<Label id="lblConsoleHeader" text="XML Tree" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="0.0" />
+																										<Button id="btnCloseConsole" mnemonicParsing="false" styleClass="closePaneButton" text="Close" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																											<graphic>
+																												<Pane styleClass="icon" />
+																											</graphic>
+																											<tooltip>
+																												<Tooltip text="Close" />
+																											</tooltip>
+																										</Button>
+																									</children>
+																								</AnchorPane>
+																								<AnchorPane id="AnchorPane" padding="$x1" VBox.vgrow="ALWAYS">
+																									<children>
+																										<TreeView fx:id="tpnExtractionTree" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+																									</children>
+																								</AnchorPane>
+																							</children>
+																						</VBox>
+																					</children>
+																				</AnchorPane>
+																			</items>
+																		</SplitPane>
+																		<AnchorPane id="AnchorPane">
+																			<children>
+																				<VBox id="VBox" alignment="CENTER" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																					<children>
+																						<AnchorPane id="apnConsoleHeader" styleClass="paneHeader">
+																							<children>
+																								<Label id="lblConsoleHeader" text="XPaths" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="0.0" />
+																								<Button id="btnCloseConsole" mnemonicParsing="false" styleClass="closePaneButton" text="Close" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																									<graphic>
+																										<Pane styleClass="icon" />
+																									</graphic>
+																									<tooltip>
+																										<Tooltip text="Close" />
+																									</tooltip>
+																								</Button>
+																							</children>
+																						</AnchorPane>
+																						<AnchorPane id="AnchorPane">
+																							<children>
+																								<HBox id="hbxXPathTools" alignment="CENTER_LEFT" styleClass="tool-bar" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+																									<children>
+																										<TextField id="txtCmd" fx:id="txtSelectedXPath" editable="false" promptText="Selected XPath" HBox.hgrow="ALWAYS">
+																											<HBox.margin>
+																												<Insets left="3.0" right="3.0" />
+																											</HBox.margin>
+																										</TextField>
+																									</children>
+																								</HBox>
+																							</children>
+																						</AnchorPane>
+																						<AnchorPane id="AnchorPane">
+																							<children>
+																								<HBox id="hbxXPathTools" alignment="CENTER_LEFT" styleClass="tool-bar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+																									AnchorPane.topAnchor="0.0"
+																								>
+																									<children>
+																										<TextField id="txtCmd" fx:id="txtUserXPath" onAction="#buttonEvaluateXPath" promptText="Enter XPath to evaluate" HBox.hgrow="ALWAYS">
+																											<HBox.margin>
+																												<Insets left="3.0" right="3.0" />
+																											</HBox.margin>
+																										</TextField>
+																										<Button id="btnExecuteCmd" fx:id="btnEvaluateXPath" mnemonicParsing="false" onAction="#buttonEvaluateXPath" styleClass="iconButton" text="Evaluate XPath">
+																											<graphic>
+																												<Pane styleClass="icon" />
+																											</graphic>
+																											<tooltip>
+																												<Tooltip text="Evaluate" />
+																											</tooltip>
+																										</Button>
+																										<Button id="btnClearConsole" fx:id="btnClearXPath" mnemonicParsing="false" onAction="#buttonClearXPath" styleClass="iconButton" text="Clear XPath">
+																											<graphic>
+																												<Pane styleClass="icon" />
+																											</graphic>
+																											<tooltip>
+																												<Tooltip text="Clear XPath" />
+																											</tooltip>
+																										</Button>
+																									</children>
+																								</HBox>
+																							</children>
+																						</AnchorPane>
+																					</children>
+																				</VBox>
+																			</children>
+																		</AnchorPane>
+																	</children>
+																</VBox>
+															</children>
+															<VBox.margin>
+																<Insets />
+															</VBox.margin>
+														</AnchorPane>
+													</children>
+												</VBox>
+											</children>
+											<VBox.margin>
+												<Insets />
+											</VBox.margin>
+										</AnchorPane>
+									</children>
+								</VBox>
+							</children>
+						</AnchorPane>
+					</content>
+				</Tab>
+				<Tab closable="false" text="Test Regex">
+					<content>
+						<AnchorPane id="Content">
+							<children>
+								<VBox id="vbxContainer" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+									<children>
+										<AnchorPane id="apnMid" VBox.vgrow="ALWAYS">
+											<children>
+												<VBox id="vbxConsole" prefHeight="794.0" prefWidth="1274.0" styleClass="sidePane" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3.0"
+													AnchorPane.topAnchor="3.0"
+												>
+													<children>
+														<AnchorPane id="apnConsoleBody" VBox.vgrow="ALWAYS">
+															<children>
+																<VBox id="vbxConsoleBody" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																	<children>
+																		<SplitPane id="spnMid" dividerPositions="0.5" focusTraversable="true" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+																			<items>
+																				<AnchorPane id="AnchorPane" styleClass="dragPane">
+																					<children>
+																						<VBox id="vbxContainer" styleClass="sidePane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																							<children>
+																								<AnchorPane id="apnConsoleHeader" prefWidth="711.0" styleClass="paneHeader">
+																									<children>
+																										<Label id="lblConsoleHeader" text="Text input" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="0.0" />
+																										<Button id="btnCloseConsole" mnemonicParsing="false" styleClass="closePaneButton" text="Close" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																											<graphic>
+																												<Pane styleClass="icon" />
+																											</graphic>
+																											<tooltip>
+																												<Tooltip text="Close" />
+																											</tooltip>
+																										</Button>
+																									</children>
+																								</AnchorPane>
+																								<AnchorPane id="apnPreviewBrowser" VBox.vgrow="ALWAYS">
+																									<children>
+																										<TextArea fx:id="txtRegexInput" prefHeight="347.0" prefWidth="1268.0" styleClass="txtMonoSpace" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+																											AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+																									</children>
+																									<padding>
+																										<Insets bottom="3.0" left="3.0" right="3.0" top="3.0" fx:id="x1" />
+																									</padding>
+																								</AnchorPane>
+																							</children>
+																						</VBox>
+																					</children>
+																				</AnchorPane>
+																				<AnchorPane id="AnchorPane" padding="$x1" styleClass="dragPane">
+																					<children>
+																						<VBox id="vbxContainer" styleClass="sidePane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																							<children>
+																								<AnchorPane id="apnConsoleHeader" prefWidth="711.0" styleClass="paneHeader">
+																									<children>
+																										<Label id="lblConsoleHeader" text="Replacement Preview" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="0.0" />
+																										<Button id="btnCloseConsole" mnemonicParsing="false" styleClass="closePaneButton" text="Close" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																											<graphic>
+																												<Pane styleClass="icon" />
+																											</graphic>
+																											<tooltip>
+																												<Tooltip text="Close" />
+																											</tooltip>
+																										</Button>
+																									</children>
+																								</AnchorPane>
+																								<AnchorPane id="AnchorPane" VBox.vgrow="ALWAYS">
+																									<children>
+																										<TextArea fx:id="txtRegexReplacementPreview" editable="false" prefHeight="97.0" prefWidth="1268.0" styleClass="txtMonoSpace" wrapText="true" AnchorPane.bottomAnchor="0.0"
+																											AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+																									</children>
+																									<padding>
+																										<Insets bottom="3.0" left="3.0" right="3.0" top="3.0" fx:id="x1" />
+																									</padding>
+																								</AnchorPane>
+																							</children>
+																						</VBox>
+																					</children>
+																				</AnchorPane>
+																			</items>
+																		</SplitPane>
+																		<AnchorPane id="AnchorPane" padding="$x1" styleClass="dragPane">
+																			<children>
+																				<VBox id="vbxContainer" styleClass="sidePane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																					<children>
+																						<AnchorPane id="apnConsoleHeader" prefWidth="711.0" styleClass="paneHeader">
+																							<children>
+																								<Label id="lblConsoleHeader" text="Capture groups" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="0.0" />
+																								<Button id="btnCloseConsole" mnemonicParsing="false" styleClass="closePaneButton" text="Close" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																									<graphic>
+																										<Pane styleClass="icon" />
+																									</graphic>
+																									<tooltip>
+																										<Tooltip text="Close" />
+																									</tooltip>
+																								</Button>
+																							</children>
+																						</AnchorPane>
+																						<AnchorPane id="AnchorPane" padding="$x1" VBox.vgrow="ALWAYS">
+																							<children>
+																								<VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																									<children>
+																										<HBox>
+																											<children>
+																												<AnchorPane id="AnchorPane">
+																													<children>
+																														<Label text="Group 1" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+																													</children>
+																												</AnchorPane>
+																												<TextField fx:id="txtGroup1" editable="false" minHeight="24.0" styleClass="txtMonoSpace" HBox.hgrow="ALWAYS">
+																													<HBox.margin>
+																														<Insets left="3.0" right="3.0" />
+																													</HBox.margin>
+																												</TextField>
+																											</children>
+																											<padding>
+																												<Insets bottom="3.0" top="3.0" fx:id="x2" />
+																											</padding>
+																											<VBox.margin>
+																												<Insets />
+																											</VBox.margin>
+																										</HBox>
+																										<HBox padding="$x2">
+																											<children>
+																												<AnchorPane id="AnchorPane">
+																													<children>
+																														<Label text="Group 2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+																													</children>
+																												</AnchorPane>
+																												<TextField fx:id="txtGroup2" editable="false" minHeight="24.0" styleClass="txtMonoSpace" HBox.hgrow="ALWAYS">
+																													<HBox.margin>
+																														<Insets left="3.0" right="3.0" />
+																													</HBox.margin>
+																												</TextField>
+																											</children>
+																											<VBox.margin>
+																												<Insets />
+																											</VBox.margin>
+																										</HBox>
+																										<HBox padding="$x2">
+																											<children>
+																												<AnchorPane id="AnchorPane">
+																													<children>
+																														<Label text="Group 3" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+																													</children>
+																												</AnchorPane>
+																												<TextField fx:id="txtGroup3" editable="false" minHeight="24.0" styleClass="txtMonoSpace" HBox.hgrow="ALWAYS">
+																													<HBox.margin>
+																														<Insets left="3.0" right="3.0" />
+																													</HBox.margin>
+																												</TextField>
+																											</children>
+																											<VBox.margin>
+																												<Insets />
+																											</VBox.margin>
+																										</HBox>
+																										<HBox padding="$x2">
+																											<children>
+																												<AnchorPane id="AnchorPane">
+																													<children>
+																														<Label text="Group 4" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+																													</children>
+																												</AnchorPane>
+																												<TextField fx:id="txtGroup4" editable="false" minHeight="24.0" styleClass="txtMonoSpace" HBox.hgrow="ALWAYS">
+																													<HBox.margin>
+																														<Insets left="3.0" right="3.0" />
+																													</HBox.margin>
+																												</TextField>
+																											</children>
+																											<VBox.margin>
+																												<Insets />
+																											</VBox.margin>
+																										</HBox>
+																										<HBox padding="$x2">
+																											<children>
+																												<AnchorPane id="AnchorPane">
+																													<children>
+																														<Label text="Group 5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+																													</children>
+																												</AnchorPane>
+																												<TextField fx:id="txtGroup5" editable="false" minHeight="24.0" styleClass="txtMonoSpace" HBox.hgrow="ALWAYS">
+																													<HBox.margin>
+																														<Insets left="3.0" right="3.0" />
+																													</HBox.margin>
+																												</TextField>
+																											</children>
+																											<VBox.margin>
+																												<Insets />
+																											</VBox.margin>
+																										</HBox>
+																										<HBox padding="$x2">
+																											<children>
+																												<AnchorPane id="AnchorPane">
+																													<children>
+																														<Label text="Group 6" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+																													</children>
+																												</AnchorPane>
+																												<TextField fx:id="txtGroup6" editable="false" minHeight="24.0" styleClass="txtMonoSpace" HBox.hgrow="ALWAYS">
+																													<HBox.margin>
+																														<Insets left="3.0" right="3.0" />
+																													</HBox.margin>
+																												</TextField>
+																											</children>
+																											<VBox.margin>
+																												<Insets />
+																											</VBox.margin>
+																										</HBox>
+																										<HBox padding="$x2">
+																											<children>
+																												<AnchorPane id="AnchorPane">
+																													<children>
+																														<Label text="Group 7" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+																													</children>
+																												</AnchorPane>
+																												<TextField fx:id="txtGroup7" editable="false" minHeight="24.0" styleClass="txtMonoSpace" HBox.hgrow="ALWAYS">
+																													<HBox.margin>
+																														<Insets left="3.0" right="3.0" />
+																													</HBox.margin>
+																												</TextField>
+																											</children>
+																											<VBox.margin>
+																												<Insets />
+																											</VBox.margin>
+																										</HBox>
+																										<HBox>
+																											<children>
+																												<AnchorPane id="AnchorPane">
+																													<children>
+																														<Label text="Group 8" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+																													</children>
+																												</AnchorPane>
+																												<TextField fx:id="txtGroup8" editable="false" minHeight="24.0" styleClass="txtMonoSpace" HBox.hgrow="ALWAYS">
+																													<HBox.margin>
+																														<Insets left="3.0" right="3.0" />
+																													</HBox.margin>
+																												</TextField>
+																											</children>
+																											<padding>
+																												<Insets bottom="3.0" top="3.0" fx:id="x2" />
+																											</padding>
+																											<VBox.margin>
+																												<Insets />
+																											</VBox.margin>
+																										</HBox>
+																										<HBox>
+																											<children>
+																												<AnchorPane id="AnchorPane">
+																													<children>
+																														<Label text="Group 9" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+																													</children>
+																												</AnchorPane>
+																												<TextField fx:id="txtGroup9" editable="false" minHeight="24.0" styleClass="txtMonoSpace" HBox.hgrow="ALWAYS">
+																													<HBox.margin>
+																														<Insets left="3.0" right="3.0" />
+																													</HBox.margin>
+																												</TextField>
+																											</children>
+																											<padding>
+																												<Insets bottom="3.0" top="3.0" fx:id="x2" />
+																											</padding>
+																											<VBox.margin>
+																												<Insets />
+																											</VBox.margin>
+																										</HBox>
+																									</children>
+																								</VBox>
+																							</children>
+																						</AnchorPane>
+																					</children>
+																				</VBox>
+																			</children>
+																		</AnchorPane>
+																		<AnchorPane id="AnchorPane">
+																			<children>
+																				<VBox id="VBox" alignment="CENTER" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																					<children>
+																						<AnchorPane id="apnConsoleHeader" styleClass="paneHeader">
+																							<children>
+																								<Label id="lblConsoleHeader" text="Regular expression" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="0.0" />
+																								<Button id="btnCloseConsole" mnemonicParsing="false" styleClass="closePaneButton" text="Close" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																									<graphic>
+																										<Pane styleClass="icon" />
+																									</graphic>
+																									<tooltip>
+																										<Tooltip text="Close" />
+																									</tooltip>
+																								</Button>
+																							</children>
+																						</AnchorPane>
+																						<AnchorPane id="AnchorPane" />
+																						<AnchorPane id="AnchorPane">
+																							<children>
+																								<HBox id="hbxXPathTools" alignment="CENTER_LEFT" styleClass="tool-bar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+																									AnchorPane.topAnchor="0.0"
+																								>
+																									<children>
+																										<TextField id="txtCmd" fx:id="txtRegex" onAction="#buttonEvaluateRegex" promptText="Enter regular expression to evaluate" HBox.hgrow="ALWAYS">
+																											<HBox.margin>
+																												<Insets left="3.0" right="3.0" />
+																											</HBox.margin>
+																										</TextField>
+																										<Button id="btnExecuteCmd" fx:id="btnEvaluateRegex" mnemonicParsing="false" onAction="#buttonEvaluateRegex" styleClass="iconButton" text="Evaluate Regex">
+																											<graphic>
+																												<Pane styleClass="icon" />
+																											</graphic>
+																											<tooltip>
+																												<Tooltip text="Evaluate" />
+																											</tooltip>
+																										</Button>
+																									</children>
+																								</HBox>
+																							</children>
+																						</AnchorPane>
+																						<AnchorPane id="AnchorPane" VBox.vgrow="NEVER">
+																							<children>
+																								<TextField id="txtCmd" fx:id="txtReplacement" minHeight="24.0" onAction="#buttonEvaluateRegex" promptText="Enter replacement pattern" AnchorPane.bottomAnchor="0.0"
+																									AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="0.0" />
+																							</children>
+																						</AnchorPane>
+																					</children>
+																				</VBox>
+																			</children>
+																		</AnchorPane>
+																	</children>
+																</VBox>
+															</children>
+															<VBox.margin>
+																<Insets />
+															</VBox.margin>
+														</AnchorPane>
+													</children>
+												</VBox>
+											</children>
+											<VBox.margin>
+												<Insets />
+											</VBox.margin>
+										</AnchorPane>
+									</children>
+								</VBox>
+							</children>
+						</AnchorPane>
+					</content>
+				</Tab>
+			</tabs>
+		</TabPane>
+	</children>
+	<stylesheets>
+		<URL value="@styles.css" />
+	</stylesheets>
+</AnchorPane>

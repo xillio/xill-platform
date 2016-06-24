@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Loads the specified text as XML and returns an XML node object.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Loading an XML node from a string.</header>
+            <code> <![CDATA[
+                use System;
+                use XML;
+
+                var content = "<note id=\"1\">
+                  <to>Tove</to>
+                  <from>Jani</from>
+                  <heading>Reminder</heading>
+                  <comment>This was sent to James as well</comment>
+                  <comment>John has not responded to the invitation</comment>
+                  <body>Don't forget me this weekend!</body>
+                </note>";
+
+                var xml = XML.fromString(content);
+                var comments = XML.xPath(xml, "//comment/text()");
+                foreach (comment in comments) {
+                    System.print(comment);
+                } ]]>
+            </code>
+            <header>This will output:</header>
+            <code>
+                "This was sent to James as well"
+                "John has not responded to the invitation"
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>fromFile</reference>
+        <reference>toString</reference>
+    </references>
+	    <tags>
+        load, string, XML, text, conversion, create
+    </tags>
+</function>

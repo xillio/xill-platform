@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import nl.xillio.migrationtool.gui.*?>
+
+<VBox fx:id="vbxEditorSearchReplaceBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="searchReplaceWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+	<children>
+		<HBox fx:id="hbxEditorSearchBar" alignment="CENTER" styleClass="searchBar" VBox.vgrow="NEVER">
+			<children>
+				<HBox fx:id="hbxEditorSearchInputWrapper" alignment="CENTER" styleClass="searchInputWrapper" HBox.hgrow="ALWAYS">
+					<children>
+						<Label fx:id="lblEditorSearchInputIcon" focusTraversable="false" styleClass="searchInputIcon" text="Search" HBox.hgrow="NEVER">
+							<graphic>
+								<Pane styleClass="icon" />
+							</graphic>
+						</Label>
+						<TextField fx:id="tfEditorSearchQuery" minWidth="50.0" styleClass="searchInputQuery" HBox.hgrow="ALWAYS" />
+						<HBox fx:id="hbxEditorSearchCounter" alignment="CENTER" styleClass="searchResultsCounter">
+							<children>
+								<Label fx:id="lblEditorSearchIndex" focusTraversable="false" minWidth="-Infinity" styleClass="searchResultIndex" text="3" HBox.hgrow="NEVER" />
+								<Label fx:id="lblEditorSearchResultOf" focusTraversable="false" minWidth="-Infinity" styleClass="searchResultOf" text=" of " HBox.hgrow="NEVER" />
+								<Label fx:id="lblEditorSearchCount" focusTraversable="false" minWidth="-Infinity" styleClass="searchResultCount" text="23" HBox.hgrow="NEVER" />
+							</children>
+						</HBox>
+						<HBox fx:id="hbxEditorSearchNavigation" alignment="CENTER" styleClass="searchResultsNavigation" HBox.hgrow="NEVER">
+							<children>
+								<Button fx:id="btnEditorSearchPrevious" mnemonicParsing="false" onAction="#previousButtonPressed" text="Previous" HBox.hgrow="NEVER">
+									<graphic>
+										<Pane styleClass="icon" />
+									</graphic>
+									<styleClass>
+										<String fx:value="iconButton" />
+										<String fx:value="previousSearchResult" />
+									</styleClass>
+									<tooltip>
+										<Tooltip text="Previous search result" />
+									</tooltip>
+								</Button>
+								<Button fx:id="btnEditorSearchNext" mnemonicParsing="false" onAction="#nextButtonPressed" text="Next" HBox.hgrow="NEVER">
+									<graphic>
+										<Pane styleClass="icon" />
+									</graphic>
+									<styleClass>
+										<String fx:value="iconButton" />
+										<String fx:value="nextSearchResult" />
+									</styleClass>
+									<tooltip>
+										<Tooltip text="Next search result" />
+									</tooltip>
+								</Button>
+							</children>
+						</HBox>
+					</children>
+				</HBox>
+				<ToggleButton fx:id="tbnEditorCaseSensitive" mnemonicParsing="false" onAction="#caseButtonPressed" text="Case sensitive">
+					<graphic>
+						<Pane fx:id="tbnEditorCaseSensitiveSearch" styleClass="icon" />
+					</graphic>
+					<styleClass>
+						<String fx:value="iconButton" />
+						<String fx:value="caseSensitiveSearch" />
+					</styleClass>
+					<tooltip>
+						<Tooltip text="Case sensitive" />
+					</tooltip>
+				</ToggleButton>
+				<ToggleButton fx:id="tbnEditorRegexSearch" mnemonicParsing="false" onAction="#regexButtonPressed" text="Use regular expressions">
+					<graphic>
+						<Pane styleClass="icon" />
+					</graphic>
+					<styleClass>
+						<String fx:value="iconButton" />
+						<String fx:value="regexSearch" />
+					</styleClass>
+					<tooltip>
+						<Tooltip text="Use regular expressions" />
+					</tooltip>
+				</ToggleButton>
+			</children>
+		</HBox>
+	</children>
+</VBox>

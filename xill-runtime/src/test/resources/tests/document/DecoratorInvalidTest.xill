@@ -1,0 +1,151 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/* Specification: A decorator is invalid if:
+ * # Name is empty or null
+ * # Decorator name contains invalid Mongo field name characters (.$)
+ * # Field name contains invalid Mongo field name characters (.$)
+ * # The field definitions miss "type" property.
+ * # The decorator "type" mentions an unknown data type
+ * Input: several invalid decorator names and decorators
+ * Expected: Exception
+ */
+use Document, Assert, ContentType;
+
+include testresources.lib.NoTestCleanup;
+
+var invalidDecoratorDef;
+var validDecoratorDef = {
+    "test_field": {
+        "type":"STRING",
+        "required":false
+    }
+};
+
+/*** Null name ***/
+do {
+    ContentType.decorator(null, validDecoratorDef);
+}
+fail {
+    // Expected
+}
+success {
+    Assert.error("Decorator with null name should not be saved");
+}
+finally {
+    cleanupUDM("default");
+}
+
+/*** Empty name ***/
+do {
+     ContentType.decorator("", validDecoratorDef);
+}
+fail {
+    // Expected
+}
+success {
+    Assert.error("Decorator with empty name should not be saved");
+}
+finally {
+    cleanupUDM("default");
+}
+
+/*** Invalid decorator name $ ***/
+do {
+     ContentType.decorator("$invalid_decorator_name", validDecoratorDef);
+}
+fail {
+    // Expected
+}
+success {
+    Assert.error("Decorator with empty name should not be saved");
+}
+finally {
+    cleanupUDM("default");
+}
+
+/*** Invalid decorator name . ***/
+do {
+     ContentType.decorator("invalid.decorator.name", validDecoratorDef);
+}
+fail {
+    // Expected
+}
+success {
+    Assert.error("Decorator with empty name should not be saved");
+}
+finally {
+    cleanupUDM("default");
+}
+
+/*** Invalid field name $ ***/
+do {
+    invalidDecoratorDef = {"$field": {"type": "NUMBER", "required": true}};
+     ContentType.decorator("test_decorator", invalidDecoratorDef);
+}
+fail {
+    // Expected
+}
+success {
+    Assert.error("Decorator invalid field name should not be saved");
+}
+finally {
+    cleanupUDM("default");
+}
+
+/*** Invalid field name . ***/
+do {
+    invalidDecoratorDef = {"field.one": {"type": "NUMBER", "required": true}};
+     ContentType.decorator("test_decorator", invalidDecoratorDef);
+}
+fail {
+    // Expected
+}
+success {
+    Assert.error("Decorator with invalid field name should not be saved");
+}
+finally {
+    cleanupUDM("default");
+}
+
+/*** Missing field type ***/
+do {
+    invalidDecoratorDef = {"field": {"required": true}};
+     ContentType.decorator("test_decorator", invalidDecoratorDef);
+}
+fail {
+    // Expected
+}
+success {
+    Assert.error("Decorator with missing type should not be saved");
+}
+finally {
+    cleanupUDM("default");
+}
+
+/*** Wrong type ***/
+do {
+    invalidDecoratorDef = {"field": {"type": "KITTENS", "required": true}};
+     ContentType.decorator("test_decorator", invalidDecoratorDef);
+}
+fail {
+    // Expected
+}
+success {
+    Assert.error("Decorator with inexistent type should not be saved");
+}
+finally {
+    cleanupUDM("default");
+}

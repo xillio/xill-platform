@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+`text` is a format string specifying how the elements of the LIST `values`, are to be formatted.
+`text` contains plain text as well as format specifiers, which are special characters that format the arguments of values.
+Format specifiers begin with a percent sign (%) and end with a converter. The converter is a character indicating the type of argument to be formatted. In between the percent sign (%) and the converter you can have optional flags and specifiers.
+    </description>
+    <examples>
+        <example title="Syntax">
+            <header>Converters</header>
+            <p>d - A decimal integer.</p>
+            <p>f - A float. Eg: 0.3f is a float with 3 decimals. It rounds.</p>
+            <p>n - A newline character appropriate for the platform. Note to always use %n.</p>
+            <header>Flags</header>
+            <p>8 (or any other integer) - Set the width to that integer. Defaults right-justified.</p>
+            <p>08 (or any other integer) - Fill up the empty space with 0's if necessary. (Doesn't work on left
+                justified formats.)
+            </p>
+            <p>+ - Left justified.</p>
+            <p>- - Print the sign, with both positive and negative numbers. (Note that negative numbers always have
+                their sign printed).
+            </p>
+            <p>, - Include locale specific grouping characters. (change 100000 to 100,000).</p>
+        </example>
+        <example title="Usage">
+            <code>
+                use System, String;
+
+                System.print(String.format("%3$2s %1$2s %1$2s %2$2s", ["a", "b", "c"]));
+                // Result: c a a b
+
+                var v = 0.1234567891;
+                System.print(String.format("value = %+10.4f or value = %010.7f or value = %-8.1f or value= %+.3f", [v, v, v, -v]));
+                // Result: value = +0.1235 or value = 00.1234568 or value = 0.1 value = -0.123
+            </code>
+        </example>
+    </examples>
+</function>

@@ -1,0 +1,214 @@
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="stylesheet" type="text/css" href="${jarFile}editor.css">
+    <title>Editor</title>
+
+    <style>
+        @font-face {
+        font-family: 'Ubuntu Mono';
+        src: url('${jarFile}fonts/UbuntuMono Regular.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+        }
+        @font-face {
+        font-family: 'Ubuntu Mono';
+        src: url('${jarFile}fonts/UbuntuMono Bold.ttf') format('truetype');
+        font-weight: bold;
+        font-style: normal;
+        }
+        @font-face {
+        font-family: 'Ubuntu Mono';
+        src: url('${jarFile}fonts/UbuntuMono BoldItalic.ttf') format('truetype');
+        font-weight: bold;
+        font-style: italic;
+        }
+        @font-face {
+        font-family: 'Ubuntu Mono';
+        src: url('${jarFile}fonts/UbuntuMono RegularItalic.ttf') format('truetype');
+        font-weight: normal;
+        font-style: italic;
+        }
+        @font-face {
+        font-family: 'Glober SemiBold';
+        src: url('${jarFile}fonts/Glober SemiBold.ttf') format('truetype');
+        }
+        @font-face {
+        font-family: 'Glober xBold';
+        src: url('${jarFile}fonts/Glober xBold.ttf') format('truetype');
+        }
+        @font-face {
+        font-family: 'Glober Light';
+        src: url('${jarFile}fonts/Glober Light.ttf') format('truetype');
+        }
+    </style>
+
+</head>
+<body>
+<div id="editor"></div>
+<script src="${jarFile}xillCore.js" type="text/javascript" charset="utf-8"></script>
+<script src="${jarFile}ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="${jarFile}ace/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
+<script src="${jarFile}ace/ext-breakpoints.js" type="text/javascript" charset="utf-8"></script>
+<script>
+
+    var editor = null;
+
+    var javaEditor = {
+        setAce: function (obj) {
+        },
+        codeChanged: function () {
+        },
+        breakpointsChanged: function () {
+        }
+    };
+
+    var UndoManager = ace.require("ace/undomanager").UndoManager;
+
+    function init() {
+
+        initConsole();
+
+        var Search = ace.require("ace/search").Search;
+        editor = ace.edit('editor');
+
+        editor.getSession().setMode("ace/mode/xill");
+        editor.setTheme("ace/theme/xillio");
+
+        var langTools = ace.require("ace/ext/language_tools");
+        editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true
+        });
+        editor.$blockScrolling = Infinity;
+
+        langTools.addCompleter(xillCore);
+
+
+        editor.setCode = function (code) {
+            this.setValue(code, 1);
+        };
+
+        editor.on('change', function () {
+            javaEditor.codeChanged(editor.getValue());
+        });
+
+        editor.session.on('changeBreakpoint', function () {
+            javaEditor.breakpointsChanged(editor.session.getBreakpoints());
+        });
+
+        javaEditor.setAce(editor);
+
+
+        ///////////// SEARCHING /////////////
+
+        // Search options.
+        editor.$savedSearch = {
+            needle: "",
+            regex: false,
+            caseSensitive: false
+        };
+
+        // Clear the occurrences.
+        editor.clearSearch = function() {
+            // Clear the highlighting.
+            editor.session.highlight(null);
+            editor.renderer.updateBackMarkers();
+            // Remove the selection.
+            var selection = editor.getSelectionRange();
+            editor.moveCursorTo(selection.start.row, selection.start.column);
+            editor.clearSelection();
+        }
+
+        // Save and execute the search.
+        editor.findOccurrences = function(needle, regex, caseSensitive) {
+            // Save the search settings.
+            editor.$savedSearch = {
+                needle: needle,
+                regex: regex,
+                caseSensitive: caseSensitive
+            };
+
+            // Execute the search.
+            return editor.doFind(false, false);
+        }
+
+        // Do the actual search.
+        editor.doFind = function(backwards, skipCurrent) {
+            var options = {
+                // Given settings.
+                backwards: backwards,
+                skipCurrent: skipCurrent,
+                // Saved search settings.
+                needle: editor.$savedSearch.needle,
+                regExp: editor.$savedSearch.regex,
+                caseSensitive: editor.$savedSearch.caseSensitive,
+                // Constant settings.
+                wrap: true,
+                range: null
+            };
+
+            // Create a search object and find all ranges.
+            var s = new Search();
+            s.setOptions(options);
+            var ranges = s.findAll(editor.session);
+
+            // Build the result.
+            var result = { amount: ranges.length, index: 0 };
+
+            // Find, save the current hit.
+            var f = editor.find(editor.$savedSearch.needle, options);
+            if (f == null)
+                return result;
+            var current = f.start;
+
+            for (var key in ranges) {
+                var check = ranges[key].start;
+
+                // Check if the highlight is the same as the current.
+                if (current.row == check.row && current.column == check.column)
+                    result.index = parseInt(key);
+            }
+
+            return result;
+        };
+
+        ///////////// END OF SEARCHING /////////////
+
+        // Configure editor
+        editor.setScrollSpeed(0.03);
+
+        // Remove keybindings
+        editor.commands.removeCommand('find');
+        editor.commands.removeCommand('replace');
+        editor.commands.removeCommand('removeline');
+
+        // Duplicate the selected lines.
+        editor.duplicateCurrentLines = function() {
+            var range = editor.selection.getRange();
+            editor.session.duplicateLines(range.start.row, range.end.row);
+            editor.selection.setRange(range);
+        };
+    }
+</script>
+</body>
+</html>

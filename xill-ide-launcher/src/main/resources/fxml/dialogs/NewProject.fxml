@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="150.0" prefWidth="400.0" styleClass="root" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/2.2">
+  <children>
+    <VBox styleClass="dialogWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <children>
+        <AnchorPane styleClass="dialogContent" VBox.vgrow="ALWAYS">
+          <children>
+            <VBox alignment="TOP_LEFT" prefHeight="-1.0" prefWidth="-1.0" styleClass="dialogFormWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <children>
+                <Label text="Specify a name and folder for the new project" />
+                <TextField fx:id="tfprojectname" promptText="Project name" />
+                <HBox alignment="TOP_LEFT" disable="false" focusTraversable="false" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" snapToPixel="true" spacing="4.0" visible="true" VBox.vgrow="NEVER">
+                  <children>
+                    <TextField fx:id="tfprojectfolder" alignment="TOP_LEFT" depthTest="INHERIT" promptText="Project folder" HBox.hgrow="ALWAYS" />
+                    <Button fx:id="tfprojectbrowse" alignment="TOP_RIGHT" cache="false" defaultButton="false" mnemonicParsing="false" text="Browse" textOverrun="WORD_ELLIPSIS" onAction="#browseBtnPressed" />
+                  </children>
+                  <padding>
+                    <Insets />
+                  </padding>
+                </HBox>
+              </children>
+            </VBox>
+          </children>
+        </AnchorPane>
+        <HBox styleClass="buttonsWrapper" VBox.vgrow="NEVER">
+          <children>
+            <Button fx:id="okBtn" defaultButton="true" mnemonicParsing="false" onAction="#okayBtnPressed" text="Ok" />
+            <Button fx:id="cancelBtn" cancelButton="true" mnemonicParsing="false" onAction="#cancelBtnPressed" text="Cancel" />
+          </children>
+        </HBox>
+      </children>
+    </VBox>
+  </children>
+</AnchorPane>

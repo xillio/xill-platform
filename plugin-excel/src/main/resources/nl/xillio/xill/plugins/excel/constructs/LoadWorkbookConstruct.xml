@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Loads an Excel workbook from the file system.
+
+Note that workbooks are not thread-safe. Handling different document-objects in different threads will work. Accessing the same document in multiple threads will not work.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Loading a workbook from the current workspace</header>
+            <code>
+                use Excel;
+                var workbook = Excel.loadWorkbook("workbook.xlsx");
+            </code>
+            <header>Loading a workbook from the disk using a full path</header>
+            <code>
+                use Excel;
+                var workbook = Excel.loadWorkbook("C:\\Users\\Xillio\\workbook.xlsx");
+            </code>
+            <header>Loading a workbook from the disk with confirmation</header>
+            <code>
+                use Excel;
+                use System;
+                var workbook = Excel.loadWorkbook("workbook.xlsx");
+                System.print(workbook);
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>createWorkbook</reference>
+        <reference>loadSheet</reference>
+        <reference>createSheet</reference>
+        <reference>System.print</reference>
+    </references>
+    <tags>
+        Excel, load, workbook, disk, io, workspace, path
+    </tags>
+</function>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Performs a click action on the `element` argument, which must be a visible `node` from an (X)HTML document with height and width greater than zero.
+
+Javascript handlers bound on click actions of the argument node will also be triggered.
+If this causes a new page to load, this method will attempt to block until the page has loaded, after which references to the node are no more valid, throwing `StaleElementReferenceException` on subsequent operations.
+If `click(element)` causes a new page to be loaded via an event or is done by sending a native event, then the method will not wait for it to be loaded and the caller should verify that a new page has been loaded.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Click an element on a web page</header>
+            <code>
+use Web;
+use System;
+
+var page = Web.loadPage("http://google.com/");
+
+if (page != null) {
+    var nodes = Web.xPath(page, "//a");
+    Web.click(nodes[0]);
+
+    //Will throw StaleElementReferenceException
+    //Web.click(nodes[1]);
+} else {
+    System.print("page could not be loaded");
+}
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>loadPage</reference>
+        <reference>xPath</reference>
+    </references>
+    <tags>
+        load, page, web, click
+    </tags>
+</function>

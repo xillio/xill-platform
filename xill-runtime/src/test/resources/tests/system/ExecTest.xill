@@ -1,0 +1,59 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/*
+* Specification: Running a command with output MUST result in an OBJECT containing stdout, stderr, an exit code and a runtime
+* Input: None
+* Expected: {"output":["test1","test2"], "errors":[], "exitCode":0, "runtime":A number}
+*/
+
+use Assert, System, Math, String;
+
+var windows = "windows"; 
+var linux = "linux"; 
+var mac = "mac";
+
+var output = null;
+var os = getOS();
+if (os == linux || os == mac) {
+    // Using & does not work (since this is not executed in a shell), so simply use \n to break lines 
+    output = System.exec(["echo", "test1\ntest2"]);
+    Assert.equal(output.output, ["test1","test2"], "Standard output is incorrect");
+}
+else if (os == windows) {
+    // echo is built into cmd
+    output = System.exec(["cmd.exe", "/C", "echo test1&echo test2"]);
+    // Line breaks on Windows are \r\n
+    Assert.equal(output.output, ["test1","test2"], "Standard output is incorrect");
+}
+
+Assert.equal(output.errors, [""], "Standard error is incorrect");
+Assert.equal(output.exitCode, 0, "Exit code is not 0");
+Assert.isTrue(Math.isNumber(output.runtime), "Running time is not a number");
+
+// Detect the OS based on the os.name system property
+function getOS() {
+    var osName = String.toLower(System.properties("os.name"));
+    if (String.contains(osName, windows)) {
+        return windows;
+    }
+    else if (String.contains(osName, linux)) {
+        return linux;
+    }
+    else if (String.contains(osName, mac)) {
+        return mac;
+    }
+    Assert.error("Unknown OS");
+}

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Creates a new Excel workbook at the given path.
+
+Note that workbooks are not thread-safe. Handling different document-objects in different threads will work. Accessing the same document in multiple threads will not work.
+    </description>
+    <examples>
+        <example title="Creation">
+            <header>Default - in IDE workspace</header>
+            <code>
+                use Excel;
+                var workbook = Excel.createWorkbook("helloworldbook");
+            </code>
+            <header>In IDE workspace, different extension</header>
+            <code>
+                use Excel;
+                var workbook = Excel.createWorkbook("helloworldbook.xls");
+            </code>
+            <header>Different location, different extension</header>
+            <code>
+                use Excel;
+                var workbook = Excel.createWorkbook("C:\\Users\\Xillio\\Documents\\helloworldbook.xlsx");
+            </code>
+            <p>
+                Workbooks are not automatically saved - you have to save them manually (see examples below).
+            </p>
+        </example>
+        <example title="Saving">
+            <header>Saving a workbook</header>
+            <code>
+                use Excel;
+                var workbook = Excel.createWorkbook("helloworldbook");
+                Excel.save(workbook);
+            </code>
+            <header>Saving with confirmation</header>
+            <code>
+                use System;
+                use Excel;
+                var workbook = Excel.createWorkbook("helloworldbook");
+                System.print(Excel.save(workbook));
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>loadWorkbook</reference>
+        <reference>save</reference>
+        <reference>createSheet</reference>
+        <reference>loadSheet</reference>
+    </references>
+    <tags>
+        Excel, workbook, sheet, spreadsheet, cell, load, get
+    </tags>
+</function>

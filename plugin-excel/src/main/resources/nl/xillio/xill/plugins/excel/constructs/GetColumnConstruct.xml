@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Gets an iterator over a column of an Excel sheet. The column can be referenced by number or alpha-numeric reference.
+    </description>
+    <examples>
+        <example title="Printing the content of a row">
+            <header>Numeric notation</header>
+            <code>
+                use Excel, System;
+                var wb = Excel.loadWorkbook("./test.xlsx");
+                var sheet = Excel.loadSheet(wb, "testSheet");
+
+                var col = Excel.getColumn(sheet, 1);
+                foreach(cell in col) {
+                    System.print(cell);
+                }
+
+            </code>
+            <header>Reference notation</header>
+            <code>
+                use Excel, System;
+                var wb = Excel.loadWorkbook("./test.xlsx");
+                var sheet = Excel.loadSheet(wb, "testSheet");
+
+                var col = Excel.getColumn(sheet, "A");
+                foreach(cell in col) {
+                    System.print(cell);
+                }
+
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>getRow</reference>
+        <reference>loadWorkbook</reference>
+        <reference>loadSheet</reference>
+        <reference>System.print</reference>
+    </references>
+    <tags>
+        Excel, workbook, sheet, spreadsheet, cell, column
+    </tags>
+</function>

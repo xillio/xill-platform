@@ -1,0 +1,17 @@
+/**
+ * Project: ${projectName}
+ * Author: ${userName}
+ * Date: ${date}
+ *
+ * ${fileName} is responsible for doing...
+ */
+
+use System;
+
+argument arg = 0;
+
+main();
+
+function main() {
+    System.print(arg);
+}

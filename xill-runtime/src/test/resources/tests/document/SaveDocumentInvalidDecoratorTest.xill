@@ -1,0 +1,109 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/* Specification: When saving a document with a registered valid decorator for its content type
+ * an exception should be thrown if:
+ * # The document misses a decorator.
+ * # The document misses some decorator required field.
+ * # The field does not evaluate to the right type.
+ * Input: a valid content type and a document of that content type but with invalid decorator data
+ * Output: Exception
+ */
+use Assert, Document, System, ContentType;
+
+include testresources.lib.NoTestCleanup;
+
+//Define decorator and content type
+var decoratorName = "test_decorator";
+var contentTypeName = "test_content_type";
+var decoratorDefinition = {
+    "field1": { "type":"STRING", "required": true }
+};
+ContentType.decorator(decoratorName, decoratorDefinition);
+ContentType.save(contentTypeName, [decoratorName]);
+
+var sourceDoc;
+
+/*** Missing Decorator ***/
+do {
+   sourceDoc = {
+        "version": "1.0"
+    };
+    var udmDoc = Document.new(contentTypeName, sourceDoc);
+    Document.save(udmDoc);
+}
+fail {
+    //Expected
+}
+success {
+    Assert.error("Document missing decorator was saved");
+}
+finally {
+    cleanupUDM("udm_default");
+}
+
+/*** Empty decorator ***/
+do {
+   sourceDoc = {
+        "version": "1.0",
+        decoratorName: {
+        }
+    };
+    var udmDoc = Document.new(contentTypeName, sourceDoc);
+    Document.save(udmDoc);
+}
+fail {
+    //Expected
+}
+success {
+    Assert.error("Document with empty decorator was saved");
+}
+finally {
+    cleanupUDM("udm_default");
+}
+
+/*** Decorator with wrong field ***/
+do {
+   sourceDoc = {
+        "version": "1.0",
+        decoratorName: {
+            "some_field": 33
+        }
+    };
+    var udmDoc = Document.new(contentTypeName, sourceDoc);
+    Document.save(udmDoc);
+}
+fail {
+    //Expected
+}
+success {
+    Assert.error("Document with malformed decorator was saved");
+}
+finally {
+    cleanupUDM("udm_default");
+}
+
+/*** Decorator with additional field: this is allowed ***/
+sourceDoc = {
+    "version": "1.0",
+    "other_field": { "x": 33 },
+    decoratorName: {
+        "field1": "YES!",
+        "more_fields": 33
+    }
+};
+var udmDoc = Document.new(contentTypeName, sourceDoc);
+Document.save(udmDoc);
+cleanupUDM("udm_default");

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Returns a new string based on `text` in which occurrences of the string `needle` have been replaced by the string `replacement`.
+
+If the optional parameter `replaceall` is set to `false`, the routine will only replace the first occurrence of `needle` (defaults to `true`).
+Note that `needle` is by default interpreted as a regex pattern, so all special regex characters have to be escaped when used as a literal.
+Also in `replacement` you can use the capture groups from `needle` as "$1", "$2", etc.
+To use a literal "$" in `replacement`, you need to escape it like this: "\$".
+Set `useregex` to `false` to have the function treat `needle` and `replacement` as regular text.
+
+Optionally a timeout can be provided in seconds, the default value is 5 seconds.
+Set `timeout` to zero to let the function run without timeout. This should only be altered when dealing with large source documents.
+See the Regular Expressions page for more about Regular Expression support in Xill IDE.
+    </description>
+    <examples>
+        <example title="Usage">
+            <code>
+                use System, String;
+
+                System.print(String.replace("The quick brown fox.", "fox", "dog"));
+                // Result: The quick brown dog.
+
+                System.print(String.replace("The quick brown fox, The quick brown fox.", "fox", "dog"));
+                // Result: The quick brown dog, the quick brown dog.
+            </code>
+        </example>
+    </examples>
+    <searchTags>
+        regex
+    </searchTags>
+</function>

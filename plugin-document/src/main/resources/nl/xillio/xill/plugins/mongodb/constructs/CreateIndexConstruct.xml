@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Creates an index on a collection.
+`keys` is an object which contains pairs where the key is the index key, and the value describes the type of index for that field.
+For an ascending index on a field specify a value of 1, for a descending index specify -1.
+
+The options are all optional. The options that can be specified are:
+
+| Option name          | Description |
+| -------------------- | ----------- |
+| `background`         | Whether the index should be built in the background, thus not blocking other database activities. The default value is `false`. |
+| `unique`             | Creates a unique index so that the collection will not accept insertion of documents where the index key(s) match an existing value in the index. The default value is `false`. |
+| `name`               | The name of the index. If unspecified, MongoDB generates an index name. |
+| `sparse`             | If `true`, the index only references documents with the specified field. These indexes use less space but behave differently in some situations. The default value is `false`. |
+| `expireAfterSeconds` | Specifies a value, in seconds, as a time-to-live to control how long documents are retained in the collection. This applies only to TTL indexes. |
+| `v`                  | The index version number. A different index version should only be specified in unusual situations. |
+| `storageEngine`      | Specifies a configuration to the storage engine for this index. This should be an object in the following form: { storage-engine-name: options }. |
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Create unique index on a root field of a document</header>
+            <code>
+                use Mongo;
+                use System;
+                Mongo.connect("udm_default");
+
+                var keys = { "myUniqueField": 1 };
+                var options = { "unique": true };
+
+                var indexName = Mongo.createIndex("documents", keys, options);
+
+                System.print("Created Index: " :: indexName);
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>connect</reference>
+        <reference>dropIndex</reference>
+        <reference>dropIndexes</reference>
+        <reference>listIndexes</reference>
+    </references>
+    <tags>
+        mongodb, index, unique, key, primary
+    </tags>
+</function>

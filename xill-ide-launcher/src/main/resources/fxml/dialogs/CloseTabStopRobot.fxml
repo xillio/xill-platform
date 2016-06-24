@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane prefHeight="150.0" prefWidth="500.0" styleClass="root" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+	<children>
+		<VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+			<children>
+				<AnchorPane styleClass="dialogContent" VBox.vgrow="ALWAYS">
+					<children>
+						<HBox fillHeight="false" styleClass="dialogMessageWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+							<children>
+								<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="24.0" prefWidth="24.0" styleClass="iconWrapper" HBox.hgrow="NEVER">
+									<children>
+										<Pane styleClass="dialogIcon" />
+									</children>
+								</StackPane>
+								<TextFlow prefHeight="0.0">
+									<children>
+										<Text strokeType="OUTSIDE" strokeWidth="0.0" text="The robot you are trying to close is still running. Closing the tab will terminate the robot. Continue?" />
+									</children>
+								</TextFlow>
+							</children>
+						</HBox>
+					</children>
+				</AnchorPane>
+				<HBox styleClass="buttonsWrapper" VBox.vgrow="NEVER">
+					<children>
+						<Button mnemonicParsing="false" onAction="#yesBtnPressed" text="Yes" />
+						<Button mnemonicParsing="false" onAction="#noBtnPressed" text="No" />
+					</children>
+				</HBox>
+			</children>
+			<styleClass>
+				<String fx:value="dialogWrapper" />
+				<String fx:value="dialogQuestion" />
+			</styleClass>
+		</VBox>
+	</children>
+</AnchorPane>

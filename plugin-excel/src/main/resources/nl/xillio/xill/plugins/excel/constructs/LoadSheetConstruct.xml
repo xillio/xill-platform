@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Load an Excel sheet from a workbook.
+
+Note that sheets are not thread-safe. Handling different document-objects in different threads will work. Accessing the same document in multiple threads will not work.
+    </description>
+    <examples>
+        <example title="Loading a sheet">
+            <header>Getting a sheet by name from a workbook</header>
+            <code>
+                use Excel;
+                var workbook = Excel.loadWorkbook("workbook.xlsx");
+                var sheet = Excel.loadSheet(workbook, "firstsheet");
+            </code>
+            <header>Getting a sheet by index from a workbook</header>
+            <code>
+                use Excel;
+                var workbook = Excel.loadWorkbook("workbook.xlsx");
+                // Use getSheetNames to get the name of the sheet at the desired index.
+                var sheetName = Excel.getSheetNames(workbook)[0];
+                var sheet = Excel.loadSheet(workbook, sheetName);
+            </code>
+        </example>
+        <example title="Printing sheet information">
+            <header>Getting all sheet information</header>
+            <code>
+                use Excel;
+                use System;
+                var workbook = Excel.loadWorkbook("workbook.xlsx");
+                var sheet = Excel.loadSheet(workbook, "firstsheet");
+                System.print(sheet);
+            </code>
+            <p>NB: this information reflects the state of the sheet at the moment
+                it is loaded and is not changed when a cell is changed after loading.
+            </p>
+        </example>
+    </examples>
+    <references>
+        <reference>loadWorkbook</reference>
+        <reference>columnCount</reference>
+        <reference>rowCount</reference>
+        <reference>getSheetNames</reference>
+        <reference>System.print</reference>
+        <reference>createWorkbook</reference>
+        <reference>createSheet</reference>
+    </references>
+    <tags>
+        Excel, workbook, sheet, spreadsheet, cell, load, get, value, extract
+    </tags>
+</function>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Removes a cookie named `cookie` from the `page`.
+
+`cookie` can be a string or a list of strings containing the cookie name(s).
+Due to the nature of Xill IDE, all locally stored cookies will be removed with every restart.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Remove cookies from a web page</header>
+            <code>
+                use Web;
+                use System;
+
+                var page = Web.loadPage ("http://www.xillio.com");
+                System.print(Web.pageInfo(page));
+                Web.removeCookie(page, "_ga");
+
+                Web.removeCookie(page, ["hubspotutk", "_gat"]);
+                System.print(Web.pageInfo(page));
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>setCookie</reference>
+        <reference>pageInfo</reference>
+        <reference>removeAllCookies</reference>
+    </references>
+    <tags>
+        load, page, web, info, remove, cookie
+    </tags>
+</function>

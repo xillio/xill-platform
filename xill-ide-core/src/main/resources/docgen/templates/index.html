@@ -1,0 +1,108 @@
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Xill Documentation</title>
+    <link rel="stylesheet" type="text/css" href="${jarFile}docgen/resources/_assets/css/style.css">
+    <style>
+        @font-face {
+        font-family: 'Ubuntu Mono';
+        src: url('${jarFile}fonts/UbuntuMono Regular.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+        }
+        @font-face {
+        font-family: 'Ubuntu Mono';
+        src: url('${jarFile}fonts/UbuntuMono Bold.ttf') format('truetype');
+        font-weight: bold;
+        font-style: normal;
+        }
+        @font-face {
+        font-family: 'Ubuntu Mono';
+        src: url('${jarFile}fonts/UbuntuMono BoldItalic.ttf') format('truetype');
+        font-weight: bold;
+        font-style: italic;
+        }
+        @font-face {
+        font-family: 'Ubuntu Mono';
+        src: url('${jarFile}fonts/UbuntuMono RegularItalic.ttf') format('truetype');
+        font-weight: normal;
+        font-style: italic;
+        }
+        @font-face {
+        font-family: 'Glober SemiBold';
+        src: url('${jarFile}fonts/Glober SemiBold.ttf') format('truetype');
+        }
+        @font-face {
+        font-family: 'Glober xBold';
+        src: url('${jarFile}fonts/Glober xBold.ttf') format('truetype');
+        }
+        @font-face {
+        font-family: 'Glober Light';
+        src: url('${jarFile}fonts/Glober Light.ttf') format('truetype');
+        }
+    </style>
+</head>
+<body>
+<main>
+    <section id="header">
+        <h1>Xill Documentation</h1>
+    </section>
+    <section id="content">
+        <h2>Xill Language</h2>
+        <div class="article">
+            <ul>
+                <li><a href="http://support.xillio.com/support/solutions/articles/6000061410-basic-syntax"><strong>Basic syntax</strong></a></li>
+                <li><a href="http://support.xillio.com/support/solutions/articles/6000091708-operators"><strong>Operators</strong></a></li>
+                <li><a href="http://support.xillio.com/support/solutions/articles/6000091705-keywords"><strong>Keywords</strong></a></li>
+                <li><a href="http://support.xillio.com/support/solutions/articles/6000061436-variable-types"><strong>Variable types</strong></a></li>
+                <li><a href="http://support.xillio.com/support/solutions/articles/6000092997-collections"><strong>Collections</strong></a></li>
+                <li><a href="http://support.xillio.com/support/solutions/articles/6000061441-function"><strong>Function</strong></a></li>
+                <li><a href="http://support.xillio.com/support/solutions/articles/6000061411-comments"><strong>Comments</strong></a></li>
+                <li><a href="http://support.xillio.com/support/solutions/articles/6000092013-using-libraries-include"><strong>Using libraries: include</strong></a></li>
+                <li><a href="http://support.xillio.com/support/solutions/articles/6000061419-if-else-and-while"><strong>If, else and while</strong></a></li>
+                <li><a href="http://support.xillio.com/support/solutions/articles/6000061427-foreach"><strong>Foreach</strong></a></li>
+                <li><a href="http://support.xillio.com/support/solutions/folders/6000217550"><strong>Pipeline functions</strong></a></li>
+            </ul>
+        </div>
+        <h2>Packages</h2>
+        <#list packages as package>
+        <#list package.constructs>
+        <div class="package ${package.packageName}">
+            <h3>${package.packageName}</h3>
+            <ul>
+                <#items as construct>
+                    <li <#if construct.deprecated>class="deprecated"</#if>>
+                        <a href="${package.packageName}/${construct.identity}.html">
+                            <#if construct.deprecated>${construct.identity}<#else><strong>${construct.identity}</strong></#if>(<#list construct.parameters as parameter><#if parameter?index != 0>, </#if>${parameter.name}</#list>)
+                        </a>
+                    </li>
+                </#items>
+            </ul>
+        </div>
+        </#list>
+        </#list>
+    </section>
+    <section id="footer">
+        <h2>More information</h2>
+        For more information see: <a href="http://support.xillio.com/"><strong>support.xillio.com</strong></a>.
+    </section>
+</main>
+</body>

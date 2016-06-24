@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Read all text from a file.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Read text from a file</header>
+            <code>
+                use File, System, Stream;
+
+                // We create a file that we can work with.
+                var path = "TestFile.txt";
+                var testFile = File.openWrite(path);
+                Stream.write("test", testFile);
+
+                // We can get the text from that file without using the Stream package.
+                var text = File.getText(path);
+                System.print(text);
+                // This prints: "test"
+            </code>
+            <header>Read text from a file using streams</header>
+            <code>
+                use File, Stream, System;
+
+                // We create a file that we can work with.
+                var path = "TestFile.txt";
+                var testFile = File.openWrite(path);
+                Stream.write("test number 2", testFile);
+
+
+                var file = File.openRead(path);
+
+                // Note we are using the Stream package
+                var text = Stream.getText(file);
+                System.print(text);
+                // This prints: "test number 2"
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>Stream.getText</reference>
+    </references>
+    <tags>
+        read, text, file
+    </tags>
+</function>

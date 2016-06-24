@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Calculates aggregate values for data in a collection.
+MongoDB allows the definition of a pipeline, a sequence of filters and computation steps which can do operations like grouping and filtering data.
+This pipeline is input as a list of objects with the stage name as key and its parameters as value.
+
+More information about MongoDB aggregation can be found in the [MongoDB manual](https://docs.mongodb.org/manual/core/aggregation-pipeline/).
+
+The `options` parameter may contain the following options:
+
+| Option           | Description |
+| ---------------- | ----------- |
+| `allowDiskUsage` | Setting to `true` enables writing to temporary files, which allows for the handling of large datasets. |
+| `maxTime`        | The maximum execution time in milliseconds for this operation. |
+| `batchSize`      | Number of documents to return per batch. |
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>
+                Display a count of documents per content type, allowing disk usage
+            </header>
+            <code>
+                use Mongo;
+                use System;
+                Mongo.connect("udm_default");
+
+                var pipeline = [
+                    {
+                        "$group": {
+                            "_id": {
+                                "contentType": "$contentType"
+                            },
+                            "count": {
+                                "$sum": 1
+                            }
+                        }
+                    }
+                ];
+
+                var options = {"allowDiskUsage": true};
+                var contentTypes = Mongo.aggregate("documents", pipeline, options);
+
+                foreach(result in contentTypes) {
+                    System.print(result._id :: ": " :: result.count);
+                }
+            </code>
+            <header>
+                Possible output
+            </header>
+            <code>
+                file: 1596
+                folder: 265
+            </code>
+        </example>
+        <example title="Calculate Average">
+            <header>
+                Filter documents from a collection and calculate the average of the "numeric" field
+            </header>
+            <code>
+                use Mongo;
+                use System;
+                Mongo.connect("db");
+
+                var pipeline = [
+                    {
+                        "$match": {
+                            "name": "someName"
+                        }
+                    },
+                    {
+                        "$group": {
+                            "_id": null,
+                            "numeric": {
+                                "$avg": "$numeric"
+                            }
+                        }
+                    }
+                ];
+
+                var average = Mongo.aggregate("collection", pipeline);
+
+                // Foreach is needed since this still returns an iterator
+                foreach (num in average) {
+                    System.print("Average: " :: num);
+                }
+            </code>
+            <header>
+                Possible output
+            </header>
+            <code>
+                Average: 3.0
+            </code>
+        </example>
+        <example title="Get outliers">
+            <header>
+                Get documents from a collection with a field called "numeric" smaller than 90 or larger than 110 and add them to a single array
+            </header>
+            <code>
+                use Mongo;
+                use System;
+                Mongo.connect("db");
+
+                var pipeline = [
+                    {
+                        "$project": {
+                            "name": 1,
+                            "outlier": {
+                                "$gt": [
+                                    {
+                                        "$abs": {
+                                            "$subtract": ["$numeric", 100]
+                                        }
+                                    },
+                                    10
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "$match": {
+                            "outlier": true
+                        }
+                    },
+                    {
+                        "$group": {
+                            "_id": null,
+                            "outliers": {
+                                "$push":"$name"
+                            }
+                        }
+                    }
+                ];
+
+                var outliers = Mongo.aggregate("collection", pipeline);
+
+                // Foreach is needed since this still returns an iterator
+                foreach (result in outliers) {
+                    System.print(result);
+                }
+            </code>
+            <header>
+                Possible output
+            </header>
+            <code>
+                {"_id":"null","outliers":["name1","name3","name5","name7"]}
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>connect</reference>
+    </references>
+    <tags>
+        mongodb
+    </tags>
+</function>

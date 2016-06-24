@@ -1,0 +1,11 @@
+nl.xillio.xill.plugins.collection.CollectionXillPlugin
+nl.xillio.xill.plugins.math.MathXillPlugin
+nl.xillio.xill.plugins.file.FileXillPlugin
+nl.xillio.xill.plugins.system.SystemXillPlugin
+nl.xillio.xill.plugins.date.DateXillPlugin
+nl.xillio.xill.plugins.codec.decode.DecodeXillPlugin
+nl.xillio.xill.plugins.codec.encode.EncodeXillPlugin
+nl.xillio.xill.plugins.codec.hash.HashXillPlugin
+nl.xillio.xill.plugins.string.StringXillPlugin
+nl.xillio.xill.plugins.testing.AssertXillPlugin
+nl.xillio.xill.plugins.stream.StreamXillPlugin

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.*?>
+<?import nl.xillio.migrationtool.gui.*?>
+
+<AnchorPane fx:id="apnEditor" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+	<VBox fx:id="vbxEditor" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+		<children>
+			<AnchorPane fx:id="apnBotToolBar">
+				<children>
+					<HBox fx:id="hbxBotToolBar" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+						<children>
+							<ToolBar fx:id="tlbBotToolBar" focusTraversable="false" HBox.hgrow="ALWAYS">
+								<items>
+									<Button fx:id="btnUndo" mnemonicParsing="false" onAction="#buttonUndo" styleClass="iconButton" text="Undo">
+										<graphic>
+											<Pane styleClass="icon" />
+										</graphic>
+										<tooltip>
+											<Tooltip text="Undo (Ctrl-Z)" />
+										</tooltip>
+									</Button>
+									<Button fx:id="btnRedo" mnemonicParsing="false" onAction="#buttonRedo" styleClass="iconButton" text="Redo">
+										<graphic>
+											<Pane styleClass="icon" />
+										</graphic>
+										<tooltip>
+											<Tooltip text="Redo (Ctrl-R)" />
+										</tooltip>
+									</Button>
+									<Separator orientation="VERTICAL" />
+									<Button fx:id="btnRun" mnemonicParsing="false" styleClass="iconButton" text="Run">
+										<graphic>
+											<Pane styleClass="icon" />
+										</graphic>
+										<tooltip>
+											<Tooltip text="Run (F6)" />
+										</tooltip>
+									</Button>
+									<Button fx:id="btnPause" mnemonicParsing="false" styleClass="iconButton" text="Pause">
+										<graphic>
+											<Pane styleClass="icon" />
+										</graphic>
+										<tooltip>
+											<Tooltip text="Pause (F7)" />
+										</tooltip>
+									</Button>
+									<Button fx:id="btnStop" mnemonicParsing="false" styleClass="iconButton" text="Stop">
+										<graphic>
+											<Pane styleClass="icon" />
+										</graphic>
+										<tooltip>
+											<Tooltip text="Stop (F8)" />
+										</tooltip>
+									</Button>
+									<Button fx:id="btnStepOver" mnemonicParsing="false" styleClass="iconButton" text="Step over">
+										<graphic>
+											<Pane styleClass="icon" />
+										</graphic>
+										<tooltip>
+											<Tooltip text="Step over (F10)" />
+										</tooltip>
+									</Button>
+									<Button fx:id="btnStepIn" mnemonicParsing="false"  styleClass="iconButton" text="Step in">
+										<graphic>
+											<Pane styleClass="icon" />
+										</graphic>
+										<tooltip>
+											<Tooltip text="Step in (F9)" />
+										</tooltip>
+									</Button>
+									<Separator orientation="VERTICAL" />
+									<Button fx:id="btnRemoveAllBreakpoints" mnemonicParsing="false" onAction="#buttonRemoveAllBreakpoints" styleClass="iconButton" text="Remove all breakpoints">
+										<graphic>
+											<Pane styleClass="icon" />
+										</graphic>
+										<tooltip>
+											<Tooltip text="Remove all breakpoints" />
+										</tooltip>
+									</Button>
+									<MenuButton fx:id="mbToggleWarnings" mnemonicParsing="false" styleClass="iconButton" text="Toggle warnings">
+										<graphic>
+											<Pane styleClass="icon" />
+										</graphic>
+										<items>
+											<CheckMenuItem fx:id="cmiDebug" mnemonicParsing="false" selected="false" text="Debug" />
+											<CheckMenuItem fx:id="cmiInfo" mnemonicParsing="false" selected="false" text="Info" />
+											<CheckMenuItem fx:id="cmiWarning" mnemonicParsing="false" selected="true" text="Warning" />
+											<CheckMenuItem fx:id="cmiError" mnemonicParsing="false" selected="true" text="Error" />
+										</items>
+										<tooltip>
+											<Tooltip text="Select breaking log levels" />
+										</tooltip>
+									</MenuButton>
+								</items>
+							</ToolBar>
+							<ToolBar fx:id="tlbSearchToolBar">
+								<items>
+									<ToggleButton fx:id="tbnEditorSearch" mnemonicParsing="false" text="Search (Ctrl+F)">
+										<graphic>
+											<Pane styleClass="icon" />
+										</graphic>
+										<styleClass>
+											<String fx:value="iconButton" />
+											<String fx:value="searchButton" />
+										</styleClass>
+										<tooltip>
+											<Tooltip text="Search (Ctrl+F)" />
+										</tooltip>
+									</ToggleButton>
+								</items>
+							</ToolBar>
+						</children>
+					</HBox>
+				</children>
+			</AnchorPane>
+			<ReplaceBar fx:id="editorReplaceBar" />
+			<AnchorPane fx:id="apnCode" VBox.vgrow="ALWAYS">
+				<children>
+					<WebView fx:id="webCode" focusTraversable="false" maxHeight="-1.0" maxWidth="-1.0" minHeight="50.0" minWidth="-1.0" onKeyPressed="#handle" prefHeight="-1.0" prefWidth="-1.0"
+						AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS" />
+				</children>
+			</AnchorPane>
+		</children>
+	</VBox>
+</AnchorPane>

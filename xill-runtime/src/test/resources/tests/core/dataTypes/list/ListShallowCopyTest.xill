@@ -1,0 +1,38 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/*
+* Specification: A copy of a list MUST be a shallow copy (only reference gets copied)
+* Input: [1,2,3] with 4 and [1,2,[1,2,3]] with 4
+* Expected: [1,2,3,4] and [1,2,[1,2,3,4]]
+*/
+
+use Assert;
+
+var list1 = [1,2,3];
+var list2 = list1;
+
+list1[] = 4;
+
+Assert.equal(list2,[1,2,3,4]);
+Assert.equal(list2,list1);
+
+var list3 = [1,2,3];
+var list4 = [1,2,list3];
+
+list3[] = 4;
+
+Assert.equal(list4,[1,2,[1,2,3,4]]);
+Assert.equal(list4,[1,2,list3]);

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Inserts documents into a collection. A robot exception will be generated if the update failed.
+
+The `ordered` parameter indicates whether to perform an ordered insert of the documents.
+If an error occurs with a document during an ordered insert, the remaining documents will not be inserted.
+If an error occurs during an unordered insert it will continue processing the remaining documents.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Insert a list of documents into a collection</header>
+            <code>
+                use Mongo;
+                use System;
+                Mongo.connect("udm_default");
+
+                var documents = [
+                    { "name": "Walter", "metadata": { "age": "65" } },
+                    { "name": "John", "metadata": { "age": "40" } }
+                ];
+
+                //insert a list of documents into collection asset
+                Mongo.insert("asset", documents);
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>connect</reference>
+        <reference>update</reference>
+        <reference>remove</reference>
+        <reference>find</reference>
+        <reference>findOne</reference>
+    </references>
+    <tags>
+        mongodb, insert
+    </tags>
+</function>

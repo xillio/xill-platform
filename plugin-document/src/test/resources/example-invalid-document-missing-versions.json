@@ -1,0 +1,23 @@
+{
+  "contentType": "Test",
+  "source": {
+    "current": {
+      "version": 1,
+      "user": {
+        "name": "Hello World"
+      }
+    },
+    "versions": []
+  },
+  "target": {
+    "current": {
+      "version": 1,
+      "user": {
+        "name": "Hello World"
+      },
+      "extra": {
+        "data": "MORE INFO"
+      }
+    }
+  }
+}

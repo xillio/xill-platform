@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import nl.xillio.migrationtool.gui.*?>
+<VBox fx:id="vbxVariables" styleClass="innerPane" alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+	<children>
+		<AnchorPane fx:id="apnVariablesHeader" styleClass="paneHeader" VBox.vgrow="NEVER">
+			<children>
+				<HBox fx:id="hbxVariablesHeader" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+					<children>
+						<Label fx:id="lblVariablesHeader" focusTraversable="false" styleClass="paneHeaderTitle" text="Variables" HBox.hgrow="NEVER" />
+						<Pane fx:id="pnVariablesHeader" HBox.hgrow="ALWAYS" />
+					</children>
+				</HBox>
+			</children>
+		</AnchorPane>
+		<AnchorPane fx:id="apnVariablesBody" styleClass="paneBody" VBox.vgrow="ALWAYS">
+			<children>
+				<TableView fx:id="tblVariables" focusTraversable="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+					<columns>
+						<TableColumn fx:id="colVariableName" prefWidth="150.0" text="Name" />
+						<TableColumn fx:id="colVariableValue" prefWidth="150.0" text="Value" />
+					</columns>
+				</TableView>
+			</children>
+		</AnchorPane>
+	</children>
+</VBox>

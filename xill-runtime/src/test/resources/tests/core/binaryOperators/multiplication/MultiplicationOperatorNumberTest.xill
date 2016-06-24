@@ -1,0 +1,48 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/*
+* Specification: number * number MUST return multiply(number, number)
+* Expected: See dataset
+* Input: See dataset
+*/
+
+use Assert;
+
+foreach(data in getDataset()){
+    Execute(data[0],data[1],data[2]);
+}
+
+function Execute(input1, input2, expected){
+    var result = input1 * input2;
+    Assert.equal(result, expected);
+}
+
+// Returns a list of operands and expected results in the format (operand 1, operand 2, expected result)
+function getDataset(){
+    return [
+        [5832,758934,4426103088],           // Random numbers
+        [-102, -50, 5100],              // Negative values
+        [-1354, 12349,-16720546],           // Negative and postive number
+        [2147483647,10,21474836470],    // MAX_INT * 10
+        [-2147483647, 10, -21474836470],// MIN_INT * 10
+        ["0.5", "2.9", 1.45],           // String-float numbers
+        ["25", 0.5, 12.5],              // String-number and number
+        [1/0, 0, NaN],                  // INFINITY
+        [0, 0.0, 0],                    // Zero-values
+        [true, false, 0],               // True-false value (1 * 0)
+        [true, true, 1]                 // True value (1*1)
+    ];
+}

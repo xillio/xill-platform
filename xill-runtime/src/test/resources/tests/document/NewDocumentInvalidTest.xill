@@ -1,0 +1,234 @@
+#*
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *#
+/* Specification: When saving a document with a valid content type an exception should be thrown if:
+ * # The document misses the version field, the contentType field, the source or target fields
+ * # "source" and "target" miss the "current" or "versions" properties
+ * Input: A document with valid contant type but with invalid structure
+ * Output: Exception
+ */
+use Assert, Document, System, ContentType;
+
+include testresources.lib.NoTestCleanup;
+
+//Define decorator and content type
+var decoratorName = "test_decorator";
+var contentTypeName = "test_content_type";
+var decoratorDefinition = {
+    "field1": { "type":"STRING", "required": true }
+};
+ContentType.decorator(decoratorName, decoratorDefinition);
+ContentType.save(contentTypeName, [decoratorName]);
+
+var rootDoc = {
+    "other_field": { "x": 33 },
+    decoratorName: {
+        "field1": "YES!"
+    }
+};
+var fullDoc; // contains a manual test example
+var udmDoc; // output of Document.new
+
+/*** Missing contentType ***/
+rootDoc["version"] = "good"; // First add a version number
+do {
+    fullDoc = {
+        "source": {
+            "current": rootDoc,
+            "versions": [rootDoc]
+        },
+        "target": {
+            "current": rootDoc,
+            "versions": [rootDoc]
+        }
+    };
+    Document.save(fullDoc);
+}
+fail {
+    // Expected
+}
+success {
+    Assert.error("Document missing contentType was saved");
+}
+finally {
+    cleanupUDM("udm_default");
+}
+
+/*** Missing source ***/
+do {
+    fullDoc = {
+        "contentType": contentTypeName,
+        "target": {
+            "current": rootDoc,
+            "versions": [rootDoc]
+        }
+    };
+    Document.save(fullDoc);
+}
+fail {
+    // Expected
+}
+success {
+    Assert.error("Document missing source was saved");
+}
+finally {
+    cleanupUDM("udm_default");
+}
+
+/*** Missing target ***/
+do {
+    fullDoc = {
+        "contentType": contentTypeName,
+        "source": {
+            "current": rootDoc,
+            "versions": [rootDoc]
+        }
+    };
+    Document.save(fullDoc);
+}
+fail {
+    // Expected
+}
+success {
+    Assert.error("Document missing target was saved");
+}
+finally {
+    cleanupUDM("udm_default");
+}
+
+/*** Malformed source 1 ***/
+do {
+    fullDoc = {
+        "contentType": contentTypeName,
+        "source": {
+            "current": "just a string",
+            "versions": [rootDoc]
+        },
+        "target": {
+            "current": rootDoc,
+            "versions": [rootDoc]
+        }
+    };
+    Document.save(fullDoc);
+}
+fail {
+    // Expected
+}
+success {
+    Assert.error("Document with malformed source 1 was saved");
+}
+finally {
+    cleanupUDM("udm_default");
+}
+
+/*** Malformed source 2 ***/
+do {
+    fullDoc = {
+        "contentType": contentTypeName,
+        "source": {
+            "current": rootDoc,
+            "versions": "just a string"
+        },
+        "target": {
+            "current": rootDoc,
+            "versions": [rootDoc]
+        }
+    };
+    Document.save(fullDoc);
+}
+fail {
+    // Expected
+}
+success {
+    Assert.error("Document with malformed source 2 was saved");
+}
+finally {
+    cleanupUDM("udm_default");
+}
+
+/*** Malformed source 2 ***/
+do {
+    fullDoc = {
+        "contentType": contentTypeName,
+        "source": {
+            "current": rootDoc,
+            "versions": "just a string"
+        },
+        "target": {
+            "current": rootDoc,
+            "versions": [rootDoc]
+        }
+    };
+    Document.save(fullDoc);
+}
+fail {
+    // Expected
+}
+success {
+    Assert.error("Document with malformed source 2 was saved");
+}
+finally {
+    cleanupUDM("udm_default");
+}
+
+/*** Malformed target 1 ***/
+do {
+    fullDoc = {
+        "contentType": contentTypeName,
+        "source": {
+            "current": rootDoc,
+            "versions": [rootDoc]
+        },
+        "target": {
+            "current": "just a string",
+            "versions": [rootDoc]
+        }
+    };
+    Document.save(fullDoc);
+}
+fail {
+    // Expected
+}
+success {
+    Assert.error("Document with malformed target 1 was saved");
+}
+finally {
+    cleanupUDM("udm_default");
+}
+
+/*** Malformed target 2 ***/
+do {
+    fullDoc = {
+        "contentType": contentTypeName,
+        "source": {
+            "current": rootDoc,
+            "versions": [rootDoc]
+        },
+        "target": {
+            "current": rootDoc,
+            "versions": "just a string"
+        }
+    };
+    Document.save(fullDoc);
+}
+fail {
+    // Expected
+}
+success {
+    Assert.error("Document with malformed target 2 was saved");
+}
+finally {
+    cleanupUDM("udm_default");
+}

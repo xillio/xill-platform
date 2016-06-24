@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Create an sha-256 hash for an input stream of a string.
+If the input is a stream it will be consumed and this construct will return the sha-256 string.
+If the input is a string this construct will return the sha-256 string.
+
+You can optionally provide an output stream as the second parameter, all the data that is read from the input will be
+forwarded to the output stream.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Get the sha-256 hash of a file</header>
+            <code>
+                use Hash, File, System;
+
+                var filePath = "C:\\tmp\\note.pdf";
+                var fileStream = File.openRead(filePath);
+                var sha256 = Hash.toSHA256(fileStream);
+                System.print(sha256);
+            </code>
+            <header>Get the sha-256 hash of a string</header>
+            <code>
+                use Hash, System;
+
+                var sha256 = Hash.toSHA256("Hello World");
+                System.print(sha256);
+            </code>
+            <header>Get the base64 encoding and sha-256 hash of a file</header>
+            <code>
+                use Hash, Encode, File, System;
+
+                var filePath = "C:\\tmp\\note.pdf";
+                var base64Path = "C:\\tmp\\node.pdf.base64";
+
+                var fileStream = File.openRead(filePath);
+                var targetStream = File.openWrite(base64Path);
+
+                var base64Stream = Encode.toBase64(targetStream);
+
+                // Read input stream to get sha-256 hash and forward to base64 stream
+                var sha256 = Hash.toSHA256(fileStream, base64Stream);
+                System.print(sha256);
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference></reference>
+    </references>
+	    <tags>
+        hash, file, conversion, sha-256, sha
+    </tags>
+</function>

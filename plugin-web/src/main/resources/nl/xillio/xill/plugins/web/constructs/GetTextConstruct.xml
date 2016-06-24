@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Returns a `string` containing all text extracted from (X)HTML `element` node(s) without any markup.
+Any HTML entities contained in the text, like the copyright symbol, will be converted to characters.
+
+If a `page` variable is provided as an input, it looks for the `body` tag and returns the extracted text from all its children.
+This function supports (X)HTML content only. Generic XML content can be processed using XML.getText.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Extract text from a web page</header>
+            <code>
+use Web;
+use System;
+
+var page = Web.loadPage("http://www.xillio.com");
+System.print(Web.getText(page));
+            </code>
+        </example>
+        
+        <example>
+            <header>Extract text from an element</header>
+            <code>
+use Web;
+use System;
+
+var page = Web.loadPage("http://www.xillio.com");
+
+var text = "";
+
+if(page != null) {
+    var header = Web.xPath(page, "//h1");
+    var text = Web.getText(header);
+    System.print(text);
+} else {
+    System.print("No page found");
+}
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>loadPage</reference>
+        <reference>xPath</reference>
+        <reference>getSource</reference>
+        <reference>XML.getText</reference>
+    </references>
+    <tags>
+        load, page, web, text, xpath, html
+    </tags>
+</function>

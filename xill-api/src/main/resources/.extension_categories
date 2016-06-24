@@ -1,0 +1,60 @@
+Office      doc dot docx docm dotx dotm docb
+Office      xls xlt xlm xlsx xlsm xltx sltm xlsb xla xlam xll xlw
+Office      ppt pot pps pptx pptm potx potm ppam ppsx ppsm sldx sldm
+
+Pdf         pdf ppdf pdfx pdf_ _pdf epdf pdfxml
+
+E-mail		vcf eml rpmsg msf mht pst vcard msg dbx emix
+E-mail		mbox ldif rcv emlx vrge08message mso nws mab mbs oas
+E-mail		gwi list mlm sbd wdseml mbx tbb pbx ezm box
+E-mail		pmm boe pmi msb ldi p10 tnf agt mail bri
+E-mail		cnm mau pmx mailhost pop pm1 maildb smd mbg mozeml
+E-mail		pmx outlook97 smp gmp pml mmdf vrge08contact schd pmc vrge08event
+E-mail		cnm pop pm3 idb bina asv vrge08group vrge08note bdf
+
+Video		264 3g2 3gp asf asx avi bik dash dat dvr
+Video		flv h264 m2t m2ts m4v mkv mod mov mp4 mpeg
+Video		mpg mswmm mts ogv prproj rec rmvb swf tod tp
+Video		ts vob webm wmv
+
+# Bitmap Images
+Image		bmp dib dt2 emf gif ico icon jpeg jpg
+Image		pcx pic png psd tga thm tif tiff wbmp
+Image		wdp webp
+# RAW Camera Images
+Image		arw cr2 crw dcr dng fpx mrw nef orf pcd
+Image		ptx raf raw rw2
+# Vector Graphics
+Image		ai cdr csh drw emz odg sda svg
+Image		wmf
+
+Audio		3ga aac aiff amr ape asf cda dvf flac
+Audio		gp4 gp5 gpx logic m4a m4b m4p midi mp3 ogg
+Audio		pcm snd sng uax wav wma wpl
+
+Text		1st alx asp csv eng htm html log lrc
+Text		lst nfo opml plist pts reg rep rtf srt sub
+Text		tbl text txt xml xsd xsl xslt
+
+E-book		azw azw3 cbr cbz epub fb2 iba ibooks lit mobi
+
+Virtualization		ova ovf pvm vdi vhd vmdk vmem vmwarevm vmx
+
+Compressed		001 002 003 004 005 006 007 008 009 010
+Compressed		7z 7zip a00 a01 a02 a03 a04
+Compressed		a05 ace apk appxbundle arc arj asec bar
+Compressed		c00 c01 c02 c03 cab cbz cso dlc
+Compressed		gz gzip hqx inv ipa isz msu nbh pak
+Compressed		r00 r01 r02 r03 r04 r05 r06
+Compressed		r07 r08 r09 r10 rar rpm sis sisx sit sitd
+Compressed		sitx tar tgz uax webarchive xap z01 z02 z03
+Compressed		z04 z05 zip
+
+AutoCad         dwfx dwg dxf 3ds dct dgn
+
+Database		accdb accdt db dbf fdb gdb idx mdb mdf
+Database		msmessagestore sdf sql sqlite wdb
+
+Executables		air app application appx bat bin com cpl deb dll
+Executables		elf exe jar js lnk msi prg rpm shs
+Executables		vbs xap

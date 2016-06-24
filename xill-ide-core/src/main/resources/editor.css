@@ -1,0 +1,76 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* General editor css */
+
+
+
+.example-node code, #editor {
+    margin: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    font-family:  'Ubuntu Mono', 'Consolas', 'Monaco', 'Menlo', 'source-code-pro', monospace;
+    left: 0;
+    right: 0;
+}
+
+/* line highlights */
+.ace_marker-layer .ace_active-line {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.ace_gutter-active-line {
+    background-color: #dcdcdc;
+}
+
+.ace_marker-layer .ace_error {
+    background-color: #ffdcdc;
+    position: absolute;
+}
+
+.ace_marker-layer .ace_highlight {
+    background-color: #FFFFBF;
+    position: absolute;
+}
+
+.ace_layer {
+
+}
+
+.ace_entity.ace_other.ace_attribute-name {
+    color: #994409;
+}
+
+/* Breakpoints */
+.ace_gutter-cell {
+    position: relative;
+}
+
+.ace_gutter-cell.ace_breakpoint:before {
+    border-radius: 100%;
+    content: '';
+    display: block;
+    height: 8px;
+    left: 20px;
+    position: absolute;
+    top: 4px;
+    width: 8px;
+    background: #DC042B;
+}
+
+.ace_gutter .ace_gutter-layer {
+    width: 70px !important;
+}

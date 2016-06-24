@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+	<description>
+Duplicates the given list. Duplicate makes a copy from the original list.
+This means that after copying, changes to the first list will not change the duplicated list.
+	</description>
+	<examples>
+		<example title="Usage">
+			<header>Duplicating a list</header>
+			<code>
+				use System;
+				use Collection;
+				
+				var listA = [1,2,3];
+				var listB = Collection.duplicate(listA);
+				listA[] = 4;
+				listA[0] = "test";
+				
+				System.print(listA); //this will print ["test",2,3,4]
+				System.print(listB); //this will print [1,2,3]
+				
+				
+			</code>
+		</example>
+	</examples>
+	<searchTags>
+		list, duplicate, copy
+	</searchTags>
+</function>

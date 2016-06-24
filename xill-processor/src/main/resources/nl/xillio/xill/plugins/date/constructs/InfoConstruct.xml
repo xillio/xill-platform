@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Returns detailed information about provided date.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Showing information about the given datetime.</header>
+            <code>
+                use System,Date;
+
+                var date = Date.of(2015, 12, 31, 10, 5, 0);
+                var info = Date.info(date);
+                System.print(info);
+
+                /*
+                Outputs:
+                {
+                    "nanoOfSecond":0,
+                    "nanoOfDay":36300000000000,
+                    "microOfSecond":0,
+                    "microOfDay":36300000000,
+                    "milliOfSecond":0,
+                    "milliOfDay":36300000,
+                    "secondOfMinute":0,
+                    "secondOfDay":36300,
+                    "minuteOfHour":5,
+                    "minuteOfDay":605,
+                    "hourOfAmPm":10,
+                    "clockHourOfAmPm":10,
+                    "hourOfDay":10,
+                    "clockHourOfDay":10,
+                    "amPmOfDay":0,
+                    "dayOfWeek":4,
+                    "alignedDayOfWeekInMonth":3,
+                    "alignedDayOfWeekInYear":1,
+                    "dayOfMonth":31,
+                    "dayOfYear":365,
+                    "epochDay":16800,
+                    "alignedWeekOfMonth":5,
+                    "alignedWeekOfYear":53,
+                    "monthOfYear":12,
+                    "prolepticMonth":24191,
+                    "yearOfEra":2015,
+                    "year":2015,
+                    "era":1,
+                    "instantSeconds":1451552700,
+                    "offsetSeconds":3600,
+                    "timeZone":"Europe/Berlin",
+                    "isInFuture":false,
+                    "isInPast":true
+                }
+                */
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>now</reference>
+    </references>
+	    <tags>
+        date, time, datetime, info, information, detail
+    </tags>
+</function>

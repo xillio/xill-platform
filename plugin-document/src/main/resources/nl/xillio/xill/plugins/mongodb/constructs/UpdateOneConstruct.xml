@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Modifies an existing document in a collection.
+The method can modify specific fields of an existing document or replace an existing document entirely, depending on the update parameter.
+Returns `true` if a document was updated, otherwise `false`.
+
+The `options` parameter may contain the following option:
+
+| Option   | Description |
+| -------- | ----------- |
+| `upsert` | If set to `true`, creates a new document if no document matches the query, or if a document matches the query, performs an update. The default is `false`. |
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Update contenttype of document with "_id" value 1 in the assets collection</header>
+            <code>
+                use System, Mongo;
+                Mongo.connect("udm_default");
+
+                var query = {"_id" : "1"};
+                var update = { "$set" : { "contenttype": "letter" } };
+
+                if (Mongo.updateOne("assets", query, update)) {
+                    System.print("Successfully updated a document");
+                }
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>connect</reference>
+        <reference>update</reference>
+        <reference>findOneAndUpdate</reference>
+        <reference>insert</reference>
+        <reference>remove</reference>
+    </references>
+    <tags>
+        mongodb, query, update
+    </tags>
+</function>
