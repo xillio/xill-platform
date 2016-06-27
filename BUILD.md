@@ -15,7 +15,7 @@ In [IntelliJ] you can launch [nl.xillio.contenttools.Application] by
 [creating a run configuration] with the following properties:
 
     Main Class: nl.xillio.contenttools.Application
-    VM Options: -Dfile.encoding=uft-8
+    VM Options: -Dfile.encoding=utf-8
     Working Directory: $MODULE_DIR$
     Use classpath of module: xill-ide-launcher
 
@@ -24,8 +24,7 @@ Building Xill IDE
 To build Xill IDE you:
 
 1. Check out the repository
-2. Run `mvn package` to prepare all modules
-3. Run `mvn -pl xill-ide-launcher jfx:native` to build the native application
+2. Run `mvn package -P build-native` to build a native package
 
 You can now find your native application at `xill-ide-launcher/target/jfx/native`.
 

@@ -1,4 +1,4 @@
-#*
+/**
  * Copyright (C) 2014 Xillio (support@xillio.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *#
+ */
 /* Specification: When saving a document with a valid content type an exception should be thrown if:
  * # The document misses the version field, the contentType field, the source or target fields
  * # "source" and "target" miss the "current" or "versions" properties

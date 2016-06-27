@@ -16,7 +16,6 @@
     limitations under the License.
 
 -->
-
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
