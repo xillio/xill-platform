@@ -1,4 +1,4 @@
-#*
+/**
  * Copyright (C) 2014 Xillio (support@xillio.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *#
+ */
 /*
 * Specification: Encountering a continue in a while loop MUST NOT execute any line after the continue in that iteration and MUST go to the next iteration.
 * Input: counter i with value 0

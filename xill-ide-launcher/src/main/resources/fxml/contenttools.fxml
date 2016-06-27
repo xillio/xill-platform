@@ -16,7 +16,6 @@
     limitations under the License.
 
 -->
-
 <?import javafx.scene.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>

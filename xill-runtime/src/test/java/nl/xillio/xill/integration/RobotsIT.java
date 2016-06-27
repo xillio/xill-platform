@@ -23,7 +23,6 @@ import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.integration.embeddedmongo.EmbeddedMongoHelper;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
-import org.testng.Reporter;
 import org.testng.annotations.*;
 
 import java.io.IOException;
@@ -97,7 +96,7 @@ public class RobotsIT {
     }
 
     @Test(dataProvider = "robots")
-    public void runRobot(URL robot, String name) throws IOException {
+    public void runRobot(URL robot, String name) throws IOException, XillParsingException {
         Path robotFile = projectPath.resolve(name);
 
         // cleanup mongo before each test (to make sure previous failures do not influence this test)
@@ -113,12 +112,8 @@ public class RobotsIT {
 
         XillProcessor processor = xillEnvironment.buildProcessor(projectPath, robotFile);
 
-        try {
-            processor.compile();
-            processor.getRobot().process(processor.getDebugger());
-        } catch (XillParsingException e) {
-            Reporter.getCurrentTestResult().setAttribute("warn", e.getMessage());
-        }
+        processor.compile();
+        processor.getRobot().process(processor.getDebugger());
     }
 
     /**

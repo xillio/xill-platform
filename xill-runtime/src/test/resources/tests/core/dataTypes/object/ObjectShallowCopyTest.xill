@@ -1,4 +1,4 @@
-#*
+/**
  * Copyright (C) 2014 Xillio (support@xillio.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *#
+ */
 /*
 * Specification: A copy of an object MUST be a shallow copy (only reference gets copied)
 * Input: {"a": 1, "b": 2} with Key:"c", Value: 3 and {"a": 1, "b": 2, "c": {"a": 1, "b": 2} with Key:"d", Value: 4
