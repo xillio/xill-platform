@@ -16,8 +16,6 @@
     limitations under the License.
 
 -->
-
-
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.*?>

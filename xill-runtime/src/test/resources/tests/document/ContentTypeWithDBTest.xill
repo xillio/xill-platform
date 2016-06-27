@@ -1,4 +1,4 @@
-#*
+/**
  * Copyright (C) 2014 Xillio (support@xillio.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *#
+ */
 /* Specification: when specified as identity, the content types are correctly stored in the database udm_<identity>.
  * Input: a content type definition stored in the udm_dbName database
  * Expected: udm_dbName is present and contains the contentType just stored

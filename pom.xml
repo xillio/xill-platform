@@ -139,7 +139,7 @@
                     </excludes>
                     <mapping>
                         <fxml>XML_STYLE</fxml>
-                        <xill>SHARPSTAR_STYLE</xill>
+                        <xill>JAVADOC_STYLE</xill>
                     </mapping>
                 </configuration>
                 <executions>
