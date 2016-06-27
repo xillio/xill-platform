@@ -32,7 +32,7 @@ do {
 } fail(e) {
 	result[] = "fail";
 	Assert.equal(e.message, "Throw error.", "Error object e not returning correct message.");
-	Assert.equal(e.line, 16, "Error object e not returning correct line number.");
+	Assert.equal(e.line, 31, "Error object e not returning correct line number.");
 } success {
     Assert.error("An error should have been caught by the fail block.");
 } finally {
