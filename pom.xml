@@ -60,6 +60,11 @@
         <maven>3.3.9</maven>
     </prerequisites>
 
+    <properties>
+        <sonar.jacoco.itReportPath>${project.build.directory}/jacoco-it.exec</sonar.jacoco.itReportPath>
+        <sonar.jacoco.reportPath>${project.build.directory}/jacoco-ut.exec</sonar.jacoco.reportPath>
+        <sonar.language>java</sonar.language>
+    </properties>
     <modules>
         <module>xill-api</module>
         <module>xill-assemblies</module>
