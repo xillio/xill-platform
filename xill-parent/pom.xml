@@ -488,38 +488,6 @@
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>0.7.6.201602180812</version>
-                    <configuration>
-                        <append>true</append>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>agent-for-ut</id>
-                            <goals>
-                                <goal>prepare-agent</goal>
-                            </goals>
-                            <configuration>
-                                <destFile>${project.basedir}/../target/jacoco-ut.exec</destFile>
-                            </configuration>
-                            <phase>test-compile</phase>
-                        </execution>
-                        <execution>
-                            <id>agent-for-it</id>
-                            <configuration>
-                                <destFile>${project.basedir}/../target/jacoco-it.exec</destFile>
-                            </configuration>
-                            <goals>
-                                <goal>prepare-agent-integration</goal>
-                            </goals>
-                            <phase>pre-integration-test</phase>
-                        </execution>
-                        <execution>
-                            <id>jacoco-site</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>report</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -570,24 +538,36 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.7.201606060606</version>
+                <configuration>
+                    <append>true</append>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>prepare-jacoco-ut</id>
+                        <id>agent-for-ut</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
+                        <configuration>
+                            <destFile>${project.basedir}/../target/jacoco-ut.exec</destFile>
+                        </configuration>
                         <phase>test-compile</phase>
                     </execution>
                     <execution>
-                        <id>prepare-jacoco-it</id>
+                        <id>agent-for-it</id>
+                        <configuration>
+                            <destFile>${project.basedir}/../target/jacoco-it.exec</destFile>
+                        </configuration>
                         <goals>
-                            <goal>prepare-agent</goal>
+                            <goal>prepare-agent-integration</goal>
                         </goals>
                         <phase>pre-integration-test</phase>
-                        <configuration>
-                            <destFile>${project.build.directory}/jacoco-it.exec</destFile>
-                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jacoco-site</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
