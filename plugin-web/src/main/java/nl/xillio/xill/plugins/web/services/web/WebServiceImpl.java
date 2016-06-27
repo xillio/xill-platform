@@ -355,6 +355,9 @@ public class WebServiceImpl implements WebService {
     }
 
     void copyInputStreamToFile(final InputStream stream, final Path targetFilePath) throws IOException {
+        // Make sure the target directory exists.
+        if(!targetFilePath.toFile().mkdirs())
+            throw new OperationFailedException("copy file to target location","Was unable to create new folder in path: " + targetFilePath.toAbsolutePath() + ".", "Check if the supplied path is correct.");
         Files.copy(stream, targetFilePath, StandardCopyOption.REPLACE_EXISTING);
     }
 
