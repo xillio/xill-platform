@@ -20,7 +20,7 @@
     <description>
 Returns `true` if `text` matches the pattern specified by `regex`.
 
-Optionally a timeout can be provided in seconds, the default value is 5 seconds.
+Optionally a timeout can be provided in milliseconds, the default value is 5000 milliseconds.
 Set `timeout` to zero to let the function run without timeout. This should only be altered when dealing with large source documents.
 The timeout is there to protect the system from hanging on invalid expressions.  
 See the Regular Expressions page for more about Regular Expression support in Xill IDE.
