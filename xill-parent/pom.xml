@@ -62,7 +62,7 @@
 
     <properties>
         <xill.version>3.04.00-SNAPSHOT</xill.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Dependencies -->
         <java.version>1.8</java.version>
         <testng.version>6.9.10</testng.version>
         <mockito.version>1.10.19</mockito.version>
@@ -94,8 +94,14 @@
         <httpclient.version>4.5.1</httpclient.version>
         <jsoup.version>1.8.3</jsoup.version>
         <mongo.java.driver.version>3.2.2</mongo.java.driver.version>
+
+        <!-- Build Info -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+        <sonar.jacoco.itReportPath>${project.basedir}/../target/jacoco-it.exec</sonar.jacoco.itReportPath>
+        <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco-ut.exec</sonar.jacoco.reportPath>
+        <sonar.language>java</sonar.language>
     </properties>
 
     <dependencyManagement>
@@ -482,12 +488,36 @@
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>0.7.6.201602180812</version>
+                    <configuration>
+                        <append>true</append>
+                    </configuration>
                     <executions>
                         <execution>
+                            <id>agent-for-ut</id>
                             <goals>
                                 <goal>prepare-agent</goal>
                             </goals>
+                            <configuration>
+                                <destFile>${project.basedir}/../target/jacoco-ut.exec</destFile>
+                            </configuration>
                             <phase>test-compile</phase>
+                        </execution>
+                        <execution>
+                            <id>agent-for-it</id>
+                            <configuration>
+                                <destFile>${project.basedir}/../target/jacoco-it.exec</destFile>
+                            </configuration>
+                            <goals>
+                                <goal>prepare-agent-integration</goal>
+                            </goals>
+                            <phase>pre-integration-test</phase>
+                        </execution>
+                        <execution>
+                            <id>jacoco-site</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
                         </execution>
                     </executions>
                 </plugin>
