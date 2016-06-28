@@ -34,7 +34,8 @@ import static org.mockito.Mockito.*;
  * Test the {@link ReplaceConstruct}.
  */
 public class ReplaceConstructTest {
-
+    private int timeoutValue = 10000;
+    
     /**
      * Test the process method when we use regex and want to replace all.
      *
@@ -64,8 +65,7 @@ public class ReplaceConstructTest {
         boolean replaceAllValue = true;
         MetaExpression replaceAll = mock(MetaExpression.class);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
-
-        int timeoutValue = 10;
+        
         MetaExpression timeout = mock(MetaExpression.class);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
@@ -79,7 +79,7 @@ public class ReplaceConstructTest {
         MetaExpression result = ReplaceConstruct.process(args, regexService, stringService);
 
         // Verify
-        verify(regexService, times(1)).getMatcher(needleValue, textValue, timeoutValue * 1000);
+        verify(regexService, times(1)).getMatcher(needleValue, textValue, timeoutValue);
         verify(regexService, times(1)).replaceAll(any(), eq(replacementValue));
         verify(regexService, times(0)).replaceFirst(any(), eq(replacementValue));
         verify(stringService, times(0)).replaceAll(textValue, needleValue, replacementValue);
@@ -118,8 +118,7 @@ public class ReplaceConstructTest {
         boolean replaceAllValue = false;
         MetaExpression replaceAll = mock(MetaExpression.class);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
-
-        int timeoutValue = 10;
+        
         MetaExpression timeout = mock(MetaExpression.class);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
@@ -133,7 +132,7 @@ public class ReplaceConstructTest {
         MetaExpression result = ReplaceConstruct.process(args, regexService, stringService);
 
         // Verify
-        verify(regexService, times(1)).getMatcher(needleValue, textValue, timeoutValue * 1000);
+        verify(regexService, times(1)).getMatcher(needleValue, textValue, timeoutValue);
         verify(regexService, times(0)).replaceAll(any(), eq(replacementValue));
         verify(regexService, times(1)).replaceFirst(any(), eq(replacementValue));
         verify(stringService, times(0)).replaceAll(textValue, needleValue, replacementValue);
@@ -172,8 +171,7 @@ public class ReplaceConstructTest {
         boolean replaceAllValue = true;
         MetaExpression replaceAll = mock(MetaExpression.class);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
-
-        int timeoutValue = 10;
+        
         MetaExpression timeout = mock(MetaExpression.class);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
@@ -187,7 +185,7 @@ public class ReplaceConstructTest {
         MetaExpression result = ReplaceConstruct.process(args, regexService, stringService);
 
         // Verify
-        verify(regexService, times(0)).getMatcher(needleValue, textValue, timeoutValue * 1000);
+        verify(regexService, times(0)).getMatcher(needleValue, textValue, timeoutValue);
         verify(regexService, times(0)).replaceAll(any(), eq(replacementValue));
         verify(regexService, times(0)).replaceFirst(any(), eq(replacementValue));
         verify(stringService, times(1)).replaceAll(textValue, needleValue, replacementValue);
@@ -226,8 +224,7 @@ public class ReplaceConstructTest {
         boolean replaceAllValue = false;
         MetaExpression replaceAll = mock(MetaExpression.class);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
-
-        int timeoutValue = 10;
+        
         MetaExpression timeout = mock(MetaExpression.class);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
@@ -241,7 +238,7 @@ public class ReplaceConstructTest {
         MetaExpression result = ReplaceConstruct.process(args, regexService, stringService);
 
         // Verify
-        verify(regexService, times(0)).getMatcher(needleValue, textValue, timeoutValue * 1000);
+        verify(regexService, times(0)).getMatcher(needleValue, textValue, timeoutValue);
         verify(regexService, times(0)).replaceAll(any(), eq(replacementValue));
         verify(regexService, times(0)).replaceFirst(any(), eq(replacementValue));
         verify(stringService, times(0)).replaceAll(textValue, needleValue, replacementValue);
@@ -280,22 +277,21 @@ public class ReplaceConstructTest {
         boolean replaceAllValue = true;
         MetaExpression replaceAll = mock(MetaExpression.class);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
-
-        int timeoutValue = 10;
+        
         MetaExpression timeout = mock(MetaExpression.class);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         Exception returnValue = new PatternSyntaxException(needleValue, textValue, timeoutValue);
         RegexService regexService = mock(RegexService.class);
         StringUtilityService stringService = mock(StringUtilityService.class);
-        when(regexService.getMatcher(needleValue, textValue, timeoutValue * 1000)).thenThrow(returnValue);
+        when(regexService.getMatcher(needleValue, textValue, timeoutValue)).thenThrow(returnValue);
 
         // Run
         MetaExpression args[] = {text, needle, replacement, useRegex, replaceAll, timeout};
         ReplaceConstruct.process(args, regexService, stringService);
 
         // Verify
-        verify(regexService, times(1)).getMatcher(needleValue, textValue, timeoutValue * 1000);
+        verify(regexService, times(1)).getMatcher(needleValue, textValue, timeoutValue);
         verify(regexService, times(0)).replaceAll(any(), eq(replacementValue));
         verify(regexService, times(0)).replaceFirst(any(), eq(replacementValue));
         verify(stringService, times(0)).replaceAll(textValue, needleValue, replacementValue);
@@ -339,14 +335,14 @@ public class ReplaceConstructTest {
         Exception returnValue = new IllegalArgumentException();
         RegexService regexService = mock(RegexService.class);
         StringUtilityService stringService = mock(StringUtilityService.class);
-        when(regexService.getMatcher(needleValue, textValue, timeoutValue * 1000)).thenThrow(returnValue);
+        when(regexService.getMatcher(needleValue, textValue, timeoutValue)).thenThrow(returnValue);
 
         // Run
         MetaExpression args[] = {text, needle, replacement, useRegex, replaceAll, timeout};
         ReplaceConstruct.process(args, regexService, stringService);
 
         // Verify
-        verify(regexService, times(1)).getMatcher(needleValue, textValue, timeoutValue * 1000);
+        verify(regexService, times(1)).getMatcher(needleValue, textValue, timeoutValue);
         verify(regexService, times(0)).replaceAll(any(), eq(replacementValue));
         verify(regexService, times(0)).replaceFirst(any(), eq(replacementValue));
         verify(stringService, times(0)).replaceAll(textValue, needleValue, replacementValue);

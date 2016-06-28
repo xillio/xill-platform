@@ -76,7 +76,7 @@ public class ReplaceConstruct extends Construct {
         String replacement = input[2].getStringValue();
         boolean useregex = input[3].getBooleanValue();
         boolean replaceall = input[4].getBooleanValue();
-        int timeout = (int) input[5].getNumberValue().doubleValue() * 1000;
+        int timeout = (int) input[5].getNumberValue().doubleValue();
 
         if (useregex) {
             try {
