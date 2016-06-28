@@ -66,7 +66,6 @@ public class RenameDialog extends FXMLDialog {
             fileName += XillEnvironment.ROBOT_EXTENSION;
         }
         final File newFile = new File(oldFile.getParent(), fileName);
-
         try {
             // Rename the item and update the tree item.
             if (oldFile.isDirectory()) {
