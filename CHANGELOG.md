@@ -1,4 +1,8 @@
 # Xill Platform - Change Log
-All notable changes to this project will be documented in this file
+All notable changes to this project will be documented in this file.
 
-## [3.3.25] - unreleased
+## [3.4.0] - unreleased
+
+### Fix
+
+* RegexServiceImpl.getMatcher uses incorrect timeout [CTC-1629]

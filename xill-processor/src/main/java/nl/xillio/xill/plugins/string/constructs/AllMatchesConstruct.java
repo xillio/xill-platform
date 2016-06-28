@@ -58,7 +58,7 @@ public class AllMatchesConstruct extends Construct {
 
         String text = textVar.getStringValue();
         String regex = regexVar.getStringValue();
-        int timeout = (int) timeoutVar.getNumberValue().doubleValue() * 1000;
+        int timeout = (int) timeoutVar.getNumberValue().doubleValue();
 
         try {
             Matcher matcher = regexService.getMatcher(regex, text, timeout);
