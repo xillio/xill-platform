@@ -1066,6 +1066,10 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 project.refresh();
             }
         }
+
+        // Set the button label.
+        String tooltipText = "Show " + (tbnShowAllFiles.isSelected() ? "robots only" : "all files");
+        tbnShowAllFiles.getTooltip().setText(tooltipText);
     }
 
     /*========== Tree items and cells ==========*/
