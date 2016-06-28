@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,8 +21,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.util.Pair;
-import org.apache.commons.io.FileUtils;
 import me.biesaart.utils.Log;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -61,7 +61,7 @@ public class RenameDialog extends FXMLDialog {
         // Get the old file, new file name and new file.
         final File oldFile = treeItem.getValue().getKey();
         String fileName = tfname.getText();
-        if (oldFile.isFile() && !fileName.endsWith(".xill")) {
+        if (oldFile.isFile() && oldFile.toString().endsWith(".xill") && !fileName.endsWith(".xill")) {
             fileName += ".xill";
         }
         final File newFile = new File(oldFile.getParent(), fileName);

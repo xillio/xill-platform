@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -87,11 +87,13 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     private Button btnUpload;
     @FXML
     private Button btnNew;
-
     @FXML
-    private ContextMenu testMenu;
+    private ToggleButton tbnShowAllFiles;
 
+    // File filters.
     private final BotFileFilter robotFileFilter = new BotFileFilter();
+    private final AnyFileFilter anyFileFilter = new AnyFileFilter();
+
     private final TreeItem<Pair<File, String>> root = new TreeItem<>(new Pair<>(new File("."), "Projects"));
     private final List<File> expandedFiles = new ArrayList<>();
     private FXController controller;
@@ -260,7 +262,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         }
     }
 
-    protected void paste(File pasteLoc, List<File> files, boolean copy) {
+    private void paste(File pasteLoc, List<File> files, boolean copy) {
         // Get the directory to paste in.
         final File destDir = pasteLoc.isDirectory() ? pasteLoc : pasteLoc.getParentFile();
 
@@ -956,103 +958,6 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     /**
-     * A filefilter filtering on the FXController.BOT_EXTENSION extension.
-     */
-    protected class BotFileFilter extends FileFilter implements FilenameFilter {
-        @Override
-        public boolean accept(final File file) {
-            return file.isDirectory() && !file.getName().startsWith(".") || file.getName().endsWith(XillEnvironment.ROBOT_EXTENSION);
-        }
-
-        @Override
-        public String getDescription() {
-            return String.format("Xillio bot script files (*%s)", XillEnvironment.ROBOT_EXTENSION);
-        }
-
-        @Override
-        public boolean accept(final File directory, final String fileName) {
-            return accept(new File(directory, fileName));
-        }
-    }
-
-    private class ProjectTreeItem extends TreeItem<Pair<File, String>> {
-
-        private boolean isLeaf;
-        private boolean isFirstTimeChildren = true;
-        private boolean isFirstTimeLeaf = true;
-
-        public ProjectTreeItem(final File file, final String name) {
-            super(new Pair<>(file, name));
-        }
-
-        @Override
-        public ObservableList<TreeItem<Pair<File, String>>> getChildren() {
-            if (isFirstTimeChildren) {
-                isFirstTimeChildren = false;
-                super.getChildren().setAll(buildChildren(this));
-            }
-            return super.getChildren();
-        }
-
-        @Override
-        public boolean isLeaf() {
-            if (isFirstTimeLeaf) {
-                isFirstTimeLeaf = false;
-                isLeaf = getValue().getKey().isFile();
-            }
-            return isLeaf;
-        }
-
-        public void refresh() {
-            // Update all children.
-            expandedFiles.clear();
-            storeAllExpanded(root);
-            getChildren().setAll(buildChildren(this));
-        }
-
-        /**
-         * Build the children of a tree item.
-         *
-         * @param treeItem The root item to build the children for.
-         * @return A list of tree items that are the children of the given tree item.
-         */
-        private List<TreeItem<Pair<File, String>>> buildChildren(final TreeItem<Pair<File, String>> treeItem) {
-            File f = treeItem.getValue().getKey();
-            List<TreeItem<Pair<File, String>>> children = new ArrayList<>();
-
-            if (f != null && f.isDirectory()) {
-                // Get a list with all files in the directory.
-                File[] files = f.listFiles(robotFileFilter);
-
-                // Sort the list of files.
-                Arrays.sort(files, (o1, o2) -> {
-                    // Put directories above files.
-                    if (o1.isDirectory() && o2.isFile()) {
-                        return -1;
-                    } else if (o1.isFile() && o2.isDirectory()) {
-                        return 1;
-                        // Both are the same type, compare them normally.
-                    } else {
-                        return o1.compareTo(o2);
-                    }
-                });
-
-                // Create tree items from all files, add them to the list
-                for (File file : files) {
-                    ProjectTreeItem sub = new ProjectTreeItem(file, file.getName());
-                    if (expandedFiles.contains(file)) {
-                        sub.setExpanded(true);
-                    }
-                    children.add(sub);
-                }
-            }
-
-            return children;
-        }
-    }
-
-
-    /**
      * store all files that are expanded so they can be expanded when the projecttree is rebuild.
      *
      * @param treeItem the root treeItem to check from
@@ -1148,11 +1053,104 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         return settings.project().getAll().size();
     }
 
+    @FXML
+    private void toggleShowAllFiles() {
+        // Refresh all projects.
+        for (TreeItem<Pair<File, String>> item : root.getChildren()) {
+            if (item instanceof ProjectTreeItem) {
+                ProjectTreeItem project = (ProjectTreeItem) item;
+                project.refresh();
+            }
+        }
+    }
+
+    /*========== Tree items and cells ==========*/
+
+    /**
+     * A project tree item.
+     */
+    private class ProjectTreeItem extends TreeItem<Pair<File, String>> {
+
+        private boolean isLeaf;
+        private boolean isFirstTimeChildren = true;
+        private boolean isFirstTimeLeaf = true;
+
+        public ProjectTreeItem(final File file, final String name) {
+            super(new Pair<>(file, name));
+        }
+
+        @Override
+        public ObservableList<TreeItem<Pair<File, String>>> getChildren() {
+            if (isFirstTimeChildren) {
+                isFirstTimeChildren = false;
+                super.getChildren().setAll(buildChildren(this));
+            }
+            return super.getChildren();
+        }
+
+        @Override
+        public boolean isLeaf() {
+            if (isFirstTimeLeaf) {
+                isFirstTimeLeaf = false;
+                isLeaf = getValue().getKey().isFile();
+            }
+            return isLeaf;
+        }
+
+        public void refresh() {
+            // Update all children.
+            expandedFiles.clear();
+            storeAllExpanded(root);
+            getChildren().setAll(buildChildren(this));
+        }
+
+        /**
+         * Build the children of a tree item.
+         *
+         * @param treeItem The root item to build the children for.
+         * @return A list of tree items that are the children of the given tree item.
+         */
+        private List<TreeItem<Pair<File, String>>> buildChildren(final TreeItem<Pair<File, String>> treeItem) {
+            File f = treeItem.getValue().getKey();
+            List<TreeItem<Pair<File, String>>> children = new ArrayList<>();
+
+            if (f != null && f.isDirectory()) {
+                // Get a list with all files in the directory.
+                File[] files = f.listFiles(tbnShowAllFiles.isSelected() ? anyFileFilter : robotFileFilter);
+
+                // Sort the list of files.
+                Arrays.sort(files, (o1, o2) -> {
+                    // Put directories above files.
+                    if (o1.isDirectory() && o2.isFile()) {
+                        return -1;
+                    } else if (o1.isFile() && o2.isDirectory()) {
+                        return 1;
+                        // Both are the same type, compare them normally.
+                    } else {
+                        return o1.compareTo(o2);
+                    }
+                });
+
+                // Create tree items from all files, add them to the list
+                for (File file : files) {
+                    ProjectTreeItem sub = new ProjectTreeItem(file, file.getName());
+                    if (expandedFiles.contains(file)) {
+                        sub.setExpanded(true);
+                    }
+                    children.add(sub);
+                }
+            }
+
+            return children;
+        }
+    }
+
     /**
      * A custom tree cell which opens a robot tab on double-click and supports drag&drop.
      */
     private class CustomTreeCell extends TreeCell<Pair<File, String>> implements EventHandler<Event> {
         private static final String dragOverClass = "drag-over";
+        private static final String canNotOpenClass = "cannot-open";
 
         public CustomTreeCell() {
             // Subscribe to drag events.
@@ -1174,13 +1172,21 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             }
             this.setText(pair.getValue());
 
+            // Check whether this is a robot file.
+            boolean isRobot = pair.getValue().endsWith(XillEnvironment.ROBOT_EXTENSION);
+
+            // Clear the style and check if this is a file we can open.
+            this.getStyleClass().remove(canNotOpenClass);
+            if (!robotFileFilter.accept(pair.getKey())) {
+                this.getStyleClass().add(canNotOpenClass);
+            }
+
+            // Hook into the mouse double click event.
             setOnMouseClicked(event -> {
-                // Double click.
-                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1) {
-                    if (pair.getKey() != null && pair.getKey().exists() && pair.getKey().isFile()) {
-                        // Open new tab from file.
-                        controller.openFile(pair.getKey());
-                    }
+                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1
+                        && pair.getKey() != null && pair.getKey().exists() && pair.getKey().isFile() && isRobot) {
+                    // Open new tab from file.
+                    controller.openFile(pair.getKey());
                 }
             });
         }
@@ -1235,6 +1241,48 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         private boolean canDrop() {
             return this.getTreeItem() != null;
+        }
+    }
+
+    /*========== File filters ==========*/
+
+    /**
+     * A file filter filtering on the FXController.BOT_EXTENSION extension.
+     */
+    private class BotFileFilter extends FileFilter implements FilenameFilter {
+        @Override
+        public boolean accept(final File file) {
+            return file.isDirectory() && !file.getName().startsWith(".") || file.getName().endsWith(XillEnvironment.ROBOT_EXTENSION);
+        }
+
+        @Override
+        public String getDescription() {
+            return String.format("Xillio bot script files (*%s)", XillEnvironment.ROBOT_EXTENSION);
+        }
+
+        @Override
+        public boolean accept(final File directory, final String fileName) {
+            return accept(new File(directory, fileName));
+        }
+    }
+
+    /**
+     * A file filter that accepts any file, except starting with a '.'.
+     */
+    private class AnyFileFilter extends FileFilter implements FilenameFilter {
+        @Override
+        public boolean accept(final File file) {
+            return !file.getName().startsWith(".");
+        }
+
+        @Override
+        public String getDescription() {
+            return "Any file (*.*)";
+        }
+
+        @Override
+        public boolean accept(final File directory, final String fileName) {
+            return accept(new File(directory, fileName));
         }
     }
 }
