@@ -62,6 +62,7 @@ public class RenameDialog extends FXMLDialog {
         // Get the old file, new file name and new file.
         final File oldFile = treeItem.getValue().getKey();
         String fileName = tfname.getText();
+        
         if (oldFile.isFile() && oldFile.toString().endsWith(XillEnvironment.ROBOT_EXTENSION) && !fileName.endsWith(XillEnvironment.ROBOT_EXTENSION)) {
             fileName += XillEnvironment.ROBOT_EXTENSION;
         }
