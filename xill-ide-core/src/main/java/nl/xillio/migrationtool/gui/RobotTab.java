@@ -415,8 +415,6 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
         return globalController;
     }
 
-    // Used in constructor as this::onClose, but Sonar does not recognize that.
-    @SuppressWarnings("UnusedPrivateMethod")
     private void onClose(final Event event) {
         // Check if the robot is saved, else show the save before closing dialog.
         if (editorPane.getDocumentState().getValue() == DocumentState.CHANGED) {
