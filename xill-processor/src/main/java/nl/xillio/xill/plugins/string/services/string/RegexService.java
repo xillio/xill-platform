@@ -31,7 +31,7 @@ public interface RegexService {
     /**
      * @param regex   the pattern
      * @param value   the haystack
-     * @param timeout in seconds
+     * @param timeout in milliseconds
      * @return the matcher
      * @throws FailedToGetMatcherException Is thrown when the matcher fails.
      * @throws IllegalArgumentException    Is thrown when an illegal argument is passed to the regular expression.

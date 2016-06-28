@@ -32,6 +32,7 @@ import static org.mockito.Mockito.*;
  * Test the {@link MatchesConstruct}.
  */
 public class MatchesConstructTest {
+    private int timeoutValue = 10000;
 
     /**
      * Test the process method with an ATOMIC value given.
@@ -51,7 +52,6 @@ public class MatchesConstructTest {
         MetaExpression regex = mock(MetaExpression.class);
         when(regex.getStringValue()).thenReturn(regexValue);
 
-        int timeoutValue = 10;
         MetaExpression timeout = mock(MetaExpression.class);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
@@ -63,7 +63,7 @@ public class MatchesConstructTest {
 
         // Verify
         verify(regexService, times(1)).matches(any());
-        verify(regexService, times(1)).getMatcher(regexValue, valueValue, timeoutValue * 1000);
+        verify(regexService, times(1)).getMatcher(regexValue, valueValue, timeoutValue);
 
         // Assert
         Assert.assertEquals(result.getBooleanValue(), returnValue);
@@ -87,18 +87,17 @@ public class MatchesConstructTest {
         MetaExpression regex = mock(MetaExpression.class);
         when(regex.getStringValue()).thenReturn(regexValue);
 
-        int timeoutValue = 10;
         MetaExpression timeout = mock(MetaExpression.class);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         Exception returnValue = new PatternSyntaxException(regexValue, regexValue, timeoutValue);
         RegexService regexService = mock(RegexService.class);
-        when(regexService.getMatcher(regexValue, valueValue, timeoutValue * 1000)).thenThrow(returnValue);
+        when(regexService.getMatcher(regexValue, valueValue, timeoutValue)).thenThrow(returnValue);
         MatchesConstruct.process(value, regex, timeout, regexService);
 
         // Verify
         verify(regexService, times(1)).matches(any());
-        verify(regexService, times(1)).getMatcher(regexValue, valueValue, timeoutValue * 1000);
+        verify(regexService, times(1)).getMatcher(regexValue, valueValue, timeoutValue);
     }
 
     /**
@@ -119,17 +118,16 @@ public class MatchesConstructTest {
         MetaExpression regex = mock(MetaExpression.class);
         when(regex.getStringValue()).thenReturn(regexValue);
 
-        int timeoutValue = 10;
         MetaExpression timeout = mock(MetaExpression.class);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         Exception returnValue = new IllegalArgumentException();
         RegexService regexService = mock(RegexService.class);
-        when(regexService.getMatcher(regexValue, valueValue, timeoutValue * 1000)).thenThrow(returnValue);
+        when(regexService.getMatcher(regexValue, valueValue, timeoutValue)).thenThrow(returnValue);
         MatchesConstruct.process(value, regex, timeout, regexService);
 
         // Verify
         verify(regexService, times(1)).matches(any());
-        verify(regexService, times(1)).getMatcher(regexValue, valueValue, timeoutValue * 1000);
+        verify(regexService, times(1)).getMatcher(regexValue, valueValue, timeoutValue);
     }
 }
