@@ -25,7 +25,7 @@ Note that the result will be a LIST. The first item contains the entire string v
 
 Note that the escape character "\" needs to be escaped.
 
-Optionally `timeout` can be provided in seconds, the default value is 5 seconds. Set `timeout` to zero to let the function run without timeout. This should only be altered when dealing with large source documents. The `timeout` is there to protect the system from hanging on invalid expressions.
+Optionally `timeout` can be provided in milliseconds, the default value is 5000 milliseconds. Set `timeout` to zero to let the function run without timeout. This should only be altered when dealing with large source documents. The `timeout` is there to protect the system from hanging on invalid expressions.
 
 See the regular expressions page for more about regular expression support in Xill IDE.
     </description>
