@@ -143,6 +143,7 @@ public class SettingsDialog extends FXMLDialog {
         Platform.runLater(() -> FXController.hotkeys.getAllTextFields(getScene()).forEach(this::setShortcutHandler));
 
         loadPluginInfo();
+        setMinHeight(500);
     }
 
     private void loadPluginInfo() {
