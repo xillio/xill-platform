@@ -576,7 +576,7 @@ public class SettingsDialog extends FXMLDialog {
                 setGraphic(null);
             } else if (item.url.get().isEmpty()) {
                 // No url
-                setGraphic(new Text(item.getVendor()));
+                setGraphic(new Label(item.getVendor()));
             } else {
                 Hyperlink hyperlink = new Hyperlink(item.getVendor());
                 hyperlink.setOnAction(e -> openUrl(item.getUrl()));

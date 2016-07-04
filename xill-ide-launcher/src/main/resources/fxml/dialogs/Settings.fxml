@@ -863,7 +863,7 @@
                                                                                         property="version"/>
                                                                             </cellValueFactory>
                                                                         </TableColumn>
-                                                                        <TableColumn text="Creator" fx:id="creatorColumn"/>
+                                                                        <TableColumn text="Creator" fx:id="creatorColumn" styleClass="creatorColumn"/>
                                                                     </columns>
                                                                     <items>
                                                                         <FXCollections
