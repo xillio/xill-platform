@@ -25,11 +25,15 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.jar.Manifest;
 
 /**
  * This class represents the base for all Xill plugins.
@@ -39,6 +43,7 @@ public abstract class XillPlugin extends AbstractModule implements AutoCloseable
     private final List<Construct> constructs = new ArrayList<>();
     private final String defaultName;
     private boolean loadingConstructs = false;
+    private String vendorUrl = null;
     @Inject
     private Injector injector;
 
@@ -66,6 +71,7 @@ public abstract class XillPlugin extends AbstractModule implements AutoCloseable
      * Gets a construct from this package.
      *
      * @param name the name of the construct
+     *
      * @return the construct or null if none was found for the provided name
      */
     public final Construct getConstruct(final String name) {
@@ -91,6 +97,7 @@ public abstract class XillPlugin extends AbstractModule implements AutoCloseable
      * Adds a construct to the package.
      *
      * @param construct the construct to add
+     *
      * @throws IllegalArgumentException when a construct with the same name already exists
      */
     protected final void add(final Construct construct) throws IllegalArgumentException {
@@ -108,6 +115,7 @@ public abstract class XillPlugin extends AbstractModule implements AutoCloseable
      * Adds constructs to the package.
      *
      * @param constructs the constructs to add the the list
+     *
      * @throws IllegalArgumentException when a construct with the same name already exists
      */
     protected final void add(final Construct... constructs) throws IllegalArgumentException {
@@ -123,6 +131,7 @@ public abstract class XillPlugin extends AbstractModule implements AutoCloseable
      * Adds a list of constructs to the package.
      *
      * @param constructs the constructs to add to the list
+     *
      * @throws IllegalArgumentException when a construct with the same name already exists
      */
     protected final void add(final Collection<Construct> constructs) throws IllegalArgumentException {
@@ -154,8 +163,56 @@ public abstract class XillPlugin extends AbstractModule implements AutoCloseable
      *
      * @return the version of the package
      */
-    public String getVersion() {
-        return getClass().getPackage().getImplementationVersion();
+    public Optional<String> getVersion() {
+        if (getClass().isAnnotationPresent(PluginVersion.class)) {
+            return Optional.of(getClass().getAnnotation(PluginVersion.class).value());
+        }
+        // No version override found. Defaulting to manifest value
+        return Optional.ofNullable(getClass().getPackage().getImplementationVersion());
+    }
+
+    /**
+     * Returns the vendor of the package.
+     *
+     * @return the vendor of the package
+     */
+    public Optional<String> getVendor() {
+        if (getClass().isAnnotationPresent(PluginVendor.class)) {
+            return Optional.of(getClass().getAnnotation(PluginVendor.class).value());
+        }
+        // No vendor override found. Defaulting to manifest value
+        return Optional.ofNullable(getClass().getPackage().getImplementationVendor());
+    }
+
+    public Optional<String> getVendorUrl() {
+        if (vendorUrl == null) {
+            if (getClass().isAnnotationPresent(PluginVendor.class)) {
+                String value = getClass().getAnnotation(PluginVendor.class).url();
+                if (!value.isEmpty()) {
+                    vendorUrl = value;
+                }
+            } else {
+                // No vendor override found. Defaulting to manifest value
+                vendorUrl = readFromManifest("Vendor-Url");
+            }
+        }
+        return Optional.ofNullable(vendorUrl);
+    }
+
+    private String readFromManifest(String key) {
+        if (getClass().getClassLoader() instanceof URLClassLoader) {
+            URLClassLoader cl = (URLClassLoader) getClass().getClassLoader();
+            URL url = cl.findResource("META-INF/MANIFEST.MF");
+            if (url != null) {
+                try (InputStream stream = url.openStream()) {
+                    Manifest manifest = new Manifest(stream);
+                    return manifest.getMainAttributes().getValue(key);
+                } catch (IOException e) {
+                    LOGGER.error("Failed to get " + key + " from manifest", e);
+                }
+            }
+        }
+        return null;
     }
 
     @Override

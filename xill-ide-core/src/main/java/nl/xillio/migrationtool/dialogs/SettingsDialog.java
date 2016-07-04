@@ -16,6 +16,8 @@
 package nl.xillio.migrationtool.dialogs;
 
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -26,12 +28,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Window;
 import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.EulaUtils;
+import nl.xillio.migrationtool.Loader;
 import nl.xillio.migrationtool.gui.FXController;
+import nl.xillio.plugins.XillPlugin;
 import nl.xillio.xill.util.settings.Settings;
 import nl.xillio.xill.util.settings.SettingsHandler;
 import org.slf4j.Logger;
@@ -42,6 +47,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Dialog contains all configurable Xill IDE options and allows to change them
@@ -97,6 +103,10 @@ public class SettingsDialog extends FXMLDialog {
     @FXML
     private Tab licenseTab;
     @FXML
+    private TableView<PluginData> pluginsTable;
+    @FXML
+    private TableColumn<PluginData, PluginData> creatorColumn;
+    @FXML
     private Label lblLicenseType, lblLicensedTo, lblLicenseContactName, lblLicenseContactEmail,
             lblLicenseDateIssued, lblLicenseExpiryDate, lblLicenseModules;
 
@@ -132,6 +142,14 @@ public class SettingsDialog extends FXMLDialog {
 
         Platform.runLater(() -> FXController.hotkeys.getAllTextFields(getScene()).forEach(this::setShortcutHandler));
 
+        loadPluginInfo();
+    }
+
+    private void loadPluginInfo() {
+        creatorColumn.setCellValueFactory(param -> new SimpleObjectProperty<>(param.getValue()));
+        creatorColumn.setCellFactory(param -> new CreatorCell());
+        java.util.List<PluginData> data = Loader.getXill().getPlugins().stream().map(PluginData::new).collect(Collectors.toList());
+        pluginsTable.getItems().setAll(data);
     }
 
     private void setSize() {
@@ -481,6 +499,100 @@ public class SettingsDialog extends FXMLDialog {
 
         public boolean isValid() {
             return this.valid;
+        }
+    }
+
+    /**
+     * This class represents the metadata about plugins displayed in the about tab.
+     *
+     * @author Thomas Biesaart
+     * @since 3.4.0
+     */
+    public static class PluginData {
+        private final SimpleStringProperty name = new SimpleStringProperty(this, "name");
+        private final SimpleStringProperty version = new SimpleStringProperty(this, "version");
+        private final SimpleStringProperty vendor = new SimpleStringProperty(this, "vendor");
+        private final SimpleStringProperty url = new SimpleStringProperty(this, "url");
+
+        public PluginData(XillPlugin xillPlugin) {
+            name.set(xillPlugin.getName());
+            version.set(xillPlugin.getVersion().orElse("-"));
+            vendor.set(xillPlugin.getVendor().orElse("-"));
+            url.setValue(xillPlugin.getVendorUrl().orElse(""));
+        }
+
+        public String getName() {
+            return name.get();
+        }
+
+        public SimpleStringProperty nameProperty() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name.set(name);
+        }
+
+        public String getVersion() {
+            return version.get();
+        }
+
+        public SimpleStringProperty versionProperty() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version.set(version);
+        }
+
+        public String getVendor() {
+            return vendor.get();
+        }
+
+        public SimpleStringProperty vendorProperty() {
+            return vendor;
+        }
+
+        public void setVendor(String vendor) {
+            this.vendor.set(vendor);
+        }
+
+        public String getUrl() {
+            return url.get();
+        }
+
+        public SimpleStringProperty urlProperty() {
+            return url;
+        }
+    }
+
+    private class CreatorCell extends TableCell<PluginData, PluginData> {
+
+        @Override
+        protected void updateItem(PluginData item, boolean empty) {
+            super.updateItem(item, empty);
+
+            if (empty) {
+                setGraphic(null);
+            } else if (item.url.get().isEmpty()) {
+                // No url
+                setGraphic(new Text(item.getVendor()));
+            } else {
+                Hyperlink hyperlink = new Hyperlink(item.getVendor());
+                hyperlink.setOnAction(e -> openUrl(item.getUrl()));
+                setGraphic(hyperlink);
+            }
+        }
+
+        private void openUrl(String url) {
+            if (!Desktop.isDesktopSupported()) {
+                return;
+            }
+            try {
+                Desktop.getDesktop().browse(new URI(url));
+            } catch (IOException | URISyntaxException | UnsupportedOperationException e) {
+                LOGGER.error("Failed to open url in browser", e);
+            }
         }
     }
 }
