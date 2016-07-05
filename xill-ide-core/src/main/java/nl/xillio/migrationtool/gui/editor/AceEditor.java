@@ -640,6 +640,15 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
         return ((JSObject) token).getMember("value").toString();
     }
 
+    /**
+     * Auto-detect and set the editor mode based on the path.
+     *
+     * @param path the path to detect the mode for
+     */
+    public void autoDetectMode(String path) {
+        executeJS("editor.session.setMode(modelist.getModeForPath(\"" + path + "\").mode);");
+    }
+
     ////////////////// SEARCH BAR //////////////////
     private ReplaceBar replaceBar;
     private int occurrences = 0;
