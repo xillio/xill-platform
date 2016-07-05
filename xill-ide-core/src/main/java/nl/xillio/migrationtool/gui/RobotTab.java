@@ -463,32 +463,26 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
      */
     public void runRobot() throws XillParsingException {
         // Read the current setting in the configuration
-        boolean autoSaveBotBeforeRun = Boolean.valueOf(settings.simple().get(Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun));
+        boolean autoSaveBotBeforeRun = Boolean.parseBoolean(settings.simple().get(Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun));
 
         if (autoSaveBotBeforeRun) {
+            // Check if the content is unsaved, show the confirmation dialog.
             if (editorPane.getDocumentState().getValue() == DocumentState.CHANGED) {
-                // If true, show the confirmation dialog
                 Alert confirmationDialog = new Alert(AlertType.CONFIRMATION);
                 confirmationDialog.setTitle("Do you want to save and run the robot?");
-                // This enables xillio icon to be displayed in the upper left corner
+                // This enables Xillio icon to be displayed in the upper left corner
                 confirmationDialog.initOwner(editorPane.getScene().getWindow());
 
                 // Compose the dialog pane
                 DialogPane dp = new DialogPane();
-
                 VBox checkBoxContainer = new VBox();
 
                 Label l = new Label("The robot " + currentRobot.getPath().getName() + " needs to be saved before running. Do you want to continue?");
                 CheckBox cb = new CheckBox("Don't ask me again.");
                 cb.addEventHandler(ActionEvent.ACTION, event -> {
-                    boolean currentSettingValue = Boolean.valueOf(settings.simple().get(Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun));
-                    if (currentSettingValue) {
-                        settings.simple().save(Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun, false);
-                    } else {
-                        settings.simple().save(Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun, true);
-                    }
+                    boolean currentSettingValue = Boolean.parseBoolean(settings.simple().get(Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun));
+                    settings.simple().save(Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun, !currentSettingValue);
                 });
-
                 checkBoxContainer.getChildren().addAll(l, cb);
 
                 dp.setContent(checkBoxContainer);
@@ -504,8 +498,8 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
                 // Process the result
                 if (result.get() == ButtonType.OK) {
                     autoSaveAndRunRobot();
-                } else if (result.get() == ButtonType.CANCEL) {
-                    editorPane.getControls().stop();
+                } else {
+                    return;
                 }
             } else {
                 autoSaveAndRunRobot();
