@@ -16,15 +16,15 @@
 package nl.xillio.migrationtool.gui;
 
 import com.sun.javafx.scene.control.behavior.CellBehaviorBase;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import com.sun.javafx.scene.control.skin.TableViewSkin;
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -32,26 +32,29 @@ import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
-import javafx.util.Duration;
 import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.elasticconsole.Counter;
 import nl.xillio.migrationtool.elasticconsole.ESConsoleClient;
 import nl.xillio.migrationtool.elasticconsole.ESConsoleClient.LogType;
+import nl.xillio.migrationtool.elasticconsole.ESDataProvider;
 import nl.xillio.migrationtool.elasticconsole.LogEntry;
+import nl.xillio.migrationtool.elasticconsole.filters.KeywordFilter;
+import nl.xillio.migrationtool.elasticconsole.filters.LogTypeFilter;
+import nl.xillio.migrationtool.elasticconsole.filters.RegexFilter;
+import nl.xillio.migrationtool.virtuallist.Filter;
+import nl.xillio.migrationtool.virtuallist.VirtualObservableList;
 import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.preview.Searchable;
-import nl.xillio.xill.util.HotkeysHandler.Hotkeys;
 import nl.xillio.xill.util.settings.Settings;
 import org.slf4j.Logger;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+
+import static nl.xillio.migrationtool.elasticconsole.ESConsoleClient.LogType.*;
+import static nl.xillio.xill.util.HotkeysHandler.Hotkeys.*;
 
 /**
  * This pane displays the console log stored in elasticsearch
@@ -59,18 +62,11 @@ import java.util.Map;
 public class ConsolePane extends AnchorPane implements Searchable, EventHandler<KeyEvent>, RobotTabComponent {
 
     private static final Logger LOGGER = Log.get();
-    // Log entry lists. Master contains everything, filtered contains only selected entries.
-    private final ObservableList<LogEntry> masterLog = FXCollections.observableArrayList();
-    private final FilteredList<LogEntry> filteredLog = new FilteredList<>(masterLog, e -> true);
-    // Updating the console
-    private final Timeline updateTimeline;
-    private final int maxEntries = 1000; // the number of lines in one "page"
-    private final Timeline sliderTimeline; // update cycle for slider changes
-    // Time format
-    private final DateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static int LOGCACHESIZE = 500;     // We need a sufficient large number so that the UI thread can keep up
+                                                // with the database but not so big it becomes too heavy on memory
+
     // Filters
-    private final Map<LogType, Boolean> filters = new HashMap<>(LogType.values().length);
-    private final Map<LogType, Integer> count = new Counter<>();
+    private final List<Filter> filters = new LinkedList<>();
     @FXML
     private SearchBar apnConsoleSearchBar;
     @FXML
@@ -85,8 +81,6 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
     private ToggleButton tbnToggleLogsInfo;
     @FXML
     private ToggleButton tbnToggleLogsDebug;
-
-    // private Robot robot;
     @FXML
     private ToggleButton tbnToggleLogsWarn;
     @FXML
@@ -101,17 +95,16 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
     private Button btnNavigateForward;
     @FXML
     private Slider sldNavigation;
-    private int startEntry = 0; // first entry to show
-    private int entriesCount = 0; // number of total entries in ES
-    private boolean updateSlider = true; // if changes on slider value has to invoke updateLog()
-    private boolean sliderChanged = false; // if slider value has changed from outside - because of some user activity
-    private RobotTab tab;
-    /* Searching */
-    private boolean searchRegExp = false;
+    // Log entry lists. Master contains everything, filtered contains only selected entries.
+    private VirtualObservableList<LogEntry> masterLog;
     private String searchNeedle = "";
+    private boolean searchRegExp = true;
+    private boolean searchCaseSensitive = true;
+    private Counter count = new Counter<LogType>();
+    private RobotTab tab;
 
     /**
-     * Creates and initialize a ConsolePane.
+     * Create an initialize a ConsolePane
      */
     public ConsolePane() {
         try {
@@ -128,18 +121,6 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
         apnConsoleSearchBar.setSearchable(this);
         apnConsoleSearchBar.setButton(tbnConsoleSearch, 1);
 
-        // Console updater timeline
-        updateTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateLog(Scroll.TOTALEND, false)));
-
-        // Log updater - when some slider changes happen
-        sliderTimeline = new Timeline(new KeyFrame(Duration.millis(1000), e -> {
-            if (this.sliderChanged) {
-                Platform.runLater(() -> this.updateLog(Scroll.START, true));
-            }
-        }));
-        sliderTimeline.setCycleCount(Timeline.INDEFINITE);
-        sliderTimeline.play();
-
         // Set the cell factories
         DragSelectionCellFactory fac = new DragSelectionCellFactory();
         colLogMessage.setCellFactory(fac);
@@ -147,9 +128,9 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
         colLogType.setCellFactory(fac);
 
         // Set the column cell value factories
-        colLogTime.setCellValueFactory(new PropertyValueFactory<LogEntry, String>("showTime"));
-        colLogType.setCellValueFactory(new PropertyValueFactory<LogEntry, String>("showType"));
-        colLogMessage.setCellValueFactory(new PropertyValueFactory<LogEntry, String>("line"));
+        colLogTime.setCellValueFactory(new PropertyValueFactory<>("showTime"));
+        colLogType.setCellValueFactory(new PropertyValueFactory<>("showType"));
+        colLogMessage.setCellValueFactory(new PropertyValueFactory<>("line"));
 
         // Restrain column resizing
         tblConsoleOut.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -162,21 +143,14 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
 
         // Add log filters
         addFilterListeners();
-        tblConsoleOut.setItems(filteredLog);
+        // Assign empty list to table, data will be set later!
+        tblConsoleOut.setItems(FXCollections.observableArrayList());
 
-        // Update the filter labels
+        // Update the filters labels
         resetLabels();
         updateLabels();
 
         addEventHandler(KeyEvent.KEY_PRESSED, this);
-
-        // Listener for slider value changes
-        sldNavigation.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (this.updateSlider) {
-                this.startEntry = (this.entriesCount * newValue.intValue()) / 100;
-                this.sliderChanged = true;
-            }
-        });
 
     }
 
@@ -195,9 +169,42 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
     }
 
     @Override
+    public void initialize(final RobotTab tab) {
+        this.tab = tab;
+        if (FXController.settings.simple().getBoolean(Settings.SETTINGS_GENERAL, Settings.OpenBotWithCleanConsole)) {
+            ESConsoleClient.getInstance().clearLog(getRobotID().toString());
+        }
+
+        // On robot start: update the log and scroll to the end
+        getDebugger().getOnRobotStart().addListener(start -> updateLog(Scroll.TOTAL_END));
+
+        // Fix for slower windows systems: add extra delay and then update one last time on robot stop
+        getDebugger().getOnRobotStop().addListener(stop -> {
+            Thread finalUpdate = new Thread(()-> {
+                try{Thread.sleep(1000);}catch(InterruptedException e){}
+                updateLog(Scroll.NONE);
+            }, "ConsolePane#onRobotStopRefreshConsole");
+            finalUpdate.setDaemon(true);
+            finalUpdate.start();
+        });
+
+        // Update the log after a log event has occurred
+        ESConsoleClient.getLogEvent(getRobotID()).addListener(msg -> {
+            updateLog(Scroll.NONE);
+        });
+
+        // Initialize the master log
+        updateFilters();
+        masterLog = new VirtualObservableList<>(new ESDataProvider(getRobotID().toString()), LOGCACHESIZE, filters);
+        tblConsoleOut.setItems(masterLog);
+
+    }
+
+
+    @Override
     public void handle(final KeyEvent e) {
         // Copy
-        if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(Hotkeys.COPY)).match(e) && tblConsoleOut.isFocused()) {
+        if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(COPY)).match(e) && tblConsoleOut.isFocused()) {
             // Get all selected entries
             StringBuilder text = new StringBuilder();
             ObservableList<LogEntry> selected = tblConsoleOut.getSelectionModel().getSelectedItems();
@@ -213,12 +220,12 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
             e.consume();
         }
         // Clear
-        else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(Hotkeys.CLEARCONSOLE)).match(e)) {
+        else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(CLEARCONSOLE)).match(e)) {
             clear();
             e.consume();
         }
         // Search
-        else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(Hotkeys.FIND)).match(e)) {
+        else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(FIND)).match(e)) {
             apnConsoleSearchBar.open(1);
             e.consume();
         }
@@ -231,20 +238,6 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
         buttonClearConsole();
     }
 
-    @FXML
-    private void buttonNavigateBack() {
-        this.startEntry -= this.maxEntries;
-        if (this.startEntry < 0) {
-            this.startEntry = 0;
-        }
-        this.updateLog(Scroll.END, false);
-    }
-
-    @FXML
-    private void buttonNavigateForward() {
-        this.startEntry += this.maxEntries;
-        this.updateLog(Scroll.START, false);
-    }
 
     @FXML
     private void buttonClearConsole() {
@@ -256,154 +249,133 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
 
         // Reset all counts
         resetLabels();
-        updateLog(Scroll.CLEAR, false);
+
     }
 
-    private void updateLog(Scroll scroll, boolean fromSlider) {
-        Platform.runLater(() -> {
-            // Clear the log
-            masterLog.clear();
+    private volatile boolean isUpdating = false;
+    
+    private void updateLog(Scroll scroll) {
+        if (masterLog != null && !isUpdating) {
+            isUpdating = true;
 
-            // Reset the filter counts
-            resetLabels();
+            Thread thread = new Thread(() -> {
 
-            if (scroll == Scroll.CLEAR) {
-                // this explicit variant is here because if you click Clear then the ES starts to remove all items,
-                // but when runtime come here, ES still can have some values "not deleted yet" and
-                // because the clear operation on ES is asynchronous
-                this.startEntry = 0;
-                this.entriesCount = 0;
-                tbnLogsCount.setText("0-0/0");
-                updateLabels();
-                return;
-            }
+                // Short delay to prevent flooding
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {}
 
-            ESConsoleClient.SearchFilter filter = ESConsoleClient.getInstance().createSearchFilter(searchNeedle, this.searchRegExp, this.filters);
+                // Set filters & force update of the log table
+                masterLog.setFilters(filters);
 
-            this.entriesCount = ESConsoleClient.getInstance().countFilteredEntries(getRobotID().toString(), filter);
+                int lastVisibleRow = getVisibleRange(tblConsoleOut)[1];
+                int targetPosition = lastVisibleRow + 1 == masterLog.size() ? -1 : lastVisibleRow;
+                masterLog.update(targetPosition);
 
-            int lastEntry = this.startEntry + this.maxEntries - 1;
-            if ((this.entriesCount <= lastEntry) || (scroll == Scroll.TOTALEND)) {
-                lastEntry = this.entriesCount - 1;
-                this.startEntry = lastEntry - this.maxEntries + 1;
-                if (this.startEntry < 0) {
-                    this.startEntry = 0;
-                }
-            }
+                // Update counters & scroll log
+                Platform.runLater(() -> {
+                    // When the log starts empty, the scrollPanel does not properly sticky the
+                    // bottom location of the log. Hence, we track the log size manually.
+                    long initialSize = masterLog.size();
 
-            if (!fromSlider) {
-                this.updateSlider = false;
-                if (this.entriesCount == 0) {
-                    this.sldNavigation.setValue(0);
-                } else {
-                    this.sldNavigation.setValue((this.startEntry * 100) / this.entriesCount);
-                }
-                this.updateSlider = true;
-            }
+                    // Update counters
+                    if (masterLog.size() > 0) {
+                        count = (Counter<LogType>) masterLog.getFilterCounts();
+                    }
 
-            if (this.entriesCount == 0) {
-                tbnLogsCount.setText("0-0/0");
-            } else {
-                tbnLogsCount.setText(String.format("%1$d-%2$d/%3$d", this.startEntry + 1, lastEntry + 1, this.entriesCount));
-            }
+                    // Scroll to bottom when explicitly asked to, or when log started empty.
+                    if (initialSize < 10 || scroll == Scroll.END || scroll == Scroll.TOTAL_END) {
+                        tblConsoleOut.scrollTo(masterLog.size() - 1);
+                    } else if (scroll == Scroll.START) {
+                        tblConsoleOut.scrollTo(0);
+                    }
 
-            List<Map<String, Object>> entries = ESConsoleClient.getInstance().getFilteredEntries(
-                    getRobotID().toString(), this.startEntry, lastEntry, filter);
+                    updateLabels();
 
-            for (Map<String, Object> entry : entries) {
-                // Get all properties
-                String time = timeFormat.format(new Date((long) entry.get("timestamp")));
-                LogType type = LogType.valueOf(entry.get("type").toString().toUpperCase());
-                addTableEntry(time, type, getMessageText(entry.get("message")), false);
-            }
+                    isUpdating = false;
+                });
 
-            // Do scroll
-            if ((scroll == Scroll.END) || (scroll == Scroll.TOTALEND)) {
-                tblConsoleOut.scrollTo(tblConsoleOut.getItems().size() - 1);
-            } else if (scroll == Scroll.START) {
-                tblConsoleOut.scrollTo(0);
-            }
 
-            updateLabels();
-            this.sliderChanged = false;
-        });
-    }
-
-    private String getMessageText(final Object message) {
-        if (message == null) {// This is protection against when message is null, otherwise the console would stop working..
-            LOGGER.error("Null message passed to console!");
-            return "null";
-        } else {
-            return message.toString();
+            }, "ConsolePane#updateLog");
+            thread.setDaemon(true);
+            thread.start();
         }
     }
 
-    private void addTableEntry(final String time, final LogType type, final String line, final boolean newLine) {
-        // Add the entry to the master log and add to the count
-        masterLog.add(new LogEntry(time, type, line, newLine));
-        if (!newLine) {
-            count.put(type, count.get(type) + 1);
-        }
-    }
+    /* Filters */
 
     private void addFilterListeners() {
-        // Add default filters
-        filters.put(LogType.INFO, tbnToggleLogsInfo.isSelected());
-        filters.put(LogType.DEBUG, tbnToggleLogsDebug.isSelected());
-        filters.put(LogType.WARN, tbnToggleLogsWarn.isSelected());
-        filters.put(LogType.ERROR, tbnToggleLogsError.isSelected());
-        filters.put(LogType.FATAL, tbnToggleLogsError.isSelected());
-
-        // Add listeners for the toggle filter buttons
+        // Add listeners for the toggle filters buttons
         tbnToggleLogsInfo.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue != newValue) {
-                filters.put(LogType.INFO, newValue);
-                updateFilters();
-            }
+            updateFilters();
         });
         tbnToggleLogsDebug.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue != newValue) {
-                filters.put(LogType.DEBUG, newValue);
-                updateFilters();
-            }
+            updateFilters();
         });
         tbnToggleLogsWarn.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue != newValue) {
-                filters.put(LogType.WARN, newValue);
-                updateFilters();
-            }
+            updateFilters();
         });
         tbnToggleLogsError.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue != newValue) {
-                filters.put(LogType.ERROR, newValue);
-                filters.put(LogType.FATAL, newValue);
-                updateFilters();
-            }
+            updateFilters();
         });
     }
 
     private void updateFilters() {
-        this.updateLog(Scroll.NONE, false);
+        // Clear current filters
+        filters.clear();
+
+        // Add log type filters
+        if (tbnToggleLogsInfo.isSelected()) {
+            filters.add(new LogTypeFilter(INFO));
+        }
+        if (tbnToggleLogsDebug.isSelected()) {
+            filters.add(new LogTypeFilter(DEBUG));
+        }
+        if (tbnToggleLogsWarn.isSelected()) {
+            filters.add(new LogTypeFilter(WARN));
+        }
+        if (tbnToggleLogsError.isSelected()) {
+            filters.add(new LogTypeFilter(ERROR));
+            filters.add(new LogTypeFilter(FATAL));
+        }
+
+        // Add text filters
+        if (!"".equals(searchNeedle)) {
+            if (searchRegExp) {
+                filters.add(new RegexFilter(searchNeedle, searchCaseSensitive));
+            } else {
+                filters.add(new KeywordFilter(searchNeedle, searchCaseSensitive));
+            }
+        }
+
+        // Update the log
+        //updateTimeline.play();
+        updateLog(Scroll.NONE);
     }
+
+    /* Filter labels */
 
     private void resetLabels() {
         count.clear();
+        updateLabels();
     }
 
     private void updateLabels() {
-        // Set all labels for the filter buttons
-        tbnToggleLogsInfo.setText(count.get(LogType.INFO).toString());
-        tbnToggleLogsDebug.setText(count.get(LogType.DEBUG).toString());
-        tbnToggleLogsWarn.setText(count.get(LogType.WARN).toString());
-        tbnToggleLogsError.setText(Integer.toString(count.get(LogType.ERROR) + count.get(LogType.FATAL)));
+        // Set all labels for the filters buttons
+        tbnToggleLogsInfo.setText(count.get(INFO).toString());
+        tbnToggleLogsDebug.setText(count.get(DEBUG).toString());
+        tbnToggleLogsWarn.setText(count.get(WARN).toString());
+        tbnToggleLogsError.setText(Integer.toString(count.get(ERROR) + count.get(FATAL)));
     }
+
 
     @Override
     public void searchPattern(final String pattern, final boolean caseSensitive) {
-        this.searchNeedle = pattern;
-        this.searchRegExp = true;
-        this.startEntry = 0;
-        this.updateLog(Scroll.START, false);
+        searchNeedle = pattern;
+        searchRegExp = true;
+        searchCaseSensitive = caseSensitive;
+
+        updateFilters();
 
         // Select the first line.
         select(0);
@@ -411,10 +383,11 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
 
     @Override
     public void search(final String needle, final boolean caseSensitive) {
-        this.searchNeedle = needle;
-        this.searchRegExp = false;
-        this.startEntry = 0;
-        this.updateLog(Scroll.START, false);
+        searchNeedle = needle;
+        searchRegExp = false;
+        searchCaseSensitive = caseSensitive;
+
+        updateFilters();
 
         // Select the first line.
         Platform.runLater(() -> select(0));
@@ -443,23 +416,14 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
 
     @Override
     public void clearSearch() {
-        this.searchNeedle = "";
-        this.updateFilters(); // show all lines (without searching affected)
+        searchNeedle = "";
+        updateFilters(); // show all lines (without searching affected)
         tblConsoleOut.getSelectionModel().clearSelection();
+
+        updateFilters();
     }
 
     /* Drag selection */
-
-    @Override
-    public void initialize(final RobotTab tab) {
-        this.tab = tab;
-        if (new Boolean(FXController.settings.simple().get(Settings.SETTINGS_GENERAL, Settings.OpenBotWithCleanConsole)).booleanValue()) {
-            ESConsoleClient.getInstance().clearLog(getRobotID().toString());
-        }
-        getDebugger().getOnRobotStart().addListener(start -> updateLog(Scroll.TOTALEND, false));
-        ESConsoleClient.getLogEvent(getRobotID()).addListener(msg -> updateTimeline.play());
-        updateTimeline.play();
-    }
 
     private RobotID getRobotID() {
         return tab.getProcessor().getRobotID();
@@ -470,7 +434,7 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
     }
 
     public enum Scroll {
-        NONE, START, END, TOTALEND, CLEAR
+        NONE, START, END, TOTAL_END, CLEAR
     }
 
     /**
@@ -488,7 +452,7 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
      */
     private class DragSelectionCell extends TableCell<LogEntry, String> {
 
-        public DragSelectionCell() {
+        DragSelectionCell() {
             // Set event handlers
             setOnDragDetected(new DragDetectedEventHandler(this));
             setOnMouseDragEntered(new DragEnteredEventHandler(this));
@@ -507,19 +471,29 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
          */
         public void createText() {
             Text text = new Text();
-            text.wrappingWidthProperty().bind(this.widthProperty());
-            text.textProperty().bind(this.itemProperty());
+            text.wrappingWidthProperty().bind(widthProperty());
+            text.textProperty().bind(itemProperty());
 
             setGraphic(text);
+
+            setMaxHeight(text.getLayoutBounds().getHeight());
+            setAlignment(Pos.TOP_LEFT);
         }
 
         /**
          * Create the contents of this cell as {@link TextArea}, useful for selecting text partially
          */
         public void createTextArea() {
-            TextArea textArea = new TextArea();
-            textArea.setWrapText(true);
-            textArea.textProperty().bind(this.itemProperty());
+            TextInputControl textArea;
+            if(getItem().indexOf('\n') > 0) {
+                TextArea ta = new TextArea();
+                ta.setWrapText(true);
+                textArea = ta;
+            } else {
+                textArea = new TextField();
+            }
+
+            textArea.textProperty().bind(itemProperty());
             // Keep the same height as before
             textArea.setPrefHeight(getHeight());
 
@@ -540,7 +514,7 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
     private class DragDetectedEventHandler implements EventHandler<MouseEvent> {
         private final TableCell<LogEntry, String> tableCell;
 
-        public DragDetectedEventHandler(final TableCell<LogEntry, String> tableCell) {
+        DragDetectedEventHandler(final TableCell<LogEntry, String> tableCell) {
             this.tableCell = tableCell;
         }
 
@@ -554,7 +528,7 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
     private class DragEnteredEventHandler implements EventHandler<MouseDragEvent> {
         private final TableCell<LogEntry, String> tableCell;
 
-        public DragEnteredEventHandler(final TableCell<LogEntry, String> tableCell) {
+        DragEnteredEventHandler(final TableCell<LogEntry, String> tableCell) {
             this.tableCell = tableCell;
         }
 
@@ -568,7 +542,7 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
     private class DoubleClickEventHandler implements EventHandler<MouseEvent> {
         private final DragSelectionCell tableCell;
 
-        public DoubleClickEventHandler(final DragSelectionCell tableCell) {
+        DoubleClickEventHandler(final DragSelectionCell tableCell) {
             this.tableCell = tableCell;
         }
 
@@ -578,5 +552,28 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
                 tableCell.createTextArea();
             }
         }
+    }
+
+    private int[] getVisibleRange(TableView table) {
+        TableViewSkin<?> skin = (TableViewSkin) table.getSkin();
+        if (skin == null) {
+            return new int[] {0, 0};
+        }
+        VirtualFlow<?> flow = (VirtualFlow) skin.getChildren().get(1);
+        int indexFirst;
+        int indexLast;
+        if (flow != null && flow.getFirstVisibleCellWithinViewPort() != null
+                && flow.getLastVisibleCellWithinViewPort() != null) {
+            indexFirst = flow.getFirstVisibleCellWithinViewPort().getIndex();
+            if (indexFirst >= table.getItems().size())
+                indexFirst = table.getItems().size() - 1;
+            indexLast = flow.getLastVisibleCellWithinViewPort().getIndex();
+            if (indexLast >= table.getItems().size())
+                indexLast = table.getItems().size() - 1;
+        } else {
+            indexFirst = 0;
+            indexLast = 0;
+        }
+        return new int[] {indexFirst, indexLast};
     }
 }
