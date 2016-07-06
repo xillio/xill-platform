@@ -68,9 +68,9 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 public class ProjectPane extends AnchorPane implements FolderListener, ListChangeListener<TreeItem<Pair<File, String>>>, EventHandler<Event> {
     // Icons.
-    private static final String newProjectIcon = "M228.734,0C102.41,0,0,102.41,0,228.735C0,355.06,102.41,457.469,228.734,457.469 c126.325,0,228.735-102.409,228.735-228.734C457.47,102.41,355.06,0,228.734,0z M359.268,265.476h-97.326v97.315 c0,16.668-13.506,30.186-30.181,30.186c-16.668,0-30.189-13.518-30.189-30.186v-97.315h-97.309 c-16.674,0-30.192-13.512-30.192-30.187c0-16.674,13.518-30.188,30.192-30.188h97.315v-97.31c0-16.674,13.515-30.183,30.189-30.183 c16.675,0,30.187,13.509,30.187,30.183v97.315h97.314c16.669,0,30.192,13.515,30.192,30.188 C389.46,251.97,375.937,265.476,359.268,265.476z";
-    private static final String newFolderIcon = "M394.42,160.758h-0.916v-42.421c0-14.641-11.916-26.551-26.563-26.551H135.017l-17.209-45.167 c-1.797-4.69-6.289-7.793-11.31-7.793H12.105c-3.227,0-6.312,1.283-8.588,3.57C1.248,44.683-0.023,47.773,0,51.001l0.074,67.335 v227.955c0,14.641,11.916,26.551,26.551,26.551h340.321c0.261,0,0.509-0.07,0.763-0.076h26.717c9.522,0,17.241-7.714,17.241-17.242 V177.991C411.655,168.472,403.942,160.758,394.42,160.758z M369.287,160.758H68.891c-9.52,0-17.236,7.714-17.236,17.239v170.635 H26.614c-1.289,0-2.344-1.053-2.344-2.341V118.266l-0.157-55.23h74.029l17.215,45.164c1.785,4.69,6.289,7.796,11.313,7.796h240.258 c1.295,0,2.347,1.052,2.347,2.341v42.421H369.287z";
-    private static final String newFileIcon = "M327.081,0H90.231c-15.9,0-28.85,12.959-28.85,28.859v412.863c0,15.924,12.95,28.863,28.85,28.863H380.35 c15.911,0,28.855-12.939,28.855-28.863V89.234L327.081,0z M333.891,43.187l35.996,39.118h-35.996V43.187z M384.978,441.723 c0,2.542-2.087,4.629-4.628,4.629H90.231c-2.547,0-4.616-2.087-4.616-4.629V28.859c0-2.548,2.069-4.613,4.616-4.613h219.414v70.181 c0,6.682,5.443,12.099,12.129,12.099h63.198v335.196H384.978z";
+    private static final String NEW_PROJECT_ICON = "M228.734,0C102.41,0,0,102.41,0,228.735C0,355.06,102.41,457.469,228.734,457.469 c126.325,0,228.735-102.409,228.735-228.734C457.47,102.41,355.06,0,228.734,0z M359.268,265.476h-97.326v97.315 c0,16.668-13.506,30.186-30.181,30.186c-16.668,0-30.189-13.518-30.189-30.186v-97.315h-97.309 c-16.674,0-30.192-13.512-30.192-30.187c0-16.674,13.518-30.188,30.192-30.188h97.315v-97.31c0-16.674,13.515-30.183,30.189-30.183 c16.675,0,30.187,13.509,30.187,30.183v97.315h97.314c16.669,0,30.192,13.515,30.192,30.188 C389.46,251.97,375.937,265.476,359.268,265.476z";
+    private static final String NEW_FOLDER_ICON = "M394.42,160.758h-0.916v-42.421c0-14.641-11.916-26.551-26.563-26.551H135.017l-17.209-45.167 c-1.797-4.69-6.289-7.793-11.31-7.793H12.105c-3.227,0-6.312,1.283-8.588,3.57C1.248,44.683-0.023,47.773,0,51.001l0.074,67.335 v227.955c0,14.641,11.916,26.551,26.551,26.551h340.321c0.261,0,0.509-0.07,0.763-0.076h26.717c9.522,0,17.241-7.714,17.241-17.242 V177.991C411.655,168.472,403.942,160.758,394.42,160.758z M369.287,160.758H68.891c-9.52,0-17.236,7.714-17.236,17.239v170.635 H26.614c-1.289,0-2.344-1.053-2.344-2.341V118.266l-0.157-55.23h74.029l17.215,45.164c1.785,4.69,6.289,7.796,11.313,7.796h240.258 c1.295,0,2.347,1.052,2.347,2.341v42.421H369.287z";
+    private static final String NEW_FILE_ICON = "M327.081,0H90.231c-15.9,0-28.85,12.959-28.85,28.859v412.863c0,15.924,12.95,28.863,28.85,28.863H380.35 c15.911,0,28.855-12.939,28.855-28.863V89.234L327.081,0z M333.891,43.187l35.996,39.118h-35.996V43.187z M384.978,441.723 c0,2.542-2.087,4.629-4.628,4.629H90.231c-2.547,0-4.616-2.087-4.616-4.629V28.859c0-2.548,2.069-4.613,4.616-4.613h219.414v70.181 c0,6.682,5.443,12.099,12.129,12.099h63.198v335.196H384.978z";
 
     private static final SettingsHandler settings = SettingsHandler.getSettingsHandler();
     private static final String DEFAULT_PROJECT_NAME = "Samples";
@@ -78,7 +78,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     private static final Logger LOGGER = Log.get();
     private static WatchDir watcher;
 
-    private static Templater TEMPLATER;
+    private static Templater templater;
 
     @FXML
     private TreeView<Pair<File, String>> trvProjects;
@@ -87,23 +87,31 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     private Button btnUpload;
     @FXML
     private Button btnNew;
-
     @FXML
-    private ContextMenu testMenu;
+    private ToggleButton tbnShowAllFiles;
 
+    // File filters.
     private final BotFileFilter robotFileFilter = new BotFileFilter();
+    private final AnyFileFilter anyFileFilter = new AnyFileFilter();
+
     private final TreeItem<Pair<File, String>> root = new TreeItem<>(new Pair<>(new File("."), "Projects"));
     private final List<File> expandedFiles = new ArrayList<>();
     private FXController controller;
 
     // Context menu items.
-    private MenuItem menuCut, menuCopy, menuPaste, menuRename, menuDelete, menuOpenFolder;
+    private MenuItem menuCut;
+    private MenuItem menuCopy;
+    private MenuItem menuPaste;
+    private MenuItem menuRename;
+    private MenuItem menuDelete;
+    private MenuItem menuOpenFolder;
     private List<File> bulkFiles = new ArrayList<>(); // Files to copy or cut.
     private boolean copy = false; // True: copy, false: cut.
 
     // "New" button context menu items.
     private Menu menuNewBotFromTemplate;
-    private MenuItem menuNewFolder, menuNewBot;
+    private MenuItem menuNewFolder;
+    private MenuItem menuNewBot;
 
     /**
      * Initialize UI stuff
@@ -115,7 +123,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             loader.setController(this);
             Node ui = loader.load();
             getChildren().add(ui);
-            TEMPLATER = new Templater();
+            templater = new Templater();
         } catch (IOException e) {
             LOGGER.error("Error loading project pane: " + e.getMessage(), e);
         }
@@ -193,13 +201,13 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     private void addNewButtonContextMenu() {
-        MenuItem menuNewProject = new MenuItem("New project", ProjectPane.createIcon(ProjectPane.newProjectIcon));
+        MenuItem menuNewProject = new MenuItem("New project", ProjectPane.createIcon(ProjectPane.NEW_PROJECT_ICON));
         menuNewProject.setOnAction(e -> newProjectButtonPressed());
 
-        menuNewFolder = new MenuItem("New folder", ProjectPane.createIcon(ProjectPane.newFolderIcon));
+        menuNewFolder = new MenuItem("New folder", ProjectPane.createIcon(ProjectPane.NEW_FOLDER_ICON));
         menuNewFolder.setOnAction(e -> newFolderButtonPressed());
 
-        menuNewBot = new MenuItem("New robot", ProjectPane.createIcon(ProjectPane.newFileIcon));
+        menuNewBot = new MenuItem("New robot", ProjectPane.createIcon(ProjectPane.NEW_FILE_ICON));
         menuNewBot.setOnAction(e -> newBot(null));
 
         menuNewBotFromTemplate = new Menu("New robot from template...");
@@ -215,7 +223,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     public void generateTemplateMenu() {
         menuNewBotFromTemplate.getItems().clear();
         try {
-            TEMPLATER.getTemplateNames().stream().map(MenuItem::new).forEach(menuNewBotFromTemplate.getItems()::add);
+            templater.getTemplateNames().stream().map(MenuItem::new).forEach(menuNewBotFromTemplate.getItems()::add);
             menuNewBotFromTemplate.getItems().forEach(item -> item.setOnAction(event -> newBot(item.getText())));
         } catch (IOException e) {
             MenuItem errorItem = new MenuItem("Error while reading template folder");
@@ -260,7 +268,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         }
     }
 
-    protected void paste(File pasteLoc, List<File> files, boolean copy) {
+    private void paste(File pasteLoc, List<File> files, boolean copy) {
         // Get the directory to paste in.
         final File destDir = pasteLoc.isDirectory() ? pasteLoc : pasteLoc.getParentFile();
 
@@ -391,7 +399,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             AlertDialog alert = new AlertDialog(Alert.AlertType.CONFIRMATION,
                     "Delete",
                     "Are you sure you want to delete " + projectCount + " " + ((projectCount > 1) ? "projects" : "project") + "?" +
-                            ((running) ? "\nOne or more robots are still running, deleting will terminate them." : ""),
+                            (running ? "\nOne or more robots are still running, deleting will terminate them." : ""),
                     ""
             );
 
@@ -471,7 +479,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 model.put("filePath", chosen.getCanonicalPath());
                 model.put("projectName", projectFile.getName());
                 model.put("projectPath", projectFile.getCanonicalPath());
-                TEMPLATER.render(templateFile, model, Paths.get(chosen.toURI()));
+                templater.render(templateFile, model, Paths.get(chosen.toURI()));
                 controller.viewOrOpenRobot(RobotID.getInstance(chosen, projectFile));
             } catch (IOException e) {
                 LOGGER.error("Failed to create robot file.", e);
@@ -836,11 +844,9 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         for (TreeItem<Pair<File, String>> item : root.getChildren()) {
             if (item instanceof ProjectTreeItem) {
                 ProjectTreeItem project = (ProjectTreeItem) item;
-                if (dir.startsWith(project.getValue().getKey().getAbsolutePath())) {
-                    if (event.kind() != ENTRY_MODIFY) {
-                        // The files in project directory has changed (i.e. some file(s) has been removed / renamed / added).
-                        Platform.runLater(() -> selectNewItem(dir, child, project));
-                    }
+                if (dir.startsWith(project.getValue().getKey().getAbsolutePath()) && event.kind() != ENTRY_MODIFY) {
+                    // The files in project directory has changed (i.e. some file(s) has been removed / renamed / added).
+                    Platform.runLater(() -> selectNewItem(dir, child, project));
                 }
             }
         }
@@ -956,103 +962,6 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     /**
-     * A filefilter filtering on the FXController.BOT_EXTENSION extension.
-     */
-    protected class BotFileFilter extends FileFilter implements FilenameFilter {
-        @Override
-        public boolean accept(final File file) {
-            return file.isDirectory() && !file.getName().startsWith(".") || file.getName().endsWith(XillEnvironment.ROBOT_EXTENSION);
-        }
-
-        @Override
-        public String getDescription() {
-            return String.format("Xillio bot script files (*%s)", XillEnvironment.ROBOT_EXTENSION);
-        }
-
-        @Override
-        public boolean accept(final File directory, final String fileName) {
-            return accept(new File(directory, fileName));
-        }
-    }
-
-    private class ProjectTreeItem extends TreeItem<Pair<File, String>> {
-
-        private boolean isLeaf;
-        private boolean isFirstTimeChildren = true;
-        private boolean isFirstTimeLeaf = true;
-
-        public ProjectTreeItem(final File file, final String name) {
-            super(new Pair<>(file, name));
-        }
-
-        @Override
-        public ObservableList<TreeItem<Pair<File, String>>> getChildren() {
-            if (isFirstTimeChildren) {
-                isFirstTimeChildren = false;
-                super.getChildren().setAll(buildChildren(this));
-            }
-            return super.getChildren();
-        }
-
-        @Override
-        public boolean isLeaf() {
-            if (isFirstTimeLeaf) {
-                isFirstTimeLeaf = false;
-                isLeaf = getValue().getKey().isFile();
-            }
-            return isLeaf;
-        }
-
-        public void refresh() {
-            // Update all children.
-            expandedFiles.clear();
-            storeAllExpanded(root);
-            getChildren().setAll(buildChildren(this));
-        }
-
-        /**
-         * Build the children of a tree item.
-         *
-         * @param treeItem The root item to build the children for.
-         * @return A list of tree items that are the children of the given tree item.
-         */
-        private List<TreeItem<Pair<File, String>>> buildChildren(final TreeItem<Pair<File, String>> treeItem) {
-            File f = treeItem.getValue().getKey();
-            List<TreeItem<Pair<File, String>>> children = new ArrayList<>();
-
-            if (f != null && f.isDirectory()) {
-                // Get a list with all files in the directory.
-                File[] files = f.listFiles(robotFileFilter);
-
-                // Sort the list of files.
-                Arrays.sort(files, (o1, o2) -> {
-                    // Put directories above files.
-                    if (o1.isDirectory() && o2.isFile()) {
-                        return -1;
-                    } else if (o1.isFile() && o2.isDirectory()) {
-                        return 1;
-                        // Both are the same type, compare them normally.
-                    } else {
-                        return o1.compareTo(o2);
-                    }
-                });
-
-                // Create tree items from all files, add them to the list
-                for (File file : files) {
-                    ProjectTreeItem sub = new ProjectTreeItem(file, file.getName());
-                    if (expandedFiles.contains(file)) {
-                        sub.setExpanded(true);
-                    }
-                    children.add(sub);
-                }
-            }
-
-            return children;
-        }
-    }
-
-
-    /**
      * store all files that are expanded so they can be expanded when the projecttree is rebuild.
      *
      * @param treeItem the root treeItem to check from
@@ -1148,11 +1057,108 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         return settings.project().getAll().size();
     }
 
+    @FXML
+    private void toggleShowAllFiles() {
+        // Refresh all projects.
+        for (TreeItem<Pair<File, String>> item : root.getChildren()) {
+            if (item instanceof ProjectTreeItem) {
+                ProjectTreeItem project = (ProjectTreeItem) item;
+                project.refresh();
+            }
+        }
+
+        // Set the button label.
+        String tooltipText = "Show " + (tbnShowAllFiles.isSelected() ? "robots only" : "all files");
+        tbnShowAllFiles.getTooltip().setText(tooltipText);
+    }
+
+    /*========== Tree items and cells ==========*/
+
+    /**
+     * A project tree item.
+     */
+    private class ProjectTreeItem extends TreeItem<Pair<File, String>> {
+
+        private boolean isLeaf;
+        private boolean isFirstTimeChildren = true;
+        private boolean isFirstTimeLeaf = true;
+
+        public ProjectTreeItem(final File file, final String name) {
+            super(new Pair<>(file, name));
+        }
+
+        @Override
+        public ObservableList<TreeItem<Pair<File, String>>> getChildren() {
+            if (isFirstTimeChildren) {
+                isFirstTimeChildren = false;
+                super.getChildren().setAll(buildChildren(this));
+            }
+            return super.getChildren();
+        }
+
+        @Override
+        public boolean isLeaf() {
+            if (isFirstTimeLeaf) {
+                isFirstTimeLeaf = false;
+                isLeaf = getValue().getKey().isFile();
+            }
+            return isLeaf;
+        }
+
+        public void refresh() {
+            // Update all children.
+            expandedFiles.clear();
+            storeAllExpanded(root);
+            getChildren().setAll(buildChildren(this));
+        }
+
+        /**
+         * Build the children of a tree item.
+         *
+         * @param treeItem The root item to build the children for.
+         * @return A list of tree items that are the children of the given tree item.
+         */
+        private List<TreeItem<Pair<File, String>>> buildChildren(final TreeItem<Pair<File, String>> treeItem) {
+            File f = treeItem.getValue().getKey();
+            List<TreeItem<Pair<File, String>>> children = new ArrayList<>();
+
+            if (f != null && f.isDirectory()) {
+                // Get a list with all files in the directory.
+                File[] files = f.listFiles(tbnShowAllFiles.isSelected() ? anyFileFilter : robotFileFilter);
+
+                // Sort the list of files.
+                Arrays.sort(files, (o1, o2) -> {
+                    // Put directories above files.
+                    if (o1.isDirectory() && o2.isFile()) {
+                        return -1;
+                    } else if (o1.isFile() && o2.isDirectory()) {
+                        return 1;
+                        // Both are the same type, compare them normally.
+                    } else {
+                        return o1.compareTo(o2);
+                    }
+                });
+
+                // Create tree items from all files, add them to the list
+                for (File file : files) {
+                    ProjectTreeItem sub = new ProjectTreeItem(file, file.getName());
+                    if (expandedFiles.contains(file)) {
+                        sub.setExpanded(true);
+                    }
+                    children.add(sub);
+                }
+            }
+
+            return children;
+        }
+    }
+
     /**
      * A custom tree cell which opens a robot tab on double-click and supports drag&drop.
      */
     private class CustomTreeCell extends TreeCell<Pair<File, String>> implements EventHandler<Event> {
-        private static final String dragOverClass = "drag-over";
+        private static final String DRAG_OVER_CLASS = "drag-over";
+        private static final String CANNOT_OPEN_CLASS = "cannot-open";
 
         public CustomTreeCell() {
             // Subscribe to drag events.
@@ -1174,13 +1180,21 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             }
             this.setText(pair.getValue());
 
+            // Check whether this is a robot file.
+            boolean isRobot = pair.getValue().endsWith(XillEnvironment.ROBOT_EXTENSION);
+
+            // Clear the style and check if this is a file we can open.
+            this.getStyleClass().remove(CANNOT_OPEN_CLASS);
+            if (!robotFileFilter.accept(pair.getKey())) {
+                this.getStyleClass().add(CANNOT_OPEN_CLASS);
+            }
+
+            // Hook into the mouse double click event.
             setOnMouseClicked(event -> {
-                // Double click.
-                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1) {
-                    if (pair.getKey() != null && pair.getKey().exists() && pair.getKey().isFile()) {
-                        // Open new tab from file.
-                        controller.openFile(pair.getKey());
-                    }
+                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1
+                        && pair.getKey() != null && pair.getKey().exists() && pair.getKey().isFile() && isRobot) {
+                    // Open new tab from file.
+                    controller.openFile(pair.getKey());
                 }
             });
         }
@@ -1188,43 +1202,47 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         @Override
         public void handle(Event event) {
             if (event instanceof MouseEvent) {
-                MouseEvent mouseEvent = (MouseEvent) event;
-
-                if (mouseEvent.getEventType() == MouseEvent.DRAG_DETECTED && canDrag()) {
-                    // Start dragging.
-                    Dragboard board = this.startDragAndDrop(TransferMode.MOVE);
-
-                    // Set the clipboard content.
-                    ClipboardContent content = new ClipboardContent();
-                    content.putFiles(getAllCurrentFiles());
-                    board.setContent(content);
-
-                    event.consume();
-                }
+                handleMouseEvent((MouseEvent) event);
             } else if (event instanceof DragEvent) {
-                if (!canDrop()) {
-                    return;
+                handleDragEvent((DragEvent) event);
+            }
+        }
+
+        private void handleMouseEvent(MouseEvent mouseEvent) {
+            if (mouseEvent.getEventType() == MouseEvent.DRAG_DETECTED && canDrag()) {
+                // Start dragging.
+                Dragboard board = this.startDragAndDrop(TransferMode.MOVE);
+
+                // Set the clipboard content.
+                ClipboardContent content = new ClipboardContent();
+                content.putFiles(getAllCurrentFiles());
+                board.setContent(content);
+
+                mouseEvent.consume();
+            }
+        }
+
+        private void handleDragEvent(DragEvent dragEvent) {
+            if (!canDrop()) {
+                return;
+            }
+
+            if (dragEvent.getEventType() == DragEvent.DRAG_OVER) {
+                // Dragging over.
+                dragEvent.acceptTransferModes(TransferMode.MOVE);
+            } else if (dragEvent.getEventType() == DragEvent.DRAG_ENTERED) {
+                this.getStyleClass().add(DRAG_OVER_CLASS);
+            } else if (dragEvent.getEventType() == DragEvent.DRAG_EXITED) {
+                this.getStyleClass().remove(DRAG_OVER_CLASS);
+            } else if (dragEvent.getEventType() == DragEvent.DRAG_DROPPED) {
+                // Dropping.
+                Dragboard board = dragEvent.getDragboard();
+                if (board.hasFiles()) {
+                    paste(this.getItem().getKey(), board.getFiles(), false);
+                    dragEvent.setDropCompleted(true);
                 }
 
-                DragEvent dragEvent = (DragEvent) event;
-
-                if (dragEvent.getEventType() == DragEvent.DRAG_OVER) {
-                    // Dragging over.
-                    dragEvent.acceptTransferModes(TransferMode.MOVE);
-                } else if (dragEvent.getEventType() == DragEvent.DRAG_ENTERED) {
-                    this.getStyleClass().add(dragOverClass);
-                } else if (dragEvent.getEventType() == DragEvent.DRAG_EXITED) {
-                    this.getStyleClass().remove(dragOverClass);
-                } else if (dragEvent.getEventType() == DragEvent.DRAG_DROPPED) {
-                    // Dropping.
-                    Dragboard board = dragEvent.getDragboard();
-                    if (board.hasFiles()) {
-                        paste(this.getItem().getKey(), board.getFiles(), false);
-                        dragEvent.setDropCompleted(true);
-                    }
-
-                    event.consume();
-                }
+                dragEvent.consume();
             }
         }
 
@@ -1235,6 +1253,48 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         private boolean canDrop() {
             return this.getTreeItem() != null;
+        }
+    }
+
+    /*========== File filters ==========*/
+
+    /**
+     * A file filter filtering on the FXController.BOT_EXTENSION extension.
+     */
+    private class BotFileFilter extends FileFilter implements FilenameFilter {
+        @Override
+        public boolean accept(final File file) {
+            return file.isDirectory() && !file.getName().startsWith(".") || file.getName().endsWith(XillEnvironment.ROBOT_EXTENSION);
+        }
+
+        @Override
+        public String getDescription() {
+            return String.format("Xillio bot script files (*%s)", XillEnvironment.ROBOT_EXTENSION);
+        }
+
+        @Override
+        public boolean accept(final File directory, final String fileName) {
+            return accept(new File(directory, fileName));
+        }
+    }
+
+    /**
+     * A file filter that accepts any file, except starting with a '.'.
+     */
+    private class AnyFileFilter extends FileFilter implements FilenameFilter {
+        @Override
+        public boolean accept(final File file) {
+            return !file.getName().startsWith(".");
+        }
+
+        @Override
+        public String getDescription() {
+            return "Any file (*.*)";
+        }
+
+        @Override
+        public boolean accept(final File directory, final String fileName) {
+            return accept(new File(directory, fileName));
         }
     }
 }

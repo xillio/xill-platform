@@ -13,16 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.migrationtool.gui;
+package nl.xillio.migrationtool.elasticconsole.filters;
+
+import nl.xillio.migrationtool.virtuallist.Filter;
 
 /**
- * This interface represents a child component of a robot tab
+ * Created by ernst on 02/05/16.
  */
-public interface RobotTabComponent {
-    /**
-     * Initialize the component. After loading and building the dom
-     *
-     * @param tab
-     */
-    void initialize(RobotTab tab);
+public class KeywordFilter implements Filter<String> {
+
+    private String keyword;
+    private boolean caseSensitive;
+
+    public KeywordFilter(String keyword, boolean caseSensitive) {
+        this.keyword = keyword;
+        this.caseSensitive = caseSensitive;
+    }
+
+    @Override
+    public String getFilter() {
+        return keyword;
+    }
 }

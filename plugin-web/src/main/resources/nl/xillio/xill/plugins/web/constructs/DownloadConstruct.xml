@@ -18,7 +18,7 @@
 -->
 <function>
     <description>
-Downloads the file identified by `url` to local file `filename`. To download from an existing web context, provide the optional `webcontext` parameter, a Page variable, to reuse its (authentication)-headers and cookies for the download. The default `timeout` if not provided is 5000 ms.  
+Downloads the file identified by `url` to local file `filename`. Any missing folders are created automatically. To download from an existing web context, provide the optional `webcontext` parameter, a Page variable, to reuse its (authentication)-headers and cookies for the download. The default `timeout` if not provided is 5000 ms.
 
 It supports the HTTP and HTTPS protocols and automatically bypasses all invalid or not trusted SSL certificates in case of HTTPS.
 
