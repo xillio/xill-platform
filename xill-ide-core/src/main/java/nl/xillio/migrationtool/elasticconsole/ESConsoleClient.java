@@ -48,9 +48,10 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class ESConsoleClient implements AutoCloseable {
@@ -59,104 +60,12 @@ public class ESConsoleClient implements AutoCloseable {
 
     // A mapping from robot id to an index.
     private static final Map<String, String> indices = new HashMap<>();
-    private static final String botIndexPrefix = "bot_";
-    private static int robotIndexCount = 0;
-
-    @Override
-    public void close() {
-        node.close();
-    }
-
-    public class SearchFilter {
-        private String text = ""; // needle or pattern
-        private boolean regExp;
-        private Map<LogType, Boolean> types;
-
-        private String getWildcardNeedle() {
-            return String.format("*%1$s*", text);
-        }
-
-        void setCountRequestFilter(CountRequestBuilder request) {
-            if (!this.text.isEmpty()) {
-                if (this.regExp) {
-                    request.setQuery(QueryBuilders.regexpQuery("message", this.text));
-                } else {
-                    request.setQuery(QueryBuilders.wildcardQuery("message", this.getWildcardNeedle()));
-                }
-            }
-
-            ArrayList<String> typeList = new ArrayList<String>();
-            if (types.get(LogType.DEBUG)) {
-                typeList.add("debug");
-            }
-            if (types.get(LogType.INFO)) {
-                typeList.add("info");
-            }
-            if (types.get(LogType.WARN)) {
-                typeList.add("warn");
-            }
-            if (types.get(LogType.ERROR)) {
-                typeList.add("error");
-            }
-            if (types.get(LogType.FATAL)) {
-                typeList.add("fatal");
-            }
-            request.setTypes(typeList.toArray(new String[typeList.size()]));
-        }
-
-        public void setSearchRequestFilter(SearchRequestBuilder request) {
-            if (!this.text.isEmpty()) {
-                if (this.regExp) {
-                    request.setQuery(QueryBuilders.regexpQuery("message", this.text));
-                } else {
-                    request.setQuery(QueryBuilders.wildcardQuery("message", this.getWildcardNeedle()));
-                }
-            }
-
-            ArrayList<String> typeList = new ArrayList<String>();
-            if (types.get(LogType.DEBUG)) {
-                typeList.add("debug");
-            }
-            if (types.get(LogType.INFO)) {
-                typeList.add("info");
-            }
-            if (types.get(LogType.WARN)) {
-                typeList.add("warn");
-            }
-            if (types.get(LogType.ERROR)) {
-                typeList.add("error");
-            }
-            if (types.get(LogType.FATAL)) {
-                typeList.add("fatal");
-            }
-            request.setTypes(typeList.toArray(new String[typeList.size()]));
-
-        }
-    }
-
-    public SearchFilter createSearchFilter(String text, boolean regExp, Map<LogType, Boolean> types) {
-        SearchFilter filter = new SearchFilter();
-        filter.text = text;
-        filter.regExp = regExp;
-        filter.types = types;
-        return filter;
-    }
-
-    /**
-     * The different logging message types.
-     */
-    public enum LogType {
-        DEBUG, INFO, WARN, ERROR, FATAL
-    }
-
-    private static final ESConsoleClient instance = new ESConsoleClient();
-    private static final Map<String, EventHost<RobotLogMessage>> eventInstances = new HashMap<>();
-
+    private static final ESConsoleClient INSTANCE = new ESConsoleClient();
+    private static final Map<String, EventHost<RobotLogMessage>> EVENT_INSTANCES = new HashMap<>();
     // A list of characters that are illegal in the index and type
-    private static final Pattern illegalChars = Pattern.compile("[\\\\/*?\"<>| ,:#]");
-
+    private static final Pattern ILLEGAL_CHARS = Pattern.compile("[\\\\/*?\"<>| ,:#]");
     private final Node node;
-    private int order = 0;
+    private int order;
 
     private ESConsoleClient() {
         // Create the settings and node
@@ -176,7 +85,7 @@ public class ESConsoleClient implements AutoCloseable {
         node = NodeBuilder.nodeBuilder().settings(settings).node();
 
         // Add a shutdown hook
-        Runtime.getRuntime().addShutdownHook(new Thread(node::close));
+        Runtime.getRuntime().addShutdownHook(new Thread(node::close, "ES Teardown"));
 
         // Add the appender
         org.apache.logging.log4j.core.Logger robotLogger = (org.apache.logging.log4j.core.Logger) LogManager.getLogger("robot");
@@ -190,78 +99,23 @@ public class ESConsoleClient implements AutoCloseable {
 
             if (name.startsWith(LogUtil.ROBOT_LOGGER_PREFIX)) {
                 String robotId = name.substring(LogUtil.ROBOT_LOGGER_PREFIX.length());
-                ESConsoleClient.getInstance().log(
+                INSTANCE.log(
                         robotId,
                         event.getLevel().toString(),
                         event.getTimeMillis(),
-                        order++,
+                        order,
                         event.getMessage().getFormattedMessage());
+                order++;
             }
         });
 
     }
 
     /**
-     * Logs a message.
+     * Gets the default mapping for log entries in elasticsearch.
      *
-     * @param robotId   The robot ID of the robot that called the log.
-     * @param type      The log type.
-     * @param timestamp The timestamp of the log message.
-     * @param order     The order of messages (for messages logged in the same timestamp).
-     * @param message   The message to log.
-     */
-    public void log(final String robotId, String type, final long timestamp, final int order, final String message) {
-
-        // Normalize index and type
-        EventHost<RobotLogMessage> eventHost = eventInstances.get(robotId);
-        String index = getIndex(robotId);
-        type = normalize(type);
-
-        // Create the index
-        createIndex(index);
-
-        // Create the map
-        Map<String, Object> data = new HashMap<>();
-        data.put("timestamp", timestamp);
-        data.put("order", order);
-        data.put("message", message);
-
-        // Index the log message in robotId/type/
-        IndexRequestBuilder request = getClient().prepareIndex(index, type).setSource(data);
-        request.execute().actionGet();
-
-        // Fire event if there is one
-        if (eventHost != null) {
-            eventHost.invoke(new RobotLogMessage(type, message));
-        }
-    }
-
-    /**
-     * Create the index (with default log mapping) if it does not exist yet.
-     *
-     * @param index The index to create.
-     */
-    private synchronized void createIndex(final String index) {
-        // Check if the index exists
-        if (getClient().admin().indices().prepareExists(index).execute().actionGet().isExists()) {
-            return;
-        }
-
-        // Create the index creation request with all mapping
-        CreateIndexRequest request = new CreateIndexRequest(index);
-        for (LogType type : LogType.values()) {
-            request.mapping(type.toString().toLowerCase(), getLogMapping(type));
-        }
-
-        // Create the index
-        getClient().admin().indices().create(request).actionGet();
-    }
-
-    /**
-     * Get the default mapping for log entries in elasticsearch.
-     *
-     * @param type The type to create the mapping source for.
-     * @return An XContentBuilder that contains the source for the mapping.
+     * @param type the type to create the mapping source for
+     * @return an builder that contains the source for the mapping
      */
     private static XContentBuilder getLogMapping(final LogType type) {
         try {
@@ -284,34 +138,183 @@ public class ESConsoleClient implements AutoCloseable {
         }
     }
 
+    private static List<Map<String, Object>> hitsToList(final SearchHits hits) {
+        // Get the search hits, create a result list
+        SearchHit[] searchHits = hits.getHits();
+        List<Map<String, Object>> results = new ArrayList<>(searchHits.length);
+
+        // Add all hits to the list
+        for (int i = 0; i < searchHits.length; i++) {
+            results.add(searchHits[i].getSource());
+            results.get(i).put("type", searchHits[i].type());
+        }
+
+        return results;
+    }
+
+    private static String getIndex(final String id) {
+        // Check if the id is already mapped. If not, generate an id.
+        if (!indices.containsKey(id)) {
+            indices.put(id, toMD5(id));
+        }
+        return indices.get(id);
+    }
+
+    /**
+     * Replaces illegal characters by an underscore, and lowercase.
+     *
+     * @param text the text to normalize
+     * @return the normalized result
+     */
+    private static String normalize(final String text) {
+        return ILLEGAL_CHARS.matcher(text).replaceAll("_").toLowerCase();
+    }
+
+    /**
+     * Gets the elasticsearch console client.
+     *
+     * @return the running ESConsoleClient instance
+     */
+    public static ESConsoleClient getInstance() {
+        return INSTANCE;
+    }
+
+    /**
+     * Gets the log event corresponding to the RobotID.
+     *
+     * @param robotId the id of the robot to get the log event for
+     * @return the event
+     */
+    public static Event<RobotLogMessage> getLogEvent(final RobotID robotId) {
+
+        synchronized (EVENT_INSTANCES) {
+            EventHost<RobotLogMessage> host = EVENT_INSTANCES.get(robotId.toString());
+
+            if (host == null) {
+                host = new EventHost<>();
+                EVENT_INSTANCES.put(robotId.toString(), host);
+            }
+
+            return host.getEvent();
+        }
+    }
+
+    @Override
+    public void close() {
+        node.close();
+    }
+
+    public SearchFilter createSearchFilter(String text, boolean regExp, Map<LogType, Boolean> types) {
+        SearchFilter filter = new SearchFilter();
+        filter.text = text;
+        filter.regExp = regExp;
+        filter.types = types;
+        return filter;
+    }
+
+    /**
+     * Logs a message.
+     *
+     * @param robotId   the ID of the robot that called the log
+     * @param type      the log type
+     * @param timestamp the timestamp of the log message
+     * @param order     the order of messages (for messages logged in the same timestamp)
+     * @param message   the message to log
+     */
+    public void log(final String robotId, String type, final long timestamp, final int order, final String message) {
+
+        // Normalize index and type
+        EventHost<RobotLogMessage> eventHost = EVENT_INSTANCES.get(robotId);
+        String index = getIndex(robotId);
+        type = normalize(type);
+
+        // Create the index
+        createIndex(index);
+
+        // Create the map
+        Map<String, Object> data = new HashMap<>();
+        data.put("timestamp", timestamp);
+        data.put("order", order);
+        data.put("message", message);
+
+        // Index the log message in robotId/type/
+        IndexRequestBuilder request = getClient().prepareIndex(index, type).setSource(data);
+        request.execute().actionGet();
+
+        // Fire event if there is one
+        if (eventHost != null) {
+            //Throttle events, to prevent overloading the observer
+            eventHost.invoke(new RobotLogMessage(type, message));
+        }
+    }
+
+    /**
+     * Creates the index (with default log mapping) if it does not exist yet.
+     *
+     * @param index the index to create
+     */
+    private synchronized void createIndex(final String index) {
+        // Check if the index exists
+        if (getClient().admin().indices().prepareExists(index).execute().actionGet().isExists()) {
+            return;
+        }
+
+        // Create the index creation request with all mapping
+        CreateIndexRequest request = new CreateIndexRequest(index);
+        for (LogType type : LogType.values()) {
+            request.mapping(type.toString().toLowerCase(), getLogMapping(type));
+        }
+
+        // Create the index
+        getClient().admin().indices().create(request).actionGet();
+    }
+
     public int countFilteredEntries(final String robotId, final SearchFilter searchFilter) {
+        // Fix for issue: If no types are selected, all entries are shown just as if all types were selected
+        // If all types are deselected: return empty result
+        if(searchFilter!=null && searchFilter.getActiveTypeCount() == 0) {
+            return 0;
+        }
+
         // Normalize index
         String index = getIndex(robotId);
 
-        CountRequestBuilder request = getClient().prepareCount(index);
+        Client client = getClient();
+
+        CountRequestBuilder request = client.prepareCount(index);
 
         if (searchFilter != null) {
             searchFilter.setCountRequestFilter(request);
         }
-        if (!getClient().admin().indices().prepareExists(index).execute().actionGet().isExists()) {
-            return 0; //if no indices exist return 0;
-        }
 
         CountResponse response = null;
-        try {
-            // Refresh the index to make sure everything is properly indexed etc
-            getClient().admin().indices().prepareRefresh(index).execute().actionGet();
-            // Get the response
-            response = request.execute().actionGet();
-        } catch (SearchPhaseExecutionException | IndexMissingException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+
+        // Get the response
+        boolean validResponse = false;
+        do { // workaround ES index related bug...
+            try {
+                createIndex(index);
+
+                // Refresh the index to make sure everything is properly indexed etc
+                client.admin().indices().prepareRefresh(index).execute().actionGet();
+                response = request.execute().actionGet();
+                validResponse = true;
+            } catch (IndexMissingException e) {
+                //safely ignore...
+            }
+        } while (!validResponse);
 
         // Return the count
         return (int) response.getCount();
     }
 
-    public ArrayList<Map<String, Object>> getFilteredEntries(final String robotId, final int from, final int to, final SearchFilter searchFilter) {
+    public List<Map<String, Object>> getFilteredEntries(final String robotId, final int from, final int to, final SearchFilter searchFilter) {
+        // Fix for issue: If no types are selected, all entries are shown just as if all types were selected
+        // If all types are deselected: return empty result
+        if(searchFilter!=null && searchFilter.getActiveTypeCount() == 0) {
+            return new ArrayList<>(0);
+        }
+
         // Normalize index
         String index = getIndex(robotId);
 
@@ -325,14 +328,14 @@ public class ESConsoleClient implements AutoCloseable {
                 .setFrom(from)
                 .setSize(to - from + 1);
 
-        return this.getEntries(index, request);
+        return getEntries(index, request);
     }
 
-    private ArrayList<Map<String, Object>> getEntries(final String normalizedId, final SearchRequestBuilder request) {
+    private List<Map<String, Object>> getEntries(final String normalizedId, final SearchRequestBuilder request) {
         if (!getClient().admin().indices().prepareExists(normalizedId).execute().actionGet().isExists()) {
             return new ArrayList<>(0); //if no indices exist return empty list
         }
-        SearchResponse response = null;
+        SearchResponse response;
         try {
             // Refresh the index to make sure everything is properly indexed etc
             getClient().admin().indices().prepareRefresh(normalizedId).execute().actionGet();
@@ -340,30 +343,17 @@ public class ESConsoleClient implements AutoCloseable {
             response = request.execute().actionGet();
         } catch (SearchPhaseExecutionException | IndexMissingException e) {
             LOGGER.error("Failed to get entries: " + e.getMessage(), e);
+            return new ArrayList<>(0);
         }
 
         // Return the hits as a list of maps
         return hitsToList(response.getHits());
     }
 
-    private static ArrayList<Map<String, Object>> hitsToList(final SearchHits hits) {
-        // Get the search hits, create a result list
-        SearchHit[] searchHits = hits.getHits();
-        ArrayList<Map<String, Object>> results = new ArrayList<>(searchHits.length);
-
-        // Add all hits to the list
-        for (int i = 0; i < searchHits.length; i++) {
-            results.add(searchHits[i].getSource());
-            results.get(i).put("type", searchHits[i].type());
-        }
-
-        return results;
-    }
-
     /**
-     * Clear the log for a robot.
+     * Clears the log for a robot.
      *
-     * @param robotId The robot ID of the robot to clear the log for.
+     * @param robotId the robot ID of the robot to clear the log for
      */
     public void clearLog(final String robotId) {
         // Get the index for the robot.
@@ -379,53 +369,106 @@ public class ESConsoleClient implements AutoCloseable {
         }
     }
 
-    private static String getIndex(final String id) {
-        // Check if the id is already mapped. If not, generate an id.
-        if (!indices.containsKey(id)) {
-            String index = botIndexPrefix + robotIndexCount++;
-            indices.put(id, index);
-        }
-        return indices.get(id);
-    }
-
-    private static String normalize(final String text) {
-        // Replace illegal characters by an underscore, and lowercase.
-        return illegalChars.matcher(text).replaceAll("_").toLowerCase();
-    }
-
     /**
-     * @return the {@link Client}
+     * @return the client
      */
     public Client getClient() {
         return node.client();
     }
 
     /**
-     * Get the elasticsearch console client.
-     *
-     * @return The running ESConsoleClient instance.
+     * The different logging message types.
      */
-    public static ESConsoleClient getInstance() {
-        return instance;
+    public enum LogType {
+        DEBUG, INFO, WARN, ERROR, FATAL
     }
 
-    /**
-     * Gets the log event corresponding to the {@link RobotID}
-     *
-     * @param robotId the id of the robot to get the log event for
-     * @return The event
-     */
-    public static Event<RobotLogMessage> getLogEvent(final RobotID robotId) {
+    private static String toMD5(String text) {
+        try {
+            MessageDigest m = MessageDigest.getInstance("MD5");
+            m.update(text.getBytes(), 0, text.length());
+            return new BigInteger(1, m.digest()).toString(16).toLowerCase();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-        synchronized (eventInstances) {
-            EventHost<RobotLogMessage> host = eventInstances.get(robotId.toString());
+    public class SearchFilter {
+        private String text = ""; // needle or pattern
+        private boolean regExp;
+        private Map<LogType, Boolean> types;
 
-            if (host == null) {
-                host = new EventHost<>();
-                eventInstances.put(robotId.toString(), host);
+        private String getWildcardNeedle() {
+            return String.format("*%1$s*", text);
+        }
+
+        void setCountRequestFilter(CountRequestBuilder request) {
+            if (!text.isEmpty()) {
+                if (regExp) {
+                    request.setQuery(QueryBuilders.regexpQuery("message", text));
+                } else {
+                    request.setQuery(QueryBuilders.wildcardQuery("message", getWildcardNeedle()));
+                }
             }
 
-            return host.getEvent();
+            List<String> typeList = new ArrayList<>();
+            if (types.get(LogType.DEBUG)) {
+                typeList.add("debug");
+            }
+            if (types.get(LogType.INFO)) {
+                typeList.add("info");
+            }
+            if (types.get(LogType.WARN)) {
+                typeList.add("warn");
+            }
+            if (types.get(LogType.ERROR)) {
+                typeList.add("error");
+            }
+            if (types.get(LogType.FATAL)) {
+                typeList.add("fatal");
+            }
+            request.setTypes(typeList.toArray(new String[typeList.size()]));
         }
+
+        public void setSearchRequestFilter(SearchRequestBuilder request) {
+            if (!text.isEmpty()) {
+                if (regExp) {
+                    request.setQuery(QueryBuilders.regexpQuery("message", text));
+                } else {
+                    request.setQuery(QueryBuilders.wildcardQuery("message", getWildcardNeedle()));
+                }
+            }
+
+            List<String> typeList = new ArrayList<>();
+            if (types.get(LogType.DEBUG)) {
+                typeList.add("debug");
+            }
+            if (types.get(LogType.INFO)) {
+                typeList.add("info");
+            }
+            if (types.get(LogType.WARN)) {
+                typeList.add("warn");
+            }
+            if (types.get(LogType.ERROR)) {
+                typeList.add("error");
+            }
+            if (types.get(LogType.FATAL)) {
+                typeList.add("fatal");
+            }
+            request.setTypes(typeList.toArray(new String[typeList.size()]));
+
+        }
+
+        public int getActiveTypeCount() {
+            int count = 0;
+            for(Map.Entry<LogType, Boolean> entry: types.entrySet()) {
+                if(entry.getValue()) {
+                    count ++;
+                }
+            }
+            return count;
+        }
+
     }
 }
