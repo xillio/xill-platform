@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 * MySQL no longer has to be installed manually [CTC-1676]
 * Make non-robot files visible in the Xill IDE project pane [CTC-1652]
 * Remove paging from the Xill IDE Console [CTC-1593]
+* Add py, xill, xillt extensions to the mimetype library [CTC-1626]
 
 ### Fix
 
