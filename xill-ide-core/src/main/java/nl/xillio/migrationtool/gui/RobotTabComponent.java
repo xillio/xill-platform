@@ -24,5 +24,5 @@ public interface RobotTabComponent {
      *
      * @param tab
      */
-    public void initialize(RobotTab tab);
+    void initialize(RobotTab tab);
 }
