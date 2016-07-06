@@ -29,12 +29,12 @@ public class XillPluginTest {
 
     @Test
     public void testVendorUrlOverride() {
-        assertEquals(new VendorOverridePlugin().getVendorUrl().get(), "https://en.wikipedia.org/wiki/Unit_testing");
+        assertEquals(new VendorUrlOverridePlugin().getVendorUrl().get(), "https://en.wikipedia.org/wiki/Unit_testing");
     }
 
     @Test
     public void testVersionOverride() {
-        assertEquals(new VendorUrlOverridePlugin().getVersion().get(), "1.x.x");
+        assertEquals(new VersionOverridePlugin().getVersion().get(), "1.x.x");
     }
 
     @PluginVendor("UnitTest")
