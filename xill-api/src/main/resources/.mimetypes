@@ -690,7 +690,7 @@ text/csv					csv
 text/html					html htm
 text/markdown               md
 text/n3						n3
-text/plain					txt text conf def list log in gitignore
+text/plain					txt text conf def list log in gitignore py xill xilt
 text/prs.lines.tag				dsc
 text/richtext					rtx
 text/sgml					sgml sgm
