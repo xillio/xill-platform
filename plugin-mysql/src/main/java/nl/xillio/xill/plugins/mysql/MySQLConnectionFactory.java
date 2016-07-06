@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.migrationtool.gui;
+package nl.xillio.xill.plugins.mysql;
 
-/**
- * This interface represents a child component of a robot tab
- */
-public interface RobotTabComponent {
-    /**
-     * Initialize the component. After loading and building the dom
-     *
-     * @param tab
-     */
-    void initialize(RobotTab tab);
+import com.mysql.jdbc.Driver;
+import nl.xillio.xill.plugins.jdbc.services.ConnectionStringFactory;
+
+class MySQLConnectionFactory extends ConnectionStringFactory {
+
+    @Override
+    protected Class<? extends java.sql.Driver> driver() {
+        return Driver.class;
+    }
 }
