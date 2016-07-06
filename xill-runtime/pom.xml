@@ -53,6 +53,7 @@
                 <module>../plugin-mssql</module>
                 <module>../plugin-oracle</module>
                 <module>../plugin-sqlite</module>
+                <module>../plugin-mysql</module>
                 <module>../plugin-xml</module>
                 <module>../plugin-document</module>
                 <module>../plugin-database</module>
