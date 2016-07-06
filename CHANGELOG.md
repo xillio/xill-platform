@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Change
 
 * MySQL no longer has to be installed manually [CTC-1676]
+* Make non-robot files visible in the Xill IDE project pane [CTC-1652]
 
 ### Fix
 
