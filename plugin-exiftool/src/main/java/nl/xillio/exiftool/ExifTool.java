@@ -20,7 +20,7 @@ import nl.xillio.exiftool.process.OSXExifToolProcess;
 import nl.xillio.exiftool.process.UnixExifToolProcess;
 import nl.xillio.exiftool.process.WindowsExifToolProcess;
 import nl.xillio.exiftool.query.*;
-import org.apache.commons.lang3.NotImplementedException;
+import nl.xillio.xill.api.errors.NotImplementedException;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
