@@ -138,7 +138,7 @@
                         <exclude>.gitattributes</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>plugin-web/**/LICENSE.BSD</exclude>
-                        <exclude>xill-plugin-archetype/src/main/resources/archetype-resources/**</exclude>
+                        <exclude>xill-plugin-archetype/src/main/**/archetype-resources/**</exclude>
                     </excludes>
                     <mapping>
                         <fxml>XML_STYLE</fxml>

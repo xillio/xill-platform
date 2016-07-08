@@ -2,17 +2,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Xill Plugin: ${pluginName}</name>
+    <name>Xill Plugin: \${pluginName}</name>
+
+    <organization>
+        <name>Example</name>
+        <url>http://example.org</url>
+    </organization>
 
     <parent>
         <groupId>nl.xillio.xill</groupId>
         <artifactId>xill-plugins-parent</artifactId>
-        <version>3.04.00-SNAPSHOT</version>
+        <version>${project.version}</version>
     </parent>
 
-    <groupId>${groupId}</groupId>
-    <artifactId>${artifactId}</artifactId>
-    <version>${version}</version>
+    <groupId>\${groupId}</groupId>
+    <artifactId>\${artifactId}</artifactId>
+    <version>\${version}</version>
 
     <dependencies>
         <!-- Here you declare your dependencies -->
