@@ -40,6 +40,7 @@ import java.util.jar.Manifest;
  */
 public abstract class XillPlugin extends AbstractModule implements AutoCloseable {
     private static final Logger LOGGER = Log.get();
+    private static final String LOAD_CONSTRUCTS_ERROR = "Can only load constructs in the loadConstructs() method.";
     private final List<Construct> constructs = new ArrayList<>();
     private final String defaultName;
     private boolean loadingConstructs = false;
@@ -71,7 +72,6 @@ public abstract class XillPlugin extends AbstractModule implements AutoCloseable
      * Gets a construct from this package.
      *
      * @param name the name of the construct
-     *
      * @return the construct or null if none was found for the provided name
      */
     public final Construct getConstruct(final String name) {
@@ -97,12 +97,11 @@ public abstract class XillPlugin extends AbstractModule implements AutoCloseable
      * Adds a construct to the package.
      *
      * @param construct the construct to add
-     *
      * @throws IllegalArgumentException when a construct with the same name already exists
      */
-    protected final void add(final Construct construct) throws IllegalArgumentException {
+    protected final void add(final Construct construct) {
         if (!loadingConstructs) {
-            throw new IllegalStateException("Can only load constructs in the loadConstructs() method.");
+            throw new IllegalStateException(LOAD_CONSTRUCTS_ERROR);
         }
         if (getConstructs().stream().anyMatch(c -> c.getName().equals(construct.getName()))) {
             throw new IllegalArgumentException("A construct with the same name exsits.");
@@ -115,12 +114,11 @@ public abstract class XillPlugin extends AbstractModule implements AutoCloseable
      * Adds constructs to the package.
      *
      * @param constructs the constructs to add the the list
-     *
      * @throws IllegalArgumentException when a construct with the same name already exists
      */
-    protected final void add(final Construct... constructs) throws IllegalArgumentException {
+    protected final void add(final Construct... constructs) {
         if (!loadingConstructs) {
-            throw new IllegalStateException("Can only load constructs in the loadConstructs() method.");
+            throw new IllegalStateException(LOAD_CONSTRUCTS_ERROR);
         }
         for (Construct c : constructs) {
             add(c);
@@ -131,12 +129,11 @@ public abstract class XillPlugin extends AbstractModule implements AutoCloseable
      * Adds a list of constructs to the package.
      *
      * @param constructs the constructs to add to the list
-     *
      * @throws IllegalArgumentException when a construct with the same name already exists
      */
-    protected final void add(final Collection<Construct> constructs) throws IllegalArgumentException {
+    protected final void add(final Collection<Construct> constructs) {
         if (!loadingConstructs) {
-            throw new IllegalStateException("Can only load constructs in the loadConstructs() method.");
+            throw new IllegalStateException(LOAD_CONSTRUCTS_ERROR);
         }
         constructs.forEach(this::add);
     }
