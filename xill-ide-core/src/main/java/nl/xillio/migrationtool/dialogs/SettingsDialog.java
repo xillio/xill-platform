@@ -28,7 +28,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Window;
@@ -236,14 +235,12 @@ public class SettingsDialog extends FXMLDialog {
                 (event.isAltDown() ? "Alt+" : "") +
                 (event.isShiftDown() ? "Shift+" : "");
 
-        if ((event.getCode().isFunctionKey()) && (event.getEventType() == KeyEvent.KEY_RELEASED)) {
+        if (event.getCode().isFunctionKey() && event.getEventType() == KeyEvent.KEY_RELEASED) {
             // This is an F* key.
             return modifiers + event.getCode().getName().toUpperCase();
-        } else if ((event.getEventType() == KeyEvent.KEY_PRESSED)) {
-            // This is any other key holding a text value. We require there to be a modifier
-            if (!modifiers.isEmpty()) {
-                return modifiers + event.getCode().getName();
-            }
+        } else if (event.getEventType() == KeyEvent.KEY_PRESSED && !modifiers.isEmpty()) {
+            // This is any other key holding a text value. We require there to be a modifier.
+            return modifiers + event.getCode().getName();
         }
 
         return null;
@@ -477,7 +474,7 @@ public class SettingsDialog extends FXMLDialog {
         RangeValidator(final int fromIncl, final int toIncl, final String suffix, final boolean allowEmpty) {
             this.fromIncl = fromIncl;
             this.toIncl = toIncl;
-            this.suffix = (suffix == null ? "" : suffix);
+            this.suffix = suffix == null ? "" : suffix;
             this.allowEmpty = allowEmpty;
             this.pattern = Pattern.compile("[0-9]+" + this.suffix);
         }
