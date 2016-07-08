@@ -511,35 +511,39 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             KeyEvent keyEvent = (KeyEvent) event;
 
             // Hotkeys.
-            HotkeysHandler.Hotkeys hk = FXController.hotkeys.getHotkey(keyEvent);
-            if (hk != null) {
-                switch (hk) {
-                    case CUT:
-                        if (!menuCut.isDisable()) {
-                            cut();
-                        }
-                        break;
-                    case COPY:
-                        if (!menuCopy.isDisable()) {
-                            copy();
-                        }
-                        break;
-                    case PASTE:
-                        if (!menuPaste.isDisable()) {
-                            paste();
-                        }
-                        break;
-                    case RENAME:
-                        if (!menuRename.isDisable()) {
-                            renameButtonPressed();
-                        }
-                        break;
-                }
-            }
+            handleHotkey(FXController.hotkeys.getHotkey(keyEvent));
 
             // Keypresses.
             if (keyEvent.getCode() == KeyCode.DELETE && !menuDelete.isDisable()) {
                 deleteButtonPressed();
+            }
+        }
+    }
+
+    @SuppressWarnings("squid:SwitchLastCaseIsDefaultCheck")
+    private void handleHotkey(HotkeysHandler.Hotkeys hk) {
+        if (hk != null) {
+            switch (hk) {
+                case CUT:
+                    if (!menuCut.isDisable()) {
+                        cut();
+                    }
+                    break;
+                case COPY:
+                    if (!menuCopy.isDisable()) {
+                        copy();
+                    }
+                    break;
+                case PASTE:
+                    if (!menuPaste.isDisable()) {
+                        paste();
+                    }
+                    break;
+                case RENAME:
+                    if (!menuRename.isDisable()) {
+                        renameButtonPressed();
+                    }
+                    break;
             }
         }
     }
@@ -632,7 +636,6 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 settings.simple().save(Settings.INFO, Settings.HasRun, true);
                 settings.commit();
             }
-
 
             if (projects.isEmpty()) {
                 disableAllButtons(true);
@@ -1133,17 +1136,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 File[] files = f.listFiles(tbnShowAllFiles.isSelected() ? anyFileFilter : robotFileFilter);
 
                 // Sort the list of files.
-                Arrays.sort(files, (o1, o2) -> {
-                    // Put directories above files.
-                    if (o1.isDirectory() && o2.isFile()) {
-                        return -1;
-                    } else if (o1.isFile() && o2.isDirectory()) {
-                        return 1;
-                        // Both are the same type, compare them normally.
-                    } else {
-                        return o1.compareTo(o2);
-                    }
-                });
+                Arrays.sort(files, this::compareFileOrder);
 
                 // Create tree items from all files, add them to the list
                 for (File file : files) {
@@ -1156,6 +1149,18 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             }
 
             return children;
+        }
+
+        private int compareFileOrder(File o1, File o2) {
+            // Put directories above files.
+            if (o1.isDirectory() && o2.isFile()) {
+                return -1;
+            } else if (o1.isFile() && o2.isDirectory()) {
+                return 1;
+            } else {
+                // Both are the same type, compare them normally.
+                return o1.compareTo(o2);
+            }
         }
     }
 
