@@ -191,7 +191,7 @@ public class FileTab extends Tab implements Initializable, ChangeListener<Editor
             String extension = FilenameUtils.getExtension(documentPath.toString());
             chooser.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter(extension + " file (*." + extension + ")", "*." + extension),
-                    new FileChooser.ExtensionFilter("Any file (*.*)", "*.*")
+                    new FileChooser.ExtensionFilter("All files (*.*)", "*.*")
             );
 
             // Get the selected file.

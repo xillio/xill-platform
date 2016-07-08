@@ -44,7 +44,6 @@ import nl.xillio.migrationtool.dialogs.*;
 import nl.xillio.migrationtool.gui.WatchDir.FolderListener;
 import nl.xillio.migrationtool.template.Templater;
 import nl.xillio.xill.api.XillEnvironment;
-import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.util.HotkeysHandler;
 import nl.xillio.xill.util.settings.ProjectSettings;
 import nl.xillio.xill.util.settings.Settings;
@@ -460,7 +459,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         String robotExtension = "*" + XillEnvironment.ROBOT_EXTENSION;
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Xill Robot (" + robotExtension + ")", robotExtension),
-                new FileChooser.ExtensionFilter("Any file (*.*)", "*.*")
+                new FileChooser.ExtensionFilter("All files (*.*)", "*.*")
         );
 
         File chosen = fileChooser.showSaveDialog(this.getScene().getWindow());

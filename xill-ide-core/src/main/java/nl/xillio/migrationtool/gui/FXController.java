@@ -355,8 +355,12 @@ public class FXController implements Initializable, EventHandler<Event> {
             fileChooser.setInitialDirectory(lastFolder);
         }
 
-        // Only show Xill scripts, show the dialog and open the file.
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Xillio scripts (*.xill)", "*.xill"));
+        // Show the dialog and open the file.
+        String robotExtension = "*" + XillEnvironment.ROBOT_EXTENSION;
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Xillio scripts (" + robotExtension + ")", robotExtension),
+                new FileChooser.ExtensionFilter("All files (*.*)", "*.*")
+        );
         File newFile = fileChooser.showOpenDialog(btnOpenFile.getScene().getWindow());
 
         if (newFile != null) {
