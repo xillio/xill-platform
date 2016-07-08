@@ -34,7 +34,7 @@
 									<children>
 										<SplitPane fx:id="spnBotLeft" focusTraversable="false" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 											<items>
-												<EditorPane fx:id="editorPane" />
+												<RobotEditorPane fx:id="editorPane" />
 												<ConsolePane fx:id="consolePane" />
 											</items>
 										</SplitPane>

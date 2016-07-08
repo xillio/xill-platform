@@ -16,6 +16,9 @@
     limitations under the License.
 
 -->
+<?import javafx.scene.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import nl.xillio.migrationtool.gui.*?>
 
@@ -25,10 +28,13 @@
 			<children>
 				<HBox fx:id="hbxBot" VBox.vgrow="ALWAYS">
 					<children>
-						<EditorPane fx:id="editorPane" />
+						<AnchorPane fx:id="apnBotLeft" VBox.vgrow="ALWAYS">
+							<children>
+								<EditorPane fx:id="editorPane" />
+							</children>
+						</AnchorPane>
 					</children>
 				</HBox>
-				<StatusBar fx:id="apnStatusBar" VBox.vgrow="NEVER" />
 			</children>
 		</VBox>
 	</children>

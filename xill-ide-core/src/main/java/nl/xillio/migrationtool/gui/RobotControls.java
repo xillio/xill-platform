@@ -257,12 +257,13 @@ public class RobotControls implements EventHandler<KeyEvent>, ErrorHandlingPolic
     private void highlight(final RobotID id, final int line, final String highlightType) {
 
         // First we find the right tab
-        Optional<RobotTab> correctTab = tab.getGlobalController().getTabs().stream()
-                .filter(tb -> tb.getProcessor().getRobotID() == id).findAny();
+        Optional<FileTab> correctTab = tab.getGlobalController().getTabs().stream()
+                .filter(tab -> tab instanceof RobotTab)
+                .filter(tab -> ((RobotTab) tab).getProcessor().getRobotID() == id).findAny();
 
         if (correctTab.isPresent()) {
             // This tab is already open
-            RobotTab currentTab = correctTab.get();
+            RobotTab currentTab = (RobotTab) correctTab.get();
             currentTab.getEditorPane().getEditor().clearHighlight();
             currentTab.getEditorPane().getEditor().highlightLine(line, highlightType);
             currentTab.requestFocus();
@@ -271,7 +272,7 @@ public class RobotControls implements EventHandler<KeyEvent>, ErrorHandlingPolic
 
         // Seems like the tab wasn't open so we open it. This has to be done in the JavaFX Thread.
         Platform.runLater(() -> {
-            RobotTab newTab = tab.getGlobalController().openFile(id.getPath());
+            RobotTab newTab = tab.getGlobalController().openRobot(id.getPath());
 
             // Wait for the editor to load
             newTab.getEditorPane().getEditor().getOnDocumentLoaded().addListener(success ->

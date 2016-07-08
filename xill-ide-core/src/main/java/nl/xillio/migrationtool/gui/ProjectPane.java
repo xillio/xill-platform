@@ -376,7 +376,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             if (tab != null) {
                 boolean wasSelected = controller.getSelectedTab() == tab;
                 controller.closeTab(tab);
-                RobotTab newTab = controller.openFile(item.getValue().getKey());
+                FileTab newTab = controller.openFile(item.getValue().getKey());
                 if (wasSelected) {
                     controller.showTab(newTab);
                 }
@@ -1158,7 +1158,6 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
      */
     private class CustomTreeCell extends TreeCell<Pair<File, String>> implements EventHandler<Event> {
         private static final String DRAG_OVER_CLASS = "drag-over";
-        private static final String CANNOT_OPEN_CLASS = "cannot-open";
 
         public CustomTreeCell() {
             // Subscribe to drag events.
@@ -1180,19 +1179,10 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             }
             this.setText(pair.getValue());
 
-            // Check whether this is a robot file.
-            boolean isRobot = pair.getValue().endsWith(XillEnvironment.ROBOT_EXTENSION);
-
-            // Clear the style and check if this is a file we can open.
-            this.getStyleClass().remove(CANNOT_OPEN_CLASS);
-            if (!robotFileFilter.accept(pair.getKey())) {
-                this.getStyleClass().add(CANNOT_OPEN_CLASS);
-            }
-
             // Hook into the mouse double click event.
             setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1
-                        && pair.getKey() != null && pair.getKey().exists() && pair.getKey().isFile() && isRobot) {
+                        && pair.getKey() != null && pair.getKey().exists() && pair.getKey().isFile()) {
                     // Open new tab from file.
                     controller.openFile(pair.getKey());
                 }

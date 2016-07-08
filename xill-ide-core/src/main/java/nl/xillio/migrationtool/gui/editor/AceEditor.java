@@ -39,13 +39,13 @@ import nl.xillio.events.Event;
 import nl.xillio.events.EventHost;
 import nl.xillio.migrationtool.BreakpointPool;
 import nl.xillio.migrationtool.gui.FXController;
+import nl.xillio.migrationtool.gui.FileTab;
 import nl.xillio.migrationtool.gui.ReplaceBar;
 import nl.xillio.migrationtool.gui.RobotTab;
 import nl.xillio.xill.api.Issue;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.preview.Replaceable;
 import nl.xillio.xill.util.HotkeysHandler.Hotkeys;
-import nl.xillio.xill.util.settings.SettingsHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
@@ -61,18 +61,18 @@ import java.util.stream.Collectors;
  * It *should* extend {@link WebView}, but this class is final...
  */
 public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable, EventDispatcher {
-    private static String EDITOR_URL;
-    private static final SettingsHandler settings = SettingsHandler.getSettingsHandler();
-    private static final double ZOOM_SENSITIVITY = 100;
-    private static final Clipboard clipboard = Clipboard.getSystemClipboard();
     private static final Logger LOGGER = Log.get();
+    private static final Clipboard clipboard = Clipboard.getSystemClipboard();
+    private static String EDITOR_URL;
+
     private final StringProperty code = new SimpleStringProperty();
     private final WebView editor;
     private final SimpleBooleanProperty documentLoaded = new SimpleBooleanProperty(false);
     private final EventHost<Boolean> onDocumentLoaded = new EventHost<>();
     private final EventDispatcher parentEventDispatcher;
+
     private JSObject ace;
-    private RobotTab tab;
+    private FileTab tab;
     private ContextMenu rightClickMenu;
     private JSObject undoManager;
 
@@ -173,7 +173,7 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
      *
      * @param tab the tab that should be used by this editor
      */
-    public void setTab(final RobotTab tab) {
+    public void setTab(final FileTab tab) {
         this.tab = tab;
     }
 
@@ -424,7 +424,6 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
     }
 
 
-
     /**
      * Perform Ace editor settings
      *
@@ -448,8 +447,12 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
     private void bindToWindow() {
         // Do not use executeJS here, it needs to be done immediately
         JSObject jsobj = (JSObject) executeJSBlocking("window");
-        jsobj.setMember("xillCoreOverride", new XillJSObject(tab.getProcessor()));
         jsobj.setMember("javaEditor", this);
+
+        // Check if the tab is a robot tab.
+        if (tab instanceof RobotTab) {
+            jsobj.setMember("xillCoreOverride", new XillJSObject(((RobotTab) tab).getProcessor()));
+        }
 
         executeJSBlocking("init();");
     }
@@ -469,6 +472,12 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
      * @param jsBreakpoints the breakpoints to set
      */
     public void breakpointsChanged(JSObject jsBreakpoints) {
+        // Check if the tab is a robot tab.
+        if (!(tab instanceof RobotTab)) {
+            return;
+        }
+        RobotTab robotTab = (RobotTab) tab;
+
         int length = ((Number) jsBreakpoints.getMember("length")).intValue();
 
         List<Integer> breakpoints = new ArrayList<>(length);
@@ -478,9 +487,9 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
             }
         }
 
-        BreakpointPool.INSTANCE.clear(tab.getCurrentRobot());
+        BreakpointPool.INSTANCE.clear(robotTab.getCurrentRobot());
 
-        breakpoints.forEach(bp -> BreakpointPool.INSTANCE.add(tab.getCurrentRobot(), bp));
+        breakpoints.forEach(bp -> BreakpointPool.INSTANCE.add(robotTab.getCurrentRobot(), bp));
     }
 
     /**

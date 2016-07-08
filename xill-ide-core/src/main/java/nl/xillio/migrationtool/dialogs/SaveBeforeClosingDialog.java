@@ -18,13 +18,13 @@ package nl.xillio.migrationtool.dialogs;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import nl.xillio.migrationtool.gui.RobotTab;
+import nl.xillio.migrationtool.gui.FileTab;
 
 /**
  * A dialog to ask for saving upon tab closing.
  */
 public class SaveBeforeClosingDialog extends FXMLDialog {
-    private final RobotTab tab;
+    private final FileTab tab;
     private final Event closeEvent;
     private boolean cancelPressed = false;
 
@@ -34,11 +34,11 @@ public class SaveBeforeClosingDialog extends FXMLDialog {
      * @param tab        the tab to close
      * @param closeEvent the original event
      */
-    public SaveBeforeClosingDialog(final RobotTab tab, final Event closeEvent) {
+    public SaveBeforeClosingDialog(final FileTab tab, final Event closeEvent) {
         super("/fxml/dialogs/SaveBeforeClosing.fxml");
         this.tab = tab;
         this.closeEvent = closeEvent;
-        setTitle("Save changes to " + this.tab.getText() + "?");
+        setTitle("Save changes to " + tab.getText() + "?");
     }
 
     @FXML
