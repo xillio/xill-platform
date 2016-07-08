@@ -23,7 +23,11 @@ If the source parameter contains binary data, consume that data.
 Otherwise the string value of the source parameter will be written to the target stream.
 
 This construct accepts a limit parameter, when this parameter is provided this construct will stop writing at X
-bytes where X is the number value passed to the limit parameter.
+bytes where X is the number value passed to the limit parameter. When limit is -1, all bytes will be written.
+
+This construct accepts outputCharset and inputCharset parameters. These cause the target and source respectively
+to be read using the given character sets. When these are null, the default character set is used. When the source
+parameter is a string, the inputCharset is ignored.
     </description>
     <examples>
         <example title="Usage">
