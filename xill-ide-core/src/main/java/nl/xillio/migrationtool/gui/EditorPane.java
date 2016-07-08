@@ -102,7 +102,7 @@ public class EditorPane extends AnchorPane implements FileTabComponent, EventHan
         editorReplaceBar.setButton(tbnEditorSearch, 1);
         editor.getCodeProperty().addListener(this);
         editor.setReplaceBar(editorReplaceBar);
-        //editor.getOnDocumentLoaded().addListener(e -> editor.autoDetectMode(tab.getDocument().getName()));
+        editor.getOnDocumentLoaded().addListener(e -> editor.autoDetectMode(tab.getDocument().getName()));
 
         btnRedo.setDisable(true);
         btnUndo.setDisable(true);
