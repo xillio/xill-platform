@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 * Remove paging from the Xill IDE Console [CTC-1593]
 * Add py, xill, xillt extensions to the mimetype library [CTC-1626]
 * Add an overview of all active plugins in the settings about section [CTC-1667]
+* Add an archetype for xill plugins [CTC-1284]
 
 ### Fix
 
