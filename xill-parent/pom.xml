@@ -538,6 +538,7 @@
                             <manifestEntries>
                                 <Created-On>${timestamp}</Created-On>
                                 <Created-By>${java.version}</Created-By>
+                                <Vendor-Url>${organization.url}</Vendor-Url>
                             </manifestEntries>
                         </archive>
                     </configuration>
