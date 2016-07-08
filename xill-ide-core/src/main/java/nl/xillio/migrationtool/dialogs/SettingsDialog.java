@@ -523,44 +523,16 @@ public class SettingsDialog extends FXMLDialog {
             return name.get();
         }
 
-        public SimpleStringProperty nameProperty() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name.set(name);
-        }
-
         public String getVersion() {
             return version.get();
-        }
-
-        public SimpleStringProperty versionProperty() {
-            return version;
-        }
-
-        public void setVersion(String version) {
-            this.version.set(version);
         }
 
         public String getVendor() {
             return vendor.get();
         }
 
-        public SimpleStringProperty vendorProperty() {
-            return vendor;
-        }
-
-        public void setVendor(String vendor) {
-            this.vendor.set(vendor);
-        }
-
         public String getUrl() {
             return url.get();
-        }
-
-        public SimpleStringProperty urlProperty() {
-            return url;
         }
     }
 
