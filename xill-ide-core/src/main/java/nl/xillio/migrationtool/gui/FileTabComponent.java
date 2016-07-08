@@ -18,11 +18,12 @@ package nl.xillio.migrationtool.gui;
 /**
  * This interface represents a child component of a file tab
  */
+@FunctionalInterface
 public interface FileTabComponent {
     /**
-     * Initialize the component. After loading and building the dom
+     * Initialize the component after loading and building the dom.
      *
-     * @param tab
+     * @param tab the file tab to use
      */
     void initialize(FileTab tab);
 }

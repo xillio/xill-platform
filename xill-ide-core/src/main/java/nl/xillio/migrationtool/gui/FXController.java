@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -535,11 +535,9 @@ public class FXController implements Initializable, EventHandler<Event> {
         // Check if there are tabs whose robots are running.
         List<FileTab> running = getTabs().stream().filter(tab -> tab instanceof RobotTab)
                 .filter(tab -> ((RobotTab) tab).getEditorPane().getControls().robotRunning()).collect(Collectors.toList());
-        if (!running.isEmpty()) {
-            // If robots are running, show a confirmation dialog.
-            if (!showCloseAppDialog(running.size())) {
-                return false;
-            }
+        // If robots are running, show a confirmation dialog.
+        if (!running.isEmpty() && !showCloseAppDialog(running.size())) {
+            return false;
         }
 
         // Close all tabs
@@ -838,7 +836,7 @@ public class FXController implements Initializable, EventHandler<Event> {
      */
     public FileTab findTab(final File filePath) {
         for (Tab tab : tpnBots.getTabs()) {
-            if (((FileTab) tab).getDocument().getPath().equals(filePath)) {
+            if (((FileTab) tab).getDocument().equals(filePath)) {
                 return (FileTab) tab;
             }
         }

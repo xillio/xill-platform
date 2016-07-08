@@ -18,11 +18,12 @@ package nl.xillio.migrationtool.gui;
 /**
  * This interface represents a child component of a robot tab
  */
+@FunctionalInterface
 public interface RobotTabComponent {
     /**
-     * Initialize the component. After loading and building the dom
+     * Initialize the component after loading and building the dom.
      *
-     * @param tab
+     * @param tab the robot tab to use
      */
     void initialize(RobotTab tab);
 }
