@@ -16,26 +16,33 @@
     limitations under the License.
 
 -->
-<?import javafx.scene.*?>
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
+
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.*?>
 <?import nl.xillio.migrationtool.gui.*?>
 
 <AnchorPane fx:id="apnBot" minHeight="0.0" minWidth="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-	<children>
-		<VBox fx:id="vbxBot" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-			<children>
-				<HBox fx:id="hbxBot" VBox.vgrow="ALWAYS">
-					<children>
-						<AnchorPane fx:id="apnBotLeft" VBox.vgrow="ALWAYS">
-							<children>
-								<EditorPane fx:id="editorPane" />
-							</children>
-						</AnchorPane>
-					</children>
-				</HBox>
-			</children>
-		</VBox>
-	</children>
+    <children>
+        <VBox fx:id="vbxBot" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <HBox fx:id="hbxBot" VBox.vgrow="ALWAYS">
+                    <children>
+                        <SplitPane fx:id="spnBotPanes" dividerPositions="0.7" focusTraversable="false" HBox.hgrow="ALWAYS">
+                            <items>
+                                <AnchorPane fx:id="apnBotLeft" VBox.vgrow="ALWAYS">
+                                    <children>
+                                        <SplitPane fx:id="spnBotLeft" focusTraversable="false" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                            <items>
+                                                <EditorPane fx:id="editorPane"/>
+                                            </items>
+                                        </SplitPane>
+                                    </children>
+                                </AnchorPane>
+                            </items>
+                        </SplitPane>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
 </AnchorPane>

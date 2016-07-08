@@ -43,7 +43,6 @@ import nl.xillio.migrationtool.elasticconsole.ESConsoleClient;
 import nl.xillio.plugins.PluginLoadFailure;
 import nl.xillio.plugins.XillPlugin;
 import nl.xillio.xill.api.XillEnvironment;
-import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.util.HotkeysHandler;
 import nl.xillio.xill.util.HotkeysHandler.Hotkeys;
 import nl.xillio.xill.util.settings.Settings;
@@ -309,18 +308,21 @@ public class FXController implements Initializable, EventHandler<Event> {
     }
 
     /**
-     * Switch focus to an existing tab for a certain robot or create it.
+     * Switch focus to an existing tab for a certain file or create it.
      *
-     * @param robotID the robot that should be viewed
+     * @param document the file that should be visible in the tab
+     * @param project  the project folder for the robot
+     * @param isRobot  whether the file is a robot or regular file
      */
-    public void viewOrOpenRobot(RobotID robotID) {
-        RobotTab tab = tpnBots.getTabs().stream()
-                .map(bot -> (RobotTab) bot)
-                .filter(robotTab -> robotTab.getProcessor().getRobotID().equals(robotID))
-                .map(this::reloadRobotTab)
-                .findAny()
-                .orElseGet(() -> createTab(robotID.getPath(), robotID.getProjectPath()));
+    public void viewOrOpenRobot(File document, File project, boolean isRobot) {
+        FileTab tab = findTab(document);
 
+        // Create a tab.
+        if (tab == null) {
+            tab = createTab(document, project, isRobot);
+        }
+
+        // Open the tab.
         if (tab != null) {
             tab.requestFocus();
         }
@@ -329,19 +331,14 @@ public class FXController implements Initializable, EventHandler<Event> {
     /**
      * Try to make a tab and add it to the view.
      *
-     * @param robotFile     the file that should be visible in the tab
-     * @param projectFolder the project folder for the robot
+     * @param document the file that should be visible in the tab
+     * @param project  the project folder for the robot
      * @return the tab or null if it could not be created
      */
-    private RobotTab createTab(File robotFile, File projectFolder) {
-        RobotTab robotTab = new RobotTab(projectFolder, robotFile, this);
-        tpnBots.getTabs().add(robotTab);
-        return robotTab;
-    }
-
-    private RobotTab reloadRobotTab(RobotTab robotTab) {
-        robotTab.reload();
-        return robotTab;
+    private FileTab createTab(File document, File project, boolean isRobot) {
+        FileTab tab = isRobot ? new RobotTab(project, document, this) : new FileTab(project, document, this);
+        tpnBots.getTabs().add(tab);
+        return tab;
     }
 
     @FXML
@@ -424,13 +421,8 @@ public class FXController implements Initializable, EventHandler<Event> {
         // Try to get the project path. If there is no project, use the parent directory as the project path.
         String projectPath = projectpane.getProjectPath(file).orElse(file.getParent());
 
-        // Create the file tab.
-        File project = new File(projectPath);
-        File document = file.getAbsoluteFile();
-        FileTab tab = isRobot ? new RobotTab(project, document, this) : new FileTab(project, document, this);
-
-        // Add and show the tab.
-        tpnBots.getTabs().add(tab);
+        // Create and open the new tab.
+        FileTab tab = createTab(file.getAbsoluteFile(), new File(projectPath), isRobot);
         tab.requestFocus();
         return tab;
     }
@@ -466,7 +458,7 @@ public class FXController implements Initializable, EventHandler<Event> {
         if (!btnSave.isDisabled()) {
             Tab tab = tpnBots.getSelectionModel().getSelectedItem();
             if (tab != null) {
-                ((RobotTab) tab).save();
+                ((FileTab) tab).save();
             }
         }
     }
@@ -476,7 +468,7 @@ public class FXController implements Initializable, EventHandler<Event> {
         if (!btnSaveAs.isDisabled()) {
             Tab tab = tpnBots.getSelectionModel().getSelectedItem();
             if (tab != null) {
-                ((RobotTab) tab).save(true);
+                ((FileTab) tab).save(true);
             }
         }
     }
@@ -484,7 +476,7 @@ public class FXController implements Initializable, EventHandler<Event> {
     @FXML
     private void buttonSaveAll() {
         if (!btnSaveAll.isDisabled()) {
-            tpnBots.getTabs().forEach(tab -> ((RobotTab) tab).save());
+            tpnBots.getTabs().forEach(tab -> ((FileTab) tab).save());
         }
     }
 
@@ -516,7 +508,7 @@ public class FXController implements Initializable, EventHandler<Event> {
             spnMain.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.LeftPanelWidth)));
         }
 
-        RobotTab selected = (RobotTab) getSelectedTab();
+        FileTab selected = (FileTab) getSelectedTab();
         if (selected != null)
             selected.requestFocus();
     }
@@ -631,7 +623,6 @@ public class FXController implements Initializable, EventHandler<Event> {
 
         return jsCode;
     }
-
 
     /**
      * Display the release notes
@@ -841,10 +832,10 @@ public class FXController implements Initializable, EventHandler<Event> {
      * @param filePath filepath to robot (.xill) file
      * @return RobotTab if found, otherwise null
      */
-    public Tab findTab(final File filePath) {
+    public FileTab findTab(final File filePath) {
         for (Tab tab : tpnBots.getTabs()) {
             if (((FileTab) tab).getDocument().getPath().equals(filePath)) {
-                return tab;
+                return (FileTab) tab;
             }
         }
         return null;

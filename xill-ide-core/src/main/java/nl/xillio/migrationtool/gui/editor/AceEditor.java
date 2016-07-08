@@ -43,6 +43,7 @@ import nl.xillio.migrationtool.gui.FileTab;
 import nl.xillio.migrationtool.gui.ReplaceBar;
 import nl.xillio.migrationtool.gui.RobotTab;
 import nl.xillio.xill.api.Issue;
+import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.preview.Replaceable;
 import nl.xillio.xill.util.HotkeysHandler.Hotkeys;
@@ -652,10 +653,12 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
     /**
      * Auto-detect and set the editor mode based on the path.
      *
-     * @param path the path to detect the mode for
+     * @param file the file to detect the mode for
      */
-    public void autoDetectMode(String path) {
-        executeJS("editor.session.setMode(modelist.getModeForPath(\"" + path + "\").mode);");
+    public void autoDetectMode(String file) {
+        if (!file.endsWith(XillEnvironment.ROBOT_EXTENSION) && !file.endsWith(XillEnvironment.ROBOT_TEMPLATE_EXTENSION)) {
+            executeJS("editor.session.setMode(modelist.getModeForPath(\"" + file + "\").mode);");
+        }
     }
 
     ////////////////// SEARCH BAR //////////////////

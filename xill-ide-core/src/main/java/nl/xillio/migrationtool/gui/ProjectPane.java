@@ -49,6 +49,7 @@ import nl.xillio.xill.util.HotkeysHandler;
 import nl.xillio.xill.util.settings.ProjectSettings;
 import nl.xillio.xill.util.settings.Settings;
 import nl.xillio.xill.util.settings.SettingsHandler;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 
 import javax.swing.filechooser.FileFilter;
@@ -454,11 +455,14 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         // Open a file chooser to save the robot file.
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(initialFolder);
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
-                String.format("Xill Robot (*%s)", XillEnvironment.ROBOT_EXTENSION),
-                String.format("*%s", XillEnvironment.ROBOT_EXTENSION)));
         fileChooser.setTitle("New Robot");
+        fileChooser.setInitialDirectory(initialFolder);
+        String robotExtension = "*" + XillEnvironment.ROBOT_EXTENSION;
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Xill Robot (" + robotExtension + ")", robotExtension),
+                new FileChooser.ExtensionFilter("Any file (*.*)", "*.*")
+        );
+
         File chosen = fileChooser.showSaveDialog(this.getScene().getWindow());
 
         // Check if no file was chosen.
@@ -468,10 +472,13 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         // Check if the new file is in the project.
         if (chosen.getParent().startsWith(projectFile.getAbsolutePath())) {
-            // On Linux the FileChooser does not automatically add xill extension.
-            if (!chosen.getName().endsWith(XillEnvironment.ROBOT_EXTENSION)) {
+            // If the file has no extension, add the robot extension.
+            if (FilenameUtils.getExtension(chosen.getName()).isEmpty()) {
                 chosen = new File(chosen.getPath() + XillEnvironment.ROBOT_EXTENSION);
             }
+
+            // Check whether the file is a robot.
+            boolean isRobot = chosen.getName().endsWith(XillEnvironment.ROBOT_EXTENSION);
 
             try {
                 Map<String, Object> model = Templater.getDefaultModel();
@@ -480,16 +487,16 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 model.put("projectName", projectFile.getName());
                 model.put("projectPath", projectFile.getCanonicalPath());
                 templater.render(templateFile, model, Paths.get(chosen.toURI()));
-                controller.viewOrOpenRobot(RobotID.getInstance(chosen, projectFile));
+                controller.viewOrOpenRobot(chosen, projectFile, isRobot);
             } catch (IOException e) {
-                LOGGER.error("Failed to create robot file.", e);
+                LOGGER.error("Failed to create file.", e);
             } catch (TemplateException e) {
                 new AlertDialog(Alert.AlertType.ERROR, "Invalid template", "The template you want to use could not be processed!", e.getMessage()).show();
-                controller.viewOrOpenRobot(RobotID.getInstance(chosen, projectFile));
+                controller.viewOrOpenRobot(chosen, projectFile, isRobot);
             }
         } else {
             // Inform the user about the file being created outside of a project.
-            new AlertDialog(Alert.AlertType.ERROR, "Project path error", "", "Robots can only be created inside projects.").show();
+            new AlertDialog(Alert.AlertType.ERROR, "Project path error", "", "Files can only be created inside projects.").show();
         }
     }
 
