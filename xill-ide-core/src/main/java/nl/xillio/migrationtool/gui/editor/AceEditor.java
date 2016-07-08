@@ -64,7 +64,7 @@ import java.util.stream.Collectors;
 public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable, EventDispatcher {
     private static final Logger LOGGER = Log.get();
     private static final Clipboard clipboard = Clipboard.getSystemClipboard();
-    private static String EDITOR_URL;
+    private static String editorUrl;
 
     private final StringProperty code = new SimpleStringProperty();
     private final WebView editor;
@@ -77,35 +77,16 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
     private ContextMenu rightClickMenu;
     private JSObject undoManager;
 
+    // Search bar.
+    private ReplaceBar replaceBar;
+    private int occurrences = 0;
+
     static {
         try {
             deployEditor();
         } catch (IOException | TemplateException e) {
             throw new RuntimeException("Failed to deploy editor", e);
         }
-    }
-
-    /**
-     * Deploy the editor file.
-     * <p>
-     * This is a workaround for a bug introduced in jdk1.8.0_60 where internal resources cannot reference other internal resources. This method should be removed as soon as this bug is fixed.
-     * </p>
-     *
-     * @see <a href="https://bugs.openjdk.java.net/browse/JDK-8134975?page=com.atlassian.streams.streams-jira-plugin:activity-stream-issue-tab">Bug Report</a>
-     * @deprecated This is a workaround
-     */
-    @Deprecated
-    private static void deployEditor() throws IOException, TemplateException {
-        File editorFile = File.createTempFile("xill_editor", ".html");
-        FileUtils.forceDeleteOnExit(editorFile);
-        Configuration config = new Configuration(Configuration.VERSION_2_3_23);
-        config.setClassForTemplateLoading(AceEditor.class, "/");
-        Template template = config.getTemplate("editor.html");
-        Map<String, Object> model = new HashMap<>();
-        model.put("jarFile", AceEditor.class.getResource("/editor.html").toExternalForm().replaceAll("editor\\.html", ""));
-        template.process(model, new FileWriter(editorFile));
-        LOGGER.info("Deployed editor as JavaFX workaround");
-        EDITOR_URL = editorFile.toURI().toURL().toExternalForm();
     }
 
     /**
@@ -142,11 +123,30 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
         editor.setOnDragDropped(null);
         editor.setOnDragOver(e -> editor.sceneProperty().get().setCursor(Cursor.DISAPPEAR));
 
-        editor.getEngine().getLoadWorker().exceptionProperty().addListener(
-                (source, o, n) -> {
-                    LOGGER.error("Javascript exception", n);
-                }
-        );
+        editor.getEngine().getLoadWorker().exceptionProperty().addListener((source, o, n) -> LOGGER.error("Javascript exception", n));
+    }
+
+    /**
+     * Deploy the editor file.
+     * <p>
+     * This is a workaround for a bug introduced in jdk1.8.0_60 where internal resources cannot reference other internal resources. This method should be removed as soon as this bug is fixed.
+     * </p>
+     *
+     * @see <a href="https://bugs.openjdk.java.net/browse/JDK-8134975?page=com.atlassian.streams.streams-jira-plugin:activity-stream-issue-tab">Bug Report</a>
+     * @deprecated This is a workaround
+     */
+    @Deprecated
+    private static void deployEditor() throws IOException, TemplateException {
+        File editorFile = File.createTempFile("xill_editor", ".html");
+        FileUtils.forceDeleteOnExit(editorFile);
+        Configuration config = new Configuration(Configuration.VERSION_2_3_23);
+        config.setClassForTemplateLoading(AceEditor.class, "/");
+        Template template = config.getTemplate("editor.html");
+        Map<String, Object> model = new HashMap<>();
+        model.put("jarFile", AceEditor.class.getResource("/editor.html").toExternalForm().replaceAll("editor\\.html", ""));
+        template.process(model, new FileWriter(editorFile));
+        LOGGER.info("Deployed editor as JavaFX workaround");
+        editorUrl = editorFile.toURI().toURL().toExternalForm();
     }
 
     /**
@@ -320,7 +320,7 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
      * @param type type of highlighting to be used( "error" or "highlight" )
      */
     public void highlightLine(final int line, final String type) {
-        callOnAce("highlight", (line > 0 ? line - 1 : 0), type);
+        callOnAce("highlight", line > 0 ? line - 1 : 0, type);
     }
 
     /**
@@ -580,7 +580,7 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
      * Load Ace editor in the {@link WebView}
      */
     public void loadEditor() {
-        load(EDITOR_URL);
+        load(editorUrl);
     }
 
     private void load(final String path) {
@@ -603,7 +603,7 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
      * @return the plugin and construct at cursor position
      * @throws ClassCastException which is most likely an out of bounds exception by retrieving tokens.
      */
-    public String[] getPluginAndConstructAtCursor() throws ClassCastException {
+    public String[] getPluginAndConstructAtCursor() {
 
         Object cursor = ((JSObject) ace.getMember("selection")).call("getCursor");
         Object column = ((JSObject) cursor).getMember("column");
@@ -637,16 +637,16 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
             default:
                 break;
         }
-        result[0] = (plugin);
-        result[1] = (construct);
+        result[0] = plugin;
+        result[1] = construct;
         return result;
     }
 
-    private String getTokenValue(Object tokens, int index) throws ClassCastException {
+    private String getTokenValue(Object tokens, int index) {
         return getTokenValue(((JSObject) tokens).getSlot(index));
     }
 
-    private String getTokenValue(Object token) throws ClassCastException {
+    private String getTokenValue(Object token) {
         return ((JSObject) token).getMember("value").toString();
     }
 
@@ -662,8 +662,6 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
     }
 
     ////////////////// SEARCH BAR //////////////////
-    private ReplaceBar replaceBar;
-    private int occurrences = 0;
 
     /**
      * Set the replace bar that the editor uses.
@@ -746,7 +744,7 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
     }
 
     private String toJavaScript(Issue issue) {
-        return String.format("{row:%d,column:0,text:\"%s\",type:\"%s\"}", (issue.getLine() > 0 ? issue.getLine() - 1 : 0),
+        return String.format("{row:%d,column:0,text:\"%s\",type:\"%s\"}", issue.getLine() > 0 ? issue.getLine() - 1 : 0,
                 escape(issue.getMessage()), issue.getSeverity().toString().toLowerCase());
     }
 }
