@@ -9,7 +9,6 @@ import nl.xillio.plugins.XillPlugin;
  *
  * @see <a href="http://guide.xill.io">http://guide.xill.io</a>
  * @since ${version}
- * @author ${author}
  */
 public class ${pluginName}XillPlugin extends XillPlugin {
 

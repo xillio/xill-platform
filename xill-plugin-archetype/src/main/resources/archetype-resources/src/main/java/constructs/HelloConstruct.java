@@ -13,7 +13,6 @@ import org.slf4j.Logger;
  *
  * @see <a href="http://guide.xill.io">http://guide.xill.io</a>
  * @since ${version}
- * @author ${author}
  */
 public class HelloConstruct extends Construct {
 

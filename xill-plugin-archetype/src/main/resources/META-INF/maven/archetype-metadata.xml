@@ -20,9 +20,6 @@
                       xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd">
     <requiredProperties>
         <requiredProperty key="pluginName"/>
-        <requiredProperty key="author">
-            <defaultValue>${user.name}</defaultValue>
-        </requiredProperty>
     </requiredProperties>
     <fileSets>
         <fileSet filtered="true" packaged="true">
