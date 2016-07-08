@@ -21,9 +21,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>nl.xillio.xill</groupId>
+    <parent>
+        <groupId>nl.xillio.xill</groupId>
+        <artifactId>xill-parent</artifactId>
+        <version>3.04.00-SNAPSHOT</version>
+        <relativePath>../xill-parent</relativePath>
+    </parent>
+    
     <artifactId>xill-plugin-archetype</artifactId>
-    <version>3.04.00-SNAPSHOT</version>
     <packaging>maven-archetype</packaging>
 
     <build>
