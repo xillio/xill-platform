@@ -78,7 +78,6 @@
         <log4j.version>2.6</log4j.version>
         <docgen.version>3.1.3</docgen.version>
         <jasypt.version>1.9.1</jasypt.version>
-        <exiftool.version>1.1.0</exiftool.version>
         <slf4j.version>1.7.21</slf4j.version>
         <saxon.version>9.6.0-5</saxon.version>
         <wield.version>1.1.1</wield.version>
@@ -426,11 +425,6 @@
                 <version>${jasypt.version}</version>
             </dependency>
             <dependency>
-                <groupId>nl.xillio</groupId>
-                <artifactId>exiftool</artifactId>
-                <version>${exiftool.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.mongodb</groupId>
                 <artifactId>mongo-java-driver</artifactId>
                 <version>${mongo.java.driver.version}</version>
@@ -544,6 +538,7 @@
                             <manifestEntries>
                                 <Created-On>${timestamp}</Created-On>
                                 <Created-By>${java.version}</Created-By>
+                                <Vendor-Url>${organization.url}</Vendor-Url>
                             </manifestEntries>
                         </archive>
                     </configuration>

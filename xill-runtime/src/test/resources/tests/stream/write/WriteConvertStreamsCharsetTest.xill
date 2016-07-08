@@ -1,0 +1,38 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Specification: Converting the character set of a text file should result in a file with the same text content
+ * Input: A UTF-8 text file
+ * Expected: The same string in the output file
+ */
+ 
+ use Assert, File, Stream;
+ 
+ var input = "testresources/stream/text.txt";
+ var output = "integration_test.txt";
+ 
+ run();
+ clean();
+ 
+ function run() {
+     var contents = Stream.getText(File.openRead(input), "UTF-8");
+     Stream.write(File.openRead(input), File.openWrite(output), -1, "ISO-8859-1", "UTF-8");
+     var verifyFile = File.openRead(output);
+     Assert.equal(Stream.getText(verifyFile, "ISO-8859-1"), contents);
+ }
+ 
+ function clean() {
+     File.delete("integration_test.txt");
+ }
