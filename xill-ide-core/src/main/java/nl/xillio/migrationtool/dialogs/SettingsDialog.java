@@ -16,6 +16,8 @@
 package nl.xillio.migrationtool.dialogs;
 
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -31,7 +33,9 @@ import javafx.stage.Modality;
 import javafx.stage.Window;
 import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.EulaUtils;
+import nl.xillio.migrationtool.Loader;
 import nl.xillio.migrationtool.gui.FXController;
+import nl.xillio.plugins.XillPlugin;
 import nl.xillio.xill.util.settings.Settings;
 import nl.xillio.xill.util.settings.SettingsHandler;
 import org.slf4j.Logger;
@@ -42,6 +46,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Dialog contains all configurable Xill IDE options and allows to change them
@@ -97,6 +102,10 @@ public class SettingsDialog extends FXMLDialog {
     @FXML
     private Tab licenseTab;
     @FXML
+    private TableView<PluginData> pluginsTable;
+    @FXML
+    private TableColumn<PluginData, PluginData> creatorColumn;
+    @FXML
     private Label lblLicenseType, lblLicensedTo, lblLicenseContactName, lblLicenseContactEmail,
             lblLicenseDateIssued, lblLicenseExpiryDate, lblLicenseModules;
 
@@ -132,6 +141,15 @@ public class SettingsDialog extends FXMLDialog {
 
         Platform.runLater(() -> FXController.hotkeys.getAllTextFields(getScene()).forEach(this::setShortcutHandler));
 
+        loadPluginInfo();
+        setMinHeight(500);
+    }
+
+    private void loadPluginInfo() {
+        creatorColumn.setCellValueFactory(param -> new SimpleObjectProperty<>(param.getValue()));
+        creatorColumn.setCellFactory(param -> new CreatorCell());
+        java.util.List<PluginData> data = Loader.getXill().getPlugins().stream().map(PluginData::new).collect(Collectors.toList());
+        pluginsTable.getItems().setAll(data);
     }
 
     private void setSize() {
@@ -217,14 +235,12 @@ public class SettingsDialog extends FXMLDialog {
                 (event.isAltDown() ? "Alt+" : "") +
                 (event.isShiftDown() ? "Shift+" : "");
 
-        if ((event.getCode().isFunctionKey()) && (event.getEventType() == KeyEvent.KEY_RELEASED)) {
+        if (event.getCode().isFunctionKey() && event.getEventType() == KeyEvent.KEY_RELEASED) {
             // This is an F* key.
             return modifiers + event.getCode().getName().toUpperCase();
-        } else if ((event.getEventType() == KeyEvent.KEY_PRESSED)) {
-            // This is any other key holding a text value. We require there to be a modifier
-            if (!modifiers.isEmpty()) {
-                return modifiers + event.getCode().getName();
-            }
+        } else if (event.getEventType() == KeyEvent.KEY_PRESSED && !modifiers.isEmpty()) {
+            // This is any other key holding a text value. We require there to be a modifier.
+            return modifiers + event.getCode().getName();
         }
 
         return null;
@@ -458,7 +474,7 @@ public class SettingsDialog extends FXMLDialog {
         RangeValidator(final int fromIncl, final int toIncl, final String suffix, final boolean allowEmpty) {
             this.fromIncl = fromIncl;
             this.toIncl = toIncl;
-            this.suffix = (suffix == null ? "" : suffix);
+            this.suffix = suffix == null ? "" : suffix;
             this.allowEmpty = allowEmpty;
             this.pattern = Pattern.compile("[0-9]+" + this.suffix);
         }
@@ -481,6 +497,72 @@ public class SettingsDialog extends FXMLDialog {
 
         public boolean isValid() {
             return this.valid;
+        }
+    }
+
+    /**
+     * This class represents the metadata about plugins displayed in the about tab.
+     *
+     * @author Thomas Biesaart
+     * @since 3.4.0
+     */
+    public static class PluginData {
+        private final SimpleStringProperty name = new SimpleStringProperty(this, "name");
+        private final SimpleStringProperty version = new SimpleStringProperty(this, "version");
+        private final SimpleStringProperty vendor = new SimpleStringProperty(this, "vendor");
+        private final SimpleStringProperty url = new SimpleStringProperty(this, "url");
+
+        public PluginData(XillPlugin xillPlugin) {
+            name.set(xillPlugin.getName());
+            version.set(xillPlugin.getVersion().orElse("-"));
+            vendor.set(xillPlugin.getVendor().orElse("-"));
+            url.setValue(xillPlugin.getVendorUrl().orElse(""));
+        }
+
+        public String getName() {
+            return name.get();
+        }
+
+        public String getVersion() {
+            return version.get();
+        }
+
+        public String getVendor() {
+            return vendor.get();
+        }
+
+        public String getUrl() {
+            return url.get();
+        }
+    }
+
+    private class CreatorCell extends TableCell<PluginData, PluginData> {
+
+        @Override
+        protected void updateItem(PluginData item, boolean empty) {
+            super.updateItem(item, empty);
+
+            if (empty) {
+                setGraphic(null);
+            } else if (item.url.get().isEmpty()) {
+                // No url
+                setGraphic(new Label(item.getVendor()));
+            } else {
+                Hyperlink hyperlink = new Hyperlink(item.getVendor());
+                hyperlink.setOnAction(e -> openUrl(item.getUrl()));
+                setGraphic(hyperlink);
+            }
+        }
+
+        private void openUrl(String url) {
+            if (!Desktop.isDesktopSupported()) {
+                return;
+            }
+            try {
+                Desktop.getDesktop().browse(new URI(url));
+            } catch (IOException | URISyntaxException | UnsupportedOperationException e) {
+                LOGGER.error("Failed to open url in browser", e);
+            }
         }
     }
 }
