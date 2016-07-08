@@ -16,3 +16,4 @@ All notable changes to this project will be documented in this file.
 * Robot Freezes when hitting cancel on auto-save dialog [CTC-1636]
 * RegexServiceImpl.getMatcher uses incorrect timeout [CTC-1629]
 * Web.download now creates all required folders [CTC-1532]
+* Allow custom character sets in Stream.write [CTC-1628]
