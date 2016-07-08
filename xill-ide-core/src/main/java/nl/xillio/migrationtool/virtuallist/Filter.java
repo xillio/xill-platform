@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.migrationtool.gui;
+package nl.xillio.migrationtool.virtuallist;
 
 /**
- * This interface represents a child component of a robot tab
+ * Defines a filter which can be applied by a {@link DataProvider} before delivering its data
+ *
+ * @author Ernst van Rheenen
  */
-public interface RobotTabComponent {
-    /**
-     * Initialize the component. After loading and building the dom
-     *
-     * @param tab
-     */
-    void initialize(RobotTab tab);
+public interface Filter<S> {
+
+    S getFilter();
+
 }
