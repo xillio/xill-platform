@@ -19,15 +19,7 @@
                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                       xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd">
     <requiredProperties>
-        <requiredProperty key="pluginName">
-            <defaultValue>Example</defaultValue>
-        </requiredProperty>
-        <requiredProperty key="groupId">
-            <defaultValue>org.example.xill</defaultValue>
-        </requiredProperty>
-        <requiredProperty key="artifactId">
-            <defaultValue>plugin-example</defaultValue>
-        </requiredProperty>
+        <requiredProperty key="pluginName"/>
     </requiredProperties>
     <fileSets>
         <fileSet filtered="true" packaged="true">
