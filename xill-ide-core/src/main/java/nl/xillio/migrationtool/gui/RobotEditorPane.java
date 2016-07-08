@@ -112,7 +112,7 @@ public class RobotEditorPane extends EditorPane implements RobotTabComponent {
             try {
                 values = getEditor().getPluginAndConstructAtCursor();
             } catch (ClassCastException e) {
-                LOGGER.warn(e.getMessage());
+                LOGGER.warn("Could not get plugin and construct at caret.", e);
                 return;
             }
 

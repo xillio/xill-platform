@@ -258,8 +258,8 @@ public class RobotControls implements EventHandler<KeyEvent>, ErrorHandlingPolic
 
         // First we find the right tab
         Optional<FileTab> correctTab = tab.getGlobalController().getTabs().stream()
-                .filter(tab -> tab instanceof RobotTab)
-                .filter(tab -> ((RobotTab) tab).getProcessor().getRobotID() == id).findAny();
+                .filter(t -> t instanceof RobotTab)
+                .filter(t -> ((RobotTab) t).getProcessor().getRobotID() == id).findAny();
 
         if (correctTab.isPresent()) {
             // This tab is already open
@@ -291,7 +291,7 @@ public class RobotControls implements EventHandler<KeyEvent>, ErrorHandlingPolic
     }
 
     @Override
-    public void handle(final Throwable e) throws RobotRuntimeException {
+    public void handle(final Throwable e) {
         Logger log = LogUtil.getLogger(getRobotID());
 
         Throwable root = ExceptionUtils.getRootCause(e);
