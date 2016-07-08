@@ -17,7 +17,6 @@ package nl.xillio.xill.plugins.stream.constructs;
 
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
-import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.api.io.IOStream;
 import nl.xillio.xill.api.io.SimpleIOStream;
@@ -27,15 +26,19 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
 
 
 public class WriteConstructTest extends TestUtils {
+    public static final String CONVERT_TEST_ENCODING = "ISO-8859-1";
     private final WriteConstruct construct = new WriteConstruct();
 
     @Test
@@ -47,8 +50,8 @@ public class WriteConstructTest extends TestUtils {
         IOStream ioStream = new SimpleIOStream(inputStream, outputStream, "UnitTest");
         MetaExpression input = fromValue(ioStream);
 
-        MetaExpression result = ConstructProcessor.process(
-                construct.prepareProcess(context(construct)),
+        MetaExpression result = process(
+                construct,
                 input,
                 input
         );
@@ -68,8 +71,8 @@ public class WriteConstructTest extends TestUtils {
         IOStream ioStream = new SimpleIOStream(inputStream, outputStream, "UnitTest");
         MetaExpression input = fromValue(ioStream);
 
-        MetaExpression result = ConstructProcessor.process(
-                construct.prepareProcess(context(construct)),
+        MetaExpression result = process(
+                construct,
                 input,
                 input,
                 fromValue(limit)
@@ -89,8 +92,8 @@ public class WriteConstructTest extends TestUtils {
         IOStream ioStream = new SimpleIOStream(inputStream, outputStream, "UnitTest");
         MetaExpression input = fromValue(ioStream);
 
-        ConstructProcessor.process(
-                construct.prepareProcess(context(construct)),
+        process(
+                construct,
                 input,
                 input
         );
@@ -105,8 +108,8 @@ public class WriteConstructTest extends TestUtils {
         MetaExpression input = fromValue(inputText);
         MetaExpression output = fromValue(ioStream);
 
-        MetaExpression result = ConstructProcessor.process(
-                construct.prepareProcess(context(construct)),
+        MetaExpression result = process(
+                construct,
                 input,
                 output
         );
@@ -115,11 +118,51 @@ public class WriteConstructTest extends TestUtils {
         assertEquals(result.getNumberValue().intValue(), inputText.length());
     }
 
+    /**
+     * Test converting a stream to a different character set
+     */
+    @Test
+    public void testConvertStream() throws UnsupportedEncodingException {
+        String inputText = "Input";
+        InputStream inputStream = IOUtils.toInputStream(inputText);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        IOStream ioStream = new SimpleIOStream(inputStream, outputStream, "UnitTest");
+
+        MetaExpression io = fromValue(ioStream);
+
+        process(construct, io, io, fromValue(-1),
+                fromValue(CONVERT_TEST_ENCODING), fromValue(Charset.defaultCharset().name()));
+
+        assertEquals(outputStream.toByteArray(), inputText.getBytes(CONVERT_TEST_ENCODING),
+                "Raw string bytes do not match");
+    }
+
+    /**
+     * Test that the inputCharset argument is ignored when the input is not a stream
+     */
+    @Test
+    public void testInputCharsetIgnored() {
+        String inputText = "Input";
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        IOStream ioStream = new SimpleIOStream(outputStream, "UnitTest");
+
+        MetaExpression output = fromValue(ioStream);
+
+        process(construct, fromValue(inputText), output, fromValue(-1),
+                fromValue(Charset.defaultCharset().name()), fromValue(CONVERT_TEST_ENCODING));
+
+        assertNotEquals(Charset.defaultCharset(), Charset.forName(CONVERT_TEST_ENCODING),
+                "This unit test will not work if the test encoding and default encoding are the same");
+        assertEquals(outputStream.toByteArray(), inputText.getBytes());
+    }
+
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*number.*")
     public void testLimitIsNaN() {
 
-        ConstructProcessor.process(
-                construct.prepareProcess(context(construct)),
+        process(
+                construct,
                 NULL,
                 NULL,
                 fromValue("Hello World")
