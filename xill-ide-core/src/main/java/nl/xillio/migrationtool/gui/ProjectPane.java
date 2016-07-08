@@ -207,7 +207,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         menuNewFolder = new MenuItem("New folder", ProjectPane.createIcon(ProjectPane.NEW_FOLDER_ICON));
         menuNewFolder.setOnAction(e -> newFolderButtonPressed());
 
-        menuNewBot = new MenuItem("New robot", ProjectPane.createIcon(ProjectPane.NEW_FILE_ICON));
+        menuNewBot = new MenuItem("New file", ProjectPane.createIcon(ProjectPane.NEW_FILE_ICON));
         menuNewBot.setOnAction(e -> newBot(null));
 
         menuNewBotFromTemplate = new Menu("New robot from template...");
