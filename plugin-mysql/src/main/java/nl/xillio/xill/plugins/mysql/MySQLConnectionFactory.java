@@ -15,7 +15,7 @@
  */
 package nl.xillio.xill.plugins.mysql;
 
-import com.mysql.jdbc.Driver;
+import com.mysql.cj.jdbc.Driver;
 import nl.xillio.xill.plugins.jdbc.services.ConnectionStringFactory;
 
 class MySQLConnectionFactory extends ConnectionStringFactory {

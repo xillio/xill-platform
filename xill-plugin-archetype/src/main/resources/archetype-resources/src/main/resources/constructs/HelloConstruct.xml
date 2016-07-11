@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<function>
+    <description>
+## Generated Construct
+
+This is a generated example construct. It prints a message to the console.
+    </description>
+    <examples>
+        <example title="Usage">
+            <header>Printing a message to the console</header>
+            <code>
+                // First declare the plugin
+                use ${pluginName};
+
+                // Then call the construct
+                ${pluginName}.hello("World");
+            </code>
+        </example>
+    </examples>
+</function>
