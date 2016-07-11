@@ -24,7 +24,6 @@ import me.biesaart.utils.FileUtils;
 import nl.xillio.migrationtool.XillServerUploader;
 import nl.xillio.migrationtool.gui.FXController;
 import nl.xillio.migrationtool.gui.ProjectPane;
-import nl.xillio.xill.services.json.JsonException;
 import nl.xillio.xill.util.settings.Settings;
 
 import java.io.File;
@@ -93,7 +92,7 @@ public class UploadToServerDialog extends FXMLDialog {
             if (!processItems(treeItems, true, true, null)) {
                 return; // Process has been user interrupted - so no success dialog is shown
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR, "Upload to server",
                     "Uploading process has failed.", e.getMessage() + "\n" + e.getCause().getMessage(),
                     ButtonType.OK);
@@ -109,7 +108,7 @@ public class UploadToServerDialog extends FXMLDialog {
         close();
     }
 
-    private boolean processItems(final List<TreeItem<Pair<File, String>>> items, boolean projectExistCheck, boolean robotExistCheck, final String projectId) throws IOException, JsonException {
+    private boolean processItems(final List<TreeItem<Pair<File, String>>> items, boolean projectExistCheck, boolean robotExistCheck, final String projectId) throws IOException {
         // Recursively go through selected items
         for (TreeItem<Pair<File, String>> item : items) {
             // Check if the item is a project
@@ -131,7 +130,7 @@ public class UploadToServerDialog extends FXMLDialog {
         return true;
     }
 
-    private boolean uploadProject(final TreeItem<Pair<File, String>> item, boolean existCheck) throws IOException, JsonException {
+    private boolean uploadProject(final TreeItem<Pair<File, String>> item, boolean existCheck) throws IOException {
         final File projectFolder = projectPane.getProject(item).getValue().getKey();
         final String projectName = xillServerUploader.getProjectName(projectFolder);
 
@@ -154,7 +153,7 @@ public class UploadToServerDialog extends FXMLDialog {
         return processItems(item.getChildren(), false, false, projectId);
     }
 
-    private boolean uploadItem(final TreeItem<Pair<File, String>> item, boolean existCheck, final String projectId) throws IOException, JsonException {
+    private boolean uploadItem(final TreeItem<Pair<File, String>> item, boolean existCheck, final String projectId) throws IOException {
         // Get the selected item info
         final File itemFile = item.getValue().getKey();
         final File projectFolder = projectPane.getProject(item).getValue().getKey();
@@ -195,7 +194,7 @@ public class UploadToServerDialog extends FXMLDialog {
         return itemFile.getName().matches("^[a-zA-Z][a-zA-Z0-9_]*\\.xill$");
     }
 
-    private boolean uploadRobot(final File robotFile, final File projectFolder, final boolean existCheck, String projectId) throws IOException, JsonException {
+    private boolean uploadRobot(final File robotFile, final File projectFolder, final boolean existCheck, String projectId) throws IOException {
         final String code;
         code = FileUtils.readFileToString(robotFile);
 
@@ -220,7 +219,7 @@ public class UploadToServerDialog extends FXMLDialog {
         return true;
     }
 
-    private boolean uploadResource(final File resourceFile, final File projectFolder, final boolean existCheck, String projectId) throws JsonException, IOException {
+    private boolean uploadResource(final File resourceFile, final File projectFolder, final boolean existCheck, String projectId) throws IOException {
         final String resourceName = xillServerUploader.getResourceName(resourceFile, projectFolder);
         if (projectId == null) {
             projectId = xillServerUploader.ensureProjectExist(xillServerUploader.getProjectName(projectFolder));

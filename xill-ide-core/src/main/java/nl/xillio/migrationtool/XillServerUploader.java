@@ -68,6 +68,7 @@ public class XillServerUploader implements AutoCloseable {
      * @param serverUrl Protocol, host [port] [uri] of the Xill server - e.g. http://localhost:8080
      * @param username Username
      * @param password Password
+     * @throws IOException if authentication fails
      */
     public void authenticate(final String serverUrl, final String username, final String password) throws IOException {
         // Xill Server authentication
@@ -100,11 +101,17 @@ public class XillServerUploader implements AutoCloseable {
      *
      * @param projectName Name of the project
      * @return projectId if found, otherwise null (if not found)
+     * @throws IOException if finding the projects fails
      */
-    public String findProject(final String projectName) throws IOException, JsonException {
+    public String findProject(final String projectName) throws IOException {
         String response = doGet("projects/search/findByProjectName?projectName=" + urlEncode(projectName));
 
-        List projects = (List) jsonPath("_embedded/projects", jsonParser.fromJson(response, Map.class));
+        List projects = null;
+        try {
+            projects = (List) jsonPath("_embedded/projects", jsonParser.fromJson(response, Map.class));
+        } catch (JsonException e) {
+            throw new RuntimeException("The server response is invalid.", e);
+        }
         if (projects == null || projects.size() != 1) {
             return null;
         }
@@ -146,6 +153,7 @@ public class XillServerUploader implements AutoCloseable {
      * @param projectId project ID
      * @param robotFqn robot FQN
      * @return true if exist, otherwise false
+     * @throws IOException if the existence check fails
      */
     public boolean existRobot(final String projectId, final String robotFqn) throws IOException {
         try {
@@ -163,7 +171,15 @@ public class XillServerUploader implements AutoCloseable {
         return true;
     }
 
-    public boolean existResource(final String projectId, final String resourceName) throws JsonException, IOException {
+    /**
+     * Tests if the resource does exist.
+     *
+     * @param projectId project ID
+     * @param resourceName resource name
+     * @return true if resource exists, otherwise false
+     * @throws IOException if the existence check fails
+     */
+    public boolean existResource(final String projectId, final String resourceName) throws IOException {
         // Get the JSON list of resources for given projectId
         final String resourcesJson;
         try {
@@ -180,7 +196,12 @@ public class XillServerUploader implements AutoCloseable {
         }
 
         // Find the resourceName in the list
-        List resources = (List) jsonParser.fromJson(resourcesJson, List.class);
+        List resources = null;
+        try {
+            resources = (List) jsonParser.fromJson(resourcesJson, List.class);
+        } catch (JsonException e) {
+            throw new RuntimeException("The server response is invalid.", e);
+        }
         if (resources == null) {
             return false;
         }
@@ -192,8 +213,9 @@ public class XillServerUploader implements AutoCloseable {
      *
      * @param projectName Name of the project
      * @return projectId
+     * @throws IOException if the existence check fails
      */
-    public String ensureProjectExist(final String projectName) throws IOException, JsonException {
+    public String ensureProjectExist(final String projectName) throws IOException {
         String projectId = findProject(projectName);
         if (projectId == null) {
             createProject(projectName);
@@ -205,13 +227,14 @@ public class XillServerUploader implements AutoCloseable {
     /**
      * Create project on the server
      * @param projectName Name of the project
+     * @throws IOException if the project creation fails
      */
-    public void createProject(final String projectName) {
+    public void createProject(final String projectName) throws IOException {
         HashMap<String,String> data = new HashMap<>();
         data.put("projectName", projectName);
         try {
             doPost("projects", jsonParser.toJson(data));
-        } catch (JsonException | IOException e) {
+        } catch (JsonException e) {
             throw new RuntimeException("Could not create project on the server.", e);
         }
     }
@@ -320,13 +343,14 @@ public class XillServerUploader implements AutoCloseable {
      * @param projectId project ID
      * @param robotFqn robot FQN
      * @param code source code of the robot
+     * @throws IOException if upload fails
      */
-    public void uploadRobot(final String projectId, final String robotFqn, final String code) {
+    public void uploadRobot(final String projectId, final String robotFqn, final String code) throws IOException {
         HashMap<String,String> data = new HashMap<>();
         data.put("code", code);
         try {
             doPut(String.format("projects/%1$s/robots/%2$s", projectId, urlEncode(robotFqn)), jsonParser.toJson(data));
-        } catch (JsonException | IOException e) {
+        } catch (JsonException e) {
             throw new RuntimeException("Could not upload robot " + robotFqn + "to the server.", e);
         }
     }
@@ -337,17 +361,15 @@ public class XillServerUploader implements AutoCloseable {
      * @param projectId project ID
      * @param resourceName resource name
      * @param resourceFile resource file
+     * @throws IOException if upload fails
      */
-    public void uploadResource(final String projectId, final String resourceName, final File resourceFile) {
+    public void uploadResource(final String projectId, final String resourceName, final File resourceFile) throws IOException {
         HttpEntity httpEntity  = MultipartEntityBuilder
             .create()
             .addBinaryBody("file", resourceFile)
             .build();
-        try {
+
             doPost(String.format("projects/%1$s/resources/%2$s", projectId, urlEncode(resourceName)), httpEntity);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not upload resource " + resourceName + " to the server.", e);
-        }
     }
 
     private String urlEncode(final String uri) {
