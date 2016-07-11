@@ -132,6 +132,21 @@ public class Settings {
      */
     public static final String ServerHost = "ServerHost";
 
+    /**
+     * Address of Xill server
+     */
+    public static final String XillServerHost = "XillServerHost";
+
+    /**
+     * Username for accessing the Xill server
+     */
+    public static final String XillServerUsername = "XillServerUsername";
+
+    /**
+     * Password for accessing the Xill server
+     */
+    public static final String XillServerPassword = "XillServerPassword";
+
     // =============================================================================
     /**
      * Info category
