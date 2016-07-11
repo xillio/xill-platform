@@ -110,7 +110,7 @@ public class XillServerUploader implements AutoCloseable {
         try {
             projects = (List) jsonPath("_embedded/projects", jsonParser.fromJson(response, Map.class));
         } catch (JsonException e) {
-            throw new RuntimeException("The server response is invalid.", e);
+            throw new IOException("The server response is invalid.", e);
         }
         if (projects == null || projects.size() != 1) {
             return null;
@@ -200,7 +200,7 @@ public class XillServerUploader implements AutoCloseable {
         try {
             resources = (List) jsonParser.fromJson(resourcesJson, List.class);
         } catch (JsonException e) {
-            throw new RuntimeException("The server response is invalid.", e);
+            throw new IOException("The server response is invalid.", e);
         }
         if (resources == null) {
             return false;
@@ -235,7 +235,7 @@ public class XillServerUploader implements AutoCloseable {
         try {
             doPost("projects", jsonParser.toJson(data));
         } catch (JsonException e) {
-            throw new RuntimeException("Could not create project on the server.", e);
+            throw new IOException("Could not create project on the server.", e);
         }
     }
 
@@ -244,12 +244,8 @@ public class XillServerUploader implements AutoCloseable {
      *
      * @param projectId Name of the project
      */
-    public void deleteProject(final String projectId) {
-        try {
-            doDelete("projects/" + projectId);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not delete project from the server.", e);
-        }
+    public void deleteProject(final String projectId) throws IOException {
+        doDelete("projects/" + projectId);
     }
 
     private String doGet(final String uri) throws IOException {
@@ -351,7 +347,7 @@ public class XillServerUploader implements AutoCloseable {
         try {
             doPut(String.format("projects/%1$s/robots/%2$s", projectId, urlEncode(robotFqn)), jsonParser.toJson(data));
         } catch (JsonException e) {
-            throw new RuntimeException("Could not upload robot " + robotFqn + "to the server.", e);
+            throw new IOException("Could not upload robot " + robotFqn + "to the server.", e);
         }
     }
 
@@ -372,11 +368,11 @@ public class XillServerUploader implements AutoCloseable {
             doPost(String.format("projects/%1$s/resources/%2$s", projectId, urlEncode(resourceName)), httpEntity);
     }
 
-    private String urlEncode(final String uri) {
+    private String urlEncode(final String uri) throws IOException {
         try {
            return URLEncoder.encode(uri, "UTF-8").replace("+", "%20");
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new IOException(e.getMessage(), e);
         }
     }
 
