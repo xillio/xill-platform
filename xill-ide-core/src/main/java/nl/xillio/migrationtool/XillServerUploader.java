@@ -106,7 +106,7 @@ public class XillServerUploader implements AutoCloseable {
     public String findProject(final String projectName) throws IOException {
         String response = doGet("projects/search/findByProjectName?projectName=" + urlEncode(projectName));
 
-        List projects = null;
+        List projects;
         try {
             projects = (List) jsonPath("_embedded/projects", jsonParser.fromJson(response, Map.class));
         } catch (JsonException e) {
@@ -196,9 +196,9 @@ public class XillServerUploader implements AutoCloseable {
         }
 
         // Find the resourceName in the list
-        List resources = null;
+        List resources;
         try {
-            resources = (List) jsonParser.fromJson(resourcesJson, List.class);
+            resources = jsonParser.fromJson(resourcesJson, List.class);
         } catch (JsonException e) {
             throw new IOException("The server response is invalid.", e);
         }
