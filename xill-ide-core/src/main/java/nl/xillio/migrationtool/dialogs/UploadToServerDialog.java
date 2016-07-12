@@ -117,8 +117,8 @@ public class UploadToServerDialog extends FXMLDialog {
                     return false;
                 }
             } else if (item.getValue().getKey().isDirectory()) {// Directory
-                // Upload robots inside the directory
-                if (!uploadProject(item, false)) {
+                // Upload items from inside the directory
+                if (!uploadFolder(item, projectExistCheck)) {
                     return false;
                 }
             } else {// Robot or resource
@@ -149,7 +149,7 @@ public class UploadToServerDialog extends FXMLDialog {
         }
         projectId = xillServerUploader.ensureProjectExist(projectName);
 
-        // Upload all robots
+        // Upload all project items
         return processItems(item.getChildren(), false, false, projectId);
     }
 
@@ -164,6 +164,27 @@ public class UploadToServerDialog extends FXMLDialog {
         } else {
             return uploadResource(itemFile, projectFolder, existCheck, projectId);
         }
+    }
+
+    private boolean uploadFolder(final TreeItem<Pair<File, String>> item, boolean existCheck) throws IOException {
+        final File projectFolder = projectPane.getProject(item).getValue().getKey();
+        final String projectName = xillServerUploader.getProjectName(projectFolder);
+
+        String projectId = xillServerUploader.findProject(projectName);
+
+        // Check for project existence on the server
+        if (existCheck && projectId != null) {
+            AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Uploading folder",
+                    String.format("The project %1$s already exists on the server", projectName), "Do you want to upload the folder content?",
+                    ButtonType.YES, ButtonType.NO);
+            if (dialog.showAndWait().get().getButtonData() == ButtonBar.ButtonData.NO) {
+                return false;
+            }
+        }
+        projectId = xillServerUploader.ensureProjectExist(projectName);
+
+        // Upload all items from within the folder
+        return processItems(item.getChildren(), false, false, projectId);
     }
 
     /**
