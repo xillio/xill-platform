@@ -235,9 +235,9 @@ public class FXController implements Initializable, EventHandler<Event> {
         settings.simple().register(Settings.WARNING, Settings.DialogInfo, "false", "Show warning dialogs for info messages.");
         settings.simple().register(Settings.WARNING, Settings.DialogWarning, "false", "Show warning dialogs for warning messages.");
         settings.simple().register(Settings.WARNING, Settings.DialogError, "true", "Show warning dialogs for error messages.");
-        settings.simple().register(Settings.SERVER, Settings.ServerHost, "http://localhost:10000", "Location XMTS is running on.");
-        settings.simple().register(Settings.SERVER, Settings.ServerUsername, "", "Optional username to access XMTS.", true);
-        settings.simple().register(Settings.SERVER, Settings.ServerPassword, "", "Optional password to access XMTS.", true);
+        settings.simple().register(Settings.SERVER, Settings.XillServerHost, "http://localhost:8080", "Location where Xill server is running.");
+        settings.simple().register(Settings.SERVER, Settings.XillServerUsername, "", "Username to access Xill server.", true);
+        settings.simple().register(Settings.SERVER, Settings.XillServerPassword, "", "Password to access Xill server.", true);
         settings.simple().register(Settings.INFO, Settings.LastVersion, "0.0.0", "Last version that was run.");
         settings.simple().register(Settings.LAYOUT, Settings.LeftPanelWidth, "0.2", "Width of the left panel");
         settings.simple().register(Settings.LAYOUT, Settings.LeftPanelCollapsed, "false", "The collapsed-state of the left panel");
