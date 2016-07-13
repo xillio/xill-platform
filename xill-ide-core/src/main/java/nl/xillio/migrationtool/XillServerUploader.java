@@ -46,8 +46,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Client for Xill server (for projects only)
- * Class contains all needed methods for communicating with Xill server using REST API related to project handling
+ * Client for Xill server
+ * Class contains all needed methods for communicating with Xill server using REST API related to project and resource handling
  */
 public class XillServerUploader implements AutoCloseable {
     private static final Logger LOGGER = Log.get();
@@ -172,7 +172,7 @@ public class XillServerUploader implements AutoCloseable {
     }
 
     /**
-     * Tests if the resource does exist.
+     * Tests if the resource does exist on the server.
      *
      * @param projectId project ID
      * @param resourceName resource name
@@ -236,6 +236,30 @@ public class XillServerUploader implements AutoCloseable {
             doPost("projects", jsonParser.toJson(data));
         } catch (JsonException e) {
             throw new IOException("Could not create project on the server.", e);
+        }
+    }
+
+    /**
+     * Perform a validation request on Xill server which checks if robot(s) are valid
+     *
+     * @param projectId the project id
+     * @param robotFqns list of robots (theirs FQNs)
+     * @throws RobotValidationException if at least one of the robot's code is not valid
+     * @throws IOException if validation process failed
+     */
+    @SuppressWarnings("unchecked")
+    public void validateRobots(final String projectId, final List<String> robotFqns) throws IOException {
+        try {
+            String responseJson = doPost(String.format("projects/%1$s/validate", projectId), jsonParser.toJson(robotFqns));
+            Map<String, String> response = jsonParser.fromJson(responseJson, Map.class);
+            if (response.get("valid").equals("true")) {
+                return;
+            }
+            // Not valid robot
+            throw new RobotValidationException(response.get("message"));
+
+        } catch (JsonException e) {
+            throw new IOException("Could not validate robot on the server.", e);
         }
     }
 
