@@ -45,7 +45,7 @@ function getDataset() {
         ["foo", "UTF-8", 3],
         ["foo", "UTF-16", 8],
         ["foo", "UTF-32", 12],
-        [lipsum, "UTF-8", 3130],
+        [lipsum, "UTF-8", 3130], // when using Windows with /r/n line endings, this is 3134
         ["€äåé®þüúíóöáßæ©ñµ", "ASCII", 17],
         ["€äåé®þüúíóöáßæ©ñµ", "UTF-8", 35],
         ["special ©å€é® characters", "ASCII", 24],
