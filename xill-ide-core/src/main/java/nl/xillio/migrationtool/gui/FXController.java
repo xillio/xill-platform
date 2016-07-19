@@ -192,7 +192,7 @@ public class FXController implements Initializable, EventHandler<Event> {
 
         Platform.runLater(() -> apnRoot.getScene().getWindow().focusedProperty().addListener((event, oldValue, newValue) -> {
                     if (newValue) {
-                        getTabs().forEach(e -> projectpane.robotFileChanged(e.getDocument()));
+                        getTabs().forEach(e -> projectpane.fileChanged(e.getDocument()));
                     }
                 })
         );

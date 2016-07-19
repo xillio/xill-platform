@@ -346,7 +346,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
     private void renameButtonPressed() {
         TreeItem<Pair<File, String>> item = getCurrentItem();
-        RobotTab tab = (RobotTab) controller.findTab(item.getValue().getKey());
+        FileTab tab = controller.findTab(item.getValue().getKey());
 
         // Check if a robot is still running, show a dialog to stop them.
         if (checkRobotsRunning(Collections.singletonList(item), false, false)) {
@@ -561,17 +561,21 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         for (TreeItem<Pair<File, String>> item : items) {
             // Check if the robot tab is open and the robot is running.
-            RobotTab tab = (RobotTab) controller.findTab(item.getValue().getKey());
-            if (tab != null) {
-                running |= tab.getEditorPane().getControls().robotRunning();
+            FileTab tab = controller.findTab(item.getValue().getKey());
+
+            // Check if the tab is a robot tab.
+            if (tab != null && tab instanceof RobotTab) {
+                RobotTab robotTab = (RobotTab) tab;
+                running |= robotTab.getEditorPane().getControls().robotRunning();
                 // Stop the robot.
                 if (stop) {
-                    tab.getEditorPane().getControls().stop();
+                    robotTab.getEditorPane().getControls().stop();
                 }
-                // Close the tab.
-                if (closeTab) {
-                    controller.closeTab(controller.findTab(item.getValue().getKey()));
-                }
+            }
+
+            // Close the tab.
+            if (closeTab) {
+                controller.closeTab(tab);
             }
 
             // Recursively check all children of the item.
@@ -810,9 +814,9 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
      *
      * @param child The path to the robot file
      */
-    public void robotFileChanged(final File child) {
+    public void fileChanged(final File child) {
 
-        RobotTab tab = (RobotTab) controller.findTab(child);
+        FileTab tab = controller.findTab(child);
         if (tab == null) {
             return;
         }
