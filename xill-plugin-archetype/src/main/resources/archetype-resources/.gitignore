@@ -1,16 +1,3 @@
-xilliosettings.db
-ESConsole/
-/plugins
-xill-ide-launcher/plugins
-helpfiles/
-test-output/
-xilliosettings.cfg
-
-# Gradle
-build/
-.gradle/
-!gradle-wrapper.jar
-
 # Maven
 target/
 pom.xml.tag
@@ -36,5 +23,3 @@ bin/
 # IntelliJ
 *.iml
 .idea/
-.gitignore
-src/main/resources/
