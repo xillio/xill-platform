@@ -22,9 +22,6 @@ package nl.xillio.xill.util.settings;
  */
 public class Settings {
 
-    private Settings() {
-    }
-
     // =============================================================================
     /**
      * Layout category
@@ -305,5 +302,9 @@ public class Settings {
 
     /** */
     public static final String ESCAPE = "Escape";
+
     // =============================================================================
+
+    private Settings() {
+    }
 }
