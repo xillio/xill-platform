@@ -19,7 +19,7 @@
 * Input: false == false && false, false <= true == false
 */
 
-use Assert, System;
+use Assert;
 
 Assert.isFalse(false == false && false); // Precidence of && (3) is lower than == (4)
 Assert.isFalse(false <= true == false); // Precedence of == (4) is lower than <= (5)

@@ -19,7 +19,7 @@
 * Input: See values below
 */
 
-use Assert, System;
+use Assert;
 
 var value = 1;
 value += false && true;
