@@ -3,15 +3,19 @@ All notable changes to this project will be documented in this file.
 
 ## [3.4.0] - unreleased
 
+### Add
+
+* Upload resources to server [CTC-1651]
+* Add an overview of all active plugins in the settings about section [CTC-1667]
+* Add an archetype for xill plugins [CTC-1284]
+* Make non-robot files visible in the Xill IDE project pane [CTC-1652]
+
 ### Change
 
 * Show the full path to the document on mouse-over on tabs in Xill IDE [CTC-1669]
 * MySQL no longer has to be installed manually [CTC-1676]
-* Make non-robot files visible in the Xill IDE project pane [CTC-1652]
 * Remove paging from the Xill IDE Console [CTC-1593]
 * Add py, xill, xillt extensions to the mimetype library [CTC-1626]
-* Add an overview of all active plugins in the settings about section [CTC-1667]
-* Add an archetype for xill plugins [CTC-1284]
 
 ### Fix
 

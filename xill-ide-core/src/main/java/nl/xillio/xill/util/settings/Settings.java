@@ -117,20 +117,20 @@ public class Settings {
     public static final String SERVER = "Server";
 
     /**
-     * Optional username to access XMTS
+     * Address of Xill server
      */
-    public static final String ServerUsername = "ServerUsername";
+    public static final String XillServerHost = "XillServerHost";
 
     /**
-     * Optional password to access XMTS
+     * Username for accessing the Xill server
      */
-    @SuppressWarnings("squid:S2068") // Credentials should not be hard-coded.
-    public static final String ServerPassword = "ServerPassword";
+    public static final String XillServerUsername = "XillServerUsername";
 
     /**
-     * Location XMTS is running on
+     * Password for accessing the Xill server
      */
-    public static final String ServerHost = "ServerHost";
+    @SuppressWarnings("squid:S2068") // This is just a key, not an actual password
+    public static final String XillServerPassword = "XillServerPassword";
 
     // =============================================================================
     /**
