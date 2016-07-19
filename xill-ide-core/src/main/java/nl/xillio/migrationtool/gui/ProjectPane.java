@@ -840,8 +840,8 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         // This must be done in the FX application thread.
         final Runnable showDialog = () -> {
             // Create and show an alert dialog saying the content has been changed.
-            AlertDialog alert = new AlertDialog(Alert.AlertType.WARNING, "Robot file content change",
-                    "The robot file has been modified outside the editor.", "Do you want reload the robot file?",
+            AlertDialog alert = new AlertDialog(Alert.AlertType.WARNING, "File content change",
+                    "The file has been modified outside the editor.", "Do you want reload the file?",
                     ButtonType.YES, ButtonType.NO);
 
             final Optional<ButtonType> result = alert.showAndWait();
