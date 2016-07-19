@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,6 +56,19 @@ public class ResponseParserTest extends TestUtils {
         MetaExpression result = responseParser.build(mock(Response.class), httpResponse, new Options());
 
         assertEquals(result.toString(), "{\"status\":{\"code\":200,\"phrase\":\"OK\"},\"headers\":{\"x-header\":\"nice\"},\"version\":\"HTTP/1.0\",\"cookies\":{},\"body\":\"This is the body of my response\"}");
+    }
+
+    @Test
+    public void testParseCookies() throws IOException {
+        HttpResponse httpResponse = textResponse("BODY");
+        when(httpResponse.getHeaders(eq("Set-Cookie"))).thenReturn(new Header[]{
+                new BasicHeader("Set-Cookie", "myCookie=This seems to work; path=/;HTTPONLY")
+        });
+
+        MetaExpression result = responseParser.build(mock(Response.class), httpResponse, new Options());
+
+        assertEquals(result.toString(), "{\"status\":{\"code\":200,\"phrase\":\"OK\"},\"headers\":{},\"version\":\"HTTP/1.0\",\"cookies\":{\"myCookie\":{\"name\":\"myCookie\",\"value\":\"This seems to work\",\" path\":\"/\",\"httponly\":true}},\"body\":\"BODY\"}");
+
     }
 
     @Test
