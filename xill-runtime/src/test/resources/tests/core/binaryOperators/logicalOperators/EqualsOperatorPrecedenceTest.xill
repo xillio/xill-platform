@@ -15,7 +15,7 @@
  */
 /*
 * Specification: The addition assignment operator has the defined precedence
-* Expected: false ,false
+* Expected: false, false
 * Input: false == false && false, false <= true == false
 */
 
