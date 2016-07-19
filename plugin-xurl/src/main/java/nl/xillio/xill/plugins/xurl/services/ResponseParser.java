@@ -20,8 +20,8 @@ import com.google.inject.Singleton;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.data.XmlNode;
 import nl.xillio.xill.api.data.XmlNodeFactory;
-import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.api.errors.OperationFailedException;
+import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.api.io.SimpleIOStream;
 import nl.xillio.xill.plugins.xurl.data.Options;
 import nl.xillio.xill.services.json.JsonException;
@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
 
+import static nl.xillio.xill.api.components.ExpressionBuilderHelper.TRUE;
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
 
 /**
@@ -47,6 +48,7 @@ import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
  */
 @Singleton
 public class ResponseParser {
+    private static final String HEADER_COOKIES = "Set-Cookie";
     private final JsonParser jsonParser;
     private final XmlNodeFactory xmlNodeFactory;
 
@@ -79,6 +81,7 @@ public class ResponseParser {
         result.put("status", status);
         result.put("headers", parseHeaders(httpResponse.getAllHeaders()));
         result.put("version", parseVersion(httpResponse.getProtocolVersion()));
+        result.put("cookies", parseCookies(httpResponse.getHeaders(HEADER_COOKIES)));
         boolean preventDiscard = false;
 
         if (httpResponse.getEntity() != null) {
@@ -140,8 +143,7 @@ public class ResponseParser {
             return MetaExpression.parseObject(value);
         } catch (JsonException e1) {
             throw throwBodyParseError(e1, "JSON", status);
-        }
-        catch (IllegalArgumentException e2) {
+        } catch (IllegalArgumentException e2) {
             throw new OperationFailedException("ParseResponseBodyAsJSON", e2.getMessage(), "Illegal arguments were handed down.", e2);
         }
     }
@@ -153,13 +155,12 @@ public class ResponseParser {
             MetaExpression result = fromValue(xml.toString());
             result.storeMeta(xml);
             return result;
-        } catch (RobotRuntimeException e ) {
+        } catch (RobotRuntimeException e) {
             throw this.throwBodyParseError(e, "XML", status);
         }
     }
 
-    private OperationFailedException throwBodyParseError(Throwable e, String parseType, MetaExpression status)
-    {
+    private OperationFailedException throwBodyParseError(Throwable e, String parseType, MetaExpression status) {
         LinkedHashMap<String, MetaExpression> statusValue = status.getValue();
         return new OperationFailedException("ParseResponseBodyAs" + parseType, e.getMessage() + " Response status code: " + statusValue.get("code"),
                 "Fix by setting responseContentType=\"text/plain\"", e);
@@ -185,9 +186,53 @@ public class ResponseParser {
         LinkedHashMap<String, MetaExpression> result = new LinkedHashMap<>(headers.length);
 
         for (Header header : headers) {
-            result.put(header.getName(), fromValue(header.getValue()));
+            if (!HEADER_COOKIES.equalsIgnoreCase(header.getName())) {
+                result.put(header.getName(), fromValue(header.getValue()));
+            }
         }
 
         return fromValue(result);
+    }
+
+    private MetaExpression parseCookies(Header[] headers) {
+        LinkedHashMap<String, MetaExpression> result = new LinkedHashMap<>();
+        for (Header cookieHeader : headers) {
+            // Extract the data
+            String cookieString = cookieHeader.getValue();
+            String[] cookieParts = cookieString.split(";");
+            String cookieDefinition = cookieParts[0];
+            int cookieNameIndex = cookieDefinition.indexOf("=");
+            String cookieName = cookieDefinition.substring(0, cookieNameIndex);
+            String cookieValue = cookieDefinition.substring(cookieNameIndex + 1);
+
+            // Put the cookie
+            result.put(cookieName, parseCookie(cookieParts, cookieName, cookieValue));
+        }
+        return fromValue(result);
+    }
+
+    private MetaExpression parseCookie(String[] cookieParts, String cookieName, String cookieValue) {
+        LinkedHashMap<String, MetaExpression> cookie = new LinkedHashMap<>();
+        // name/value
+        cookie.put("name", fromValue(cookieName));
+        cookie.put("value", fromValue(cookieValue));
+
+        // Other properties
+        for (int i = 1; i < cookieParts.length; i++) {
+            String cookiePartDef = cookieParts[i];
+            int cookiePartDefIndex = cookiePartDef.indexOf("=");
+            if (cookiePartDefIndex >= 0) {
+                cookie.put(
+                        cookiePartDef.substring(0, cookiePartDefIndex).toLowerCase(),
+                        fromValue(cookiePartDef.substring(cookiePartDefIndex + 1))
+                );
+            } else {
+                cookie.put(
+                        cookiePartDef.toLowerCase(),
+                        TRUE
+                );
+            }
+        }
+        return fromValue(cookie);
     }
 }

@@ -55,7 +55,7 @@ public class ResponseParserTest extends TestUtils {
 
         MetaExpression result = responseParser.build(mock(Response.class), httpResponse, new Options());
 
-        assertEquals(result.toString(), "{\"status\":{\"code\":200,\"phrase\":\"OK\"},\"headers\":{\"x-header\":\"nice\"},\"version\":\"HTTP/1.0\",\"body\":\"This is the body of my response\"}");
+        assertEquals(result.toString(), "{\"status\":{\"code\":200,\"phrase\":\"OK\"},\"headers\":{\"x-header\":\"nice\"},\"version\":\"HTTP/1.0\",\"cookies\":{},\"body\":\"This is the body of my response\"}");
     }
 
     @Test
@@ -77,8 +77,7 @@ public class ResponseParserTest extends TestUtils {
         responseParser.parseBody(httpResponse, null, this.mockResponseStatus());
     }
 
-    private MetaExpression mockResponseStatus()
-    {
+    private MetaExpression mockResponseStatus() {
         LinkedHashMap<String, MetaExpression> responseStatusValue = new LinkedHashMap<String, MetaExpression>(2);
         responseStatusValue.put("code", fromValue(515));
 
@@ -133,6 +132,7 @@ public class ResponseParserTest extends TestUtils {
         when(response.getStatusLine()).thenReturn(new BasicStatusLine(version, 200, "OK"));
         when(response.getAllHeaders()).thenReturn(headers);
         when(response.getProtocolVersion()).thenReturn(version);
+        when(response.getHeaders(anyString())).thenReturn(new Header[0]);
 
         if (body != null) {
             HttpEntity entity = new InputStreamEntity(body, contentType);
