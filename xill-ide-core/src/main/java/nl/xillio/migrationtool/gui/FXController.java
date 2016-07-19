@@ -156,21 +156,21 @@ public class FXController implements Initializable, EventHandler<Event> {
             // Add splitpane position listener
             spnMain.getDividers().get(0).positionProperty().addListener((observable, oldPos, newPos) -> {
                 if (spnMain.getItems().contains(apnLeft)) {
-                    settings.simple().save(Settings.LAYOUT, Settings.LeftPanelWidth, newPos.toString());
+                    settings.simple().save(Settings.LAYOUT, Settings.LEFT_PANEL_WIDTH, newPos.toString());
                 }
             });
 
-            spnMain.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.LeftPanelWidth)));
+            spnMain.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.LEFT_PANEL_WIDTH)));
             // Remove the left hidden bar from dom
-            if (Boolean.parseBoolean(settings.simple().get(Settings.LAYOUT, Settings.LeftPanelCollapsed))) {
+            if (Boolean.parseBoolean(settings.simple().get(Settings.LAYOUT, Settings.LEFT_PANEL_COLLAPSED))) {
                 btnHideLeftPane();
             } else {
                 btnShowLeftPane();
             }
 
-            spnLeft.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.ProjectHeight)));
+            spnLeft.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.PROJECT_HEIGHT)));
             spnLeft.getDividers().get(0).positionProperty().addListener((observable, oldPos, newPos) -> settings
-                    .simple().save(Settings.LAYOUT, Settings.ProjectHeight, Double.toString(newPos.doubleValue())));
+                    .simple().save(Settings.LAYOUT, Settings.PROJECT_HEIGHT, Double.toString(newPos.doubleValue())));
         });
 
         // Start the elasticsearch console
@@ -230,18 +230,18 @@ public class FXController implements Initializable, EventHandler<Event> {
     private void registerSettings() {
         settings.setManualCommit(true);
 
-        settings.simple().register(Settings.FILE, Settings.LastFolder, System.getProperty("user.dir"), "The last folder a file was opened from or saved to.");
-        settings.simple().register(Settings.WARNING, Settings.DialogDebug, "false", "Show warning dialogs for debug messages.");
-        settings.simple().register(Settings.WARNING, Settings.DialogInfo, "false", "Show warning dialogs for info messages.");
-        settings.simple().register(Settings.WARNING, Settings.DialogWarning, "false", "Show warning dialogs for warning messages.");
-        settings.simple().register(Settings.WARNING, Settings.DialogError, "true", "Show warning dialogs for error messages.");
-        settings.simple().register(Settings.SERVER, Settings.XillServerHost, "http://localhost:8080", "Location where Xill server is running.");
-        settings.simple().register(Settings.SERVER, Settings.XillServerUsername, "", "Username to access Xill server.", true);
-        settings.simple().register(Settings.SERVER, Settings.XillServerPassword, "", "Password to access Xill server.", true);
-        settings.simple().register(Settings.INFO, Settings.LastVersion, "0.0.0", "Last version that was run.");
-        settings.simple().register(Settings.LAYOUT, Settings.LeftPanelWidth, "0.2", "Width of the left panel");
-        settings.simple().register(Settings.LAYOUT, Settings.LeftPanelCollapsed, "false", "The collapsed-state of the left panel");
-        settings.simple().register(Settings.LAYOUT, Settings.ProjectHeight, "0.5", "The height of the project panel");
+        settings.simple().register(Settings.FILE, Settings.LAST_FOLDER, System.getProperty("user.dir"), "The last folder a file was opened from or saved to.");
+        settings.simple().register(Settings.WARNING, Settings.DIALOG_DEBUG, "false", "Show warning dialogs for debug messages.");
+        settings.simple().register(Settings.WARNING, Settings.DIALOG_INFO, "false", "Show warning dialogs for info messages.");
+        settings.simple().register(Settings.WARNING, Settings.DIALOG_WARNING, "false", "Show warning dialogs for warning messages.");
+        settings.simple().register(Settings.WARNING, Settings.DIALOG_ERROR, "true", "Show warning dialogs for error messages.");
+        settings.simple().register(Settings.SERVER, Settings.XILL_SERVER_HOST, "http://localhost:8080", "Location where Xill server is running.");
+        settings.simple().register(Settings.SERVER, Settings.XILL_SERVER_USERNAME, "", "Username to access Xill server.", true);
+        settings.simple().register(Settings.SERVER, Settings.XILL_SERVER_PASSWORD, "", "Password to access Xill server.", true);
+        settings.simple().register(Settings.INFO, Settings.LAST_VERSION, "0.0.0", "Last version that was run.");
+        settings.simple().register(Settings.LAYOUT, Settings.LEFT_PANEL_WIDTH, "0.2", "Width of the left panel");
+        settings.simple().register(Settings.LAYOUT, Settings.LEFT_PANEL_COLLAPSED, "false", "The collapsed-state of the left panel");
+        settings.simple().register(Settings.LAYOUT, Settings.PROJECT_HEIGHT, "0.5", "The height of the project panel");
 
         SettingsDialog.register(settings);
 
@@ -251,7 +251,7 @@ public class FXController implements Initializable, EventHandler<Event> {
 
     private void loadWorkSpace() {
         Platform.runLater(() -> {
-            String workspace = settings.simple().get(Settings.WORKSPACE, Settings.OpenTabs);
+            String workspace = settings.simple().get(Settings.WORKSPACE, Settings.OPEN_TABS);
             // Wait for all plugins to be loaded before loading the workspace.
             Loader.getInitializer().getPlugins();
 
@@ -289,7 +289,7 @@ public class FXController implements Initializable, EventHandler<Event> {
             showMissingLicensePlugins();
 
             // Select the last opened tab.
-            String activeTab = settings.simple().get(Settings.WORKSPACE, Settings.ActiveTab);
+            String activeTab = settings.simple().get(Settings.WORKSPACE, Settings.ACTIVE_TAB);
             if (activeTab != null && !"".equals(activeTab)) {
                 getTabs().stream()
                         .filter(tab -> tab.getDocument().getAbsolutePath().equals(activeTab))
@@ -354,7 +354,7 @@ public class FXController implements Initializable, EventHandler<Event> {
 
         // If the last picked folder exists, set the initial directory to that.
         FileChooser fileChooser = new FileChooser();
-        File lastFolder = new File(settings.simple().get(Settings.FILE, Settings.LastFolder));
+        File lastFolder = new File(settings.simple().get(Settings.FILE, Settings.LAST_FOLDER));
         if (lastFolder.exists()) {
             fileChooser.setInitialDirectory(lastFolder);
         }
@@ -408,7 +408,7 @@ public class FXController implements Initializable, EventHandler<Event> {
         }
 
         // Tab is not open yet: open new tab
-        settings.simple().save(Settings.FILE, Settings.LastFolder, newfile.getParent());
+        settings.simple().save(Settings.FILE, Settings.LAST_FOLDER, newfile.getParent());
 
         // Try to get the project path. If there is no project, use the parent directory as the project path.
         String projectPath = projectpane.getProjectPath(newfile).orElse(newfile.getParent());
@@ -483,8 +483,8 @@ public class FXController implements Initializable, EventHandler<Event> {
 
     @FXML
     private void btnHideLeftPane() {
-        settings.simple().save(Settings.LAYOUT, Settings.LeftPanelWidth, "" + spnMain.getDividerPositions()[0]);
-        settings.simple().save(Settings.LAYOUT, Settings.LeftPanelCollapsed, "true");
+        settings.simple().save(Settings.LAYOUT, Settings.LEFT_PANEL_WIDTH, "" + spnMain.getDividerPositions()[0]);
+        settings.simple().save(Settings.LAYOUT, Settings.LEFT_PANEL_COLLAPSED, "true");
         spnMain.getItems().remove(apnLeft);
         if (!hbxMain.getChildren().contains(vbxLeftHidden)) {
             hbxMain.getChildren().add(0, vbxLeftHidden);
@@ -493,12 +493,12 @@ public class FXController implements Initializable, EventHandler<Event> {
 
     @FXML
     private void btnShowLeftPane() {
-        settings.simple().save(Settings.LAYOUT, Settings.LeftPanelCollapsed, "false");
+        settings.simple().save(Settings.LAYOUT, Settings.LEFT_PANEL_COLLAPSED, "false");
 
         hbxMain.getChildren().remove(vbxLeftHidden);
         if (!spnMain.getItems().contains(apnLeft)) {
             spnMain.getItems().add(0, apnLeft);
-            spnMain.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.LeftPanelWidth)));
+            spnMain.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.LEFT_PANEL_WIDTH)));
         }
 
         RobotTab selected = (RobotTab) getSelectedTab();
@@ -511,15 +511,15 @@ public class FXController implements Initializable, EventHandler<Event> {
                 getTabs().stream().map(tab -> tab.getDocument().getAbsolutePath()).collect(Collectors.toList()));
 
         // Save all tabs
-        settings.simple().save(Settings.WORKSPACE, Settings.OpenTabs, openTabs, true);
+        settings.simple().save(Settings.WORKSPACE, Settings.OPEN_TABS, openTabs, true);
 
         // Save active tab
         final String[] activeTab = {null};
         getTabs().stream().filter(Tab::isSelected).forEach(tab -> activeTab[0] = tab.getDocument().getAbsolutePath());
         if (activeTab[0] != null) {
-            settings.simple().save(Settings.WORKSPACE, Settings.ActiveTab, activeTab[0], true);
+            settings.simple().save(Settings.WORKSPACE, Settings.ACTIVE_TAB, activeTab[0], true);
         } else {
-            settings.simple().save(Settings.WORKSPACE, Settings.ActiveTab, "", true);
+            settings.simple().save(Settings.WORKSPACE, Settings.ACTIVE_TAB, "", true);
         }
 
         // Check if there are tabs whose robots are running.
@@ -587,22 +587,22 @@ public class FXController implements Initializable, EventHandler<Event> {
         String jsCode = "var editor = javaEditor.getAce();\neditor.setOptions({\n";
         String jsSettings = "";
 
-        String s = settings.simple().get(Settings.SETTINGS_EDITOR, Settings.FontSize);
+        String s = settings.simple().get(Settings.SETTINGS_EDITOR, Settings.FONT_SIZE);
         if (s.endsWith("px")) {
             s = s.substring(0, s.length() - 2);
         }
         jsSettings += String.format("fontSize: \"%1$spt\",%n", s);
 
-        jsSettings += formatEditorOptionJSBoolean("displayIndentGuides", Settings.DisplayIndentGuides);
-        jsSettings += formatEditorOptionJS("newLineMode", Settings.NewLineMode);
-        jsSettings += formatEditorOptionJSBoolean("showPrintMargin", Settings.ShowPrintMargin);
-        jsSettings += formatEditorOptionJS("printMarginColumn", Settings.PrintMarginColumn);
-        jsSettings += formatEditorOptionJSBoolean("showGutter", Settings.ShowGutter);
-        jsSettings += formatEditorOptionJSBoolean("showInvisibles", Settings.ShowInvisibles);
-        jsSettings += formatEditorOptionJSRaw("tabSize", Settings.TabSize);
-        jsSettings += formatEditorOptionJSBoolean("useSoftTabs", Settings.UseSoftTabs);
-        jsSettings += formatEditorOptionJSBoolean("wrap", Settings.WrapText);
-        jsSettings += formatEditorOptionJSBoolean("showLineNumbers", Settings.ShowLineNumbers);
+        jsSettings += formatEditorOptionJSBoolean("displayIndentGuides", Settings.DISPLAY_INDENT_GUIDES);
+        jsSettings += formatEditorOptionJS("newLineMode", Settings.NEW_LINE_MODE);
+        jsSettings += formatEditorOptionJSBoolean("showPrintMargin", Settings.SHOW_PRINT_MARGIN);
+        jsSettings += formatEditorOptionJS("printMarginColumn", Settings.PRINT_MARGIN_COLUMN);
+        jsSettings += formatEditorOptionJSBoolean("showGutter", Settings.SHOW_GUTTER);
+        jsSettings += formatEditorOptionJSBoolean("showInvisibles", Settings.SHOW_INVISIBLES);
+        jsSettings += formatEditorOptionJSRaw("tabSize", Settings.TAB_SIZE);
+        jsSettings += formatEditorOptionJSBoolean("useSoftTabs", Settings.USE_SOFT_TABS);
+        jsSettings += formatEditorOptionJSBoolean("wrap", Settings.WRAP_TEXT);
+        jsSettings += formatEditorOptionJSBoolean("showLineNumbers", Settings.SHOW_LINE_NUMBERS);
 
         if (jsSettings.endsWith(",\n")) {
             jsSettings = jsSettings.substring(0, jsSettings.length() - 2);
@@ -611,8 +611,8 @@ public class FXController implements Initializable, EventHandler<Event> {
         jsCode += jsSettings;
         jsCode += "\n});";
 
-        jsCode += String.format("editor.session.setWrapLimit(%1$s);%n", settings.simple().get(Settings.SETTINGS_EDITOR, Settings.WrapLimit));
-        jsCode += String.format("editor.setHighlightSelectedWord(%1$s);%n", settings.simple().getBoolean(Settings.SETTINGS_EDITOR, Settings.HighlightSelectedWord));
+        jsCode += String.format("editor.session.setWrapLimit(%1$s);%n", settings.simple().get(Settings.SETTINGS_EDITOR, Settings.WRAP_LIMIT));
+        jsCode += String.format("editor.setHighlightSelectedWord(%1$s);%n", settings.simple().getBoolean(Settings.SETTINGS_EDITOR, Settings.HIGHLIGHT_SELECTED_WORD));
 
         return jsCode;
     }
@@ -624,14 +624,14 @@ public class FXController implements Initializable, EventHandler<Event> {
      * @throws IOException if error occurs when reading the changelog file
      */
     public void showReleaseNotes() throws IOException {
-        String lastVersion = settings.simple().get(Settings.INFO, Settings.LastVersion);
+        String lastVersion = settings.simple().get(Settings.INFO, Settings.LAST_VERSION);
 
         if (lastVersion.compareTo(Loader.SHORT_VERSION) < 0) {
 
             String changeLogMD = FileUtils.readFileToString(new File("CHANGELOG.md"));
             String changeLogHTML = new PegDownProcessor().markdownToHtml(changeLogMD);
 
-            settings.simple().save(Settings.INFO, Settings.LastVersion, Loader.SHORT_VERSION);
+            settings.simple().save(Settings.INFO, Settings.LAST_VERSION, Loader.SHORT_VERSION);
 
             ChangeLogDialog releaseNotes = new ChangeLogDialog("Change Log",
                     "Current version: " + Loader.SHORT_VERSION,

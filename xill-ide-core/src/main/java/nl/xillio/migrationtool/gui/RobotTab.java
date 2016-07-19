@@ -146,15 +146,15 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
     * Reset the timeline.
      */
     public void resetAutoSave() {
-        if (Boolean.valueOf(settings.simple().get(Settings.SETTINGS_GENERAL, Settings.EnableAutoSave))) {
+        if (Boolean.valueOf(settings.simple().get(Settings.SETTINGS_GENERAL, Settings.ENABLE_AUTO_SAVE))) {
             this.autoSaveTimeline.playFromStart();
         }
     }
 
     private static void initializeSettings(final File documentPath) {
-        settings.simple().register(Settings.LAYOUT, Settings.RightPanelWidth_ + documentPath.getAbsolutePath(), "0.7", "Width of the right panel for the specified currentRobot");
-        settings.simple().register(Settings.LAYOUT, Settings.RightPanelCollapsed_ + documentPath.getAbsolutePath(), "true", "The collapsed-state of the right panel for the specified currentRobot");
-        settings.simple().register(Settings.LAYOUT, Settings.EditorHeight_ + documentPath.getAbsolutePath(), "0.6", "The height of the editor");
+        settings.simple().register(Settings.LAYOUT, Settings.RIGHT_PANEL_WIDTH + documentPath.getAbsolutePath(), "0.7", "Width of the right panel for the specified currentRobot");
+        settings.simple().register(Settings.LAYOUT, Settings.RIGHT_PANEL_COLLAPSED + documentPath.getAbsolutePath(), "true", "The collapsed-state of the right panel for the specified currentRobot");
+        settings.simple().register(Settings.LAYOUT, Settings.EDITOR_HEIGHT + documentPath.getAbsolutePath(), "0.6", "The height of the editor");
     }
 
     private void initializeTab(final File documentPath) {
@@ -162,7 +162,7 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
         setText(getName());
 
         // Set the tab dividers
-        double editorHeight = Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.EditorHeight_ + documentPath.getAbsolutePath()));
+        double editorHeight = Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.EDITOR_HEIGHT + documentPath.getAbsolutePath()));
 
         spnBotLeft.setDividerPosition(0, editorHeight);
 
@@ -170,7 +170,7 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
         spnBotLeft.getDividers().get(0).positionProperty().addListener(
                 (observable, oldPos, newPos) -> {
                     double height = newPos.doubleValue();
-                    settings.simple().save(Settings.LAYOUT, Settings.EditorHeight_ + documentPath.getAbsolutePath(), Double.toString(height));
+                    settings.simple().save(Settings.LAYOUT, Settings.EDITOR_HEIGHT + documentPath.getAbsolutePath(), Double.toString(height));
                 });
 
         // Status icons
@@ -218,7 +218,7 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
 
             // Remove the left hidden bar from dom
             // This must be done after initialization otherwise the debugpane won't receive the tab
-            boolean showRightPanel = Boolean.parseBoolean(settings.simple().get(Settings.LAYOUT, Settings.RightPanelCollapsed_ + getDocument().getAbsolutePath()));
+            boolean showRightPanel = Boolean.parseBoolean(settings.simple().get(Settings.LAYOUT, Settings.RIGHT_PANEL_COLLAPSED + getDocument().getAbsolutePath()));
 
             if (showRightPanel) {
                 hideButtonPressed();
@@ -252,9 +252,9 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
     private void hideButtonPressed() {
         File document = processor.getRobotID().getPath();
         if (document != null) {
-            settings.simple().save(Settings.LAYOUT, Settings.RightPanelCollapsed_ + document.getAbsolutePath(), "true");
+            settings.simple().save(Settings.LAYOUT, Settings.RIGHT_PANEL_COLLAPSED + document.getAbsolutePath(), "true");
             if (!spnBotPanes.getDividers().isEmpty()) {
-                settings.simple().save(Settings.LAYOUT, Settings.RightPanelWidth_ + document.getAbsolutePath(), Double.toString(spnBotPanes.getDividerPositions()[0]));
+                settings.simple().save(Settings.LAYOUT, Settings.RIGHT_PANEL_WIDTH + document.getAbsolutePath(), Double.toString(spnBotPanes.getDividerPositions()[0]));
             }
         }
 
@@ -273,7 +273,7 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
     @FXML
     private void showButtonPressed() {
         File document = processor.getRobotID().getPath();
-        settings.simple().save(Settings.LAYOUT, Settings.RightPanelCollapsed_ + document.getAbsolutePath(), "false");
+        settings.simple().save(Settings.LAYOUT, Settings.RIGHT_PANEL_COLLAPSED + document.getAbsolutePath(), "false");
 
         // Hide small bar
         hbxBot.getChildren().remove(vbxDebugHidden);
@@ -284,10 +284,10 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
         }
 
         // Add splitpane position listener
-        spnBotPanes.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.RightPanelWidth_ + document.getAbsolutePath())));
+        spnBotPanes.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.RIGHT_PANEL_WIDTH + document.getAbsolutePath())));
         spnBotPanes.getDividers().get(0).positionProperty().addListener((position, oldPos, newPos) -> {
             if (spnBotPanes.getItems().contains(vbxDebugpane)) {
-                settings.simple().save(Settings.LAYOUT, Settings.RightPanelWidth_ + document.getAbsolutePath(), newPos.toString());
+                settings.simple().save(Settings.LAYOUT, Settings.RIGHT_PANEL_WIDTH + document.getAbsolutePath(), newPos.toString());
             }
         });
     }
@@ -469,7 +469,7 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
      */
     public void runRobot() throws XillParsingException {
         // Read the current setting in the configuration
-        boolean autoSaveBotBeforeRun = Boolean.parseBoolean(settings.simple().get(Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun));
+        boolean autoSaveBotBeforeRun = Boolean.parseBoolean(settings.simple().get(Settings.SETTINGS_GENERAL, Settings.AUTO_SAVE_BOT_BEFORE_RUN));
 
         if (autoSaveBotBeforeRun) {
             // Check if the content is unsaved, show the confirmation dialog.
@@ -486,8 +486,8 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
                 Label l = new Label("The robot " + currentRobot.getPath().getName() + " needs to be saved before running. Do you want to continue?");
                 CheckBox cb = new CheckBox("Don't ask me again.");
                 cb.addEventHandler(ActionEvent.ACTION, event -> {
-                    boolean currentSettingValue = Boolean.parseBoolean(settings.simple().get(Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun));
-                    settings.simple().save(Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun, !currentSettingValue);
+                    boolean currentSettingValue = Boolean.parseBoolean(settings.simple().get(Settings.SETTINGS_GENERAL, Settings.AUTO_SAVE_BOT_BEFORE_RUN));
+                    settings.simple().save(Settings.SETTINGS_GENERAL, Settings.AUTO_SAVE_BOT_BEFORE_RUN, !currentSettingValue);
                 });
                 checkBoxContainer.getChildren().addAll(l, cb);
 
@@ -523,7 +523,7 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
     private void autoSaveAndRunRobot() {
         save();
 
-        if (FXController.settings.simple().getBoolean(Settings.SETTINGS_GENERAL, Settings.RunBotWithCleanConsole)) {
+        if (FXController.settings.simple().getBoolean(Settings.SETTINGS_GENERAL, Settings.RUN_BOT_WITH_CLEAN_CONSOLE)) {
             ESConsoleClient.getInstance().clearLog(getProcessor().getRobotID().toString());
         }
 

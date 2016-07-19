@@ -148,7 +148,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         this.addEventFilter(MouseEvent.MOUSE_PRESSED, this);
 
         // Register the hasRun setting which is being used to add the default project on first run
-        settings.simple().register(Settings.INFO, Settings.HasRun, "false", "Whether the IDE has run before.");
+        settings.simple().register(Settings.INFO, Settings.HAS_RUN, "false", "Whether the IDE has run before.");
 
         loadProjects();
         addContextMenu();
@@ -617,13 +617,13 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
             // When this is the first time the IDE runs, add the samples project
             File defaultProjectPath = new File(DEFAULT_PROJECT_PATH);
-            if (!settings.simple().getBoolean(Settings.INFO, Settings.HasRun)) {
+            if (!settings.simple().getBoolean(Settings.INFO, Settings.HAS_RUN)) {
                 if (defaultProjectPath.exists()) {
                     // Projects must have an absolute directory
                     newProject(DEFAULT_PROJECT_NAME, defaultProjectPath.getAbsolutePath(), "");
                 }
                 // Mark that the IDE has run for the first time
-                settings.simple().save(Settings.INFO, Settings.HasRun, true);
+                settings.simple().save(Settings.INFO, Settings.HAS_RUN, true);
                 settings.commit();
             }
 
