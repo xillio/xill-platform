@@ -67,7 +67,7 @@ public class ResponseParserTest extends TestUtils {
 
         MetaExpression result = responseParser.build(mock(Response.class), httpResponse, new Options());
 
-        assertEquals(result.toString(), "{\"status\":{\"code\":200,\"phrase\":\"OK\"},\"headers\":{},\"version\":\"HTTP/1.0\",\"cookies\":{\"myCookie\":{\"name\":\"myCookie\",\"value\":\"This seems to work\",\" path\":\"/\",\"httponly\":true}},\"body\":\"BODY\"}");
+        assertEquals(result.toString(), "{\"status\":{\"code\":200,\"phrase\":\"OK\"},\"headers\":{},\"version\":\"HTTP/1.0\",\"cookies\":{\"myCookie\":{\"name\":\"myCookie\",\"value\":\"This seems to work\",\"path\":\"/\",\"httponly\":true}},\"body\":\"BODY\"}");
 
     }
 
