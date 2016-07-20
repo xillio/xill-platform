@@ -21,7 +21,7 @@
 Move a file to a target destination.  
 
 Returns an object containing the source destination [from] and the target destination [into].  
-This constrcut will rename a file if the source folder and target folder is the same.  
+This construct will rename a file if the source folder and target folder is the same.
 Parameter `replaceExisting` determines if the move operation can replace existing target file. If set to `false` and the target file already exists it will fail.  
 </description>
     <examples>
@@ -30,13 +30,13 @@ Parameter `replaceExisting` determines if the move operation can replace existin
             <code>
                 use File, System, Stream;
 
-                var path = "TestFile.txt";
+                var path = "test/TestFile.txt";
                 var testFile = File.openWrite(path);
                 Stream.write("test", testFile);
 
                 var result = File.move(path, "file_copy.txt");
 
-                // Prints {"from": "absolute/path/to/TestFile.txt", "into": "absolute/path/to/file_copy.txt"}
+                // Prints {"from": "absolute/path/to/test/TestFile.txt", "into": "absolute/path/to/file_copy.txt"}
                 System.print(result);
             </code>
         </example>
