@@ -16,7 +16,7 @@
 package nl.xillio.migrationtool;
 
 /**
- * The exception is thrown when the robot's source code is not valid
+ * The exception is thrown when the robot's source code is not valid.
  * The message should contain output of compilation error (i.e. description of where and what is not correct)
  */
 public class RobotValidationException extends RuntimeException {

@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Client for Xill server
+ * Client for Xill server.
  * Class contains all needed methods for communicating with Xill server using REST API related to project and resource handling
  */
 public class XillServerUploader implements AutoCloseable {
@@ -63,7 +63,7 @@ public class XillServerUploader implements AutoCloseable {
     }
 
     /**
-     * Authenticate on Xill server
+     * Authenticate on Xill server.
      *
      * @param serverUrl Protocol, host [port] [uri] of the Xill server - e.g. http://localhost:8080
      * @param username Username
@@ -97,7 +97,7 @@ public class XillServerUploader implements AutoCloseable {
     }
 
     /**
-     * Find project on the server
+     * Find project on the server.
      *
      * @param projectName Name of the project
      * @return projectId if found, otherwise null (if not found)
@@ -120,11 +120,11 @@ public class XillServerUploader implements AutoCloseable {
         if (uri == null) {
             return null;
         }
-        return uri.substring(uri.lastIndexOf('/')+1);
+        return uri.substring(uri.lastIndexOf('/') + 1);
     }
 
     /**
-     * Find object in Json given by path of object's keys (very simplified XPath like - for objects only)
+     * Find object in Json given by path of object's keys (very simplified XPath like - for objects only).
      *
      * @param path Path of object's keys (e.g. "user/address/street")
      * @param jsonParsed Object of parsed Json
@@ -148,7 +148,7 @@ public class XillServerUploader implements AutoCloseable {
     }
 
     /**
-     * Check if provided robot exist on the server
+     * Check if provided robot exist on the server.
      *
      * @param projectId project ID
      * @param robotFqn robot FQN
@@ -205,11 +205,11 @@ public class XillServerUploader implements AutoCloseable {
         if (resources == null) {
             return false;
         }
-        return resources.stream().filter(r -> ((Map)r).get("projectPath").equals(resourceName)).findAny().isPresent();
+        return resources.stream().filter(r -> ((Map) r).get("projectPath").equals(resourceName)).findAny().isPresent();
     }
 
     /**
-     * Check if the project exists on the server - if not then create it
+     * Check if the project exists on the server - if not then create it.
      *
      * @param projectName Name of the project
      * @return projectId
@@ -225,12 +225,12 @@ public class XillServerUploader implements AutoCloseable {
     }
 
     /**
-     * Create project on the server
+     * Create project on the server.
      * @param projectName Name of the project
      * @throws IOException if the project creation fails
      */
     public void createProject(final String projectName) throws IOException {
-        HashMap<String,String> data = new HashMap<>();
+        HashMap<String, String> data = new HashMap<>();
         data.put("projectName", projectName);
         try {
             doPost("projects", jsonParser.toJson(data));
@@ -240,7 +240,7 @@ public class XillServerUploader implements AutoCloseable {
     }
 
     /**
-     * Perform a validation request on Xill server which checks if robot(s) are valid
+     * Perform a validation request on Xill server which checks if robot(s) are valid.
      *
      * @param projectId the project id
      * @param robotFqns list of robots (theirs FQNs)
@@ -264,7 +264,7 @@ public class XillServerUploader implements AutoCloseable {
     }
 
     /**
-     * Delete project from the server
+     * Delete project from the server.
      *
      * @param projectId Name of the project
      */
@@ -313,7 +313,7 @@ public class XillServerUploader implements AutoCloseable {
     }
 
     /**
-     * Create fully qualified name of the robot
+     * Create fully qualified name of the robot.
      *
      * @param robotFile robot file
      * @param projectFolder project folder
@@ -327,14 +327,14 @@ public class XillServerUploader implements AutoCloseable {
     }
 
     /**
-     * Create resource name from resource file and project folder
+     * Create resource name from resource file and project folder.
      *
      * @param resourceFile the resource file
      * @param projectFolder the project folder
      * @return resource name
      */
     public String getResourceName(final File resourceFile, final File projectFolder) {
-        return projectFolder.toURI().relativize(resourceFile.toURI()).getPath().replace('/',':'); // This replacement is because path having / (slash char) cannot be part of uri even if it's url encoded - so it must be replaced by some other char, ideally by some not valid for path itself
+        return projectFolder.toURI().relativize(resourceFile.toURI()).getPath().replace('/', ':'); // This replacement is because path having / (slash char) cannot be part of uri even if it's url encoded - so it must be replaced by some other char, ideally by some not valid for path itself
     }
 
     /**
@@ -358,7 +358,7 @@ public class XillServerUploader implements AutoCloseable {
     }
 
     /**
-     * Upload the robot to the server
+     * Upload the robot to the server.
      *
      * @param projectId project ID
      * @param robotFqn robot FQN
@@ -366,7 +366,7 @@ public class XillServerUploader implements AutoCloseable {
      * @throws IOException if upload fails
      */
     public void uploadRobot(final String projectId, final String robotFqn, final String code) throws IOException {
-        HashMap<String,String> data = new HashMap<>();
+        HashMap<String, String> data = new HashMap<>();
         data.put("code", code);
         try {
             doPut(String.format("projects/%1$s/robots/%2$s", projectId, urlEncode(robotFqn)), jsonParser.toJson(data));
@@ -376,7 +376,7 @@ public class XillServerUploader implements AutoCloseable {
     }
 
     /**
-     * Upload the resource to the server
+     * Upload the resource to the server.
      *
      * @param projectId project ID
      * @param resourceName resource name
@@ -384,17 +384,17 @@ public class XillServerUploader implements AutoCloseable {
      * @throws IOException if upload fails
      */
     public void uploadResource(final String projectId, final String resourceName, final File resourceFile) throws IOException {
-        HttpEntity httpEntity  = MultipartEntityBuilder
-            .create()
-            .addBinaryBody("file", resourceFile)
-            .build();
+        HttpEntity httpEntity = MultipartEntityBuilder
+                .create()
+                .addBinaryBody("file", resourceFile)
+                .build();
 
-            doPost(String.format("projects/%1$s/resources/%2$s", projectId, urlEncode(resourceName)), httpEntity);
+        doPost(String.format("projects/%1$s/resources/%2$s", projectId, urlEncode(resourceName)), httpEntity);
     }
 
     private String urlEncode(final String uri) throws IOException {
         try {
-           return URLEncoder.encode(uri, "UTF-8").replace("+", "%20");
+            return URLEncoder.encode(uri, "UTF-8").replace("+", "%20");
         } catch (UnsupportedEncodingException e) {
             throw new IOException(e.getMessage(), e);
         }
