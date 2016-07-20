@@ -23,7 +23,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.KeyCombination;
@@ -33,9 +32,6 @@ import javafx.scene.web.WebView;
 import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.BreakpointPool;
 import nl.xillio.migrationtool.Loader;
-import nl.xillio.migrationtool.elasticconsole.ESConsoleClient;
-import nl.xillio.migrationtool.elasticconsole.RobotLogMessage;
-import nl.xillio.migrationtool.gui.StatusBar.Status;
 import nl.xillio.migrationtool.gui.editor.AceEditor;
 import nl.xillio.xill.util.HotkeysHandler;
 import org.slf4j.Logger;
@@ -45,13 +41,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * The editor pane. Contains most of the UI, apart from the left panel.
+ * The editor pane for files. Contains most of the UI, apart from the left panel.
  */
-public class EditorPane extends AnchorPane implements EventHandler<KeyEvent>, RobotTabComponent, ChangeListener<String> {
-
+public class EditorPane extends AnchorPane implements FileTabComponent, EventHandler<KeyEvent>, ChangeListener<String> {
     private static final Logger LOGGER = Log.get();
-    private final AceEditor editor;
-    private final Property<DocumentState> documentState = new SimpleObjectProperty<>(DocumentState.NEW);
+
+    protected final AceEditor editor;
+    protected final Property<DocumentState> documentState = new SimpleObjectProperty<>(DocumentState.NEW);
+
     @FXML
     private Button btnUndo;
     @FXML
@@ -65,29 +62,11 @@ public class EditorPane extends AnchorPane implements EventHandler<KeyEvent>, Ro
     @FXML
     private Button btnPreviewOpenRegex;
     @FXML
-    private CheckMenuItem cmiDebug;
-    @FXML
-    private CheckMenuItem cmiInfo;
-    @FXML
-    private CheckMenuItem cmiWarning;
-    @FXML
-    private CheckMenuItem cmiError;
-    @FXML
     private Button btnRemoveAllBreakpoints;
     @FXML
-    private Button btnRun;
-    @FXML
-    private Button btnStepOver;
-    @FXML
-    private Button btnStepIn;
-    @FXML
-    private Button btnPause;
-    @FXML
-    private Button btnStop;
-    @FXML
-    private ReplaceBar editorReplaceBar;
-    private RobotControls controls;
-    private RobotTab tab;
+    protected ReplaceBar editorReplaceBar;
+
+    protected FileTab tab;
 
     /**
      * Contains the editor's content (Xill source code) that was saved to disc (or whatever medium) last time.
@@ -104,8 +83,12 @@ public class EditorPane extends AnchorPane implements EventHandler<KeyEvent>, Ro
      * Default constructor. Just sets up the UI and the listener.
      */
     public EditorPane() {
+        this("/fxml/EditorPane.fxml");
+    }
+
+    protected EditorPane(String fxml) {
         try {
-            getChildren().add(Loader.load(getClass().getResource("/fxml/EditorPane.fxml"), this));
+            getChildren().add(Loader.load(getClass().getResource(fxml), this));
         } catch (IOException e) {
             LOGGER.error("Error loading editor pane: " + e.getMessage(), e);
         }
@@ -119,6 +102,7 @@ public class EditorPane extends AnchorPane implements EventHandler<KeyEvent>, Ro
         editorReplaceBar.setButton(tbnEditorSearch, 1);
         editor.getCodeProperty().addListener(this);
         editor.setReplaceBar(editorReplaceBar);
+        editor.getOnDocumentLoaded().addListener(e -> editor.autoDetectMode(tab.getDocument().getName()));
 
         btnRedo.setDisable(true);
         btnUndo.setDisable(true);
@@ -127,10 +111,9 @@ public class EditorPane extends AnchorPane implements EventHandler<KeyEvent>, Ro
     }
 
     @Override
-    public void initialize(final RobotTab tab) {
-
+    public void initialize(final FileTab tab) {
         this.tab = tab;
-        controls = new RobotControls(tab, btnRun, btnPause, btnStop, btnStepIn, btnStepOver, cmiError);
+
         editor.setTab(tab);
         editorReplaceBar.getOnClose().addListener(clear -> {
             if (clear) {
@@ -140,12 +123,11 @@ public class EditorPane extends AnchorPane implements EventHandler<KeyEvent>, Ro
 
         editor.loadEditor();
         editor.setOptions(tab.getGlobalController().createEditorOptionsJSCode());
-        ESConsoleClient.getLogEvent(tab.getProcessor().getRobotID()).addListener(this::onLogMessage);
     }
 
     /**
      * Update the state of the undo/redo buttons.
-     * 
+     *
      * Due to some strange behaviour when using the delete key on a selection after opening a robot NOT updating the
      * editor state immediately, the task is run a couple of times to ensure the state is updated correctly.
      */
@@ -166,7 +148,6 @@ public class EditorPane extends AnchorPane implements EventHandler<KeyEvent>, Ro
             }
         };
         timer.scheduleAtFixedRate(task, 0, 500);
-
     }
 
     @FXML
@@ -185,34 +166,6 @@ public class EditorPane extends AnchorPane implements EventHandler<KeyEvent>, Ro
         updateUndoRedoButtons();
     }
 
-    private void onLogMessage(final RobotLogMessage message) {
-        switch (message.getLevel()) {
-            case "debug":
-                if (cmiDebug.isSelected()) {
-                    controls.pause(false);
-                }
-                break;
-            case "info":
-                if (cmiInfo.isSelected()) {
-                    controls.pause(false);
-                }
-                break;
-            case "warn":
-                if (cmiWarning.isSelected()) {
-                    controls.pause(false);
-                }
-                break;
-            case "error":
-                if (cmiError.isSelected()) {
-                    controls.pause(false);
-                }
-                break;
-            default:
-                LOGGER.debug("Unimplemented loglevel: " + message.getLevel());
-                break;
-        }
-    }
-
     /**
      * Overrides requestFocus by transferring the focus to the webCode.
      *
@@ -228,35 +181,18 @@ public class EditorPane extends AnchorPane implements EventHandler<KeyEvent>, Ro
     public void handle(final KeyEvent event) {
         // Find
         if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(HotkeysHandler.Hotkeys.FIND)).match(event)) {
-            event.consume();
+            // Open the search bar.
             if (!editorReplaceBar.isOpen()) {
                 editorReplaceBar.open(1);
             }
 
+            // If there is selected text, put it in the search bar.
             String selected = editor.getSelectedText();
             if (!selected.isEmpty()) {
                 editorReplaceBar.setSearchText(selected);
             }
-            editorReplaceBar.requestFocus();
-        } else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(HotkeysHandler.Hotkeys.HELP)).match(event)) {
-            String[] values;
-            try {
-                values = getEditor().getPluginAndConstructAtCursor();
-            } catch (ClassCastException e) {
-                LOGGER.warn(e.getMessage());
-                return;
-            }
 
-            HelpPane helpPane = tab.getGlobalController().getHelpPane();
-            if (values[0] == null) {
-                helpPane.getHelpSearchBar().cleanup();
-                helpPane.displayHome();
-                helpPane.getHelpSearchBar().requestFocus();
-            } else if (values[1] == null) {
-                helpPane.display(values[0], "_index");
-            } else {
-                helpPane.display(values[0], values[1]);
-            }
+            editorReplaceBar.requestFocus();
             event.consume();
         }
     }
@@ -304,21 +240,13 @@ public class EditorPane extends AnchorPane implements EventHandler<KeyEvent>, Ro
      * Checks if the @newCode means that document is changed or not.
      * It compares the @newCode with the last saved editor's content.
      *
-     * @param newCode the Xill source code
+     * @param newCode the new code
      */
-    private void updateDocumentState(final String newCode) {
+    protected void updateDocumentState(final String newCode) {
         if (lastSavedCode.equals(newCode)) {
             documentState.setValue(DocumentState.SAVED);
         } else {
             documentState.setValue(DocumentState.CHANGED);
-
-            // Only trigger auto-save if we are ready to run
-            Status currentStatus = tab.getStatusBar().statusProperty().get();
-
-            if (currentStatus == null || currentStatus == Status.PAUSED || currentStatus == Status.READY || currentStatus == Status.STOPPED) {
-                tab.resetAutoSave();
-            }
-
         }
     }
 
@@ -353,13 +281,6 @@ public class EditorPane extends AnchorPane implements EventHandler<KeyEvent>, Ro
             return true;
         }
 
-    }
-
-    /**
-     * @return the robot controls which allows to control the active robot
-     */
-    public RobotControls getControls() {
-        return controls;
     }
 
     /**
