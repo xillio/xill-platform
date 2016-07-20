@@ -46,7 +46,7 @@ public class ReturnFocusListener implements ChangeListener<Boolean> {
             if (oldValue instanceof WebView && newValue instanceof TabPane) {
                 ((TabPane) newValue).getTabs().forEach(tab -> {
                     if (tab.isSelected()) {
-                        ((RobotTab) tab).requestFocus();
+                        ((FileTab) tab).requestFocus();
                     }
                 });
             }

@@ -44,11 +44,11 @@ import nl.xillio.migrationtool.dialogs.*;
 import nl.xillio.migrationtool.gui.WatchDir.FolderListener;
 import nl.xillio.migrationtool.template.Templater;
 import nl.xillio.xill.api.XillEnvironment;
-import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.util.HotkeysHandler;
 import nl.xillio.xill.util.settings.ProjectSettings;
 import nl.xillio.xill.util.settings.Settings;
 import nl.xillio.xill.util.settings.SettingsHandler;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 
 import javax.swing.filechooser.FileFilter;
@@ -207,7 +207,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         menuNewFolder = new MenuItem("New folder", ProjectPane.createIcon(ProjectPane.NEW_FOLDER_ICON));
         menuNewFolder.setOnAction(e -> newFolderButtonPressed());
 
-        menuNewBot = new MenuItem("New robot", ProjectPane.createIcon(ProjectPane.NEW_FILE_ICON));
+        menuNewBot = new MenuItem("New file", ProjectPane.createIcon(ProjectPane.NEW_FILE_ICON));
         menuNewBot.setOnAction(e -> newBot(null));
 
         menuNewBotFromTemplate = new Menu("New robot from template...");
@@ -346,7 +346,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
     private void renameButtonPressed() {
         TreeItem<Pair<File, String>> item = getCurrentItem();
-        RobotTab tab = (RobotTab) controller.findTab(item.getValue().getKey());
+        FileTab tab = controller.findTab(item.getValue().getKey());
 
         // Check if a robot is still running, show a dialog to stop them.
         if (checkRobotsRunning(Collections.singletonList(item), false, false)) {
@@ -376,7 +376,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             if (tab != null) {
                 boolean wasSelected = controller.getSelectedTab() == tab;
                 controller.closeTab(tab);
-                RobotTab newTab = controller.openFile(item.getValue().getKey());
+                FileTab newTab = controller.openFile(item.getValue().getKey());
                 if (wasSelected) {
                     controller.showTab(newTab);
                 }
@@ -454,11 +454,14 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         // Open a file chooser to save the robot file.
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(initialFolder);
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
-                String.format("Xill Robot (*%s)", XillEnvironment.ROBOT_EXTENSION),
-                String.format("*%s", XillEnvironment.ROBOT_EXTENSION)));
         fileChooser.setTitle("New Robot");
+        fileChooser.setInitialDirectory(initialFolder);
+        String robotExtension = "*" + XillEnvironment.ROBOT_EXTENSION;
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Xill Robot (" + robotExtension + ")", robotExtension),
+                new FileChooser.ExtensionFilter("All files (*.*)", "*.*")
+        );
+
         File chosen = fileChooser.showSaveDialog(this.getScene().getWindow());
 
         // Check if no file was chosen.
@@ -468,10 +471,13 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         // Check if the new file is in the project.
         if (chosen.getParent().startsWith(projectFile.getAbsolutePath())) {
-            // On Linux the FileChooser does not automatically add xill extension.
-            if (!chosen.getName().endsWith(XillEnvironment.ROBOT_EXTENSION)) {
+            // If the file has no extension, add the robot extension.
+            if (FilenameUtils.getExtension(chosen.getName()).isEmpty()) {
                 chosen = new File(chosen.getPath() + XillEnvironment.ROBOT_EXTENSION);
             }
+
+            // Check whether the file is a robot.
+            boolean isRobot = chosen.getName().endsWith(XillEnvironment.ROBOT_EXTENSION);
 
             try {
                 Map<String, Object> model = Templater.getDefaultModel();
@@ -480,16 +486,16 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 model.put("projectName", projectFile.getName());
                 model.put("projectPath", projectFile.getCanonicalPath());
                 templater.render(templateFile, model, Paths.get(chosen.toURI()));
-                controller.viewOrOpenRobot(RobotID.getInstance(chosen, projectFile));
+                controller.viewOrOpenRobot(chosen, projectFile, isRobot);
             } catch (IOException e) {
-                LOGGER.error("Failed to create robot file.", e);
+                LOGGER.error("Failed to create file.", e);
             } catch (TemplateException e) {
                 new AlertDialog(Alert.AlertType.ERROR, "Invalid template", "The template you want to use could not be processed!", e.getMessage()).show();
-                controller.viewOrOpenRobot(RobotID.getInstance(chosen, projectFile));
+                controller.viewOrOpenRobot(chosen, projectFile, isRobot);
             }
         } else {
             // Inform the user about the file being created outside of a project.
-            new AlertDialog(Alert.AlertType.ERROR, "Project path error", "", "Robots can only be created inside projects.").show();
+            new AlertDialog(Alert.AlertType.ERROR, "Project path error", "", "Files can only be created inside projects.").show();
         }
     }
 
@@ -505,35 +511,39 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             KeyEvent keyEvent = (KeyEvent) event;
 
             // Hotkeys.
-            HotkeysHandler.Hotkeys hk = FXController.hotkeys.getHotkey(keyEvent);
-            if (hk != null) {
-                switch (hk) {
-                    case CUT:
-                        if (!menuCut.isDisable()) {
-                            cut();
-                        }
-                        break;
-                    case COPY:
-                        if (!menuCopy.isDisable()) {
-                            copy();
-                        }
-                        break;
-                    case PASTE:
-                        if (!menuPaste.isDisable()) {
-                            paste();
-                        }
-                        break;
-                    case RENAME:
-                        if (!menuRename.isDisable()) {
-                            renameButtonPressed();
-                        }
-                        break;
-                }
-            }
+            handleHotkey(FXController.hotkeys.getHotkey(keyEvent));
 
             // Keypresses.
             if (keyEvent.getCode() == KeyCode.DELETE && !menuDelete.isDisable()) {
                 deleteButtonPressed();
+            }
+        }
+    }
+
+    @SuppressWarnings("squid:SwitchLastCaseIsDefaultCheck")
+    private void handleHotkey(HotkeysHandler.Hotkeys hk) {
+        if (hk != null) {
+            switch (hk) {
+                case CUT:
+                    if (!menuCut.isDisable()) {
+                        cut();
+                    }
+                    break;
+                case COPY:
+                    if (!menuCopy.isDisable()) {
+                        copy();
+                    }
+                    break;
+                case PASTE:
+                    if (!menuPaste.isDisable()) {
+                        paste();
+                    }
+                    break;
+                case RENAME:
+                    if (!menuRename.isDisable()) {
+                        renameButtonPressed();
+                    }
+                    break;
             }
         }
     }
@@ -551,17 +561,21 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         for (TreeItem<Pair<File, String>> item : items) {
             // Check if the robot tab is open and the robot is running.
-            RobotTab tab = (RobotTab) controller.findTab(item.getValue().getKey());
-            if (tab != null) {
-                running |= tab.getEditorPane().getControls().robotRunning();
+            FileTab tab = controller.findTab(item.getValue().getKey());
+
+            // Check if the tab is a robot tab.
+            if (tab != null && tab instanceof RobotTab) {
+                RobotTab robotTab = (RobotTab) tab;
+                running |= robotTab.getEditorPane().getControls().robotRunning();
                 // Stop the robot.
                 if (stop) {
-                    tab.getEditorPane().getControls().stop();
+                    robotTab.getEditorPane().getControls().stop();
                 }
-                // Close the tab.
-                if (closeTab) {
-                    controller.closeTab(controller.findTab(item.getValue().getKey()));
-                }
+            }
+
+            // Close the tab.
+            if (closeTab) {
+                controller.closeTab(tab);
             }
 
             // Recursively check all children of the item.
@@ -626,7 +640,6 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 settings.simple().save(Settings.INFO, Settings.HAS_RUN, true);
                 settings.commit();
             }
-
 
             if (projects.isEmpty()) {
                 disableAllButtons(true);
@@ -801,9 +814,9 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
      *
      * @param child The path to the robot file
      */
-    public void robotFileChanged(final File child) {
+    public void fileChanged(final File child) {
 
-        RobotTab tab = (RobotTab) controller.findTab(child);
+        FileTab tab = controller.findTab(child);
         if (tab == null) {
             return;
         }
@@ -827,8 +840,8 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         // This must be done in the FX application thread.
         final Runnable showDialog = () -> {
             // Create and show an alert dialog saying the content has been changed.
-            AlertDialog alert = new AlertDialog(Alert.AlertType.WARNING, "Robot file content change",
-                    "The robot file has been modified outside the editor.", "Do you want reload the robot file?",
+            AlertDialog alert = new AlertDialog(Alert.AlertType.WARNING, "File content change",
+                    "The file has been modified outside the editor.", "Do you want reload the file?",
                     ButtonType.YES, ButtonType.NO);
 
             final Optional<ButtonType> result = alert.showAndWait();
@@ -1127,17 +1140,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 File[] files = f.listFiles(tbnShowAllFiles.isSelected() ? anyFileFilter : robotFileFilter);
 
                 // Sort the list of files.
-                Arrays.sort(files, (o1, o2) -> {
-                    // Put directories above files.
-                    if (o1.isDirectory() && o2.isFile()) {
-                        return -1;
-                    } else if (o1.isFile() && o2.isDirectory()) {
-                        return 1;
-                        // Both are the same type, compare them normally.
-                    } else {
-                        return o1.compareTo(o2);
-                    }
-                });
+                Arrays.sort(files, this::compareFileOrder);
 
                 // Create tree items from all files, add them to the list
                 for (File file : files) {
@@ -1151,6 +1154,18 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
             return children;
         }
+
+        private int compareFileOrder(File o1, File o2) {
+            // Put directories above files.
+            if (o1.isDirectory() && o2.isFile()) {
+                return -1;
+            } else if (o1.isFile() && o2.isDirectory()) {
+                return 1;
+            } else {
+                // Both are the same type, compare them normally.
+                return o1.compareTo(o2);
+            }
+        }
     }
 
     /**
@@ -1158,7 +1173,6 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
      */
     private class CustomTreeCell extends TreeCell<Pair<File, String>> implements EventHandler<Event> {
         private static final String DRAG_OVER_CLASS = "drag-over";
-        private static final String CANNOT_OPEN_CLASS = "cannot-open";
 
         public CustomTreeCell() {
             // Subscribe to drag events.
@@ -1180,19 +1194,10 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             }
             this.setText(pair.getValue());
 
-            // Check whether this is a robot file.
-            boolean isRobot = pair.getValue().endsWith(XillEnvironment.ROBOT_EXTENSION);
-
-            // Clear the style and check if this is a file we can open.
-            this.getStyleClass().remove(CANNOT_OPEN_CLASS);
-            if (!robotFileFilter.accept(pair.getKey())) {
-                this.getStyleClass().add(CANNOT_OPEN_CLASS);
-            }
-
             // Hook into the mouse double click event.
             setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1
-                        && pair.getKey() != null && pair.getKey().exists() && pair.getKey().isFile() && isRobot) {
+                        && pair.getKey() != null && pair.getKey().exists() && pair.getKey().isFile()) {
                     // Open new tab from file.
                     controller.openFile(pair.getKey());
                 }

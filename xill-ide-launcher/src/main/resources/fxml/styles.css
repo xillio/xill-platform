@@ -76,7 +76,6 @@
 	-fx-tab-hover-background-color: #ffffff;
 	-fx-tab-selected-background-color: #ffffff;
 	-fx-default-button: #f0f0f0;
-	-fx-disabled-text-color: rgba(0,0,0,0.5);
 	
 	-fx-info-color: -fx-accent;
 	-fx-question-color: -fx-accent;
@@ -1686,9 +1685,6 @@
 			.tree-cell:filled:selected .tree-disclosure-node .arrow {
 				-fx-background-color: -fx-selected-text-color;
 			}
-    .cannot-open {
-        -fx-text-fill: -fx-disabled-text-color;
-    }
 
 
 /* WEB VIEW */
