@@ -77,10 +77,10 @@ public class DebugPane extends AnchorPane implements EventHandler<KeyEvent>, Rob
 
     @Override
     public void initialize(final RobotTab tab) {
-        settings.simple().register(Settings.LAYOUT, Settings.PreviewHeight_ + getFullPath(tab), "0.6", "The height of the preview panel");
+        settings.simple().register(Settings.LAYOUT, Settings.PREVIEW_HEIGHT + getFullPath(tab), "0.6", "The height of the preview panel");
         // Load the divider position
-        spnBotRight.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.PreviewHeight_ + getFullPath(tab))));
-        spnBotRight.getDividers().get(0).positionProperty().addListener((observable, prevPos, newPos) -> settings.simple().save(Settings.LAYOUT, Settings.PreviewHeight_ + getFullPath(tab), Double.toString(newPos.doubleValue())));
+        spnBotRight.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.PREVIEW_HEIGHT + getFullPath(tab))));
+        spnBotRight.getDividers().get(0).positionProperty().addListener((observable, prevPos, newPos) -> settings.simple().save(Settings.LAYOUT, Settings.PREVIEW_HEIGHT + getFullPath(tab), Double.toString(newPos.doubleValue())));
 
         initializeChildren(tab);
     }
