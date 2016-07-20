@@ -65,9 +65,9 @@ public class UploadToServerDialog extends FXMLDialog {
 
         setTitle("Upload to server");
 
-        tfserver.setText(FXController.settings.simple().get(Settings.SERVER, Settings.XillServerHost));
-        tfusername.setText(FXController.settings.simple().get(Settings.SERVER, Settings.XillServerUsername));
-        tfpassword.setText(FXController.settings.simple().get(Settings.SERVER, Settings.XillServerPassword));
+        tfserver.setText(FXController.settings.simple().get(Settings.SERVER, Settings.XILL_SERVER_HOST));
+        tfusername.setText(FXController.settings.simple().get(Settings.SERVER, Settings.XILL_SERVER_USERNAME));
+        tfpassword.setText(FXController.settings.simple().get(Settings.SERVER, Settings.XILL_SERVER_PASSWORD));
     }
 
     @FXML
@@ -90,9 +90,9 @@ public class UploadToServerDialog extends FXMLDialog {
 
         try {
             // Save current credentials
-            FXController.settings.simple().save(Settings.SERVER, Settings.XillServerHost, tfserver.getText());
-            FXController.settings.simple().save(Settings.SERVER, Settings.XillServerUsername, tfusername.getText());
-            FXController.settings.simple().save(Settings.SERVER, Settings.XillServerPassword, tfpassword.getText());
+            FXController.settings.simple().save(Settings.SERVER, Settings.XILL_SERVER_HOST, tfserver.getText());
+            FXController.settings.simple().save(Settings.SERVER, Settings.XILL_SERVER_USERNAME, tfusername.getText());
+            FXController.settings.simple().save(Settings.SERVER, Settings.XILL_SERVER_PASSWORD, tfpassword.getText());
 
             uploadedRobots.clear();
 

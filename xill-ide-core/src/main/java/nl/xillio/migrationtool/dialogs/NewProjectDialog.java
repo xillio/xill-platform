@@ -17,11 +17,8 @@ package nl.xillio.migrationtool.dialogs;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Modality;
 import nl.xillio.migrationtool.gui.FXController;
 import nl.xillio.migrationtool.gui.ProjectPane;
 import nl.xillio.xill.util.settings.Settings;
@@ -52,7 +49,7 @@ public class NewProjectDialog extends FXMLDialog {
         this.projectPane = projectPane;
         setTitle("New Project");
 
-        setProjectFolder(FXController.settings.simple().get(Settings.SETTINGS_GENERAL, Settings.DefaultProjectLocation));
+        setProjectFolder(FXController.settings.simple().get(Settings.SETTINGS_GENERAL, Settings.DEFAULT_PROJECT_LOCATION));
         initalFoldervalue = tfprojectfolder.getText();
         tfprojectname.textProperty().addListener(this::typedInProjectName);
         tfprojectfolder.setOnKeyTyped(e -> hasBeenTypedInProjectFolder = true);

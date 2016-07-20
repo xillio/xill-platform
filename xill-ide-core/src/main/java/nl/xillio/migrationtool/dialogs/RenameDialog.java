@@ -22,8 +22,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.util.Pair;
 import me.biesaart.utils.Log;
-import nl.xillio.xill.api.XillEnvironment;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -62,10 +62,13 @@ public class RenameDialog extends FXMLDialog {
         // Get the old file, new file name and new file.
         final File oldFile = treeItem.getValue().getKey();
         String fileName = tfname.getText();
-        
-        if (oldFile.isFile() && oldFile.toString().endsWith(XillEnvironment.ROBOT_EXTENSION) && !fileName.endsWith(XillEnvironment.ROBOT_EXTENSION)) {
-            fileName += XillEnvironment.ROBOT_EXTENSION;
+
+        // If the file is renamed without extension, add the old extension.
+        String oldExtension = FilenameUtils.getExtension(oldFile.toString());
+        if (oldFile.isFile() && FilenameUtils.getExtension(fileName).isEmpty()) {
+            fileName += "." + oldExtension;
         }
+
         final File newFile = new File(oldFile.getParent(), fileName);
         try {
             // Rename the item and update the tree item.

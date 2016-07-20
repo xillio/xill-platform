@@ -135,7 +135,7 @@ public class SettingsDialog extends FXMLDialog {
         ObservableList<String> options = FXCollections.observableArrayList("auto", "windows", "unix");
         cbnewlinemode.setItems(options);
 
-        settings.simple().register(Settings.INFO, Settings.EulaAccepted, "false", "Whether the EULA was accepted by the user.");
+        settings.simple().register(Settings.INFO, Settings.EULA_ACCEPTED, "false", "Whether the EULA was accepted by the user.");
 
         loadSettings();
 
@@ -153,7 +153,7 @@ public class SettingsDialog extends FXMLDialog {
     }
 
     private void setSize() {
-        String dimensions = settings.simple().get(Settings.LAYOUT, Settings.SettingsDialogDimensions);
+        String dimensions = settings.simple().get(Settings.LAYOUT, Settings.SETTINGS_DIALOG_DIMENSIONS);
         String[] parts = dimensions.split("[^0-9\\.]");
         if (parts.length != 2) {
             LOGGER.error("Failed to get size of settings dialog from the settings");
@@ -171,7 +171,7 @@ public class SettingsDialog extends FXMLDialog {
 
     private void saveSize() {
         String value = getScene().getWindow().getWidth() + "x" + getScene().getWindow().getHeight();
-        settings.simple().save(Settings.LAYOUT, Settings.SettingsDialogDimensions, value);
+        settings.simple().save(Settings.LAYOUT, Settings.SETTINGS_DIALOG_DIMENSIONS, value);
         settings.commit();
     }
 
@@ -331,26 +331,26 @@ public class SettingsDialog extends FXMLDialog {
         settings.setManualCommit(true);
 
         // General
-        saveText(tfprojectfolder, Settings.SETTINGS_GENERAL, Settings.DefaultProjectLocation);
-        saveCheckBox(cbopenbotwcleanconsole, Settings.SETTINGS_GENERAL, Settings.OpenBotWithCleanConsole);
-        saveCheckBox(cbrunbotwcleanconsole, Settings.SETTINGS_GENERAL, Settings.RunBotWithCleanConsole);
-        saveCheckBox(cbautosavebotbeforerun, Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun);
-        saveCheckBox(cbEnableAutoSave, Settings.SETTINGS_GENERAL, Settings.EnableAutoSave);
+        saveText(tfprojectfolder, Settings.SETTINGS_GENERAL, Settings.DEFAULT_PROJECT_LOCATION);
+        saveCheckBox(cbopenbotwcleanconsole, Settings.SETTINGS_GENERAL, Settings.OPEN_BOT_WITH_CLEAN_CONSOLE);
+        saveCheckBox(cbrunbotwcleanconsole, Settings.SETTINGS_GENERAL, Settings.RUN_BOT_WITH_CLEAN_CONSOLE);
+        saveCheckBox(cbautosavebotbeforerun, Settings.SETTINGS_GENERAL, Settings.AUTO_SAVE_BOT_BEFORE_RUN);
+        saveCheckBox(cbEnableAutoSave, Settings.SETTINGS_GENERAL, Settings.ENABLE_AUTO_SAVE);
 
         // Editor
-        saveCheckBox(cbdisplayindentguides, Settings.SETTINGS_EDITOR, Settings.DisplayIndentGuides);
-        saveText(tffontsize, Settings.SETTINGS_EDITOR, Settings.FontSize);
-        saveCheckBox(cbhighlightselword, Settings.SETTINGS_EDITOR, Settings.HighlightSelectedWord);
-        saveComboBox(cbnewlinemode, Settings.SETTINGS_EDITOR, Settings.NewLineMode);
-        saveText(tfprintmargincolumn, Settings.SETTINGS_EDITOR, Settings.PrintMarginColumn);
-        saveCheckBox(cbshowgutter, Settings.SETTINGS_EDITOR, Settings.ShowGutter);
-        saveCheckBox(cbshowinvisibles, Settings.SETTINGS_EDITOR, Settings.ShowInvisibles);
-        saveText(tftabsize, Settings.SETTINGS_EDITOR, Settings.TabSize);
-        saveCheckBox(cbusesofttabs, Settings.SETTINGS_EDITOR, Settings.UseSoftTabs);
-        saveCheckBox(cbwraptext, Settings.SETTINGS_EDITOR, Settings.WrapText);
-        saveText(tfwraplimit, Settings.SETTINGS_EDITOR, Settings.WrapLimit);
-        saveCheckBox(cbshowprintmargin, Settings.SETTINGS_EDITOR, Settings.ShowPrintMargin);
-        saveCheckBox(cbshowlinenumbers, Settings.SETTINGS_EDITOR, Settings.ShowLineNumbers);
+        saveCheckBox(cbdisplayindentguides, Settings.SETTINGS_EDITOR, Settings.DISPLAY_INDENT_GUIDES);
+        saveText(tffontsize, Settings.SETTINGS_EDITOR, Settings.FONT_SIZE);
+        saveCheckBox(cbhighlightselword, Settings.SETTINGS_EDITOR, Settings.HIGHLIGHT_SELECTED_WORD);
+        saveComboBox(cbnewlinemode, Settings.SETTINGS_EDITOR, Settings.NEW_LINE_MODE);
+        saveText(tfprintmargincolumn, Settings.SETTINGS_EDITOR, Settings.PRINT_MARGIN_COLUMN);
+        saveCheckBox(cbshowgutter, Settings.SETTINGS_EDITOR, Settings.SHOW_GUTTER);
+        saveCheckBox(cbshowinvisibles, Settings.SETTINGS_EDITOR, Settings.SHOW_INVISIBLES);
+        saveText(tftabsize, Settings.SETTINGS_EDITOR, Settings.TAB_SIZE);
+        saveCheckBox(cbusesofttabs, Settings.SETTINGS_EDITOR, Settings.USE_SOFT_TABS);
+        saveCheckBox(cbwraptext, Settings.SETTINGS_EDITOR, Settings.WRAP_TEXT);
+        saveText(tfwraplimit, Settings.SETTINGS_EDITOR, Settings.WRAP_LIMIT);
+        saveCheckBox(cbshowprintmargin, Settings.SETTINGS_EDITOR, Settings.SHOW_PRINT_MARGIN);
+        saveCheckBox(cbshowlinenumbers, Settings.SETTINGS_EDITOR, Settings.SHOW_LINE_NUMBERS);
 
         // Key bindings
         FXController.hotkeys.saveSettingsFromDialog(getScene(), settings);
@@ -361,26 +361,26 @@ public class SettingsDialog extends FXMLDialog {
 
     private void loadSettings() {
         // General
-        setText(tfprojectfolder, Settings.SETTINGS_GENERAL, Settings.DefaultProjectLocation);
-        setCheckBox(cbopenbotwcleanconsole, Settings.SETTINGS_GENERAL, Settings.OpenBotWithCleanConsole);
-        setCheckBox(cbrunbotwcleanconsole, Settings.SETTINGS_GENERAL, Settings.RunBotWithCleanConsole);
-        setCheckBox(cbautosavebotbeforerun, Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun);
-        setCheckBox(cbEnableAutoSave, Settings.SETTINGS_GENERAL, Settings.EnableAutoSave);
+        setText(tfprojectfolder, Settings.SETTINGS_GENERAL, Settings.DEFAULT_PROJECT_LOCATION);
+        setCheckBox(cbopenbotwcleanconsole, Settings.SETTINGS_GENERAL, Settings.OPEN_BOT_WITH_CLEAN_CONSOLE);
+        setCheckBox(cbrunbotwcleanconsole, Settings.SETTINGS_GENERAL, Settings.RUN_BOT_WITH_CLEAN_CONSOLE);
+        setCheckBox(cbautosavebotbeforerun, Settings.SETTINGS_GENERAL, Settings.AUTO_SAVE_BOT_BEFORE_RUN);
+        setCheckBox(cbEnableAutoSave, Settings.SETTINGS_GENERAL, Settings.ENABLE_AUTO_SAVE);
 
         // Editor
-        setCheckBox(cbdisplayindentguides, Settings.SETTINGS_EDITOR, Settings.DisplayIndentGuides);
-        setText(tffontsize, Settings.SETTINGS_EDITOR, Settings.FontSize);
-        setCheckBox(cbhighlightselword, Settings.SETTINGS_EDITOR, Settings.HighlightSelectedWord);
-        setComboBox(cbnewlinemode, Settings.SETTINGS_EDITOR, Settings.NewLineMode);
-        setText(tfprintmargincolumn, Settings.SETTINGS_EDITOR, Settings.PrintMarginColumn);
-        setCheckBox(cbshowgutter, Settings.SETTINGS_EDITOR, Settings.ShowGutter);
-        setCheckBox(cbshowinvisibles, Settings.SETTINGS_EDITOR, Settings.ShowInvisibles);
-        setText(tftabsize, Settings.SETTINGS_EDITOR, Settings.TabSize);
-        setCheckBox(cbusesofttabs, Settings.SETTINGS_EDITOR, Settings.UseSoftTabs);
-        setCheckBox(cbwraptext, Settings.SETTINGS_EDITOR, Settings.WrapText);
-        setText(tfwraplimit, Settings.SETTINGS_EDITOR, Settings.WrapLimit);
-        setCheckBox(cbshowprintmargin, Settings.SETTINGS_EDITOR, Settings.ShowPrintMargin);
-        setCheckBox(cbshowlinenumbers, Settings.SETTINGS_EDITOR, Settings.ShowLineNumbers);
+        setCheckBox(cbdisplayindentguides, Settings.SETTINGS_EDITOR, Settings.DISPLAY_INDENT_GUIDES);
+        setText(tffontsize, Settings.SETTINGS_EDITOR, Settings.FONT_SIZE);
+        setCheckBox(cbhighlightselword, Settings.SETTINGS_EDITOR, Settings.HIGHLIGHT_SELECTED_WORD);
+        setComboBox(cbnewlinemode, Settings.SETTINGS_EDITOR, Settings.NEW_LINE_MODE);
+        setText(tfprintmargincolumn, Settings.SETTINGS_EDITOR, Settings.PRINT_MARGIN_COLUMN);
+        setCheckBox(cbshowgutter, Settings.SETTINGS_EDITOR, Settings.SHOW_GUTTER);
+        setCheckBox(cbshowinvisibles, Settings.SETTINGS_EDITOR, Settings.SHOW_INVISIBLES);
+        setText(tftabsize, Settings.SETTINGS_EDITOR, Settings.TAB_SIZE);
+        setCheckBox(cbusesofttabs, Settings.SETTINGS_EDITOR, Settings.USE_SOFT_TABS);
+        setCheckBox(cbwraptext, Settings.SETTINGS_EDITOR, Settings.WRAP_TEXT);
+        setText(tfwraplimit, Settings.SETTINGS_EDITOR, Settings.WRAP_LIMIT);
+        setCheckBox(cbshowprintmargin, Settings.SETTINGS_EDITOR, Settings.SHOW_PRINT_MARGIN);
+        setCheckBox(cbshowlinenumbers, Settings.SETTINGS_EDITOR, Settings.SHOW_LINE_NUMBERS);
 
         // Key bindings
         Platform.runLater(() -> FXController.hotkeys.setDialogFromSettings(getScene(), settings));
@@ -423,27 +423,27 @@ public class SettingsDialog extends FXMLDialog {
      */
     public static void register(final SettingsHandler settings) {
         // General
-        settings.simple().register(Settings.LAYOUT, Settings.SettingsDialogDimensions, "800x600", "The size of the settings window");
-        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.DefaultProjectLocation, System.getProperty("user.home"), "The default project location");
-        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.OpenBotWithCleanConsole, "true", "If the console is cleared when the bot is open");
-        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.RunBotWithCleanConsole, "false", "If the console is cleared when the bot is about to run");
-        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun, "true", "Save the robot before it's run");
-        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.EnableAutoSave, "true", "Save the robot after 2 seconds of no edits");
+        settings.simple().register(Settings.LAYOUT, Settings.SETTINGS_DIALOG_DIMENSIONS, "800x600", "The size of the settings window");
+        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.DEFAULT_PROJECT_LOCATION, System.getProperty("user.home"), "The default project location");
+        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.OPEN_BOT_WITH_CLEAN_CONSOLE, "true", "If the console is cleared when the bot is open");
+        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.RUN_BOT_WITH_CLEAN_CONSOLE, "false", "If the console is cleared when the bot is about to run");
+        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.AUTO_SAVE_BOT_BEFORE_RUN, "true", "Save the robot before it's run");
+        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.ENABLE_AUTO_SAVE, "true", "Save the robot after 2 seconds of no edits");
 
         // Editor
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.DisplayIndentGuides, "false", "Displays indent guides");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.FontSize, "12px", "The editor's font size");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.HighlightSelectedWord, "true", "Highlight selected word in editor");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.NewLineMode, "auto", "New-line mode in editor");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.PrintMarginColumn, "80", "Set print margin column");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.ShowGutter, "true", "Show editor gutter");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.ShowInvisibles, "false", "Show invisibles in editor");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.TabSize, "4", "Tab size in editor");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.UseSoftTabs, "true", "Use soft tabs in editor");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.WrapText, "false", "Wrap text in editor");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.WrapLimit, "60", "Wrap limit in editor");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.ShowPrintMargin, "false", "Show print margin in editor");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.ShowLineNumbers, "true", "Show line numbers in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.DISPLAY_INDENT_GUIDES, "false", "Displays indent guides");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.FONT_SIZE, "12px", "The editor's font size");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.HIGHLIGHT_SELECTED_WORD, "true", "Highlight selected word in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.NEW_LINE_MODE, "auto", "New-line mode in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.PRINT_MARGIN_COLUMN, "80", "Set print margin column");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.SHOW_GUTTER, "true", "Show editor gutter");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.SHOW_INVISIBLES, "false", "Show invisibles in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.TAB_SIZE, "4", "Tab size in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.USE_SOFT_TABS, "true", "Use soft tabs in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.WRAP_TEXT, "false", "Wrap text in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.WRAP_LIMIT, "60", "Wrap limit in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.SHOW_PRINT_MARGIN, "false", "Show print margin in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.SHOW_LINE_NUMBERS, "true", "Show line numbers in editor");
 
         // Key bindings
         FXController.hotkeys.registerHotkeysSettings(settings);

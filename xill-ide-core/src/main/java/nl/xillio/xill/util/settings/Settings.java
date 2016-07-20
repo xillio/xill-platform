@@ -31,47 +31,42 @@ public class Settings {
     /**
      * Width of the left panel
      */
-    public static final String LeftPanelWidth = "LeftPanelWidth";
+    public static final String LEFT_PANEL_WIDTH = "LeftPanelWidth";
 
     /**
      * The collapsed-state of the left panel
      */
-    public static final String LeftPanelCollapsed = "LeftPanelCollapsed";
+    public static final String LEFT_PANEL_COLLAPSED = "LeftPanelCollapsed";
 
     /**
      * The height of the project panel
      */
-    public static final String ProjectHeight = "ProjectHeight";
+    public static final String PROJECT_HEIGHT = "ProjectHeight";
 
     /**
      * Width of the right panel for the specified currentRobot
      */
-    public static final String RightPanelWidth_ = "RightPanelWidth_";
+    public static final String RIGHT_PANEL_WIDTH = "RightPanelWidth_";
 
     /**
      * The collapsed-state of the right panel for the specified currentRobot
      */
-    public static final String RightPanelCollapsed_ = "RightPanelCollapsed_";
+    public static final String RIGHT_PANEL_COLLAPSED = "RightPanelCollapsed_";
 
     /**
      * The height of the editor
      */
-    public static final String EditorHeight_ = "EditorHeight_";
+    public static final String EDITOR_HEIGHT = "EditorHeight_";
 
     /**
      * The height of the preview panel
      */
-    public static final String PreviewHeight_ = "PreviewHeight_";
-
-    /**
-     * The zoom factor of the code editor.
-     */
-    public static final String AceZoom_ = "AceZoom_";
+    public static final String PREVIEW_HEIGHT = "PreviewHeight_";
 
     /**
      * The dimensions of the settings dialog
      */
-    public static final String SettingsDialogDimensions = "SettingsDialogDimensions";
+    public static final String SETTINGS_DIALOG_DIMENSIONS = "SettingsDialogDimensions";
 
     // =============================================================================
     /**
@@ -82,7 +77,7 @@ public class Settings {
     /**
      * The last folder a file was opened from or saved to
      */
-    public static final String LastFolder = "LastFolder";
+    public static final String LAST_FOLDER = "LastFolder";
 
     // =============================================================================
     /**
@@ -93,22 +88,22 @@ public class Settings {
     /**
      * Show warning dialogs for debug messages
      */
-    public static final String DialogDebug = "DialogDebug";
+    public static final String DIALOG_DEBUG = "DialogDebug";
 
     /**
      * Show warning dialogs for info messages
      */
-    public static final String DialogInfo = "DialogInfo";
+    public static final String DIALOG_INFO = "DialogInfo";
 
     /**
      * Show warning dialogs for warning messages
      */
-    public static final String DialogWarning = "DialogWarning";
+    public static final String DIALOG_WARNING = "DialogWarning";
 
     /**
      * Show warning dialogs for error messages
      */
-    public static final String DialogError = "DialogError";
+    public static final String DIALOG_ERROR = "DialogError";
 
     // =============================================================================
     /**
@@ -119,18 +114,18 @@ public class Settings {
     /**
      * Address of Xill server
      */
-    public static final String XillServerHost = "XillServerHost";
+    public static final String XILL_SERVER_HOST = "XillServerHost";
 
     /**
      * Username for accessing the Xill server
      */
-    public static final String XillServerUsername = "XillServerUsername";
+    public static final String XILL_SERVER_USERNAME = "XillServerUsername";
 
     /**
      * Password for accessing the Xill server
      */
     @SuppressWarnings("squid:S2068") // This is just a key, not an actual password
-    public static final String XillServerPassword = "XillServerPassword";
+    public static final String XILL_SERVER_PASSWORD = "XillServerPassword";
 
     // =============================================================================
     /**
@@ -141,17 +136,17 @@ public class Settings {
     /**
      * Last version that was run
      */
-    public static final String LastVersion = "LastVersion";
+    public static final String LAST_VERSION = "LastVersion";
 
     /**
      * Whether the IDE has run before
      */
-    public static final String HasRun = "HasRun";
+    public static final String HAS_RUN = "HasRun";
 
     /**
      * Whether the user accepted the EULA
      */
-    public static final String EulaAccepted = "EulaAccepted";
+    public static final String EULA_ACCEPTED = "EulaAccepted";
 
     // =============================================================================
     /**
@@ -162,12 +157,12 @@ public class Settings {
     /**
      * List of last time open tabs
      */
-    public static final String OpenTabs = "OpenTabs";
+    public static final String OPEN_TABS = "OpenTabs";
 
     /**
      * Last time active tab
      */
-    public static final String ActiveTab = "ActiveTab";
+    public static final String ACTIVE_TAB = "ActiveTab";
 
     // =============================================================================
     /**
@@ -176,16 +171,16 @@ public class Settings {
     public static final String SETTINGS_GENERAL = "SettingsGeneral";
 
     /** */
-    public static final String DefaultProjectLocation = "DefaultProjectLocation";
+    public static final String DEFAULT_PROJECT_LOCATION = "DefaultProjectLocation";
 
     /** */
-    public static final String OpenBotWithCleanConsole = "OpenBotWithCleanConsole";
+    public static final String OPEN_BOT_WITH_CLEAN_CONSOLE = "OpenBotWithCleanConsole";
 
     /** */
-    public static final String RunBotWithCleanConsole = "RunBotWithCleanConsole";
+    public static final String RUN_BOT_WITH_CLEAN_CONSOLE = "RunBotWithCleanConsole";
 
     /** */
-    public static final String EnableAutoSave = "EnableAutoSave";
+    public static final String ENABLE_AUTO_SAVE = "EnableAutoSave";
 
     // =============================================================================
     /**
@@ -194,46 +189,46 @@ public class Settings {
     public static final String SETTINGS_EDITOR = "SettingsEditor";
 
     /** */
-    public static final String DisplayIndentGuides = "DisplayIndentGuides";
+    public static final String DISPLAY_INDENT_GUIDES = "DisplayIndentGuides";
 
     /** */
-    public static final String FontSize = "FontSize";
+    public static final String FONT_SIZE = "FontSize";
 
     /** */
-    public static final String AutoSaveBotBeforeRun = "AutoSaveBotBeforeRun";
+    public static final String AUTO_SAVE_BOT_BEFORE_RUN = "AutoSaveBotBeforeRun";
 
     /** */
-    public static final String HighlightSelectedWord = "HighlightSelectedWord";
+    public static final String HIGHLIGHT_SELECTED_WORD = "HighlightSelectedWord";
 
     /** */
-    public static final String NewLineMode = "NewLineMode";
+    public static final String NEW_LINE_MODE = "NewLineMode";
 
     /** */
-    public static final String PrintMarginColumn = "PrintMarginColumn";
+    public static final String PRINT_MARGIN_COLUMN = "PrintMarginColumn";
 
     /** */
-    public static final String ShowGutter = "ShowGutter";
+    public static final String SHOW_GUTTER = "ShowGutter";
 
     /** */
-    public static final String ShowInvisibles = "ShowInvisibles";
+    public static final String SHOW_INVISIBLES = "ShowInvisibles";
 
     /** */
-    public static final String TabSize = "TabSize";
+    public static final String TAB_SIZE = "TabSize";
 
     /** */
-    public static final String UseSoftTabs = "UseSoftTabs";
+    public static final String USE_SOFT_TABS = "UseSoftTabs";
 
     /** */
-    public static final String WrapText = "WrapText";
+    public static final String WRAP_TEXT = "WrapText";
 
     /** */
-    public static final String WrapLimit = "WrapLimit";
+    public static final String WRAP_LIMIT = "WrapLimit";
 
     /** */
-    public static final String ShowPrintMargin = "ShowPrintMargin";
+    public static final String SHOW_PRINT_MARGIN = "ShowPrintMargin";
 
     /** */
-    public static final String ShowLineNumbers = "ShowLineNumbers";
+    public static final String SHOW_LINE_NUMBERS = "ShowLineNumbers";
 
     /** */
     // =============================================================================
@@ -243,69 +238,73 @@ public class Settings {
     public static final String SETTINGS_KEYBINDINGS = "KeyBindings";
 
     /** */
-    public static final String NewFile = "NewFile";
+    public static final String NEW_FILE = "NewFile";
 
     /** */
-    public static final String OpenFile = "OpenFile";
+    public static final String OPEN_FILE = "OpenFile";
 
     /** */
-    public static final String SaveFile = "SaveFile";
+    public static final String SAVE_FILE = "SaveFile";
 
     /** */
-    public static final String SaveFileAs = "SaveFileAs";
+    public static final String SAVE_FILE_AS = "SaveFileAs";
 
     /** */
-    public static final String SaveAll = "SaveFileAll";
+    public static final String SAVE_FILE_ALL = "SaveFileAll";
 
     /** */
-    public static final String Close = "Close";
+    public static final String CLOSE = "Close";
 
     /** */
-    public static final String HelpHome = "HelpHome";
+    public static final String HELP_HOME = "HelpHome";
 
     /** */
-    public static final String Run = "Run";
+    public static final String RUN = "Run";
 
     /** */
-    public static final String Pause = "Pause";
+    public static final String PAUSE = "Pause";
 
     /** */
-    public static final String Stop = "Stop";
+    public static final String STOP = "Stop";
 
     /** */
-    public static final String Stepin = "Stepin";
+    public static final String STEP_IN = "Stepin";
 
     /** */
-    public static final String Stepover = "Stepover";
+    public static final String STEP_OVER = "Stepover";
 
     /** */
-    public static final String ClearConsole = "ClearConsole";
+    public static final String CLEAR_CONSOLE = "ClearConsole";
 
     /** */
-    public static final String Search = "Search";
+    public static final String SEARCH = "Search";
 
     /** */
-    public static final String ResetZoom = "ResetZoom";
+    public static final String RESET_ZOOM = "ResetZoom";
 
     /** */
-    public static final String Copy = "Copy";
+    public static final String COPY = "Copy";
 
     /** */
-    public static final String Cut = "Cut";
+    public static final String CUT = "Cut";
 
     /** */
-    public static final String Paste = "Paste";
+    public static final String PASTE = "Paste";
 
     /** */
-    public static final String DuplicateLines = "DuplicateLines";
+    public static final String DUPLICATE_LINES = "DuplicateLines";
 
     /** */
-    public static final String OpenSettings = "OpenSettings";
+    public static final String OPEN_SETTINGS = "OpenSettings";
 
     /** */
-    public static final String Rename = "Rename";
+    public static final String RENAME = "Rename";
 
     /** */
-    public static final String Escape = "Escape";
+    public static final String ESCAPE = "Escape";
+
     // =============================================================================
+
+    private Settings() {
+    }
 }

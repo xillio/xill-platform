@@ -15,11 +15,7 @@
  */
 package nl.xillio.migrationtool.gui;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventType;
@@ -32,9 +28,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import javafx.util.Duration;
 import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.Loader;
 import nl.xillio.migrationtool.dialogs.AlertDialog;
@@ -47,9 +41,7 @@ import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.util.settings.Settings;
-import nl.xillio.xill.util.settings.SettingsHandler;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.MarkerFactory;
@@ -66,22 +58,19 @@ import java.util.stream.Collectors;
 /**
  * A tab containing the editor, console and debug panel attached to a specific currentRobot.
  */
-public class RobotTab extends Tab implements Initializable, ChangeListener<DocumentState> {
+public class RobotTab extends FileTab implements Initializable {
     private static final Logger LOGGER = Log.get();
     // The event used to silently close a tab.
     public static final EventType<Event> SILENT_CLOSED_EVENT = new EventType<>(Event.ANY, "TAB_CLOSED_SILENT");
-    private static final SettingsHandler settings = SettingsHandler.getSettingsHandler();
 
+    // Status icons.
     private static final String PATH_STATUSICON_RUNNING = "M256,92.481c44.433,0,86.18,17.068,117.553,48.064C404.794,171.411,422,212.413,422,255.999 s-17.206,84.588-48.448,115.455c-31.372,30.994-73.12,48.064-117.552,48.064s-86.179-17.07-117.552-48.064 C107.206,340.587,90,299.585,90,255.999s17.206-84.588,48.448-115.453C169.821,109.55,211.568,92.481,256,92.481 M256,52.481 c-113.771,0-206,91.117-206,203.518c0,112.398,92.229,203.52,206,203.52c113.772,0,206-91.121,206-203.52 C462,143.599,369.772,52.481,256,52.481L256,52.481z M206.544,357.161V159.833l160.919,98.666L206.544,357.161z";
     private static final String PATH_STATUSICON_PAUSED = "M256,92.481c44.433,0,86.18,17.068,117.553,48.064C404.794,171.411,422,212.413,422,255.999 s-17.206,84.588-48.448,115.455c-31.372,30.994-73.12,48.064-117.552,48.064s-86.179-17.07-117.552-48.064 C107.206,340.587,90,299.585,90,255.999s17.206-84.588,48.448-115.453C169.821,109.55,211.568,92.481,256,92.481 M256,52.481 c-113.771,0-206,91.117-206,203.518c0,112.398,92.229,203.52,206,203.52c113.772,0,206-91.121,206-203.52 C462,143.599,369.772,52.481,256,52.481L256,52.481z M240.258,346h-52.428V166h52.428V346z M326.17,346h-52.428V166h52.428V346z";
-    private static final Group STATUSICON_RUNNING = createIcon(PATH_STATUSICON_RUNNING);
-    private static final Group STATUSICON_PAUSED = createIcon(PATH_STATUSICON_PAUSED);
-    private Timeline autoSaveTimeline;
+    private final Group statusIconRunning = createIcon(PATH_STATUSICON_RUNNING);
+    private final Group statusIconPaused = createIcon(PATH_STATUSICON_PAUSED);
 
     @FXML
     private HBox hbxBot;
-    @FXML
-    private EditorPane editorPane;
     @FXML
     private SplitPane spnBotPanes;
     @FXML
@@ -97,72 +86,44 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
 
     private XillProcessor processor;
 
-    private final FXController globalController;
     private RobotID currentRobot;
     private LinkedList<RobotTab> relatedHighlightTabs = new LinkedList<>(); // This list contains the tabs that have been highlighted from this tab (e.g. compile error of included bot)
 
     /**
-     * Create a new robottab that holds a currentRobot
+     * Create a new RobotTab that holds a robot
      *
      * @param projectPath      The project path
      * @param documentPath     The full path to the currentRobot (absolute)
      * @param globalController The FXController
      */
     public RobotTab(final File projectPath, final File documentPath, final FXController globalController) {
-        this.globalController = globalController;
+        super("/fxml/RobotTabContent.fxml", projectPath, documentPath, globalController);
 
-        if (!documentPath.isAbsolute()) {
-            throw new IllegalArgumentException("The provided document must be an absolute path.");
-        }
-
-        // Load the FXML
+        // Load the processor.
         try {
             processor = Loader.getXill().buildProcessor(projectPath.toPath(), documentPath.toPath());
-            setContent(Loader.load(getClass().getResource("/fxml/RobotTabContent.fxml"), this));
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
-
         currentRobot = getProcessor().getRobotID();
 
-        // Add close request event handler
-        setOnCloseRequest(this::onClose);
-
+        // Initialize the settings and tab.
         initializeSettings(documentPath);
         initializeTab(documentPath);
 
-        // Add the context menu.
-        addContextMenu(globalController);
-
-        autoSaveTimeline = new Timeline(new KeyFrame(Duration.millis(1000), ae -> save(false)));
-
         // Validate the robot as soon as the editor is loaded.
         editorPane.getEditor().getOnDocumentLoaded().addListener(e -> validate());
-
-        this.setTooltip(new Tooltip(documentPath.toString()));
-    }
-
-    /*
-    * Reset the timeline.
-     */
-    public void resetAutoSave() {
-        if (Boolean.valueOf(settings.simple().get(Settings.SETTINGS_GENERAL, Settings.EnableAutoSave))) {
-            this.autoSaveTimeline.playFromStart();
-        }
     }
 
     private static void initializeSettings(final File documentPath) {
-        settings.simple().register(Settings.LAYOUT, Settings.RightPanelWidth_ + documentPath.getAbsolutePath(), "0.7", "Width of the right panel for the specified currentRobot");
-        settings.simple().register(Settings.LAYOUT, Settings.RightPanelCollapsed_ + documentPath.getAbsolutePath(), "true", "The collapsed-state of the right panel for the specified currentRobot");
-        settings.simple().register(Settings.LAYOUT, Settings.EditorHeight_ + documentPath.getAbsolutePath(), "0.6", "The height of the editor");
+        settings.simple().register(Settings.LAYOUT, Settings.RIGHT_PANEL_WIDTH + documentPath.getAbsolutePath(), "0.7", "Width of the right panel for the specified currentRobot");
+        settings.simple().register(Settings.LAYOUT, Settings.RIGHT_PANEL_COLLAPSED + documentPath.getAbsolutePath(), "true", "The collapsed-state of the right panel for the specified currentRobot");
+        settings.simple().register(Settings.LAYOUT, Settings.EDITOR_HEIGHT + documentPath.getAbsolutePath(), "0.6", "The height of the editor");
     }
 
     private void initializeTab(final File documentPath) {
-        // First we set the tab name
-        setText(getName());
-
         // Set the tab dividers
-        double editorHeight = Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.EditorHeight_ + documentPath.getAbsolutePath()));
+        double editorHeight = Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.EDITOR_HEIGHT + documentPath.getAbsolutePath()));
 
         spnBotLeft.setDividerPosition(0, editorHeight);
 
@@ -170,79 +131,40 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
         spnBotLeft.getDividers().get(0).positionProperty().addListener(
                 (observable, oldPos, newPos) -> {
                     double height = newPos.doubleValue();
-                    settings.simple().save(Settings.LAYOUT, Settings.EditorHeight_ + documentPath.getAbsolutePath(), Double.toString(height));
+                    settings.simple().save(Settings.LAYOUT, Settings.EDITOR_HEIGHT + documentPath.getAbsolutePath(), Double.toString(height));
                 });
 
         // Status icons
-        STATUSICON_RUNNING.setAutoSizeChildren(true);
-        STATUSICON_PAUSED.setAutoSizeChildren(true);
+        statusIconRunning.setAutoSizeChildren(true);
+        statusIconPaused.setAutoSizeChildren(true);
 
         // Subscribe to start/stop for icon change
-        processor.getDebugger().getOnRobotStart().addListener(e -> Platform.runLater(() -> setGraphic(STATUSICON_RUNNING)));
+        processor.getDebugger().getOnRobotStart().addListener(e -> Platform.runLater(() -> setGraphic(statusIconRunning)));
         processor.getDebugger().getOnRobotStop().addListener(e -> Platform.runLater(() -> setGraphic(null)));
-        processor.getDebugger().getOnRobotPause().addListener(e -> Platform.runLater(() -> setGraphic(STATUSICON_PAUSED)));
-        processor.getDebugger().getOnRobotContinue().addListener(e -> Platform.runLater(() -> setGraphic(STATUSICON_RUNNING)));
+        processor.getDebugger().getOnRobotPause().addListener(e -> Platform.runLater(() -> setGraphic(statusIconPaused)));
+        processor.getDebugger().getOnRobotContinue().addListener(e -> Platform.runLater(() -> setGraphic(statusIconRunning)));
         apnStatusBar.registerDebugger(processor.getDebugger());
     }
 
-    private void addContextMenu(FXController controller) {
-        // Close this tab.
-        MenuItem closeThis = new MenuItem("Close");
-        closeThis.setOnAction(e -> controller.closeTab(this));
-
-        // Close all other tabs.
-        MenuItem closeOther = new MenuItem("Close all other tabs");
-        closeOther.setOnAction(e -> controller.closeAllTabsExcept(this));
-
-        // Save
-        MenuItem saveTab = new MenuItem("Save");
-        saveTab.setOnAction(e -> save());
-
-        // Save
-        MenuItem saveAs = new MenuItem("Save as...");
-        saveAs.setOnAction(e -> save(true));
-
-        // Create the context menu.
-        ContextMenu menu = new ContextMenu(closeThis, closeOther, saveTab, saveAs);
-        this.setContextMenu(menu);
-    }
-
     @Override
-    public void initialize(final URL arg0, final ResourceBundle arg1) {
+    public void initialize(final URL url, final ResourceBundle resources) {
+        super.initialize(url, resources);
 
         Platform.runLater(() -> {
-            // FX graphical child items initialization (CTC-713)
-            editorPane.initialize(this);
+            getEditorPane().initialize(this);
             consolePane.initialize(this);
             vbxDebugpane.getChildrenUnmodifiable().filtered(node -> node instanceof DebugPane).forEach(node -> ((DebugPane) node).initialize(this));
 
             // Remove the left hidden bar from dom
             // This must be done after initialization otherwise the debugpane won't receive the tab
-            boolean showRightPanel = Boolean.parseBoolean(settings.simple().get(Settings.LAYOUT, Settings.RightPanelCollapsed_ + getDocument().getAbsolutePath()));
+            boolean showRightPanel = Boolean.parseBoolean(settings.simple().get(Settings.LAYOUT, Settings.RIGHT_PANEL_COLLAPSED + getDocument().getAbsolutePath()));
 
             if (showRightPanel) {
                 hideButtonPressed();
             } else {
                 showButtonPressed();
             }
-
         });
-        setText(getName());
-
-        // Load code
-        File document = processor.getRobotID().getPath();
-        if (document.exists()) {
-            try {
-                String code = FileUtils.readFileToString(document);
-                editorPane.setLastSavedCode(code);
-                editorPane.getEditor().setCode(code);
-            } catch (IOException e) {
-                LOGGER.info("Could not open " + document.getAbsolutePath(), e);
-            }
-        }
-
-        // Subscribe to events
-        editorPane.getDocumentState().addListener(this);
     }
 
     /**
@@ -252,9 +174,9 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
     private void hideButtonPressed() {
         File document = processor.getRobotID().getPath();
         if (document != null) {
-            settings.simple().save(Settings.LAYOUT, Settings.RightPanelCollapsed_ + document.getAbsolutePath(), "true");
+            settings.simple().save(Settings.LAYOUT, Settings.RIGHT_PANEL_COLLAPSED + document.getAbsolutePath(), "true");
             if (!spnBotPanes.getDividers().isEmpty()) {
-                settings.simple().save(Settings.LAYOUT, Settings.RightPanelWidth_ + document.getAbsolutePath(), Double.toString(spnBotPanes.getDividerPositions()[0]));
+                settings.simple().save(Settings.LAYOUT, Settings.RIGHT_PANEL_WIDTH + document.getAbsolutePath(), Double.toString(spnBotPanes.getDividerPositions()[0]));
             }
         }
 
@@ -273,7 +195,7 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
     @FXML
     private void showButtonPressed() {
         File document = processor.getRobotID().getPath();
-        settings.simple().save(Settings.LAYOUT, Settings.RightPanelCollapsed_ + document.getAbsolutePath(), "false");
+        settings.simple().save(Settings.LAYOUT, Settings.RIGHT_PANEL_COLLAPSED + document.getAbsolutePath(), "false");
 
         // Hide small bar
         hbxBot.getChildren().remove(vbxDebugHidden);
@@ -284,29 +206,12 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
         }
 
         // Add splitpane position listener
-        spnBotPanes.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.RightPanelWidth_ + document.getAbsolutePath())));
+        spnBotPanes.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.RIGHT_PANEL_WIDTH + document.getAbsolutePath())));
         spnBotPanes.getDividers().get(0).positionProperty().addListener((position, oldPos, newPos) -> {
             if (spnBotPanes.getItems().contains(vbxDebugpane)) {
-                settings.simple().save(Settings.LAYOUT, Settings.RightPanelWidth_ + document.getAbsolutePath(), newPos.toString());
+                settings.simple().save(Settings.LAYOUT, Settings.RIGHT_PANEL_WIDTH + document.getAbsolutePath(), newPos.toString());
             }
         });
-    }
-
-    /**
-     * Transfers the focus to the editor pane.
-     */
-    public void requestFocus() {
-        globalController.showTab(this);
-        editorPane.requestFocus();
-    }
-
-    /**
-     * Save this document.
-     *
-     * @return whether the document was saved successfully.
-     */
-    public boolean save() {
-        return save(editorPane.getDocumentState().getValue() == DocumentState.NEW);
     }
 
     /**
@@ -315,57 +220,39 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
      * @param showDialog whether a "Save as..." dialog should be shown
      * @return whether the document was saved successfully.
      */
+    @Override
     protected boolean save(final boolean showDialog) {
-        // Do not save the contents of other robots (i.e. included robots being debugged)
+        // Do not save the contents of other robots (i.e. included robots being debugged).
         if (currentRobot != processor.getRobotID()) {
             return false;
         }
 
-        // Clear editor highlights except when Paused.
+        // Clear editor highlights except when paused.
         if (getStatusBar().statusProperty().get() != StatusBar.Status.PAUSED) {
             getEditorPane().getEditor().clearHighlight();
         }
-        File document = getDocument();
-        File projectPath = getProjectPath();
-        if (!projectPath.exists()) {
-            projectPath = document.getParentFile();
+
+        // Save.
+        if (!super.save(showDialog)) {
+            return false;
         }
 
-        if (showDialog) {
-            // Show file picker
-            FileChooser chooser = new FileChooser();
-            chooser.setInitialDirectory(projectPath);
-            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Xill Robot (*.xill)", "*.xill"));
-            File selected = chooser.showSaveDialog(getContent().getScene().getWindow());
-
-            if (selected == null) {
-                return false;
-            }
-
-            document = selected;
-        }
-
-        // Actually save
+        // Build the processor.
         try {
-            String code = editorPane.getEditor().getCodeProperty().get();
-            editorPane.setLastSavedCode(code);
-            FileUtils.write(document, code);
-            LOGGER.info("Saved currentRobot to " + document.getAbsolutePath());
-            processor = Loader.getXill().buildProcessor(projectPath.toPath(), document.toPath(), processor.getDebugger());
+            processor = Loader.getXill().buildProcessor(projectPath.toPath(), documentPath.toPath(), processor.getDebugger());
         } catch (IOException e) {
             new AlertDialog(AlertType.ERROR, "Failed to save robot", "", e.getMessage()).show();
             LOGGER.error("Failed to save robot", e);
         }
-        currentRobot = getProcessor().getRobotID();
-        setText(getName());
+        currentRobot = processor.getRobotID();
 
-        // Validate
+        // Validate.
         validate();
 
         return true;
     }
 
-    private void validate() {
+    protected void validate() {
         List<Issue> issues = getProcessor().validate()
                 .stream()
                 .filter(issue -> issue.getRobot() == getCurrentRobot())
@@ -375,30 +262,11 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
     }
 
     /**
-     * @return the project path
+     * Create an icon from an SVG shape.
+     *
+     * @param shape the shape to create an icon from
+     * @return a group containing the icon
      */
-    private File getProjectPath() {
-        return processor.getRobotID().getProjectPath();
-    }
-
-    /**
-     * @return the document
-     */
-    public File getDocument() {
-        return processor.getRobotID().getPath();
-    }
-
-    /**
-     * @return the name of the tab
-     */
-    public String getName() {
-        String filename = getDocument().getName();
-        if (filename.endsWith(".xill")) {
-            filename = filename.substring(0, filename.length() - 5);
-        }
-        return filename;
-    }
-
     private static Group createIcon(final String shape) {
         SVGPath path = new SVGPath();
         path.setFill(Color.DARKGRAY);
@@ -408,38 +276,31 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
         return new Group(path);
     }
 
-    /**
-     * @return the globalController
-     */
-    public FXController getGlobalController() {
-        return globalController;
-    }
-
-    private void onClose(final Event event) {
+    @Override
+    protected void onClose(final Event event) {
         // Check if the robot is saved, else show the save before closing dialog.
         if (editorPane.getDocumentState().getValue() == DocumentState.CHANGED) {
             SaveBeforeClosingDialog dlg = new SaveBeforeClosingDialog(this, event);
             dlg.showAndWait();
             if (dlg.isCancelPressed()) {
                 globalController.setCancelClose(true);
-
             } else {
-                checkTabAmount();
+                checkLastTab();
             }
-        } else if (editorPane.getControls().robotRunning()) {
+        } else if (getEditorPane().getControls().robotRunning()) {
             boolean silent = event.getEventType() == SILENT_CLOSED_EVENT;
 
             // If the robot is running and it is not a silent event show the stop robot dialog.
             if (silent || showCloseTabDialog()) {
                 // Stop the robot.
-                editorPane.getControls().stop();
-                checkTabAmount();
+                getEditorPane().getControls().stop();
+                checkLastTab();
             } else {
                 // Consume the event to prevent the tab from closing.
                 event.consume();
             }
         } else {
-            checkTabAmount(); // If not running and saved then just check if it is the last robot.
+            checkLastTab(); // If not running and saved then just check if it is the last robot.
         }
     }
 
@@ -448,15 +309,6 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
                 "Closing the tab will stop the robot. Do you want to close the tab?",
                 new ButtonType("Close", ButtonBar.ButtonData.YES), ButtonType.CANCEL);
         return dialog.showAndWait().get().getButtonData() == ButtonBar.ButtonData.YES;
-    }
-
-    /**
-     * Disable the save buttons if this was the last tab
-     */
-    private void checkTabAmount() {
-        if (this.globalController.getTabs().size() == 1) {
-            globalController.disableSaveButtons(true);
-        }
     }
 
     /**
@@ -469,7 +321,7 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
      */
     public void runRobot() throws XillParsingException {
         // Read the current setting in the configuration
-        boolean autoSaveBotBeforeRun = Boolean.parseBoolean(settings.simple().get(Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun));
+        boolean autoSaveBotBeforeRun = Boolean.parseBoolean(settings.simple().get(Settings.SETTINGS_GENERAL, Settings.AUTO_SAVE_BOT_BEFORE_RUN));
 
         if (autoSaveBotBeforeRun) {
             // Check if the content is unsaved, show the confirmation dialog.
@@ -486,8 +338,8 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
                 Label l = new Label("The robot " + currentRobot.getPath().getName() + " needs to be saved before running. Do you want to continue?");
                 CheckBox cb = new CheckBox("Don't ask me again.");
                 cb.addEventHandler(ActionEvent.ACTION, event -> {
-                    boolean currentSettingValue = Boolean.parseBoolean(settings.simple().get(Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun));
-                    settings.simple().save(Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun, !currentSettingValue);
+                    boolean currentSettingValue = Boolean.parseBoolean(settings.simple().get(Settings.SETTINGS_GENERAL, Settings.AUTO_SAVE_BOT_BEFORE_RUN));
+                    settings.simple().save(Settings.SETTINGS_GENERAL, Settings.AUTO_SAVE_BOT_BEFORE_RUN, !currentSettingValue);
                 });
                 checkBoxContainer.getChildren().addAll(l, cb);
 
@@ -523,7 +375,7 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
     private void autoSaveAndRunRobot() {
         save();
 
-        if (FXController.settings.simple().getBoolean(Settings.SETTINGS_GENERAL, Settings.RunBotWithCleanConsole)) {
+        if (FXController.settings.simple().getBoolean(Settings.SETTINGS_GENERAL, Settings.RUN_BOT_WITH_CLEAN_CONSOLE)) {
             ESConsoleClient.getInstance().clearLog(getProcessor().getRobotID().toString());
         }
 
@@ -585,7 +437,7 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
         // Notify the user of the error that occurred.
         Platform.runLater(() -> {
 
-            editorPane.getControls().stop();
+            getEditorPane().getControls().stop();
             setGraphic(null);
             apnStatusBar.setStatus(StatusBar.Status.STOPPED);
 
@@ -611,7 +463,7 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
             } else {// RobotTab is not open in editor
                 // Let's open the RobotTab where error occurred
                 Platform.runLater(() -> {
-                    RobotTab newTab = globalController.openFile(e.getRobot().getPath());
+                    RobotTab newTab = globalController.openRobot(e.getRobot().getPath());
                     newTab.getEditorPane().getEditor().getOnDocumentLoaded().addListener(success ->
                             // We queue this for later execution because the tab has to display before we can scroll to the right location.
                             Platform.runLater(() -> {
@@ -628,62 +480,21 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
     }
 
     private void errorPopup(final int line, final String message, final String title, final String context) {
-        Alert error = new Alert(AlertType.ERROR);
-        error.initModality(Modality.APPLICATION_MODAL);
-        error.setTitle(title);
-        error.setContentText(message);
-        error.setHeaderText(context);
+        // Create and show an error dialog.
+        AlertDialog error = new AlertDialog(AlertType.ERROR, title, context, message);
         error.show();
 
+        // Highlight the line.
         getEditorPane().getEditor().highlightLine(line, "error");
     }
 
     /**
-     * <b>NOTE: </b> Do not save this processor over a long period as it will be spped out often.
+     * <b>NOTE: </b> Do not save this processor over a long period as it will be swapped out often.
      *
      * @return the processor for this tab
      */
     public XillProcessor getProcessor() {
         return processor;
-    }
-
-    /**
-     * Replace the existing robot code in editor by the content that is in the robot file (it could be changed outside of editor)
-     */
-    public void reload() {
-        File document = processor.getRobotID().getPath();
-        if (document.exists()) {
-            try {
-                String code = FileUtils.readFileToString(document);
-                editorPane.setLastSavedCode(code);
-                editorPane.getEditor().setCode(code);
-            } catch (IOException e) {
-                LOGGER.error("Could not open " + document.getAbsolutePath(), e);
-            }
-        }
-    }
-
-    @Override
-    public void changed(final ObservableValue<? extends DocumentState> source, final DocumentState oldValue, final DocumentState newValue) {
-        // This needs to happen in JFX Thread
-        Platform.runLater(() -> {
-            String name = getName();
-            if (newValue == DocumentState.CHANGED) {
-                name += "*";
-            }
-            if (currentRobot != getProcessor().getRobotID()) {
-                String filename = currentRobot.getPath().getName();
-                name += " > " + FilenameUtils.getBaseName(filename);
-            }
-            setText(name);
-        });
-    }
-
-    /**
-     * @return the {@link EditorPane} in this tab
-     */
-    public EditorPane getEditorPane() {
-        return editorPane;
     }
 
     /**
@@ -733,7 +544,6 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
                 editorPane.getEditor().highlightLine(line, "highlight");
             });
         }
-
     }
 
     /**
@@ -768,14 +578,18 @@ public class RobotTab extends Tab implements Initializable, ChangeListener<Docum
      * Clear all highlights in the current tab and in the tabs that have been highlighted from this tab (e.g. include robot error highlight)
      */
     public void clearHighlight() {
-        getEditorPane().getEditor().clearHighlight(); // Clear all highlights in current robottab
+        getEditorPane().getEditor().clearHighlight();
 
-        // Clear all highlights in all related robottabs
-        relatedHighlightTabs.forEach(tab -> {
-            if (globalController.findTab(tab.getDocument()) != null) {// Select just still opened tabs
-                tab.clearHighlight();
-            }
-        });
+        // Clear all highlights in all related robot tabs.
+        relatedHighlightTabs.stream().filter(tab -> globalController.findTab(tab.getDocument()) != null).forEach(RobotTab::clearHighlight);
         relatedHighlightTabs.clear();
+    }
+
+    /**
+     * @return the {@link RobotEditorPane} in this tab
+     */
+    @Override
+    public RobotEditorPane getEditorPane() {
+        return (RobotEditorPane) editorPane;
     }
 }
