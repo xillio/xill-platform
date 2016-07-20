@@ -42,17 +42,14 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class FileTab extends Tab implements Initializable, ChangeListener<EditorPane.DocumentState> {
-    private static final Logger LOGGER = Log.get();
     protected static final SettingsHandler settings = SettingsHandler.getSettingsHandler();
-
-    private Timeline autoSaveTimeline;
-
+    private static final Logger LOGGER = Log.get();
+    protected final FXController globalController;
     @FXML
     protected EditorPane editorPane;
-
-    protected final FXController globalController;
     protected File projectPath;
     protected File documentPath;
+    private Timeline autoSaveTimeline;
 
     /**
      * Create a new FileTab that holds a file
@@ -105,7 +102,7 @@ public class FileTab extends Tab implements Initializable, ChangeListener<Editor
      * Reset the autosave timeline
      */
     public void resetAutoSave() {
-        if (Boolean.valueOf(settings.simple().get(Settings.SETTINGS_GENERAL, Settings.EnableAutoSave))) {
+        if (Boolean.valueOf(settings.simple().get(Settings.SETTINGS_GENERAL, Settings.ENABLE_AUTO_SAVE))) {
             this.autoSaveTimeline.playFromStart();
         }
     }

@@ -171,7 +171,7 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
     @Override
     public void initialize(final RobotTab tab) {
         this.tab = tab;
-        if (FXController.settings.simple().getBoolean(Settings.SETTINGS_GENERAL, Settings.OpenBotWithCleanConsole)) {
+        if (FXController.settings.simple().getBoolean(Settings.SETTINGS_GENERAL, Settings.OPEN_BOT_WITH_CLEAN_CONSOLE)) {
             ESConsoleClient.getInstance().clearLog(getRobotID().toString());
         }
 
