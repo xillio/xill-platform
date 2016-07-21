@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 * MySQL no longer has to be installed manually [CTC-1676]
 * Remove paging from the Xill IDE Console [CTC-1593]
 * Add py, xill, xillt extensions to the mimetype library [CTC-1626]
+* Move cookies in XURL responses to a separate field [CTC-1687]
 
 ### Fix
 
