@@ -122,11 +122,13 @@ public class UploadToServerDialog extends FXMLDialog {
             close();
 
         } catch (IOException e) {
+            LOGGER.error("Uploading process has failed", e);
             AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR, "Upload to server",
                     "Uploading process has failed.", e.getMessage() + (e.getCause() == null ? "" : "\n" + e.getCause().getMessage()),
                     ButtonType.OK);
             dialog.showAndWait();
         } catch (RobotValidationException e) {
+            LOGGER.error("At least one uploaded robot is not valid", e);
             AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Upload to server",
                     "At least one uploaded robot is not valid.", e.getMessage(),
                     ButtonType.OK);
