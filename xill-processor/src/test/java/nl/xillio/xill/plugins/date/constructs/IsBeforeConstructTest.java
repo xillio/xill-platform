@@ -17,6 +17,7 @@ package nl.xillio.xill.plugins.date.constructs;
 
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.date.services.DateService;
+import org.testng.annotations.Test;
 
 import java.time.ZonedDateTime;
 
@@ -29,6 +30,7 @@ public class IsBeforeConstructTest {
     /**
      * Test the process method under normal circumstances
      */
+    @Test
     public void testProcess() {
         // Mock
         ZonedDateTime date1 = ZonedDateTime.now();
