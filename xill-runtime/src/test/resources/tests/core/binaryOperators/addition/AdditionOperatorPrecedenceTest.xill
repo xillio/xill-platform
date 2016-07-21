@@ -23,3 +23,6 @@ use Assert;
 
 Assert.equal(5 + 3 ^ 2, 14); // Precedence of + (6) is lower than ^ (7)
 Assert.isTrue(5 + 5 < 5 + 6); // Precedence of + (6) is lower than < (5)
+
+Assert.equal((5+3)^2, 64);          // Inversed precedence
+Assert.equal(5 + (5 < 5) + 6, 11);  //Inversed precedence

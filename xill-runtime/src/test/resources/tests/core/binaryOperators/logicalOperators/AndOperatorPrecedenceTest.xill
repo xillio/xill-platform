@@ -21,5 +21,8 @@
 
 use Assert;
 
-Assert.isFalse(false && true == false); // Precedence of && (3) is lower than == (4)
-Assert.isTrue(true || true && false); // Precedence of && (3) is higher than || (2)
+Assert.isFalse(false && true == false);  // Precedence of && (3) is lower than == (4)
+Assert.isTrue(true || true && false);    // Precedence of && (3) is higher than || (2)
+
+Assert.isTrue((false && true) == false); // Inverse precedence
+Assert.isFalse((true || true) && false); // Inverse precedence

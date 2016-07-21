@@ -23,3 +23,6 @@ use Assert;
 
 Assert.equal(5 :: 7 * 3, "521"); // Precedence of :: (6) is lower than * (7)
 Assert.equal(5 :: 7 > 0, "true"); // Precedence of :: (6) is higher than > (6)
+
+Assert.equal((5 :: 7) * 3, "171"); // Inverse precedence
+Assert.isTrue((5 :: 7) > 0); //Inverse precedence

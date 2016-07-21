@@ -23,3 +23,6 @@ use Assert;
 
 Assert.isTrue(true == 5 >= 5);  // The precedence of == (4) is lower than >= (5)
 Assert.isTrue(9 + 1 >= 10);     // The precedence of >= (5) is lower than == (6)
+
+Assert.isFalse((true == 5) >= 5);   // Inversed precedence
+Assert.equal(9 + (1 >= 10), 9);     // Inversed precedence

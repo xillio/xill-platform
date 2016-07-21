@@ -14,15 +14,32 @@
  * limitations under the License.
  */
 /*
-* Specification: The addition assignment operator has the defined precedence
-* Expected: true, true
-* Input: true == 4 <= 5, 5 <= 1 + 4
+* Specification: All defined syntax MUST fail for this operator
+* Expected: An error before compilation
+* Input: Multiple illegal syntax possibilities
 */
 
-use Assert;
 
-Assert.isTrue(4 <= 5 == true);      // The precedence of == (4) is lower than <= (5)
-Assert.isTrue(5 <= 1 + 4);          // The precedence of <= (5) is lower than == (6)
-
-Assert.isFalse(4 <= (5==true));     // Inverse precedence
-Assert.equal((5 <= 1) + 4, 4);      // Inverse precedence
+true = false;
+true=false;
+true =false;
+true= false;
+(true)=(false);
+( true ) = ( false );
+(true ) = (false );
+(true) = (false);
+(true=false);
+( true=false );
+( true = false );
+(true = false);
+(true)=false;
+( true ) =false;
+(true) =false;
+(true) = false;
+( true ) = false;
+true=(false);
+true= ( false );
+true= (false);
+true = (false);
+true = ( false );
+true  =  false;
