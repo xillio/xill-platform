@@ -22,17 +22,13 @@ import nl.xillio.xill.services.json.JacksonParser;
 import nl.xillio.xill.services.json.JsonException;
 import nl.xillio.xill.services.json.JsonParser;
 import nl.xillio.xill.util.settings.ProjectSettings;
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
-import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.message.BasicHeader;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -52,14 +48,11 @@ import java.util.Map;
 public class XillServerUploader implements AutoCloseable {
     private static final Logger LOGGER = Log.get();
     private Executor executor;
-    private CookieStore cookieStore;
-    private Header xsrfHeader;
     private String baseUrl;
     private JsonParser jsonParser = new JacksonParser(true);
 
     public XillServerUploader() {
-        cookieStore = new BasicCookieStore();
-        executor = Executor.newInstance().use(cookieStore);
+        executor = Executor.newInstance();
     }
 
     /**
@@ -91,9 +84,6 @@ public class XillServerUploader implements AutoCloseable {
         // Login to get the session settings. There's currently an extra arbitrary get request because otherwise the session isn't starting up correctly.
         executor.execute(Request.Get(baseUrl + "login"));
         executor.execute(Request.Get(baseUrl + "/projects")).returnContent().asString(); // This getting response without usage is intentional - it would not fail if credentials were wrong without this code!
-
-        // Store CSRF token
-        xsrfHeader = new BasicHeader("X-XSRF-TOKEN", cookieStore.getCookies().stream().filter(p -> p.getName().equals("XSRF-TOKEN")).findFirst().get().getValue());
     }
 
     /**
@@ -279,13 +269,12 @@ public class XillServerUploader implements AutoCloseable {
     }
 
     private void doDelete(final String uri) throws IOException {
-        executor.execute(Request.Delete(baseUrl + uri).addHeader(xsrfHeader));
+        executor.execute(Request.Delete(baseUrl + uri));
     }
 
     private String doPost(final String uri, final HttpEntity entity) throws IOException {
         return executor.execute(
                 Request.Post(baseUrl + uri)
-                        .addHeader(xsrfHeader)
                         .body(entity)
         )
                 .returnContent()
@@ -295,7 +284,6 @@ public class XillServerUploader implements AutoCloseable {
     private String doPost(final String uri, final String jsonData) throws IOException {
         return executor.execute(
                 Request.Post(baseUrl + uri)
-                        .addHeader(xsrfHeader)
                         .bodyString(jsonData, ContentType.APPLICATION_JSON)
         )
                 .returnContent()
@@ -305,7 +293,6 @@ public class XillServerUploader implements AutoCloseable {
     private String doPut(final String uri, final String jsonData) throws IOException {
         return executor.execute(
                 Request.Put(baseUrl + uri)
-                        .addHeader(xsrfHeader)
                         .bodyString(jsonData, ContentType.APPLICATION_JSON)
         )
                 .returnContent()
