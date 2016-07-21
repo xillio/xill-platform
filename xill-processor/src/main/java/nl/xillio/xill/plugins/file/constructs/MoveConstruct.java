@@ -27,6 +27,7 @@ import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.file.services.files.FileUtilities;
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -69,6 +70,8 @@ public class MoveConstruct extends Construct {
             }
         } catch (FileAlreadyExistsException e) {
             throw new OperationFailedException("move " + sourceFile + " to " + targetFile, "The target file already exist.", "Delete target file or set replaceExisting parameter to true (or leave it blank).", e);
+        } catch (AccessDeniedException e) {
+            throw new OperationFailedException("move " + sourceFile + " to " + targetFile, "Access is denied.", "Check the source and target if they are both accessible.", e);
         } catch (IOException e) {
             throw new OperationFailedException("move " + sourceFile + " to " + targetFile, e.getMessage(), e);
         }
