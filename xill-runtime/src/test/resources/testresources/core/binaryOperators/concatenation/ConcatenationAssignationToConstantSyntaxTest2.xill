@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 /*
-* Specification: All defined syntax MUST fail for this operator
-* Expected: No errors if the syntax is deemed illegal
-* Input: Multiple illegal syntax possibilities
+* Specification: The defined syntax must fail for this operator
+* Expected: An error before compilation
+* Input: A line with illegal syntax
 */
 
-use String, Assert, System;
-
-var i = 1;
-while(i < 24){
-    do{
-       callbot("testresources/core/binaryOperators/concatenation/ConcatenationAssignationToConstantSyntaxTest" :: i :: ".xill");
-    }fail(error){
-        Assert.isTrue(String.contains(error["message"], "Can only assign to variables"));
-    }
-    i++;
-}
+true::=false;

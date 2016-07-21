@@ -14,32 +14,9 @@
  * limitations under the License.
  */
 /*
-* Specification: All defined syntax MUST fail for this operator
+* Specification: The defined syntax must fail for this operator
 * Expected: An error before compilation
-* Input: Multiple illegal syntax possibilities
+* Input: A line with illegal syntax
 */
 
-
-true ::= false;
-true::=false;
-true ::=false;
-true::= false;
-(true)::=(false);
-( true ) ::= ( false );
-(true ) ::= (false );
-(true) ::= (false);
-(true::=false);
-( true::=false );
-( true ::= false );
-(true ::= false);
-(true)::=false;
-( true ) ::=false;
-(true) ::=false;
-(true) ::= false;
-( true ) ::= false;
-true::=(false);
-true::= ( false );
-true::= (false);
-true ::= (false);
-true ::= ( false );
 true  ::=  false;
