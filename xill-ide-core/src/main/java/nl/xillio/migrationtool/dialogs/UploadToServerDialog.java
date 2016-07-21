@@ -21,6 +21,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Pair;
 import me.biesaart.utils.FileUtils;
+import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.RobotValidationException;
 import nl.xillio.migrationtool.XillServerUploader;
 import nl.xillio.migrationtool.gui.FXController;
@@ -32,11 +33,15 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+
 /**
  * A dialog to upload an item to the server.
  */
 public class UploadToServerDialog extends FXMLDialog {
 
+    private static final Logger LOGGER = Log.get();
+    
     @FXML
     private TextField tfserver;
     @FXML
@@ -81,6 +86,7 @@ public class UploadToServerDialog extends FXMLDialog {
             // Do connect and authenticate to server
             xillServerUploader.authenticate(tfserver.getText(), tfusername.getText(), tfpassword.getText());
         } catch (IOException e) {
+            LOGGER.error("Could not login to server", e);
             AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR, "Upload to server",
                     "Could not login to server.", e.getMessage(),
                     ButtonType.OK);
