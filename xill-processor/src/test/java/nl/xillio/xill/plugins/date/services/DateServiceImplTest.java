@@ -132,4 +132,11 @@ public class DateServiceImplTest {
         Assert.assertEquals(diffs.get("days"), 1.0);
         Assert.assertEquals(diffs.get("minutes"), 0.0);
     }
+
+    @Test
+    public void testFromTimestamp() {
+        DateService ds = new DateServiceImpl();
+        Date date = ds.fromTimestamp(1469179600);
+        Assert.assertEquals(ds.formatDate(date, null), "2016-07-22 11:26:40");
+    }
 }

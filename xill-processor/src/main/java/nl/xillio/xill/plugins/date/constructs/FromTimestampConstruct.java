@@ -23,6 +23,9 @@ import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.date.BaseDateConstruct;
 import nl.xillio.xill.plugins.date.services.DateService;
 
+/**
+ * Creates a date from a Unix timestamp.
+ */
 public class FromTimestampConstruct extends BaseDateConstruct {
     @Override
     public ConstructProcessor prepareProcess(ConstructContext context) {
