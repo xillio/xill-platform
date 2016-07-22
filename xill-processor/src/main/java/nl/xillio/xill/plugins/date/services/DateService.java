@@ -44,14 +44,14 @@ public interface DateService extends XillService {
     /**
      * Create a new {@link Date}
      *
-     * @param year      the year.
-     * @param month     the month.
-     * @param day       the day.
-     * @param hour      the hour.
-     * @param minute    the minute.
-     * @param second    the second.
-     * @param nano      the nanosecond.
-     * @param zone Timezone to be used for the new date
+     * @param year   the year.
+     * @param month  the month.
+     * @param day    the day.
+     * @param hour   the hour.
+     * @param minute the minute.
+     * @param second the second.
+     * @param nano   the nanosecond.
+     * @param zone   Timezone to be used for the new date
      * @return {@link Date} from the given parameters
      */
     Date constructDate(int year, int month, int day, int hour, int minute, int second, int nano, ZoneId zone);
@@ -136,12 +136,19 @@ public interface DateService extends XillService {
     /**
      * Calculates the difference between two dates
      *
-     * @param date1 First comparison date
-     * @param date2 Second comparison date
-     * @param absolute    whether an absolute value needs to be returned.
+     * @param date1    First comparison date
+     * @param date2    Second comparison date
+     * @param absolute whether an absolute value needs to be returned.
      * @return A map containing names of time units as keys (first letter capitlized and in plural) and the amount of this time unit as value. The amount is always positive. When the key has "Total "
      * prepended, the value is not additive.
      */
-    public Map<String, Double> difference(Date date1, Date date2, boolean absolute);
+    Map<String, Double> difference(Date date1, Date date2, boolean absolute);
 
+    /**
+     * Calculates the {@link Date} for a certain Unix timestamp.
+     *
+     * @param timestamp The timestamp to get the date for
+     * @return The date corresponding with the timestamp
+     */
+    Date fromTimestamp(long timestamp);
 }
