@@ -144,4 +144,13 @@ public class FileUtilitiesImpl implements FileUtilities, FileSizeCalculator, Fil
             return size;
         }
     }
+
+    @Override
+    public void move(Path source, Path target, boolean replaceExisting) throws IOException {
+        if (replaceExisting) {
+            Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
+        } else {
+            Files.move(source, target);
+        }
+    }
 }
