@@ -21,6 +21,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Pair;
 import me.biesaart.utils.FileUtils;
+import nl.xillio.migrationtool.RobotValidationException;
 import nl.xillio.migrationtool.XillServerUploader;
 import nl.xillio.migrationtool.gui.FXController;
 import nl.xillio.migrationtool.gui.ProjectPane;
@@ -28,6 +29,7 @@ import nl.xillio.xill.util.settings.Settings;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -41,10 +43,14 @@ public class UploadToServerDialog extends FXMLDialog {
     private TextField tfusername;
     @FXML
     private TextField tfpassword;
+    @FXML
+    private CheckBox cbvalidate;
 
     private final ObservableList<TreeItem<Pair<File, String>>> treeItems;
     private final ProjectPane projectPane;
     private final XillServerUploader xillServerUploader = new XillServerUploader();
+    private List<String> uploadedRobots = new LinkedList<>();
+    private String uploadedProjectId = "";
 
     /**
      * Default constructor.
@@ -88,24 +94,38 @@ public class UploadToServerDialog extends FXMLDialog {
             FXController.settings.simple().save(Settings.SERVER, Settings.XILL_SERVER_USERNAME, tfusername.getText());
             FXController.settings.simple().save(Settings.SERVER, Settings.XILL_SERVER_PASSWORD, tfpassword.getText());
 
-            // Process items
+            uploadedRobots.clear();
+
+            // Process items (do selected robots and resources upload)
             if (!processItems(treeItems, true, true, null)) {
                 return; // Process has been user interrupted - so no success dialog is shown
             }
-        } catch (IOException e) {
-            AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR, "Upload to server",
-                    "Uploading process has failed.", e.getMessage() + "\n" + e.getCause().getMessage(),
+
+            // Validate uploaded robots (in a one bulk server request - because of every Xill environment start is very time consuming)
+            if (cbvalidate.isSelected() && !uploadedRobots.isEmpty()) {
+                xillServerUploader.validateRobots(uploadedProjectId, uploadedRobots);
+            }
+
+            // Show success message
+            AlertDialog dialog = new AlertDialog(Alert.AlertType.INFORMATION, "Upload to server",
+                    "Uploading process has been successfully finished.", null,
                     ButtonType.OK);
             dialog.showAndWait();
-            return;
+
+            // Close the dialog
+            close();
+
+        } catch (IOException e) {
+            AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR, "Upload to server",
+                    "Uploading process has failed.", e.getMessage() + (e.getCause() == null ? "" : "\n" + e.getCause().getMessage()),
+                    ButtonType.OK);
+            dialog.showAndWait();
+        } catch (RobotValidationException e) {
+            AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Upload to server",
+                    "At least one uploaded robot is not valid.", e.getMessage(),
+                    ButtonType.OK);
+            dialog.showAndWait();
         }
-
-        AlertDialog dialog = new AlertDialog(Alert.AlertType.INFORMATION, "Upload to server",
-                "Uploading process has been successfully finished.", null,
-                ButtonType.OK);
-        dialog.showAndWait();
-
-        close();
     }
 
     private boolean processItems(final List<TreeItem<Pair<File, String>>> items, boolean projectExistCheck, boolean robotExistCheck, final String projectId) throws IOException {
@@ -237,6 +257,11 @@ public class UploadToServerDialog extends FXMLDialog {
 
         // Upload the robot
         xillServerUploader.uploadRobot(projectId, robotFqn, code);
+
+        // Store robot's FQN to list for bulk validation process after entire uploading is done
+        uploadedRobots.add(robotFqn);
+        uploadedProjectId = projectId;
+
         return true;
     }
 
