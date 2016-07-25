@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Move a file to a target destination.  
+
+Returns an object containing the source destination [from] and the target destination [into].  
+This construct will rename a file if the source folder and target folder is the same.
+Parameter `replaceExisting` determines if the move operation can replace existing target file. If set to `false` and the target file already exists it will fail.  
+</description>
+    <examples>
+        <example title="Usage">
+            <header>Move a file</header>
+            <code>
+                use File, System, Stream;
+
+                var path = "test/TestFile.txt";
+                var testFile = File.openWrite(path);
+                Stream.write("test", testFile);
+
+                var result = File.move(path, "file_copy.txt");
+
+                // Prints {"from": "absolute/path/to/test/TestFile.txt", "into": "absolute/path/to/file_copy.txt"}
+                System.print(result);
+            </code>
+        </example>
+    </examples>
+    <tags>
+        move, file
+    </tags>
+</function>

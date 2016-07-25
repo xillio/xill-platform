@@ -60,4 +60,13 @@ public interface FileUtilities extends XillService {
      */
     void delete(Path file) throws IOException;
 
+    /**
+     * Move a source file to a target path
+     *
+     * @param source the source file
+     * @param target the target file
+     * @param replaceExisting it will replace existing target file when set to true, it will fail if target file already exists when set to false
+     * @throws IOException when operation failed
+     */
+    void move(Path source, Path target, boolean replaceExisting) throws IOException;
 }
