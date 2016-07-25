@@ -16,7 +16,7 @@
 /*
 * Specification: The result of Subtract-Assign with another subtraction of two numbers equals the original value minus the result of the second subtraction
 * Expected: 135, 8
-* Input: See below, also includes randomized inputs
+* Input: 10-9-8-7-6-5-4-3-2-1,  4-2-0
 */
 
 use Assert, Math;
@@ -35,32 +35,3 @@ var b = 10;
 b -= 4-2-0;
 Assert.equal(b, 8);
 
-/*  
- *  -------------------------------------------
- *  Randomized Tests
- *  -------------------------------------------
-*/
-
-var randomInitials = generateRandomSequence(500, 20);
-var rSubs = generateRandomSequence(10, 5);
-var resultRandomSubtractions = rSubs[0] - rSubs[1] - rSubs[2] - rSubs[3] - rSubs[4];
-
-
-foreach(initial in randomInitials){
-    Assert.equal(repeatedSubtraction(initial, rSubs),initial - resultRandomSubtractions);
-}
-
-function repeatedSubtraction(initial, subs){
-    initial -= subs[0] - subs[1] - subs[2] - subs[3] - subs[4];
-    return initial;
-}
-
-function generateRandomSequence(max, size){
-    var list = [];
-    var i = 0;
-    while(i < size){
-        list[] = Math.random(max*2)-max;
-        i++;
-    }
-    return list;
-}
