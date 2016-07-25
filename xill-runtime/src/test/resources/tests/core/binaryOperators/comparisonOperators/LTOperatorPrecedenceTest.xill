@@ -21,8 +21,9 @@
 
 use Assert;
 
-Assert.isTrue(4 < 5 == true); // The precedence of == (4) is lower than <  (5)
-Assert.isTrue(5 < 1 + 9);     // The precedence of <  (5) is lower than == (6)
+Assert.isTrue(4 < 5 == true);       // The precedence of == (4) is lower than <  (5)
+Assert.isFalse(4 < (5 == true));    // Inverse precedence
 
-Assert.isFalse(4 < (5 == true)); // Inverse precedence
-Assert.equal((5 < 1) + 9, 9);    // Inverse precedence
+
+Assert.isTrue(5 < 1 + 9);       // The precedence of <  (5) is lower than == (6)
+Assert.equal((5 < 1) + 9, 9);   // Inverse precedence

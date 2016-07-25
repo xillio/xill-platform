@@ -16,53 +16,13 @@
 /*
 * Specification: The result of subtracting multiple numbers together must be equal to the first number minus the sum of all other numbers
 * Expected: 45, -8, -20
-* Input: 100-10-9-8-7-6-5-4-3-2-1, 10-9-5-4, -11-9-0, also randomized tests
+* Input: 100-10-9-8-7-6-5-4-3-2-1, 10-9-5-4, -11-9-0
 */
 
-use Assert, Math;
-
-/*  
- *  -------------------------------------------
- *  Static Tests
- *  -------------------------------------------
-*/
+use Assert, System;
 
 Assert.equal(100-10-9-8-7-6-5-4-3-2-1, 100-(10+9+8+7+6+5+4+3+2+1));
 Assert.equal(10-9-5-4, 10-(9+5+4));
 Assert.equal(-11-9-0, -11-(9+0));
 
-/*  
- *  -------------------------------------------
- *  Randomized Tests
- *  -------------------------------------------
-*/
-
-var randomInitials = generateRandomSequence(500, 20);
-var randomSubtractions = generateRandomSequence(10, 5);
-var sumRandomSubtractions = sum(randomSubtractions);
-
-foreach(initial in randomInitials){
-    Assert.equal(repeatedSubtraction(initial, randomSubtractions),initial - sumRandomSubtractions);
-}
-
-function repeatedSubtraction(initial, subs){
-    return initial - subs[0] - subs[1] - subs[2] - subs[3] - subs[4];
-}
-
-function sum(list){
-    var result = 0;
-    foreach(element in list){
-        result += element;
-    }
-    return result;
-}
-
-function generateRandomSequence(max, size){
-    var list = [];
-    var i = 0;
-    while(i < size){
-        list[] = Math.random(max*2)-max;
-        i++;
-    }
-    return list;
-}
+System.print("hoi!");

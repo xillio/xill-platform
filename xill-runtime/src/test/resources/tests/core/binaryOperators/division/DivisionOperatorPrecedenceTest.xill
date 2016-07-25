@@ -21,8 +21,8 @@
 
 use Assert;
 
-Assert.equal(5 / 10 - 6, -5.5);   // Precedence of / (7) is higher than - (6)
-Assert.equal(@10/3, NaN);         // Precedence of @ (8) is higher than / (7)
+Assert.equal(5 / 10 - 6, -5.5);     // Precedence of / (7) is higher than - (6)
+Assert.equal(5 / (10-6), 1.25);     // Inverse precedence
 
-Assert.equal(5 / (10-6), 1.25); // Inverse precedence
-Assert.equal(@(10/4), 2.5);     // Inverse precdence
+Assert.equal(@10/3, NaN);           // Precedence of @ (8) is higher than / (7)
+Assert.equal(@(10/4), 2.5);         // Inverse precdence

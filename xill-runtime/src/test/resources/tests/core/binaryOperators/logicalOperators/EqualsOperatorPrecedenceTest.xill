@@ -22,7 +22,7 @@
 use Assert;
 
 Assert.isFalse(false == false && false); // Precedence of && (3) is lower than == (4)
-Assert.isFalse(false <= true == false);  // Precedence of == (4) is lower than <= (5)
-
 Assert.isTrue(false == (false && false)); // Inverse precedence
-Assert.isTrue(false <= (true == false));
+
+Assert.isFalse(false <= true == false);  // Precedence of == (4) is lower than <= (5)
+Assert.isTrue(false <= (true == false));  // Inverse precedence
