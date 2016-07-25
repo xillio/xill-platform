@@ -79,6 +79,11 @@ public class Settings {
      */
     public static final String LAST_FOLDER = "LastFolder";
 
+    /**
+     * Show non-Xill files
+     */
+    public static final String SHOW_ALL_FILES = "ShowAllFiles";
+
     // =============================================================================
     /**
      * Warning category

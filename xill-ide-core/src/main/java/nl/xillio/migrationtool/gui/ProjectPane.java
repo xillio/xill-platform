@@ -147,12 +147,19 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         this.addEventFilter(KeyEvent.KEY_PRESSED, this);
         this.addEventFilter(MouseEvent.MOUSE_PRESSED, this);
 
-        // Register the hasRun setting which is being used to add the default project on first run
-        settings.simple().register(Settings.INFO, Settings.HAS_RUN, "false", "Whether the IDE has run before.");
-
+        initializeSettings();
         loadProjects();
         addContextMenu();
         addNewButtonContextMenu();
+    }
+
+    private void initializeSettings() {
+        // Register the hasRun setting which is being used to add the default project on first run.
+        settings.simple().register(Settings.INFO, Settings.HAS_RUN, "false", "Whether the IDE has run before.");
+
+        // Register and load the setting for showing all files.
+        settings.simple().register(Settings.FILE, Settings.SHOW_ALL_FILES, "false", "Show non-Xill files.");
+        tbnShowAllFiles.setSelected(settings.simple().getBoolean(Settings.FILE, Settings.SHOW_ALL_FILES));
     }
 
     private void addContextMenu() {
@@ -1083,6 +1090,9 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         // Set the button label.
         String tooltipText = "Show " + (tbnShowAllFiles.isSelected() ? "robots only" : "all files");
         tbnShowAllFiles.getTooltip().setText(tooltipText);
+
+        // Save the setting.
+        settings.simple().save(Settings.FILE, Settings.SHOW_ALL_FILES, tbnShowAllFiles.isSelected());
     }
 
     /*========== Tree items and cells ==========*/
