@@ -45,8 +45,6 @@ All other properties together form the total difference, e.g. 25.05 hours = 1 da
                 25.05
 
                 {
-                    "totalNanos" : 9.018E13,
-                    "totalMicros" : 9.018E10,
                     "totalMillis" : 9.018E7,
                     "totalSeconds" : 90180.0,
                     "totalMinutes" : 1503.0,
@@ -59,8 +57,6 @@ All other properties together form the total difference, e.g. 25.05 hours = 1 da
                     "totalDecades" : 2.85769E-4,
                     "totalCenturies" : 2.8577E-5,
                     "totalMillennia" : 2.858E-6,
-                    "totalEras" : 0.0,
-                    "eras" : 0.0,
                     "millennia" : 0.0,
                     "centuries" : 0.0,
                     "decades" : 0.0,
@@ -73,8 +69,6 @@ All other properties together form the total difference, e.g. 25.05 hours = 1 da
                     "minutes" : 3.0,    // and 3 minutes.
                     "seconds" : 0.0,
                     "millis" : 0.0,
-                    "micros" : 0.0,
-                    "nanos" : 0.0
                 }
                 */
             </code>
