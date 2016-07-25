@@ -23,3 +23,6 @@ use Assert;
 
 Assert.equal(5 * 10 - 6, 44);   // Precedence of * (7) is higher than - (6)
 Assert.equal(@10*3, NaN);       // Precedence of @ (8) is higher than * (7)
+
+Assert.equal(5 * (10 - 6), 20); // Inverse precedence
+Assert.equal(@(10*3), "30");    // Inverse precedence

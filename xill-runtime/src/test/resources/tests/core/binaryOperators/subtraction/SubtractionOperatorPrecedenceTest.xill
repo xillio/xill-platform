@@ -23,3 +23,6 @@ use Assert;
 
 Assert.isTrue(5 > 10 - 6);     // Precedence of - (6) is higher than > (5)
 Assert.equal(5 * 10 - 6, 44);  // Precedence of * (7) is higher than - (6)
+
+Assert.equal((5 > 10) - 6, -6); // Inverse precedence
+Assert.equal(5 * (10-6), 20); // Inverse precedence
