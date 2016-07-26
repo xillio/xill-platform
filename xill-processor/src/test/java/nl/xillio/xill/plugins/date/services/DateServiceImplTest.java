@@ -125,6 +125,13 @@ public class DateServiceImplTest {
     }
 
     @Test
+    public void testFromTimestamp() {
+        DateService ds = new DateServiceImpl();
+        Date date = ds.fromTimestamp(1469179600);
+        Assert.assertEquals(ds.formatDate(date, null), "2016-07-22 11:26:40");
+    }
+
+    @Test
     public void testIsBefore() {
         DateService ds = new DateServiceImpl();
         Date justOneDate = ds.constructDate(2015, 2, 14, 12, 32, 15, 12, ZoneId.of("GMT"));
