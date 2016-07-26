@@ -27,7 +27,7 @@ public class RobotConcurrentModificationException extends OperationFailedExcepti
      * @param e the original {@link ConcurrentModificationException}
      */
     public RobotConcurrentModificationException(ConcurrentModificationException e){
-        super("use variable", "Variable is being both written to and being read by separate threads.", "Please don't modify variables " +
+        super("access expression", "Variable is being both written to and being read by separate threads.", "Please don't modify variables " +
                 "that are being used by other threads.", e.getCause());
 
     }
