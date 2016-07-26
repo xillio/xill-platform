@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /*
-* Specification: An atomic MUST NOT be a shallow copy (i.e. a reference).
+* Specification: Atomic values MUST be immutable.
 * Input: A variable, and a copy of that variable
 * Expected: The first variable is not changed
 */

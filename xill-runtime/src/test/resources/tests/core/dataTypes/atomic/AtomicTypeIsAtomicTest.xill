@@ -15,13 +15,13 @@
  */
 /*
 * Specification: The type of an atomic MUST be "ATOMIC".
-* Input: 3, "foo", null, true, false
+* Input: 3, "foo", null, true, false, ATOMIC, OBJECT, LIST
 * Expected: "ATOMIC"
 */
 
 use Assert, System;
 
-var items = [3, "foo", null, true, false];
+var items = [3, "foo", null, true, false, ATOMIC, OBJECT, LIST];
 var atomic;
 
 foreach (item in items) {
