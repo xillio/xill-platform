@@ -18,8 +18,15 @@
  * Expected: true
  */
 
-use Assert, File;
+use Assert, File, Stream;
 
-var file = "testresources/file/file.txt";
+var file = "testresources/file/executable.txt";
+
+// Create the file.
+var stream = File.openWrite(file);
+Stream.write("test", stream);
 
 Assert.isTrue(File.canExecute(file));
+
+// Delete the file.
+File.delete(file);
