@@ -429,12 +429,6 @@
                 <artifactId>mongo-java-driver</artifactId>
                 <version>${mongo.java.driver.version}</version>
             </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-concurrency</artifactId>
-                <version>1.00.03-SNAPSHOT</version>
-                <type>zip</type>
-            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
