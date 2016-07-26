@@ -123,4 +123,22 @@ public class DateServiceImplTest {
         Assert.assertEquals(diffs.get("days").longValue(), 1);
         Assert.assertEquals(diffs.get("minutes").longValue(), 0);
     }
+
+    @Test
+    public void testIsBefore() {
+        DateService ds = new DateServiceImpl();
+        Date justOneDate = ds.constructDate(2015, 2, 14, 12, 32, 15, 12, ZoneId.of("GMT"));
+        Date justAnotherDate = ds.constructDate(2015, 2, 13, 12, 32, 15, 12, ZoneId.of("GMT"));
+        boolean isBefore = ds.isBefore(justOneDate, justAnotherDate);
+        Assert.assertEquals(isBefore, false);
+    }
+
+    @Test
+    public void testIsAfter() {
+        DateService ds = new DateServiceImpl();
+        Date justOneDate = ds.constructDate(2015, 2, 14, 12, 32, 15, 12, ZoneId.of("GMT"));
+        Date justAnotherDate = ds.constructDate(2015, 2, 13, 12, 32, 15, 12, ZoneId.of("GMT"));
+        boolean isAfter = ds.isAfter(justOneDate, justAnotherDate);
+        Assert.assertEquals(isAfter, true);
+    }
 }
