@@ -139,9 +139,26 @@ public interface DateService extends XillService {
      * @param date1 First comparison date
      * @param date2 Second comparison date
      * @param absolute    whether an absolute value needs to be returned.
-     * @return A map containing names of time units as keys (first letter capitlized and in plural) and the amount of this time unit as value. The amount is always positive. When the key has "Total "
+     * @return A map containing names of time units as keys (first letter capitalized and in plural) and the amount of this time unit as value. The amount is always positive. When the key has "Total "
      * prepended, the value is not additive.
      */
-    public Map<String, Double> difference(Date date1, Date date2, boolean absolute);
+    Map<String, Double> difference(Date date1, Date date2, boolean absolute);
 
+    /**
+     * Determines if the date is before another date
+     *
+     * @param date1 First comparison date
+     * @param date2 Second comparison date
+     * @return True if the date1 is before date2, otherwise false
+     */
+    boolean isBefore(Date date1, Date date2);
+
+    /**
+     * Determines if the date is after another date
+     *
+     * @param date1 First comparison date
+     * @param date2 Second comparison date
+     * @return True if the date1 is after date2, otherwise false
+     */
+    boolean isAfter(Date date1, Date date2);
 }
