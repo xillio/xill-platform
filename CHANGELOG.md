@@ -10,7 +10,9 @@ All notable changes to this project will be documented in this file.
 * Add an archetype for xill plugins [CTC-1284]
 * Make non-robot files visible in the Xill IDE project pane [CTC-1652]
 * Make non-robot files editable in Xill IDE [CTC-1617]
+* File.move construct [CTC-1643]
 * Validate Xill robot when uploading to Xill Server [XSVR-21]
+* Add Date.isBefore and Date.isAfter constructs [CTC-1672]
 
 ### Change
 

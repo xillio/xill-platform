@@ -21,7 +21,6 @@ import org.testng.annotations.Test;
 
 import java.time.ZoneId;
 import java.time.format.FormatStyle;
-import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Locale;
@@ -138,5 +137,23 @@ public class DateServiceImplTest {
         DateService ds = new DateServiceImpl();
         Date date = ds.fromTimestamp(1469179600);
         Assert.assertEquals(ds.formatDate(date, null), "2016-07-22 11:26:40");
+    }
+
+    @Test
+    public void testIsBefore() {
+        DateService ds = new DateServiceImpl();
+        Date justOneDate = ds.constructDate(2015, 2, 14, 12, 32, 15, 12, ZoneId.of("GMT"));
+        Date justAnotherDate = ds.constructDate(2015, 2, 13, 12, 32, 15, 12, ZoneId.of("GMT"));
+        boolean isBefore = ds.isBefore(justOneDate, justAnotherDate);
+        Assert.assertEquals(isBefore, false);
+    }
+
+    @Test
+    public void testIsAfter() {
+        DateService ds = new DateServiceImpl();
+        Date justOneDate = ds.constructDate(2015, 2, 14, 12, 32, 15, 12, ZoneId.of("GMT"));
+        Date justAnotherDate = ds.constructDate(2015, 2, 13, 12, 32, 15, 12, ZoneId.of("GMT"));
+        boolean isAfter = ds.isAfter(justOneDate, justAnotherDate);
+        Assert.assertEquals(isAfter, true);
     }
 }

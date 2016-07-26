@@ -46,7 +46,7 @@ public abstract class BaseDateConstruct extends Construct {
         Date date = dateVar.getMeta(Date.class);
 
         if (date == null) {
-            throw new InvalidUserInputException("Expected a date variable.", dateVar.getStringValue(), "Create a date using either Date.parse() or Date.of().");
+            throw new InvalidUserInputException("Expected a date variable.", dateVar.getStringValue(), "Create a date using either Date.parse() or Date.of() or Date.now().");
         }
 
         return date;
