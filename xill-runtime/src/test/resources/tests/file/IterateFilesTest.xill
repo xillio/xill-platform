@@ -22,13 +22,12 @@ use Assert, File;
 
 var folder = "testresources/file/";
 var expectedNonRecursive = [
-	File.normalize("testresources/file/file.txt"),
-	File.normalize("testresources/file/linkToFile")
+	File.normalize("testresources/file/file.txt")
 ];
 var expectedRecursive = [
 	File.normalize("testresources/file/file.txt"),
 	File.normalize("testresources/file/folder/subfile.unknown"),
-	File.normalize("testresources/file/linkToFile")
+	File.normalize("testresources/file/folder/subfolder/subsubfile.txt")
 ];
 
 Assert.equal(collect(File.iterateFiles(folder)), expectedNonRecursive);
