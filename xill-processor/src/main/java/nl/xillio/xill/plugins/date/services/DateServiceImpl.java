@@ -157,7 +157,7 @@ public class DateServiceImpl implements DateService, DateFactory {
     }
 
     @Override
-    public Map<String, Double> difference(Date date1, Date date2, boolean absolute) {
+    public Map<String, Number> difference(Date date1, Date date2, boolean absolute) {
         // Calculate difference and convert to seconds
         long milisDifference = date1.getZoned().until(date2.getZoned(), ChronoUnit.MILLIS);
         if (absolute) {
@@ -165,16 +165,23 @@ public class DateServiceImpl implements DateService, DateFactory {
         }
 
         // Calculate the totals
-        Map<String, Double> diff = new LinkedHashMap<>();
+        Map<String, Number> diff = new LinkedHashMap<>();
         for (TimeUnits t : TimeUnits.values()) {
-            diff.put(String.format("total%s", t.getPascalName()), (double)milisDifference / (double)t.getNumMiliseconds());
+            Double total = (double)milisDifference / (double)t.getNumMiliseconds();
+            String name = String.format("total%s", t.getPascalName());
+            if (TimeUnits.MILLIS.equals(t)) {
+                Long totalLong = total.longValue();
+                diff.put(name, totalLong);
+            } else {
+                diff.put(name, total);
+            }
         }
         // Calculate the additive differences by going through the TimeUnits in reverse order and
         for (int i = TimeUnits.values().length - 1; i >= 0; i--) {
             TimeUnits unit = TimeUnits.values()[i];
-            long value = milisDifference / unit.getNumMiliseconds();
+            Long value = milisDifference / unit.getNumMiliseconds();
             milisDifference -= value * unit.getNumMiliseconds();
-            diff.put(unit.getCamelName(), (double) value);
+            diff.put(unit.getCamelName(), value);
         }
         return diff;
     }

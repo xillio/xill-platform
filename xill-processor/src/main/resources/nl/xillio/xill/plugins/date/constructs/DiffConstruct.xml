@@ -45,30 +45,28 @@ All other properties together form the total difference, e.g. 25.05 hours = 1 da
                 25.05
 
                 {
-                    "totalMillis" : 9.018E7,
+                    "totalMillis" : 90180000,
                     "totalSeconds" : 90180.0,
                     "totalMinutes" : 1503.0,
                     "totalHours" : 25.05,
-                    "totalHalfDays" : 2.0875,
                     "totalDays" : 1.04375,
-                    "totalWeeks" : 0.149107143,
-                    "totalMonths" : 0.034292285,
-                    "totalYears" : 0.00285769,
-                    "totalDecades" : 2.85769E-4,
-                    "totalCenturies" : 2.8577E-5,
-                    "totalMillennia" : 2.858E-6,
-                    "millennia" : 0.0,
-                    "centuries" : 0.0,
-                    "decades" : 0.0,
-                    "years" : 0.0,
-                    "months" : 0.0,
-                    "weeks" : 0.0,
-                    "days" : 1.0,       // 25.05 hours is: 1 day,
-                    "halfDays" : 0.0,
-                    "hours" : 1.0,      // 1 hour,
-                    "minutes" : 3.0,    // and 3 minutes.
-                    "seconds" : 0.0,
-                    "millis" : 0.0,
+                    "totalWeeks" : 0.14910714285714285,
+                    "totalMonths" : 0.03429228526253106,
+                    "totalYears" : 0.0028576904385442547,
+                    "totalDecades" : 2.8576904385442547E-4,
+                    "totalCenturies" : 2.8576904385442548E-5,
+                    "totalMillennia" : 2.8576904385442547E-6,
+                    "millennia" : 0,
+                    "centuries" : 0,
+                    "decades" : 0,
+                    "years" : 0,
+                    "months" : 0,
+                    "weeks" : 0,
+                    "days" : 1,       // 25.05 hours is: 1 day,
+                    "hours" : 1,      // 1 hour,
+                    "minutes" : 3,    // and 3 minutes.
+                    "seconds" : 0,
+                    "millis" : 0,
                 }
                 */
             </code>
