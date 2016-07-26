@@ -187,6 +187,11 @@ public class DateServiceImpl implements DateService, DateFactory {
         );
     }
 
+    @Override
+    public Date fromTimestamp(long timestamp) {
+        return from(Instant.ofEpochSecond(timestamp));
+    }
+
     /**
      * Represents different kinds of time units, containing their name and the amount of nanoseconds they contain.
      * <p>
