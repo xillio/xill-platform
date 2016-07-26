@@ -19,8 +19,10 @@ import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.Processable;
 import nl.xillio.xill.api.components.WrappingIterator;
+import nl.xillio.xill.api.errors.RobotConcurrentModificationException;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
@@ -50,6 +52,8 @@ public class CollectTerminalExpression extends AbstractPipelineTerminalExpressio
             }
 
             return fromValue(output);
+        } catch(ConcurrentModificationException e){
+            throw new RobotConcurrentModificationException(e);
         }
     }
 }

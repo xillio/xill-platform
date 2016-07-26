@@ -62,6 +62,8 @@
                 <module>../plugin-xurl</module>
                 <module>../plugin-rest</module>
                 <module>../plugin-exiftool</module>
+                <module>../../plugin-concurrency</module>
+
             </modules>
         </profile>
         <profile>
