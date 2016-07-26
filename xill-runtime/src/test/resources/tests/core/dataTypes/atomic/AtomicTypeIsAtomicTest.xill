@@ -15,16 +15,16 @@
  */
 /*
 * Specification: The type of an atomic MUST be "ATOMIC".
-* Input: 3, "foo", null
+* Input: 3, "foo", null, true, false
 * Expected: "ATOMIC"
 */
 
 use Assert, System;
 
-var items = [3, "foo", null];
+var items = [3, "foo", null, true, false];
 var atomic;
 
 foreach (item in items) {
 	atomic = item;
-	Assert.equal(System.typeOf(atomic), "ATOMIC");
+	Assert.equal(System.typeOf(atomic), ATOMIC);
 }
