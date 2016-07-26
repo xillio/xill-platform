@@ -44,7 +44,6 @@ import java.util.Map.Entry;
 public class DateServiceImpl implements DateService, DateFactory {
 
     private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private static final Logger LOGGER = Log.get();
 
     @Override
     public Date now() {
@@ -167,7 +166,7 @@ public class DateServiceImpl implements DateService, DateFactory {
         // Calculate the totals
         Map<String, Number> diff = new LinkedHashMap<>();
         for (TimeUnits t : TimeUnits.values()) {
-            Double total = (double)milisDifference / (double)t.getNumMiliseconds();
+            Double total = (double) milisDifference / (double) t.getNumMilliseconds();
             String name = String.format("total%s", t.getPascalName());
             if (TimeUnits.MILLIS.equals(t)) {
                 Long totalLong = total.longValue();
@@ -179,8 +178,8 @@ public class DateServiceImpl implements DateService, DateFactory {
         // Calculate the additive differences by going through the TimeUnits in reverse order and
         for (int i = TimeUnits.values().length - 1; i >= 0; i--) {
             TimeUnits unit = TimeUnits.values()[i];
-            Long value = milisDifference / unit.getNumMiliseconds();
-            milisDifference -= value * unit.getNumMiliseconds();
+            Long value = milisDifference / unit.getNumMilliseconds();
+            milisDifference -= value * unit.getNumMilliseconds();
             diff.put(unit.getCamelName(), value);
         }
         return diff;
@@ -200,6 +199,16 @@ public class DateServiceImpl implements DateService, DateFactory {
         return from(Instant.ofEpochSecond(timestamp));
     }
 
+    @Override
+    public boolean isBefore(Date date1, Date date2) {
+        return date1.getZoned().isBefore(date2.getZoned());
+    }
+
+    @Override
+    public boolean isAfter(Date date1, Date date2) {
+        return date1.getZoned().isAfter(date2.getZoned());
+    }
+
     /**
      * Represents different kinds of time units, containing their name and the amount of nanoseconds they contain.
      * <p>
@@ -208,36 +217,33 @@ public class DateServiceImpl implements DateService, DateFactory {
      * @author Geert Konijnendijk
      */
     private enum TimeUnits {
+        MILLIS(1),
+        SECONDS(1000),
+        MINUTES(60000),
+        HOURS(3600000),
+        DAYS(86400000),
+        WEEKS(604800000),
+        MONTHS(2629746000L),
+        YEARS(31556952000L),
+        DECADES(315569520000L),
+        CENTURIES(3155695200000L),
+        MILLENNIA(31556952000000L);
 
-        // @formatter:off
-        MILLIS("1"),
-        SECONDS("1000"),
-        MINUTES("60000"),
-        HOURS("3600000"),
-        DAYS("86400000"),
-        WEEKS("604800000"),
-        MONTHS("2629746000"),
-        YEARS("31556952000"),
-        DECADES("315569520000"),
-        CENTURIES("3155695200000"),
-        MILLENNIA("31556952000000");
-        // @formatter:on
-
-        private final Long numMiliseconds;
+        private final long numMilliseconds;
         private final String camelName;
         private final String pascalName;
 
         /**
          * @param numSeconds Number of seconds that fit into one unit of this kind in {@link Long} String representation
          */
-        TimeUnits(String numSeconds) {
-            this.numMiliseconds = new Long(numSeconds);
+        TimeUnits(long numSeconds) {
+            this.numMilliseconds = numSeconds;
             this.camelName = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, this.name());
             this.pascalName = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, this.name());
         }
 
-        public Long getNumMiliseconds() {
-            return numMiliseconds;
+        public Long getNumMilliseconds() {
+            return numMilliseconds;
         }
 
         public String getCamelName() {
@@ -247,15 +253,5 @@ public class DateServiceImpl implements DateService, DateFactory {
         public String getPascalName() {
             return pascalName;
         }
-    }
-
-    @Override
-    public boolean isBefore(Date date1, Date date2) {
-        return date1.getZoned().isBefore(date2.getZoned());
-    }
-
-    @Override
-    public boolean isAfter(Date date1, Date date2) {
-        return date1.getZoned().isAfter(date2.getZoned());
     }
 }
