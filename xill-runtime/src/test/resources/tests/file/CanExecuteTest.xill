@@ -21,5 +21,5 @@
 use Assert, File, Stream;
 
 var file = "testresources/file/file.txt";
-File.delete("testresources/file/executable.txt");
+
 Assert.notNull(File.canExecute(file));
