@@ -18,17 +18,17 @@
  * Expected: An iterator with the files
  */
 
-use Assert, File;
+use Assert, File, Collection;
 
 var folder = "testresources/file/";
 var expectedNonRecursive = [
 	File.normalize("testresources/file/file.txt")
 ];
-var expectedRecursive = [
+var expectedRecursive = Collection.sort([
 	File.normalize("testresources/file/file.txt"),
 	File.normalize("testresources/file/folder/subfile.unknown"),
 	File.normalize("testresources/file/folder/subfolder/subsubfile.txt")
-];
+]);
 
 Assert.equal(collect(File.iterateFiles(folder)), expectedNonRecursive);
-Assert.equal(collect(File.iterateFiles(folder, true)), expectedRecursive);
+Assert.equal(Collection.sort(collect(File.iterateFiles(folder, true))), expectedRecursive);
