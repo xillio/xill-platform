@@ -187,6 +187,11 @@ public class DateServiceImpl implements DateService, DateFactory {
         );
     }
 
+    @Override
+    public Date fromTimestamp(long timestamp) {
+        return from(Instant.ofEpochSecond(timestamp));
+    }
+
     /**
      * Represents different kinds of time units, containing their name and the amount of nanoseconds they contain.
      * <p>
@@ -238,5 +243,15 @@ public class DateServiceImpl implements DateService, DateFactory {
         public String getPascalName() {
             return pascalName;
         }
+    }
+
+    @Override
+    public boolean isBefore(Date date1, Date date2) {
+        return date1.getZoned().isBefore(date2.getZoned());
+    }
+
+    @Override
+    public boolean isAfter(Date date1, Date date2) {
+        return date1.getZoned().isAfter(date2.getZoned());
     }
 }

@@ -1,0 +1,36 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+* Specification: Assigning a new value to a variable must change the variable to the new value
+* Expected: The last value in each test pair
+* Input: test pairs: [[1,0], ['a', 'b'], [true,false], [[],['a']], [{}, {"a":"b"}], [{"test":"object"}, {"test":"tree"}]]
+*/
+
+use Assert;
+
+// List of test pairs of various variable types
+// First in pair is initial value, second is both what the initial value will be reassigned to and the expected value
+var testPairs = [[1,0], ['a', 'b'], [true,false], [[],['a']], [{}, {"a":"b"}], [{"test":"object"}, {"test":"tree"}]];
+
+foreach(val in testPairs){
+    testAssignation(val[0], val[1]);
+}
+
+function testAssignation(initial, newValue){
+    var testValue = initial;
+    testValue = newValue;
+    Assert.equal(testValue, newValue);
+}
