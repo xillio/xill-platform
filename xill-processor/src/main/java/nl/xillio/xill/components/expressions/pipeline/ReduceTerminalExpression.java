@@ -19,12 +19,10 @@ import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.Processable;
 import nl.xillio.xill.api.components.WrappingIterator;
-import nl.xillio.xill.api.errors.RobotConcurrentModificationException;
 import nl.xillio.xill.components.expressions.FunctionParameterExpression;
 import nl.xillio.xill.components.instructions.FunctionDeclaration;
 
 import java.util.Arrays;
-import java.util.ConcurrentModificationException;
 
 /**
  * This class represents the implementation of the reduce function. This function takes an iterable and an accumulator
@@ -58,8 +56,6 @@ public class ReduceTerminalExpression extends AbstractPipelineTerminalExpression
 
             // Return the result
             return workingValue;
-        } catch(ConcurrentModificationException e){
-            throw new RobotConcurrentModificationException(e);
         }
     }
 

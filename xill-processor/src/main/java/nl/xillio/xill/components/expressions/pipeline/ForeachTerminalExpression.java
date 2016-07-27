@@ -17,12 +17,10 @@ package nl.xillio.xill.components.expressions.pipeline;
 
 import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.components.*;
-import nl.xillio.xill.api.errors.RobotConcurrentModificationException;
 import nl.xillio.xill.components.expressions.FunctionParameterExpression;
 import nl.xillio.xill.components.instructions.FunctionDeclaration;
 
 import java.util.Collections;
-import java.util.ConcurrentModificationException;
 
 /**
  * This class represents the implementation of the foreach function. This function will apply a function to every element
@@ -54,8 +52,6 @@ public class ForeachTerminalExpression extends AbstractPipelineTerminalExpressio
 
             // Return the result
             return ExpressionBuilder.NULL;
-        } catch(ConcurrentModificationException e){
-            throw new RobotConcurrentModificationException(e);
         }
     }
 

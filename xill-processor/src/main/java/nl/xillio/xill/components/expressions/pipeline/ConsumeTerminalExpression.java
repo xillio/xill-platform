@@ -19,9 +19,6 @@ import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.Processable;
 import nl.xillio.xill.api.components.WrappingIterator;
-import nl.xillio.xill.api.errors.RobotConcurrentModificationException;
-
-import java.util.ConcurrentModificationException;
 
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
 import static nl.xillio.xill.api.components.ExpressionDataType.ATOMIC;
@@ -64,8 +61,6 @@ public class ConsumeTerminalExpression extends AbstractPipelineTerminalExpressio
                 }
                 result++;
             }
-        } catch(ConcurrentModificationException e){
-            throw new RobotConcurrentModificationException(e);
         }
         return result;
     }
