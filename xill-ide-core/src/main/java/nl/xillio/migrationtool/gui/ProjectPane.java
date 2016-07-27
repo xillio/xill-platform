@@ -279,7 +279,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     private void paste(File pasteLoc, List<File> files, boolean copy) {
         // Get the directory to paste in.
         final File destDir = pasteLoc.isDirectory() ? pasteLoc : pasteLoc.getParentFile();
-
+        boolean overwriteAll = false;
         for (File oldFile : files) {
             // Check if the source file exists. If not is is probably already copied by moving a parent folder.
             if (!oldFile.exists()) {
@@ -288,19 +288,28 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
             // Check if the file already exists. (This does not throw an IOException in FileUtils, so we need to check it here.)
             File destFile = new File(destDir, oldFile.getName());
-            if (destFile.exists()) {
+            if (destFile.exists() && !overwriteAll) {
                 // Show a dialog.
-                AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR,
+                ButtonType buttonTypeOverwrite = new ButtonType("Overwrite");
+                ButtonType buttonTypeOverwriteAll = new ButtonType("Overwrite all");
+                ButtonType buttonTypeSkip = new ButtonType("Skip");
+                AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING,
                         "File already exists", "",
-                        "The destination file (" + destFile.toString() + ") already exists. Press OK to continue or Cancel to abort.",
-                        ButtonType.OK, ButtonType.CANCEL);
+                        "The destination file (" + destFile.toString() + ") already exists.",
+                        buttonTypeOverwrite, buttonTypeOverwriteAll, buttonTypeSkip, ButtonType.CANCEL);
                 final Optional<ButtonType> result = dialog.showAndWait();
 
-                // Skip this file or abort if cancel was pressed.
-                if (result.isPresent() && result.get() == ButtonType.CANCEL) {
-                    break;
+                if (result.isPresent()) {
+                    if (result.get() == buttonTypeOverwriteAll) {
+                        overwriteAll = true; // Overwrite all
+                    } else if (result.get() == buttonTypeSkip) {
+                        continue; // Skip
+                    } else if (result.get() == ButtonType.CANCEL) {
+                        break; // Cancel
+                    } // else Overwrite
+                } else {
+                    break; // Dialog was closed - treat it as Cancel
                 }
-                continue;
             }
 
             try {
