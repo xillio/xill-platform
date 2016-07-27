@@ -22,12 +22,17 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.print.JobSettings;
+import javafx.print.PageLayout;
+import javafx.print.PrinterJob;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebView;
 import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.BreakpointPool;
@@ -156,6 +161,64 @@ public class EditorPane extends AnchorPane implements FileTabComponent, EventHan
             editor.undo();
         }
         updateUndoRedoButtons();
+    }
+
+    public void print() {
+        PrinterJob printerJob = PrinterJob.createPrinterJob();
+        if (printerJob == null) {
+            LOGGER.error("Could not create printer job.");
+            return;
+        }
+
+        if (!printerJob.showPrintDialog(this.getParent().getScene().getWindow())) {
+            return;
+        }
+
+        print(getEditor().getCodeProperty().get(), printerJob);
+    }
+
+    private void print(final String content, final PrinterJob printerJob) {
+        // Get all lines
+        final String[] lines = content.split(System.getProperty("line.separator"));
+
+        // Get printer and page settings
+        JobSettings jobSettings = printerJob.getJobSettings();
+        PageLayout pageLayout = jobSettings.getPageLayout();
+
+        // Prepare JavaFX Text node
+        final Text text = new Text();
+        text.setTextAlignment(TextAlignment.LEFT);
+        text.setWrappingWidth(pageLayout.getPrintableWidth());
+
+        // Do print
+        String pageText = "";
+        final double maxHeight = pageLayout.getPrintableHeight();
+        double curHeight = 0;
+        for (String line : lines) {// Walk through each line of text
+            text.setText(line);
+            double lineHeight = text.getLayoutBounds().getHeight(); // Calculate line height (it can be multiline because of wrapping)
+            if (lineHeight+curHeight > maxHeight) {
+                // This line is beyond the page height, so do the print page
+                text.setText(pageText);
+                printerJob.printPage(text);
+
+                // Clear the internal page
+                curHeight = 0;
+                pageText = "";
+            }
+
+            // Add line to internal page
+            pageText += "\n";
+            pageText += line;
+            curHeight += lineHeight;
+        }
+        if (!pageText.isEmpty()) {
+            // Print the rest as a last page (if there is any to print)
+            text.setText(pageText);
+            printerJob.printPage(text);
+        }
+
+        printerJob.endJob();
     }
 
     @FXML
