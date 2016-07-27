@@ -2,6 +2,6 @@
 
 "sonarHost": "https://sonaross.xillio.com",
 
-"sonarProjectKey": "nl.xillio.xill:xill-build"
+"sonarProjectKey": "nl.xillio.xill:xill-build:origin/develop"
 
 } 
