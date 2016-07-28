@@ -35,6 +35,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
 import javafx.util.Pair;
@@ -496,6 +497,9 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 controller.viewOrOpenRobot(chosen, projectFile, isRobot);
             } catch (IOException e) {
                 LOGGER.error("Failed to create file.", e);
+                AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error creating robot.", "", "Could not create '" + chosen.toString() + "'.");
+                error.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                error.showAndWait();
             } catch (TemplateException e) {
                 new AlertDialog(Alert.AlertType.ERROR, "Invalid template", "The template you want to use could not be processed!", e.getMessage()).show();
                 controller.viewOrOpenRobot(chosen, projectFile, isRobot);
@@ -607,9 +611,18 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         items.forEach(item -> {
             File file = item.getValue().getKey();
+            // Check if we have write access to file and we're not soft deleting a project
+            if(!file.canWrite() && !(item == getProject(item) && !hardDeleteProjects)){
+                LOGGER.error("Cannot delete " + file.toString() + ": no write access.");
+                AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error while deleting files.", "",
+                        "Could not delete: " + file.toString() + ", access was denied.\n\nPlease check if you have write permissions.",
+                        ButtonType.OK);
+                error.getDialogPane().setMinHeight(Region.USE_PREF_SIZE); // Workaround to get scaled window in Linux (currently bug in javafx)
+                error.showAndWait();
+            }
 
-            // Check if the file exists.
-            if (file.exists()) {
+            // Check if the file exists and is writable.
+            if (file.canWrite()) {
                 try {
                     //If it is a file, remove it. If it is a folder only remove it if it is not a project or we should hard delete projects.
                     if (file.isFile() || file.isDirectory() && (item != getProject(item) || hardDeleteProjects)) {
@@ -619,6 +632,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                     LOGGER.error("Could not delete " + file.toString(), e);
                     AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error while deleting files.", "",
                             "An error occurred while deleting files.\n" + e.getMessage(), ButtonType.OK);
+                    error.getDialogPane().setMinHeight(Region.USE_PREF_SIZE); // Workaround to get scaled window in Linux (currently bug in javafx)
                     error.showAndWait();
                 }
             }
@@ -1123,7 +1137,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         public boolean isLeaf() {
             if (isFirstTimeLeaf) {
                 isFirstTimeLeaf = false;
-                isLeaf = getValue().getKey().isFile();
+                isLeaf = !getValue().getKey().isDirectory();
             }
             return isLeaf;
         }
