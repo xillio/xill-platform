@@ -320,41 +320,77 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 fileList.add(new Pair(oldFile, new File(destDir, oldFile.getParentFile().toURI().relativize(oldFile.toURI()).getPath())));
             }
 
-            // Copy or move the file or directory.
-            try {
-                if (copy) {
-                    if (oldFile.isDirectory()) {
-                        FileUtils.copyDirectoryToDirectory(oldFile, destDir);
-                    } else {
-                        FileUtils.copyFileToDirectory(oldFile, destDir);
-                    }
-                    reloadTabs(fileList.stream().map(t -> t.getValue()).collect(Collectors.toList()));
-                } else {
-                    // In case of overwriting the target must be deleted beforehand because FileUtils.move.. methods throws exception otherwise (while FileUtils.copy.. methods don't)
-                    File destTarget = new File(destDir, oldFile.getName());
-                    if (oldFile.isDirectory()) {
-                        FileUtils.deleteDirectory(destTarget);
-                        FileUtils.moveDirectoryToDirectory(oldFile, destDir, false);
-                    } else {
-                        destTarget.delete();
-                        FileUtils.moveFileToDirectory(oldFile, destDir, false);
-                    }
-                    resetTabs(fileList);
-                }
-            } catch (IOException e) {
-                // Show the error.
-                LOGGER.error("IOException while moving files.", e);
-                AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error while pasting files.", "",
-                        "An error occurred while pasting files. Press OK to continue or Cancel to abort.\n" + e.getMessage(),
-                        ButtonType.OK, ButtonType.CANCEL);
-                final Optional<ButtonType> result = error.showAndWait();
+            // Test if any open source tab is modified
+            if (!checkOpenTabsModified(fileList.stream().map(t -> t.getKey()).collect(Collectors.toList()))) {
+                break;
+            }
 
-                // If cancel was pressed, abort.
-                if (result.isPresent() && result.get() == ButtonType.CANCEL) {
-                    break;
+            // Copy or move the file or directory.
+            if (!pasteCopyMove(oldFile, destDir, fileList, copy)) {
+                break;
+            }
+        }
+    }
+
+    private boolean pasteCopyMove(final File source, final File target, final List<Pair<File, File>> fileList, final boolean copy) {
+        try {
+            if (copy) {
+                if (source.isDirectory()) {
+                    FileUtils.copyDirectoryToDirectory(source, target);
+                } else {
+                    FileUtils.copyFileToDirectory(source, target);
+                }
+                reloadTabs(fileList.stream().map(t -> t.getValue()).collect(Collectors.toList()));
+            } else {
+                // In case of overwriting the target must be deleted beforehand because FileUtils.move.. methods throws exception otherwise (while FileUtils.copy.. methods don't)
+                File destTarget = new File(target, source.getName());
+                if (source.isDirectory()) {
+                    FileUtils.deleteDirectory(destTarget);
+                    FileUtils.moveDirectoryToDirectory(source, target, false);
+                } else {
+                    destTarget.delete();
+                    FileUtils.moveFileToDirectory(source, target, false);
+                }
+                resetTabs(fileList);
+            }
+        } catch (IOException e) {
+            // Show the error.
+            LOGGER.error("IOException while moving files.", e);
+            AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error while pasting files.", "",
+                    "An error occurred while pasting files. Press OK to continue or Cancel to abort.\n" + e.getMessage(),
+                    ButtonType.OK, ButtonType.CANCEL);
+            final Optional<ButtonType> result = error.showAndWait();
+
+            // If cancel was pressed, abort.
+            if (result.isPresent() && result.get() == ButtonType.CANCEL) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean checkOpenTabsModified(final List<File> files) {
+        for (File f : files) {
+            FileTab tab = controller.findTab(f);
+            if (tab != null) {
+                if (tab.getEditorPane().getDocumentState().getValue() == EditorPane.DocumentState.CHANGED) {
+                    AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Modified document",
+                            "The document " + tab.getDocument().getName() + " is modified.",
+                            "Do you want to save the changes?",
+                            ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+                    final Optional<ButtonType> result = dialog.showAndWait();
+                    if (result.isPresent()) {
+                        if (result.get() == ButtonType.CANCEL) {
+                            return false;
+                        }
+                        if (result.get() == ButtonType.YES) {
+                           tab.save();
+                        }
+                    }
                 }
             }
         }
+        return true;
     }
 
     private void resetTabs(final List<Pair<File, File>> files) {
@@ -362,7 +398,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         files.forEach(f -> {
             FileTab tab = controller.findTab(f.getValue()); // Target file
             if (tab != null) {
-                controller.closeTab(tab);
+                controller.closeTab(tab, true, true);
             }
         });
 
