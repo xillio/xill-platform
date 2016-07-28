@@ -1,0 +1,32 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Specification: copy MUST copy a file to the target destination, delete MUST delete it.
+ * Input: A file
+ * Expected: The file is copied and then deleted
+ */
+
+use Assert, File;
+
+var source = "testresources/file/file.txt";
+var target = "testresources/file/folder/copy.txt";
+
+// Copy.
+File.copy(source, target);
+Assert.isTrue(File.exists(target));
+
+// Delete.
+File.delete(target);
+Assert.isFalse(File.exists(target));
