@@ -22,15 +22,22 @@ use Assert, Collection, System;
 
 var list = [ 5, "yes" ];
 var object = { "a": 5, "not": "yes" };
-var error;
+var error1;
+var error2;
 
 do {
 	Collection.remove(list, -1);
 } fail(e) {
-	error = e;
+	error1 = e;
+}
+do {
+	Collection.remove(list, 100);
+} fail(e) {
+	error2 = e;
 }
 Collection.remove(object, "abcd");
 
-Assert.notNull(error);
+Assert.notNull(error1);
+Assert.notNull(error2);
 Assert.equal(list, [ 5, "yes" ]);
 Assert.equal(object, { "a": 5, "not": "yes" });
