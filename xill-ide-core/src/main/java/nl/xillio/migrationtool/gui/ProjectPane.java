@@ -321,9 +321,13 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                         FileUtils.copyFileToDirectory(oldFile, destDir);
                     }
                 } else {
+                    // In case of overwriting the target must be deleted beforehand because FileUtils.move.. methods throws exception otherwise (while FileUtils.copy.. methods don't)
+                    File destTarget = new File(destDir, oldFile.getName());
                     if (oldFile.isDirectory()) {
+                        FileUtils.deleteDirectory(destTarget);
                         FileUtils.moveDirectoryToDirectory(oldFile, destDir, false);
                     } else {
+                        destTarget.delete();
                         FileUtils.moveFileToDirectory(oldFile, destDir, false);
                     }
                 }
