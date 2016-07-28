@@ -312,14 +312,23 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 }
             }
 
+            // Create the list of source (key) and TARGET (value) files that will be copied/moved
+            final LinkedList<Pair<File, File>> fileList = new LinkedList<>();
+            if (oldFile.isDirectory()) {
+                FileUtils.listFiles(oldFile, null, true).forEach(f -> fileList.add(new Pair(f, new File(destDir, oldFile.getParentFile().toURI().relativize(f.toURI()).getPath()))));
+            } else {
+                fileList.add(new Pair(oldFile, new File(destDir, oldFile.getParentFile().toURI().relativize(oldFile.toURI()).getPath())));
+            }
+
+            // Copy or move the file or directory.
             try {
-                // Copy or move the file or directory.
                 if (copy) {
                     if (oldFile.isDirectory()) {
                         FileUtils.copyDirectoryToDirectory(oldFile, destDir);
                     } else {
                         FileUtils.copyFileToDirectory(oldFile, destDir);
                     }
+                    reloadTabs(fileList.stream().map(t -> t.getValue()).collect(Collectors.toList()));
                 } else {
                     // In case of overwriting the target must be deleted beforehand because FileUtils.move.. methods throws exception otherwise (while FileUtils.copy.. methods don't)
                     File destTarget = new File(destDir, oldFile.getName());
@@ -330,6 +339,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                         destTarget.delete();
                         FileUtils.moveFileToDirectory(oldFile, destDir, false);
                     }
+                    resetTabs(fileList);
                 }
             } catch (IOException e) {
                 // Show the error.
@@ -345,6 +355,35 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 }
             }
         }
+    }
+
+    private void resetTabs(final List<Pair<File, File>> files) {
+        // Close all related open target tabs (if exist they will be overwritten by source files having different path and project so we need to close them)
+        files.forEach(f -> {
+            FileTab tab = controller.findTab(f.getValue()); // Target file
+            if (tab != null) {
+                controller.closeTab(tab);
+            }
+        });
+
+        // Reset project and document of all related open source tabs
+        files.forEach(f -> {
+            FileTab tab = controller.findTab(f.getKey()); // Source file
+            if (tab != null) {
+                final File file = f.getValue();
+                tab.resetSource(file, new File(getProjectPath(file).orElse(file.getParent()))); // Target file
+            }
+        });
+    }
+
+    // Reload content of all existing tabs that matches the (target) files in the list
+    private void reloadTabs(final List<File> files) {
+        files.forEach(f -> {
+            FileTab tab = controller.findTab(f);
+            if (tab != null) {
+                tab.reload();
+            }
+        });
     }
 
     /* End of bulk file functionality. */
