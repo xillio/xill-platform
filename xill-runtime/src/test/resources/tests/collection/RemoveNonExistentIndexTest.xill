@@ -1,0 +1,36 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Specification: remove on a list with an index that is out of bounds MUST throw an error, on an object it MUST NOT do anything.
+ * Input: A list and object and a non-existent element to remove
+ * Expected: The collection are unchanged, remove on the list throws an error
+ */
+
+use Assert, Collection, System;
+
+var list = [ 5, "yes" ];
+var object = { "a": 5, "not": "yes" };
+var error;
+
+do {
+	Collection.remove(list, -1);
+} fail(e) {
+	error = e;
+}
+Collection.remove(object, "abcd");
+
+Assert.notNull(error);
+Assert.equal(list, [ 5, "yes" ]);
+Assert.equal(object, { "a": 5, "not": "yes" });
