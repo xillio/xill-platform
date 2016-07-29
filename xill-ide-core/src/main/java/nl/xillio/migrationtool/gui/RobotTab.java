@@ -25,6 +25,7 @@ import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
@@ -241,7 +242,9 @@ public class RobotTab extends FileTab implements Initializable {
         try {
             processor = Loader.getXill().buildProcessor(projectPath.toPath(), documentPath.toPath(), processor.getDebugger());
         } catch (IOException e) {
-            new AlertDialog(AlertType.ERROR, "Failed to save robot", "", e.getMessage()).show();
+            AlertDialog error = new AlertDialog(AlertType.ERROR, "Failed to save robot", "", e.getMessage());
+            error.getDialogPane().setMinHeight(Region.USE_PREF_SIZE); // Workaround to get scaled window in Linux (bug in javafx)
+            error.show();
             LOGGER.error("Failed to save robot", e);
         }
         currentRobot = processor.getRobotID();

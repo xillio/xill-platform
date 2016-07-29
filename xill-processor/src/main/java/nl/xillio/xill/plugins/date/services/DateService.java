@@ -142,8 +142,7 @@ public interface DateService extends XillService {
      * @return A map containing names of time units as keys (first letter capitlized and in plural) and the amount of this time unit as value. The amount is always positive. When the key has "Total "
      * prepended, the value is not additive.
      */
-    Map<String, Double> difference(Date date1, Date date2, boolean absolute);
-
+    Map<String, Number> difference(Date date1, Date date2, boolean absolute);
     /**
      * Calculates the {@link Date} for a certain Unix timestamp.
      *
