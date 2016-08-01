@@ -170,9 +170,10 @@ public class EditorPane extends AnchorPane implements FileTabComponent, EventHan
             return;
         }
 
-        if (!printerJob.showPrintDialog(this.getParent().getScene().getWindow())) {
-            return;
-        }
+        // This is commented out as it's not working properly (will be resolved in Java 9) see: https://bugs.openjdk.java.net/browse/JDK-8088395
+//        if (!printerJob.showPrintDialog(this.getParent().getScene().getWindow())) {
+//            return;
+//        }
 
         print(getEditor().getCodeProperty().get(), printerJob);
     }
