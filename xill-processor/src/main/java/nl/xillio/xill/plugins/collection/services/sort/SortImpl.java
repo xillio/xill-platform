@@ -31,93 +31,94 @@ public class SortImpl implements Sort {
 
     @Override
     public Object asSorted(final Object input, final boolean recursive, final boolean onKeys, final boolean reverse) {
-        return asSorted(input, recursive, onKeys, reverse, new IdentityHashMap<>());
+        Sorter sorter = reverse ? Sorter.REVERSE : Sorter.NORMAL;
+        return asSorted(input, recursive, onKeys, sorter, new IdentityHashMap<>());
     }
 
-    private Object asSorted(final Object input, final boolean recursive, final boolean onKeys, final boolean reverse, final IdentityHashMap<Object, Object> results) {
+    public static Object asSorted(final Object input, final boolean recursive, final boolean onKeys, final Sorter sorter, final IdentityHashMap<Object, Object> results) {
         if (results.containsKey(input)) {
             return results.get(input);
         }
-        Sorter sorter = reverse ? Sorter.REVERSE : Sorter.NORMAL;
 
         if (input instanceof List) {
-            @SuppressWarnings("unchecked")
-            List<?> list = (List<?>) input;
-            List<Object> sorted = list.stream().sorted((a,b) -> {
-                if(onKeys){ // comparing on keys in a list should always return the first key
-                    return 1;
-                } else
-                    return sorter.compare(a,b);}).collect(Collectors.toList());
-            results.put(list, sorted);
-
-            // Sort recursive
-            if (recursive) {
-                for (int i = 0; i < sorted.size(); i++) {
-                    Object child = sorted.get(i);
-                    sorted.set(i, asSorted(child, true, onKeys, reverse, results));
-                }
-            }
-
-            return sorted;
+            return asSortedList(input, recursive, onKeys, sorter, results);
         } else if (input instanceof Map) {
-            // Sort the map by extracting single entries and sorting them either by key or
-            @SuppressWarnings("unchecked")
-            Entry<String, Object>[] sortedEntries = ((Map<String, Object>) input)
-                    .entrySet()
-                    .stream()
-                    .sorted((a, b) -> {
-                        if (onKeys) {
-                            return sorter.compare(a.getKey(), b.getKey());
-                        }
-                        return sorter.compare(a.getValue(), b.getValue());
-                    })
-                    .toArray(Entry[]::new);
-
-            Map<String, Object> map = new LinkedHashMap<>();
-            for (Entry<String, Object> entry : sortedEntries) {
-                map.put(entry.getKey(), entry.getValue());
-            }
-
-            // Sort recursive
-            if (recursive) {
-                for (String key : map.keySet()) {
-                    Object child = map.get(key);
-                    map.put(key, asSorted(child, true, onKeys, reverse, results));
-                }
-            }
-
-            return map;
+            return asSortedMap(input, recursive, onKeys, sorter, results);
         }
 
         return input;
     }
 
+    public static Object asSortedList(final Object input, final boolean recursive, final boolean onKeys, Sorter sorter, final IdentityHashMap<Object, Object> results){
+        @SuppressWarnings("unchecked")
+        List<?> list = (List<?>) input;
+        List<Object> sorted = list.stream().sorted((a,b) -> {
+            if(onKeys){ // comparing on keys in a list should always return the first key
+                return sorter.isReverse() ? -1 : 0;
+            } else
+                return sorter.compare(a,b);}).collect(Collectors.toList());
+        results.put(list, sorted);
+
+        // Sort recursive
+        if (recursive) {
+            for (int i = 0; i < sorted.size(); i++) {
+                Object child = sorted.get(i);
+                sorted.set(i, asSorted(child, true, onKeys, sorter, results));
+            }
+        }
+
+        return sorted;
+    }
+
+    public static Object asSortedMap(final Object input, final boolean recursive, final boolean onKeys, Sorter sorter, final IdentityHashMap<Object, Object> results){
+        // Sort the map by extracting single entries and sorting them either by key or
+        @SuppressWarnings("unchecked")
+        Entry<String, Object>[] sortedEntries = ((Map<String, Object>) input)
+                .entrySet()
+                .stream()
+                .sorted((a, b) -> {
+                    if (onKeys) {
+                        return sorter.compare(a.getKey(), b.getKey());
+                    }
+                    return sorter.compare(a.getValue(), b.getValue());
+                })
+                .toArray(Entry[]::new);
+
+        Map<String, Object> map = new LinkedHashMap<>();
+        for (Entry<String, Object> entry : sortedEntries) {
+            map.put(entry.getKey(), entry.getValue());
+        }
+
+        // Sort recursive
+        if (recursive) {
+            for (String key : map.keySet()) {
+                Object child = map.get(key);
+                map.put(key, asSorted(child, true, onKeys, sorter, results));
+            }
+        }
+
+        return map;
+    }
+
     //returns the priority of the type of the input.
-    private static int getPriorityIndex(final Object object) {
-        if (object instanceof List) {
+    public static int getPriorityIndex(final Object object) {
+
+
+        if (object instanceof List)
             return 0;
-        }
-
-        if (object instanceof Map) {
+        if (object instanceof Map)
             return 1;
-        }
-
-        if (object instanceof Boolean) {
+        if (object instanceof Boolean)
             return 2;
-        }
-
-        if (object instanceof Number) {
+        if (object instanceof Number)
             return 3;
-        }
-
-        if (object != null) {
+        if (object != null)
             return 4;
-        }
 
         return 5;
     }
 
-    private static class Sorter implements Comparator<Object> {
+    public static class Sorter implements Comparator<Object> {
         public static final Sorter NORMAL = new Sorter(false);
         public static final Sorter REVERSE = new Sorter(true);
         private final boolean reverse;
@@ -133,7 +134,7 @@ public class SortImpl implements Sort {
             int priorityB = getPriorityIndex(objectB);
             int result = 0;
             if (priorityA != priorityB) {
-                return priorityA - priorityB;
+                return reverse ? priorityB - priorityA : priorityA - priorityB;
             }
 
             // These objects are of the same type.
@@ -172,6 +173,10 @@ public class SortImpl implements Sort {
             }
 
             return result;
+        }
+
+        public boolean isReverse(){
+            return reverse;
         }
 
     }
