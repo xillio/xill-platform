@@ -46,7 +46,7 @@ public class DiffConstruct extends BaseDateConstruct {
 
         LinkedHashMap<String, MetaExpression> result = new LinkedHashMap<>();
 
-        Map<String, Double> diff = dateService.difference(date, other, absolute.getBooleanValue());
+        Map<String, Number> diff = dateService.difference(date, other, absolute.getBooleanValue());
 
         diff.forEach((k, v) -> result.put(k, fromValue(v)));
 

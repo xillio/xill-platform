@@ -779,7 +779,14 @@ public class FXController implements Initializable, EventHandler<Event> {
         closeTab(tab, true, false);
     }
 
-    private void closeTab(final Tab tab, final boolean removeTab, final boolean silent) {
+    /**
+     * Close a tab
+     *
+     * @param tab The tab
+     * @param removeTab True if tab will be removed
+     * @param silent True if tab will be closed silently without any further dialogs
+     */
+    public void closeTab(final Tab tab, final boolean removeTab, final boolean silent) {
         // Stop if we don't have a selected tab
         if (tab == null) {
             return;

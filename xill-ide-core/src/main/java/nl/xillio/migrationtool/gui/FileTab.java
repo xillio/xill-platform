@@ -24,6 +24,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import me.biesaart.utils.Log;
@@ -206,7 +207,9 @@ public class FileTab extends Tab implements Initializable, ChangeListener<Editor
             FileUtils.write(document, code);
             LOGGER.info("Saved file to " + document.getAbsolutePath());
         } catch (IOException e) {
-            new AlertDialog(Alert.AlertType.ERROR, "Failed to save file", "", e.getMessage()).show();
+            AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Failed to save file", "", e.getMessage() + ".");
+            error.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            error.show();
             LOGGER.error("Failed to save file", e);
         }
 
@@ -296,5 +299,17 @@ public class FileTab extends Tab implements Initializable, ChangeListener<Editor
                 LOGGER.error("Could not open " + documentPath, e);
             }
         }
+    }
+
+    /**
+     * Reset source of the tab
+     *
+     * @param documentPath New document path
+     * @param projectPath New project path
+     */
+    public void resetSource(final File documentPath, final File projectPath) {
+        this.documentPath = documentPath;
+        this.projectPath = projectPath;
+        reload();
     }
 }

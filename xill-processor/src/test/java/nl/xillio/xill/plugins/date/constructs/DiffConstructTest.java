@@ -39,7 +39,7 @@ import static org.testng.Assert.assertEquals;
 public class DiffConstructTest {
 
     /**
-     * @return Data containing two maps (which should be returned from the mock {@link DateService#difference(java.time.temporal.Temporal, java.time.temporal.Temporal, boolean)}) for testing absolute
+     * @return Data containing two maps (which should be returned from the mock {@link DateService#difference(nl.xillio.xill.api.data.Date, nl.xillio.xill.api.data.Date, boolean)}) for testing absolute
      * and relative difference.
      */
     @DataProvider(name = "differences")
@@ -60,11 +60,11 @@ public class DiffConstructTest {
     /**
      * Test the process method
      *
-     * @param differences Map with differences as could be returned by {@link DateService#difference(nl.xillio.xill.plugins.date.data.Date, nl.xillio.xill.plugins.date.data.Date, boolean)}.
+     * @param differences Map with differences as could be returned by {@link DateService#difference(nl.xillio.xill.api.data.Date, nl.xillio.xill.api.data.Date, boolean)}.
      * @param absolute    Whether the difference should be absolute or relative
      */
     @Test(dataProvider = "differences")
-    public void testProcess(Map<String, Double> differences, MetaExpression absolute) {
+    public void testProcess(Map<String, Number> differences, MetaExpression absolute) {
         // Mock
         ZonedDateTime date1 = ZonedDateTime.now();
         ZonedDateTime date2 = ZonedDateTime.now();
@@ -82,7 +82,6 @@ public class DiffConstructTest {
         verify(dateService).difference(any(), any(), anyBoolean());
 
         // Assert
-        ((Map<String, MetaExpression>) difference.getValue()).forEach((k, v) -> assertEquals(differences.get(k), v.getNumberValue().doubleValue(), 10e-9));
-
+        ((Map<String, MetaExpression>) difference.getValue()).forEach((k, v) -> assertEquals(differences.get(k).doubleValue(), v.getNumberValue().doubleValue(), 10e-9));
     }
 }

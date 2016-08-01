@@ -97,19 +97,15 @@ public class DateServiceImplTest {
         DateService ds = new DateServiceImpl();
         Date justOneDate = ds.constructDate(2015, 2, 14, 12, 32, 15, 12, ZoneId.of("GMT"));
         Date justAnotherDate = ds.constructDate(2015, 2, 13, 12, 32, 15, 12, ZoneId.of("GMT"));
-        Map<String, Double> diffs = ds.difference(justOneDate, justAnotherDate, false);
-        diffs.forEach((k, v) -> System.out.printf("Key: %s, Value: %f%n", k, v));
-        Assert.assertEquals(diffs.get("totalNanos"), -86400000000000.0);
-        Assert.assertEquals(diffs.get("totalMicros"), -86400000000.0);
-        Assert.assertEquals(diffs.get("totalMillis"), -86400000.0);
+        Map<String, Number> diffs = ds.difference(justOneDate, justAnotherDate, false);
+        diffs.forEach((k, v) -> System.out.printf("Key: %s, Value: %f%n", k, v.doubleValue()));
+        Assert.assertEquals(diffs.get("totalMillis").longValue(), -86400000);
         Assert.assertEquals(diffs.get("totalSeconds"), -86400.0);
         Assert.assertEquals(diffs.get("totalMinutes"), -1440.0);
         Assert.assertEquals(diffs.get("totalHours"), -24.0);
-        Assert.assertEquals(diffs.get("totalHalfDays"), -2.0);
         Assert.assertEquals(diffs.get("totalDays"), -1.0);
-
-        Assert.assertEquals(diffs.get("days"), -1.0);
-        Assert.assertEquals(diffs.get("minutes"), 0.0);
+        Assert.assertEquals(diffs.get("days").longValue(), -1);
+        Assert.assertEquals(diffs.get("minutes").longValue(), 0);
     }
 
     @Test
@@ -117,19 +113,15 @@ public class DateServiceImplTest {
         DateService ds = new DateServiceImpl();
         Date justOneDate = ds.constructDate(2015, 2, 14, 12, 32, 15, 12, ZoneId.of("GMT"));
         Date justAnotherDate = ds.constructDate(2015, 2, 13, 12, 32, 15, 12, ZoneId.of("GMT"));
-        Map<String, Double> diffs = ds.difference(justOneDate, justAnotherDate, true);
-        diffs.forEach((k, v) -> System.out.printf("Key: %s, Value: %f%n", k, v));
-        Assert.assertEquals(diffs.get("totalNanos"), 86400000000000.0);
-        Assert.assertEquals(diffs.get("totalMicros"), 86400000000.0);
-        Assert.assertEquals(diffs.get("totalMillis"), 86400000.0);
+        Map<String, Number> diffs = ds.difference(justOneDate, justAnotherDate, true);
+        diffs.forEach((k, v) -> System.out.printf("Key: %s, Value: %f%n", k, v.doubleValue()));
+        Assert.assertEquals(diffs.get("totalMillis").longValue(), 86400000);
         Assert.assertEquals(diffs.get("totalSeconds"), 86400.0);
         Assert.assertEquals(diffs.get("totalMinutes"), 1440.0);
         Assert.assertEquals(diffs.get("totalHours"), 24.0);
-        Assert.assertEquals(diffs.get("totalHalfDays"), 2.0);
         Assert.assertEquals(diffs.get("totalDays"), 1.0);
-
-        Assert.assertEquals(diffs.get("days"), 1.0);
-        Assert.assertEquals(diffs.get("minutes"), 0.0);
+        Assert.assertEquals(diffs.get("days").longValue(), 1);
+        Assert.assertEquals(diffs.get("minutes").longValue(), 0);
     }
 
     @Test
