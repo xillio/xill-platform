@@ -219,10 +219,8 @@ public class SettingsDialog extends FXMLDialog {
         }
 
         String shortcut = getShortCutPattern(event);
-        if (shortcut != null) {
-            if (FXController.hotkeys.findShortcutInDialog(getScene(), shortcut) == null) {
-                tf.setText(shortcut);
-            }
+        if (shortcut != null && FXController.hotkeys.findShortcutInDialog(getScene(), shortcut) == null) {
+            tf.setText(shortcut);
         }
 
         event.consume();
@@ -264,6 +262,7 @@ public class SettingsDialog extends FXMLDialog {
         try {
             Desktop.getDesktop().browse(new URI(EulaUtils.EULA_LOCATION));
         } catch (IOException | URISyntaxException e) {
+            LOGGER.debug("Cannot open an EULA url.", e);
             Alert alert = new Alert(Alert.AlertType.ERROR, "Unfortunately your system is not able to open a link. Copy this link and paste it into a browser: " + EulaUtils.EULA_LOCATION);
             alert.setTitle("Compatibility");
             alert.initOwner(this.getScene().getWindow());
@@ -461,6 +460,7 @@ public class SettingsDialog extends FXMLDialog {
         }
     }
 
+    @FunctionalInterface
     private interface TextValidator {
         boolean test(final String text);
     }
