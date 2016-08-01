@@ -219,5 +219,10 @@ public class ExpressionBuilderHelper {
             return true;
         }
 
+        @Override
+        public Expression copy() {
+            return new NullLiteral();
+        }
+
     }
 }

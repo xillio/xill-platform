@@ -642,4 +642,6 @@ public abstract class MetaExpression implements Expression, Processable {
 
         throw new IllegalArgumentException("Unable to deserialize " + root.getClass().getName());
     }
+
+    public abstract MetaExpression copy();
 }

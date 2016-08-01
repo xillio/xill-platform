@@ -57,6 +57,13 @@ class ObjectExpression extends CollectionExpression {
     }
 
     @Override
+    public ObjectExpression copy() {
+        LinkedHashMap<String, MetaExpression> copy = new LinkedHashMap<>();
+        value.forEach((x,y) -> copy.put(x, y.copy()));
+        return new ObjectExpression(copy);
+    }
+
+    @Override
     public Collection<Processable> getChildren() {
         return new ArrayList<>(value.values());
     }

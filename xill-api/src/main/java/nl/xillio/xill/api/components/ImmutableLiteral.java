@@ -78,6 +78,11 @@ class ImmutableLiteral extends MetaExpression {
     }
 
     @Override
+    public MetaExpression copy() {
+        return new ImmutableLiteral(this.value);
+    }
+
+    @Override
     public void storeMeta(MetadataExpression object) {
         // No OP
     }
