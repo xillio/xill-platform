@@ -23,6 +23,7 @@ import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.data.DateFactory;
 import nl.xillio.xill.api.data.MetadataExpression;
 import nl.xillio.xill.api.errors.NotImplementedException;
+import nl.xillio.xill.api.errors.RobotConcurrentModificationException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.services.json.JsonException;
 import nl.xillio.xill.services.json.JsonParser;
@@ -394,8 +395,12 @@ public abstract class MetaExpression implements Expression, Processable {
             case LIST:
                 List<Object> resultList = new ArrayList<>();
                 results.put(expression, resultList);
-                resultList.addAll((expression.<List<MetaExpression>>getValue()).stream().map(v -> extractValue(v, results, metaExpressionSerializer))
-                        .collect(Collectors.toList()));
+                try{
+                    resultList.addAll((expression.<List<MetaExpression>>getValue()).stream().map(v -> extractValue(v, results, metaExpressionSerializer))
+                            .collect(Collectors.toList()));
+                } catch (ConcurrentModificationException cme){
+                    throw new RobotConcurrentModificationException(cme);
+                }
                 result = resultList;
                 break;
             case OBJECT:

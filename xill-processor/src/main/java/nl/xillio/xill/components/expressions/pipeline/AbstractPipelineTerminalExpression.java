@@ -20,9 +20,11 @@ import nl.xillio.xill.api.components.InstructionFlow;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.Processable;
 import nl.xillio.xill.api.components.WrappingIterator;
+import nl.xillio.xill.api.errors.RobotConcurrentModificationException;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 
 /**
  * This class represent the base implementation of a function that will reduce an iterable input to a summary.
@@ -40,8 +42,13 @@ public abstract class AbstractPipelineTerminalExpression implements Processable 
     @Override
     public InstructionFlow<MetaExpression> process(Debugger debugger) {
         MetaExpression iterableValue = input.process(debugger).get();
-
-        return InstructionFlow.doResume(reduce(iterableValue, debugger));
+        MetaExpression reduced;
+        try {
+            reduced = reduce(iterableValue, debugger);
+        }catch(ConcurrentModificationException e){
+            throw new RobotConcurrentModificationException(e);
+        }
+        return InstructionFlow.doResume(reduced);
     }
 
     protected WrappingIterator iterate(MetaExpression expression) {
