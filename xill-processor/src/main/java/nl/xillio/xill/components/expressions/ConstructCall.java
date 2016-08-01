@@ -23,10 +23,12 @@ import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.components.ExpressionBuilderHelper;
+import nl.xillio.xill.api.errors.RobotConcurrentModificationException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 /**
@@ -81,6 +83,8 @@ public class ConstructCall implements Processable {
             return InstructionFlow.doResume(processor.process());
 
 
+        } catch(ConcurrentModificationException e){
+            debugger.handle(new RobotConcurrentModificationException(e));
         } catch (Throwable e) {
 
             // Catch all exceptions that happen in constructs. (Unsafe environment)
