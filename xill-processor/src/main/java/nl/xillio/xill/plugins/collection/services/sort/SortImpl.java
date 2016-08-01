@@ -43,7 +43,11 @@ public class SortImpl implements Sort {
         if (input instanceof List) {
             @SuppressWarnings("unchecked")
             List<?> list = (List<?>) input;
-            List<Object> sorted = list.stream().sorted(sorter).collect(Collectors.toList());
+            List<Object> sorted = list.stream().sorted((a,b) -> {
+                if(onKeys){ // comparing on keys in a list should always return the first key
+                    return 1;
+                } else
+                    return sorter.compare(a,b);}).collect(Collectors.toList());
             results.put(list, sorted);
 
             // Sort recursive
