@@ -201,7 +201,8 @@ public class SettingsDialog extends FXMLDialog {
     }
 
     private void setShortcutHandler(final TextField tf) {
-        tf.addEventHandler(KeyEvent.ANY, this::handleShortcut);
+        tf.addEventFilter(KeyEvent.ANY, this::handleShortcut);
+        tf.setContextMenu(new ContextMenu()); // Disable context menu
     }
 
     private void handleShortcut(KeyEvent event) {
@@ -217,9 +218,7 @@ public class SettingsDialog extends FXMLDialog {
             return;
         }
 
-
         String shortcut = getShortCutPattern(event);
-
         if (shortcut != null) {
             if (FXController.hotkeys.findShortcutInDialog(getScene(), shortcut) == null) {
                 tf.setText(shortcut);
@@ -230,7 +229,7 @@ public class SettingsDialog extends FXMLDialog {
     }
 
     private String getShortCutPattern(KeyEvent event) {
-        String modifiers = (event.isControlDown() ? "Ctrl+" : "") +
+        final String modifiers = (event.isControlDown() ? "Ctrl+" : "") +
                 (event.isMetaDown() ? "Meta+" : "") +
                 (event.isAltDown() ? "Alt+" : "") +
                 (event.isShiftDown() ? "Shift+" : "");
@@ -239,8 +238,11 @@ public class SettingsDialog extends FXMLDialog {
             // This is an F* key.
             return modifiers + event.getCode().getName().toUpperCase();
         } else if (event.getEventType() == KeyEvent.KEY_PRESSED && !modifiers.isEmpty()) {
+            final String text = event.getText().toUpperCase();
             // This is any other key holding a text value. We require there to be a modifier.
-            return modifiers + event.getCode().getName();
+            if (text.length() == 1 && text.charAt(0) >= 33 && text.charAt(0) <= 127) {
+                return modifiers + text;
+            }
         }
 
         return null;
