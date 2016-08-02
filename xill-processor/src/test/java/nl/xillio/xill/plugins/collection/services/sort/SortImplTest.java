@@ -21,6 +21,8 @@ import java.util.*;
 
 import static nl.xillio.xill.plugins.collection.services.sort.SortImpl.Sorter;
 import static nl.xillio.xill.plugins.collection.services.sort.SortImpl.getPriorityIndex;
+import static nl.xillio.xill.plugins.collection.services.sort.SortImplTest.SortHelpers.createTestMap;
+import static nl.xillio.xill.plugins.collection.services.sort.SortImplTest.SortHelpers.testMapOrder;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -41,7 +43,7 @@ public class SortImplTest {
     }
 
     @Test
-    public void testAsSortedListOnKeys() throws Exception {
+    public void testAsSortedList() throws Exception {
 
         // Setting up variables
         final String string              = "This is also a unit test";
@@ -90,6 +92,33 @@ public class SortImplTest {
         assertEquals(output.get(1), string);
     }
 
+    @Test
+    public void testAsSortedMap() throws Exception{
+        LinkedHashMap<Object, Object> output = createTestMap(false, false, Sorter.NORMAL);
+        testMapOrder(output, 1,0,0,1);
+
+        output = createTestMap(true, false, Sorter.NORMAL);
+        testMapOrder(output, 1,0,1,0);
+
+        output = createTestMap(false, true, Sorter.NORMAL);
+        testMapOrder(output, 0,1,0,1);
+
+        output = createTestMap(true, true, Sorter.NORMAL);
+        testMapOrder(output, 0,1,1,0);
+
+        output = createTestMap(false, false, Sorter.REVERSE);
+        testMapOrder(output, 0,1,0,1);
+
+        output = createTestMap(true, false, Sorter.REVERSE);
+        testMapOrder(output, 0,1,0,1);
+
+        output = createTestMap(false, true, Sorter.REVERSE);
+        testMapOrder(output, 1,0,0,1);
+
+        output = createTestMap(true, true, Sorter.REVERSE);
+        testMapOrder(output, 1,0,0,1);
+    }
+
 
     @Test
     public void testGetPriorityIndex() throws Exception {
@@ -99,6 +128,59 @@ public class SortImplTest {
         assertEquals(getPriorityIndex(new Double(9)), 3);
         assertEquals(getPriorityIndex(new Character('b')), 4);
         assertEquals(getPriorityIndex(null), 5);
+    }
+
+    static class SortHelpers{
+        /**
+         * Helper function to run the {@link SortImpl#asSortedMap(Object, boolean, boolean, Sorter, IdentityHashMap)} with various parameters.
+         * @param recursive a {@link Boolean} to indicate if the map should be recursively sorted
+         * @param onKeys a {@link Boolean} to indicate if the map should be sorted on keys (values if {@code false})
+         * @param sorter a {@link Sorter} object which will be used to sort
+         * @return a {@link LinkedHashMap} containing the sorted objects
+         */
+        public static LinkedHashMap<Object, Object> createTestMap(boolean recursive, boolean onKeys, Sorter sorter) {
+            IdentityHashMap<Object, Object> ihm = new IdentityHashMap<>();
+            LinkedHashMap<Object, Object> input = new LinkedHashMap<>();
+            input.put("akey1", "value1");
+
+            LinkedHashMap<Object, Object> innerMap = new LinkedHashMap<>();
+            innerMap.put("key2", "value2");
+            innerMap.put("3yek", "3eulav");
+            input.put("innerMap", innerMap);
+
+            return (LinkedHashMap<Object, Object>) SortImpl.asSortedMap(input, recursive, onKeys, sorter, ihm);
+        }
+
+        /**
+         * Helper function to test that the position of all elements in the result map is correct.
+         * @param output the output of {@link SortImpl#asSortedMap(Object, boolean, boolean, Sorter, IdentityHashMap)}
+         * @param positionKey1 the expected position of the element: <"akey1", "value1">
+         * @param positionInnerMap the expected position of the inner map
+         * @param positionKey2 the expected position of the element: <"key2", "value2"> within the inner map
+         * @param position3yek the expected position of the element: <"3yek", "3eulav"> within the inner map
+         */
+        public static void testMapOrder(Object output, int positionKey1, int positionInnerMap, int positionKey2, int position3yek){
+            LinkedHashMap<Object, Object> out = (LinkedHashMap<Object, Object>) output;
+            Iterator iterator = out.entrySet().iterator();
+            Map.Entry<Object, Object>[] elements = new Map.Entry[2];
+
+            elements[0] = (Map.Entry<Object, Object>) iterator.next();
+            elements[1] = (Map.Entry<Object, Object>) iterator.next();
+
+            LinkedHashMap<String, String> innerMap = (LinkedHashMap<String, String>) elements[positionInnerMap].getValue();
+            Iterator innerIterator = innerMap.entrySet().iterator();
+            Map.Entry<String, String>[] innerElements = new Map.Entry[2];
+
+            innerElements[0] = (Map.Entry<String, String>) innerIterator.next();
+            innerElements[1] = (Map.Entry<String, String>) innerIterator.next();
+
+            assertTrue(elements[positionInnerMap].getValue() instanceof LinkedHashMap);
+            assertEquals(elements[positionKey1].getValue(), "value1");
+            assertEquals(innerElements[positionKey2].getValue(), "value2");
+            assertEquals(innerElements[position3yek].getValue(), "3eulav");
+        }
+
+
     }
 
 }
