@@ -96,13 +96,13 @@ public class CallbotExpression implements Processable {
                 }
 
                 InstructionFlow<MetaExpression> result = processor.getRobot().process(childDebugger);
-
+                
                 if (result.hasValue()) {
                     return InstructionFlow.doResume(result.get());
                 }
             } catch (Exception e) {
                 if (e instanceof RobotRuntimeException) {
-                    throw (RobotRuntimeException) e;
+                    throw new RobotRuntimeException("in called robot: '" + otherRobot.getName() + "'",e);
                 }
                 throw new RobotRuntimeException("An exception occurred while evaluating " + otherRobot.getAbsolutePath(), e);
             } finally {
