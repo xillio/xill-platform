@@ -18,6 +18,7 @@ package nl.xillio.xill.components.instructions;
 import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.components.*;
 import nl.xillio.xill.api.errors.NotImplementedException;
+import nl.xillio.xill.api.errors.RobotConcurrentModificationException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 
 import java.util.*;
@@ -124,7 +125,7 @@ public class ForeachInstruction extends CompoundInstruction {
         try {
             return doIterations(debugger, valueIterable, keySet);
         } catch (ConcurrentModificationException e) {
-            throw new RobotRuntimeException("You cannot modify a collection while you are iterating over it.", e);
+            throw new RobotConcurrentModificationException(e);
         }
     }
 
