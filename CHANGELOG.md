@@ -31,3 +31,5 @@ All notable changes to this project will be documented in this file.
 * Web.download now creates all required folders [CTC-1532]
 * Allow custom character sets in Stream.write [CTC-1628]
 * Display a descriptive error when a concurrent modification occurs [CTC-1650]
+* File exists dialog does not overwrite file [CTC-1647]
+* Enable change of casing in robot name [CTC-1444]

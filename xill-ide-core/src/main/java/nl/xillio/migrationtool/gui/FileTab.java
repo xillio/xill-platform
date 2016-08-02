@@ -300,4 +300,16 @@ public class FileTab extends Tab implements Initializable, ChangeListener<Editor
             }
         }
     }
+
+    /**
+     * Reset source of the tab
+     *
+     * @param documentPath New document path
+     * @param projectPath New project path
+     */
+    public void resetSource(final File documentPath, final File projectPath) {
+        this.documentPath = documentPath;
+        this.projectPath = projectPath;
+        reload();
+    }
 }
