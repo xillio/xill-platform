@@ -179,8 +179,6 @@ public class SortImplTest {
             assertEquals(innerElements[positionKey2].getValue(), "value2");
             assertEquals(innerElements[position3yek].getValue(), "3eulav");
         }
-
-
     }
 
 }
