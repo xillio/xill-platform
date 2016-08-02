@@ -16,13 +16,21 @@
 package nl.xillio.xill.api;
 
 import nl.xillio.xill.api.components.EventEx;
+import nl.xillio.xill.api.components.Instruction;
+import nl.xillio.xill.api.components.InstructionFlow;
+import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.ErrorHandlingPolicy;
+
+import java.util.List;
+import java.util.Stack;
 
 /**
  * This class represents a debugger that can be stopped (this is only behaviour that is supported).
  * Debugger can stop if error occurs (this is optional).
  */
 public class StoppableDebugger extends NullDebugger {
+
+    private final Stack<Instruction> currentStack = new Stack<>();
     private ErrorHandlingPolicy errorHandlingPolicy;
     private boolean stop = false;
     private boolean errorOccurred = false;
@@ -33,6 +41,23 @@ public class StoppableDebugger extends NullDebugger {
         this.parent = parent;
     }
 
+    @Override
+    public void startInstruction(final nl.xillio.xill.api.components.Instruction instruction) {
+        Instruction internalInstruction = (Instruction) instruction;
+        currentStack.add(internalInstruction);
+    }
+
+    @Override
+    public void endInstruction(final nl.xillio.xill.api.components.Instruction instruction, final InstructionFlow<MetaExpression> result) {
+        currentStack.pop();
+    }
+
+    @Override
+    public int getStackDepth() {
+        int stackSize = currentStack.size();
+        // The stack size is 0 for variable initializers in included robots, those should be on depth 0 too
+        return stackSize > 0 ? stackSize - 1 : 0;
+    }
 
     @Override
     public void stop() {
@@ -82,5 +107,10 @@ public class StoppableDebugger extends NullDebugger {
      */
     public void setStopOnError(boolean stopOnError) {
         this.stopOnError = stopOnError;
+    }
+
+    @Override
+    public List<Instruction> getStackTrace() {
+        return currentStack;
     }
 }
