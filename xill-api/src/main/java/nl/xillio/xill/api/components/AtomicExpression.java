@@ -98,7 +98,7 @@ class AtomicExpression extends MetaExpression {
     }
 
     @Override
-    public MetaExpression copy() {
+    public AtomicExpression copy() {
         return new AtomicExpression(this.expressionValue);
     }
 

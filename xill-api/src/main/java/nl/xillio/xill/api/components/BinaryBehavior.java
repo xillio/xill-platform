@@ -60,6 +60,6 @@ class BinaryBehavior extends AbstractBehavior {
     @Override
     public Expression copy() {
         // Cannot create a copy of a stream
-        return null;
+        return ExpressionBuilderHelper.NULL;
     }
 }
