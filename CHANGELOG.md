@@ -34,3 +34,4 @@ All notable changes to this project will be documented in this file.
 * File exists dialog does not overwrite file [CTC-1647]
 * Enable change of casing in robot name [CTC-1444]
 * Collection.sort onKeys parameter is ignored for lists [CTC-1700]
+* Hotkey input fields can contain illegal keywords [CTC-1696]
