@@ -20,7 +20,8 @@ import org.testng.annotations.Test;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * This class tests the {@link BinaryBehavior} class.
@@ -68,7 +69,7 @@ public class BinaryBehaviorTest {
 
     @Test
     public void testCopy() throws Exception {
-        assertNull(behavior.copy());
+        assertEquals(behavior.copy(), ExpressionBuilderHelper.NULL);
     }
 
 }
