@@ -18,6 +18,7 @@ package nl.xillio.xill.plugins.jdbc.data;
 import me.biesaart.utils.Log;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.MetaExpressionIterator;
+import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.jdbc.services.ExpressionConverter;
 import org.slf4j.Logger;
@@ -76,10 +77,11 @@ public class ResultSetIterator extends MetaExpressionIterator<Object> {
     public boolean hasNext() {
         if (hasNext == null) {
             try {
-                hasNext = resultSet.next();
+                hasNext = !resultSet.isClosed() && resultSet.next();
             } catch (SQLException e) {
-                LOGGER.error("Failed to get next row", e);
                 hasNext = false;
+                throw new OperationFailedException("perform SQL operation", "Failed to get next row.",
+                        "Please check whether your database is accessible or faulty", e);
             }
         }
         return hasNext;
