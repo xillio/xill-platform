@@ -84,6 +84,10 @@ public abstract class MetaExpression implements Expression, Processable {
         }
     }
 
+    protected boolean isOpen(){
+        return !isClosed;
+    }
+
     /**
      * Stores a value in the {@link MetadataExpressionPool} and default the key to the class of the object as returned by {@link Object#getClass()}.
      *
