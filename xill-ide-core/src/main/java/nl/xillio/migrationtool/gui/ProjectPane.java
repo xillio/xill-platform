@@ -192,8 +192,8 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         menuOpenFolder.setOnAction(e -> new Thread(() ->{
             try {
                 Desktop.getDesktop().open(getCurrentItem().getValue().getKey().getParentFile());
-            } catch (IOException e1) {
-                LOGGER.error("Failed to open containing folder.", e1);
+            } catch (IOException ex) {
+                LOGGER.error("Failed to open containing folder.", ex);
             }
         }).start());
 
