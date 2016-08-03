@@ -67,6 +67,13 @@ public class ObjectExpressionTest {
         assertEquals(objectExpression.getSize(), copy.getSize());
     }
 
+    @Test (expectedExceptions = IllegalStateException.class)
+    public void testCopyClosed() throws Exception{
+        ObjectExpression copy = objectExpression.copy();
+        copy.close();
+        copy.copy();
+    }
+
     @Test
     public void testGetChildren() throws Exception {
         List<Processable> children = (List<Processable>) objectExpression.getChildren();

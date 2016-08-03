@@ -59,6 +59,7 @@ class ListExpression extends CollectionExpression {
 
     @Override
     public ListExpression copy() {
+        assertOpen();
         return new ListExpression(value.stream().map(MetaExpression::copy).collect(Collectors.toList()));
     }
 

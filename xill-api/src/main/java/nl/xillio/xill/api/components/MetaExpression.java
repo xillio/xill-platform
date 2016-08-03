@@ -74,7 +74,7 @@ public abstract class MetaExpression implements Expression, Processable {
         return metadataPool.get(clazz);
     }
 
-    private void assertOpen() {
+    protected void assertOpen() {
         if (isClosed()) {
             String message = "This expression has already been closed.";
             if (DEBUG) {
@@ -271,7 +271,7 @@ public abstract class MetaExpression implements Expression, Processable {
     /**
      * Checks equality on meta expression on the value level. This uses the equals method.
      *
-     * @param other the other meta expression
+     * @param other the other metaclose expression
      * @return true if and only if the expressions have equal value
      */
     public boolean valueEquals(final MetaExpression other) {

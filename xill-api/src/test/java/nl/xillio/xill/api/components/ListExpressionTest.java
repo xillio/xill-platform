@@ -67,6 +67,13 @@ public class ListExpressionTest {
             assertTrue(children.contains(meta));
     }
 
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void testCopyClosed() throws Exception{
+        ListExpression copy = expression.copy();
+        copy.close();
+        copy.copy();
+    }
+
     @Test
     public void testGetSize() throws Exception {
         assertEquals(expression.getSize(), 3);
