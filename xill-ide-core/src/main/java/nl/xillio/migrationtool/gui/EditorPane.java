@@ -31,6 +31,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebView;
@@ -39,6 +40,7 @@ import nl.xillio.migrationtool.BreakpointPool;
 import nl.xillio.migrationtool.Loader;
 import nl.xillio.migrationtool.gui.editor.AceEditor;
 import nl.xillio.xill.util.HotkeysHandler;
+import nl.xillio.xill.util.settings.Settings;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -188,6 +190,7 @@ public class EditorPane extends AnchorPane implements FileTabComponent, EventHan
 
         // Prepare JavaFX Text node
         final Text text = new Text();
+        text.setFont(new Font(Integer.valueOf(FXController.settings.simple().get(Settings.SETTINGS_EDITOR, Settings.PRINTER_FONT_SIZE))));
         text.setTextAlignment(TextAlignment.LEFT);
         text.setWrappingWidth(pageLayout.getPrintableWidth());
 
