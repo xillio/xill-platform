@@ -100,7 +100,7 @@ class AtomicExpression extends MetaExpression {
     @Override
     public AtomicExpression copy() {
         assertOpen();
-        return new AtomicExpression(this.expressionValue);
+        return new AtomicExpression(this.expressionValue.copy());
     }
 
     @Override
