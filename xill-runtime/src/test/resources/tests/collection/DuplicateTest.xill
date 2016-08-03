@@ -1,0 +1,37 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Specification: duplicate MUST duplicate the collection, and changes to the first MUST NOT change the duplicate
+ * Input: A list and object
+ * Expected: The duplicates match the duplicated, changes to the duplicated collection don't change the duplicate
+ */
+
+use Assert, Collection;
+
+// A list and object to duplicate, and an extra copy to compare the duplicate against.
+var list = [ 5, "yes" ];
+var object = { "a": 5, "not": "yes" };
+
+// Duplicate and assert equality.
+var duplicateList = Collection.duplicate(list);
+var duplicateObject = Collection.duplicate(object);
+Assert.equal(duplicateList, list);
+Assert.equal(duplicateObject, object);
+
+// Add items to the duplicated collections, and assert the duplicates have not changed
+list[] = "foo";
+object["bar"] = "foo";
+Assert.equal(duplicateList, [ 5, "yes" ]);
+Assert.equal(duplicateObject, { "a": 5, "not": "yes" });
