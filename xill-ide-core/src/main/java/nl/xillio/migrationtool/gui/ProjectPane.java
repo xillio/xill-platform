@@ -189,13 +189,18 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         menuUpload.setOnAction(e -> uploadButtonPressed());
 
         menuOpenFolder = new MenuItem("Open containing folder");
-        menuOpenFolder.setOnAction(e -> new Thread(() ->{
-            try {
-                Desktop.getDesktop().open(getCurrentItem().getValue().getKey().getParentFile());
-            } catch (IOException ex) {
-                LOGGER.error("Failed to open containing folder.", ex);
-            }
-        }).start());
+        menuOpenFolder.setOnAction(e -> {
+            Thread openContainingFolderTread = new Thread(() ->{
+                try {
+                    Desktop.getDesktop().open(getCurrentItem().getValue().getKey().getParentFile());
+                } catch (IOException ex) {
+                    LOGGER.error("Failed to open containing folder.", ex);
+                }
+            });
+            openContainingFolderTread.start();
+        });
+
+
 
         // Create the context menu.
         ContextMenu menu = new ContextMenu(menuCut, menuCopy, menuPaste, menuRename, menuDelete, menuUpload);
