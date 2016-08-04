@@ -182,7 +182,7 @@ public class RunBulkExpression implements Processable {
                     if (e instanceof RobotRuntimeException) {
                         int line = childDebugger.getStackTrace().get(childDebugger.getStackDepth()).getLineNumber();
                         childDebugger.endInstruction(null,null);
-                        throw new RobotRuntimeException("Caused by line " + line + " in robot: '" + calledRobotFile.getName() + "'",e);
+                        throw new RobotRuntimeException("Caused by '" + calledRobotFile.getName() + "' (line " + line + ")",e);
                     }
                     throw new RobotRuntimeException("An exception occurred while evaluating " + calledRobotFile.getAbsolutePath(), e);
                 } finally {

@@ -107,7 +107,7 @@ public class CallbotExpression implements Processable {
                 if (e instanceof RobotRuntimeException) {
                     int line = childDebugger.getStackTrace().get(childDebugger.getStackDepth()).getLineNumber();
                     childDebugger.endInstruction(null,null); //pop from stack so stacktrace can be made.
-                    throw new RobotRuntimeException("Caused by line " + line + " in robot: '" + otherRobot.getName() + "'",e);
+                    throw new RobotRuntimeException("Caused by '" + otherRobot.getName() + "' (line " + line + ")",e);
                 }
                 throw new RobotRuntimeException("An exception occurred while evaluating " + otherRobot.getAbsolutePath(), e);
             } finally {
