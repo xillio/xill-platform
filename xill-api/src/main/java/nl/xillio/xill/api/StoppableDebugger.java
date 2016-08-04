@@ -43,20 +43,12 @@ public class StoppableDebugger extends NullDebugger {
 
     @Override
     public void startInstruction(final nl.xillio.xill.api.components.Instruction instruction) {
-        Instruction internalInstruction = (Instruction) instruction;
-        currentStack.add(internalInstruction);
+        currentStack.add(instruction);
     }
 
     @Override
     public void endInstruction(final nl.xillio.xill.api.components.Instruction instruction, final InstructionFlow<MetaExpression> result) {
         currentStack.pop();
-    }
-
-    @Override
-    public int getStackDepth() {
-        int stackSize = currentStack.size();
-        // The stack size is 0 for variable initializers in included robots, those should be on depth 0 too
-        return stackSize > 0 ? stackSize - 1 : 0;
     }
 
     @Override
@@ -107,6 +99,13 @@ public class StoppableDebugger extends NullDebugger {
      */
     public void setStopOnError(boolean stopOnError) {
         this.stopOnError = stopOnError;
+    }
+
+    @Override
+    public int getStackDepth() {
+        int stackSize = currentStack.size();
+        // The stack size is 0 for variable initializers in included robots, those should be on depth 0 too
+        return stackSize > 0 ? stackSize - 1 : 0;
     }
 
     @Override

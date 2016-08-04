@@ -300,9 +300,9 @@ public class RobotControls implements EventHandler<KeyEvent>, ErrorHandlingPolic
 
         LOGGER.error("Exception occurred in robot", e);
         if (e instanceof RobotRuntimeException) {
-            if(exceptionList.size() == 1){ //exception in root robot
+            if (exceptionList.size() == 1) { //exception in root robot
                 log.error(e.getMessage());
-            }else { //exception in called robot
+            } else { //exception in called robot
                 String message = String.join("\n\t", Lists.reverse(exceptionList.stream().map(f -> f.getMessage()).collect(Collectors.toList())));
                 log.error(message);
             }

@@ -20,9 +20,7 @@ import nl.xillio.plugins.XillPlugin;
 import nl.xillio.xill.Xill;
 import nl.xillio.xill.XillProcessor;
 import nl.xillio.xill.api.Debugger;
-import nl.xillio.xill.api.Issue;
 import nl.xillio.xill.api.LogUtil;
-import nl.xillio.xill.api.StoppableDebugger;
 import nl.xillio.xill.api.components.*;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
@@ -36,7 +34,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Stack;
 
 /**
  * This class represents calling another robot
@@ -99,15 +96,15 @@ public class CallbotExpression implements Processable {
                 }
 
                 InstructionFlow<MetaExpression> result = processor.getRobot().process(childDebugger);
-                
+
                 if (result.hasValue()) {
                     return InstructionFlow.doResume(result.get());
                 }
             } catch (Exception e) {
                 if (e instanceof RobotRuntimeException) {
                     int line = childDebugger.getStackTrace().get(childDebugger.getStackDepth()).getLineNumber();
-                    childDebugger.endInstruction(null,null); //pop from stack so stacktrace can be made.
-                    throw new RobotRuntimeException("Caused by '" + otherRobot.getName() + "' (line " + line + ")",e);
+                    childDebugger.endInstruction(null, null); //pop from stack so stacktrace can be made.
+                    throw new RobotRuntimeException("Caused by '" + otherRobot.getName() + "' (line " + line + ")", e);
                 }
                 throw new RobotRuntimeException("An exception occurred while evaluating " + otherRobot.getAbsolutePath(), e);
             } finally {
