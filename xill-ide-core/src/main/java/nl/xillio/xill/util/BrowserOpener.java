@@ -28,13 +28,16 @@ import java.net.URI;
  */
 public class BrowserOpener {
 
+    // Class is a library and should not be initialized
+    private BrowserOpener(){}
+
 
     /**
      * Checks if the currently used platform supports opening a browser window from xill.
      * @return a {@link Boolean} which is {@code true} if opening a browswer is supported on the current platform and {@code false} otherwise.
      */
     public static boolean browserIsSupported(){
-        return (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE));
+        return Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE);
     }
 
     /**
