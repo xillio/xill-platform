@@ -26,6 +26,10 @@ The return value of this construct depends on the type of query. If the query re
 an iterator that will iterate over every row in that set. If the query is an update, insert or delete query it
 will return the number of affected rows.
 
+If you want to pass a string containing a colon you could either escape the colon by preceding the colon with two
+backslashes (\\\\:), or insert the string in an object and use named parameters (see below) with that object.
+See an example of the latter solution in the code examples.
+
 ## Parameters
 If your query requires input it is generally bad practice to use string concatenation to build your own queries.
 The correct way to do this it by using parameterization. This you can do in two ways.
@@ -106,6 +110,24 @@ If you use this syntax, your parameters input should be a list containing the sa
 
                 // Insert a row. Notice that we now use a different notation for the parameters
                 db.query("INSERT INTO people (firstName, lastName) VALUES (:firstName, :lastName)", object);
+            </code>
+            <header>Use a string containing a colon as a parameter</header>
+            <code>
+                use Oracle as db, System;
+
+                // Connect to your database
+                db.connect(
+                    "jdbc:oracle:thin:" ::
+                    "scott/tiger" ::
+                    "@//localhost:1521/myservicename"
+                );
+
+                // Select data from table where version contains a colon
+                var rows = db.query("SELECT * FROM software WHERE version = :myVersion" , {"myVersion" : "1.0:2"});
+
+                foreach(row in rows) {
+                    System.print("Software: " :: row.name);
+                }
             </code>
         </example>
     </examples>
