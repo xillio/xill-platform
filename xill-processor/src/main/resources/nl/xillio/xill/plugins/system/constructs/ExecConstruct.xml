@@ -18,17 +18,28 @@
 -->
 <function>
     <description>
-Runs an application and returns the output.
+Runs a command line application and returns the output of the process.
 
-The result will contain a list of errors, a list of output, the runtime in milliseconds and the process' exit code.
-The directory parameter is the working directory where you would like the command to be executed.
+`arguments` must contain a valid path to an
+executable file as the first value, optionally followed by (command-line) arguments. These arguments should be specified
+one by one. `directory` is the working directory where the command will be executed.
+
+Returns an OBJECT containing:
+
+|Field|Description|
+|-----|-----------|
+|`errors`|A LIST of error messages|
+|`output`|A LIST of output lines|
+|`runtime`|The runtime in milliseconds|
+|`exitCode`|The exit code of the process|
+
     </description>
     <examples>
         <example title="Usage">
             <header>
-            Running on windows.
-
-            Possible output: {"errors":[],"output":["test"],"runtime":14,"exitCode":0}.
+            In windows you can execute a batch command by running `cmd.exe` with the `/C` parameter. The example below
+            prints the word `test`.
+            Example output: `{"errors":[],"output":["test"],"runtime":14,"exitCode":0}`
             </header>
             <code>
                 use System;
@@ -38,18 +49,19 @@ The directory parameter is the working directory where you would like the comman
             </code>
         </example>
         <example title="Usage">
-            <header>
+            <header format="MD">
             Copying a file in a specified working directory. In this specific example,
-            the working directory is specified by C:/tmp. The source file source.jpg is copied and
+            the working directory is specified as `C:/tmp`. The source file source.jpg is copied and
             the name of the new file is target.jpg. The copy, i.e. target.jpg, is created in the
             specified working directory, in this case C:/tmp.
 
-            Possible output: {"errors":[],"output":["        1 file(s) copied."],"runtime":19,"exitCode":0}.
+            Example output: {"errors":[],"output":["        1 file(s) copied."],"runtime":19,"exitCode":0}.
             </header>
             <code>
                 use System;
 
-                System.exec(["cmd.exe", "/C", "copy source.jpg target.jpg"], "C:/tmp")
+                var result = System.exec(["cmd.exe", "/C", "copy source.jpg target.jpg"], "C:/tmp");
+                System.print(result);
             </code>
         </example>
     </examples>
