@@ -80,7 +80,7 @@ public class ResultSetIterator extends MetaExpressionIterator<Object> {
                 hasNext = !resultSet.isClosed() && resultSet.next();
             } catch (SQLException e) {
                 hasNext = false;
-                throw new OperationFailedException("perform SQL operation", "Failed to get next row.",
+                throw new OperationFailedException("perform SQL operation", "Failed to get next row: " + e.getMessage(),
                         "Please check whether your database is accessible or faulty", e);
             }
         }
