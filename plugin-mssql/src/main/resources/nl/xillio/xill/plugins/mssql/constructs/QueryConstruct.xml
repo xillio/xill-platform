@@ -20,7 +20,7 @@
     <description>
 Execute a single SQL query.
 The connection parameter is optional, if not given the last created connection will be used.
-the timeout parameter is optional. The default is set to 30 seconds. when the query takes longer than the given
+The timeout parameter is optional. The default is set to 30 seconds. When the query takes longer than the given
 timeout it will stop. A timeout of 0 means that there is no limit.
 The return value of this construct depends on the type of query. If the query results in a result set it will return
 an iterator that will iterate over every row in that set. If the query is an update, insert or delete query it
