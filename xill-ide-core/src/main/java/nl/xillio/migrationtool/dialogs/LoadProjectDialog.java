@@ -28,39 +28,29 @@ import java.io.File;
 /**
  * A dialog to add a new project.
  */
-public class NewProjectDialog extends FXMLDialog {
+public class LoadProjectDialog extends FXMLDialog {
     @FXML
     private TextField tfprojectname;
     @FXML
     private TextField tfprojectfolder;
 
     private final ProjectPane projectPane;
-    private String folderValue;
-    private String nameValue = "";
+    private boolean hasBeenTypedInProjectFolder;
 
     /**
      * Default constructor.
      *
      * @param projectPane the projectPane to which this dialog is attached to.
      */
-    public NewProjectDialog(final ProjectPane projectPane) {
+    public LoadProjectDialog(final ProjectPane projectPane) {
         super("/fxml/dialogs/NewProject.fxml");
 
         this.projectPane = projectPane;
-        setTitle("New Project");
-        String initialFolder = FXController.settings.simple().get(Settings.SETTINGS_GENERAL, Settings.DEFAULT_PROJECT_LOCATION);
-        setProjectFolder(initialFolder + File.separator);
-        folderValue = initialFolder;
-        tfprojectname.textProperty().addListener(this::typedInProjectName);
-    }
+        setTitle("Load Project");
 
-    private void typedInProjectName(Object source, String oldValue, String newValue) {
-        // The name changed. See if we need to fix this in the project folder field.
-        // This we only do if the project folder field remains untouched
-        nameValue = newValue;
-        setProjectFolder(folderValue + File.separator + nameValue);
-    }
 
+        tfprojectfolder.setOnKeyTyped(e -> hasBeenTypedInProjectFolder = true);
+    }
 
     /**
      * Set the default project folder
@@ -79,10 +69,13 @@ public class NewProjectDialog extends FXMLDialog {
 
         File result = chooser.showDialog(getScene().getWindow());
         if (result != null) {
-            folderValue = result.getPath();
-            typedInProjectName(null,null,nameValue);
-        }
+            tfprojectfolder.setText(result.getPath());
 
+            // If we have no project name yet we want to auto fill this
+            if (tfprojectname.getText().isEmpty()) {
+                tfprojectname.setText(result.getName());
+            }
+        }
     }
 
     @FXML
@@ -95,7 +88,7 @@ public class NewProjectDialog extends FXMLDialog {
         String projectName = tfprojectname.getText();
         String projectFolder = tfprojectfolder.getText();
 
-        if (projectPane.newProject(projectName, projectFolder, "",true)) {
+        if (projectPane.newProject(projectName, projectFolder, "",false)) {
             close();
         }
     }

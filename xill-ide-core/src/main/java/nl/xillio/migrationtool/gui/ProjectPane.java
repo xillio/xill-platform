@@ -209,6 +209,9 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     private void addNewButtonContextMenu() {
+        MenuItem menuLoadProject = new MenuItem("Load project", ProjectPane.createIcon(ProjectPane.NEW_FOLDER_ICON));
+        menuLoadProject.setOnAction(e -> loadProjectButtonPressed());
+
         MenuItem menuNewProject = new MenuItem("New project", ProjectPane.createIcon(ProjectPane.NEW_PROJECT_ICON));
         menuNewProject.setOnAction(e -> newProjectButtonPressed());
 
@@ -220,7 +223,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         menuNewBotFromTemplate = new Menu("New robot from template...");
 
-        ContextMenu menu = new ContextMenu(menuNewProject, menuNewFolder, menuNewBot, menuNewBotFromTemplate);
+        ContextMenu menu = new ContextMenu(menuLoadProject,menuNewProject, menuNewFolder, menuNewBot, menuNewBotFromTemplate);
         btnNew.setOnAction(e -> {
             Bounds bounds = btnNew.localToScreen(btnNew.getBoundsInParent());
             generateTemplateMenu();
@@ -424,6 +427,11 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
     /* End of bulk file functionality. */
 
+    @FXML
+    private void loadProjectButtonPressed(){
+        LoadProjectDialog dlg = new LoadProjectDialog(this);
+        dlg.showAndWait(); //placeholder method
+    }
     @FXML
     private void newProjectButtonPressed() {
         NewProjectDialog dlg = new NewProjectDialog(this);
@@ -743,7 +751,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             if (!settings.simple().getBoolean(Settings.INFO, Settings.HAS_RUN)) {
                 if (defaultProjectPath.exists()) {
                     // Projects must have an absolute directory
-                    newProject(DEFAULT_PROJECT_NAME, defaultProjectPath.getAbsolutePath(), "");
+                    newProject(DEFAULT_PROJECT_NAME, defaultProjectPath.getAbsolutePath(), "",true);
                 }
                 // Mark that the IDE has run for the first time
                 settings.simple().save(Settings.INFO, Settings.HAS_RUN, true);
@@ -781,7 +789,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
      * @param description the description of the project
      * @return whether creating the project was successful
      */
-    public boolean newProject(final String name, final String folder, final String description) {
+    public boolean newProject(final String name, final String folder, final String description,final boolean isNew) {
         // Check if the project is already opened
         boolean projectDoesntExist = root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
                 && findItemByPath(root, folder) == null;
@@ -814,10 +822,12 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         // Create the project.
         ProjectSettings project = new ProjectSettings(name, folder, description);
         settings.project().save(project);
-        try {
-            FileUtils.forceMkdir(new File(project.getFolder()));
-        } catch (IOException e) {
-            LOGGER.error("Failed to create project directory", e);
+        if(isNew) {
+            try {
+                FileUtils.forceMkdir(new File(project.getFolder()));
+            } catch (IOException e) {
+                LOGGER.error("Failed to create project directory", e);
+            }
         }
         addProject(project);
 
