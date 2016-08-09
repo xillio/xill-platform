@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 
 ### Change
 
+* Removed easter egg [CTC-1708]
 * Show the full path to the document on mouse-over on tabs in Xill IDE [CTC-1669]
 * MySQL no longer has to be installed manually [CTC-1676]
 * Remove paging from the Xill IDE Console [CTC-1593]
