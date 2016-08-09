@@ -20,9 +20,9 @@ import nl.xillio.xill.api.io.IOStream;
 /**
  * This class represents a null implementation of the expression class.
  *
- * @author Thomas biesaart
+ * @author Thomas Biesaart
  */
-class AbstractBehavior implements Expression {
+abstract class AbstractBehavior implements Expression {
     private IOStream emptyStream;
 
     @Override
@@ -62,4 +62,7 @@ class AbstractBehavior implements Expression {
     public void close() {
         getBinaryValue().close();
     }
+
+    @Override
+    public abstract Expression copy();
 }
