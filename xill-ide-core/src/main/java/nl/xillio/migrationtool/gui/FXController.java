@@ -21,12 +21,10 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -54,10 +52,7 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -90,6 +85,8 @@ public class FXController implements Initializable, EventHandler<Event> {
     private Button btnSaveAs;
     @FXML
     private Button btnSaveAll;
+    @FXML
+    private Button btnPrint;
     @FXML
     private Button btnSettings;
     @FXML
@@ -375,13 +372,7 @@ public class FXController implements Initializable, EventHandler<Event> {
      * @return the tab that was opened or null if something went wrong
      */
     public FileTab openFile(final File file) {
-        FileTab tab = doOpenFile(file, file.toString().endsWith(XillEnvironment.ROBOT_EXTENSION));
-
-        if ("14".equals(new SimpleDateFormat("dM").format(new Date()))) {
-            iterate(tpnBots, new Random());
-        }
-
-        return tab;
+        return doOpenFile(file, file.toString().endsWith(XillEnvironment.ROBOT_EXTENSION));
     }
 
     /**
@@ -481,6 +472,14 @@ public class FXController implements Initializable, EventHandler<Event> {
     private void buttonSaveAll() {
         if (!btnSaveAll.isDisabled()) {
             tpnBots.getTabs().forEach(tab -> ((FileTab) tab).save());
+        }
+    }
+
+    @FXML
+    private void buttonPrint() {
+        Tab tab = tpnBots.getSelectionModel().getSelectedItem();
+        if (tab != null) {
+            ((FileTab) tab).getEditorPane().print();
         }
     }
 
@@ -746,17 +745,6 @@ public class FXController implements Initializable, EventHandler<Event> {
                         }
                 }
             }
-        }
-    }
-
-    private void iterate(Node node, Random random) {
-        if (node instanceof Pane) {
-            double randomness = (359.5 + random.nextDouble()) % 360;
-            node.setRotate(randomness * 2);
-        }
-
-        if (node instanceof Parent) {
-            ((Parent) node).getChildrenUnmodifiable().forEach(n -> iterate(n, random));
         }
     }
 
