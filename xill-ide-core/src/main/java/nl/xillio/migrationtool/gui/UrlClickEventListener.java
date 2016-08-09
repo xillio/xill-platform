@@ -47,7 +47,7 @@ public class UrlClickEventListener implements EventListener {
         }
 
         // if host == null, link to internal help file, link to external page otherwise
-        if(requestedPage.getHost() != null) {
+        if (requestedPage.getHost() != null) {
             if (BrowserOpener.browserIsSupported()) {
                 evt.preventDefault();
                 BrowserOpener.openBrowser(requestedPage);

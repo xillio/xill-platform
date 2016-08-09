@@ -259,23 +259,23 @@ public class SettingsDialog extends FXMLDialog {
     @FXML
     private void hlEulaClicked(final ActionEvent event) {
         URI uri;
-        try{
+        try {
             uri = new URI(EulaUtils.EULA_LOCATION);
         } catch (URISyntaxException e) {
-            LOGGER.error("Unable to parse EULA link (" + EulaUtils.EULA_LOCATION + ") as URI.",e);
+            LOGGER.error("Unable to parse EULA link (" + EulaUtils.EULA_LOCATION + ") as URI.", e);
             openEULAAlertWindow();
             return;
         }
 
-        if(BrowserOpener.browserIsSupported()){
+        if (BrowserOpener.browserIsSupported()) {
             BrowserOpener.openBrowser(uri);
-        } else{
+        } else {
             LOGGER.info("Could not open a browser (Desktop API is not supported).");
             openEULAAlertWindow();
         }
     }
 
-    private void openEULAAlertWindow(){
+    private void openEULAAlertWindow() {
         Alert alert = new Alert(Alert.AlertType.ERROR, "Unfortunately your system is not able to open this link." +
                 "\n\nPlease enter the following URL into a browser:\n" + EulaUtils.EULA_LOCATION);
         alert.setTitle("Compatibility");
@@ -578,10 +578,11 @@ public class SettingsDialog extends FXMLDialog {
                 LOGGER.error("Failed to open link: URI was not formed correctly.", e);
                 return;
             }
-            if(BrowserOpener.browserIsSupported())
+            if (BrowserOpener.browserIsSupported()) {
                 BrowserOpener.openBrowser(uri);
-            else
+            } else {
                 LOGGER.info("Could not open a browser (Desktop API is not supported).");
+            }
         }
     }
 }
