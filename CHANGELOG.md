@@ -28,6 +28,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fix
 
+* Error handling on getting next element in ResultSet is only visible in console [CTC-1685]
 * Callbot displays unspecific error: "Exception in Robot" [CTC-1646]
 * Expression is already closed with nested list [CTC-1679]
 * Clicking on link in settings panel crashes IDE in Linux [CTC-1704]
