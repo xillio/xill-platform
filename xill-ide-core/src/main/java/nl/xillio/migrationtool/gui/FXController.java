@@ -86,6 +86,8 @@ public class FXController implements Initializable, EventHandler<Event> {
     @FXML
     private Button btnSaveAll;
     @FXML
+    private Button btnPrint;
+    @FXML
     private Button btnSettings;
     @FXML
     private Button btnRemoveAllBreakpoints;
@@ -470,6 +472,14 @@ public class FXController implements Initializable, EventHandler<Event> {
     private void buttonSaveAll() {
         if (!btnSaveAll.isDisabled()) {
             tpnBots.getTabs().forEach(tab -> ((FileTab) tab).save());
+        }
+    }
+
+    @FXML
+    private void buttonPrint() {
+        Tab tab = tpnBots.getSelectionModel().getSelectedItem();
+        if (tab != null) {
+            ((FileTab) tab).getEditorPane().print();
         }
     }
 

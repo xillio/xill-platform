@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 
 ### Add
 
+* Add print xill script to IDE [CTC-1645]
+* New option disableRedirect on constructs of XURL plugin [CTC-1710]
 * Upload resources to server [CTC-1651]
 * Add an overview of all active plugins in the settings about section [CTC-1667]
 * Add an archetype for xill plugins [CTC-1284]
@@ -25,6 +27,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fix
 
+* Expression is already closed with nested list [CTC-1679]
+* Clicking on link in settings panel crashes IDE in Linux [CTC-1704]
 * Exiftool plugin will scan the path variable for executable [CTC-1585]
 * Robot Freezes when hitting cancel on auto-save dialog [CTC-1636]
 * RegexServiceImpl.getMatcher uses incorrect timeout [CTC-1629]

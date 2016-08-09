@@ -219,5 +219,12 @@ public class ExpressionBuilderHelper {
             return true;
         }
 
+        @Override
+        public Expression copy() {
+            // This literal cannot be closed, and to preserve null == copy(null)
+            // the null literal itself will be returned.
+            return this;
+        }
+
     }
 }
