@@ -69,4 +69,9 @@ class StringBehavior extends AbstractBehavior {
     public boolean getBooleanValue() {
         return !value.isEmpty();
     }
+
+    @Override
+    public StringBehavior copy() {
+        return new StringBehavior(value);
+    }
 }

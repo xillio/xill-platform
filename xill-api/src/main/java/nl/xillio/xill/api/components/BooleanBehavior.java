@@ -54,4 +54,9 @@ class BooleanBehavior extends AbstractBehavior {
         return value;
     }
 
+    @Override
+    public BooleanBehavior copy() {
+        return new BooleanBehavior(value);
+    }
+
 }
