@@ -27,6 +27,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fix
 
+* Clicking on link in settings panel crashes IDE in Linux [CTC-1704]
 * Exiftool plugin will scan the path variable for executable [CTC-1585]
 * Robot Freezes when hitting cancel on auto-save dialog [CTC-1636]
 * RegexServiceImpl.getMatcher uses incorrect timeout [CTC-1629]

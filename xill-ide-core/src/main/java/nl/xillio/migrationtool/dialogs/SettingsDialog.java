@@ -24,10 +24,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Window;
@@ -36,11 +35,11 @@ import nl.xillio.migrationtool.EulaUtils;
 import nl.xillio.migrationtool.Loader;
 import nl.xillio.migrationtool.gui.FXController;
 import nl.xillio.plugins.XillPlugin;
+import nl.xillio.xill.util.BrowserOpener;
 import nl.xillio.xill.util.settings.Settings;
 import nl.xillio.xill.util.settings.SettingsHandler;
 import org.slf4j.Logger;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -264,15 +263,30 @@ public class SettingsDialog extends FXMLDialog {
 
     @FXML
     private void hlEulaClicked(final ActionEvent event) {
+        URI uri;
         try {
-            Desktop.getDesktop().browse(new URI(EulaUtils.EULA_LOCATION));
-        } catch (IOException | URISyntaxException e) {
-            LOGGER.debug("Cannot open an EULA url.", e);
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Unfortunately your system is not able to open a link. Copy this link and paste it into a browser: " + EulaUtils.EULA_LOCATION);
-            alert.setTitle("Compatibility");
-            alert.initOwner(this.getScene().getWindow());
-            alert.show();
+            uri = new URI(EulaUtils.EULA_LOCATION);
+        } catch (URISyntaxException e) {
+            LOGGER.error("Unable to parse EULA link (" + EulaUtils.EULA_LOCATION + ") as URI.", e);
+            openEULAAlertWindow();
+            return;
         }
+
+        if (BrowserOpener.browserIsSupported()) {
+            BrowserOpener.openBrowser(uri);
+        } else {
+            LOGGER.info("Could not open a browser (Desktop API is not supported).");
+            openEULAAlertWindow();
+        }
+    }
+
+    private void openEULAAlertWindow() {
+        Alert alert = new Alert(Alert.AlertType.ERROR, "Unfortunately your system is not able to open this link." +
+                "\n\nPlease enter the following URL into a browser:\n" + EulaUtils.EULA_LOCATION);
+        alert.setTitle("Compatibility");
+        alert.initOwner(this.getScene().getWindow());
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE); // Resizes window correctly in Linux
+        alert.show();
     }
 
     @FXML
@@ -569,13 +583,17 @@ public class SettingsDialog extends FXMLDialog {
         }
 
         private void openUrl(String url) {
-            if (!Desktop.isDesktopSupported()) {
+            URI uri;
+            try {
+                uri = new URI(url);
+            } catch (URISyntaxException e) {
+                LOGGER.error("Failed to open link: URI was not formed correctly.", e);
                 return;
             }
-            try {
-                Desktop.getDesktop().browse(new URI(url));
-            } catch (IOException | URISyntaxException | UnsupportedOperationException e) {
-                LOGGER.error("Failed to open url in browser", e);
+            if (BrowserOpener.browserIsSupported()) {
+                BrowserOpener.openBrowser(uri);
+            } else {
+                LOGGER.info("Could not open a browser (Desktop API is not supported).");
             }
         }
     }
