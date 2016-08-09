@@ -149,10 +149,23 @@ public class RobotTab extends FileTab implements Initializable {
 
     @Override
     public void initialize(final URL url, final ResourceBundle resources) {
-        super.initialize(url, resources);
+
 
         Platform.runLater(() -> {
             getEditorPane().initialize(this);
+            setText(getName());
+            if (documentPath.exists()) {
+                try {
+                    String code = FileUtils.readFileToString(documentPath);
+                    editorPane.setLastSavedCode(code);
+                    editorPane.getEditor().setCode(code);
+                } catch (IOException e) {
+                    LOGGER.info("Could not open " + documentPath, e);
+                }
+            }
+
+            // Subscribe to events
+            editorPane.getDocumentState().addListener(this);
             consolePane.initialize(this);
             vbxDebugpane.getChildrenUnmodifiable().filtered(node -> node instanceof DebugPane).forEach(node -> ((DebugPane) node).initialize(this));
 
