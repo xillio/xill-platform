@@ -28,6 +28,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fix
 
+* Corrected documentation on query construct on JDBC plugin [CTC-1690]
 * Error handling on getting next element in ResultSet is only visible in console [CTC-1685]
 * Callbot displays unspecific error: "Exception in Robot" [CTC-1646]
 * Expression is already closed with nested list [CTC-1679]
