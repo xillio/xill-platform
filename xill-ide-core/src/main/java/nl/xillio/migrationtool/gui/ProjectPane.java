@@ -817,6 +817,12 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             } catch (IOException e) {
                 LOGGER.error("Failed to read directory", e);
             }
+        }else if(!isNew){
+            //We are opening existing project but the folder does not exist
+            AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "folder does not exist", "",
+                    "The selected directory does not exist.", ButtonType.OK);
+            error.show();
+            return false;
         }
 
         // Create the project.
