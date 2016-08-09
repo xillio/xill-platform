@@ -111,6 +111,10 @@ public class SettingsDialog extends FXMLDialog {
 
     @FXML
     private Hyperlink hlEula;
+    @FXML
+    private TextField tfprinterfontsize;
+    private RangeValidator tfprinterfontsizeValidator = new RangeValidator(4, 30, null, false);
+
 
     private SettingsHandler settings;
     private ApplyHandler onApply;
@@ -129,6 +133,7 @@ public class SettingsDialog extends FXMLDialog {
         setSize();
         setValidator(tffontsize, tffontsizeValidator);
         setValidator(tfprintmargincolumn, tfprintmargincolumnValidator);
+        setValidator(tfprinterfontsize, tfprinterfontsizeValidator);
         setValidator(tftabsize, tftabsizeValidator);
         setValidator(tfwraplimit, tfwraplimitValidator);
 
@@ -308,6 +313,10 @@ public class SettingsDialog extends FXMLDialog {
             throw new ValidationException("Invalid print margin column value!");
         }
 
+        if (!this.tfprinterfontsizeValidator.isValid()) {
+            throw new ValidationException("Invalid printer font size value!");
+        }
+
         if (!this.tftabsizeValidator.isValid()) {
             throw new ValidationException("Invalid tab size value!");
         }
@@ -352,6 +361,7 @@ public class SettingsDialog extends FXMLDialog {
         saveText(tfwraplimit, Settings.SETTINGS_EDITOR, Settings.WRAP_LIMIT);
         saveCheckBox(cbshowprintmargin, Settings.SETTINGS_EDITOR, Settings.SHOW_PRINT_MARGIN);
         saveCheckBox(cbshowlinenumbers, Settings.SETTINGS_EDITOR, Settings.SHOW_LINE_NUMBERS);
+        saveText(tfprinterfontsize, Settings.SETTINGS_EDITOR, Settings.PRINTER_FONT_SIZE);
 
         // Key bindings
         FXController.hotkeys.saveSettingsFromDialog(getScene(), settings);
@@ -382,6 +392,7 @@ public class SettingsDialog extends FXMLDialog {
         setText(tfwraplimit, Settings.SETTINGS_EDITOR, Settings.WRAP_LIMIT);
         setCheckBox(cbshowprintmargin, Settings.SETTINGS_EDITOR, Settings.SHOW_PRINT_MARGIN);
         setCheckBox(cbshowlinenumbers, Settings.SETTINGS_EDITOR, Settings.SHOW_LINE_NUMBERS);
+        setText(tfprinterfontsize, Settings.SETTINGS_EDITOR, Settings.PRINTER_FONT_SIZE);
 
         // Key bindings
         Platform.runLater(() -> FXController.hotkeys.setDialogFromSettings(getScene(), settings));
@@ -445,6 +456,7 @@ public class SettingsDialog extends FXMLDialog {
         settings.simple().register(Settings.SETTINGS_EDITOR, Settings.WRAP_LIMIT, "60", "Wrap limit in editor");
         settings.simple().register(Settings.SETTINGS_EDITOR, Settings.SHOW_PRINT_MARGIN, "false", "Show print margin in editor");
         settings.simple().register(Settings.SETTINGS_EDITOR, Settings.SHOW_LINE_NUMBERS, "true", "Show line numbers in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.PRINTER_FONT_SIZE, "10", "The printer font size");
 
         // Key bindings
         FXController.hotkeys.registerHotkeysSettings(settings);
