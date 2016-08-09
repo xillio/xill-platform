@@ -15,6 +15,7 @@
  */
 package nl.xillio.migrationtool.gui;
 
+import com.google.common.collect.Lists;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -36,6 +37,7 @@ import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This class handles the activating and deactivating of robot control buttons
@@ -293,14 +295,17 @@ public class RobotControls implements EventHandler<KeyEvent>, ErrorHandlingPolic
     @Override
     public void handle(final Throwable e) {
         Logger log = LogUtil.getLogger(getRobotID());
-
         Throwable root = ExceptionUtils.getRootCause(e);
+        List<Throwable> exceptionList = ExceptionUtils.getThrowableList(e);
 
         LOGGER.error("Exception occurred in robot", e);
-        if (root instanceof RobotRuntimeException) {
-            log.error(root.getMessage());
-        } else if (e instanceof RobotRuntimeException) {
-            log.error(e.getMessage());
+        if (e instanceof RobotRuntimeException) {
+            if (exceptionList.size() == 1) { //exception in root robot
+                log.error(e.getMessage());
+            } else { //exception in called robot
+                String message = String.join("\n\t", Lists.reverse(exceptionList.stream().map(f -> f.getMessage()).collect(Collectors.toList())));
+                log.error(message);
+            }
         } else if (root == null) {
             log.error("An error occurred in a robot: " + e.getMessage(), e);
         } else {
