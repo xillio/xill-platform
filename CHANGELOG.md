@@ -28,6 +28,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fix
 
+* Callbot displays unspecific error: "Exception in Robot" [CTC-1646]
 * Expression is already closed with nested list [CTC-1679]
 * Clicking on link in settings panel crashes IDE in Linux [CTC-1704]
 * Exiftool plugin will scan the path variable for executable [CTC-1585]
