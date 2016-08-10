@@ -18,9 +18,7 @@ package nl.xillio.xill;
 import com.google.inject.Injector;
 import me.biesaart.utils.Log;
 import nl.xillio.plugins.XillPlugin;
-import nl.xillio.xill.api.Debugger;
-import nl.xillio.xill.api.Issue;
-import nl.xillio.xill.api.LanguageFactory;
+import nl.xillio.xill.api.*;
 import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.construct.Construct;
@@ -73,6 +71,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     private final List<XillPlugin> plugins;
     private final Debugger debugger;
     private final Map<Construct, String> argumentSignatures = new HashMap<>();
+    private OutputHandler outputHandler = new DefaultOutputHandler();
 
     /**
      * Create a new processor that can run a file.
@@ -81,7 +80,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
      * @param robotFile     the robot file
      * @param plugins       the plugins
      * @param debugger      the debugger
-     * @throws IOException  is thrown if a file(-related) operation fails.
+     * @throws IOException is thrown if a file(-related) operation fails.
      */
     public XillProcessor(final File projectFolder, final File robotFile, final List<XillPlugin> plugins,
                          final Debugger debugger) throws IOException {
@@ -124,6 +123,12 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
         }
     }
 
+    @Override
+    public void setOutputHandler(final OutputHandler outputHandler) {
+        Objects.requireNonNull(outputHandler);
+        this.outputHandler = outputHandler;
+    }
+
     private List<Issue> compile(final File robotPath, RobotID rootRobot) throws XillParsingException {
         Resource resource = resourceSet.getResource(URI.createFileURI(robotPath.getAbsolutePath()), true);
 
@@ -132,7 +137,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
             rootRobot = robotID;
         }
 
-        LanguageFactory<xill.lang.xill.Robot> factory = new XillProgramFactory(plugins, getDebugger(), rootRobot);
+        LanguageFactory<xill.lang.xill.Robot> factory = new XillProgramFactory(plugins, getDebugger(), rootRobot, outputHandler);
 
 
         List<Issue> issues = validate(resource);
@@ -307,8 +312,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
                     // Create an error if the construct does not exist
                     Issue issue = new Issue("No construct with name " + call.getFunction() + " was found in package " + plugin, node.getStartLine(), Issue.Type.ERROR, robotID);
                     issues.add(issue);
-                }
-                else if(construct.isDeprecated()){
+                } else if (construct.isDeprecated()) {
                     Issue issue = new Issue("Call to deprecated construct with name " + call.getFunction(), node.getStartLine(), Issue.Type.WARNING, robotID);
                     issues.add(issue);
                 }
@@ -416,7 +420,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
      */
     private String getSignature(Construct construct) {
         if (!argumentSignatures.containsKey(construct)) {
-            ConstructContext context = new ConstructContext(getRobotID(), getRobotID(), construct, null, null, null, null);
+            ConstructContext context = new ConstructContext(getRobotID(), getRobotID(), construct, null, null, outputHandler, null, null);
             try (ConstructProcessor processor = construct.prepareProcess(context)) {
 
                 List<String> args = new ArrayList<>();

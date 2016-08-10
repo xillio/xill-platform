@@ -19,6 +19,7 @@ import nl.xillio.events.EventHost;
 import nl.xillio.plugins.XillPlugin;
 import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.LanguageFactory;
+import nl.xillio.xill.api.OutputHandler;
 import nl.xillio.xill.api.components.*;
 import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.construct.Construct;
@@ -102,6 +103,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
     private final EventHost<RobotStartedAction> robotStartedEvent = new EventHost<>();
     private final EventHost<RobotStoppedAction> robotStoppedEvent = new EventHost<>();
     private final UUID compilerSerialId = UUID.randomUUID();
+    private final OutputHandler outputHandler;
 
     /**
      * Create a new {@link XillProgramFactory}
@@ -111,8 +113,8 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
      * @param robotID  the robot.
      */
     public XillProgramFactory(final List<XillPlugin> plugins, final Debugger debugger,
-                              final RobotID robotID) {
-        this(plugins, debugger, robotID, false);
+                              final RobotID robotID, final OutputHandler outputHandler) {
+        this(plugins, debugger, robotID, outputHandler, false);
     }
 
     /**
@@ -124,11 +126,13 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
      * @param verbose  verbose logging for the compiler
      */
     public XillProgramFactory(final List<XillPlugin> plugins, final Debugger debugger, final RobotID robotID,
+                              final OutputHandler outputHandler,
                               final boolean verbose) {
         this.debugger = debugger;
         rootRobot = robotID;
         expressionParseInvoker.setVERBOSE(verbose);
         this.plugins = plugins;
+        this.outputHandler = outputHandler;
     }
 
     @Override
@@ -953,7 +957,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
         }
 
         // Check argument count by mocking the input
-        ConstructContext constructContext = new ConstructContext(robotID.get(token.eResource()), rootRobot, construct, debugger, compilerSerialId, robotStartedEvent, robotStoppedEvent);
+        ConstructContext constructContext = new ConstructContext(robotID.get(token.eResource()), rootRobot, construct, debugger, compilerSerialId, outputHandler, robotStartedEvent, robotStoppedEvent);
 
         try (ConstructProcessor processor = construct.prepareProcess(constructContext)) {
             return buildCall(construct, processor, arguments, constructContext, pos);

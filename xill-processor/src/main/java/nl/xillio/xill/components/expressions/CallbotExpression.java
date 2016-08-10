@@ -20,6 +20,7 @@ import nl.xillio.plugins.XillPlugin;
 import nl.xillio.xill.Xill;
 import nl.xillio.xill.XillProcessor;
 import nl.xillio.xill.api.Debugger;
+import nl.xillio.xill.api.DefaultOutputHandler;
 import nl.xillio.xill.api.LogUtil;
 import nl.xillio.xill.api.components.*;
 import nl.xillio.xill.api.construct.ConstructContext;
@@ -59,7 +60,7 @@ public class CallbotExpression implements Processable {
         this.path = path;
         this.robotID = robotID;
         this.plugins = plugins;
-        robotLogger = LogUtil.getLogger(robotID);
+        robotLogger = LogUtil.getLogger(robotID, new DefaultOutputHandler());
         resolver = new FileResolverImpl();
     }
 

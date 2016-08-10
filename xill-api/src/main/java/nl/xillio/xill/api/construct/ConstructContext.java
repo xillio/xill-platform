@@ -16,10 +16,7 @@
 package nl.xillio.xill.api.construct;
 
 import nl.xillio.events.EventHost;
-import nl.xillio.xill.api.Debugger;
-import nl.xillio.xill.api.LogUtil;
-import nl.xillio.xill.api.XillEnvironment;
-import nl.xillio.xill.api.XillProcessor;
+import nl.xillio.xill.api.*;
 import nl.xillio.xill.api.components.EventEx;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.events.RobotStartedAction;
@@ -42,6 +39,7 @@ public class ConstructContext {
     private Logger rootLogger;
     private Debugger debugger;
     private final UUID compilerSerialId;
+    private final OutputHandler outputHandler;
 
     /**
      * Events for notifying constructs that robots have started or stopped.
@@ -51,10 +49,34 @@ public class ConstructContext {
     private final EventHost<RobotStoppedAction> robotStoppedEvent;
     /**
      * This event is used to forward deprecated method calls to the correct methods.
+     *
      * @deprecated Used to support the deprecated {@link ConstructContext#getOnRobotInterrupt()}
      */
     @Deprecated
     private final EventEx<Object> mockInterruptEvent = new MockInterruptEvent();
+
+    /**
+     * Creates a new {@link ConstructContext} for a specific robot.
+     *
+     * @param robot             the robotID of the current robot
+     * @param rootRobot         the robotID of the root robot
+     * @param construct         the construct that will be using this context
+     * @param debugger          the debugger that is being used
+     * @param compilerSerialId  the serial id of the compiler instance
+     * @param outputHandler     the event handler for all robot output
+     * @param robotStartedEvent the event host for started robots
+     * @param robotStoppedEvent the event host for stopped robots
+     */
+    public ConstructContext(final RobotID robot, final RobotID rootRobot, final Construct construct, final Debugger debugger, UUID compilerSerialId, OutputHandler outputHandler, final EventHost<RobotStartedAction> robotStartedEvent,
+                            final EventHost<RobotStoppedAction> robotStoppedEvent) {
+        robotID = robot;
+        this.rootRobot = rootRobot;
+        this.compilerSerialId = compilerSerialId;
+        this.outputHandler = outputHandler;
+        this.robotStartedEvent = robotStartedEvent;
+        this.robotStoppedEvent = robotStoppedEvent;
+        this.debugger = debugger;
+    }
 
     /**
      * Creates a new {@link ConstructContext} for a specific robot.
@@ -69,12 +91,7 @@ public class ConstructContext {
      */
     public ConstructContext(final RobotID robot, final RobotID rootRobot, final Construct construct, final Debugger debugger, UUID compilerSerialId, final EventHost<RobotStartedAction> robotStartedEvent,
                             final EventHost<RobotStoppedAction> robotStoppedEvent) {
-        robotID = robot;
-        this.rootRobot = rootRobot;
-        this.compilerSerialId = compilerSerialId;
-        this.robotStartedEvent = robotStartedEvent;
-        this.robotStoppedEvent = robotStoppedEvent;
-        this.debugger = debugger;
+        this(robot, rootRobot, construct, debugger, compilerSerialId, new DefaultOutputHandler(), robotStartedEvent, robotStoppedEvent);
     }
 
     /**
@@ -98,7 +115,7 @@ public class ConstructContext {
 
         // Make sure the logger is set
         if (robotLogger == null) {
-            robotLogger = LogUtil.getLogger(robotID);
+            robotLogger = LogUtil.getLogger(robotID, outputHandler);
         }
 
         return robotLogger;
@@ -111,7 +128,7 @@ public class ConstructContext {
 
         // Make sure the logger is set
         if (rootLogger == null) {
-            rootLogger = LogUtil.getLogger(rootRobot);
+            rootLogger = LogUtil.getLogger(rootRobot, outputHandler);
         }
 
         return rootLogger;
@@ -203,6 +220,7 @@ public class ConstructContext {
 
     /**
      * This class forwards deprecated calls to the correct implementation
+     *
      * @deprecated we no longer use the getter. Use the delegation methods instead.
      */
     @Deprecated

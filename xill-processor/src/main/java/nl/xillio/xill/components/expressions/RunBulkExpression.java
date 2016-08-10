@@ -20,7 +20,6 @@ import nl.xillio.plugins.XillPlugin;
 import nl.xillio.xill.Xill;
 import nl.xillio.xill.XillProcessor;
 import nl.xillio.xill.api.Debugger;
-import nl.xillio.xill.api.LogUtil;
 import nl.xillio.xill.api.NullDebugger;
 import nl.xillio.xill.api.StoppableDebugger;
 import nl.xillio.xill.api.components.*;
@@ -44,7 +43,6 @@ import java.util.concurrent.TimeUnit;
 public class RunBulkExpression implements Processable {
 
     private static final Logger LOGGER = Log.get();
-    private final Logger robotLogger;
     private final Processable path;
     private final RobotID robotID;
     private final List<XillPlugin> plugins;
@@ -212,7 +210,6 @@ public class RunBulkExpression implements Processable {
         this.path = path;
         this.robotID = robotID;
         this.plugins = plugins;
-        robotLogger = LogUtil.getLogger(robotID);
         resolver = new FileResolverImpl();
         maxThreadsVal = 0;
     }
@@ -331,13 +328,6 @@ public class RunBulkExpression implements Processable {
     @Override
     public Collection<Processable> getChildren() {
         return Collections.singletonList(path);
-    }
-
-    /**
-     * @return the robotLogger
-     */
-    public Logger getRobotLogger() {
-        return robotLogger;
     }
 
     /**
