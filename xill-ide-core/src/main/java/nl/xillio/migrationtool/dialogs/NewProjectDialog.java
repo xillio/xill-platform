@@ -26,7 +26,7 @@ import nl.xillio.xill.util.settings.Settings;
 import java.io.File;
 
 /**
- * A dialog to add a new project.
+ * A dialog to add a new project
  */
 public class NewProjectDialog extends FXMLDialog {
     @FXML
@@ -63,8 +63,6 @@ public class NewProjectDialog extends FXMLDialog {
     }
 
     private void typedInProjectName(Object source, String oldValue, String newValue) {
-        // The name changed. See if we need to fix this in the project folder field.
-        // This we only do if the project folder field remains untouched
         nameValue = newValue;
         setProjectFolder(folderValue + File.separator + nameValue);
     }

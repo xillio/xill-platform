@@ -24,7 +24,7 @@ import nl.xillio.migrationtool.gui.ProjectPane;
 import java.io.File;
 
 /**
- * A dialog to add a new project.
+ * A dialog to add a new project from an existing source.
  */
 public class LoadProjectDialog extends FXMLDialog {
     @FXML
