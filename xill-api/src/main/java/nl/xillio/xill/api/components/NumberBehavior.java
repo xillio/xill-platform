@@ -53,4 +53,9 @@ class NumberBehavior extends AbstractBehavior {
     public boolean getBooleanValue() {
         return Double.doubleToRawLongBits(value.doubleValue()) != 0;
     }
+
+    @Override
+    public NumberBehavior copy() {
+        return new NumberBehavior(value);
+    }
 }

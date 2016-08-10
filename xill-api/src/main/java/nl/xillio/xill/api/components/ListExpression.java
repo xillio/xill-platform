@@ -18,6 +18,7 @@ package nl.xillio.xill.api.components;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -54,6 +55,12 @@ class ListExpression extends CollectionExpression {
     @Override
     public Number getNumberValue() {
         return Double.NaN;
+    }
+
+    @Override
+    public ListExpression copy() {
+        assertOpen();
+        return new ListExpression(value.stream().map(MetaExpression::copy).collect(Collectors.toList()));
     }
 
     @Override

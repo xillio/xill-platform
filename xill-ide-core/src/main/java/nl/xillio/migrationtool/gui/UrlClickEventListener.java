@@ -16,14 +16,15 @@
 package nl.xillio.migrationtool.gui;
 
 import me.biesaart.utils.Log;
+import nl.xillio.xill.util.BrowserOpener;
 import org.slf4j.Logger;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.html.HTMLAnchorElement;
 
-import java.awt.*;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Adds an event listener to link clicks to open them in a browser.
@@ -36,21 +37,23 @@ public class UrlClickEventListener implements EventListener {
         EventTarget target = evt.getCurrentTarget();
         HTMLAnchorElement anchorElement = (HTMLAnchorElement) target;
         String href = anchorElement.getHref();
-        try {
-            URI requestedPage = new URI(href);
+        URI requestedPage;
 
-            // Check if page is a local path or external resource
-            if (requestedPage.getHost() != null) {
-                if (Desktop.isDesktopSupported()) {
-                    // Prevent default behaviour and open browser
-                    evt.preventDefault();
-                    Desktop.getDesktop().browse(requestedPage);
-                } else {
-                    LOGGER.info("Could not open a browser (Desktop API is not supported)");
-                }
+        try {
+            requestedPage = new URI(href);
+        } catch (URISyntaxException e) {
+            LOGGER.error("The provided URI (" + href + ") is not correctly formed.", e);
+            return;
+        }
+
+        // if host == null, link to internal help file, link to external page otherwise
+        if (requestedPage.getHost() != null) {
+            if (BrowserOpener.browserIsSupported()) {
+                evt.preventDefault();
+                BrowserOpener.openBrowser(requestedPage);
+            } else {
+                LOGGER.info("Could not open a browser (Desktop API is not supported). Opening URI in help panel instead.");
             }
-        } catch (Exception e) {
-            LOGGER.error("Could not load requested help file into browser (" + href + ")", e);
         }
     }
 }
