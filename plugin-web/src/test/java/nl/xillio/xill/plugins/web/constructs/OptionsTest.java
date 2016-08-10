@@ -25,6 +25,8 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -576,6 +578,114 @@ public class OptionsTest extends ExpressionBuilderHelper {
         MetaExpression options = mock(MetaExpression.class);
         when(options.getValue()).thenReturn(optionsValue);
         when(options.getType()).thenReturn(ATOMIC);
+
+        // run
+        optionsFactory.processOptions(options);
+    }
+
+    @Test
+    public void testResolutionOptions() {
+        // mock
+        OptionsFactory optionsFactory = new OptionsFactory();
+
+        // The resolution value
+        Number resNum = new Integer(1000); // Valid width and height
+        MetaExpression resValue = mock(MetaExpression.class);
+        when(resValue.getNumberValue()).thenReturn(resNum);
+        List<MetaExpression> list = new LinkedList<>();
+        list.add(resValue);
+        list.add(resValue);
+        MetaExpression value = mock(MetaExpression.class);
+        when(value.getType()).thenReturn(LIST);
+        when(value.getValue()).thenReturn(list);
+
+        // The options
+        LinkedHashMap<String, MetaExpression> optionsValue = new LinkedHashMap<>();
+        optionsValue.put("resolution", value);
+
+        MetaExpression options = mock(MetaExpression.class);
+        when(options.getValue()).thenReturn(optionsValue);
+        when(options.getType()).thenReturn(OBJECT);
+
+        // run
+        optionsFactory.processOptions(options);
+
+        // verify
+        verify(options, times(1)).getValue();
+        verify(options, times(1)).getType();
+    }
+
+    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Invalid \"resolution\" option. The minimum resolution is.*")
+    public void testNotSupportedResolutionOptions() {
+        // mock
+        OptionsFactory optionsFactory = new OptionsFactory();
+
+        // The resolution value
+        Number resNum = new Integer(10); // Width and height lower than minimum allowed
+        MetaExpression resValue = mock(MetaExpression.class);
+        when(resValue.getNumberValue()).thenReturn(resNum);
+        List<MetaExpression> list = new LinkedList<>();
+        list.add(resValue);
+        list.add(resValue);
+        MetaExpression value = mock(MetaExpression.class);
+        when(value.getType()).thenReturn(LIST);
+        when(value.getValue()).thenReturn(list);
+
+        // The options
+        LinkedHashMap<String, MetaExpression> optionsValue = new LinkedHashMap<>();
+        optionsValue.put("resolution", value);
+
+        MetaExpression options = mock(MetaExpression.class);
+        when(options.getValue()).thenReturn(optionsValue);
+        when(options.getType()).thenReturn(OBJECT);
+
+        // run
+        optionsFactory.processOptions(options);
+    }
+
+    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Invalid variable type of \"resolution\" option.*")
+    public void testInvalidVariableTypeResolutionOptions() {
+        // mock
+        OptionsFactory optionsFactory = new OptionsFactory();
+
+        // The resolution value
+        MetaExpression value = mock(MetaExpression.class);
+        when(value.getType()).thenReturn(OBJECT);
+
+        // The options
+        LinkedHashMap<String, MetaExpression> optionsValue = new LinkedHashMap<>();
+        optionsValue.put("resolution", value);
+
+        MetaExpression options = mock(MetaExpression.class);
+        when(options.getValue()).thenReturn(optionsValue);
+        when(options.getType()).thenReturn(OBJECT);
+
+        // run
+        optionsFactory.processOptions(options);
+    }
+
+    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Invalid \"resolution\" option. Expected value is the list of pixel width and height.")
+    public void testInvalidResolutionOptions() {
+        // mock
+        OptionsFactory optionsFactory = new OptionsFactory();
+
+        // The resolution value
+        Number resNum = new Integer(10); // Width and height lower than minimum allowed
+        MetaExpression resValue = mock(MetaExpression.class);
+        when(resValue.getNumberValue()).thenReturn(resNum);
+        List<MetaExpression> list = new LinkedList<>();
+        list.add(resValue); // Add just once
+        MetaExpression value = mock(MetaExpression.class);
+        when(value.getType()).thenReturn(LIST);
+        when(value.getValue()).thenReturn(list);
+
+        // The options
+        LinkedHashMap<String, MetaExpression> optionsValue = new LinkedHashMap<>();
+        optionsValue.put("resolution", value);
+
+        MetaExpression options = mock(MetaExpression.class);
+        when(options.getValue()).thenReturn(optionsValue);
+        when(options.getType()).thenReturn(OBJECT);
 
         // run
         optionsFactory.processOptions(options);

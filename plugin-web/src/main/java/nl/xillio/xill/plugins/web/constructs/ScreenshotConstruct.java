@@ -41,8 +41,8 @@ import static nl.xillio.xill.plugins.web.services.web.WebService.MIN_VIEWPORT_WI
  */
 public class ScreenshotConstruct extends PhantomJSConstruct {
 
-    private final static String EXAMPLE = "use System, Web;\nvar page = Web.loadPage(\"http://www.xillio.com\");\nWeb.screenshot(page, \"c:/tmp/test.png\",{\"resolution\" : [1024,768]});";
-    private final static String EXPECTED_INPUT = String.format("A resolution of the screenshot - the list of width and height in pixels.\nMinimum resolution is %1$dx%2$d pixels.", MIN_VIEWPORT_WIDTH, MIN_VIEWPORT_HEIGHT);
+    private static final String EXAMPLE = "use System, Web;\nvar page = Web.loadPage(\"http://www.xillio.com\");\nWeb.screenshot(page, \"c:/tmp/test.png\",{\"resolution\" : [1024,768]});";
+    private static final String EXPECTED_INPUT = String.format("A resolution of the screenshot - the list of width and height in pixels.%nMinimum resolution is %1$dx%2$d pixels.", MIN_VIEWPORT_WIDTH, MIN_VIEWPORT_HEIGHT);
 
     @Inject
     private FileService fileService;

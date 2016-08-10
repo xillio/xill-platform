@@ -18,6 +18,7 @@ package nl.xillio.xill.plugins.web.constructs;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.PageVariable;
 import nl.xillio.xill.plugins.web.services.web.FileService;
@@ -27,6 +28,10 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
@@ -232,4 +237,72 @@ public class ScreenshotConstructTest extends ExpressionBuilderHelper {
         ScreenshotConstruct.process(page, name, options, fileService, webService, null);
     }
 
+    /**
+     * test the process with invalid options.
+     */
+    @Test(expectedExceptions = InvalidUserInputException.class, expectedExceptionsMessageRegExp = "Invalid options.*")
+    public void testProcessInvalidOptions() {
+        // mock
+        WebService webService = mock(WebService.class);
+        FileService fileService = mock(FileService.class);
+
+        // The page
+        PageVariable pageVariable = mock(PageVariable.class);
+        MetaExpression page = mock(MetaExpression.class);
+        when(page.getMeta(PageVariable.class)).thenReturn(pageVariable);
+
+        // The name
+        String nameValue = "Tony";
+        MetaExpression name = mock(MetaExpression.class);
+        when(name.getStringValue()).thenReturn(nameValue);
+
+        // The options
+        Map<String, MetaExpression> optionMap = new HashMap<>();
+        optionMap.put("na", null);
+        MetaExpression options = mock(MetaExpression.class);
+        when(options.isNull()).thenReturn(false);
+        when(options.getValue()).thenReturn(optionMap);
+
+        // run
+        ScreenshotConstruct.process(page, name, options, fileService, webService, null);
+    }
+
+    /**
+     * test the process with invalid resolution.
+     */
+    @Test(expectedExceptions = InvalidUserInputException.class, expectedExceptionsMessageRegExp = "Invalid resolution value.*")
+    public void testProcessInvalidResolution() {
+        // mock
+        WebService webService = mock(WebService.class);
+        FileService fileService = mock(FileService.class);
+
+        // The page
+        PageVariable pageVariable = mock(PageVariable.class);
+        MetaExpression page = mock(MetaExpression.class);
+        when(page.getMeta(PageVariable.class)).thenReturn(pageVariable);
+
+        // The name
+        String nameValue = "Tony";
+        MetaExpression name = mock(MetaExpression.class);
+        when(name.getStringValue()).thenReturn(nameValue);
+
+        // The options
+        Number resNum = new Integer(10); // Width and height lower than minimum allowed
+        MetaExpression resValue = mock(MetaExpression.class);
+        when(resValue.getNumberValue()).thenReturn(resNum);
+        List<MetaExpression> list = new LinkedList<>();
+        list.add(resValue);
+        list.add(resValue);
+        MetaExpression value = mock(MetaExpression.class);
+        when(value.getType()).thenReturn(LIST);
+        when(value.getValue()).thenReturn(list);
+        Map<String, MetaExpression> optionMap = new HashMap<>();
+        optionMap.put("resolution", value);
+        MetaExpression options = mock(MetaExpression.class);
+        when(options.isNull()).thenReturn(false);
+        when(options.getValue()).thenReturn(optionMap);
+
+        // run
+        ScreenshotConstruct.process(page, name, options, fileService, webService, null);
+    }
 }

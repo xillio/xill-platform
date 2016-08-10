@@ -524,8 +524,71 @@ public class WebServiceImplTest {
         doReturn(outPutFile).when(jsdriver).getScreenshotAs(any());
 
         // run
+        implementation.getScreenshotAsFilePath(webVariable, 0, 0); // Default resolution
 
-        implementation.getScreenshotAsFilePath(webVariable, 0, 0);
+        // verify
+        verify(jsdriver, times(1)).getScreenshotAs(any());
+    }
+
+    /**
+     * Test the getScreenshotAsFile function
+     */
+    @Test
+    public void testGetScreenshotAsFileSpecificDifferentResolution() {
+        WebServiceImpl implementation = spy(new WebServiceImpl());
+        // mock
+        WebDriver driver = mock(WebDriver.class);
+
+        Options options = mock(Options.class);
+        when(driver.manage()).thenReturn(options);
+        Window window = mock(Window.class);
+        when(options.window()).thenReturn(window);
+        Dimension resolution = new Dimension(1600, 900);
+        when(window.getSize()).thenReturn(resolution);
+
+        WebVariable webVariable = mock(WebVariable.class);
+        File outPutFile = mock(File.class);
+        when(webVariable.getDriver()).thenReturn(driver);
+
+        //the options for manage()
+        PhantomJSDriver jsdriver = mock(PhantomJSDriver.class);
+        doReturn(jsdriver).when(implementation).getJSDriver(driver);
+        doReturn(outPutFile).when(jsdriver).getScreenshotAs(any());
+
+        // run
+        implementation.getScreenshotAsFilePath(webVariable, 1000, 1000);
+
+        // verify
+        verify(jsdriver, times(1)).getScreenshotAs(any());
+    }
+
+    /**
+     * Test the getScreenshotAsFile function
+     */
+    @Test
+    public void testGetScreenshotAsFileSpecificSameResolution() {
+        WebServiceImpl implementation = spy(new WebServiceImpl());
+        // mock
+        WebDriver driver = mock(WebDriver.class);
+
+        Options options = mock(Options.class);
+        when(driver.manage()).thenReturn(options);
+        Window window = mock(Window.class);
+        when(options.window()).thenReturn(window);
+        Dimension resolution = new Dimension(1600, 900);
+        when(window.getSize()).thenReturn(resolution);
+
+        WebVariable webVariable = mock(WebVariable.class);
+        File outPutFile = mock(File.class);
+        when(webVariable.getDriver()).thenReturn(driver);
+
+        //the options for manage()
+        PhantomJSDriver jsdriver = mock(PhantomJSDriver.class);
+        doReturn(jsdriver).when(implementation).getJSDriver(driver);
+        doReturn(outPutFile).when(jsdriver).getScreenshotAs(any());
+
+        // run
+        implementation.getScreenshotAsFilePath(webVariable, 1600, 900);
 
         // verify
         verify(jsdriver, times(1)).getScreenshotAs(any());

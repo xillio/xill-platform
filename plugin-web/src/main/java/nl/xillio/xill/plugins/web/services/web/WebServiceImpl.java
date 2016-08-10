@@ -215,7 +215,7 @@ public class WebServiceImpl implements WebService {
 
         // Process the resolution
         Dimension orgResolution = null;
-        if (width !=0 && height != 0) {
+        if (width != 0 && height != 0) {
             orgResolution = driver.manage().window().getSize();
             if (orgResolution.getWidth() != width || orgResolution.getHeight() != height) {
                 // Current resolution is different than required

@@ -154,7 +154,7 @@ public class OptionsFactory {
                 final int width = resolutionList.get(0).getNumberValue().intValue();
                 final int height = resolutionList.get(1).getNumberValue().intValue();
                 if (width < MIN_VIEWPORT_WIDTH || height < MIN_VIEWPORT_HEIGHT) {
-                    throw new RobotRuntimeException("Invalid \"resolution\" option. The minimum resolution is 400x300 pixels.");
+                    throw new RobotRuntimeException(String.format("Invalid \"resolution\" option. The minimum resolution is %1$dx%2$d pixels.", MIN_VIEWPORT_WIDTH, MIN_VIEWPORT_HEIGHT));
                 }
                 options.setResolution(width, height);
                 break;
