@@ -55,12 +55,13 @@ public class NewProjectDialog extends FXMLDialog {
         tfprojectfolder.textProperty().addListener(this::typesInProjectFolder);
     }
 
-    private void typesInProjectFolder(Object source, String oldValue, String newValue){
-        if(tfprojectfolder.isFocused()) {
+    private void typesInProjectFolder(Object source, String oldValue, String newValue) {
+        if (tfprojectfolder.isFocused()) {
             folderValue = newValue;
             setProjectFolder(folderValue);
         }
     }
+
     private void typedInProjectName(Object source, String oldValue, String newValue) {
         // The name changed. See if we need to fix this in the project folder field.
         // This we only do if the project folder field remains untouched
@@ -87,7 +88,7 @@ public class NewProjectDialog extends FXMLDialog {
         File result = chooser.showDialog(getScene().getWindow());
         if (result != null) {
             folderValue = result.getPath();
-            typedInProjectName(null,null,nameValue);
+            typedInProjectName(null, null, nameValue);
         }
 
     }
@@ -102,7 +103,7 @@ public class NewProjectDialog extends FXMLDialog {
         String projectName = tfprojectname.getText();
         String projectFolder = tfprojectfolder.getText();
 
-        if (projectPane.newProject(projectName, projectFolder, "",true)) {
+        if (projectPane.newProject(projectName, projectFolder, "", true)) {
             close();
         }
     }

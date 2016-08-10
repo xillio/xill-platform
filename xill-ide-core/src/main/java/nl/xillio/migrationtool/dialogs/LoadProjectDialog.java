@@ -19,9 +19,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
-import nl.xillio.migrationtool.gui.FXController;
 import nl.xillio.migrationtool.gui.ProjectPane;
-import nl.xillio.xill.util.settings.Settings;
 
 import java.io.File;
 
@@ -35,7 +33,6 @@ public class LoadProjectDialog extends FXMLDialog {
     private TextField tfprojectfolder;
 
     private final ProjectPane projectPane;
-    private boolean hasBeenTypedInProjectFolder;
 
     /**
      * Default constructor.
@@ -47,9 +44,6 @@ public class LoadProjectDialog extends FXMLDialog {
 
         this.projectPane = projectPane;
         setTitle("New Project from source");
-
-
-        tfprojectfolder.setOnKeyTyped(e -> hasBeenTypedInProjectFolder = true);
     }
 
     /**
@@ -88,7 +82,7 @@ public class LoadProjectDialog extends FXMLDialog {
         String projectName = tfprojectname.getText();
         String projectFolder = tfprojectfolder.getText();
 
-        if (projectPane.newProject(projectName, projectFolder, "",false)) {
+        if (projectPane.newProject(projectName, projectFolder, "", false)) {
             close();
         }
     }
