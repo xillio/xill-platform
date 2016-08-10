@@ -209,7 +209,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     private void addNewButtonContextMenu() {
-        MenuItem menuLoadProject = new MenuItem("Load project", ProjectPane.createIcon(ProjectPane.NEW_FOLDER_ICON));
+        MenuItem menuLoadProject = new MenuItem("New project from existing source", ProjectPane.createIcon(ProjectPane.NEW_PROJECT_ICON));
         menuLoadProject.setOnAction(e -> loadProjectButtonPressed());
 
         MenuItem menuNewProject = new MenuItem("New project", ProjectPane.createIcon(ProjectPane.NEW_PROJECT_ICON));
@@ -795,10 +795,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 && findItemByPath(root, folder) == null;
 
         if (!projectDoesntExist || "".equals(name) || "".equals(folder)) {
-            AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error", "",
-                    "Make sure the name and folder are not empty, and do not exist as a project yet.", ButtonType.OK);
-            error.show();
-            return false;
+            return showAlertDialog(Alert.AlertType.ERROR,"Error","","Make sure the name and folder are not empty, and do not exist as a project yet.");
         }
 
         // Check if project folder already exists under different capitalization
@@ -807,22 +804,19 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             try {
                 String canonicalFileName = projectFolder.getCanonicalFile().getName();
                 String fileName = projectFolder.getName();
-
+                if(isNew){
+                    return showAlertDialog(Alert.AlertType.ERROR,"Error","","The selected directory already exists.");
+                }
                 if (!canonicalFileName.equals(fileName)) {
-                    AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Project already exists", "",
-                            "The selected directory already exists with a different case. Please use \"" + canonicalFileName + "\" or rename your project.", ButtonType.OK);
-                    error.show();
-                    return false;
+                    return showAlertDialog(Alert.AlertType.ERROR,"Project already exists","",
+                            "The selected directory already exists with a different case. Please use \"" + canonicalFileName + "\" or rename your project.");
                 }
             } catch (IOException e) {
                 LOGGER.error("Failed to read directory", e);
             }
         }else if(!isNew){
             //We are opening existing project but the folder does not exist
-            AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "folder does not exist", "",
-                    "The selected directory does not exist.", ButtonType.OK);
-            error.show();
-            return false;
+            return showAlertDialog(Alert.AlertType.ERROR,"Folder does note exist","","The selected directory does not exist.");
         }
 
         // Create the project.
@@ -863,6 +857,12 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     /* End of projects */
+
+    public boolean showAlertDialog(Alert.AlertType type,String title, String header, String content){
+        AlertDialog error = new AlertDialog(type, title, header, content, ButtonType.OK);
+        error.show();
+        return false;
+    }
 
     /* Selection of TreeItems */
 

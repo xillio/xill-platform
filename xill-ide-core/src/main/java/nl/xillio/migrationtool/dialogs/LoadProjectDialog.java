@@ -46,7 +46,7 @@ public class LoadProjectDialog extends FXMLDialog {
         super("/fxml/dialogs/NewProject.fxml");
 
         this.projectPane = projectPane;
-        setTitle("Load Project");
+        setTitle("New Project from source");
 
 
         tfprojectfolder.setOnKeyTyped(e -> hasBeenTypedInProjectFolder = true);
