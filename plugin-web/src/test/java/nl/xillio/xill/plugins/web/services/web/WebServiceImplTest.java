@@ -525,7 +525,7 @@ public class WebServiceImplTest {
 
         // run
 
-        implementation.getScreenshotAsFilePath(webVariable);
+        implementation.getScreenshotAsFilePath(webVariable, 0, 0);
 
         // verify
         verify(jsdriver, times(1)).getScreenshotAs(any());
@@ -756,6 +756,9 @@ public class WebServiceImplTest {
         WebDriver driver = mock(WebDriver.class);
         when(pageVariable.getDriver()).thenReturn(driver);
 
+        nl.xillio.xill.plugins.web.data.Options webOptions = mock(nl.xillio.xill.plugins.web.data.Options.class);
+        when(webOptions.getTimeOut()).thenReturn(42);
+        when(webOptions.getResolution()).thenReturn(new Dimension(1024,768));
         Options options = mock(Options.class);
         when(driver.manage()).thenReturn(options);
         Timeouts timeouts = mock(Timeouts.class);
@@ -765,7 +768,7 @@ public class WebServiceImplTest {
 
         // run
         WebServiceImpl implementation = new WebServiceImpl();
-        implementation.setDriverOptions(pageVariable, 42);
+        implementation.setDriverOptions(pageVariable, webOptions);
 
         // verify
         verify(driver, times(2)).manage();
@@ -781,6 +784,9 @@ public class WebServiceImplTest {
         WebDriver driver = mock(WebDriver.class);
         when(pageVariable.getDriver()).thenReturn(driver);
 
+        nl.xillio.xill.plugins.web.data.Options webOptions = mock(nl.xillio.xill.plugins.web.data.Options.class);
+        when(webOptions.getTimeOut()).thenReturn(-1);
+        when(webOptions.getResolution()).thenReturn(new Dimension(1024,768));
         Options options = mock(Options.class);
         when(driver.manage()).thenReturn(options);
         Timeouts timeouts = mock(Timeouts.class);
@@ -790,7 +796,7 @@ public class WebServiceImplTest {
 
         // run
         WebServiceImpl implementation = new WebServiceImpl();
-        implementation.setDriverOptions(pageVariable, 0);
+        implementation.setDriverOptions(pageVariable, webOptions);
 
         // verify
         verify(driver, times(2)).manage();

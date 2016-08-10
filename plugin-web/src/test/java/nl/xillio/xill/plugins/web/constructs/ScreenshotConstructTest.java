@@ -60,18 +60,22 @@ public class ScreenshotConstructTest extends ExpressionBuilderHelper {
         Path srcFile = mock(Path.class);
         Path desFile = mock(Path.class);
 
+        // The options
+        MetaExpression options = mock(MetaExpression.class);
+        when(options.isNull()).thenReturn(true);
+
         // The process
-        when(webService.getScreenshotAsFilePath(pageVariable)).thenReturn(srcFile);
+        when(webService.getScreenshotAsFilePath(pageVariable, 0, 0)).thenReturn(srcFile);
         when(TestUtils.CONSTRUCT_FILE_RESOLVER.buildPath(null, name)).thenReturn(desFile);
 
         // run
-        MetaExpression output = ScreenshotConstruct.process(page, name, fileService, webService, null);
+        MetaExpression output = ScreenshotConstruct.process(page, name, options, fileService, webService, null);
 
         // Wheter we parse the pageVariable only once
         verify(page, times(2)).getMeta(PageVariable.class);
 
         // We make one screenshot and store it once
-        verify(webService, times(1)).getScreenshotAsFilePath(pageVariable);
+        verify(webService, times(1)).getScreenshotAsFilePath(pageVariable, 0, 0);
         verify(fileService, times(1)).copyFile(srcFile, desFile);
 
         // assert
@@ -89,9 +93,10 @@ public class ScreenshotConstructTest extends ExpressionBuilderHelper {
         MetaExpression input = mock(MetaExpression.class);
         MetaExpression fileName = mock(MetaExpression.class);
         when(input.isNull()).thenReturn(true);
+        MetaExpression options = mock(MetaExpression.class);
 
         // run
-        MetaExpression output = ScreenshotConstruct.process(input, fileName, fileService, webService, null);
+        MetaExpression output = ScreenshotConstruct.process(input, fileName, options, fileService, webService, null);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -116,11 +121,15 @@ public class ScreenshotConstructTest extends ExpressionBuilderHelper {
         MetaExpression name = mock(MetaExpression.class);
         when(name.getStringValue()).thenReturn(nameValue);
 
+        // The options
+        MetaExpression options = mock(MetaExpression.class);
+        when(options.isNull()).thenReturn(true);
+
         // The process
-        when(webService.getScreenshotAsFilePath(pageVariable)).thenThrow(new RobotRuntimeException(""));
+        when(webService.getScreenshotAsFilePath(pageVariable, 0, 0)).thenThrow(new RobotRuntimeException(""));
 
         // run
-        ScreenshotConstruct.process(page, name, fileService, webService, null);
+        ScreenshotConstruct.process(page, name, options, fileService, webService, null);
     }
 
     /**
@@ -148,19 +157,23 @@ public class ScreenshotConstructTest extends ExpressionBuilderHelper {
         Path srcFile = mock(Path.class);
         Path desFile = mock(Path.class);
 
+        // The options
+        MetaExpression options = mock(MetaExpression.class);
+        when(options.isNull()).thenReturn(true);
+
         // The process
-        when(webService.getScreenshotAsFilePath(pageVariable)).thenReturn(srcFile);
+        when(webService.getScreenshotAsFilePath(pageVariable, 0, 0)).thenReturn(srcFile);
         when(TestUtils.CONSTRUCT_FILE_RESOLVER.buildPath(null, name)).thenReturn(desFile);
         doThrow(new IOException()).when(fileService).copyFile(srcFile, desFile);
 
         // run
-        MetaExpression output = ScreenshotConstruct.process(page, name, fileService, webService, null);
+        MetaExpression output = ScreenshotConstruct.process(page, name, options, fileService, webService, null);
 
         // Wheter we parse the pageVariable only once
         verify(page, times(2)).getMeta(PageVariable.class);
 
         // We make one screenshot and store it once
-        verify(webService, times(1)).getScreenshotAsFilePath(pageVariable);
+        verify(webService, times(1)).getScreenshotAsFilePath(pageVariable, 0, 0);
         verify(fileService, times(1)).copyFile(srcFile, desFile);
 
         // assert
@@ -181,13 +194,17 @@ public class ScreenshotConstructTest extends ExpressionBuilderHelper {
         MetaExpression page = mock(MetaExpression.class);
         when(page.getMeta(PageVariable.class)).thenReturn(null);
 
+        // The options
+        MetaExpression options = mock(MetaExpression.class);
+        when(options.isNull()).thenReturn(true);
+
         // The name
         String nameValue = "Tony";
         MetaExpression name = mock(MetaExpression.class);
         when(name.getStringValue()).thenReturn(nameValue);
 
         // run
-        ScreenshotConstruct.process(page, name, fileService, webService, null);
+        ScreenshotConstruct.process(page, name, options, fileService, webService, null);
     }
 
     /**
@@ -203,11 +220,16 @@ public class ScreenshotConstructTest extends ExpressionBuilderHelper {
         String nameValue = "";
         MetaExpression name = mock(MetaExpression.class);
         when(name.getStringValue()).thenReturn(nameValue);
+
+        // The options
+        MetaExpression options = mock(MetaExpression.class);
+        when(options.isNull()).thenReturn(true);
+
         // The page
         MetaExpression page = mock(MetaExpression.class);
 
         // run
-        ScreenshotConstruct.process(page, name, fileService, webService, null);
+        ScreenshotConstruct.process(page, name, options, fileService, webService, null);
     }
 
 }

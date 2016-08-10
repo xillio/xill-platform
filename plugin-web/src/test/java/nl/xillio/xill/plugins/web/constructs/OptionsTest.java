@@ -528,7 +528,7 @@ public class OptionsTest extends ExpressionBuilderHelper {
      *
      * @throws Exception
      */
-    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Unknow option: nonExistingOption")
+    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Unknown option: nonExistingOption")
     public void testUnknownOption() throws Exception {
         // mock
         OptionsFactory optionsFactory = new OptionsFactory();
