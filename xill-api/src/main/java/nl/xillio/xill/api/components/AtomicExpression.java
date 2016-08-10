@@ -98,6 +98,12 @@ class AtomicExpression extends MetaExpression {
     }
 
     @Override
+    public AtomicExpression copy() {
+        assertOpen();
+        return new AtomicExpression(this.expressionValue.copy());
+    }
+
+    @Override
     public Collection<Processable> getChildren() {
         return new ArrayList<>();
     }

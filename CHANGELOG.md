@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 
 ### Change
 
+* Removed easter egg [CTC-1708]
 * Show the full path to the document on mouse-over on tabs in Xill IDE [CTC-1669]
 * MySQL no longer has to be installed manually [CTC-1676]
 * Remove paging from the Xill IDE Console [CTC-1593]
@@ -27,6 +28,10 @@ All notable changes to this project will be documented in this file.
 
 ### Fix
 
+* Corrected documentation on query construct on JDBC plugin [CTC-1690]
+* Error handling on getting next element in ResultSet is only visible in console [CTC-1685]
+* Callbot displays unspecific error: "Exception in Robot" [CTC-1646]
+* Expression is already closed with nested list [CTC-1679]
 * Clicking on link in settings panel crashes IDE in Linux [CTC-1704]
 * Exiftool plugin will scan the path variable for executable [CTC-1585]
 * Robot Freezes when hitting cancel on auto-save dialog [CTC-1636]

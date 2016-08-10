@@ -57,7 +57,7 @@ public class RandomConstruct extends Construct {
         if (value.getType() == LIST) {
             @SuppressWarnings("unchecked")
             List<MetaExpression> list = (List<MetaExpression>) value.getValue();
-            return list.get((int) math.random(list.size()));
+            return list.get((int) math.random(list.size())).copy();
         }
         // In case of a number below zero or a null value given, return a random double
         else if (value.getNumberValue().longValue() <= 0) {
