@@ -24,7 +24,7 @@
     </formats>
     <dependencySets>
         <dependencySet>
-            <outputDirectory>${default.plugin.dir}</outputDirectory>
+            <outputDirectory>bin</outputDirectory>
             <useProjectArtifact>true</useProjectArtifact>
             <scope>runtime</scope>
         </dependencySet>

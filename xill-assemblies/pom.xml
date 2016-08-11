@@ -32,7 +32,4 @@
     </parent>
 
     <artifactId>xill-assemblies</artifactId>
-    <properties>
-        <default.plugin.dir>bin</default.plugin.dir>
-    </properties>
 </project>
