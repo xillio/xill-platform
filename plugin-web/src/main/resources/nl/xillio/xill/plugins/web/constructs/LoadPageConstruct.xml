@@ -56,9 +56,9 @@ Make sure you add the binary to your `PATH` environment variable.
 
                 var page = Web.loadPage("http://www.xillio.com/", {"enablejs":true, "loadimages":false, "resolution":[1024,768]});
 
-                var mainmenutitles = Web.xPath(page, '//ul[@class="active-branch"]/li/a/text()');
+                var mainmenutitles = Web.xPath(page, '//ul[@class="hs-menu-children-wrapper"]/li/a/text()');
                 System.print(mainmenutitles);
-                var mainmenuurls = Web.xPath(page, '//ul[@class="active-branch"]/li/a[@href]');
+                var mainmenuurls = Web.xPath(page, '//ul[@class="hs-menu-children-wrapper"]/li/a[@href]');
                 System.print(mainmenuurls);
             </code>
         </example>
