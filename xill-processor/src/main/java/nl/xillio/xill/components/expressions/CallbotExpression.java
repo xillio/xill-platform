@@ -22,6 +22,7 @@ import nl.xillio.xill.XillProcessor;
 import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.DefaultOutputHandler;
 import nl.xillio.xill.api.LogUtil;
+import nl.xillio.xill.api.OutputHandler;
 import nl.xillio.xill.api.components.*;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
@@ -48,19 +49,22 @@ public class CallbotExpression implements Processable {
     private final List<XillPlugin> plugins;
     private Processable argument;
     private final FileResolver resolver;
+    private final OutputHandler outputHandler;
 
     /**
      * Create a new {@link CallbotExpression}
      *
-     * @param path    the path of the called bot
-     * @param robotID the root robot of this tree
-     * @param plugins the current plugin loader
+     * @param path          the path of the called bot
+     * @param robotID       the root robot of this tree
+     * @param plugins       the current plugin loader
+     * @param outputHandler the event handler for all output
      */
-    public CallbotExpression(final Processable path, final RobotID robotID, final List<XillPlugin> plugins) {
+    public CallbotExpression(final Processable path, final RobotID robotID, final List<XillPlugin> plugins, OutputHandler outputHandler) {
         this.path = path;
         this.robotID = robotID;
         this.plugins = plugins;
         robotLogger = LogUtil.getLogger(robotID, new DefaultOutputHandler());
+        this.outputHandler = outputHandler;
         resolver = new FileResolverImpl();
     }
 
@@ -84,7 +88,7 @@ public class CallbotExpression implements Processable {
         try {
             Debugger childDebugger = debugger.createChild();
             XillProcessor processor = new XillProcessor(robotID.getProjectPath(), otherRobot, plugins, childDebugger);
-
+            processor.setOutputHandler(outputHandler);
             processor.compileAsSubRobot(robotID);
 
             try {
@@ -138,7 +142,7 @@ public class CallbotExpression implements Processable {
     /**
      * Set the argument that will be passed to the called robot
      *
-     * @param argument    the argument to be passed to the called robot.
+     * @param argument the argument to be passed to the called robot.
      */
     public void setArgument(final Processable argument) {
         this.argument = argument;
