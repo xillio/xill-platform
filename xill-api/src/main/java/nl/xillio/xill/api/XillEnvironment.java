@@ -29,7 +29,7 @@ import java.util.List;
  *
  * @author Thomas Biesaart
  */
-public interface XillEnvironment {
+public interface XillEnvironment extends AutoCloseable {
 
     /**
      * The default file extension for robot files.
@@ -112,4 +112,9 @@ public interface XillEnvironment {
     default List<PluginLoadFailure> getMissingLicensePlugins() {
         return Collections.emptyList();
     }
+
+    /**
+     * Close all loaded plugins.
+     */
+    void close();
 }
