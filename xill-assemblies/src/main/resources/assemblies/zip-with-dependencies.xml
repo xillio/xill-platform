@@ -24,7 +24,7 @@
     </formats>
     <dependencySets>
         <dependencySet>
-            <outputDirectory>bin</outputDirectory>
+            <outputDirectory>${default.plugin.dir}</outputDirectory>
             <useProjectArtifact>true</useProjectArtifact>
             <scope>runtime</scope>
         </dependencySet>
@@ -32,6 +32,10 @@
     <fileSets>
         <fileSet>
             <directory>src/main/deploy</directory>
+            <outputDirectory/>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/html</directory>
             <outputDirectory/>
         </fileSet>
     </fileSets>
