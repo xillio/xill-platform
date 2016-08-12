@@ -186,12 +186,21 @@ public class MathUtils {
         NumberType type = NumberType.forClass(a.getClass(), b.getClass());
         switch (type) {
             case INT:
+                if (a.intValue() == 0 && b.intValue() == 0) {
+                    return Double.NaN;
+                }
                 return a.intValue() % b.intValue();
             case LONG:
+                if (a.longValue() == 0 && b.longValue() == 0) {
+                    return Double.NaN;
+                }
                 return a.longValue() % b.longValue();
             case BIG:
                 BigInteger bigA = getBig(a);
                 BigInteger bigB = getBig(b);
+                if (bigA.equals(BigInteger.ZERO) && bigB.equals(BigInteger.ZERO)) {
+                    return Double.NaN;
+                }
                 return bigA.mod(bigB);
             case DOUBLE:
                 return a.doubleValue() % b.doubleValue();
