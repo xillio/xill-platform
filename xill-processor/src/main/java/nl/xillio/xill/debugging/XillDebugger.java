@@ -18,10 +18,7 @@ package nl.xillio.xill.debugging;
 import me.biesaart.utils.Log;
 import nl.xillio.events.Event;
 import nl.xillio.events.EventHost;
-import nl.xillio.xill.api.Breakpoint;
-import nl.xillio.xill.api.Debugger;
-import nl.xillio.xill.api.NullDebugger;
-import nl.xillio.xill.api.StoppableDebugger;
+import nl.xillio.xill.api.*;
 import nl.xillio.xill.api.components.*;
 import nl.xillio.xill.api.errors.ErrorHandlingPolicy;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
@@ -60,6 +57,7 @@ public class XillDebugger implements Debugger {
     private final Stack<CounterWrapper> functionStack = new Stack<>();
     private Mode mode = Mode.RUNNING;
     private final LinkedList<Debugger> childDebuggers = new LinkedList<>();
+    private OutputHandler outputHandler;
 
 
     /**
@@ -335,10 +333,10 @@ public class XillDebugger implements Debugger {
             parent = parent.getHostInstruction().getParentInstruction();
             bottomPosition--;
         }
-        while (value==null && parent!=null && !(parent instanceof FunctionDeclaration));
+        while (value == null && parent != null && !(parent instanceof FunctionDeclaration));
 
         // If the variable was not found in a function call, look for it at robot level
-        if (value==null) {
+        if (value == null) {
             value = dec.peek(0);
         }
 
@@ -379,12 +377,20 @@ public class XillDebugger implements Debugger {
 
     @Override
     public void handle(final Throwable e) throws RobotRuntimeException {
+        if (outputHandler != null) {
+            outputHandler.inspect(e);
+        }
         handler.handle(e);
     }
 
     @Override
     public void setErrorHandler(final ErrorHandlingPolicy handler) {
         this.handler = handler;
+    }
+
+    @Override
+    public void setOutputHandler(OutputHandler handler) {
+        this.outputHandler = handler;
     }
 
     @Override
@@ -402,6 +408,7 @@ public class XillDebugger implements Debugger {
     @Override
     public Debugger createChild() {
         Debugger debugger = new StoppableDebugger(this);
+        debugger.setOutputHandler(outputHandler);
         childDebuggers.add(debugger);
         return debugger;
     }

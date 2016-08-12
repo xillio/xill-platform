@@ -185,6 +185,8 @@ public interface Debugger extends ErrorHandlingPolicy {
      */
     void setErrorHandler(final ErrorHandlingPolicy handler);
 
+    void setOutputHandler(final OutputHandler handler);
+
     /**
      * @return the stack trace to the current instruction
      */

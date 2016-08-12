@@ -28,4 +28,9 @@ public class DefaultOutputHandler implements OutputHandler {
     public void handleLog(Level level, String message, Object... parameters) {
         // No Op
     }
+
+    @Override
+    public void inspect(Throwable e) {
+        // No Op
+    }
 }

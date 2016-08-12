@@ -31,4 +31,6 @@ public interface OutputHandler {
      * @param parameters the parameters
      */
     void handleLog(Level level, String message, Object... parameters);
+
+    void inspect(Throwable e);
 }

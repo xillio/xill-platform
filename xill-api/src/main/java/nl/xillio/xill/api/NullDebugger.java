@@ -29,9 +29,10 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * This class represents a debugger that does absolutely nothing.
+ * This class represents a debugger that does absolutely nothing except forward exceptions to the output handler.
  */
 public class NullDebugger implements Debugger {
+    private OutputHandler outputHandler;
 
     @Override
     public void stepIn() {
@@ -136,14 +137,26 @@ public class NullDebugger implements Debugger {
 
     @Override
     public void handle(final Throwable e) throws RobotRuntimeException {
+        sendToOutputHandler(e);
         if (e instanceof RobotRuntimeException) {
             throw (RobotRuntimeException) e;
         }
         throw new RobotRuntimeException("Exception in robot.", e);
     }
 
+    protected void sendToOutputHandler(Throwable e) {
+        if (outputHandler != null) {
+            outputHandler.inspect(e);
+        }
+    }
+
     @Override
     public void setErrorHandler(final ErrorHandlingPolicy handler) {
+    }
+
+    @Override
+    public void setOutputHandler(OutputHandler handler) {
+        outputHandler = handler;
     }
 
     @Override

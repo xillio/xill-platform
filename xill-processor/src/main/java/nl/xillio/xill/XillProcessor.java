@@ -127,6 +127,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     public void setOutputHandler(final OutputHandler outputHandler) {
         Objects.requireNonNull(outputHandler);
         this.outputHandler = outputHandler;
+        this.debugger.setOutputHandler(outputHandler);
     }
 
     private List<Issue> compile(final File robotPath, RobotID rootRobot) throws XillParsingException {
