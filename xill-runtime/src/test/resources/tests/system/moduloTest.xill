@@ -18,16 +18,27 @@ use System, Assert;
 // For int
 var result = 0 % 0;
 Assert.equal(result, NaN);
+result = 2 % 0;
+Assert.equal(result, NaN);
+result = 0 % 2;
+Assert.equal(result, 0);
 
 // For long
 var x = 1234567890123;
-
 var y = x;
-result = (x-y) % (y-x); 
+result = (x-y) % (y-x); // 0 % 0
 Assert.equal(result, NaN);
+result = (x-y+2) % (y-x); // 2 % 0
+Assert.equal(result, NaN);
+result = (x-y) % (y-x+2); // 0 % 2
+Assert.equal(result, 0);
 
 // For BigInteger
 x = 12345678901231234567890123;
 y = x;
-result = (x-y) % (y-x); 
+result = (x-y) % (y-x); // 0 % 0
 Assert.equal(result, NaN);
+result = (x-y+2) % (y-x); // 2 % 0
+Assert.equal(result, NaN);
+result = (x-y) % (y-x+2); // 0 % 2
+Assert.equal(result, 0);
