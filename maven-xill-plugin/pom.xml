@@ -23,9 +23,9 @@
 
   <parent>
     <groupId>nl.xillio.xill</groupId>
-    <artifactId>xill-plugins-parent</artifactId>
+    <artifactId>xill-parent</artifactId>
     <version>3.04.00-SNAPSHOT</version>
-    <relativePath>../xill-plugins-parent</relativePath>
+    <relativePath>../xill-parent</relativePath>
   </parent>
 
   <artifactId>maven-xill-plugin</artifactId>
