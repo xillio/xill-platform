@@ -146,7 +146,7 @@ public class NullDebugger implements Debugger {
 
     protected void sendToOutputHandler(Throwable e) {
         if (outputHandler != null) {
-            outputHandler.inspect(e);
+            outputHandler.inspect(null, e);
         }
     }
 

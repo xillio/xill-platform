@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.api;
 
+import nl.xillio.xill.api.components.Instruction;
+import nl.xillio.xill.api.components.RobotID;
 import org.slf4j.event.Level;
 
 /**
@@ -26,11 +28,12 @@ public interface OutputHandler {
     /**
      * This method is called every time a message is logged to an slf4j {@link org.slf4j.Logger}.
      *
+     * @param robotID    the robot for which this log is generated
      * @param level      the level
      * @param message    the message pattern
      * @param parameters the parameters
      */
-    void handleLog(Level level, String message, Object... parameters);
+    void handleLog(RobotID robotID, Level level, String message, Object... parameters);
 
-    void inspect(Throwable e);
+    void inspect(Instruction instruction, Throwable e);
 }

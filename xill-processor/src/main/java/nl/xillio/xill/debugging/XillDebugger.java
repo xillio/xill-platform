@@ -45,18 +45,18 @@ import java.util.stream.Collectors;
 public class XillDebugger implements Debugger {
     private static final Logger LOGGER = Log.get();
     private final List<Breakpoint> breakpoints;
-    private DebugInfo debugInfo = new DebugInfo();
-    private Instruction pausedOnInstruction = null;
     private final EventHost<RobotStartedAction> onRobotStarted = new EventHost<>();
     private final EventHost<RobotStoppedAction> onRobotStopped = new EventHost<>();
     private final EventHost<RobotPausedAction> onRobotPaused = new EventHost<>();
     private final EventHost<RobotContinuedAction> onRobotContinued = new EventHost<>();
     private final EventHostEx<Object> onRobotInterrupt = new EventHostEx<>();
-    private ErrorHandlingPolicy handler = new NullDebugger();
     private final Stack<nl.xillio.xill.api.components.Instruction> currentStack = new Stack<>();
     private final Stack<CounterWrapper> functionStack = new Stack<>();
-    private Mode mode = Mode.RUNNING;
     private final LinkedList<Debugger> childDebuggers = new LinkedList<>();
+    private DebugInfo debugInfo = new DebugInfo();
+    private Instruction pausedOnInstruction = null;
+    private ErrorHandlingPolicy handler = new NullDebugger();
+    private Mode mode = Mode.RUNNING;
     private OutputHandler outputHandler;
 
 
@@ -378,7 +378,8 @@ public class XillDebugger implements Debugger {
     @Override
     public void handle(final Throwable e) throws RobotRuntimeException {
         if (outputHandler != null) {
-            outputHandler.inspect(e);
+            nl.xillio.xill.api.components.Instruction instruction = getStackTrace().stream().findFirst().orElse(null);
+            outputHandler.inspect(instruction, e);
         }
         handler.handle(e);
     }
