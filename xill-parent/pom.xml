@@ -487,13 +487,13 @@
                     </dependencies>
                     <executions>
                         <execution>
-                            <id>build-xip</id>
+                            <id>build-zip</id>
                             <goals>
                                 <goal>single</goal>
                             </goals>
                             <configuration>
                                 <descriptorRefs>
-                                    <descriptorRef>xip-with-dependencies</descriptorRef>
+                                    <descriptorRef>zip-with-dependencies</descriptorRef>
                                 </descriptorRefs>
                             </configuration>
                         </execution>

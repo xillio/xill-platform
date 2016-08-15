@@ -53,7 +53,7 @@
                     <artifactId>maven-assembly-plugin</artifactId>
                     <executions>
                         <execution>
-                            <id>build-xip</id>
+                            <id>build-zip</id>
                             <phase>package</phase>
                         </execution>
                     </executions>

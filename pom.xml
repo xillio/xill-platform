@@ -66,7 +66,6 @@
         <sonar.language>java</sonar.language>
     </properties>
     <modules>
-        <module>maven-xill-plugin</module>
         <module>xill-plugin-archetype</module>
         <module>xill-api</module>
         <module>xill-assemblies</module>

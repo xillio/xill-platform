@@ -128,13 +128,13 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>runtime-xip</id>
+                        <id>runtime-zip</id>
                         <goals>
                             <goal>single</goal>
                         </goals>
                         <phase>package</phase>
                         <configuration>
-                            <descriptor>src/assembly/xip.xml</descriptor>
+                            <descriptor>src/assembly/zip.xml</descriptor>
                             <attach>true</attach>
                         </configuration>
                     </execution>
