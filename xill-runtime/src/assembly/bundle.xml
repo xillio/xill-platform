@@ -30,7 +30,7 @@
             <binaries>
                 <unpack>true</unpack>
                 <includeDependencies>false</includeDependencies>
-                <attachmentClassifier>zip-with-dependencies</attachmentClassifier>
+                <attachmentClassifier>xip-with-dependencies</attachmentClassifier>
             </binaries>
         </moduleSet>
     </moduleSets>
