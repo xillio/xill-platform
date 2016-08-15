@@ -34,12 +34,12 @@ public interface XillEnvironment extends AutoCloseable {
     /**
      * The default file extension for robot files.
      */
-    public static final String ROBOT_EXTENSION = ".xill";
+    String ROBOT_EXTENSION = ".xill";
 
     /**
      * The default file extension for robot templates.
      */
-    public static final String ROBOT_TEMPLATE_EXTENSION = ".xilt";
+    String ROBOT_TEMPLATE_EXTENSION = ".xilt";
 
     /**
      * Enables or disables loading plugins from the user's home folder.
