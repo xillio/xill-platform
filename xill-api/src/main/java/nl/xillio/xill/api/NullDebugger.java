@@ -30,6 +30,8 @@ import java.util.List;
 
 /**
  * This class represents a debugger that does absolutely nothing except forward exceptions to the output handler.
+ *
+ * @author Thomas Biesaart
  */
 public class NullDebugger implements Debugger {
     private OutputHandler outputHandler;

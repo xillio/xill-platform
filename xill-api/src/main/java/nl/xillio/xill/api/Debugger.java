@@ -185,6 +185,11 @@ public interface Debugger extends ErrorHandlingPolicy {
      */
     void setErrorHandler(final ErrorHandlingPolicy handler);
 
+    /**
+     * Set the handler for all logging output for this debugger.
+     *
+     * @param handler the handler
+     */
     void setOutputHandler(final OutputHandler handler);
 
     /**

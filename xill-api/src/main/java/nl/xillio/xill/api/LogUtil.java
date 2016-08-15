@@ -22,9 +22,9 @@ import org.slf4j.Marker;
 import org.slf4j.event.Level;
 
 /**
- * Logger class for
- * <p>
- * Created by Anwar on 2/18/2016.
+ * This class provides a utility method that will create a {@link Logger} for Xill robot output.
+ *
+ * @author Thomas Biesaart
  */
 public class LogUtil {
     private LogUtil() {
@@ -45,6 +45,12 @@ public class LogUtil {
         return new WrappingLogger(robotID, logger, outputHandler);
     }
 
+    /**
+     * This class provides a delegation that intercepts all logging messages and forwards them
+     * the {@link OutputHandler}.
+     *
+     * @author Thomas Biesaart
+     */
     private static class WrappingLogger implements Logger {
         private final RobotID robotID;
         private final Logger logger;
