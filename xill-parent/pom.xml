@@ -479,11 +479,6 @@
                             <artifactId>xill-assemblies</artifactId>
                             <version>${xill.version}</version>
                         </dependency>
-                        <dependency>
-                            <groupId>nl.xillio.xill</groupId>
-                            <artifactId>maven-xill-plugin</artifactId>
-                            <version>${xill.version}</version>
-                        </dependency>
                     </dependencies>
                     <executions>
                         <execution>

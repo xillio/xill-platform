@@ -71,13 +71,6 @@
                         <phase>package</phase>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>nl.xillio.xill</groupId>
-                        <artifactId>maven-xill-plugin</artifactId>
-                        <version>${xill.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>

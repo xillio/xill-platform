@@ -103,13 +103,6 @@
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>nl.xillio.xill</groupId>
-                        <artifactId>maven-xill-plugin</artifactId>
-                        <version>${xill.version}</version>
-                    </dependency>
-                </dependencies>
                 <configuration>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
