@@ -62,7 +62,7 @@ public class AlertDialog extends Alert {
         }
 
         // Hook each button into the enter pressed event.
-        Arrays.stream(buttons).map(getDialogPane()::lookupButton).forEach(button -> button.addEventHandler(KeyEvent.KEY_PRESSED, this::enterPressed));
+        getButtonTypes().stream().map(getDialogPane()::lookupButton).forEach(button -> button.addEventHandler(KeyEvent.KEY_PRESSED, this::enterPressed));
     }
 
     private void enterPressed(KeyEvent event) {
