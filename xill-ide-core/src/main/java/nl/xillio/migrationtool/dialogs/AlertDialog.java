@@ -16,8 +16,11 @@
 package nl.xillio.migrationtool.dialogs;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import me.biesaart.utils.Log;
@@ -25,6 +28,7 @@ import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 public class AlertDialog extends Alert {
 
@@ -55,6 +59,16 @@ public class AlertDialog extends Alert {
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
+        }
+
+        // Hook each button into the enter pressed event.
+        Arrays.stream(buttons).map(getDialogPane()::lookupButton).forEach(button -> button.addEventHandler(KeyEvent.KEY_PRESSED, this::enterPressed));
+    }
+
+    private void enterPressed(KeyEvent event) {
+        // Check if enter was pressed and the target is a button.
+        if (KeyCode.ENTER.equals(event.getCode()) && event.getTarget() instanceof Button) {
+            ((Button) event.getTarget()).fire();
         }
     }
 }
