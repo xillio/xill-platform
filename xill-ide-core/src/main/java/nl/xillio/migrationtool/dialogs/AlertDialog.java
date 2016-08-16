@@ -69,6 +69,7 @@ public class AlertDialog extends Alert {
         // Check if enter was pressed and the target is a button.
         if (KeyCode.ENTER.equals(event.getCode()) && event.getTarget() instanceof Button) {
             ((Button) event.getTarget()).fire();
+            event.consume();
         }
     }
 }
