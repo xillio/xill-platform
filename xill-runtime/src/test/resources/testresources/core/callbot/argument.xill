@@ -1,0 +1,2 @@
+argument arg = "empty";
+return arg;

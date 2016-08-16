@@ -1,0 +1,5 @@
+argument collection;
+
+foreach (k, v in collection) {
+	collection[k] = v + 1;
+}
