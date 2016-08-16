@@ -116,5 +116,6 @@ public interface XillEnvironment extends AutoCloseable {
     /**
      * Close all loaded plugins.
      */
+    @Override
     void close();
 }

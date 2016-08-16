@@ -27,11 +27,11 @@ import org.slf4j.event.Level;
  * @author Thomas Biesaart
  */
 public class LogUtil {
+    public static final String ROBOT_LOGGER_PREFIX = "robot.";
+
     private LogUtil() {
         // No LogUtil for you
     }
-
-    public static final String ROBOT_LOGGER_PREFIX = "robot.";
 
     /**
      * Gets a new logger instance associated with a specific robot ID.
@@ -56,7 +56,7 @@ public class LogUtil {
         private final Logger logger;
         private final OutputHandler outputHandler;
 
-        public WrappingLogger(RobotID robotID, Logger logger, OutputHandler outputHandler) {
+        private WrappingLogger(RobotID robotID, Logger logger, OutputHandler outputHandler) {
             this.robotID = robotID;
             this.logger = logger;
             this.outputHandler = outputHandler;

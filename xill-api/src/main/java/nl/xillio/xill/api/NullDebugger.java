@@ -38,38 +38,47 @@ public class NullDebugger implements Debugger {
 
     @Override
     public void stepIn() {
+        // No Op
     }
 
     @Override
     public void stepOver() {
+        // No Op
     }
 
     @Override
     public void startInstruction(final Instruction instruction) {
+        // No Op
     }
 
     @Override
     public void endInstruction(final Instruction instruction, final InstructionFlow<MetaExpression> result) {
+        // No Op
     }
 
     @Override
     public void returning(final InstructionSet instructionSet, final InstructionFlow<MetaExpression> result) {
+        // No Op
     }
 
     @Override
     public void resume() {
+        // No Op
     }
 
     @Override
     public void robotStarted(final Robot robot) {
+        // No Op
     }
 
     @Override
     public void robotFinished(final Robot robot) {
+        // No Op
     }
 
     @Override
     public void addDebugInfo(final DebugInfo info) {
+        // No Op
     }
 
     @Override
@@ -99,18 +108,22 @@ public class NullDebugger implements Debugger {
 
     @Override
     public void addBreakpoint(final Breakpoint breakpoint) {
+        // No Op
     }
 
     @Override
     public void setBreakpoints(final List<Breakpoint> breakpoints) {
+        // No Op
     }
 
     @Override
     public void pause(boolean userAction) {
+        // No Op
     }
 
     @Override
     public void stop() {
+        // No Op
     }
 
     @Override
@@ -135,6 +148,7 @@ public class NullDebugger implements Debugger {
 
     @Override
     public void reset() {
+        // No Op
     }
 
     @Override
@@ -154,6 +168,7 @@ public class NullDebugger implements Debugger {
 
     @Override
     public void setErrorHandler(final ErrorHandlingPolicy handler) {
+        // No Op
     }
 
     @Override
@@ -178,14 +193,17 @@ public class NullDebugger implements Debugger {
 
     @Override
     public void removeChild(final Debugger debugger) {
+        // No Op
     }
 
     @Override
     public void startFunction(Processable functionDeclaration) {
+        // No Op
     }
 
     @Override
     public void endFunction(Processable functionDeclaration) {
+        // No Op
     }
 
 }
