@@ -34,13 +34,9 @@ import java.util.function.Consumer;
 public class ConstructContext {
 
     private final RobotID robotID;
-    private Logger robotLogger;
     private final RobotID rootRobot;
-    private Logger rootLogger;
-    private Debugger debugger;
     private final UUID compilerSerialId;
     private final OutputHandler outputHandler;
-
     /**
      * Events for notifying constructs that robots have started or stopped.
      * Example uses are initialization and cleanup.
@@ -54,6 +50,9 @@ public class ConstructContext {
      */
     @Deprecated
     private final EventEx<Object> mockInterruptEvent = new MockInterruptEvent();
+    private Logger robotLogger;
+    private Logger rootLogger;
+    private Debugger debugger;
 
     /**
      * Creates a new {@link ConstructContext} for a specific robot.
@@ -215,7 +214,9 @@ public class ConstructContext {
      * @throws IOException if an IO error occurs
      */
     public XillProcessor createChildProcessor(Path robot, XillEnvironment xillEnvironment) throws IOException {
-        return xillEnvironment.buildProcessor(robotID.getProjectPath().toPath(), robot, debugger.createChild());
+        XillProcessor processor = xillEnvironment.buildProcessor(robotID.getProjectPath().toPath(), robot, debugger.createChild());
+        processor.setOutputHandler(outputHandler);
+        return processor;
     }
 
     /**
