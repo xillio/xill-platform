@@ -23,6 +23,17 @@ import nl.xillio.xill.api.data.MetadataExpression;
  * @author Thomas Biesaart
  */
 public interface TextPreview extends MetadataExpression {
+
+    /**
+     * Maximum string size of the preview
+     */
+    int MAX_TEXT_PREVIEW_SIZE = 1000000;
+
+    /**
+     * The string placed at the end of the text preview that is used to indicate that the text preview is not complete in comparison with the full text
+     */
+    String NOT_COMPLETE_MARK = "\n...";
+
     /**
      * Renders a plain text preview of this object.
      *
