@@ -26,14 +26,20 @@ var tests = [
     [13, true],
     [-23, true],
     [45.128876, true],
+    [21474836472147483647, true],
+    [-21474836472147483647, true],
     ["912", true],
     [true, true],
     [false, true],
+    [1/0, true],
+    [-1/-0, true],
     // Non-numbers.
     ["foo", false],
     [["list"], false],
     [{"a": "object"}, false],
-    [[4], false]
+    [[4], false],
+    [NaN, false],
+    [null, false]
 ];
 
 foreach (item in tests) {
