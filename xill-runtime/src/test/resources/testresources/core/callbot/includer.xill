@@ -1,0 +1,3 @@
+include testresources.core.callbot_include.includeMe;
+
+timesCalled();
