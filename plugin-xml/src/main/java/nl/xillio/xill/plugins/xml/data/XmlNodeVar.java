@@ -178,8 +178,8 @@ public class XmlNodeVar implements nl.xillio.xill.api.data.XmlNode, TextPreview 
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(domSource, result);
 
-            if (writer.getBuffer().length() > MAX_TEXT_PREVIEW_SIZE) {
-                return writer.getBuffer().substring(0, MAX_TEXT_PREVIEW_SIZE- NOT_COMPLETE_MARK.length()) + NOT_COMPLETE_MARK;
+            if (writer.getBuffer().length() > maxSize) {
+                return writer.getBuffer().substring(0, maxSize - NOT_COMPLETE_MARK.length()) + NOT_COMPLETE_MARK;
             } else {
                 return writer.toString();
             }
