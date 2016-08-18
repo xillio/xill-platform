@@ -159,6 +159,36 @@ public class XmlNodeVar implements nl.xillio.xill.api.data.XmlNode, TextPreview 
         return null;
     }
 
+    /**
+     * Returns XML content of this node in string format
+     *
+     * @param maxSize The maximum text size of returned content
+     * @return XML content in string format
+     */
+    public String getXmlContent(int maxSize) {
+        if (this.node == null) {
+            return "null";
+        }
+
+        try {
+            DOMSource domSource = new DOMSource(this.treatAsDocument ? this.getDocument() : this.node);
+            StringWriter writer = new StringWriter();
+            StreamResult result = new StreamResult(writer);
+            Transformer transformer = tf.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.transform(domSource, result);
+
+            if (writer.getBuffer().length() > maxSize) {
+                return writer.getBuffer().substring(0, maxSize - NOT_COMPLETE_MARK.length()) + NOT_COMPLETE_MARK;
+            } else {
+                return writer.toString();
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error while formatting XML", e);
+        }
+        return null;
+    }
+
     private void removeEmptyTextNodes(final Node parent) {
         for (int i = 0; i < parent.getChildNodes().getLength(); i++) {
             Node child = parent.getChildNodes().item(i);
@@ -173,7 +203,7 @@ public class XmlNodeVar implements nl.xillio.xill.api.data.XmlNode, TextPreview 
 
     @Override
     public String getTextPreview() {
-        return getXmlContent();
+        return getXmlContent(MAX_TEXT_PREVIEW_SIZE);
     }
 
 }
