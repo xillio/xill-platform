@@ -128,7 +128,7 @@ public class XillServerUploader implements AutoCloseable {
             return null;
         }
 
-        String uri = (String) jsonPath("_links/project/href", projects.get(0));
+        String uri = (String) jsonPath("_links/self/href", projects.get(0));
         if (uri == null) {
             return null;
         }
