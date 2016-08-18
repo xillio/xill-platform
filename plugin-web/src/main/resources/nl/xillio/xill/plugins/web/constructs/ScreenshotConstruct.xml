@@ -18,7 +18,9 @@
 -->
 <function>
     <description>
-Takes a screenshot of the `page` in argument, storing it in the `file` as a PNG image.
+Takes a screenshot of the `page` in argument, storing it in the `file` as a PNG image.  
+
+Optionally the `resolution` of the screenshot can be provided (see example below). If no parameter is passed then the screenshot resolution will be equal to the resolution used when calling `loadPage` construct.
     </description>
     <examples>
         <example title="Usage">
@@ -27,7 +29,7 @@ Takes a screenshot of the `page` in argument, storing it in the `file` as a PNG 
 use Web;
 
 var page = Web.loadPage("http://google.com");
-Web.screenshot(page, "test.jpg");
+Web.screenshot(page, "test.jpg", {"resolution" : [1024,768]});
 // The file can be found in your "Xill Projects" folder
             </code>
         </example>

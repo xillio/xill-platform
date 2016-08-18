@@ -1,0 +1,32 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* 
+* Specification: Arguments given to a called bot MUST be references instead of hard copies (list and object).
+* Input: A list and object, and a bot which adds 1 to each element of the list or object
+* Expected: The elements of the list and object are changed
+*/
+
+use Assert;
+
+var init = 7;
+var list = [ init ];
+var object = { 0 : init };
+
+callbot("testresources/core/callbot/addOne.xill", list);
+callbot("testresources/core/callbot/addOne.xill", object);
+
+Assert.equal(list[0], init + 1);
+Assert.equal(object[0], init + 1);
