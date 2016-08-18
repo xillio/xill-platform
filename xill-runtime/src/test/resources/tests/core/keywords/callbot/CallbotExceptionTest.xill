@@ -15,7 +15,7 @@
  */
 /* 
 * Specification: Errors in called bots MUST be thrown in the calling bot and callbot MUST return null.
-* Input: A robot which throws an error when given an atomic argument
+* Input: A robot which throws an error when given an atomic as argument
 * Expected: An error is thrown
 */
 
