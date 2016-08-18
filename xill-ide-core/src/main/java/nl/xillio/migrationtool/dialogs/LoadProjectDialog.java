@@ -27,10 +27,11 @@ import java.io.File;
  * A dialog to add a new project from an existing source.
  */
 public class LoadProjectDialog extends FXMLDialog {
-    @FXML
-    private TextField tfprojectname;
+
     @FXML
     private TextField tfprojectfolder;
+
+    private String projectName;
 
     private final ProjectPane projectPane;
 
@@ -40,10 +41,10 @@ public class LoadProjectDialog extends FXMLDialog {
      * @param projectPane the projectPane to which this dialog is attached to.
      */
     public LoadProjectDialog(final ProjectPane projectPane) {
-        super("/fxml/dialogs/NewProject.fxml");
+        super("/fxml/dialogs/LoadProject.fxml");
 
         this.projectPane = projectPane;
-        setTitle("New Project from source");
+        setTitle("New project from existing sources");
     }
 
     /**
@@ -64,11 +65,7 @@ public class LoadProjectDialog extends FXMLDialog {
         File result = chooser.showDialog(getScene().getWindow());
         if (result != null) {
             tfprojectfolder.setText(result.getPath());
-
-            // If we have no project name yet we want to auto fill this
-            if (tfprojectname.getText().isEmpty()) {
-                tfprojectname.setText(result.getName());
-            }
+            projectName = result.getName();
         }
     }
 
@@ -79,7 +76,6 @@ public class LoadProjectDialog extends FXMLDialog {
 
     @FXML
     private void okayBtnPressed(final ActionEvent event) {
-        String projectName = tfprojectname.getText();
         String projectFolder = tfprojectfolder.getText();
 
         if (projectPane.newProject(projectName, projectFolder, "", false)) {
