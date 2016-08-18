@@ -46,3 +46,4 @@ All notable changes to this project will be documented in this file.
 * Divide by zero java error for modulo [CTC-1147]
 * OutOfMemoryError when trying to preview large XML-files [CTC-1267]
 * Add resolution parameter to `Web.screenshot()` [CTC-1043]
+* Display of CHANGELOG.md after new install [CTC-1713]
