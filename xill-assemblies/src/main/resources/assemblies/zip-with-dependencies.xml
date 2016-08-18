@@ -34,5 +34,9 @@
             <directory>src/main/deploy</directory>
             <outputDirectory/>
         </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/html</directory>
+            <outputDirectory/>
+        </fileSet>
     </fileSets>
 </assembly>

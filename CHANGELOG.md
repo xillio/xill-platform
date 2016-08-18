@@ -43,3 +43,5 @@ All notable changes to this project will be documented in this file.
 * Enable change of casing in robot name [CTC-1444]
 * Collection.sort onKeys parameter is ignored for lists [CTC-1700]
 * Hotkey input fields can contain illegal keywords [CTC-1696]
+* Divide by zero java error for modulo [CTC-1147]
+* OutOfMemoryError when trying to preview large XML-files [CTC-1267]
