@@ -60,6 +60,7 @@ public class Options implements MetadataExpression {
     private boolean loadImages = true;
     private String sslProtocol; // null==(default==) "sslv3"
     private boolean ltrUrlAccess; // --local-to-remote-url-access (default==null== "false")
+    private Dimension resolution = new Dimension(1920, 1024); // Default viewport size
 
     private String proxyHost;
     private int proxyPort = 0;
@@ -196,6 +197,16 @@ public class Options implements MetadataExpression {
     }
 
     /**
+     * Set the viewport dimension.
+     *
+     * @param width The width of viewport in the pixels.
+     * @param height The height of viewport in the pixels.
+     */
+    public void setResolution(int width, int height) {
+        this.resolution = new Dimension(width, height);
+    }
+
+    /**
      * Enable or disable ltr URL access.
      *
      * @param enabled Whether or not we want this access enabled.
@@ -251,8 +262,8 @@ public class Options implements MetadataExpression {
      * @param driver Existing WebDriver
      */
     public void setDriverOptions(final WebDriver driver) {
-        // setting up bigger size of viewport (default is 400x300)
-        driver.manage().window().setSize(new Dimension(1920, 1080));
+        // setting up the size of viewport
+        driver.manage().window().setSize(resolution);
 
         // page load timeout
         if (timeout != 0) {
@@ -333,7 +344,7 @@ public class Options implements MetadataExpression {
                 insecureSSL, loadImages, sslProtocol,
                 ltrUrlAccess, proxyHost, proxyPort,
                 proxyUser, proxyPass, proxyType,
-                httpAuthUser, httpAuthPass);
+                httpAuthUser, httpAuthPass, resolution);
     }
 
     private WebDriver createPhantomJSDriver() {
@@ -389,6 +400,13 @@ public class Options implements MetadataExpression {
      */
     public int getTimeOut() {
         return timeout;
+    }
+
+    /**
+     * @return Returns the resolution value in the options.
+     */
+    public Dimension getResolution() {
+        return resolution;
     }
 
 }
