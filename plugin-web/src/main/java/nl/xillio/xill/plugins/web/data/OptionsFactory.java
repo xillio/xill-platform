@@ -20,7 +20,11 @@ import nl.xillio.xill.api.components.ExpressionDataType;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 
+import java.util.List;
 import java.util.Map;
+
+import static nl.xillio.xill.plugins.web.services.web.WebService.MIN_VIEWPORT_HEIGHT;
+import static nl.xillio.xill.plugins.web.services.web.WebService.MIN_VIEWPORT_WIDTH;
 
 /**
  * The factory for the {@link Options} variable.
@@ -139,8 +143,24 @@ public class OptionsFactory {
                 }
                 break;
 
+            case "resolution":
+                if (value.getType() != ExpressionDataType.LIST) {
+                    throw new RobotRuntimeException("Invalid variable type of \"resolution\" option. Expected value is the list of pixel width and height.");
+                }
+                final List<MetaExpression> resolutionList = value.getValue();
+                if (resolutionList == null || resolutionList.size() != 2) {
+                    throw new RobotRuntimeException("Invalid \"resolution\" option. Expected value is the list of pixel width and height.");
+                }
+                final int width = resolutionList.get(0).getNumberValue().intValue();
+                final int height = resolutionList.get(1).getNumberValue().intValue();
+                if (width < MIN_VIEWPORT_WIDTH || height < MIN_VIEWPORT_HEIGHT) {
+                    throw new RobotRuntimeException(String.format("Invalid \"resolution\" option. The minimum resolution is %1$dx%2$d pixels.", MIN_VIEWPORT_WIDTH, MIN_VIEWPORT_HEIGHT));
+                }
+                options.setResolution(width, height);
+                break;
+
             default:
-                throw new RobotRuntimeException("Unknow option: " + option);
+                throw new RobotRuntimeException("Unknown option: " + option);
         }
     }
 
