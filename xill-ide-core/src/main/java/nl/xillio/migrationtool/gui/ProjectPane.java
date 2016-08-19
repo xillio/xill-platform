@@ -799,13 +799,15 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder.");
         }
 
+        if ("".equals(folder)) {
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Select a folder to create a new project.");
+        }
+
         if ("".equals(name)) {
             return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Enter a file name to create a new project.");
         }
 
-        if ("".equals(folder)) {
-            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Select a folder to create a new project.");
-        }
+
 
         // Check if project folder already exists under different capitalization
         File projectFolder = new File(folder);

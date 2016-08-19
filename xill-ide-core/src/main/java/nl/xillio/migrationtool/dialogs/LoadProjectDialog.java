@@ -70,7 +70,6 @@ public class LoadProjectDialog extends FXMLDialog {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setInitialDirectory(getInitialDirectory());
 
-
         File result = chooser.showDialog(getScene().getWindow());
         if (result != null) {
             tfprojectfolder.setText(result.getPath());
