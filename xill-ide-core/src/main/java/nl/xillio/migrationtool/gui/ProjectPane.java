@@ -796,7 +796,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 && findItemByPath(root, folder) == null;
 
         if (!projectDoesntExist) {
-            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "A project with the same name already exists as a project.");
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder.");
         }
 
         if ("".equals(name)) {
@@ -825,7 +825,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             }
         } else if (!isNew) {
             //We are opening existing project but the folder does not exist
-            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected directory does not exist.");
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder does not exist.");
         }
 
         // Create the project.

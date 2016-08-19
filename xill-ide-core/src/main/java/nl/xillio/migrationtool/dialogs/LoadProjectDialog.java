@@ -45,6 +45,15 @@ public class LoadProjectDialog extends FXMLDialog {
 
         this.projectPane = projectPane;
         setTitle("New project from existing sources");
+        tfprojectfolder.textProperty().addListener(this::typesInProjectFolder);
+    }
+
+    private void typesInProjectFolder(Object source, String oldValue, String newValue) {
+        if (tfprojectfolder.isFocused()) {
+            File newFile = new File(newValue);
+            setProjectFolder(newValue);
+            projectName = newFile.getName();
+        }
     }
 
     /**
