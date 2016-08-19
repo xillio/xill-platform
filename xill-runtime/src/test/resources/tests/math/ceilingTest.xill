@@ -13,8 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var calls = 0;
+/*
+* Specification: Getting the ceiling of a number MUST round it up to the smallest number larger than the given value.
+* Expected: The smallest number larger than the given value
+* Input: See dataset
+*/
 
-function timesCalled() {
-	return calls++;
+use Math, Assert;
+
+var tests = [
+    [6, 6],
+    [3.14, 4],
+    [-3.78, -3],
+    [0.7, 1],
+    [2147483647.345, 2147483648],
+    [-2147483648.67, -2147483648],
+    [NaN, 0]
+];
+
+foreach (item in tests) {
+    Assert.equal(Math.ceiling(item[0]), item[1]);
 }
