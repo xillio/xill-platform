@@ -13,21 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
-* Specification: Flooring a number MUST round it down to the largest number smaller than the given value
-* Expected: The largest number smaller than the given value
-* Input: See dataset
-*/
+var calls = 0;
 
-use Math, Assert;
-
-var tests = [
-    [6, 6],
-    [3.14, 3],
-    [-3.78, -4],
-    [0.7, 0]
-];
-
-foreach (item in tests) {
-    Assert.equal(Math.floor(item[0]), item[1]);
+function timesCalled() {
+	return calls++;
 }
