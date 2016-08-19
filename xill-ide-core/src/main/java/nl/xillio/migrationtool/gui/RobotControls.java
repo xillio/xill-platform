@@ -34,6 +34,8 @@ import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.util.HotkeysHandler.Hotkeys;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +48,7 @@ import java.util.stream.Collectors;
 public class RobotControls implements EventHandler<KeyEvent>, ErrorHandlingPolicy {
 
     private static final Logger LOGGER = Log.get();
+    private static final Marker NO_DEV_MARKER = MarkerFactory.getMarker("NO_DEV");
 
     private final Button start;
     private final Button stop;
@@ -301,15 +304,15 @@ public class RobotControls implements EventHandler<KeyEvent>, ErrorHandlingPolic
         LOGGER.error("Exception occurred in robot", e);
         if (e instanceof RobotRuntimeException) {
             if (exceptionList.size() == 1) { //exception in root robot
-                log.error(e.getMessage());
+                log.error(NO_DEV_MARKER, e.getMessage());
             } else { //exception in called robot
                 String message = String.join("\n\t", Lists.reverse(exceptionList.stream().map(f -> f.getMessage()).collect(Collectors.toList())));
-                log.error(message);
+                log.error(NO_DEV_MARKER, message);
             }
         } else if (root == null) {
-            log.error("An error occurred in a robot: " + e.getMessage(), e);
+            log.error(NO_DEV_MARKER, "An error occurred in a robot: " + e.getMessage(), e);
         } else {
-            log.error("An error occurred in a robot: " + root.getMessage(), root);
+            log.error(NO_DEV_MARKER, "An error occurred in a robot: " + root.getMessage(), root);
         }
 
         if (shouldStopOnError.isSelected()) {

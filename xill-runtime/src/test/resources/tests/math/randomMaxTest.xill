@@ -13,8 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var calls = 0;
+/*
+* Specification: When a number is given, random MUST return a random number between 0 (inclusive) and that number (exclusive).
+* Expected: A number between 0 and the given number
+* Input: A number
+*/
 
-function timesCalled() {
-	return calls++;
+use Math, Assert;
+
+var max = 3;
+var i = 0;
+while (i++ < 10) {
+	var rnd = Math.random(max);
+	Assert.isTrue(rnd >= 0 && rnd < max);
 }

@@ -17,7 +17,10 @@ package nl.xillio.migrationtool.dialogs;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import me.biesaart.utils.Log;
@@ -50,6 +53,9 @@ public class FXMLDialog extends Stage {
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
+
+        // Hook into the enter pressed event.
+        this.getScene().addEventHandler(KeyEvent.KEY_PRESSED, this::enterPressed);
     }
 
     private void loadFXML(final URL resource) {
@@ -61,6 +67,14 @@ public class FXMLDialog extends Stage {
             setScene(new Scene(loader.load()));
         } catch (IOException e) {
             LOGGER.error("Failed to load FXML.", e);
+        }
+    }
+
+    private void enterPressed(KeyEvent event) {
+        // Check if enter was pressed and the target is a button.
+        if (KeyCode.ENTER.equals(event.getCode()) && event.getTarget() instanceof Button) {
+            ((Button) event.getTarget()).fire();
+            event.consume();
         }
     }
 }
