@@ -17,6 +17,7 @@ package nl.xillio.migrationtool.gui;
 
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,6 +28,7 @@ import javafx.scene.layout.AnchorPane;
 import nl.xillio.events.Event;
 import nl.xillio.xill.api.Debugger;
 import me.biesaart.utils.Log;
+import nl.xillio.xill.api.ProgressInfo;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -63,6 +65,8 @@ public class StatusBar extends AnchorPane {
 
     @FXML
     private ProgressBar barRobotProgress;
+    private final SimpleDoubleProperty progress = new SimpleDoubleProperty();
+    private ProgressInfo progressInfo;
     @FXML
     private Labeled lblTimeRemaining;
     @FXML
@@ -80,6 +84,7 @@ public class StatusBar extends AnchorPane {
             Node ui = loader.load();
             getChildren().add(ui);
             lblStatusVal.textProperty().bind(status.asString());
+            barRobotProgress.progressProperty().bind(progress);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -92,9 +97,26 @@ public class StatusBar extends AnchorPane {
      */
     public void registerDebugger(Debugger debugger) {
         debugger.getOnRobotStart().addListener(e -> setStatus(Status.RUNNING));
-        debugger.getOnRobotStop().addListener(e -> setStatus(Status.STOPPED));
+        debugger.getOnRobotStop().addListener(e -> {
+            setStatus(Status.STOPPED);
+            // Set progress bar according to its settings
+            if (progressInfo != null) {
+                switch (progressInfo.getOnStopBehavior()) {
+                    case ZERO: // Set to zero
+                        progress.set(0);
+                        break;
+                    case HIDE: // Hide progress bar
+                        barRobotProgress.setVisible(false);
+                        progressInfo.setProgress(-1);
+                        progress.set(-1);
+                        break;
+                    default: // Otherwise do nothing
+                }
+            }
+        });
         debugger.getOnRobotPause().addListener(e -> setStatus(Status.PAUSED));
         debugger.getOnRobotContinue().addListener(e -> setStatus(Status.RUNNING));
+        debugger.getOnSetProgressInfo().addListener(e -> setProgress(e));
     }
 
     /**
@@ -108,5 +130,35 @@ public class StatusBar extends AnchorPane {
 
     public ObjectProperty<Status> statusProperty() {
         return status;
+    }
+
+    /**
+     * This method is called when event is invoked in XillDebugger.setProgressInfo()
+     *
+     * @param progressInfo the ProgressInfo object instantiated in XillDebugger
+     */
+    private void setProgress(ProgressInfo progressInfo) {
+        this.progressInfo = progressInfo;
+        double newProgress = progressInfo.getProgress();
+        barRobotProgress.setVisible(newProgress >= 0);
+        progress.set(newProgress);
+    }
+
+    /**
+     * Getter for progress value property
+     *
+     * @return the progress value property
+     */
+    public SimpleDoubleProperty progressProperty() {
+        return progress;
+    }
+
+    /**
+     * Getter for ProgressInfo object
+     *
+     * @return the ProgressInfo object
+     */
+    public ProgressInfo getProgressInfo() {
+        return progressInfo;
     }
 }

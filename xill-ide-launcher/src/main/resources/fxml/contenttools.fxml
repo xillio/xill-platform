@@ -91,6 +91,14 @@
 										<Tooltip text="Print" />
 									</tooltip>
 								</Button>
+								<Button fx:id="btnRobotsProgress" mnemonicParsing="false" onAction="#buttonRobotsProgress" styleClass="iconButton" text="Robots progress">
+									<graphic>
+										<Pane styleClass="icon" />
+									</graphic>
+									<tooltip>
+										<Tooltip text="Print" />
+									</tooltip>
+								</Button>
 							</items>
 						</ToolBar>
 						<ToolBar fx:id="tlbRight" focusTraversable="false" HBox.hgrow="NEVER">

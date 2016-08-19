@@ -16,9 +16,9 @@
 package nl.xillio.xill.debugging;
 
 import nl.xillio.events.Event;
-import nl.xillio.xill.api.Breakpoint;
+import nl.xillio.xill.api.*;
 import nl.xillio.xill.api.DebugInfo;
-import nl.xillio.xill.api.Debugger;
+import nl.xillio.xill.api.ProgressInfo;
 import nl.xillio.xill.api.components.*;
 import nl.xillio.xill.api.errors.ErrorHandlingPolicy;
 import nl.xillio.xill.api.events.RobotContinuedAction;
@@ -184,6 +184,16 @@ public class DelegateDebugger implements Debugger {
     @Override
     public void endFunction(Processable functionDeclaration) {
         debugger.endFunction(functionDeclaration);
+    }
+
+    @Override
+    public Event<nl.xillio.xill.api.ProgressInfo> getOnSetProgressInfo() {
+        return debugger.getOnSetProgressInfo();
+    }
+
+    @Override
+    public void setProgressInfo(ProgressInfo progressInfo) {
+        debugger.setProgressInfo(progressInfo);
     }
 
     @Override

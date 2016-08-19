@@ -173,4 +173,12 @@ public class NullDebugger implements Debugger {
     public void endFunction(Processable functionDeclaration) {
     }
 
+    @Override
+    public Event<nl.xillio.xill.api.ProgressInfo> getOnSetProgressInfo() {
+        return null;
+    }
+
+    @Override
+    public void setProgressInfo(ProgressInfo progressInfo) {
+    }
 }

@@ -223,4 +223,18 @@ public interface Debugger extends ErrorHandlingPolicy {
      * @param functionDeclaration the function
      */
     void endFunction(Processable functionDeclaration);
+
+    /**
+     * Getter for ProgressInfo event
+     *
+     * @return the event
+     */
+    Event<ProgressInfo> getOnSetProgressInfo();
+
+    /**
+     * Set current progress status of the robot
+     *
+     * @param progressInfo the info about current robot's progress; serves here for data transferring only
+     */
+    void setProgressInfo(ProgressInfo progressInfo);
 }

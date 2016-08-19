@@ -217,4 +217,13 @@ public class ConstructContext {
             removeRobotInterruptListener(listener);
         }
     }
+
+    /**
+     * Return debugger associated with this context
+     *
+     * @return the debugger
+     */
+    public Debugger getDebugger() {
+        return debugger;
+    }
 }

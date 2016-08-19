@@ -33,10 +33,7 @@ import nl.xillio.events.EventHost;
 import nl.xillio.migrationtool.ApplicationKillThread;
 import nl.xillio.migrationtool.EulaUtils;
 import nl.xillio.migrationtool.Loader;
-import nl.xillio.migrationtool.dialogs.AlertDialog;
-import nl.xillio.migrationtool.dialogs.ChangeLogDialog;
-import nl.xillio.migrationtool.dialogs.MissingLicensePluginsDialog;
-import nl.xillio.migrationtool.dialogs.SettingsDialog;
+import nl.xillio.migrationtool.dialogs.*;
 import nl.xillio.migrationtool.elasticconsole.ESConsoleClient;
 import nl.xillio.plugins.PluginLoadFailure;
 import nl.xillio.plugins.XillPlugin;
@@ -481,6 +478,12 @@ public class FXController implements Initializable, EventHandler<Event> {
         if (tab != null) {
             ((FileTab) tab).getEditorPane().print();
         }
+    }
+    
+    @FXML
+    private void buttonRobotsProgress() {
+        RobotsProgressDialog dialog = new RobotsProgressDialog(tpnBots.getTabs());
+        dialog.showAndWait();
     }
 
     @FXML
