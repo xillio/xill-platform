@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /*
-* Specification: Getting the ceiling of a number MUST round it up to the smallest number larger than the given value
+* Specification: Getting the ceiling of a number MUST round it up to the smallest number larger than the given value.
 * Expected: The smallest number larger than the given value
 * Input: See dataset
 */
@@ -25,7 +25,12 @@ var tests = [
     [6, 6],
     [3.14, 4],
     [-3.78, -3],
-    [0.7, 1]
+    [0.7, 1],
+    [2147483647.345, 2147483648],
+    [-2147483648.67, -2147483648],
+    [21474821474836473648.2, 21474821474836473649],
+    [-21474836472147483647.45, -21474836472147483647],
+    [NaN, 0]
 ];
 
 foreach (item in tests) {
