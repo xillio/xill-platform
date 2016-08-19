@@ -819,7 +819,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                     return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder.");
                 }
                 if (!canonicalFileName.equals(fileName)) {
-                    return showAlertDialog(Alert.AlertType.ERROR, "Project already exists", "",
+                    return showAlertDialog(Alert.AlertType.ERROR, "Error", "",
                             "The selected directory already exists with a different case. Please use \"" + canonicalFileName + "\" or rename your project.");
                 }
             } catch (IOException e) {
