@@ -16,7 +16,6 @@
     limitations under the License.
 
 -->
-
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -49,47 +48,6 @@
 										</tooltip>
 									</Button>
 									<Separator orientation="VERTICAL" />
-									<Button fx:id="btnRun" mnemonicParsing="false" styleClass="iconButton" text="Run">
-										<graphic>
-											<Pane styleClass="icon" />
-										</graphic>
-										<tooltip>
-											<Tooltip text="Run (F6)" />
-										</tooltip>
-									</Button>
-									<Button fx:id="btnPause" mnemonicParsing="false" styleClass="iconButton" text="Pause">
-										<graphic>
-											<Pane styleClass="icon" />
-										</graphic>
-										<tooltip>
-											<Tooltip text="Pause (F7)" />
-										</tooltip>
-									</Button>
-									<Button fx:id="btnStop" mnemonicParsing="false" styleClass="iconButton" text="Stop">
-										<graphic>
-											<Pane styleClass="icon" />
-										</graphic>
-										<tooltip>
-											<Tooltip text="Stop (F8)" />
-										</tooltip>
-									</Button>
-									<Button fx:id="btnStepOver" mnemonicParsing="false" styleClass="iconButton" text="Step over">
-										<graphic>
-											<Pane styleClass="icon" />
-										</graphic>
-										<tooltip>
-											<Tooltip text="Step over (F10)" />
-										</tooltip>
-									</Button>
-									<Button fx:id="btnStepIn" mnemonicParsing="false"  styleClass="iconButton" text="Step in">
-										<graphic>
-											<Pane styleClass="icon" />
-										</graphic>
-										<tooltip>
-											<Tooltip text="Step in (F9)" />
-										</tooltip>
-									</Button>
-									<Separator orientation="VERTICAL" />
 									<Button fx:id="btnRemoveAllBreakpoints" mnemonicParsing="false" onAction="#buttonRemoveAllBreakpoints" styleClass="iconButton" text="Remove all breakpoints">
 										<graphic>
 											<Pane styleClass="icon" />
@@ -98,20 +56,6 @@
 											<Tooltip text="Remove all breakpoints" />
 										</tooltip>
 									</Button>
-									<MenuButton fx:id="mbToggleWarnings" mnemonicParsing="false" styleClass="iconButton" text="Toggle warnings">
-										<graphic>
-											<Pane styleClass="icon" />
-										</graphic>
-										<items>
-											<CheckMenuItem fx:id="cmiDebug" mnemonicParsing="false" selected="false" text="Debug" />
-											<CheckMenuItem fx:id="cmiInfo" mnemonicParsing="false" selected="false" text="Info" />
-											<CheckMenuItem fx:id="cmiWarning" mnemonicParsing="false" selected="true" text="Warning" />
-											<CheckMenuItem fx:id="cmiError" mnemonicParsing="false" selected="true" text="Error" />
-										</items>
-										<tooltip>
-											<Tooltip text="Select breaking log levels" />
-										</tooltip>
-									</MenuButton>
 								</items>
 							</ToolBar>
 							<ToolBar fx:id="tlbSearchToolBar">

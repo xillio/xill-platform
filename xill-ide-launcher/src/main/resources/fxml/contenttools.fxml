@@ -16,7 +16,6 @@
     limitations under the License.
 
 -->
-
 <?import javafx.scene.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
@@ -82,6 +81,14 @@
 									</graphic>
 									<tooltip>
 										<Tooltip text="Save all" />
+									</tooltip>
+								</Button>
+								<Button fx:id="btnPrint" mnemonicParsing="false" onAction="#buttonPrint" styleClass="iconButton" text="Print">
+									<graphic>
+										<Pane styleClass="icon" />
+									</graphic>
+									<tooltip>
+										<Tooltip text="Print" />
 									</tooltip>
 								</Button>
 							</items>

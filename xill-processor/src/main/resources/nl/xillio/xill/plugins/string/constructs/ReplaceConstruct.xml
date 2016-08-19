@@ -26,7 +26,7 @@ Also in `replacement` you can use the capture groups from `needle` as "$1", "$2"
 To use a literal "$" in `replacement`, you need to escape it like this: "\$".
 Set `useregex` to `false` to have the function treat `needle` and `replacement` as regular text.
 
-Optionally a timeout can be provided in seconds, the default value is 5 seconds.
+Optionally a timeout can be provided in milliseconds, the default value is 5000 milliseconds.
 Set `timeout` to zero to let the function run without timeout. This should only be altered when dealing with large source documents.
 See the Regular Expressions page for more about Regular Expression support in Xill IDE.
     </description>

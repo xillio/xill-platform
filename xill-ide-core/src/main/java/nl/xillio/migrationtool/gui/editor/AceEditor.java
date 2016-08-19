@@ -39,13 +39,14 @@ import nl.xillio.events.Event;
 import nl.xillio.events.EventHost;
 import nl.xillio.migrationtool.BreakpointPool;
 import nl.xillio.migrationtool.gui.FXController;
+import nl.xillio.migrationtool.gui.FileTab;
 import nl.xillio.migrationtool.gui.ReplaceBar;
 import nl.xillio.migrationtool.gui.RobotTab;
 import nl.xillio.xill.api.Issue;
+import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.preview.Replaceable;
 import nl.xillio.xill.util.HotkeysHandler.Hotkeys;
-import nl.xillio.xill.util.settings.SettingsHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
@@ -61,20 +62,24 @@ import java.util.stream.Collectors;
  * It *should* extend {@link WebView}, but this class is final...
  */
 public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable, EventDispatcher {
-    private static String EDITOR_URL;
-    private static final SettingsHandler settings = SettingsHandler.getSettingsHandler();
-    private static final double ZOOM_SENSITIVITY = 100;
-    private static final Clipboard clipboard = Clipboard.getSystemClipboard();
     private static final Logger LOGGER = Log.get();
+    private static final Clipboard clipboard = Clipboard.getSystemClipboard();
+    private static String editorUrl;
+
     private final StringProperty code = new SimpleStringProperty();
     private final WebView editor;
     private final SimpleBooleanProperty documentLoaded = new SimpleBooleanProperty(false);
     private final EventHost<Boolean> onDocumentLoaded = new EventHost<>();
     private final EventDispatcher parentEventDispatcher;
+
     private JSObject ace;
-    private RobotTab tab;
+    private FileTab tab;
     private ContextMenu rightClickMenu;
     private JSObject undoManager;
+
+    // Search bar.
+    private ReplaceBar replaceBar;
+    private int occurrences = 0;
 
     static {
         try {
@@ -82,29 +87,6 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
         } catch (IOException | TemplateException e) {
             throw new RuntimeException("Failed to deploy editor", e);
         }
-    }
-
-    /**
-     * Deploy the editor file.
-     * <p>
-     * This is a workaround for a bug introduced in jdk1.8.0_60 where internal resources cannot reference other internal resources. This method should be removed as soon as this bug is fixed.
-     * </p>
-     *
-     * @see <a href="https://bugs.openjdk.java.net/browse/JDK-8134975?page=com.atlassian.streams.streams-jira-plugin:activity-stream-issue-tab">Bug Report</a>
-     * @deprecated This is a workaround
-     */
-    @Deprecated
-    private static void deployEditor() throws IOException, TemplateException {
-        File editorFile = File.createTempFile("xill_editor", ".html");
-        FileUtils.forceDeleteOnExit(editorFile);
-        Configuration config = new Configuration(Configuration.VERSION_2_3_23);
-        config.setClassForTemplateLoading(AceEditor.class, "/");
-        Template template = config.getTemplate("editor.html");
-        Map<String, Object> model = new HashMap<>();
-        model.put("jarFile", AceEditor.class.getResource("/editor.html").toExternalForm().replaceAll("editor\\.html", ""));
-        template.process(model, new FileWriter(editorFile));
-        LOGGER.info("Deployed editor as JavaFX workaround");
-        EDITOR_URL = editorFile.toURI().toURL().toExternalForm();
     }
 
     /**
@@ -141,11 +123,30 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
         editor.setOnDragDropped(null);
         editor.setOnDragOver(e -> editor.sceneProperty().get().setCursor(Cursor.DISAPPEAR));
 
-        editor.getEngine().getLoadWorker().exceptionProperty().addListener(
-                (source, o, n) -> {
-                    LOGGER.error("Javascript exception", n);
-                }
-        );
+        editor.getEngine().getLoadWorker().exceptionProperty().addListener((source, o, n) -> LOGGER.error("Javascript exception", n));
+    }
+
+    /**
+     * Deploy the editor file.
+     * <p>
+     * This is a workaround for a bug introduced in jdk1.8.0_60 where internal resources cannot reference other internal resources. This method should be removed as soon as this bug is fixed.
+     * </p>
+     *
+     * @see <a href="https://bugs.openjdk.java.net/browse/JDK-8134975?page=com.atlassian.streams.streams-jira-plugin:activity-stream-issue-tab">Bug Report</a>
+     * @deprecated This is a workaround
+     */
+    @Deprecated
+    private static void deployEditor() throws IOException, TemplateException {
+        File editorFile = File.createTempFile("xill_editor", ".html");
+        FileUtils.forceDeleteOnExit(editorFile);
+        Configuration config = new Configuration(Configuration.VERSION_2_3_23);
+        config.setClassForTemplateLoading(AceEditor.class, "/");
+        Template template = config.getTemplate("editor.html");
+        Map<String, Object> model = new HashMap<>();
+        model.put("jarFile", AceEditor.class.getResource("/editor.html").toExternalForm().replaceAll("editor\\.html", ""));
+        template.process(model, new FileWriter(editorFile));
+        LOGGER.info("Deployed editor as JavaFX workaround");
+        editorUrl = editorFile.toURI().toURL().toExternalForm();
     }
 
     /**
@@ -173,7 +174,7 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
      *
      * @param tab the tab that should be used by this editor
      */
-    public void setTab(final RobotTab tab) {
+    public void setTab(final FileTab tab) {
         this.tab = tab;
     }
 
@@ -319,7 +320,7 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
      * @param type type of highlighting to be used( "error" or "highlight" )
      */
     public void highlightLine(final int line, final String type) {
-        callOnAce("highlight", (line > 0 ? line - 1 : 0), type);
+        callOnAce("highlight", line > 0 ? line - 1 : 0, type);
     }
 
     /**
@@ -424,7 +425,6 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
     }
 
 
-
     /**
      * Perform Ace editor settings
      *
@@ -448,8 +448,12 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
     private void bindToWindow() {
         // Do not use executeJS here, it needs to be done immediately
         JSObject jsobj = (JSObject) executeJSBlocking("window");
-        jsobj.setMember("xillCoreOverride", new XillJSObject(tab.getProcessor()));
         jsobj.setMember("javaEditor", this);
+
+        // Check if the tab is a robot tab.
+        if (tab instanceof RobotTab) {
+            jsobj.setMember("xillCoreOverride", new XillJSObject(((RobotTab) tab).getProcessor()));
+        }
 
         executeJSBlocking("init();");
     }
@@ -469,6 +473,12 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
      * @param jsBreakpoints the breakpoints to set
      */
     public void breakpointsChanged(JSObject jsBreakpoints) {
+        // Check if the tab is a robot tab.
+        if (!(tab instanceof RobotTab)) {
+            return;
+        }
+        RobotTab robotTab = (RobotTab) tab;
+
         int length = ((Number) jsBreakpoints.getMember("length")).intValue();
 
         List<Integer> breakpoints = new ArrayList<>(length);
@@ -478,9 +488,9 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
             }
         }
 
-        BreakpointPool.INSTANCE.clear(tab.getCurrentRobot());
+        BreakpointPool.INSTANCE.clear(robotTab.getCurrentRobot());
 
-        breakpoints.forEach(bp -> BreakpointPool.INSTANCE.add(tab.getCurrentRobot(), bp));
+        breakpoints.forEach(bp -> BreakpointPool.INSTANCE.add(robotTab.getCurrentRobot(), bp));
     }
 
     /**
@@ -570,7 +580,7 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
      * Load Ace editor in the {@link WebView}
      */
     public void loadEditor() {
-        load(EDITOR_URL);
+        load(editorUrl);
     }
 
     private void load(final String path) {
@@ -593,7 +603,7 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
      * @return the plugin and construct at cursor position
      * @throws ClassCastException which is most likely an out of bounds exception by retrieving tokens.
      */
-    public String[] getPluginAndConstructAtCursor() throws ClassCastException {
+    public String[] getPluginAndConstructAtCursor() {
 
         Object cursor = ((JSObject) ace.getMember("selection")).call("getCursor");
         Object column = ((JSObject) cursor).getMember("column");
@@ -627,22 +637,31 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
             default:
                 break;
         }
-        result[0] = (plugin);
-        result[1] = (construct);
+        result[0] = plugin;
+        result[1] = construct;
         return result;
     }
 
-    private String getTokenValue(Object tokens, int index) throws ClassCastException {
+    private String getTokenValue(Object tokens, int index) {
         return getTokenValue(((JSObject) tokens).getSlot(index));
     }
 
-    private String getTokenValue(Object token) throws ClassCastException {
+    private String getTokenValue(Object token) {
         return ((JSObject) token).getMember("value").toString();
     }
 
+    /**
+     * Auto-detect and set the editor mode based on the path.
+     *
+     * @param file the file to detect the mode for
+     */
+    public void autoDetectMode(String file) {
+        if (!file.endsWith(XillEnvironment.ROBOT_EXTENSION) && !file.endsWith(XillEnvironment.ROBOT_TEMPLATE_EXTENSION)) {
+            executeJS("editor.session.setMode(modelist.getModeForPath(\"" + file + "\").mode);");
+        }
+    }
+
     ////////////////// SEARCH BAR //////////////////
-    private ReplaceBar replaceBar;
-    private int occurrences = 0;
 
     /**
      * Set the replace bar that the editor uses.
@@ -725,7 +744,7 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
     }
 
     private String toJavaScript(Issue issue) {
-        return String.format("{row:%d,column:0,text:\"%s\",type:\"%s\"}", (issue.getLine() > 0 ? issue.getLine() - 1 : 0),
+        return String.format("{row:%d,column:0,text:\"%s\",type:\"%s\"}", issue.getLine() > 0 ? issue.getLine() - 1 : 0,
                 escape(issue.getMessage()), issue.getSeverity().toString().toLowerCase());
     }
 }

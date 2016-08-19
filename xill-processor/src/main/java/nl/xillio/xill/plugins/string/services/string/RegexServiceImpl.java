@@ -58,7 +58,7 @@ public class RegexServiceImpl implements RegexService {
 
         if (timeout < 0) {
             // If no (valid) timeout is given, use the default timeout
-            targetTime = RegexConstruct.REGEX_TIMEOUT * 1000 + cachedTimer.getCachedTime();
+            targetTime = RegexConstruct.REGEX_TIMEOUT + cachedTimer.getCachedTime();
         } else if (timeout == 0) {
             // Use no time out
             targetTime = Long.MAX_VALUE;
@@ -173,7 +173,7 @@ public class RegexServiceImpl implements RegexService {
             while (isRunning) {
                 cachedTime = System.currentTimeMillis();
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(10);
                 } catch (InterruptedException e) {
                     LOGGER.error("Exception while running timer", e);
                 }

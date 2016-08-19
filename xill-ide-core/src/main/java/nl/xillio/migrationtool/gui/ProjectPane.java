@@ -35,6 +35,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
 import javafx.util.Pair;
@@ -44,11 +45,11 @@ import nl.xillio.migrationtool.dialogs.*;
 import nl.xillio.migrationtool.gui.WatchDir.FolderListener;
 import nl.xillio.migrationtool.template.Templater;
 import nl.xillio.xill.api.XillEnvironment;
-import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.util.HotkeysHandler;
 import nl.xillio.xill.util.settings.ProjectSettings;
 import nl.xillio.xill.util.settings.Settings;
 import nl.xillio.xill.util.settings.SettingsHandler;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 
 import javax.swing.filechooser.FileFilter;
@@ -68,9 +69,9 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 public class ProjectPane extends AnchorPane implements FolderListener, ListChangeListener<TreeItem<Pair<File, String>>>, EventHandler<Event> {
     // Icons.
-    private static final String newProjectIcon = "M228.734,0C102.41,0,0,102.41,0,228.735C0,355.06,102.41,457.469,228.734,457.469 c126.325,0,228.735-102.409,228.735-228.734C457.47,102.41,355.06,0,228.734,0z M359.268,265.476h-97.326v97.315 c0,16.668-13.506,30.186-30.181,30.186c-16.668,0-30.189-13.518-30.189-30.186v-97.315h-97.309 c-16.674,0-30.192-13.512-30.192-30.187c0-16.674,13.518-30.188,30.192-30.188h97.315v-97.31c0-16.674,13.515-30.183,30.189-30.183 c16.675,0,30.187,13.509,30.187,30.183v97.315h97.314c16.669,0,30.192,13.515,30.192,30.188 C389.46,251.97,375.937,265.476,359.268,265.476z";
-    private static final String newFolderIcon = "M394.42,160.758h-0.916v-42.421c0-14.641-11.916-26.551-26.563-26.551H135.017l-17.209-45.167 c-1.797-4.69-6.289-7.793-11.31-7.793H12.105c-3.227,0-6.312,1.283-8.588,3.57C1.248,44.683-0.023,47.773,0,51.001l0.074,67.335 v227.955c0,14.641,11.916,26.551,26.551,26.551h340.321c0.261,0,0.509-0.07,0.763-0.076h26.717c9.522,0,17.241-7.714,17.241-17.242 V177.991C411.655,168.472,403.942,160.758,394.42,160.758z M369.287,160.758H68.891c-9.52,0-17.236,7.714-17.236,17.239v170.635 H26.614c-1.289,0-2.344-1.053-2.344-2.341V118.266l-0.157-55.23h74.029l17.215,45.164c1.785,4.69,6.289,7.796,11.313,7.796h240.258 c1.295,0,2.347,1.052,2.347,2.341v42.421H369.287z";
-    private static final String newFileIcon = "M327.081,0H90.231c-15.9,0-28.85,12.959-28.85,28.859v412.863c0,15.924,12.95,28.863,28.85,28.863H380.35 c15.911,0,28.855-12.939,28.855-28.863V89.234L327.081,0z M333.891,43.187l35.996,39.118h-35.996V43.187z M384.978,441.723 c0,2.542-2.087,4.629-4.628,4.629H90.231c-2.547,0-4.616-2.087-4.616-4.629V28.859c0-2.548,2.069-4.613,4.616-4.613h219.414v70.181 c0,6.682,5.443,12.099,12.129,12.099h63.198v335.196H384.978z";
+    private static final String NEW_PROJECT_ICON = "M228.734,0C102.41,0,0,102.41,0,228.735C0,355.06,102.41,457.469,228.734,457.469 c126.325,0,228.735-102.409,228.735-228.734C457.47,102.41,355.06,0,228.734,0z M359.268,265.476h-97.326v97.315 c0,16.668-13.506,30.186-30.181,30.186c-16.668,0-30.189-13.518-30.189-30.186v-97.315h-97.309 c-16.674,0-30.192-13.512-30.192-30.187c0-16.674,13.518-30.188,30.192-30.188h97.315v-97.31c0-16.674,13.515-30.183,30.189-30.183 c16.675,0,30.187,13.509,30.187,30.183v97.315h97.314c16.669,0,30.192,13.515,30.192,30.188 C389.46,251.97,375.937,265.476,359.268,265.476z";
+    private static final String NEW_FOLDER_ICON = "M394.42,160.758h-0.916v-42.421c0-14.641-11.916-26.551-26.563-26.551H135.017l-17.209-45.167 c-1.797-4.69-6.289-7.793-11.31-7.793H12.105c-3.227,0-6.312,1.283-8.588,3.57C1.248,44.683-0.023,47.773,0,51.001l0.074,67.335 v227.955c0,14.641,11.916,26.551,26.551,26.551h340.321c0.261,0,0.509-0.07,0.763-0.076h26.717c9.522,0,17.241-7.714,17.241-17.242 V177.991C411.655,168.472,403.942,160.758,394.42,160.758z M369.287,160.758H68.891c-9.52,0-17.236,7.714-17.236,17.239v170.635 H26.614c-1.289,0-2.344-1.053-2.344-2.341V118.266l-0.157-55.23h74.029l17.215,45.164c1.785,4.69,6.289,7.796,11.313,7.796h240.258 c1.295,0,2.347,1.052,2.347,2.341v42.421H369.287z";
+    private static final String NEW_FILE_ICON = "M327.081,0H90.231c-15.9,0-28.85,12.959-28.85,28.859v412.863c0,15.924,12.95,28.863,28.85,28.863H380.35 c15.911,0,28.855-12.939,28.855-28.863V89.234L327.081,0z M333.891,43.187l35.996,39.118h-35.996V43.187z M384.978,441.723 c0,2.542-2.087,4.629-4.628,4.629H90.231c-2.547,0-4.616-2.087-4.616-4.629V28.859c0-2.548,2.069-4.613,4.616-4.613h219.414v70.181 c0,6.682,5.443,12.099,12.129,12.099h63.198v335.196H384.978z";
 
     private static final SettingsHandler settings = SettingsHandler.getSettingsHandler();
     private static final String DEFAULT_PROJECT_NAME = "Samples";
@@ -78,7 +79,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     private static final Logger LOGGER = Log.get();
     private static WatchDir watcher;
 
-    private static Templater TEMPLATER;
+    private static Templater templater;
 
     @FXML
     private TreeView<Pair<File, String>> trvProjects;
@@ -87,23 +88,31 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     private Button btnUpload;
     @FXML
     private Button btnNew;
-
     @FXML
-    private ContextMenu testMenu;
+    private ToggleButton tbnShowAllFiles;
 
+    // File filters.
     private final BotFileFilter robotFileFilter = new BotFileFilter();
+    private final AnyFileFilter anyFileFilter = new AnyFileFilter();
+
     private final TreeItem<Pair<File, String>> root = new TreeItem<>(new Pair<>(new File("."), "Projects"));
     private final List<File> expandedFiles = new ArrayList<>();
     private FXController controller;
 
     // Context menu items.
-    private MenuItem menuCut, menuCopy, menuPaste, menuRename, menuDelete, menuOpenFolder;
+    private MenuItem menuCut;
+    private MenuItem menuCopy;
+    private MenuItem menuPaste;
+    private MenuItem menuRename;
+    private MenuItem menuDelete;
+    private MenuItem menuOpenFolder;
     private List<File> bulkFiles = new ArrayList<>(); // Files to copy or cut.
     private boolean copy = false; // True: copy, false: cut.
 
     // "New" button context menu items.
     private Menu menuNewBotFromTemplate;
-    private MenuItem menuNewFolder, menuNewBot;
+    private MenuItem menuNewFolder;
+    private MenuItem menuNewBot;
 
     /**
      * Initialize UI stuff
@@ -115,7 +124,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             loader.setController(this);
             Node ui = loader.load();
             getChildren().add(ui);
-            TEMPLATER = new Templater();
+            templater = new Templater();
         } catch (IOException e) {
             LOGGER.error("Error loading project pane: " + e.getMessage(), e);
         }
@@ -139,12 +148,19 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         this.addEventFilter(KeyEvent.KEY_PRESSED, this);
         this.addEventFilter(MouseEvent.MOUSE_PRESSED, this);
 
-        // Register the hasRun setting which is being used to add the default project on first run
-        settings.simple().register(Settings.INFO, Settings.HasRun, "false", "Whether the IDE has run before.");
-
+        initializeSettings();
         loadProjects();
         addContextMenu();
         addNewButtonContextMenu();
+    }
+
+    private void initializeSettings() {
+        // Register the hasRun setting which is being used to add the default project on first run.
+        settings.simple().register(Settings.INFO, Settings.HAS_RUN, "false", "Whether the IDE has run before.");
+
+        // Register and load the setting for showing all files.
+        settings.simple().register(Settings.FILE, Settings.SHOW_ALL_FILES, "false", "Show non-Xill files.");
+        tbnShowAllFiles.setSelected(settings.simple().getBoolean(Settings.FILE, Settings.SHOW_ALL_FILES));
     }
 
     private void addContextMenu() {
@@ -193,13 +209,13 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     private void addNewButtonContextMenu() {
-        MenuItem menuNewProject = new MenuItem("New project", ProjectPane.createIcon(ProjectPane.newProjectIcon));
+        MenuItem menuNewProject = new MenuItem("New project", ProjectPane.createIcon(ProjectPane.NEW_PROJECT_ICON));
         menuNewProject.setOnAction(e -> newProjectButtonPressed());
 
-        menuNewFolder = new MenuItem("New folder", ProjectPane.createIcon(ProjectPane.newFolderIcon));
+        menuNewFolder = new MenuItem("New folder", ProjectPane.createIcon(ProjectPane.NEW_FOLDER_ICON));
         menuNewFolder.setOnAction(e -> newFolderButtonPressed());
 
-        menuNewBot = new MenuItem("New robot", ProjectPane.createIcon(ProjectPane.newFileIcon));
+        menuNewBot = new MenuItem("New file", ProjectPane.createIcon(ProjectPane.NEW_FILE_ICON));
         menuNewBot.setOnAction(e -> newBot(null));
 
         menuNewBotFromTemplate = new Menu("New robot from template...");
@@ -215,7 +231,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     public void generateTemplateMenu() {
         menuNewBotFromTemplate.getItems().clear();
         try {
-            TEMPLATER.getTemplateNames().stream().map(MenuItem::new).forEach(menuNewBotFromTemplate.getItems()::add);
+            templater.getTemplateNames().stream().map(MenuItem::new).forEach(menuNewBotFromTemplate.getItems()::add);
             menuNewBotFromTemplate.getItems().forEach(item -> item.setOnAction(event -> newBot(item.getText())));
         } catch (IOException e) {
             MenuItem errorItem = new MenuItem("Error while reading template folder");
@@ -260,10 +276,10 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         }
     }
 
-    protected void paste(File pasteLoc, List<File> files, boolean copy) {
+    private void paste(File pasteLoc, List<File> files, boolean copy) {
         // Get the directory to paste in.
         final File destDir = pasteLoc.isDirectory() ? pasteLoc : pasteLoc.getParentFile();
-
+        boolean overwriteAll = false;
         for (File oldFile : files) {
             // Check if the source file exists. If not is is probably already copied by moving a parent folder.
             if (!oldFile.exists()) {
@@ -272,50 +288,138 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
             // Check if the file already exists. (This does not throw an IOException in FileUtils, so we need to check it here.)
             File destFile = new File(destDir, oldFile.getName());
-            if (destFile.exists()) {
+            if (destFile.exists() && !overwriteAll) {
                 // Show a dialog.
-                AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR,
+                ButtonType buttonTypeOverwrite = new ButtonType("Overwrite");
+                ButtonType buttonTypeOverwriteAll = new ButtonType("Overwrite all");
+                ButtonType buttonTypeSkip = new ButtonType("Skip");
+                AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING,
                         "File already exists", "",
-                        "The destination file (" + destFile.toString() + ") already exists. Press OK to continue or Cancel to abort.",
-                        ButtonType.OK, ButtonType.CANCEL);
+                        "The destination file (" + destFile.toString() + ") already exists.",
+                        buttonTypeOverwrite, buttonTypeOverwriteAll, buttonTypeSkip, ButtonType.CANCEL);
                 final Optional<ButtonType> result = dialog.showAndWait();
 
-                // Skip this file or abort if cancel was pressed.
-                if (result.isPresent() && result.get() == ButtonType.CANCEL) {
-                    break;
+                if (result.isPresent()) {
+                    if (result.get() == buttonTypeOverwriteAll) {
+                        overwriteAll = true; // Overwrite all
+                    } else if (result.get() == buttonTypeSkip) {
+                        continue; // Skip
+                    } else if (result.get() == ButtonType.CANCEL) {
+                        break; // Cancel
+                    } // else Overwrite
+                } else {
+                    break; // Dialog was closed - treat it as Cancel
                 }
-                continue;
             }
 
-            try {
-                // Copy or move the file or directory.
-                if (copy) {
-                    if (oldFile.isDirectory()) {
-                        FileUtils.copyDirectoryToDirectory(oldFile, destDir);
-                    } else {
-                        FileUtils.copyFileToDirectory(oldFile, destDir);
-                    }
-                } else {
-                    if (oldFile.isDirectory()) {
-                        FileUtils.moveDirectoryToDirectory(oldFile, destDir, false);
-                    } else {
-                        FileUtils.moveFileToDirectory(oldFile, destDir, false);
-                    }
-                }
-            } catch (IOException e) {
-                // Show the error.
-                LOGGER.error("IOException while moving files.", e);
-                AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error while pasting files.", "",
-                        "An error occurred while pasting files. Press OK to continue or Cancel to abort.\n" + e.getMessage(),
-                        ButtonType.OK, ButtonType.CANCEL);
-                final Optional<ButtonType> result = error.showAndWait();
+            // Create the list of source (key) and TARGET (value) files that will be copied/moved
+            final LinkedList<Pair<File, File>> fileList = new LinkedList<>();
+            if (oldFile.isDirectory()) {
+                FileUtils.listFiles(oldFile, null, true).forEach(f -> fileList.add(new Pair(f, new File(destDir, oldFile.getParentFile().toURI().relativize(f.toURI()).getPath()))));
+            } else {
+                fileList.add(new Pair(oldFile, new File(destDir, oldFile.getParentFile().toURI().relativize(oldFile.toURI()).getPath())));
+            }
 
-                // If cancel was pressed, abort.
-                if (result.isPresent() && result.get() == ButtonType.CANCEL) {
-                    break;
+            // Test if any open source tab is modified
+            if (!checkOpenTabsModified(fileList.stream().map(t -> t.getKey()).collect(Collectors.toList()))) {
+                break;
+            }
+
+            // Copy or move the file or directory.
+            if (!pasteCopyMove(oldFile, destDir, fileList, copy)) {
+                break;
+            }
+        }
+    }
+
+    private boolean pasteCopyMove(final File source, final File target, final List<Pair<File, File>> fileList, final boolean copy) {
+        try {
+            if (copy) {
+                if (source.isDirectory()) {
+                    FileUtils.copyDirectoryToDirectory(source, target);
+                } else {
+                    FileUtils.copyFileToDirectory(source, target);
+                }
+                reloadTabs(fileList.stream().map(t -> t.getValue()).collect(Collectors.toList()));
+            } else {
+                // In case of overwriting the target must be deleted beforehand because FileUtils.move.. methods throws exception otherwise (while FileUtils.copy.. methods don't)
+                File destTarget = new File(target, source.getName());
+                if (source.isDirectory()) {
+                    FileUtils.deleteDirectory(destTarget);
+                    FileUtils.moveDirectoryToDirectory(source, target, false);
+                } else {
+                    destTarget.delete();
+                    FileUtils.moveFileToDirectory(source, target, false);
+                }
+                resetTabs(fileList);
+            }
+        } catch (IOException e) {
+            // Show the error.
+            LOGGER.error("IOException while moving files.", e);
+            AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error while pasting files.", "",
+                    "An error occurred while pasting files. Press OK to continue or Cancel to abort.\n" + e.getMessage(),
+                    ButtonType.OK, ButtonType.CANCEL);
+            final Optional<ButtonType> result = error.showAndWait();
+
+            // If cancel was pressed, abort.
+            if (result.isPresent() && result.get() == ButtonType.CANCEL) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean checkOpenTabsModified(final List<File> files) {
+        for (File f : files) {
+            FileTab tab = controller.findTab(f);
+            if (tab != null) {
+                if (tab.getEditorPane().getDocumentState().getValue() == EditorPane.DocumentState.CHANGED) {
+                    AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Modified document",
+                            "The document " + tab.getDocument().getName() + " is modified.",
+                            "Do you want to save the changes?",
+                            ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+                    final Optional<ButtonType> result = dialog.showAndWait();
+                    if (result.isPresent()) {
+                        if (result.get() == ButtonType.CANCEL) {
+                            return false;
+                        }
+                        if (result.get() == ButtonType.YES) {
+                           tab.save();
+                        }
+                    }
                 }
             }
         }
+        return true;
+    }
+
+    private void resetTabs(final List<Pair<File, File>> files) {
+        // Close all related open target tabs (if exist they will be overwritten by source files having different path and project so we need to close them)
+        files.forEach(f -> {
+            FileTab tab = controller.findTab(f.getValue()); // Target file
+            if (tab != null) {
+                controller.closeTab(tab, true, true);
+            }
+        });
+
+        // Reset project and document of all related open source tabs
+        files.forEach(f -> {
+            FileTab tab = controller.findTab(f.getKey()); // Source file
+            if (tab != null) {
+                final File file = f.getValue();
+                tab.resetSource(file, new File(getProjectPath(file).orElse(file.getParent()))); // Target file
+            }
+        });
+    }
+
+    // Reload content of all existing tabs that matches the (target) files in the list
+    private void reloadTabs(final List<File> files) {
+        files.forEach(f -> {
+            FileTab tab = controller.findTab(f);
+            if (tab != null) {
+                tab.reload();
+            }
+        });
     }
 
     /* End of bulk file functionality. */
@@ -338,7 +442,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
     private void renameButtonPressed() {
         TreeItem<Pair<File, String>> item = getCurrentItem();
-        RobotTab tab = (RobotTab) controller.findTab(item.getValue().getKey());
+        FileTab tab = controller.findTab(item.getValue().getKey());
 
         // Check if a robot is still running, show a dialog to stop them.
         if (checkRobotsRunning(Collections.singletonList(item), false, false)) {
@@ -368,7 +472,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             if (tab != null) {
                 boolean wasSelected = controller.getSelectedTab() == tab;
                 controller.closeTab(tab);
-                RobotTab newTab = controller.openFile(item.getValue().getKey());
+                FileTab newTab = controller.openFile(item.getValue().getKey());
                 if (wasSelected) {
                     controller.showTab(newTab);
                 }
@@ -391,7 +495,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             AlertDialog alert = new AlertDialog(Alert.AlertType.CONFIRMATION,
                     "Delete",
                     "Are you sure you want to delete " + projectCount + " " + ((projectCount > 1) ? "projects" : "project") + "?" +
-                            ((running) ? "\nOne or more robots are still running, deleting will terminate them." : ""),
+                            (running ? "\nOne or more robots are still running, deleting will terminate them." : ""),
                     ""
             );
 
@@ -446,11 +550,14 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         // Open a file chooser to save the robot file.
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(initialFolder);
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
-                String.format("Xill Robot (*%s)", XillEnvironment.ROBOT_EXTENSION),
-                String.format("*%s", XillEnvironment.ROBOT_EXTENSION)));
         fileChooser.setTitle("New Robot");
+        fileChooser.setInitialDirectory(initialFolder);
+        String robotExtension = "*" + XillEnvironment.ROBOT_EXTENSION;
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Xill Robot (" + robotExtension + ")", robotExtension),
+                new FileChooser.ExtensionFilter("All files (*.*)", "*.*")
+        );
+
         File chosen = fileChooser.showSaveDialog(this.getScene().getWindow());
 
         // Check if no file was chosen.
@@ -460,10 +567,13 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         // Check if the new file is in the project.
         if (chosen.getParent().startsWith(projectFile.getAbsolutePath())) {
-            // On Linux the FileChooser does not automatically add xill extension.
-            if (!chosen.getName().endsWith(XillEnvironment.ROBOT_EXTENSION)) {
+            // If the file has no extension, add the robot extension.
+            if (FilenameUtils.getExtension(chosen.getName()).isEmpty()) {
                 chosen = new File(chosen.getPath() + XillEnvironment.ROBOT_EXTENSION);
             }
+
+            // Check whether the file is a robot.
+            boolean isRobot = chosen.getName().endsWith(XillEnvironment.ROBOT_EXTENSION);
 
             try {
                 Map<String, Object> model = Templater.getDefaultModel();
@@ -471,17 +581,20 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 model.put("filePath", chosen.getCanonicalPath());
                 model.put("projectName", projectFile.getName());
                 model.put("projectPath", projectFile.getCanonicalPath());
-                TEMPLATER.render(templateFile, model, Paths.get(chosen.toURI()));
-                controller.viewOrOpenRobot(RobotID.getInstance(chosen, projectFile));
+                templater.render(templateFile, model, Paths.get(chosen.toURI()));
+                controller.viewOrOpenRobot(chosen, projectFile, isRobot);
             } catch (IOException e) {
-                LOGGER.error("Failed to create robot file.", e);
+                LOGGER.error("Failed to create file.", e);
+                AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error creating robot.", "", "Could not create '" + chosen.toString() + "'.");
+                error.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                error.showAndWait();
             } catch (TemplateException e) {
                 new AlertDialog(Alert.AlertType.ERROR, "Invalid template", "The template you want to use could not be processed!", e.getMessage()).show();
-                controller.viewOrOpenRobot(RobotID.getInstance(chosen, projectFile));
+                controller.viewOrOpenRobot(chosen, projectFile, isRobot);
             }
         } else {
             // Inform the user about the file being created outside of a project.
-            new AlertDialog(Alert.AlertType.ERROR, "Project path error", "", "Robots can only be created inside projects.").show();
+            new AlertDialog(Alert.AlertType.ERROR, "Project path error", "", "Files can only be created inside projects.").show();
         }
     }
 
@@ -497,35 +610,39 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             KeyEvent keyEvent = (KeyEvent) event;
 
             // Hotkeys.
-            HotkeysHandler.Hotkeys hk = FXController.hotkeys.getHotkey(keyEvent);
-            if (hk != null) {
-                switch (hk) {
-                    case CUT:
-                        if (!menuCut.isDisable()) {
-                            cut();
-                        }
-                        break;
-                    case COPY:
-                        if (!menuCopy.isDisable()) {
-                            copy();
-                        }
-                        break;
-                    case PASTE:
-                        if (!menuPaste.isDisable()) {
-                            paste();
-                        }
-                        break;
-                    case RENAME:
-                        if (!menuRename.isDisable()) {
-                            renameButtonPressed();
-                        }
-                        break;
-                }
-            }
+            handleHotkey(FXController.hotkeys.getHotkey(keyEvent));
 
             // Keypresses.
             if (keyEvent.getCode() == KeyCode.DELETE && !menuDelete.isDisable()) {
                 deleteButtonPressed();
+            }
+        }
+    }
+
+    @SuppressWarnings("squid:SwitchLastCaseIsDefaultCheck")
+    private void handleHotkey(HotkeysHandler.Hotkeys hk) {
+        if (hk != null) {
+            switch (hk) {
+                case CUT:
+                    if (!menuCut.isDisable()) {
+                        cut();
+                    }
+                    break;
+                case COPY:
+                    if (!menuCopy.isDisable()) {
+                        copy();
+                    }
+                    break;
+                case PASTE:
+                    if (!menuPaste.isDisable()) {
+                        paste();
+                    }
+                    break;
+                case RENAME:
+                    if (!menuRename.isDisable()) {
+                        renameButtonPressed();
+                    }
+                    break;
             }
         }
     }
@@ -543,17 +660,21 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         for (TreeItem<Pair<File, String>> item : items) {
             // Check if the robot tab is open and the robot is running.
-            RobotTab tab = (RobotTab) controller.findTab(item.getValue().getKey());
-            if (tab != null) {
-                running |= tab.getEditorPane().getControls().robotRunning();
+            FileTab tab = controller.findTab(item.getValue().getKey());
+
+            // Check if the tab is a robot tab.
+            if (tab != null && tab instanceof RobotTab) {
+                RobotTab robotTab = (RobotTab) tab;
+                running |= robotTab.getEditorPane().getControls().robotRunning();
                 // Stop the robot.
                 if (stop) {
-                    tab.getEditorPane().getControls().stop();
+                    robotTab.getEditorPane().getControls().stop();
                 }
-                // Close the tab.
-                if (closeTab) {
-                    controller.closeTab(controller.findTab(item.getValue().getKey()));
-                }
+            }
+
+            // Close the tab.
+            if (closeTab) {
+                controller.closeTab(tab);
             }
 
             // Recursively check all children of the item.
@@ -578,9 +699,18 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         items.forEach(item -> {
             File file = item.getValue().getKey();
+            // Check if we have write access to file and we're not soft deleting a project
+            if(!file.canWrite() && !(item == getProject(item) && !hardDeleteProjects)){
+                LOGGER.error("Cannot delete " + file.toString() + ": no write access.");
+                AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error while deleting files.", "",
+                        "Could not delete: " + file.toString() + ", access was denied.\n\nPlease check if you have write permissions.",
+                        ButtonType.OK);
+                error.getDialogPane().setMinHeight(Region.USE_PREF_SIZE); // Workaround to get scaled window in Linux (currently bug in javafx)
+                error.showAndWait();
+            }
 
-            // Check if the file exists.
-            if (file.exists()) {
+            // Check if the file exists and is writable.
+            if (file.canWrite()) {
                 try {
                     //If it is a file, remove it. If it is a folder only remove it if it is not a project or we should hard delete projects.
                     if (file.isFile() || file.isDirectory() && (item != getProject(item) || hardDeleteProjects)) {
@@ -590,6 +720,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                     LOGGER.error("Could not delete " + file.toString(), e);
                     AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error while deleting files.", "",
                             "An error occurred while deleting files.\n" + e.getMessage(), ButtonType.OK);
+                    error.getDialogPane().setMinHeight(Region.USE_PREF_SIZE); // Workaround to get scaled window in Linux (currently bug in javafx)
                     error.showAndWait();
                 }
             }
@@ -609,16 +740,15 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
             // When this is the first time the IDE runs, add the samples project
             File defaultProjectPath = new File(DEFAULT_PROJECT_PATH);
-            if (!settings.simple().getBoolean(Settings.INFO, Settings.HasRun)) {
+            if (!settings.simple().getBoolean(Settings.INFO, Settings.HAS_RUN)) {
                 if (defaultProjectPath.exists()) {
                     // Projects must have an absolute directory
                     newProject(DEFAULT_PROJECT_NAME, defaultProjectPath.getAbsolutePath(), "");
                 }
                 // Mark that the IDE has run for the first time
-                settings.simple().save(Settings.INFO, Settings.HasRun, true);
+                settings.simple().save(Settings.INFO, Settings.HAS_RUN, true);
                 settings.commit();
             }
-
 
             if (projects.isEmpty()) {
                 disableAllButtons(true);
@@ -793,9 +923,9 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
      *
      * @param child The path to the robot file
      */
-    public void robotFileChanged(final File child) {
+    public void fileChanged(final File child) {
 
-        RobotTab tab = (RobotTab) controller.findTab(child);
+        FileTab tab = controller.findTab(child);
         if (tab == null) {
             return;
         }
@@ -819,8 +949,8 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         // This must be done in the FX application thread.
         final Runnable showDialog = () -> {
             // Create and show an alert dialog saying the content has been changed.
-            AlertDialog alert = new AlertDialog(Alert.AlertType.WARNING, "Robot file content change",
-                    "The robot file has been modified outside the editor.", "Do you want reload the robot file?",
+            AlertDialog alert = new AlertDialog(Alert.AlertType.WARNING, "File content change",
+                    "The file has been modified outside the editor.", "Do you want reload the file?",
                     ButtonType.YES, ButtonType.NO);
 
             final Optional<ButtonType> result = alert.showAndWait();
@@ -836,11 +966,9 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         for (TreeItem<Pair<File, String>> item : root.getChildren()) {
             if (item instanceof ProjectTreeItem) {
                 ProjectTreeItem project = (ProjectTreeItem) item;
-                if (dir.startsWith(project.getValue().getKey().getAbsolutePath())) {
-                    if (event.kind() != ENTRY_MODIFY) {
-                        // The files in project directory has changed (i.e. some file(s) has been removed / renamed / added).
-                        Platform.runLater(() -> selectNewItem(dir, child, project));
-                    }
+                if (dir.startsWith(project.getValue().getKey().getAbsolutePath()) && event.kind() != ENTRY_MODIFY) {
+                    // The files in project directory has changed (i.e. some file(s) has been removed / renamed / added).
+                    Platform.runLater(() -> selectNewItem(dir, child, project));
                 }
             }
         }
@@ -956,103 +1084,6 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     /**
-     * A filefilter filtering on the FXController.BOT_EXTENSION extension.
-     */
-    protected class BotFileFilter extends FileFilter implements FilenameFilter {
-        @Override
-        public boolean accept(final File file) {
-            return file.isDirectory() && !file.getName().startsWith(".") || file.getName().endsWith(XillEnvironment.ROBOT_EXTENSION);
-        }
-
-        @Override
-        public String getDescription() {
-            return String.format("Xillio bot script files (*%s)", XillEnvironment.ROBOT_EXTENSION);
-        }
-
-        @Override
-        public boolean accept(final File directory, final String fileName) {
-            return accept(new File(directory, fileName));
-        }
-    }
-
-    private class ProjectTreeItem extends TreeItem<Pair<File, String>> {
-
-        private boolean isLeaf;
-        private boolean isFirstTimeChildren = true;
-        private boolean isFirstTimeLeaf = true;
-
-        public ProjectTreeItem(final File file, final String name) {
-            super(new Pair<>(file, name));
-        }
-
-        @Override
-        public ObservableList<TreeItem<Pair<File, String>>> getChildren() {
-            if (isFirstTimeChildren) {
-                isFirstTimeChildren = false;
-                super.getChildren().setAll(buildChildren(this));
-            }
-            return super.getChildren();
-        }
-
-        @Override
-        public boolean isLeaf() {
-            if (isFirstTimeLeaf) {
-                isFirstTimeLeaf = false;
-                isLeaf = getValue().getKey().isFile();
-            }
-            return isLeaf;
-        }
-
-        public void refresh() {
-            // Update all children.
-            expandedFiles.clear();
-            storeAllExpanded(root);
-            getChildren().setAll(buildChildren(this));
-        }
-
-        /**
-         * Build the children of a tree item.
-         *
-         * @param treeItem The root item to build the children for.
-         * @return A list of tree items that are the children of the given tree item.
-         */
-        private List<TreeItem<Pair<File, String>>> buildChildren(final TreeItem<Pair<File, String>> treeItem) {
-            File f = treeItem.getValue().getKey();
-            List<TreeItem<Pair<File, String>>> children = new ArrayList<>();
-
-            if (f != null && f.isDirectory()) {
-                // Get a list with all files in the directory.
-                File[] files = f.listFiles(robotFileFilter);
-
-                // Sort the list of files.
-                Arrays.sort(files, (o1, o2) -> {
-                    // Put directories above files.
-                    if (o1.isDirectory() && o2.isFile()) {
-                        return -1;
-                    } else if (o1.isFile() && o2.isDirectory()) {
-                        return 1;
-                        // Both are the same type, compare them normally.
-                    } else {
-                        return o1.compareTo(o2);
-                    }
-                });
-
-                // Create tree items from all files, add them to the list
-                for (File file : files) {
-                    ProjectTreeItem sub = new ProjectTreeItem(file, file.getName());
-                    if (expandedFiles.contains(file)) {
-                        sub.setExpanded(true);
-                    }
-                    children.add(sub);
-                }
-            }
-
-            return children;
-        }
-    }
-
-
-    /**
      * store all files that are expanded so they can be expanded when the projecttree is rebuild.
      *
      * @param treeItem the root treeItem to check from
@@ -1148,11 +1179,112 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         return settings.project().getAll().size();
     }
 
+    @FXML
+    private void toggleShowAllFiles() {
+        // Refresh all projects.
+        for (TreeItem<Pair<File, String>> item : root.getChildren()) {
+            if (item instanceof ProjectTreeItem) {
+                ProjectTreeItem project = (ProjectTreeItem) item;
+                project.refresh();
+            }
+        }
+
+        // Set the button label.
+        String tooltipText = "Show " + (tbnShowAllFiles.isSelected() ? "robots only" : "all files");
+        tbnShowAllFiles.getTooltip().setText(tooltipText);
+
+        // Save the setting.
+        settings.simple().save(Settings.FILE, Settings.SHOW_ALL_FILES, tbnShowAllFiles.isSelected());
+    }
+
+    /*========== Tree items and cells ==========*/
+
+    /**
+     * A project tree item.
+     */
+    private class ProjectTreeItem extends TreeItem<Pair<File, String>> {
+
+        private boolean isLeaf;
+        private boolean isFirstTimeChildren = true;
+        private boolean isFirstTimeLeaf = true;
+
+        public ProjectTreeItem(final File file, final String name) {
+            super(new Pair<>(file, name));
+        }
+
+        @Override
+        public ObservableList<TreeItem<Pair<File, String>>> getChildren() {
+            if (isFirstTimeChildren) {
+                isFirstTimeChildren = false;
+                super.getChildren().setAll(buildChildren(this));
+            }
+            return super.getChildren();
+        }
+
+        @Override
+        public boolean isLeaf() {
+            if (isFirstTimeLeaf) {
+                isFirstTimeLeaf = false;
+                isLeaf = !getValue().getKey().isDirectory();
+            }
+            return isLeaf;
+        }
+
+        public void refresh() {
+            // Update all children.
+            expandedFiles.clear();
+            storeAllExpanded(root);
+            getChildren().setAll(buildChildren(this));
+        }
+
+        /**
+         * Build the children of a tree item.
+         *
+         * @param treeItem The root item to build the children for.
+         * @return A list of tree items that are the children of the given tree item.
+         */
+        private List<TreeItem<Pair<File, String>>> buildChildren(final TreeItem<Pair<File, String>> treeItem) {
+            File f = treeItem.getValue().getKey();
+            List<TreeItem<Pair<File, String>>> children = new ArrayList<>();
+
+            if (f != null && f.isDirectory()) {
+                // Get a list with all files in the directory.
+                File[] files = f.listFiles(tbnShowAllFiles.isSelected() ? anyFileFilter : robotFileFilter);
+
+                // Sort the list of files.
+                Arrays.sort(files, this::compareFileOrder);
+
+                // Create tree items from all files, add them to the list
+                for (File file : files) {
+                    ProjectTreeItem sub = new ProjectTreeItem(file, file.getName());
+                    if (expandedFiles.contains(file)) {
+                        sub.setExpanded(true);
+                    }
+                    children.add(sub);
+                }
+            }
+
+            return children;
+        }
+
+        private int compareFileOrder(File o1, File o2) {
+            // Put directories above files.
+            if (o1.isDirectory() && o2.isFile()) {
+                return -1;
+            } else if (o1.isFile() && o2.isDirectory()) {
+                return 1;
+            } else {
+                // Both are the same type, compare them normally.
+                return o1.compareTo(o2);
+            }
+        }
+    }
+
     /**
      * A custom tree cell which opens a robot tab on double-click and supports drag&drop.
      */
     private class CustomTreeCell extends TreeCell<Pair<File, String>> implements EventHandler<Event> {
-        private static final String dragOverClass = "drag-over";
+        private static final String DRAG_OVER_CLASS = "drag-over";
 
         public CustomTreeCell() {
             // Subscribe to drag events.
@@ -1174,13 +1306,12 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             }
             this.setText(pair.getValue());
 
+            // Hook into the mouse double click event.
             setOnMouseClicked(event -> {
-                // Double click.
-                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1) {
-                    if (pair.getKey() != null && pair.getKey().exists() && pair.getKey().isFile()) {
-                        // Open new tab from file.
-                        controller.openFile(pair.getKey());
-                    }
+                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1
+                        && pair.getKey() != null && pair.getKey().exists() && pair.getKey().isFile()) {
+                    // Open new tab from file.
+                    controller.openFile(pair.getKey());
                 }
             });
         }
@@ -1188,43 +1319,47 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         @Override
         public void handle(Event event) {
             if (event instanceof MouseEvent) {
-                MouseEvent mouseEvent = (MouseEvent) event;
-
-                if (mouseEvent.getEventType() == MouseEvent.DRAG_DETECTED && canDrag()) {
-                    // Start dragging.
-                    Dragboard board = this.startDragAndDrop(TransferMode.MOVE);
-
-                    // Set the clipboard content.
-                    ClipboardContent content = new ClipboardContent();
-                    content.putFiles(getAllCurrentFiles());
-                    board.setContent(content);
-
-                    event.consume();
-                }
+                handleMouseEvent((MouseEvent) event);
             } else if (event instanceof DragEvent) {
-                if (!canDrop()) {
-                    return;
+                handleDragEvent((DragEvent) event);
+            }
+        }
+
+        private void handleMouseEvent(MouseEvent mouseEvent) {
+            if (mouseEvent.getEventType() == MouseEvent.DRAG_DETECTED && canDrag()) {
+                // Start dragging.
+                Dragboard board = this.startDragAndDrop(TransferMode.MOVE);
+
+                // Set the clipboard content.
+                ClipboardContent content = new ClipboardContent();
+                content.putFiles(getAllCurrentFiles());
+                board.setContent(content);
+
+                mouseEvent.consume();
+            }
+        }
+
+        private void handleDragEvent(DragEvent dragEvent) {
+            if (!canDrop()) {
+                return;
+            }
+
+            if (dragEvent.getEventType() == DragEvent.DRAG_OVER) {
+                // Dragging over.
+                dragEvent.acceptTransferModes(TransferMode.MOVE);
+            } else if (dragEvent.getEventType() == DragEvent.DRAG_ENTERED) {
+                this.getStyleClass().add(DRAG_OVER_CLASS);
+            } else if (dragEvent.getEventType() == DragEvent.DRAG_EXITED) {
+                this.getStyleClass().remove(DRAG_OVER_CLASS);
+            } else if (dragEvent.getEventType() == DragEvent.DRAG_DROPPED) {
+                // Dropping.
+                Dragboard board = dragEvent.getDragboard();
+                if (board.hasFiles()) {
+                    paste(this.getItem().getKey(), board.getFiles(), false);
+                    dragEvent.setDropCompleted(true);
                 }
 
-                DragEvent dragEvent = (DragEvent) event;
-
-                if (dragEvent.getEventType() == DragEvent.DRAG_OVER) {
-                    // Dragging over.
-                    dragEvent.acceptTransferModes(TransferMode.MOVE);
-                } else if (dragEvent.getEventType() == DragEvent.DRAG_ENTERED) {
-                    this.getStyleClass().add(dragOverClass);
-                } else if (dragEvent.getEventType() == DragEvent.DRAG_EXITED) {
-                    this.getStyleClass().remove(dragOverClass);
-                } else if (dragEvent.getEventType() == DragEvent.DRAG_DROPPED) {
-                    // Dropping.
-                    Dragboard board = dragEvent.getDragboard();
-                    if (board.hasFiles()) {
-                        paste(this.getItem().getKey(), board.getFiles(), false);
-                        dragEvent.setDropCompleted(true);
-                    }
-
-                    event.consume();
-                }
+                dragEvent.consume();
             }
         }
 
@@ -1235,6 +1370,48 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         private boolean canDrop() {
             return this.getTreeItem() != null;
+        }
+    }
+
+    /*========== File filters ==========*/
+
+    /**
+     * A file filter filtering on the FXController.BOT_EXTENSION extension.
+     */
+    private class BotFileFilter extends FileFilter implements FilenameFilter {
+        @Override
+        public boolean accept(final File file) {
+            return file.isDirectory() && !file.getName().startsWith(".") || file.getName().endsWith(XillEnvironment.ROBOT_EXTENSION);
+        }
+
+        @Override
+        public String getDescription() {
+            return String.format("Xillio bot script files (*%s)", XillEnvironment.ROBOT_EXTENSION);
+        }
+
+        @Override
+        public boolean accept(final File directory, final String fileName) {
+            return accept(new File(directory, fileName));
+        }
+    }
+
+    /**
+     * A file filter that accepts any file, except starting with a '.'.
+     */
+    private class AnyFileFilter extends FileFilter implements FilenameFilter {
+        @Override
+        public boolean accept(final File file) {
+            return !file.getName().startsWith(".");
+        }
+
+        @Override
+        public String getDescription() {
+            return "Any file (*.*)";
+        }
+
+        @Override
+        public boolean accept(final File directory, final String fileName) {
+            return accept(new File(directory, fileName));
         }
     }
 }

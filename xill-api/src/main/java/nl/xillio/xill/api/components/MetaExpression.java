@@ -23,6 +23,7 @@ import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.data.DateFactory;
 import nl.xillio.xill.api.data.MetadataExpression;
 import nl.xillio.xill.api.errors.NotImplementedException;
+import nl.xillio.xill.api.errors.RobotConcurrentModificationException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.services.json.JsonException;
 import nl.xillio.xill.services.json.JsonParser;
@@ -73,7 +74,7 @@ public abstract class MetaExpression implements Expression, Processable {
         return metadataPool.get(clazz);
     }
 
-    private void assertOpen() {
+    protected void assertOpen() {
         if (isClosed()) {
             String message = "This expression has already been closed.";
             if (DEBUG) {
@@ -81,6 +82,10 @@ public abstract class MetaExpression implements Expression, Processable {
             }
             throw new IllegalStateException(message);
         }
+    }
+
+    protected boolean isOpen(){
+        return !isClosed;
     }
 
     /**
@@ -270,7 +275,7 @@ public abstract class MetaExpression implements Expression, Processable {
     /**
      * Checks equality on meta expression on the value level. This uses the equals method.
      *
-     * @param other the other meta expression
+     * @param other the other metaclose expression
      * @return true if and only if the expressions have equal value
      */
     public boolean valueEquals(final MetaExpression other) {
@@ -394,8 +399,12 @@ public abstract class MetaExpression implements Expression, Processable {
             case LIST:
                 List<Object> resultList = new ArrayList<>();
                 results.put(expression, resultList);
-                resultList.addAll((expression.<List<MetaExpression>>getValue()).stream().map(v -> extractValue(v, results, metaExpressionSerializer))
-                        .collect(Collectors.toList()));
+                try{
+                    resultList.addAll((expression.<List<MetaExpression>>getValue()).stream().map(v -> extractValue(v, results, metaExpressionSerializer))
+                            .collect(Collectors.toList()));
+                } catch (ConcurrentModificationException cme){
+                    throw new RobotConcurrentModificationException(cme);
+                }
                 result = resultList;
                 break;
             case OBJECT:
@@ -642,4 +651,6 @@ public abstract class MetaExpression implements Expression, Processable {
 
         throw new IllegalArgumentException("Unable to deserialize " + root.getClass().getName());
     }
+
+    public abstract MetaExpression copy();
 }

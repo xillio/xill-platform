@@ -1,4 +1,4 @@
-#*
+/**
  * Copyright (C) 2014 Xillio (support@xillio.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *#
+ */
 /* 
 * Specification: 
 *   The correct blocks MUST be executed when the do is unsuccesful (and other blocks MUST NOT be executed)
@@ -32,7 +32,7 @@ do {
 } fail(e) {
 	result[] = "fail";
 	Assert.equal(e.message, "Throw error.", "Error object e not returning correct message.");
-	Assert.equal(e.line, 16, "Error object e not returning correct line number.");
+	Assert.equal(e.line, 31, "Error object e not returning correct line number.");
 } success {
     Assert.error("An error should have been caught by the fail block.");
 } finally {

@@ -36,3 +36,5 @@ bin/
 # IntelliJ
 *.iml
 .idea/
+.gitignore
+src/main/resources/

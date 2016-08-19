@@ -210,10 +210,32 @@ public class WebServiceImpl implements WebService {
     }
 
     @Override
-    public Path getScreenshotAsFilePath(final WebVariable var) {
+    public Path getScreenshotAsFilePath(final WebVariable var, int width, int height) {
         WebDriver driver = var.getDriver();
+
+        // Process the resolution
+        Dimension orgResolution = null;
+        if (width != 0 && height != 0) {
+            orgResolution = driver.manage().window().getSize();
+            if (orgResolution.getWidth() != width || orgResolution.getHeight() != height) {
+                // Current resolution is different than required
+                driver.manage().window().setSize(new Dimension(width, height)); // Set new resolution
+            } else {
+                // Current resolution is the same as required - so no change needed
+                orgResolution = null; // Set this to null to let know that there will be no switching back
+            }
+        }
+
+        // Do the screenshot
         PhantomJSDriver castedDriver = getJSDriver(driver);
-        return castedDriver.getScreenshotAs(OutputType.FILE).toPath();
+        Path path = castedDriver.getScreenshotAs(OutputType.FILE).toPath();
+
+        // Optionally switch resolution back
+        if (orgResolution != null) {
+            driver.manage().window().setSize(orgResolution); // Switch the viewport resolution back to the original (before this construct call) size
+        }
+
+        return path;
     }
 
     PhantomJSDriver getJSDriver(WebDriver driver) {
@@ -311,14 +333,14 @@ public class WebServiceImpl implements WebService {
     }
 
     @Override
-    public void setDriverOptions(final WebVariable var, final int timeOut) {
+    public void setDriverOptions(final WebVariable var, final Options options) {
         WebDriver driver = var.getDriver();
-        // setting up bigger size of viewport (default is 400x300)
-        driver.manage().window().setSize(new Dimension(1920, 1080));
+        // setting up the size of viewport
+        driver.manage().window().setSize(options.getResolution());
 
         // page load timeout
-        if (timeOut != 0) {
-            driver.manage().timeouts().pageLoadTimeout(timeOut, TimeUnit.MILLISECONDS);
+        if (options.getTimeOut() != 0) {
+            driver.manage().timeouts().pageLoadTimeout(options.getTimeOut(), TimeUnit.MILLISECONDS);
         } else {
             // set infinite timeout
             driver.manage().timeouts().pageLoadTimeout(-1, TimeUnit.MILLISECONDS);
@@ -355,6 +377,12 @@ public class WebServiceImpl implements WebService {
     }
 
     void copyInputStreamToFile(final InputStream stream, final Path targetFilePath) throws IOException {
+        // Make sure the target directory exists.
+        try {
+            Files.createDirectories(targetFilePath.getParent());
+        } catch (IOException e) {
+            throw new OperationFailedException("copy file to target location", "Was unable to create new folder in path: " + targetFilePath.getParent().toAbsolutePath() + ".", "Check if the supplied path is correct.");
+        }
         Files.copy(stream, targetFilePath, StandardCopyOption.REPLACE_EXISTING);
     }
 

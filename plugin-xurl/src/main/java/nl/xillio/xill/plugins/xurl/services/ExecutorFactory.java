@@ -19,6 +19,7 @@ import com.google.inject.Singleton;
 import nl.xillio.xill.plugins.xurl.data.Options;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 
 /**
@@ -30,14 +31,17 @@ import org.apache.http.impl.client.HttpClients;
 public class ExecutorFactory {
 
     public Executor buildExecutor(Options options) {
+
+        HttpClientBuilder builder = HttpClients.custom();
+
         if (options.isInsecure()) {
-            return Executor.newInstance(
-                    HttpClients.custom()
-                            .setSSLHostnameVerifier(new NoopHostnameVerifier())
-                            .build()
-            );
+            builder.setSSLHostnameVerifier(new NoopHostnameVerifier());
         }
 
-        return Executor.newInstance();
+        if (options.isDisableRedirect()) {
+            builder.disableRedirectHandling();
+        }
+
+        return Executor.newInstance(builder.build());
     }
 }

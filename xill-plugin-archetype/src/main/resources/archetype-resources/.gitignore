@@ -1,0 +1,25 @@
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+maven-build.properties
+maven-build.xml
+build.xml
+
+# Eclipse
+.settings/
+.metadata/
+.classpath
+.project
+bin/
+*/test-output/
+
+# IntelliJ
+*.iml
+.idea/

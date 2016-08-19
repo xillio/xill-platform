@@ -16,7 +16,6 @@
     limitations under the License.
 
 -->
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -38,6 +37,14 @@
 										<Tooltip text="New..." />
 									</tooltip>
 								</Button>
+								<ToggleButton fx:id="tbnShowAllFiles" mnemonicParsing="false" onAction="#toggleShowAllFiles" styleClass="iconButton" text="Show all files">
+									<graphic>
+										<Pane styleClass="icon" />
+									</graphic>
+									<tooltip>
+										<Tooltip text="Show all files" />
+									</tooltip>
+								</ToggleButton>
 								<Button fx:id="btnUpload" mnemonicParsing="false" onAction="#uploadButtonPressed" styleClass="iconButton" text="Upload">
 									<graphic>
 										<Pane styleClass="icon" />

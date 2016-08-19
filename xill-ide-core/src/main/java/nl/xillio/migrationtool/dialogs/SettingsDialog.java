@@ -16,32 +16,36 @@
 package nl.xillio.migrationtool.dialogs;
 
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Window;
 import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.EulaUtils;
+import nl.xillio.migrationtool.Loader;
 import nl.xillio.migrationtool.gui.FXController;
+import nl.xillio.plugins.XillPlugin;
+import nl.xillio.xill.util.BrowserOpener;
 import nl.xillio.xill.util.settings.Settings;
 import nl.xillio.xill.util.settings.SettingsHandler;
 import org.slf4j.Logger;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Dialog contains all configurable Xill IDE options and allows to change them
@@ -97,11 +101,19 @@ public class SettingsDialog extends FXMLDialog {
     @FXML
     private Tab licenseTab;
     @FXML
+    private TableView<PluginData> pluginsTable;
+    @FXML
+    private TableColumn<PluginData, PluginData> creatorColumn;
+    @FXML
     private Label lblLicenseType, lblLicensedTo, lblLicenseContactName, lblLicenseContactEmail,
             lblLicenseDateIssued, lblLicenseExpiryDate, lblLicenseModules;
 
     @FXML
     private Hyperlink hlEula;
+    @FXML
+    private TextField tfprinterfontsize;
+    private RangeValidator tfprinterfontsizeValidator = new RangeValidator(4, 30, null, false);
+
 
     private SettingsHandler settings;
     private ApplyHandler onApply;
@@ -120,22 +132,32 @@ public class SettingsDialog extends FXMLDialog {
         setSize();
         setValidator(tffontsize, tffontsizeValidator);
         setValidator(tfprintmargincolumn, tfprintmargincolumnValidator);
+        setValidator(tfprinterfontsize, tfprinterfontsizeValidator);
         setValidator(tftabsize, tftabsizeValidator);
         setValidator(tfwraplimit, tfwraplimitValidator);
 
         ObservableList<String> options = FXCollections.observableArrayList("auto", "windows", "unix");
         cbnewlinemode.setItems(options);
 
-        settings.simple().register(Settings.INFO, Settings.EulaAccepted, "false", "Whether the EULA was accepted by the user.");
+        settings.simple().register(Settings.INFO, Settings.EULA_ACCEPTED, "false", "Whether the EULA was accepted by the user.");
 
         loadSettings();
 
         Platform.runLater(() -> FXController.hotkeys.getAllTextFields(getScene()).forEach(this::setShortcutHandler));
 
+        loadPluginInfo();
+        setMinHeight(500);
+    }
+
+    private void loadPluginInfo() {
+        creatorColumn.setCellValueFactory(param -> new SimpleObjectProperty<>(param.getValue()));
+        creatorColumn.setCellFactory(param -> new CreatorCell());
+        java.util.List<PluginData> data = Loader.getXill().getPlugins().stream().map(PluginData::new).collect(Collectors.toList());
+        pluginsTable.getItems().setAll(data);
     }
 
     private void setSize() {
-        String dimensions = settings.simple().get(Settings.LAYOUT, Settings.SettingsDialogDimensions);
+        String dimensions = settings.simple().get(Settings.LAYOUT, Settings.SETTINGS_DIALOG_DIMENSIONS);
         String[] parts = dimensions.split("[^0-9\\.]");
         if (parts.length != 2) {
             LOGGER.error("Failed to get size of settings dialog from the settings");
@@ -153,7 +175,7 @@ public class SettingsDialog extends FXMLDialog {
 
     private void saveSize() {
         String value = getScene().getWindow().getWidth() + "x" + getScene().getWindow().getHeight();
-        settings.simple().save(Settings.LAYOUT, Settings.SettingsDialogDimensions, value);
+        settings.simple().save(Settings.LAYOUT, Settings.SETTINGS_DIALOG_DIMENSIONS, value);
         settings.commit();
     }
 
@@ -183,7 +205,8 @@ public class SettingsDialog extends FXMLDialog {
     }
 
     private void setShortcutHandler(final TextField tf) {
-        tf.addEventHandler(KeyEvent.ANY, this::handleShortcut);
+        tf.addEventFilter(KeyEvent.ANY, this::handleShortcut);
+        tf.setContextMenu(new ContextMenu()); // Disable context menu
     }
 
     private void handleShortcut(KeyEvent event) {
@@ -199,31 +222,28 @@ public class SettingsDialog extends FXMLDialog {
             return;
         }
 
-
         String shortcut = getShortCutPattern(event);
-
-        if (shortcut != null) {
-            if (FXController.hotkeys.findShortcutInDialog(getScene(), shortcut) == null) {
-                tf.setText(shortcut);
-            }
+        if (shortcut != null && FXController.hotkeys.findShortcutInDialog(getScene(), shortcut) == null) {
+            tf.setText(shortcut);
         }
 
         event.consume();
     }
 
     private String getShortCutPattern(KeyEvent event) {
-        String modifiers = (event.isControlDown() ? "Ctrl+" : "") +
+        final String modifiers = (event.isControlDown() ? "Ctrl+" : "") +
                 (event.isMetaDown() ? "Meta+" : "") +
                 (event.isAltDown() ? "Alt+" : "") +
                 (event.isShiftDown() ? "Shift+" : "");
 
-        if ((event.getCode().isFunctionKey()) && (event.getEventType() == KeyEvent.KEY_RELEASED)) {
+        if (event.getCode().isFunctionKey() && event.getEventType() == KeyEvent.KEY_RELEASED) {
             // This is an F* key.
             return modifiers + event.getCode().getName().toUpperCase();
-        } else if ((event.getEventType() == KeyEvent.KEY_PRESSED)) {
-            // This is any other key holding a text value. We require there to be a modifier
-            if (!modifiers.isEmpty()) {
-                return modifiers + event.getCode().getName();
+        } else if (event.getEventType() == KeyEvent.KEY_PRESSED && !modifiers.isEmpty()) {
+            final String text = event.getText().toUpperCase();
+            // This is any other key holding a text value. We require there to be a modifier.
+            if (text.length() == 1 && text.charAt(0) >= 33 && text.charAt(0) <= 127) {
+                return modifiers + text;
             }
         }
 
@@ -243,14 +263,30 @@ public class SettingsDialog extends FXMLDialog {
 
     @FXML
     private void hlEulaClicked(final ActionEvent event) {
+        URI uri;
         try {
-            Desktop.getDesktop().browse(new URI(EulaUtils.EULA_LOCATION));
-        } catch (IOException | URISyntaxException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Unfortunately your system is not able to open a link. Copy this link and paste it into a browser: " + EulaUtils.EULA_LOCATION);
-            alert.setTitle("Compatibility");
-            alert.initOwner(this.getScene().getWindow());
-            alert.show();
+            uri = new URI(EulaUtils.EULA_LOCATION);
+        } catch (URISyntaxException e) {
+            LOGGER.error("Unable to parse EULA link (" + EulaUtils.EULA_LOCATION + ") as URI.", e);
+            openEULAAlertWindow();
+            return;
         }
+
+        if (BrowserOpener.browserIsSupported()) {
+            BrowserOpener.openBrowser(uri);
+        } else {
+            LOGGER.info("Could not open a browser (Desktop API is not supported).");
+            openEULAAlertWindow();
+        }
+    }
+
+    private void openEULAAlertWindow() {
+        Alert alert = new Alert(Alert.AlertType.ERROR, "Unfortunately your system is not able to open this link." +
+                "\n\nPlease enter the following URL into a browser:\n" + EulaUtils.EULA_LOCATION);
+        alert.setTitle("Compatibility");
+        alert.initOwner(this.getScene().getWindow());
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE); // Resizes window correctly in Linux
+        alert.show();
     }
 
     @FXML
@@ -291,6 +327,10 @@ public class SettingsDialog extends FXMLDialog {
             throw new ValidationException("Invalid print margin column value!");
         }
 
+        if (!this.tfprinterfontsizeValidator.isValid()) {
+            throw new ValidationException("Invalid printer font size value!");
+        }
+
         if (!this.tftabsizeValidator.isValid()) {
             throw new ValidationException("Invalid tab size value!");
         }
@@ -315,26 +355,27 @@ public class SettingsDialog extends FXMLDialog {
         settings.setManualCommit(true);
 
         // General
-        saveText(tfprojectfolder, Settings.SETTINGS_GENERAL, Settings.DefaultProjectLocation);
-        saveCheckBox(cbopenbotwcleanconsole, Settings.SETTINGS_GENERAL, Settings.OpenBotWithCleanConsole);
-        saveCheckBox(cbrunbotwcleanconsole, Settings.SETTINGS_GENERAL, Settings.RunBotWithCleanConsole);
-        saveCheckBox(cbautosavebotbeforerun, Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun);
-        saveCheckBox(cbEnableAutoSave, Settings.SETTINGS_GENERAL, Settings.EnableAutoSave);
+        saveText(tfprojectfolder, Settings.SETTINGS_GENERAL, Settings.DEFAULT_PROJECT_LOCATION);
+        saveCheckBox(cbopenbotwcleanconsole, Settings.SETTINGS_GENERAL, Settings.OPEN_BOT_WITH_CLEAN_CONSOLE);
+        saveCheckBox(cbrunbotwcleanconsole, Settings.SETTINGS_GENERAL, Settings.RUN_BOT_WITH_CLEAN_CONSOLE);
+        saveCheckBox(cbautosavebotbeforerun, Settings.SETTINGS_GENERAL, Settings.AUTO_SAVE_BOT_BEFORE_RUN);
+        saveCheckBox(cbEnableAutoSave, Settings.SETTINGS_GENERAL, Settings.ENABLE_AUTO_SAVE);
 
         // Editor
-        saveCheckBox(cbdisplayindentguides, Settings.SETTINGS_EDITOR, Settings.DisplayIndentGuides);
-        saveText(tffontsize, Settings.SETTINGS_EDITOR, Settings.FontSize);
-        saveCheckBox(cbhighlightselword, Settings.SETTINGS_EDITOR, Settings.HighlightSelectedWord);
-        saveComboBox(cbnewlinemode, Settings.SETTINGS_EDITOR, Settings.NewLineMode);
-        saveText(tfprintmargincolumn, Settings.SETTINGS_EDITOR, Settings.PrintMarginColumn);
-        saveCheckBox(cbshowgutter, Settings.SETTINGS_EDITOR, Settings.ShowGutter);
-        saveCheckBox(cbshowinvisibles, Settings.SETTINGS_EDITOR, Settings.ShowInvisibles);
-        saveText(tftabsize, Settings.SETTINGS_EDITOR, Settings.TabSize);
-        saveCheckBox(cbusesofttabs, Settings.SETTINGS_EDITOR, Settings.UseSoftTabs);
-        saveCheckBox(cbwraptext, Settings.SETTINGS_EDITOR, Settings.WrapText);
-        saveText(tfwraplimit, Settings.SETTINGS_EDITOR, Settings.WrapLimit);
-        saveCheckBox(cbshowprintmargin, Settings.SETTINGS_EDITOR, Settings.ShowPrintMargin);
-        saveCheckBox(cbshowlinenumbers, Settings.SETTINGS_EDITOR, Settings.ShowLineNumbers);
+        saveCheckBox(cbdisplayindentguides, Settings.SETTINGS_EDITOR, Settings.DISPLAY_INDENT_GUIDES);
+        saveText(tffontsize, Settings.SETTINGS_EDITOR, Settings.FONT_SIZE);
+        saveCheckBox(cbhighlightselword, Settings.SETTINGS_EDITOR, Settings.HIGHLIGHT_SELECTED_WORD);
+        saveComboBox(cbnewlinemode, Settings.SETTINGS_EDITOR, Settings.NEW_LINE_MODE);
+        saveText(tfprintmargincolumn, Settings.SETTINGS_EDITOR, Settings.PRINT_MARGIN_COLUMN);
+        saveCheckBox(cbshowgutter, Settings.SETTINGS_EDITOR, Settings.SHOW_GUTTER);
+        saveCheckBox(cbshowinvisibles, Settings.SETTINGS_EDITOR, Settings.SHOW_INVISIBLES);
+        saveText(tftabsize, Settings.SETTINGS_EDITOR, Settings.TAB_SIZE);
+        saveCheckBox(cbusesofttabs, Settings.SETTINGS_EDITOR, Settings.USE_SOFT_TABS);
+        saveCheckBox(cbwraptext, Settings.SETTINGS_EDITOR, Settings.WRAP_TEXT);
+        saveText(tfwraplimit, Settings.SETTINGS_EDITOR, Settings.WRAP_LIMIT);
+        saveCheckBox(cbshowprintmargin, Settings.SETTINGS_EDITOR, Settings.SHOW_PRINT_MARGIN);
+        saveCheckBox(cbshowlinenumbers, Settings.SETTINGS_EDITOR, Settings.SHOW_LINE_NUMBERS);
+        saveText(tfprinterfontsize, Settings.SETTINGS_EDITOR, Settings.PRINTER_FONT_SIZE);
 
         // Key bindings
         FXController.hotkeys.saveSettingsFromDialog(getScene(), settings);
@@ -345,26 +386,27 @@ public class SettingsDialog extends FXMLDialog {
 
     private void loadSettings() {
         // General
-        setText(tfprojectfolder, Settings.SETTINGS_GENERAL, Settings.DefaultProjectLocation);
-        setCheckBox(cbopenbotwcleanconsole, Settings.SETTINGS_GENERAL, Settings.OpenBotWithCleanConsole);
-        setCheckBox(cbrunbotwcleanconsole, Settings.SETTINGS_GENERAL, Settings.RunBotWithCleanConsole);
-        setCheckBox(cbautosavebotbeforerun, Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun);
-        setCheckBox(cbEnableAutoSave, Settings.SETTINGS_GENERAL, Settings.EnableAutoSave);
+        setText(tfprojectfolder, Settings.SETTINGS_GENERAL, Settings.DEFAULT_PROJECT_LOCATION);
+        setCheckBox(cbopenbotwcleanconsole, Settings.SETTINGS_GENERAL, Settings.OPEN_BOT_WITH_CLEAN_CONSOLE);
+        setCheckBox(cbrunbotwcleanconsole, Settings.SETTINGS_GENERAL, Settings.RUN_BOT_WITH_CLEAN_CONSOLE);
+        setCheckBox(cbautosavebotbeforerun, Settings.SETTINGS_GENERAL, Settings.AUTO_SAVE_BOT_BEFORE_RUN);
+        setCheckBox(cbEnableAutoSave, Settings.SETTINGS_GENERAL, Settings.ENABLE_AUTO_SAVE);
 
         // Editor
-        setCheckBox(cbdisplayindentguides, Settings.SETTINGS_EDITOR, Settings.DisplayIndentGuides);
-        setText(tffontsize, Settings.SETTINGS_EDITOR, Settings.FontSize);
-        setCheckBox(cbhighlightselword, Settings.SETTINGS_EDITOR, Settings.HighlightSelectedWord);
-        setComboBox(cbnewlinemode, Settings.SETTINGS_EDITOR, Settings.NewLineMode);
-        setText(tfprintmargincolumn, Settings.SETTINGS_EDITOR, Settings.PrintMarginColumn);
-        setCheckBox(cbshowgutter, Settings.SETTINGS_EDITOR, Settings.ShowGutter);
-        setCheckBox(cbshowinvisibles, Settings.SETTINGS_EDITOR, Settings.ShowInvisibles);
-        setText(tftabsize, Settings.SETTINGS_EDITOR, Settings.TabSize);
-        setCheckBox(cbusesofttabs, Settings.SETTINGS_EDITOR, Settings.UseSoftTabs);
-        setCheckBox(cbwraptext, Settings.SETTINGS_EDITOR, Settings.WrapText);
-        setText(tfwraplimit, Settings.SETTINGS_EDITOR, Settings.WrapLimit);
-        setCheckBox(cbshowprintmargin, Settings.SETTINGS_EDITOR, Settings.ShowPrintMargin);
-        setCheckBox(cbshowlinenumbers, Settings.SETTINGS_EDITOR, Settings.ShowLineNumbers);
+        setCheckBox(cbdisplayindentguides, Settings.SETTINGS_EDITOR, Settings.DISPLAY_INDENT_GUIDES);
+        setText(tffontsize, Settings.SETTINGS_EDITOR, Settings.FONT_SIZE);
+        setCheckBox(cbhighlightselword, Settings.SETTINGS_EDITOR, Settings.HIGHLIGHT_SELECTED_WORD);
+        setComboBox(cbnewlinemode, Settings.SETTINGS_EDITOR, Settings.NEW_LINE_MODE);
+        setText(tfprintmargincolumn, Settings.SETTINGS_EDITOR, Settings.PRINT_MARGIN_COLUMN);
+        setCheckBox(cbshowgutter, Settings.SETTINGS_EDITOR, Settings.SHOW_GUTTER);
+        setCheckBox(cbshowinvisibles, Settings.SETTINGS_EDITOR, Settings.SHOW_INVISIBLES);
+        setText(tftabsize, Settings.SETTINGS_EDITOR, Settings.TAB_SIZE);
+        setCheckBox(cbusesofttabs, Settings.SETTINGS_EDITOR, Settings.USE_SOFT_TABS);
+        setCheckBox(cbwraptext, Settings.SETTINGS_EDITOR, Settings.WRAP_TEXT);
+        setText(tfwraplimit, Settings.SETTINGS_EDITOR, Settings.WRAP_LIMIT);
+        setCheckBox(cbshowprintmargin, Settings.SETTINGS_EDITOR, Settings.SHOW_PRINT_MARGIN);
+        setCheckBox(cbshowlinenumbers, Settings.SETTINGS_EDITOR, Settings.SHOW_LINE_NUMBERS);
+        setText(tfprinterfontsize, Settings.SETTINGS_EDITOR, Settings.PRINTER_FONT_SIZE);
 
         // Key bindings
         Platform.runLater(() -> FXController.hotkeys.setDialogFromSettings(getScene(), settings));
@@ -407,27 +449,28 @@ public class SettingsDialog extends FXMLDialog {
      */
     public static void register(final SettingsHandler settings) {
         // General
-        settings.simple().register(Settings.LAYOUT, Settings.SettingsDialogDimensions, "800x600", "The size of the settings window");
-        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.DefaultProjectLocation, System.getProperty("user.home"), "The default project location");
-        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.OpenBotWithCleanConsole, "true", "If the console is cleared when the bot is open");
-        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.RunBotWithCleanConsole, "false", "If the console is cleared when the bot is about to run");
-        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.AutoSaveBotBeforeRun, "true", "Save the robot before it's run");
-        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.EnableAutoSave, "true", "Save the robot after 2 seconds of no edits");
+        settings.simple().register(Settings.LAYOUT, Settings.SETTINGS_DIALOG_DIMENSIONS, "800x600", "The size of the settings window");
+        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.DEFAULT_PROJECT_LOCATION, System.getProperty("user.home"), "The default project location");
+        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.OPEN_BOT_WITH_CLEAN_CONSOLE, "true", "If the console is cleared when the bot is open");
+        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.RUN_BOT_WITH_CLEAN_CONSOLE, "false", "If the console is cleared when the bot is about to run");
+        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.AUTO_SAVE_BOT_BEFORE_RUN, "true", "Save the robot before it's run");
+        settings.simple().register(Settings.SETTINGS_GENERAL, Settings.ENABLE_AUTO_SAVE, "true", "Save the robot after 2 seconds of no edits");
 
         // Editor
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.DisplayIndentGuides, "false", "Displays indent guides");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.FontSize, "12px", "The editor's font size");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.HighlightSelectedWord, "true", "Highlight selected word in editor");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.NewLineMode, "auto", "New-line mode in editor");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.PrintMarginColumn, "80", "Set print margin column");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.ShowGutter, "true", "Show editor gutter");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.ShowInvisibles, "false", "Show invisibles in editor");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.TabSize, "4", "Tab size in editor");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.UseSoftTabs, "true", "Use soft tabs in editor");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.WrapText, "false", "Wrap text in editor");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.WrapLimit, "60", "Wrap limit in editor");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.ShowPrintMargin, "false", "Show print margin in editor");
-        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.ShowLineNumbers, "true", "Show line numbers in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.DISPLAY_INDENT_GUIDES, "false", "Displays indent guides");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.FONT_SIZE, "12px", "The editor's font size");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.HIGHLIGHT_SELECTED_WORD, "true", "Highlight selected word in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.NEW_LINE_MODE, "auto", "New-line mode in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.PRINT_MARGIN_COLUMN, "80", "Set print margin column");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.SHOW_GUTTER, "true", "Show editor gutter");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.SHOW_INVISIBLES, "false", "Show invisibles in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.TAB_SIZE, "4", "Tab size in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.USE_SOFT_TABS, "true", "Use soft tabs in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.WRAP_TEXT, "false", "Wrap text in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.WRAP_LIMIT, "60", "Wrap limit in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.SHOW_PRINT_MARGIN, "false", "Show print margin in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.SHOW_LINE_NUMBERS, "true", "Show line numbers in editor");
+        settings.simple().register(Settings.SETTINGS_EDITOR, Settings.PRINTER_FONT_SIZE, "10", "The printer font size");
 
         // Key bindings
         FXController.hotkeys.registerHotkeysSettings(settings);
@@ -443,6 +486,7 @@ public class SettingsDialog extends FXMLDialog {
         }
     }
 
+    @FunctionalInterface
     private interface TextValidator {
         boolean test(final String text);
     }
@@ -458,7 +502,7 @@ public class SettingsDialog extends FXMLDialog {
         RangeValidator(final int fromIncl, final int toIncl, final String suffix, final boolean allowEmpty) {
             this.fromIncl = fromIncl;
             this.toIncl = toIncl;
-            this.suffix = (suffix == null ? "" : suffix);
+            this.suffix = suffix == null ? "" : suffix;
             this.allowEmpty = allowEmpty;
             this.pattern = Pattern.compile("[0-9]+" + this.suffix);
         }
@@ -481,6 +525,76 @@ public class SettingsDialog extends FXMLDialog {
 
         public boolean isValid() {
             return this.valid;
+        }
+    }
+
+    /**
+     * This class represents the metadata about plugins displayed in the about tab.
+     *
+     * @author Thomas Biesaart
+     * @since 3.4.0
+     */
+    public static class PluginData {
+        private final SimpleStringProperty name = new SimpleStringProperty(this, "name");
+        private final SimpleStringProperty version = new SimpleStringProperty(this, "version");
+        private final SimpleStringProperty vendor = new SimpleStringProperty(this, "vendor");
+        private final SimpleStringProperty url = new SimpleStringProperty(this, "url");
+
+        public PluginData(XillPlugin xillPlugin) {
+            name.set(xillPlugin.getName());
+            version.set(xillPlugin.getVersion().orElse("-"));
+            vendor.set(xillPlugin.getVendor().orElse("-"));
+            url.setValue(xillPlugin.getVendorUrl().orElse(""));
+        }
+
+        public String getName() {
+            return name.get();
+        }
+
+        public String getVersion() {
+            return version.get();
+        }
+
+        public String getVendor() {
+            return vendor.get();
+        }
+
+        public String getUrl() {
+            return url.get();
+        }
+    }
+
+    private class CreatorCell extends TableCell<PluginData, PluginData> {
+
+        @Override
+        protected void updateItem(PluginData item, boolean empty) {
+            super.updateItem(item, empty);
+
+            if (empty) {
+                setGraphic(null);
+            } else if (item.url.get().isEmpty()) {
+                // No url
+                setGraphic(new Label(item.getVendor()));
+            } else {
+                Hyperlink hyperlink = new Hyperlink(item.getVendor());
+                hyperlink.setOnAction(e -> openUrl(item.getUrl()));
+                setGraphic(hyperlink);
+            }
+        }
+
+        private void openUrl(String url) {
+            URI uri;
+            try {
+                uri = new URI(url);
+            } catch (URISyntaxException e) {
+                LOGGER.error("Failed to open link: URI was not formed correctly.", e);
+                return;
+            }
+            if (BrowserOpener.browserIsSupported()) {
+                BrowserOpener.openBrowser(uri);
+            } else {
+                LOGGER.info("Could not open a browser (Desktop API is not supported).");
+            }
         }
     }
 }

@@ -22,15 +22,16 @@ import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.data.DateFactory;
 import org.slf4j.Logger;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAccessor;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 
 /**
@@ -43,7 +44,6 @@ import java.util.Map.Entry;
 public class DateServiceImpl implements DateService, DateFactory {
 
     private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private static final Logger LOGGER = Log.get();
 
     @Override
     public Date now() {
@@ -156,24 +156,31 @@ public class DateServiceImpl implements DateService, DateFactory {
     }
 
     @Override
-    public Map<String, Double> difference(Date date1, Date date2, boolean absolute) {
+    public Map<String, Number> difference(Date date1, Date date2, boolean absolute) {
         // Calculate difference and convert to seconds
-        long nanoDifference = date1.getZoned().until(date2.getZoned(), ChronoUnit.NANOS);
+        long milisDifference = date1.getZoned().until(date2.getZoned(), ChronoUnit.MILLIS);
         if (absolute) {
-            nanoDifference = Math.abs(nanoDifference);
+            milisDifference = Math.abs(milisDifference);
         }
-        BigDecimal difference = new BigDecimal(nanoDifference).multiply(TimeUnits.NANOS.getNumSeconds());
+
         // Calculate the totals
-        Map<String, Double> diff = new LinkedHashMap<>();
+        Map<String, Number> diff = new LinkedHashMap<>();
         for (TimeUnits t : TimeUnits.values()) {
-            diff.put(String.format("total%s", t.getPascalName()), difference.divide(t.getNumSeconds(), RoundingMode.HALF_UP).doubleValue());
+            Double total = (double) milisDifference / (double) t.getNumMilliseconds();
+            String name = String.format("total%s", t.getPascalName());
+            if (TimeUnits.MILLIS.equals(t)) {
+                Long totalLong = total.longValue();
+                diff.put(name, totalLong);
+            } else {
+                diff.put(name, total);
+            }
         }
         // Calculate the additive differences by going through the TimeUnits in reverse order and
         for (int i = TimeUnits.values().length - 1; i >= 0; i--) {
             TimeUnits unit = TimeUnits.values()[i];
-            BigDecimal[] division = difference.divideAndRemainder(unit.getNumSeconds());
-            diff.put(unit.getCamelName(), Math.floor(division[0].doubleValue()));
-            difference = division[1];
+            Long value = milisDifference / unit.getNumMilliseconds();
+            milisDifference -= value * unit.getNumMilliseconds();
+            diff.put(unit.getCamelName(), value);
         }
         return diff;
     }
@@ -187,6 +194,21 @@ public class DateServiceImpl implements DateService, DateFactory {
         );
     }
 
+    @Override
+    public Date fromTimestamp(long timestamp) {
+        return from(Instant.ofEpochSecond(timestamp));
+    }
+
+    @Override
+    public boolean isBefore(Date date1, Date date2) {
+        return date1.getZoned().isBefore(date2.getZoned());
+    }
+
+    @Override
+    public boolean isAfter(Date date1, Date date2) {
+        return date1.getZoned().isAfter(date2.getZoned());
+    }
+
     /**
      * Represents different kinds of time units, containing their name and the amount of nanoseconds they contain.
      * <p>
@@ -195,40 +217,33 @@ public class DateServiceImpl implements DateService, DateFactory {
      * @author Geert Konijnendijk
      */
     private enum TimeUnits {
+        MILLIS(1),
+        SECONDS(1000),
+        MINUTES(60000),
+        HOURS(3600000),
+        DAYS(86400000),
+        WEEKS(604800000),
+        MONTHS(2629746000L),
+        YEARS(31556952000L),
+        DECADES(315569520000L),
+        CENTURIES(3155695200000L),
+        MILLENNIA(31556952000000L);
 
-        // @formatter:off
-        NANOS("1E-9"),
-        MICROS("1E-6"),
-        MILLIS("1E-3"),
-        SECONDS("1"),
-        MINUTES("60"),
-        HOURS("3600"),
-        HALF_DAYS("43200"),
-        DAYS("86400"),
-        WEEKS("604800"),
-        MONTHS("2629746"),
-        YEARS("31556952"),
-        DECADES("31556952E1"),
-        CENTURIES("31556952E2"),
-        MILLENNIA("31556952E3"),
-        ERAS("31556952E9");
-        // @formatter:on
-
-        private final BigDecimal numSeconds;
+        private final long numMilliseconds;
         private final String camelName;
         private final String pascalName;
 
         /**
-         * @param numSeconds Number of seconds that fit into one unit of this kind in {@link BigDecimal} String representation
+         * @param numSeconds Number of seconds that fit into one unit of this kind in {@link Long} String representation
          */
-        TimeUnits(String numSeconds) {
-            this.numSeconds = new BigDecimal(numSeconds);
+        TimeUnits(long numSeconds) {
+            this.numMilliseconds = numSeconds;
             this.camelName = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, this.name());
             this.pascalName = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, this.name());
         }
 
-        public BigDecimal getNumSeconds() {
-            return numSeconds;
+        public Long getNumMilliseconds() {
+            return numMilliseconds;
         }
 
         public String getCamelName() {

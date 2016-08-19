@@ -21,12 +21,10 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -43,7 +41,6 @@ import nl.xillio.migrationtool.elasticconsole.ESConsoleClient;
 import nl.xillio.plugins.PluginLoadFailure;
 import nl.xillio.plugins.XillPlugin;
 import nl.xillio.xill.api.XillEnvironment;
-import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.util.HotkeysHandler;
 import nl.xillio.xill.util.HotkeysHandler.Hotkeys;
 import nl.xillio.xill.util.settings.Settings;
@@ -55,10 +52,7 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -91,6 +85,8 @@ public class FXController implements Initializable, EventHandler<Event> {
     private Button btnSaveAs;
     @FXML
     private Button btnSaveAll;
+    @FXML
+    private Button btnPrint;
     @FXML
     private Button btnSettings;
     @FXML
@@ -156,21 +152,21 @@ public class FXController implements Initializable, EventHandler<Event> {
             // Add splitpane position listener
             spnMain.getDividers().get(0).positionProperty().addListener((observable, oldPos, newPos) -> {
                 if (spnMain.getItems().contains(apnLeft)) {
-                    settings.simple().save(Settings.LAYOUT, Settings.LeftPanelWidth, newPos.toString());
+                    settings.simple().save(Settings.LAYOUT, Settings.LEFT_PANEL_WIDTH, newPos.toString());
                 }
             });
 
-            spnMain.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.LeftPanelWidth)));
+            spnMain.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.LEFT_PANEL_WIDTH)));
             // Remove the left hidden bar from dom
-            if (Boolean.parseBoolean(settings.simple().get(Settings.LAYOUT, Settings.LeftPanelCollapsed))) {
+            if (Boolean.parseBoolean(settings.simple().get(Settings.LAYOUT, Settings.LEFT_PANEL_COLLAPSED))) {
                 btnHideLeftPane();
             } else {
                 btnShowLeftPane();
             }
 
-            spnLeft.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.ProjectHeight)));
+            spnLeft.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.PROJECT_HEIGHT)));
             spnLeft.getDividers().get(0).positionProperty().addListener((observable, oldPos, newPos) -> settings
-                    .simple().save(Settings.LAYOUT, Settings.ProjectHeight, Double.toString(newPos.doubleValue())));
+                    .simple().save(Settings.LAYOUT, Settings.PROJECT_HEIGHT, Double.toString(newPos.doubleValue())));
         });
 
         // Start the elasticsearch console
@@ -193,7 +189,7 @@ public class FXController implements Initializable, EventHandler<Event> {
 
         Platform.runLater(() -> apnRoot.getScene().getWindow().focusedProperty().addListener((event, oldValue, newValue) -> {
                     if (newValue) {
-                        getTabs().forEach(e -> projectpane.robotFileChanged(e.getDocument()));
+                        getTabs().forEach(e -> projectpane.fileChanged(e.getDocument()));
                     }
                 })
         );
@@ -230,18 +226,18 @@ public class FXController implements Initializable, EventHandler<Event> {
     private void registerSettings() {
         settings.setManualCommit(true);
 
-        settings.simple().register(Settings.FILE, Settings.LastFolder, System.getProperty("user.dir"), "The last folder a file was opened from or saved to.");
-        settings.simple().register(Settings.WARNING, Settings.DialogDebug, "false", "Show warning dialogs for debug messages.");
-        settings.simple().register(Settings.WARNING, Settings.DialogInfo, "false", "Show warning dialogs for info messages.");
-        settings.simple().register(Settings.WARNING, Settings.DialogWarning, "false", "Show warning dialogs for warning messages.");
-        settings.simple().register(Settings.WARNING, Settings.DialogError, "true", "Show warning dialogs for error messages.");
-        settings.simple().register(Settings.SERVER, Settings.ServerHost, "http://localhost:10000", "Location XMTS is running on.");
-        settings.simple().register(Settings.SERVER, Settings.ServerUsername, "", "Optional username to access XMTS.", true);
-        settings.simple().register(Settings.SERVER, Settings.ServerPassword, "", "Optional password to access XMTS.", true);
-        settings.simple().register(Settings.INFO, Settings.LastVersion, "0.0.0", "Last version that was run.");
-        settings.simple().register(Settings.LAYOUT, Settings.LeftPanelWidth, "0.2", "Width of the left panel");
-        settings.simple().register(Settings.LAYOUT, Settings.LeftPanelCollapsed, "false", "The collapsed-state of the left panel");
-        settings.simple().register(Settings.LAYOUT, Settings.ProjectHeight, "0.5", "The height of the project panel");
+        settings.simple().register(Settings.FILE, Settings.LAST_FOLDER, System.getProperty("user.dir"), "The last folder a file was opened from or saved to.");
+        settings.simple().register(Settings.WARNING, Settings.DIALOG_DEBUG, "false", "Show warning dialogs for debug messages.");
+        settings.simple().register(Settings.WARNING, Settings.DIALOG_INFO, "false", "Show warning dialogs for info messages.");
+        settings.simple().register(Settings.WARNING, Settings.DIALOG_WARNING, "false", "Show warning dialogs for warning messages.");
+        settings.simple().register(Settings.WARNING, Settings.DIALOG_ERROR, "true", "Show warning dialogs for error messages.");
+        settings.simple().register(Settings.SERVER, Settings.XILL_SERVER_HOST, "http://localhost:8080", "Location where Xill server is running.");
+        settings.simple().register(Settings.SERVER, Settings.XILL_SERVER_USERNAME, "", "Username to access Xill server.", true);
+        settings.simple().register(Settings.SERVER, Settings.XILL_SERVER_PASSWORD, "", "Password to access Xill server.", true);
+        settings.simple().register(Settings.INFO, Settings.LAST_VERSION, "0.0.0", "Last version that was run.");
+        settings.simple().register(Settings.LAYOUT, Settings.LEFT_PANEL_WIDTH, "0.2", "Width of the left panel");
+        settings.simple().register(Settings.LAYOUT, Settings.LEFT_PANEL_COLLAPSED, "false", "The collapsed-state of the left panel");
+        settings.simple().register(Settings.LAYOUT, Settings.PROJECT_HEIGHT, "0.5", "The height of the project panel");
 
         SettingsDialog.register(settings);
 
@@ -251,7 +247,7 @@ public class FXController implements Initializable, EventHandler<Event> {
 
     private void loadWorkSpace() {
         Platform.runLater(() -> {
-            String workspace = settings.simple().get(Settings.WORKSPACE, Settings.OpenTabs);
+            String workspace = settings.simple().get(Settings.WORKSPACE, Settings.OPEN_TABS);
             // Wait for all plugins to be loaded before loading the workspace.
             Loader.getInitializer().getPlugins();
 
@@ -289,7 +285,7 @@ public class FXController implements Initializable, EventHandler<Event> {
             showMissingLicensePlugins();
 
             // Select the last opened tab.
-            String activeTab = settings.simple().get(Settings.WORKSPACE, Settings.ActiveTab);
+            String activeTab = settings.simple().get(Settings.WORKSPACE, Settings.ACTIVE_TAB);
             if (activeTab != null && !"".equals(activeTab)) {
                 getTabs().stream()
                         .filter(tab -> tab.getDocument().getAbsolutePath().equals(activeTab))
@@ -304,45 +300,42 @@ public class FXController implements Initializable, EventHandler<Event> {
     @FXML
     private void buttonNewFile() {
         if (!btnNewFile.isDisabled()) {
-            projectpane.newBot(null); //TODO: give the option to open from template
+            projectpane.newBot(null);
         }
     }
 
     /**
-     * Switch focus to an existing tab for a certain robot or create it.
+     * Switch focus to an existing tab for a certain file or create it.
      *
-     * @param robotID the robot that should be viewed
+     * @param document the file that should be visible in the tab
+     * @param project  the project folder for the robot
+     * @param isRobot  whether the file is a robot or regular file
      */
-    public void viewOrOpenRobot(RobotID robotID) {
-        RobotTab tab = tpnBots.getTabs().stream()
-                .map(bot -> (RobotTab) bot)
-                .filter(robotTab -> robotTab.getProcessor().getRobotID().equals(robotID))
-                .map(this::reloadTab)
-                .findAny()
-                .orElseGet(() -> createTab(robotID.getPath(), robotID.getProjectPath()));
+    public void viewOrOpenRobot(File document, File project, boolean isRobot) {
+        FileTab tab = findTab(document);
 
+        // Create a tab.
+        if (tab == null) {
+            tab = createTab(document, project, isRobot);
+        }
+
+        // Open the tab.
         if (tab != null) {
             tab.requestFocus();
         }
-
     }
 
     /**
      * Try to make a tab and add it to the view.
      *
-     * @param robotFile     the file that should be visible in the tab
-     * @param projectFolder the project folder for the robot
+     * @param document the file that should be visible in the tab
+     * @param project  the project folder for the robot
      * @return the tab or null if it could not be created
      */
-    private RobotTab createTab(File robotFile, File projectFolder) {
-        RobotTab robotTab = new RobotTab(projectFolder, robotFile, this);
-        tpnBots.getTabs().add(robotTab);
-        return robotTab;
-    }
-
-    private RobotTab reloadTab(RobotTab robotTab) {
-        robotTab.reload();
-        return robotTab;
+    private FileTab createTab(File document, File project, boolean isRobot) {
+        FileTab tab = isRobot ? new RobotTab(project, document, this) : new FileTab(project, document, this);
+        tpnBots.getTabs().add(tab);
+        return tab;
     }
 
     @FXML
@@ -354,13 +347,17 @@ public class FXController implements Initializable, EventHandler<Event> {
 
         // If the last picked folder exists, set the initial directory to that.
         FileChooser fileChooser = new FileChooser();
-        File lastFolder = new File(settings.simple().get(Settings.FILE, Settings.LastFolder));
+        File lastFolder = new File(settings.simple().get(Settings.FILE, Settings.LAST_FOLDER));
         if (lastFolder.exists()) {
             fileChooser.setInitialDirectory(lastFolder);
         }
 
-        // Only show Xill scripts, show the dialog and open the file.
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Xillio scripts (*.xill)", "*.xill"));
+        // Show the dialog and open the file.
+        String robotExtension = "*" + XillEnvironment.ROBOT_EXTENSION;
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Xillio scripts (" + robotExtension + ")", robotExtension),
+                new FileChooser.ExtensionFilter("All files (*.*)", "*.*")
+        );
         File newFile = fileChooser.showOpenDialog(btnOpenFile.getScene().getWindow());
 
         if (newFile != null) {
@@ -369,31 +366,37 @@ public class FXController implements Initializable, EventHandler<Event> {
     }
 
     /**
-     * @param newfile file with Xill robot code
+     * Open a file
+     *
+     * @param file the file to open
      * @return the tab that was opened or null if something went wrong
      */
-    public RobotTab openFile(final File newfile) {
-        RobotTab tab = doOpenFile(newfile);
-
-        if ("14".equals(new SimpleDateFormat("dM").format(new Date()))) {
-            iterate(tpnBots, new Random());
-        }
-
-        return tab;
+    public FileTab openFile(final File file) {
+        return doOpenFile(file, file.toString().endsWith(XillEnvironment.ROBOT_EXTENSION));
     }
 
-    public RobotTab doOpenFile(final File newfile) {
+    /**
+     * Open a robot
+     *
+     * @param file the file to open
+     * @return the tab that was opened or null if something went wrong
+     */
+    public RobotTab openRobot(final File file) {
+        return (RobotTab) doOpenFile(file, true);
+    }
+
+    private FileTab doOpenFile(final File file, boolean isRobot) {
         // Skip if the file doesn't exist
-        if (!newfile.exists() || !newfile.isFile()) {
-            LOGGER.error("Failed to open file `" + newfile.getAbsolutePath() + "`. File not found.");
+        if (!file.exists() || !file.isFile()) {
+            LOGGER.error("Failed to open file `" + file.getAbsolutePath() + "`. File not found.");
             return null;
         }
 
         // Verify file isn't open already
         for (Tab tab : tpnBots.getTabs()) {
-            RobotTab editor = (RobotTab) tab;
+            FileTab editor = (FileTab) tab;
             try {
-                if (editor.getDocument() != null && editor.getDocument().getCanonicalPath().equals(newfile.getCanonicalPath())) {
+                if (editor.getDocument() != null && editor.getDocument().getCanonicalPath().equals(file.getCanonicalPath())) {
                     tpnBots.getSelectionModel().select(editor);
 
                     showTab(editor);
@@ -408,14 +411,13 @@ public class FXController implements Initializable, EventHandler<Event> {
         }
 
         // Tab is not open yet: open new tab
-        settings.simple().save(Settings.FILE, Settings.LastFolder, newfile.getParent());
+        settings.simple().save(Settings.FILE, Settings.LAST_FOLDER, file.getParent());
 
         // Try to get the project path. If there is no project, use the parent directory as the project path.
-        String projectPath = projectpane.getProjectPath(newfile).orElse(newfile.getParent());
+        String projectPath = projectpane.getProjectPath(file).orElse(file.getParent());
 
-        // Create and show the robot tab.
-        RobotTab tab = new RobotTab(new File(projectPath), newfile.getAbsoluteFile(), this);
-        tpnBots.getTabs().add(tab);
+        // Create and open the new tab.
+        FileTab tab = createTab(file.getAbsoluteFile(), new File(projectPath), isRobot);
         tab.requestFocus();
         return tab;
     }
@@ -451,7 +453,7 @@ public class FXController implements Initializable, EventHandler<Event> {
         if (!btnSave.isDisabled()) {
             Tab tab = tpnBots.getSelectionModel().getSelectedItem();
             if (tab != null) {
-                ((RobotTab) tab).save();
+                ((FileTab) tab).save();
             }
         }
     }
@@ -461,7 +463,7 @@ public class FXController implements Initializable, EventHandler<Event> {
         if (!btnSaveAs.isDisabled()) {
             Tab tab = tpnBots.getSelectionModel().getSelectedItem();
             if (tab != null) {
-                ((RobotTab) tab).save(true);
+                ((FileTab) tab).save(true);
             }
         }
     }
@@ -469,7 +471,15 @@ public class FXController implements Initializable, EventHandler<Event> {
     @FXML
     private void buttonSaveAll() {
         if (!btnSaveAll.isDisabled()) {
-            tpnBots.getTabs().forEach(tab -> ((RobotTab) tab).save());
+            tpnBots.getTabs().forEach(tab -> ((FileTab) tab).save());
+        }
+    }
+
+    @FXML
+    private void buttonPrint() {
+        Tab tab = tpnBots.getSelectionModel().getSelectedItem();
+        if (tab != null) {
+            ((FileTab) tab).getEditorPane().print();
         }
     }
 
@@ -483,8 +493,8 @@ public class FXController implements Initializable, EventHandler<Event> {
 
     @FXML
     private void btnHideLeftPane() {
-        settings.simple().save(Settings.LAYOUT, Settings.LeftPanelWidth, "" + spnMain.getDividerPositions()[0]);
-        settings.simple().save(Settings.LAYOUT, Settings.LeftPanelCollapsed, "true");
+        settings.simple().save(Settings.LAYOUT, Settings.LEFT_PANEL_WIDTH, "" + spnMain.getDividerPositions()[0]);
+        settings.simple().save(Settings.LAYOUT, Settings.LEFT_PANEL_COLLAPSED, "true");
         spnMain.getItems().remove(apnLeft);
         if (!hbxMain.getChildren().contains(vbxLeftHidden)) {
             hbxMain.getChildren().add(0, vbxLeftHidden);
@@ -493,42 +503,40 @@ public class FXController implements Initializable, EventHandler<Event> {
 
     @FXML
     private void btnShowLeftPane() {
-        settings.simple().save(Settings.LAYOUT, Settings.LeftPanelCollapsed, "false");
+        settings.simple().save(Settings.LAYOUT, Settings.LEFT_PANEL_COLLAPSED, "false");
 
         hbxMain.getChildren().remove(vbxLeftHidden);
         if (!spnMain.getItems().contains(apnLeft)) {
             spnMain.getItems().add(0, apnLeft);
-            spnMain.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.LeftPanelWidth)));
+            spnMain.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.LEFT_PANEL_WIDTH)));
         }
 
-        RobotTab selected = (RobotTab) getSelectedTab();
+        FileTab selected = (FileTab) getSelectedTab();
         if (selected != null)
             selected.requestFocus();
     }
 
     private boolean closeApplication() {
-        String openTabs = String.join(";",
-                getTabs().stream().map(tab -> tab.getDocument().getAbsolutePath()).collect(Collectors.toList()));
+        String openTabs = String.join(";", getTabs().stream().map(tab -> tab.getDocument().getAbsolutePath()).collect(Collectors.toList()));
 
         // Save all tabs
-        settings.simple().save(Settings.WORKSPACE, Settings.OpenTabs, openTabs, true);
+        settings.simple().save(Settings.WORKSPACE, Settings.OPEN_TABS, openTabs, true);
 
         // Save active tab
         final String[] activeTab = {null};
         getTabs().stream().filter(Tab::isSelected).forEach(tab -> activeTab[0] = tab.getDocument().getAbsolutePath());
         if (activeTab[0] != null) {
-            settings.simple().save(Settings.WORKSPACE, Settings.ActiveTab, activeTab[0], true);
+            settings.simple().save(Settings.WORKSPACE, Settings.ACTIVE_TAB, activeTab[0], true);
         } else {
-            settings.simple().save(Settings.WORKSPACE, Settings.ActiveTab, "", true);
+            settings.simple().save(Settings.WORKSPACE, Settings.ACTIVE_TAB, "", true);
         }
 
         // Check if there are tabs whose robots are running.
-        List<RobotTab> running = getTabs().stream().filter(tab -> tab.getEditorPane().getControls().robotRunning()).collect(Collectors.toList());
-        if (!running.isEmpty()) {
-            // If robots are running, show a confirmation dialog.
-            if (!showCloseAppDialog(running.size())) {
-                return false;
-            }
+        List<FileTab> running = getTabs().stream().filter(tab -> tab instanceof RobotTab)
+                .filter(tab -> ((RobotTab) tab).getEditorPane().getControls().robotRunning()).collect(Collectors.toList());
+        // If robots are running, show a confirmation dialog.
+        if (!running.isEmpty() && !showCloseAppDialog(running.size())) {
+            return false;
         }
 
         // Close all tabs
@@ -587,22 +595,22 @@ public class FXController implements Initializable, EventHandler<Event> {
         String jsCode = "var editor = javaEditor.getAce();\neditor.setOptions({\n";
         String jsSettings = "";
 
-        String s = settings.simple().get(Settings.SETTINGS_EDITOR, Settings.FontSize);
+        String s = settings.simple().get(Settings.SETTINGS_EDITOR, Settings.FONT_SIZE);
         if (s.endsWith("px")) {
             s = s.substring(0, s.length() - 2);
         }
         jsSettings += String.format("fontSize: \"%1$spt\",%n", s);
 
-        jsSettings += formatEditorOptionJSBoolean("displayIndentGuides", Settings.DisplayIndentGuides);
-        jsSettings += formatEditorOptionJS("newLineMode", Settings.NewLineMode);
-        jsSettings += formatEditorOptionJSBoolean("showPrintMargin", Settings.ShowPrintMargin);
-        jsSettings += formatEditorOptionJS("printMarginColumn", Settings.PrintMarginColumn);
-        jsSettings += formatEditorOptionJSBoolean("showGutter", Settings.ShowGutter);
-        jsSettings += formatEditorOptionJSBoolean("showInvisibles", Settings.ShowInvisibles);
-        jsSettings += formatEditorOptionJSRaw("tabSize", Settings.TabSize);
-        jsSettings += formatEditorOptionJSBoolean("useSoftTabs", Settings.UseSoftTabs);
-        jsSettings += formatEditorOptionJSBoolean("wrap", Settings.WrapText);
-        jsSettings += formatEditorOptionJSBoolean("showLineNumbers", Settings.ShowLineNumbers);
+        jsSettings += formatEditorOptionJSBoolean("displayIndentGuides", Settings.DISPLAY_INDENT_GUIDES);
+        jsSettings += formatEditorOptionJS("newLineMode", Settings.NEW_LINE_MODE);
+        jsSettings += formatEditorOptionJSBoolean("showPrintMargin", Settings.SHOW_PRINT_MARGIN);
+        jsSettings += formatEditorOptionJS("printMarginColumn", Settings.PRINT_MARGIN_COLUMN);
+        jsSettings += formatEditorOptionJSBoolean("showGutter", Settings.SHOW_GUTTER);
+        jsSettings += formatEditorOptionJSBoolean("showInvisibles", Settings.SHOW_INVISIBLES);
+        jsSettings += formatEditorOptionJSRaw("tabSize", Settings.TAB_SIZE);
+        jsSettings += formatEditorOptionJSBoolean("useSoftTabs", Settings.USE_SOFT_TABS);
+        jsSettings += formatEditorOptionJSBoolean("wrap", Settings.WRAP_TEXT);
+        jsSettings += formatEditorOptionJSBoolean("showLineNumbers", Settings.SHOW_LINE_NUMBERS);
 
         if (jsSettings.endsWith(",\n")) {
             jsSettings = jsSettings.substring(0, jsSettings.length() - 2);
@@ -611,12 +619,11 @@ public class FXController implements Initializable, EventHandler<Event> {
         jsCode += jsSettings;
         jsCode += "\n});";
 
-        jsCode += String.format("editor.session.setWrapLimit(%1$s);%n", settings.simple().get(Settings.SETTINGS_EDITOR, Settings.WrapLimit));
-        jsCode += String.format("editor.setHighlightSelectedWord(%1$s);%n", settings.simple().getBoolean(Settings.SETTINGS_EDITOR, Settings.HighlightSelectedWord));
+        jsCode += String.format("editor.session.setWrapLimit(%1$s);%n", settings.simple().get(Settings.SETTINGS_EDITOR, Settings.WRAP_LIMIT));
+        jsCode += String.format("editor.setHighlightSelectedWord(%1$s);%n", settings.simple().getBoolean(Settings.SETTINGS_EDITOR, Settings.HIGHLIGHT_SELECTED_WORD));
 
         return jsCode;
     }
-
 
     /**
      * Display the release notes
@@ -624,14 +631,14 @@ public class FXController implements Initializable, EventHandler<Event> {
      * @throws IOException if error occurs when reading the changelog file
      */
     public void showReleaseNotes() throws IOException {
-        String lastVersion = settings.simple().get(Settings.INFO, Settings.LastVersion);
+        String lastVersion = settings.simple().get(Settings.INFO, Settings.LAST_VERSION);
 
         if (lastVersion.compareTo(Loader.SHORT_VERSION) < 0) {
 
-            String changeLogMD = FileUtils.readFileToString(new File("CHANGELOG.md"));
+            String changeLogMD = FileUtils.readFileToString(new File("../CHANGELOG.md"));
             String changeLogHTML = new PegDownProcessor().markdownToHtml(changeLogMD);
 
-            settings.simple().save(Settings.INFO, Settings.LastVersion, Loader.SHORT_VERSION);
+            settings.simple().save(Settings.INFO, Settings.LAST_VERSION, Loader.SHORT_VERSION);
 
             ChangeLogDialog releaseNotes = new ChangeLogDialog("Change Log",
                     "Current version: " + Loader.SHORT_VERSION,
@@ -720,7 +727,7 @@ public class FXController implements Initializable, EventHandler<Event> {
                     case ESCAPE:
                         // No editorpane has focus, so focus to a selected one
                         tpnBots.getTabs().filtered(Tab::isSelected).forEach(tab ->
-                                ((RobotTab) tab).getEditorPane().requestFocus());
+                                ((FileTab) tab).getEditorPane().requestFocus());
                         break;
                     default:
                         if (keyEvent.isControlDown() || keyEvent.isMetaDown()) {
@@ -730,7 +737,7 @@ public class FXController implements Initializable, EventHandler<Event> {
 
                                 if (tab < tpnBots.getTabs().size() && tab >= 0) {
                                     tpnBots.getSelectionModel().select(tab);
-                                    ((RobotTab) tpnBots.getTabs().get(tab)).requestFocus();
+                                    ((FileTab) tpnBots.getTabs().get(tab)).requestFocus();
                                 }
                             } catch (NumberFormatException e) {
                                 // nevermind...
@@ -738,17 +745,6 @@ public class FXController implements Initializable, EventHandler<Event> {
                         }
                 }
             }
-        }
-    }
-
-    private void iterate(Node node, Random random) {
-        if (node instanceof Pane) {
-            double randomness = (359.5 + random.nextDouble()) % 360;
-            node.setRotate(randomness * 2);
-        }
-
-        if (node instanceof Parent) {
-            ((Parent) node).getChildrenUnmodifiable().forEach(n -> iterate(n, random));
         }
     }
 
@@ -761,7 +757,14 @@ public class FXController implements Initializable, EventHandler<Event> {
         closeTab(tab, true, false);
     }
 
-    private void closeTab(final Tab tab, final boolean removeTab, final boolean silent) {
+    /**
+     * Close a tab
+     *
+     * @param tab The tab
+     * @param removeTab True if tab will be removed
+     * @param silent True if tab will be closed silently without any further dialogs
+     */
+    public void closeTab(final Tab tab, final boolean removeTab, final boolean silent) {
         // Stop if we don't have a selected tab
         if (tab == null) {
             return;
@@ -786,15 +789,15 @@ public class FXController implements Initializable, EventHandler<Event> {
      * @param tab The tab to keep open.
      */
     public void closeAllTabsExcept(final Tab tab) {
-        List<RobotTab> tabs = getTabs();
+        List<FileTab> tabs = getTabs();
         tabs.stream().filter(t -> t != tab).forEach(this::closeTab);
     }
 
     /**
      * @return A list of active tabs
      */
-    public List<RobotTab> getTabs() {
-        return tpnBots.getTabs().stream().map(tab -> (RobotTab) tab).collect(Collectors.toList());
+    public List<FileTab> getTabs() {
+        return tpnBots.getTabs().stream().map(tab -> (FileTab) tab).collect(Collectors.toList());
     }
 
     /**
@@ -802,7 +805,7 @@ public class FXController implements Initializable, EventHandler<Event> {
      *
      * @param tab a tab to open
      */
-    public void showTab(final RobotTab tab) {
+    public void showTab(final FileTab tab) {
         int index = tpnBots.getTabs().indexOf(tab);
 
         if (index >= 0) {
@@ -826,15 +829,13 @@ public class FXController implements Initializable, EventHandler<Event> {
      * @param filePath filepath to robot (.xill) file
      * @return RobotTab if found, otherwise null
      */
-    public Tab findTab(final File filePath) {
-        final RobotTab[] robotTabs = {null};
-        tpnBots.getTabs().forEach(tab -> {
-            RobotTab robotTab = (RobotTab) tab;
-            if (robotTab.getCurrentRobot().getPath().equals(filePath)) {
-                robotTabs[0] = robotTab;
+    public FileTab findTab(final File filePath) {
+        for (Tab tab : tpnBots.getTabs()) {
+            if (((FileTab) tab).getDocument().equals(filePath)) {
+                return (FileTab) tab;
             }
-        });
-        return robotTabs[0];
+        }
+        return null;
     }
 
     /**

@@ -15,7 +15,6 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
-import com.google.inject.Inject;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
@@ -24,7 +23,6 @@ import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.PhantomJSConstruct;
 import nl.xillio.xill.plugins.web.data.WebVariable;
-import nl.xillio.xill.plugins.web.services.web.FileService;
 import nl.xillio.xill.plugins.web.services.web.WebService;
 
 import java.io.IOException;
@@ -35,8 +33,7 @@ import java.nio.file.Path;
  * Download a content given by URL link and save it to a file
  */
 public class DownloadConstruct extends PhantomJSConstruct {
-    @Inject
-    private FileService fileService;
+    private static final int DEFAULT_TIMEOUT = 5000;
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
@@ -45,7 +42,7 @@ public class DownloadConstruct extends PhantomJSConstruct {
                 new Argument("url", ATOMIC),
                 new Argument("filename", ATOMIC),
                 new Argument("webContext", NULL, ATOMIC),
-                new Argument("timeout", NULL, ATOMIC));
+                new Argument("timeout", fromValue(DEFAULT_TIMEOUT), ATOMIC));
     }
 
     /**
@@ -78,7 +75,7 @@ public class DownloadConstruct extends PhantomJSConstruct {
             }
         }
 
-        int timeout = 5000; // Default timeout (in miliseconds)
+        int timeout = DEFAULT_TIMEOUT; // Default timeout (in miliseconds)
         if (!timeoutVar.isNull()) {
             timeout = timeoutVar.getNumberValue().intValue();
         }

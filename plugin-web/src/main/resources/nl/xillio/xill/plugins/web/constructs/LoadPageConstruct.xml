@@ -35,6 +35,7 @@ The optional `options` argument contains additional attributes or modifiers for 
 |loadimages            |Allow loading of images referenced on the page.|[true,false] default: true|
 |insecuressl           |Ignore SSL trust failures, thus allowing the load of non trusted resources.|[true,false] default:false|
 |sslprotocol           |Protocol to use for HTTPS requests.|[sslv3,sslv2,tlsv1,any] default: sslv3|
+|resolution            |The list of width and height of the PhatomJS viewport in pixels|default: [1920,1024]|
 |user                  |If HTTP authentication is required, the user name.| |
 |pass                  |If HTTP authentication is required, the password.| |
 |timeout               |Timeout for load, in milliseconds.| |
@@ -53,11 +54,11 @@ Make sure you add the binary to your `PATH` environment variable.
                 use Web;
                 use System;
 
-                var page = Web.loadPage("http://www.xillio.com/", {"enablejs":true, "loadimages":false});
+                var page = Web.loadPage("http://www.xillio.com/", {"enablejs":true, "loadimages":false, "resolution":[1024,768]});
 
-                var mainmenutitles = Web.xPath(page, '//ul[@class="active-branch"]/li/a/text()');
+                var mainmenutitles = Web.xPath(page, '//ul[@class="hs-menu-children-wrapper"]/li/a/text()');
                 System.print(mainmenutitles);
-                var mainmenuurls = Web.xPath(page, '//ul[@class="active-branch"]/li/a[@href]');
+                var mainmenuurls = Web.xPath(page, '//ul[@class="hs-menu-children-wrapper"]/li/a[@href]');
                 System.print(mainmenuurls);
             </code>
         </example>

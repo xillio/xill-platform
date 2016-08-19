@@ -1,4 +1,4 @@
-#*
+/**
  * Copyright (C) 2014 Xillio (support@xillio.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *#
+ */
 /*
-* Specification: Flooring a number MUST round it down to the largest number smaller than the given value
-* Expected: The largest number smaller than the given value
-* Input: See dataset
+* Specification: The defined syntax must fail for this operator
+* Expected: An error before compilation
+* Input: A line with illegal syntax
 */
 
-use Math, Assert;
-
-var tests = [
-    [6, 6],
-    [3.14, 3],
-    [-3.78, -4],
-    [0.7, 0]
-];
-
-foreach (item in tests) {
-    Assert.equal(Math.floor(item[0]), item[1]);
-}
+(true)=false;

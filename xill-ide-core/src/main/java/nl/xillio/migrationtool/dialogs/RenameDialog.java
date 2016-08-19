@@ -17,16 +17,18 @@ package nl.xillio.migrationtool.dialogs;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.util.Pair;
-import org.apache.commons.io.FileUtils;
 import me.biesaart.utils.Log;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 /**
  * A dialog to remove an item in the project view.
@@ -61,23 +63,22 @@ public class RenameDialog extends FXMLDialog {
         // Get the old file, new file name and new file.
         final File oldFile = treeItem.getValue().getKey();
         String fileName = tfname.getText();
-        if (oldFile.isFile() && !fileName.endsWith(".xill")) {
-            fileName += ".xill";
-        }
-        final File newFile = new File(oldFile.getParent(), fileName);
 
+        // If the file is renamed without extension, add the old extension.
+        String oldExtension = FilenameUtils.getExtension(oldFile.toString());
+        if (oldFile.isFile() && FilenameUtils.getExtension(fileName).isEmpty()) {
+            fileName += "." + oldExtension;
+        }
+
+        final File newFile = new File(oldFile.getParent(), fileName);
         try {
             // Rename the item and update the tree item.
-            if (oldFile.isDirectory()) {
-                FileUtils.moveDirectory(oldFile, newFile);
-            } else {
-                FileUtils.moveFile(oldFile, newFile);
-            }
+            Files.move(oldFile.toPath(), newFile.toPath(), StandardCopyOption.ATOMIC_MOVE);
             treeItem.setValue(new Pair<>(newFile, tfname.getText()));
             close();
         } catch (IOException e) {
             LOGGER.error("IOException while renaming file.", e);
-            new AlertDialog(AlertType.ERROR, "Failed to rename file/folder", "",
+            new AlertDialog(Alert.AlertType.ERROR, "Failed to rename file/folder", "",
                     "Something went wrong while renaming a file/folder.\n" + e.getMessage()).showAndWait();
         }
     }

@@ -16,12 +16,11 @@
     limitations under the License.
 
 -->
-
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="250.0" prefWidth="400.0" styleClass="root" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="267.0" prefWidth="400.0" styleClass="root" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
 		<VBox styleClass="dialogWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 			<children>
@@ -37,6 +36,7 @@
 								<TextField fx:id="tfserver" promptText="Server" />
 								<TextField fx:id="tfusername" promptText="Username" />
 								<PasswordField fx:id="tfpassword" promptText="Password" />
+								<CheckBox fx:id="cbvalidate" mnemonicParsing="false" text="Validate robot(s)" />
 							</children>
 						</VBox>
 					</children>

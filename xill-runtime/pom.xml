@@ -53,6 +53,7 @@
                 <module>../plugin-mssql</module>
                 <module>../plugin-oracle</module>
                 <module>../plugin-sqlite</module>
+                <module>../plugin-mysql</module>
                 <module>../plugin-xml</module>
                 <module>../plugin-document</module>
                 <module>../plugin-database</module>
@@ -102,6 +103,9 @@
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
                 <executions>
                     <execution>
                         <id>runtime-bundle</id>
@@ -111,10 +115,20 @@
                         <phase>package</phase>
                         <configuration>
                             <descriptor>src/assembly/bundle.xml</descriptor>
-                            <appendAssemblyId>false</appendAssemblyId>
                             <outputDirectory>${project.basedir}/../xill-ide-launcher</outputDirectory>
                             <finalName>plugins</finalName>
                             <attach>false</attach>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>runtime-zip</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <descriptor>src/assembly/zip.xml</descriptor>
+                            <attach>true</attach>
                         </configuration>
                     </execution>
                 </executions>

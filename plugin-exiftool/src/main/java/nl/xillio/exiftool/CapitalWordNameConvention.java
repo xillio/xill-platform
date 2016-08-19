@@ -1,4 +1,4 @@
-#*
+/**
  * Copyright (C) 2014 Xillio (support@xillio.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +12,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *#
-/*
-* Specification: Getting the ceiling of a number MUST round it up to the smallest number larger than the given value
-* Expected: The smallest number larger than the given value
-* Input: See dataset
-*/
+ */
+package nl.xillio.exiftool;
 
-use Math, Assert;
+import nl.xillio.exiftool.query.TagNameConvention;
 
-var tests = [
-    [6, 6],
-    [3.14, 4],
-    [-3.78, -3],
-    [0.7, 1]
-];
-
-foreach (item in tests) {
-    Assert.equal(Math.ceiling(item[0]), item[1]);
+/**
+ * This TagNameConvention will not convert the tags, because the default output of Exiftool is already Capital Word formatted.
+ *
+ * @author Thomas Biesaart
+ */
+public class CapitalWordNameConvention implements TagNameConvention {
+    @Override
+    public String toConvention(String originalTagName) {
+        return originalTagName;
+    }
 }

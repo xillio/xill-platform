@@ -69,6 +69,7 @@
 <script src="${jarFile}ace/ace.js" type="text/javascript" charset="utf-8"></script>
 <script src="${jarFile}ace/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
 <script src="${jarFile}ace/ext-breakpoints.js" type="text/javascript" charset="utf-8"></script>
+<script src="${jarFile}ace/ext-modelist.js" type="text/javascript" charset="utf-8"></script>
 <script>
 
     var editor = null;
@@ -83,6 +84,7 @@
     };
 
     var UndoManager = ace.require("ace/undomanager").UndoManager;
+    var modelist = ace.require("ace/ext/modelist");
 
     function init() {
 

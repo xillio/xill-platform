@@ -16,13 +16,10 @@
     limitations under the License.
 
 -->
-
 <?import javafx.scene.*?>
 <?import java.lang.*?>
-<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.web.*?>
 <?import nl.xillio.migrationtool.gui.*?>
 
 <AnchorPane fx:id="apnBot" minHeight="0.0" minWidth="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
@@ -37,7 +34,7 @@
 									<children>
 										<SplitPane fx:id="spnBotLeft" focusTraversable="false" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 											<items>
-												<EditorPane fx:id="editorPane" />
+												<RobotEditorPane fx:id="editorPane" />
 												<ConsolePane fx:id="consolePane" />
 											</items>
 										</SplitPane>

@@ -97,28 +97,28 @@ public class HotkeysHandler {
 
     private void init() {
         // Shortcut is Ctrl on Windows and Meta on Mac.
-        hotkeys.put(Hotkeys.ESCAPE, new Hotkey("Esc", Settings.Escape, "Shortcut to escape back to the editor.", "tfrename"));
-        hotkeys.put(Hotkeys.NEW, new Hotkey("Shortcut+N", Settings.NewFile, "Shortcut to New file", "tfnewfile"));
-        hotkeys.put(Hotkeys.OPEN, new Hotkey("Shortcut+O", Settings.OpenFile, "Shortcut to Open file", "tfopenfile"));
-        hotkeys.put(Hotkeys.SAVE, new Hotkey("Shortcut+S", Settings.SaveFile, "Shortcut to Save file", "tfsavefile"));
-        hotkeys.put(Hotkeys.SAVEAS, new Hotkey("Shortcut+Alt+S", Settings.SaveFileAs, "Shortcut to Save file as", "tfsavefileas"));
-        hotkeys.put(Hotkeys.SAVEALL, new Hotkey("Shortcut+Shift+S", Settings.SaveAll, "Shortcut to Save all", "tfsaveall"));
-        hotkeys.put(Hotkeys.CLOSE, new Hotkey("Shortcut+W", Settings.Close, "Shortcut to close currently open bot", "tfclose"));
-        hotkeys.put(Hotkeys.HELP, new Hotkey("F1", Settings.HelpHome, "Shortcut to show help", "tfhelphome"));
-        hotkeys.put(Hotkeys.RUN, new Hotkey("F6", Settings.Run, "Shortcut to run bot", "tfrun"));
-        hotkeys.put(Hotkeys.PAUSE, new Hotkey("F7", Settings.Pause, "Shortcut to pause bot", "tfpause"));
-        hotkeys.put(Hotkeys.STOP, new Hotkey("F8", Settings.Stop, "Shortcut to stop bot", "tfstop"));
-        hotkeys.put(Hotkeys.STEPIN, new Hotkey("F9", Settings.Stepin, "Shortcut to step in", "tfstepin"));
-        hotkeys.put(Hotkeys.STEPOVER, new Hotkey("F10", Settings.Stepover, "Shortcut to step over", "tfstepover"));
-        hotkeys.put(Hotkeys.CLEARCONSOLE, new Hotkey("Shortcut+L", Settings.ClearConsole, "Shortcut to clear console", "tfclearconsole"));
-        hotkeys.put(Hotkeys.COPY, new Hotkey("Shortcut+C", Settings.Copy, "Shortcut to copy to clipboard", "tfcopy"));
-        hotkeys.put(Hotkeys.CUT, new Hotkey("Shortcut+X", Settings.Cut, "Shortcut to cut to clipboard", "tfcut"));
-        hotkeys.put(Hotkeys.PASTE, new Hotkey("Shortcut+V", Settings.Paste, "Shortcut to paste from clipboard", "tfpaste"));
-        hotkeys.put(Hotkeys.RESET_ZOOM, new Hotkey("Shortcut+0", Settings.ResetZoom, "Shortcut to reset zoom", "tfresetzoom"));
-        hotkeys.put(Hotkeys.FIND, new Hotkey("Shortcut+F", Settings.Search, "Shortcut to start search", "tfsearch"));
-        hotkeys.put(Hotkeys.OPENSETTINGS, new Hotkey("Shortcut+P", Settings.OpenSettings, "Shortcut to open settings dialog", "tfopensettings"));
-        hotkeys.put(Hotkeys.DUPLICATELINES, new Hotkey("Shortcut+D", Settings.DuplicateLines, "Shortcut to duplicate selected lines", "tfduplicatelines"));
-        hotkeys.put(Hotkeys.RENAME, new Hotkey("F2", Settings.Rename, "Shortcut to rename the selected file/folder.", "tfrename"));
+        hotkeys.put(Hotkeys.ESCAPE, new Hotkey("Esc", Settings.ESCAPE, "Shortcut to escape back to the editor.", "tfrename"));
+        hotkeys.put(Hotkeys.NEW, new Hotkey("Shortcut+N", Settings.NEW_FILE, "Shortcut to New file", "tfnewfile"));
+        hotkeys.put(Hotkeys.OPEN, new Hotkey("Shortcut+O", Settings.OPEN_FILE, "Shortcut to Open file", "tfopenfile"));
+        hotkeys.put(Hotkeys.SAVE, new Hotkey("Shortcut+S", Settings.SAVE_FILE, "Shortcut to Save file", "tfsavefile"));
+        hotkeys.put(Hotkeys.SAVEAS, new Hotkey("Shortcut+Alt+S", Settings.SAVE_FILE_AS, "Shortcut to Save file as", "tfsavefileas"));
+        hotkeys.put(Hotkeys.SAVEALL, new Hotkey("Shortcut+Shift+S", Settings.SAVE_FILE_ALL, "Shortcut to Save all", "tfsaveall"));
+        hotkeys.put(Hotkeys.CLOSE, new Hotkey("Shortcut+W", Settings.CLOSE, "Shortcut to close currently open bot", "tfclose"));
+        hotkeys.put(Hotkeys.HELP, new Hotkey("F1", Settings.HELP_HOME, "Shortcut to show help", "tfhelphome"));
+        hotkeys.put(Hotkeys.RUN, new Hotkey("F6", Settings.RUN, "Shortcut to run bot", "tfrun"));
+        hotkeys.put(Hotkeys.PAUSE, new Hotkey("F7", Settings.PAUSE, "Shortcut to pause bot", "tfpause"));
+        hotkeys.put(Hotkeys.STOP, new Hotkey("F8", Settings.STOP, "Shortcut to stop bot", "tfstop"));
+        hotkeys.put(Hotkeys.STEPIN, new Hotkey("F9", Settings.STEP_IN, "Shortcut to step in", "tfstepin"));
+        hotkeys.put(Hotkeys.STEPOVER, new Hotkey("F10", Settings.STEP_OVER, "Shortcut to step over", "tfstepover"));
+        hotkeys.put(Hotkeys.CLEARCONSOLE, new Hotkey("Shortcut+L", Settings.CLEAR_CONSOLE, "Shortcut to clear console", "tfclearconsole"));
+        hotkeys.put(Hotkeys.COPY, new Hotkey("Shortcut+C", Settings.COPY, "Shortcut to copy to clipboard", "tfcopy"));
+        hotkeys.put(Hotkeys.CUT, new Hotkey("Shortcut+X", Settings.CUT, "Shortcut to cut to clipboard", "tfcut"));
+        hotkeys.put(Hotkeys.PASTE, new Hotkey("Shortcut+V", Settings.PASTE, "Shortcut to paste from clipboard", "tfpaste"));
+        hotkeys.put(Hotkeys.RESET_ZOOM, new Hotkey("Shortcut+0", Settings.RESET_ZOOM, "Shortcut to reset zoom", "tfresetzoom"));
+        hotkeys.put(Hotkeys.FIND, new Hotkey("Shortcut+F", Settings.SEARCH, "Shortcut to start search", "tfsearch"));
+        hotkeys.put(Hotkeys.OPENSETTINGS, new Hotkey("Shortcut+P", Settings.OPEN_SETTINGS, "Shortcut to open settings dialog", "tfopensettings"));
+        hotkeys.put(Hotkeys.DUPLICATELINES, new Hotkey("Shortcut+D", Settings.DUPLICATE_LINES, "Shortcut to duplicate selected lines", "tfduplicatelines"));
+        hotkeys.put(Hotkeys.RENAME, new Hotkey("F2", Settings.RENAME, "Shortcut to rename the selected file/folder.", "tfrename"));
     }
 
     /**
