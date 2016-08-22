@@ -96,7 +96,7 @@
 										<Pane styleClass="icon" />
 									</graphic>
 									<tooltip>
-										<Tooltip text="Print" />
+										<Tooltip text="Robots progress" />
 									</tooltip>
 								</Button>
 							</items>

@@ -61,6 +61,4 @@ public interface ProgressInfo {
      * @return the current progress value
      */
     double getProgress();
-
-
 }
