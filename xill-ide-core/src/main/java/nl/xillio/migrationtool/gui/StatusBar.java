@@ -118,7 +118,7 @@ public class StatusBar extends AnchorPane {
         });
         debugger.getOnRobotPause().addListener(e -> setStatus(Status.PAUSED));
         debugger.getOnRobotContinue().addListener(e -> setStatus(Status.RUNNING));
-        debugger.getOnSetProgressInfo().addListener(e -> setProgress(e));
+        debugger.getOnSetProgressInfo().addListener(this::setProgress);
     }
 
     /**

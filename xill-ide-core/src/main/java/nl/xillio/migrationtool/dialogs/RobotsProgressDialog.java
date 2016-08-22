@@ -99,7 +99,7 @@ public class RobotsProgressDialog extends FXMLDialog {
             if (!(progressInfo == null || progressInfo.getProgress() < 0)) {
 
                 // Define listener for progress bar removal event
-                Consumer<StatusBar> removalListener = statusBar -> {
+                Consumer<StatusBar> removalListener = statusBar ->
                     Platform.runLater(() -> {
                         Row row = table.stream().filter(p -> p.getStatusBar() == tab.getStatusBar()).findFirst().orElse(null);
                         if (row != null) {
@@ -108,7 +108,6 @@ public class RobotsProgressDialog extends FXMLDialog {
                             table.remove(row);
                         }
                     });
-                };
 
                 // Add new progress bar item to table ans set listener
                 table.add(new Row(tab.getName(), tab.getStatusBar(), removalListener));
@@ -136,9 +135,7 @@ public class RobotsProgressDialog extends FXMLDialog {
         tblRobotsProgress.setItems(table);
 
         // Define action when dialog is about to close
-        setOnCloseRequest(e -> {
-           table.forEach(row -> row.getStatusBar().getOnProgressRemove().removeListener(row.getRemovalListener()));
-        });
+        setOnCloseRequest(e -> table.forEach(row -> row.getStatusBar().getOnProgressRemove().removeListener(row.getRemovalListener())));
     }
 
     @FXML
