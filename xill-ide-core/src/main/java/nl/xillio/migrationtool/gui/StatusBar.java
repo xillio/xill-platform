@@ -26,6 +26,7 @@ import javafx.scene.control.Labeled;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
 import nl.xillio.events.Event;
+import nl.xillio.events.EventHost;
 import nl.xillio.xill.api.Debugger;
 import me.biesaart.utils.Log;
 import nl.xillio.xill.api.ProgressInfo;
@@ -67,6 +68,7 @@ public class StatusBar extends AnchorPane {
     private ProgressBar barRobotProgress;
     private final SimpleDoubleProperty progress = new SimpleDoubleProperty();
     private ProgressInfo progressInfo;
+    private EventHost<StatusBar> onProgressRemove = new EventHost<>();
     @FXML
     private Labeled lblTimeRemaining;
     @FXML
@@ -108,7 +110,7 @@ public class StatusBar extends AnchorPane {
                     case HIDE: // Hide progress bar
                         barRobotProgress.setVisible(false);
                         progressInfo.setProgress(-1);
-                        progress.set(-1);
+                        onProgressRemove.invoke(this);
                         break;
                     default: // Otherwise do nothing
                 }
@@ -137,11 +139,19 @@ public class StatusBar extends AnchorPane {
      *
      * @param progressInfo the ProgressInfo object instantiated in XillDebugger
      */
-    private void setProgress(ProgressInfo progressInfo) {
+    private void setProgress(final ProgressInfo progressInfo) {
         this.progressInfo = progressInfo;
         double newProgress = progressInfo.getProgress();
-        barRobotProgress.setVisible(newProgress >= 0);
-        progress.set(newProgress);
+        if (newProgress >= 0) {
+            // Set new progress
+            barRobotProgress.setVisible(true);
+            progress.set(newProgress);
+        } else {
+            // Hide progress bar
+            barRobotProgress.setVisible(false);
+            progress.set(0);
+            onProgressRemove.invoke(this);
+        }
     }
 
     /**
@@ -160,5 +170,14 @@ public class StatusBar extends AnchorPane {
      */
     public ProgressInfo getProgressInfo() {
         return progressInfo;
+    }
+
+    /**
+     * Getter for onProgressRemove event
+     *
+     * @return the onProgressRemove event
+     */
+    public Event<StatusBar> getOnProgressRemove() {
+        return onProgressRemove.getEvent();
     }
 }
