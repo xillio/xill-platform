@@ -13,8 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var calls = 0;
+/*
+* Specification: abs MUST return the absolute value of the given number.
+* Expected: The absolute value of the given value
+* Input: See dataset
+*/
 
-function timesCalled() {
-	return calls++;
+use Math, Assert;
+
+var tests = [
+    [6, 6],
+    [3.14, 3.14],
+    [-123, 123],
+    [-3.78, 3.78],
+    [0, 0],
+    [2147483648, 2147483648],
+    [-2147483648, 2147483648],
+    [21474821474836473648, 21474821474836473648],
+    [-21474836472147483647, 21474836472147483647],
+    [1/0, 1/0],
+    [-1/-0, 1/0],
+    [NaN, NaN]
+];
+
+foreach (item in tests) {
+    Assert.equal(Math.abs(item[0]), item[1]);
 }

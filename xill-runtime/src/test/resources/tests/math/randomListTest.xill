@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 /*
-* Specification: Getting the ceiling of a number MUST round it up to the smallest number larger than the given value
-* Expected: The smallest number larger than the given value
-* Input: See dataset
+* Specification: When a list is given, random MUST return an element from that list.
+* Expected: An element from the list
+* Input: A list
 */
 
-use Math, Assert;
+use Math, Collection, Assert;
 
-var tests = [
-    [6, 6],
-    [3.14, 4],
-    [-3.78, -3],
-    [0.7, 1]
-];
-
-foreach (item in tests) {
-    Assert.equal(Math.ceiling(item[0]), item[1]);
+var list = [ "foo", 3, true ];
+var i = 0;
+while (i++ < 10) {
+	var rnd = Math.random(list);
+	Assert.isTrue(Collection.contains(list, rnd));
 }

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 /*
-* Specification: Flooring a number MUST round it down to the largest number smaller than the given value
-* Expected: The largest number smaller than the given value
+* Specification: round MUST round the given number to its nearest integer.
+* Expected: The integer nearest to the given number
 * Input: See dataset
 */
 
@@ -24,10 +24,16 @@ use Math, Assert;
 var tests = [
     [6, 6],
     [3.14, 3],
+    [7.5, 8],
+    [-12, -12],
     [-3.78, -4],
-    [0.7, 0]
+    [-5.5, -5],
+    [0, 0],
+    [NaN, 0],
+    [2147483647.7, 2147483648],
+    [-2147483648.9, -2147483649]
 ];
 
 foreach (item in tests) {
-    Assert.equal(Math.floor(item[0]), item[1]);
+    Assert.equal(Math.round(item[0]), item[1]);
 }

@@ -13,8 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var calls = 0;
+/*
+* Specification: When no argument is given, random MUST return a random number between 0 (inclusive) and 1 (exclusive).
+* Expected: A number between 0 and 1
+* Input: Nothing
+*/
 
-function timesCalled() {
-	return calls++;
+use Math, Assert;
+
+var i = 0;
+while (i++ < 10) {
+	var rnd = Math.random();
+	Assert.isTrue(rnd >= 0 && rnd < 1);
 }

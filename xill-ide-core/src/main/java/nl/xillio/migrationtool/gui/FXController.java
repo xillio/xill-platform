@@ -635,7 +635,7 @@ public class FXController implements Initializable, EventHandler<Event> {
 
         if (lastVersion.compareTo(Loader.SHORT_VERSION) < 0) {
 
-            String changeLogMD = FileUtils.readFileToString(new File("CHANGELOG.md"));
+            String changeLogMD = FileUtils.readFileToString(new File("../CHANGELOG.md"));
             String changeLogHTML = new PegDownProcessor().markdownToHtml(changeLogMD);
 
             settings.simple().save(Settings.INFO, Settings.LAST_VERSION, Loader.SHORT_VERSION);
