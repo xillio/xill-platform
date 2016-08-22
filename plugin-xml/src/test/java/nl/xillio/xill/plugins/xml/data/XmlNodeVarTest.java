@@ -130,4 +130,24 @@ public class XmlNodeVarTest {
         // verify
         assertEquals(result, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<root>\n   <a/>\n</root>\n");
     }
+
+    /**
+     * Tests the getXmlContent() method of the XmlNodeVar class.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void getXmlContentTest() throws Exception {
+        // mock
+        Node node = mock(Node.class);
+        when(node.getNodeName()).thenReturn("root");
+        XmlNodeVar xmlNodeVar = new XmlNodeVar("<root><a></a></root>", true);
+        XmlNodeVar nodeVar = spy(xmlNodeVar);
+
+        // run
+        String result = nodeVar.getXmlContent();
+
+        // verify
+        assertEquals(result, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<root>\n   <a/>\n</root>\n");
+    }
 }

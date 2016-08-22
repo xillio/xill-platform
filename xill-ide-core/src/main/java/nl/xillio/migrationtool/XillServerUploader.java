@@ -15,22 +15,6 @@
  */
 package nl.xillio.migrationtool;
 
-import me.biesaart.utils.Log;
-import nl.xillio.migrationtool.gui.FXController;
-import nl.xillio.xill.api.XillEnvironment;
-import nl.xillio.xill.services.json.JacksonParser;
-import nl.xillio.xill.services.json.JsonException;
-import nl.xillio.xill.services.json.JsonParser;
-import nl.xillio.xill.util.settings.ProjectSettings;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.client.HttpResponseException;
-import org.apache.http.client.fluent.Executor;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.slf4j.Logger;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -41,15 +25,41 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.client.HttpResponseException;
+import org.apache.http.client.fluent.Executor;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
+
+import me.biesaart.utils.Log;
+import nl.xillio.migrationtool.gui.FXController;
+import nl.xillio.xill.api.XillEnvironment;
+import nl.xillio.xill.services.json.JacksonParser;
+import nl.xillio.xill.services.json.JsonException;
+import nl.xillio.xill.services.json.JsonParser;
+import nl.xillio.xill.util.settings.ProjectSettings;
+
 /**
  * Client for Xill server.
  * Class contains all needed methods for communicating with Xill server using REST API related to project and resource handling
  */
 public class XillServerUploader implements AutoCloseable {
+    
+    private static final String OAUTH_CLIENT_ID = "xillServer";
+    private static final String OAUTH_CLIENT_SECRET = "";
+    
     private static final Logger LOGGER = Log.get();
     private Executor executor;
     private String baseUrl;
     private JsonParser jsonParser = new JacksonParser(true);
+    
+    private Header authorizationHeader;
 
     public XillServerUploader() {
         executor = Executor.newInstance();
@@ -77,13 +87,25 @@ public class XillServerUploader implements AutoCloseable {
             throw new IllegalArgumentException("Invalid host.", e);
         }
 
-        // Authentication
-        executor.auth(new HttpHost(host, port), username, password)
-                .authPreemptive(new HttpHost(host, port));
-
-        // Login to get the session settings. There's currently an extra arbitrary get request because otherwise the session isn't starting up correctly.
-        executor.execute(Request.Get(baseUrl + "login"));
-        executor.execute(Request.Get(baseUrl + "/projects")).returnContent().asString(); // This getting response without usage is intentional - it would not fail if credentials were wrong without this code!
+        HttpHost httpHost = new HttpHost(host, port);
+        String response = executor.auth(OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET)
+            .authPreemptive(httpHost)
+            .execute(
+                Request.Post(serverUrl + "/oauth/token")
+                .bodyForm(
+                    new BasicNameValuePair("grant_type", "password"),
+                    new BasicNameValuePair("username", username),
+                    new BasicNameValuePair("password", password)
+                )
+            )
+            .returnContent()
+            .asString();
+        try {
+            String accessToken = (String) jsonPath("access_token", jsonParser.fromJson(response, Map.class));
+            authorizationHeader = new BasicHeader("Authorization", "Bearer " + accessToken);
+        } catch (JsonException e) {
+            throw new IOException("The server response is invalid.", e);
+        }
     }
 
     /**
@@ -106,7 +128,7 @@ public class XillServerUploader implements AutoCloseable {
             return null;
         }
 
-        String uri = (String) jsonPath("_links/project/href", projects.get(0));
+        String uri = (String) jsonPath("_links/self/href", projects.get(0));
         if (uri == null) {
             return null;
         }
@@ -263,7 +285,7 @@ public class XillServerUploader implements AutoCloseable {
     }
 
     private String doGet(final String uri) throws IOException {
-        return executor.execute(Request.Get(baseUrl + uri))
+        return executor.execute(Request.Get(baseUrl + uri).addHeader(authorizationHeader))
                 .returnContent()
                 .asString();
     }
@@ -276,6 +298,7 @@ public class XillServerUploader implements AutoCloseable {
         return executor.execute(
                 Request.Post(baseUrl + uri)
                         .body(entity)
+                        .addHeader(authorizationHeader)
         )
                 .returnContent()
                 .asString();
@@ -285,6 +308,7 @@ public class XillServerUploader implements AutoCloseable {
         return executor.execute(
                 Request.Post(baseUrl + uri)
                         .bodyString(jsonData, ContentType.APPLICATION_JSON)
+                        .addHeader(authorizationHeader)
         )
                 .returnContent()
                 .asString();
@@ -294,6 +318,7 @@ public class XillServerUploader implements AutoCloseable {
         return executor.execute(
                 Request.Put(baseUrl + uri)
                         .bodyString(jsonData, ContentType.APPLICATION_JSON)
+                        .addHeader(authorizationHeader)
         )
                 .returnContent()
                 .asString();

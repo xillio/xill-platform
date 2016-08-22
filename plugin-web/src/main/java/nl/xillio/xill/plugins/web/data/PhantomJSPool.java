@@ -208,7 +208,7 @@ public class PhantomJSPool {
         private void reuse(final Identifier id) {
             used = true; // set to be used
             // re-set driver (non-CLI) options
-            webService.setDriverOptions(page, id.getOptions().getTimeOut());
+            webService.setDriverOptions(page, id.getOptions());
         }
 
         /**
