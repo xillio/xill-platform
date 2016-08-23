@@ -18,15 +18,15 @@
  * Expected: See dataset
  */
 
-use Assert, Hash, File;
+use Assert, Hash, File, System;
 
 var data = {
 	"": "d41d8cd98f00b204e9800998ecf8427e",
 	"foo bar 123 !@#": "0ac3154a9822d32cdd70535bb030dc2f",
-	1234567890: "e807f1fcf82d132f9bb018ca6738a19f",
-	File.openRead("testresources/hash/hashMe.txt"): "d61cbd9474459be263cbb4b3f96a94dd"
+	1234567890: "e807f1fcf82d132f9bb018ca6738a19f"
 };
 
 foreach(input, hash in data) {
 	Assert.equal(Hash.toMD5(input), hash);
 }
+Assert.equal(Hash.toMD5(File.openRead("testresources/hash/hashMe.txt")), "d61cbd9474459be263cbb4b3f96a94dd");

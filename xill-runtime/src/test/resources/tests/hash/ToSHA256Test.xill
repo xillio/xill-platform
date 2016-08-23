@@ -23,10 +23,10 @@ use Assert, Hash, File;
 var data = {
 	"": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
 	"foo bar 123 !@#": "341f4b54cd2b15d2e1004f6518eb84df874920047b90bb95612c4a8c7d0a6c95",
-	1234567890: "c775e7b757ede630cd0aa1113bd102661ab38829ca52a6422ab782862f268646",
-	File.openRead("testresources/hash/hashMe.txt"): "56a71779bb901eb2f0d27bd5e821bb246c0eb78e1ab4600bba7fc14adeaf23fe"
+	1234567890: "c775e7b757ede630cd0aa1113bd102661ab38829ca52a6422ab782862f268646"
 };
 
 foreach(input, hash in data) {
 	Assert.equal(Hash.toSHA256(input), hash);
 }
+Assert.equal(Hash.toSHA256(File.openRead("testresources/hash/hashMe.txt")), "56a71779bb901eb2f0d27bd5e821bb246c0eb78e1ab4600bba7fc14adeaf23fe");
