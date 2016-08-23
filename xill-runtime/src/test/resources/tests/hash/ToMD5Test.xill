@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* Specification: toSHA256 MUST return the correct SHA256 hash.
+/* Specification: toMD5 MUST return the correct MD5 hash.
  * Input: See dataset
  * Expected: See dataset
  */
@@ -21,12 +21,12 @@
 use Assert, Hash, File;
 
 var data = {
-	"": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-	"foo bar 123 !@#": "341f4b54cd2b15d2e1004f6518eb84df874920047b90bb95612c4a8c7d0a6c95",
-	1234567890: "c775e7b757ede630cd0aa1113bd102661ab38829ca52a6422ab782862f268646",
-	File.openRead("testresources/hash/hashMe.txt"): "56a71779bb901eb2f0d27bd5e821bb246c0eb78e1ab4600bba7fc14adeaf23fe"
+	"": "d41d8cd98f00b204e9800998ecf8427e",
+	"foo bar 123 !@#": "0ac3154a9822d32cdd70535bb030dc2f",
+	1234567890: "e807f1fcf82d132f9bb018ca6738a19f",
+	File.openRead("testresources/hash/hashMe.txt"): "d61cbd9474459be263cbb4b3f96a94dd"
 };
 
 foreach(input, hash in data) {
-	Assert.equal(Hash.toSHA256(input), hash);
+	Assert.equal(Hash.toMD5(input), hash);
 }
