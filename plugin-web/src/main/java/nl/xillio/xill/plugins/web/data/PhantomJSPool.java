@@ -16,6 +16,7 @@
 package nl.xillio.xill.plugins.web.data;
 
 import me.biesaart.utils.Log;
+import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.data.MetadataExpression;
 import nl.xillio.xill.plugins.web.services.web.WebService;
 import org.slf4j.Logger;
@@ -41,9 +42,23 @@ public class PhantomJSPool {
      * @param maxPoolSize Maximum amount of entities (PhantomJS processes) that can
      *                    be in the pool at one time
      */
-    public PhantomJSPool(final int maxPoolSize) {
+    public PhantomJSPool(final int maxPoolSize, XillThreadFactory xillThreadFactory) {
         this.maxPoolSize = maxPoolSize;
+        // A hook disposing PhantomJS processes when the IDE stops
         Runtime.getRuntime().addShutdownHook(new Thread(this::dispose));
+        // A Thread stopping PhantomJS processes when the XillEnvironment on the server is closed
+        Thread disposeThread = xillThreadFactory.create(new Runnable() {
+            @Override
+            public synchronized void run() {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    dispose();
+                }
+            }
+        }, "PhantomJSPool Dispose");
+        disposeThread.setDaemon(true);
+        disposeThread.start();
     }
 
     /**
