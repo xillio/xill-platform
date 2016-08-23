@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.plugins.web.data;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import me.biesaart.utils.Log;
 import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.data.MetadataExpression;
@@ -30,11 +32,17 @@ import java.util.List;
  *
  * @author Zbynek Hochmann
  */
+@Singleton
 public class PhantomJSPool {
     private static final Logger LOGGER = Log.get();
 
     private final int maxPoolSize; // Maximum number of entities in pool (an entity is a PhantomJS process).
     private List<Entity> poolEntities = new ArrayList<>();
+
+    @Inject
+    public PhantomJSPool(XillThreadFactory xillThreadFactory) {
+        this(10, xillThreadFactory);
+    }
 
     /**
      * Creates PJS pool
