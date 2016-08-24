@@ -792,10 +792,10 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
      */
     public boolean newProject(final String name, final String folder, final String description, final boolean isNew) {
         // Check if the project is already opened
-        boolean projectDoesntExist = root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
+        boolean projectExists = !root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
                 && findItemByPath(root, folder) == null;
 
-        if (!projectDoesntExist) {
+        if (projectExists) {
             return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder.");
         }
 
@@ -806,8 +806,6 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         if ("".equals(name)) {
             return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Enter a file name to create a new project.");
         }
-
-
 
         // Check if project folder already exists under different capitalization
         File projectFolder = new File(folder);
