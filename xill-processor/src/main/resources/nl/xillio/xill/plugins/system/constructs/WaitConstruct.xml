@@ -18,13 +18,21 @@
 -->
 <function>
     <description>
-Pause the robot for a period of time in milliseconds.
+This construct makes the robot wait for a period of time in milliseconds.
     </description>
     <examples>
         <example title="Usage">
-            <header>Wait 1 second</header>
+            <header>Wait five seconds</header>
             <code>
-                System.wait(1000);
+                use System;
+
+                System.print("hello");
+                System.wait(5000);
+                System.print("world");
+
+                /*
+                'world' will be printed five seconds after 'hello' is printed.
+                */
             </code>
         </example>
     </examples>

@@ -18,18 +18,25 @@
 -->
 <function>
     <description>
-Get system or environmental properties.  
+Returns an OBJECT containing all system and environmental properties if the 'property' parameter is left empty.
+If a property key is provided for the 'property' parameter only that specific property will be returned as an ATOMIC.
 
-When a property key is provided only that specific property will be fetched.
     </description>
     <examples>
         <example title="Usage">
 			<code>
-                // Get all environmental variables
-                System.properties();
+                use System;
 
-                // Get the PATH envirionmental variable
-                System.properties("PATH");
+                /*
+                the OBJECT allProperties will contain all system and environmental properties
+                */
+                var allProperties = System.properties();
+
+                /*
+                the ATOMIC pathProperty will be the value of the 'PATH' property
+                */
+                var pathProperty = System.properties("PATH");
+
             </code>
         </example>
     </examples>

@@ -18,15 +18,23 @@
 -->
 <function>
     <description>
-Parse a json string to an expression.
+This construct takes an JSON string and converts it to an ATOMIC, LIST or OBJECT.
     </description>
     <examples>
         <example title="Usage">
             <code>
-                System.parseJSON("[1,2,3, { \"Title\": \"Hello Xillio\" }]");
-                System.print(result[3].Title);
+                use System;
 
-                // Prints: Hello Xillio
+                var object = {"a":"hello","b":"world","c":{"a":"example","b":"xillio"}};
+                var object_JSON_String = System.toJSON(object); //we convert the OBJECT to a JSON string
+                var object_parsed = System.parseJSON(object_JSON_String);
+
+                System.print(object_parsed.c.a);
+
+                /*
+                printed to the console:
+                example
+                */
             </code>
         </example>
     </examples>
