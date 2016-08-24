@@ -22,7 +22,7 @@ import java.util.Objects;
 /**
  * This class represents the behavior of an expression that contains binary data.
  *
- * @author Thomas biesaart
+ * @author Thomas Biesaart
  */
 class BinaryBehavior extends AbstractBehavior {
 
@@ -55,5 +55,11 @@ class BinaryBehavior extends AbstractBehavior {
     @Override
     public IOStream getBinaryValue() {
         return value;
+    }
+
+    @Override
+    public Expression copy() {
+        // Cannot create a copy of a stream
+        return ExpressionBuilderHelper.NULL;
     }
 }

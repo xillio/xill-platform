@@ -180,7 +180,9 @@ public class RunBulkExpression implements Processable {
 
                 } catch (Exception e) {
                     if (e instanceof RobotRuntimeException) {
-                        throw (RobotRuntimeException) e;
+                        int line = childDebugger.getStackTrace().get(childDebugger.getStackDepth()).getLineNumber();
+                        childDebugger.endInstruction(null, null);
+                        throw new RobotRuntimeException("Caused by '" + calledRobotFile.getName() + "' (line " + line + ")", e);
                     }
                     throw new RobotRuntimeException("An exception occurred while evaluating " + calledRobotFile.getAbsolutePath(), e);
                 } finally {
@@ -341,7 +343,7 @@ public class RunBulkExpression implements Processable {
     /**
      * Set the argument that will be used for running called robots.
      *
-     * @param argument    the value to which the argument needs to be set.
+     * @param argument the value to which the argument needs to be set.
      */
     public void setArgument(final Processable argument) {
         this.argument = argument;
@@ -350,7 +352,7 @@ public class RunBulkExpression implements Processable {
     /**
      * Set the options that will be used when running called robots
      *
-     * @param options    the options to be set when running robots.
+     * @param options the options to be set when running robots.
      */
     public void setOptions(final Processable options) {
         this.options = options;

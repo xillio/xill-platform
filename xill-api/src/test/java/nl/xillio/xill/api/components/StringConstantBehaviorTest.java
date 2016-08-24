@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
-* Specification: Flooring a number MUST round it down to the largest number smaller than the given value
-* Expected: The largest number smaller than the given value
-* Input: See dataset
-*/
+package nl.xillio.xill.api.components;
 
-use Math, Assert;
+import org.testng.annotations.Test;
 
-var tests = [
-    [6, 6],
-    [3.14, 3],
-    [-3.78, -4],
-    [0.7, 0]
-];
+import static java.lang.Double.NaN;
+import static org.testng.Assert.assertEquals;
 
-foreach (item in tests) {
-    Assert.equal(Math.floor(item[0]), item[1]);
+/**
+ * This class tests the {@link StringConstantBehavior} class.
+ *
+ * @author Daan Knoope
+ */
+public class StringConstantBehaviorTest {
+
+    @Test
+    public void testGetNumberValue() throws Exception {
+        assertEquals(new StringConstantBehavior("3").getNumberValue(), NaN);
+    }
+
 }
