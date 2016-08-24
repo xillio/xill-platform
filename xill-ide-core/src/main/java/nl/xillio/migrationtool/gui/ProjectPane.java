@@ -790,10 +790,10 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
      * @return whether creating the project was successful
      */
     public boolean loadProject(final String name, final String folder){
-        boolean projectDoesntExist = root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
+        boolean projectExist = !root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
                 && findItemByPath(root, folder) == null;
 
-        if (!projectDoesntExist) {
+        if (projectExist) {
             return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder.");
         }
 
@@ -823,10 +823,10 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
      */
     public boolean newProject(final String name, final String folder, final String description) {
         // Check if the project is already opened
-        boolean projectDoesntExist = root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
+        boolean projectExists = !root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
                 && findItemByPath(root, folder) == null;
 
-        if (!projectDoesntExist) {
+        if (projectExists) {
             return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder.");
         }
 
