@@ -752,7 +752,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             if (!settings.simple().getBoolean(Settings.INFO, Settings.HAS_RUN)) {
                 if (defaultProjectPath.exists()) {
                     // Projects must have an absolute directory
-                    newProject(DEFAULT_PROJECT_NAME, defaultProjectPath.getAbsolutePath(), "", true);
+                    newProject(DEFAULT_PROJECT_NAME, defaultProjectPath.getAbsolutePath(), "");
                 }
                 // Mark that the IDE has run for the first time
                 settings.simple().save(Settings.INFO, Settings.HAS_RUN, true);
@@ -783,6 +783,37 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     /**
+     * Creates a new project from source
+     *
+     * @param name        the name of the new project
+     * @param folder      the folder representing the project
+     * @return whether creating the project was successful
+     */
+    public boolean loadProject(final String name, final String folder){
+        boolean projectDoesntExist = root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
+                && findItemByPath(root, folder) == null;
+
+        if (!projectDoesntExist) {
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder.");
+        }
+
+        if ("".equals(folder)) {
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Select a folder to create a new project.");
+        }
+
+        File projectFolder = new File(folder);
+
+        if(!projectFolder.exists()){
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder does not exist.");
+        }
+
+        ProjectSettings project = new ProjectSettings(name, folder, "");
+        settings.project().save(project);
+        addProject(project);
+        return true;
+    }
+
+    /**
      * Creates a new project.
      *
      * @param name        the name of the new project
@@ -790,7 +821,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
      * @param description the description of the project
      * @return whether creating the project was successful
      */
-    public boolean newProject(final String name, final String folder, final String description, final boolean isNew) {
+    public boolean newProject(final String name, final String folder, final String description) {
         // Check if the project is already opened
         boolean projectDoesntExist = root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
                 && findItemByPath(root, folder) == null;
@@ -806,42 +837,31 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         if ("".equals(name)) {
             return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Enter a file name to create a new project.");
         }
-
-
-
         // Check if project folder already exists under different capitalization
         File projectFolder = new File(folder);
         if (projectFolder.exists()) {
             try {
                 String canonicalFileName = projectFolder.getCanonicalFile().getName();
                 String fileName = projectFolder.getName();
-                if (isNew) {
-                    return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder.");
-                }
+
                 if (!canonicalFileName.equals(fileName)) {
                     return showAlertDialog(Alert.AlertType.ERROR, "Error", "",
                             "The selected directory already exists with a different case. Please use \"" + canonicalFileName + "\" or rename your project.");
                 }
+                return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder.");
             } catch (IOException e) {
                 LOGGER.error("Failed to read directory", e);
             }
-        } else if (!isNew) {
-            //We are opening existing project but the folder does not exist
-            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder does not exist.");
         }
-
         // Create the project.
         ProjectSettings project = new ProjectSettings(name, folder, description);
         settings.project().save(project);
-        if (isNew) {
             try {
                 FileUtils.forceMkdir(new File(project.getFolder()));
             } catch (IOException e) {
                 LOGGER.error("Failed to create project directory", e);
             }
-        }
         addProject(project);
-
         return true;
     }
 

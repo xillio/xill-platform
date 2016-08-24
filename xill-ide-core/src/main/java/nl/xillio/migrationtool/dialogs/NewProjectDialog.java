@@ -101,7 +101,7 @@ public class NewProjectDialog extends FXMLDialog {
         String projectName = tfprojectname.getText();
         String projectFolder = tfprojectfolder.getText();
 
-        if (projectPane.newProject(projectName, projectFolder, "", true)) {
+        if (projectPane.newProject(projectName, projectFolder, "")) {
             close();
         }
     }

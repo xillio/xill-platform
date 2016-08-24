@@ -86,7 +86,7 @@ public class LoadProjectDialog extends FXMLDialog {
     private void okayBtnPressed(final ActionEvent event) {
         String projectFolder = tfprojectfolder.getText();
 
-        if (projectPane.newProject(projectName, projectFolder, "", false)) {
+        if (projectPane.loadProject(projectName, projectFolder)) {
             close();
         }
     }
