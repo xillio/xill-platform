@@ -1,0 +1,142 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+Author:     Xillio
+Modified:   7-9-2015
+
+Description:
+        This robot compares two strings and gives you a score that indicates how much the two strings are alike.
+        It can be used for example to figure out variations and misspellings in product names.
+        Add your own texts that you want to analyse to the list of examples below. 
+*/
+use Collection, Math, String, System;
+
+// Example texts:
+var texts = [
+    ["The Wolf of Wall Street", "The Wolf of Wallstreet"],
+    ["Hobbit, The: An unexpected journey", "Hobbit, The: Smaug"],
+    ["Samsung TV UE40HU6900", "Samsung TV UE40HU/6900"],
+    ["RiverRidge Home Ellsworth Floor Cabinet", "RiverRidge Home Somerset Wall Cabinet"]
+];
+  
+// Weight-configuration allows you to do basic tuning of the scoring mechanism
+var weights = {
+    "coverage" : 0.2,  // How much impact should the difference between the amount of words have 
+    "score" : 1       // How much impact should the average differnce of individual words have
+};
+ 
+// Print the scores for the example texts
+foreach(text in texts) {
+    System.print("\"" :: text[0] :: "\"");
+    System.print("\"" :: text[1] :: "\"");
+    System.print("Score: " :: Math.round(100 * score(text[0], text[1])) :: "%");
+    System.print("");
+}
+ 
+  
+// ---------------------------------------------
+// ROUTINES
+// ---------------------------------------------
+   
+// Calculate the overall scores for the provided source and target strings
+function score(_source, _target) {
+    var source = String.toLower(_source);
+    var target = String.toLower(_target);
+      
+    var sourcetokens = tokenise(source);
+    var targettokens = tokenise(target);
+  
+    var c = coverage(sourcetokens, targettokens);
+    var cw = c ^ weights.coverage;
+      
+    var s = tokenscore(sourcetokens, targettokens);
+    var sw = s ^ weights.score;
+      
+    var final = cw * sw;
+      
+    return(final);
+}
+  
+// Calculate the damlev scores for the given two tokensets and return the average score for the complete set
+function tokenscore(_sourcetokens, _targettokens) {
+   var scores = [];
+   foreach(i, _sourcetoken in _sourcetokens) {
+      scores[i] = bestdamlev(_sourcetoken, _targettokens);
+   }
+  
+   var result = Math.hungarianAlgorithm(scores, true);
+   var optimalsum = 0;
+   foreach(_, res in result) {
+      if (res.sum != null) {
+         optimalsum = res.sum;
+      }
+   }
+    var average = optimalsum / Collection.length(_sourcetokens);
+  
+    return(average);
+}
+
+// Calculate the difference between the ammount of the two tokensets and return it as a relative value
+function coverage(sourcetokens, targettokens) {
+    var sourcecount = Collection.length(sourcetokens);
+    var targetcount = Collection.length(targettokens);
+      
+    var score = 0;
+    if(sourcecount > targetcount) {
+        score = targetcount / sourcecount;
+    } else {
+        score = sourcecount / targetcount;
+    }
+      
+    return(score);
+}
+
+// Return the scorematrix for this source token
+function bestdamlev(source, targettokens) {
+    var sourcehasnumber = false;
+    if(String.matches(source, ".*\\d+.*")) {
+        sourcehasnumber = true;
+    }
+      
+    // Make a list with source values: the original string and alternate spellings
+    var sources = {};
+    sources[0] = source;
+      
+    var scores = [];
+    foreach(index, target in targettokens) {
+        var bestscore = 0;
+          
+        // Calculate the best score for each available source-alternative
+        foreach(_, source in sources) {
+            var score = String.wordDistance(source, target);
+            var len = String.length(source);
+                          
+            // If this is our best score so far, then store it
+            if(score > bestscore) {
+                bestscore = score;
+            }
+        }
+        scores[index] = bestscore;
+    }
+      
+    // return the score matrix
+    return(scores);
+}
+  
+// Tokenise the provided string
+function tokenise(text) {
+    return(String.split(text, "[^\\w]"));
+}

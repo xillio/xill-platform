@@ -1,0 +1,150 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+* DNA Matching of reads to genome sequence, allowing for single nucleotide errors.
+*
+* Description: This bot will tell you if a genome sequence contains a certain part (read) and if so,
+*              at which position(s). It allows for single nucleotide variance (read errors).
+*
+* Demonstrates: Usage of lists for indexing words in a longer string.
+* 
+* Limitations: The underlying implementation of lists makes them unsuitable for very large indexes.
+*              For large sequences, refactor to use Mongo or Document package instead.
+*
+*              The variations are pre-generated, this could be inefficient for large reads.
+*
+* Author: Xillio
+*
+*/
+
+use System, Collection, String;
+
+var sequence = "ggccgcctcc cgcgcccctc tgtcccctcc cgtgttcggc ctcgggaagt cggggcggcg
+ggcggcgcgg gccgggaggg gtcgcctcgg gctcaccccg ccccagggcc gccgggcgga
+aggcggaggc cgagaccaga cgcggagcca tggccgaggt gttgcggacg ctggccg";
+
+var read = "ttgcggacgctagc";
+read = cleanSequence(read);
+
+//System.print("Trying variations: " :: System.toJSON(getVariations(read, 1), true));
+
+foreach (variationList in getVariations(read, 1)) {
+    foreach (variation in variationList) {
+        var positions = findPositions(variation, sequence);
+        if (Collection.length(positions) > 0) {
+            System.print ("Found variation [" :: variation :: "] at position(s) " :: positions :: ".");
+        }
+    }
+}
+
+//Returns a lowercased cleaned sequence (only valid letters acgt in DNA remaining)
+private function cleanSequence (sequence) {
+    return (String.replace(String.toLower(sequence), "[^acgt]", "", true, true));
+}
+
+//Returns an index of all words of wordsize in sequence.
+//The index will be an OBJECT containing lists of all positions where a word occurs in sequence (starting with 0).
+private function indexSequence (sequence, wordsize) {
+    var index = {};
+    var position = 0;
+    
+    while (position < String.length(sequence) - wordsize) {
+        var word = String.substring(sequence, position, position + wordsize);
+        if (index[word] == null) {
+            index[word] = [position];
+        } else {
+            index[word][] = position;
+        }
+        position++;
+    }
+    return index;
+}
+
+//Wordsize should be a function of the read size (in this case half the size of the read).
+private function getWordsize (read){
+    return String.length(read) / 2;
+}
+
+//Returns the first half of the word read.
+private function firstHalf(read) {
+    return String.substring(read, 0, getWordsize(read));
+}
+
+//Returns the first half of the word read.
+private function secondHalf(read) {
+    return String.substring(read, getWordsize(read), String.length(read));
+}
+
+//Returns true if the second half of read matches the index at position + getWordsize (i.e. if second half of read follows at that position).
+private function matchSecondHalf(read, index, position) {
+    var match = index[secondHalf(read)];
+    if (match != null) {
+        return Collection.contains(index[secondHalf(read)], position + getWordsize(read));
+    } else {
+        return false;
+    }
+}
+
+//Returns a list of the positions of read in sequence if any or an empty LIST if read is not found in sequence. 
+function findPositions (read, sequence) {
+    var wordsize = getWordsize(read);
+    var index = indexSequence(cleanSequence(sequence), wordsize);
+    var result = [];
+    
+    foreach (positionList in index[firstHalf(read)]) {
+        foreach (position in positionList) {
+            if (matchSecondHalf(read, index, position)) {
+                result[] = position;
+            }
+        }
+    }   
+    
+    return result;
+}
+
+//Returns a list of all possible variants of read, if the variation occurs at position.
+private function generateVariants(read, position) {
+    var alphabet = ["a", "c", "g", "t"];
+    var result = [];
+    foreach (letter in alphabet) {
+        result[] = replaceLetter(read, letter, position);
+    }
+    return result;
+}
+
+//Returns the variant of read with the letter at position replaced by letter, even if the letter was already the same.
+private function replaceLetter(read, letter, position) {
+    if (String.length(read) == 1) {
+        return letter;
+    } else if (position == 0) {
+        return letter :: String.substring(read, 1, String.length(read));
+    } else if (position == String.length(read)) {
+        return String.substring(read, 0, position) :: letter;
+    } else {
+        return String.substring(read, 0, position) :: letter :: String.substring(read, position + 1, String.length(read));
+    }
+}
+
+//Returns a list of lists of all variations of read that differ distance letters, including read itself at the first position.
+function getVariations(read, distance) {
+    var result = [];
+    var position = 0;
+    while (position < String.length(read)) {
+        result[] = generateVariants(read, position);
+        position++;
+    }
+    return result;
+}

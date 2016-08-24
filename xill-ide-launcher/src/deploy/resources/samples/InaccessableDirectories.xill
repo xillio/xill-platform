@@ -1,0 +1,97 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+Author:     Xillio
+Modified:   7-9-2015
+
+Description:
+        List inaccessible folders into an MongoDB collection and sum them up in an Excel file.
+*/
+use Excel;
+use File;
+use Mongo;
+use System;
+
+Mongo.connect("test");
+
+Mongo.remove("NotHandled", {});
+var wb = Excel.createWorkbook("C:/tmp/NotReadable.xlsx");
+
+function listNotReadableFolders(wb) {
+   
+   foreach(folder in File.iterateFolders("C:\\ProgramData\\", true)) {
+      System.print(folder.path);
+      if (folder.isAccessible == false || folder.canRead == false) {
+         Mongo.insert("NotHandled", [{"path" : folder.path, "accessible" : folder.isAccessible, "readable" : folder.canRead}]);
+      }
+   }
+   var cantReadSheet = Excel.createSheet(wb, "not readable");
+   
+   Excel.setCellValue(cantReadSheet, 1, 1, "Path");
+   Excel.setCellValue(cantReadSheet, 2, 1, "Accessible");
+   Excel.setCellValue(cantReadSheet, 3, 1, "Readable");
+   
+   var rowcount = 2;
+   foreach(row, res in Mongo.find("NotHandled", {})) {
+      Excel.setCellValue(cantReadSheet, 1, rowcount, res.path);
+      Excel.setCellValue(cantReadSheet, 2, rowcount, res.accessible);
+      Excel.setCellValue(cantReadSheet, 3, rowcount, res.readable);
+      rowcount++;
+   }
+   
+   Excel.setCellFormula(cantReadSheet, 7, 2, "=COUNTIF(B:B,\"ONWAAR\")");
+   Excel.setCellValue(cantReadSheet, 8, 2, " Not readable");
+   
+   Excel.setCellFormula(cantReadSheet, 7, 3, "=COUNTIF(C:C,\"ONWAAR\")");
+   Excel.setCellValue(cantReadSheet, 8, 3, " Not accessible");
+}   
+
+function listByParameter(wb, fieldname) {
+   
+   var cantReadSheet = Excel.createSheet(wb, fieldname);
+   Excel.setCellValue(cantReadSheet, 1, 1, "Path");
+   
+   var rwcntr = 2;
+   foreach(r in Mongo.find("NotHandled", {fieldname: false})) {
+      Excel.setCellValue(cantReadSheet, 1, rwcntr, r.path);
+      rwcntr++;
+   }
+   
+   var pipeline = [
+      {
+         "$group": {
+      		"_id": "$" :: fieldname,
+      		"count": { "$sum": 1 }
+          }
+      }
+   ];
+   
+   var res = Mongo.aggregate("NotHandled", pipeline);
+   var out = "For the value '" :: fieldname :: "' there were:\n";
+   foreach(row in res) {
+      out = out :: row._id :: " = " :: row.count :: "\n";
+   }
+   System.print(out);
+}
+
+listNotReadableFolders(wb);
+listByParameter(wb, "readable");
+listByParameter(wb, "accessible");
+
+
+Excel.save(wb);
+System.print("Excel file is saved");
+System.exec(["cmd.exe", "/C", "start", "C:/Program Files/Microsoft Office 15/root/office15/excel.exe", "C:/tmp/NotReadable.xlsx"]);

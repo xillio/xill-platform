@@ -1,0 +1,105 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+Author:     Xillio
+Modified:   7-9-2015
+
+Description:
+        Run this for a (very small) Game of Life simulation. You can select a "blinker", "glider" or "r-pentomino" as starting pattern in line 3.
+*/
+use System, Collection;
+ 
+var array = getCreatures(empty2Darray(20, 30), "r-pentomino");
+while(true) {
+     array = iterateGOL(array);
+     System.wait(500);
+}
+ 
+//////////////
+// ROUTINES //
+//////////////
+ 
+function iterateGOL(array) {
+     drawGrid(array);
+     var xn = Collection.length(array); 
+     var yn = Collection.length(array[0]);
+     var newArray = Collection.duplicate(array);
+     var xi = xn - 1;
+     while (xi --> 1) {
+          var yi = yn - 1;
+          while (yi --> 1) {
+               var sum = array[xi-1][yi+1] + array[xi][yi+1] + array[xi+1][yi+1] +
+                         array[xi-1][yi]                     + array[xi+1][yi] +
+                         array[xi-1][yi-1] + array[xi][yi-1] + array[xi+1][yi-1];
+               if (array[xi][yi] == 1) { 
+                    if (sum > 3) { newArray[xi][yi] = 0; }
+                    if (sum < 2) { newArray[xi][yi] = 0; }
+               } else if (array[xi][yi] == 0) {
+                    if (sum == 3) { newArray[xi][yi] = 1; }
+               }
+          }
+     }
+     return(newArray);
+}
+ 
+function drawGrid(array) {
+     var xn = Collection.length(array); 
+     var yn = Collection.length(array[0]);
+     var blob = "|----conways game of life----|";
+     var xi = xn;
+     while (xi --> 1) {
+          var yi = yn;
+          while (yi --> 1) {
+               if (array[xi][yi] == 0) { blob = blob :: " "; }
+               if (array[xi][yi] == 1) { blob = blob :: "X"; }
+          }
+          blob = blob :: "\n";
+     }
+     System.print(blob);
+}
+ 
+function empty2Darray (xsize, ysize) {
+     var xi = 1 * xsize;
+     array = {};
+     while (xi --> 0) {
+          var yi = 1 * ysize;
+          var column = {};
+          while (yi --> 0) {
+               column[yi] = 0;
+          }
+          array[xi] = column;
+     }
+     return (array);
+}
+ 
+function getCreatures(array, creature) {
+     if (creature == "blinker") {
+          array[9][9] = 1; array[9][10] = 1; array[9][11] = 1;
+          array[10][9] = 1; array[10][10] = 0; array[10][11] = 1;
+          array[11][9] = 1; array[11][10] = 1; array[11][11] = 1;
+     }
+     if (creature == "glider") {
+          array[9][9] = 1; array[9][10] = 1; array[9][11] = 0;
+          array[10][9] = 1; array[10][10] = 0; array[10][11] = 1;
+          array[11][9] = 1; array[11][10] = 0; array[11][11] = 0;
+     }
+     if (creature == "r-pentomino") {
+          array[9][14] = 0; array[9][15] = 1; array[9][16] = 1;
+          array[10][14] = 1; array[10][15] = 1; array[10][16] = 0;
+          array[11][14] = 0; array[11][15] = 1; array[11][16] = 0;
+     }
+     return(array);
+}
