@@ -18,7 +18,7 @@
 -->
 <function>
     <description>
-This construct makes the robot wait for a period of time in milliseconds.
+This construct makes the robot wait for the provided amount of time (in milliseconds).
     </description>
     <examples>
         <example title="Usage">

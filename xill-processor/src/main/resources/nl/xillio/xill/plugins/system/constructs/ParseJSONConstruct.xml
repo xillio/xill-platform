@@ -18,7 +18,7 @@
 -->
 <function>
     <description>
-This construct takes an JSON string and converts it to an ATOMIC, LIST or OBJECT.
+This construct takes a JSON string and converts it to an ATOMIC, LIST or OBJECT variable.
     </description>
     <examples>
         <example title="Usage">
@@ -26,7 +26,7 @@ This construct takes an JSON string and converts it to an ATOMIC, LIST or OBJECT
                 use System;
 
                 var object = {"a":"hello","b":"world","c":{"a":"example","b":"xillio"}};
-                var object_JSON_String = System.toJSON(object); //we convert the OBJECT to a JSON string
+                var object_JSON_String = System.toJSON(object); //we convert the OBJECT variable to a JSON string
                 var object_parsed = System.parseJSON(object_JSON_String);
 
                 System.print(object_parsed.c.a);

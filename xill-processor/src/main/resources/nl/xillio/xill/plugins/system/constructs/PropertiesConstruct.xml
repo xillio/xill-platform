@@ -18,8 +18,8 @@
 -->
 <function>
     <description>
-Returns an OBJECT containing all system and environmental properties if the 'property' parameter is left empty.
-If a property key is provided for the 'property' parameter only that specific property will be returned as an ATOMIC.
+Returns an OBJECT variable containing all system and environmental properties if the 'property' parameter is left empty.
+If a property key is provided for the 'property' parameter only that specific property will be returned as an ATOMIC variable.
 
     </description>
     <examples>

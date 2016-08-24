@@ -21,10 +21,10 @@
 Runs a command line application and returns the output of the process.
 
 `arguments` must contain a valid path to an
-executable file as the first value, optionally followed by (command-line) arguments. These arguments should be specified
+executable file as the first value, optionally followed by zero or more command line arguments. These arguments should be specified
 one by one. `directory` is the working directory where the command will be executed.
 
-Returns an OBJECT containing:
+Returns an OBJECT variable containing:
 
 |Field|Description|
 |-----|-----------|
@@ -37,7 +37,7 @@ Returns an OBJECT containing:
     <examples>
         <example title="Usage">
             <header>
-            In windows you can execute a batch command by running `cmd.exe` with the `/C` parameter. The example below
+            In Windows you can execute a batch command by running `cmd.exe` with the `/C` parameter. The example below
             prints the word `test`.
             Example output: `{"errors":[],"output":["test"],"runtime":14,"exitCode":0}`
             </header>

@@ -18,12 +18,12 @@
 -->
 <function>
     <description>
-Returns an OBJECT with information about your system and the current robot and project:
+Returns an OBJECT with information about the current system, robot and runtime.
 
 |Field|Description|
 |-----|-----------|
-|`availableProcessors`|The number of available processors in this VM|
-|`memory`|An OBJECT with information about the memory in this VM|
+|`availableProcessors`|The number of available processors to this application|
+|`memory`|An OBJECT with information about the memory to this application|
 |`projectPath`|The path to the project of the current robot|
 |`fileSystem`|An OBJECT with information about the current file system|
 |`rootRobotPath`|The path to the robot that is run first|

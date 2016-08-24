@@ -18,8 +18,8 @@
 -->
 <function>
     <description>
-This construct parses an ATOMIC, LIST or OBJECT to a JSON string and returns it as an ATOMIC.
-If the 'pretty' parameter is true then the JSON string will be pretty printed.
+This construct parses an ATOMIC, LIST or OBJECT variable to a JSON string and returns it as an ATOMIC variable.
+If the 'pretty' parameter is set to true then the JSON string will be formatted.
 
 Note that circular references cannot be parsed and will be substituted.  
 
