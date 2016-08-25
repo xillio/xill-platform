@@ -184,7 +184,7 @@ public class UploadToServerDialog extends FXMLDialog {
     private boolean invalidFile(TreeItem<Pair<File, String>> item) {
         final File itemFile = item.getValue().getKey();
         final boolean isXill = itemFile.getName().matches("^.*\\.xill$"); //it is a robot
-        final boolean validName = itemFile.getName().matches("^[a-zA-Z][a-zA-Z0-9_]*\\.xill$"); //name is valid
+        final boolean validName = itemFile.getName().matches("^[_a-zA-Z][a-zA-Z0-9_]*\\.xill$"); //name is valid
 
         if (isXill && !validName) {
             //the xill robot has an invalid name, show dialog.
@@ -303,7 +303,7 @@ public class UploadToServerDialog extends FXMLDialog {
         }
 
         // Validate robot name
-        return itemFile.getName().matches("^[a-zA-Z][a-zA-Z0-9_]*\\.xill$");
+        return itemFile.getName().matches("^[_a-zA-Z][a-zA-Z0-9_]*\\.xill$");
     }
 
     private boolean uploadRobot(final File robotFile, final File projectFolder, final boolean existCheck, String projectId) throws IOException {
