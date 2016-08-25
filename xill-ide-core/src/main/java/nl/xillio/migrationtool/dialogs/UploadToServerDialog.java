@@ -170,16 +170,12 @@ public class UploadToServerDialog extends FXMLDialog {
         //iterate over all items
         for (TreeItem<Pair<File, String>> item : items) {
             //check robots only
-            if (item.getParent() != projectPane.getRoot() && !item.getValue().getKey().isDirectory()) {
-                if (invalidFile(item)) {
-                    return true; //stop the whole upload.
-                }
+            if (item.getParent() != projectPane.getRoot() && !item.getValue().getKey().isDirectory() && invalidFile(item)) {
+                return true;
             }
             //check children too
-            if (!item.getChildren().isEmpty()) {
-                if (checkAllRobots(item.getChildren())) {
-                    return true;
-                }
+            if (!item.getChildren().isEmpty() && checkAllRobots(item.getChildren())) {
+                return true;
             }
         }
         return false;
@@ -192,13 +188,12 @@ public class UploadToServerDialog extends FXMLDialog {
 
         if (isXill && !validName) {
             //the xill robot has an invalid name, show dialog.
-            ButtonType Rename = new ButtonType("Rename");
             ButtonType cancelUpload = new ButtonType("Cancel Upload");
             AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR,
                     "Invalid robot name found",
                     "The robot '" + itemFile.getName() + "' has an invalid name.",
                     "Do you want to rename the robot or cancel the whole upload?",
-                    Rename, cancelUpload
+                    new ButtonType("Rename"), cancelUpload
             );
             final Optional<ButtonType> result = dialog.showAndWait();
 
