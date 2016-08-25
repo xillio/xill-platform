@@ -28,16 +28,14 @@ import nl.xillio.migrationtool.XillServerUploader;
 import nl.xillio.migrationtool.gui.FXController;
 import nl.xillio.migrationtool.gui.ProjectPane;
 import nl.xillio.xill.util.settings.Settings;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
 
 /**
  * A dialog to upload an item to the server.
@@ -45,7 +43,7 @@ import org.slf4j.Logger;
 public class UploadToServerDialog extends FXMLDialog {
 
     private static final Logger LOGGER = Log.get();
-    
+
     @FXML
     private TextField tfserver;
     @FXML
@@ -143,7 +141,7 @@ public class UploadToServerDialog extends FXMLDialog {
     private boolean processItems(final List<TreeItem<Pair<File, String>>> items, boolean projectExistCheck, boolean robotExistCheck, final String projectId) throws IOException {
 
         //check all items (including children) too see if robots have valid names
-        if(checkAllRobots(items)){
+        if (checkAllRobots(items)) {
             return false; //Cancel the upload
         }
 
@@ -168,18 +166,18 @@ public class UploadToServerDialog extends FXMLDialog {
         return true;
     }
 
-    private boolean checkAllRobots(final List<TreeItem<Pair<File, String>>> items){
+    private boolean checkAllRobots(final List<TreeItem<Pair<File, String>>> items) {
         //iterate over all items
-        for(TreeItem<Pair<File,String>> item  : items){
+        for (TreeItem<Pair<File, String>> item : items) {
             //check robots only
-            if(item.getParent() != projectPane.getRoot() && !item.getValue().getKey().isDirectory()){
-                if(invalidFile(item)){
+            if (item.getParent() != projectPane.getRoot() && !item.getValue().getKey().isDirectory()) {
+                if (invalidFile(item)) {
                     return true; //stop the whole upload.
                 }
             }
             //check children too
-            if(!item.getChildren().isEmpty()) {
-                if(checkAllRobots(item.getChildren())){
+            if (!item.getChildren().isEmpty()) {
+                if (checkAllRobots(item.getChildren())) {
                     return true;
                 }
             }
@@ -187,12 +185,12 @@ public class UploadToServerDialog extends FXMLDialog {
         return false;
     }
 
-    private boolean invalidFile(TreeItem<Pair<File, String>> item){
+    private boolean invalidFile(TreeItem<Pair<File, String>> item) {
         final File itemFile = item.getValue().getKey();
         final boolean isXill = itemFile.getName().matches("^.*\\.xill$"); //it is a robot
         final boolean validName = itemFile.getName().matches("^[a-zA-Z][a-zA-Z0-9_]*\\.xill$"); //name is valid
 
-        if(isXill && !validName){
+        if (isXill && !validName) {
             //the xill robot has an invalid name, show dialog.
             ButtonType Rename = new ButtonType("Rename");
             ButtonType cancelUpload = new ButtonType("Cancel Upload");
@@ -206,7 +204,7 @@ public class UploadToServerDialog extends FXMLDialog {
 
             if (!result.isPresent() || result.get() == cancelUpload) {
                 return true; //do not upload
-            }else{
+            } else {
                 List<String> selectedItems = getSelectedPaths(); //we need to get the paths for reselection
                 RenameDialog dlg = new RenameDialog(item); //open rename dialog
                 dlg.showAndWait();
@@ -217,13 +215,13 @@ public class UploadToServerDialog extends FXMLDialog {
         return false; //the file is valid
     }
 
-    private List<String> getSelectedPaths(){
+    private List<String> getSelectedPaths() {
         return this.treeItems.stream().map(pairTreeItem -> pairTreeItem.getValue().getKey().getAbsolutePath()).collect(Collectors.toList());
     }
 
-    private void reselectItems(List<String> items){
+    private void reselectItems(List<String> items) {
         //reselect the items that were deselected because of a rename
-        for(String item  : items){
+        for (String item : items) {
             projectPane.select(item);
         }
     }
