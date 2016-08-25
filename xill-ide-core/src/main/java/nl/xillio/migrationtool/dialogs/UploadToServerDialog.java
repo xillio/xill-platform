@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 
@@ -82,17 +83,17 @@ public class UploadToServerDialog extends FXMLDialog {
 
     @FXML
     private void okayBtnPressed(final ActionEvent event) {
-        try {
-            // Do connect and authenticate to server
-            xillServerUploader.authenticate(tfserver.getText(), tfusername.getText(), tfpassword.getText());
-        } catch (IOException e) {
-            LOGGER.error("Could not login to server", e);
-            AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR, "Upload to server",
-                    "Could not login to server.", e.getMessage(),
-                    ButtonType.OK);
-            dialog.showAndWait();
-            return;
-        }
+//        try {
+//            // Do connect and authenticate to server
+//            xillServerUploader.authenticate(tfserver.getText(), tfusername.getText(), tfpassword.getText());
+//        } catch (IOException e) {
+//            LOGGER.error("Could not login to server", e);
+//            AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR, "Upload to server",
+//                    "Could not login to server.", e.getMessage(),
+//                    ButtonType.OK);
+//            dialog.showAndWait();
+//            return;
+//        }
 
         try {
             // Save current credentials
@@ -137,16 +138,21 @@ public class UploadToServerDialog extends FXMLDialog {
     }
 
     private boolean processItems(final List<TreeItem<Pair<File, String>>> items, boolean projectExistCheck, boolean robotExistCheck, final String projectId) throws IOException {
+
+        if(checkInvalidNames(items)){
+            return false;
+        }
+
         // Recursively go through selected items
         for (TreeItem<Pair<File, String>> item : items) {
             // Check if the item is a project
             if (item.getParent() == projectPane.getRoot()) {// Project
-                if (!uploadProject(item, projectExistCheck)) {
+                if (checkInvalidNames(item.getChildren()) || !uploadProject(item, projectExistCheck)) {
                     return false;
                 }
             } else if (item.getValue().getKey().isDirectory()) {// Directory
                 // Upload items from inside the directory
-                if (!uploadFolder(item, projectExistCheck)) {
+                if (checkInvalidNames(item.getChildren()) || !uploadFolder(item, projectExistCheck)) {
                     return false;
                 }
             } else {// Robot or resource
@@ -156,6 +162,47 @@ public class UploadToServerDialog extends FXMLDialog {
             }
         }
         return true;
+    }
+
+    private boolean checkInvalidNames(final List<TreeItem<Pair<File, String>>> items){
+        for(TreeItem<Pair<File,String>> item  : items){
+            //check robot only
+            if(item.getParent() != projectPane.getRoot() && !item.getValue().getKey().isDirectory()){
+                if(invalidFile(item)){
+                    return true; //stop the whole upload.
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean invalidFile(TreeItem<Pair<File, String>> item){
+        final File itemFile = item.getValue().getKey();
+        final boolean isXill = itemFile.getName().matches("^.*\\.xill$");
+        final boolean validName = itemFile.getName().matches("^[a-zA-Z][a-zA-Z0-9_]*\\.xill$");
+        if(isXill && !validName){
+            //the xill file has an invalid name, show dialog.
+            ButtonType Rename = new ButtonType("Rename");
+            ButtonType cancelUpload = new ButtonType("Cancel Upload");
+            AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR,
+                    "Invalid robot name found",
+                    "The robot '" + itemFile.getName() + "' has an invalid name.",
+                    "Do you want to rename the robot or cancel the whole upload?",
+                    Rename, cancelUpload
+            );
+            final Optional<ButtonType> result = dialog.showAndWait();
+            if (!result.isPresent() || result.get() == cancelUpload) {
+                return true; //do not upload
+            }else{
+                RenameDialog dlg = new RenameDialog(item);
+                dlg.showAndWait();
+                return invalidFile(item); //check again
+            }
+        }
+
+        return false;
+
+
     }
 
     private boolean uploadProject(final TreeItem<Pair<File, String>> item, boolean existCheck) throws IOException {
