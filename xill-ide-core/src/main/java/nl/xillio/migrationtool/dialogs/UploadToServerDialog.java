@@ -86,17 +86,17 @@ public class UploadToServerDialog extends FXMLDialog {
 
     @FXML
     private void okayBtnPressed(final ActionEvent event) {
-//        try {
-//            // Do connect and authenticate to server
-//            xillServerUploader.authenticate(tfserver.getText(), tfusername.getText(), tfpassword.getText());
-//        } catch (IOException e) {
-//            LOGGER.error("Could not login to server", e);
-//            AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR, "Upload to server",
-//                    "Could not login to server.", e.getMessage(),
-//                    ButtonType.OK);
-//            dialog.showAndWait();
-//            return;
-//        }
+        try {
+            // Do connect and authenticate to server
+            xillServerUploader.authenticate(tfserver.getText(), tfusername.getText(), tfpassword.getText());
+        } catch (IOException e) {
+            LOGGER.error("Could not login to server", e);
+            AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR, "Upload to server",
+                    "Could not login to server.", e.getMessage(),
+                    ButtonType.OK);
+            dialog.showAndWait();
+            return;
+        }
 
         try {
             // Save current credentials
