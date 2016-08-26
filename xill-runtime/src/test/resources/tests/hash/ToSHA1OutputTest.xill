@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* Specification: toMD5 MUST return the correct MD5 hash.
- * Input: See dataset
- * Expected: See dataset
+/* Specification: When an output stream is given the construct MUST forward the input to the output stream.
+ * Input: A string
+ * Expected: A file containing the input
  */
 
 use Assert, Hash, File;
 
-var data = {
-	"": "d41d8cd98f00b204e9800998ecf8427e",
-	"foo bar 123 !@#": "0ac3154a9822d32cdd70535bb030dc2f",
-	1234567890: "e807f1fcf82d132f9bb018ca6738a19f"
-};
+var input = "foo bar 123 !@#";
+var file = "testresources/hash/output.txt";
 
-foreach(input, hash in data) {
-	Assert.equal(Hash.toMD5(input), hash);
-}
-Assert.equal(Hash.toMD5(File.openRead("testresources/hash/hashMe.txt")), "d61cbd9474459be263cbb4b3f96a94dd");
+Hash.toSHA1(input, File.openWrite(file));
+Assert.equal(File.getText(file), input);
+
+File.delete(file);
