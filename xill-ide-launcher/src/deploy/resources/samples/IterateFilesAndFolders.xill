@@ -18,7 +18,7 @@ Author:     Xillio
 Modified:   26-8-2016
 
 Description:
-        This robot iterates all files and folders in a current user home folder (e.g. c:\Users\John).
+        This robot iterates all files and folders in a current user home folder (e.g. c:\Users\John on MS Windows or /home/John on Linux).
 */
 use File, System, String;
    

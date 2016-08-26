@@ -19,11 +19,13 @@ Modified:   26-8-2016
 
 Description:
         The robot extracts metadata from files in current user Pictures folder using ExifTool.
+        Note: Set path variable to some valid path according to your disk storage structure and operating system.
 */
 use ExifTool, System;
  
-var pictures = ExifTool.scanFolder(System.properties("user.home") :: "/Pictures", {}, {"recursive" : true});
- 
+var path = System.properties("user.home") :: "/Pictures";
+var pictures = ExifTool.scanFolder(path, {}, {"recursive" : true});
+
 foreach (picture in pictures) {
     System.print(System.toJSON(picture, true));
 }

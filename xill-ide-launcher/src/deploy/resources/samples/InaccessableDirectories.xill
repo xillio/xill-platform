@@ -19,6 +19,8 @@ Modified:   26-8-2016
 
 Description:
         List inaccessible folders into an MongoDB collection and sum them up in an Excel file.
+        
+        Note: This robots can be run on MS Windows only having MS Office installed.
 */
 use Excel;
 use File;

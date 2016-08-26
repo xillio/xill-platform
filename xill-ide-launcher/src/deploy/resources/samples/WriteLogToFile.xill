@@ -18,7 +18,7 @@ Author:     Xillio
 Modified:   26-8-2016
 
 Description:
-        This robot writes the log message to a file in a current user home folder (e.g. c:\Users\John\test\test.txt).
+        This robot writes the log message to a file in a current user home folder (e.g. c:\Users\John\test\test.txt on MS Windows or /home/John/test/test.txt on Linux).
 */
 use File, System, Date, Stream;
  

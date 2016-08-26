@@ -18,12 +18,13 @@ Author:     Xillio
 Modified:   26-8-2016
 
 Description:
-        This robot iterates all files in a current user Documents folder (e.g. c:\Users\John\Documents).
+        This robot iterates all files in a current user Documents folder (e.g. c:\Users\John\Documents on MS Windows or /home/John/Documents on Linux).
+        Note: Set testPath variable to some valid path according to your disk storage structure and operating system.
 */
 use File, System;
  
-var test = System.properties("user.home") :: "/Documents";
-var testFiles = File.iterateFiles(test, false);
+var testPath = System.properties("user.home") :: "/Documents";
+var testFiles = File.iterateFiles(testPath, false);
  
 foreach(file in testFiles) {
         System.print("File " :: File.getSize(file) :: " bytes " :: File.getCreationDate(file) :: " " :: file);

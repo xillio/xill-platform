@@ -19,6 +19,8 @@ Modified:   26-8-2016
 
 Description:
         This robot downloads some .pdf files and save them to bookFolder.
+        Note: Set bookFolder variable to some valid path according to your disk storage structure and operating system.
+        Note: On Linux OS the PhantomJS must be installed manually prior to run this robot.
 */
 use Web, System, String, Hash, Math;
  

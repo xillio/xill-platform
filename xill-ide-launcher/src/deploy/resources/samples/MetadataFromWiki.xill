@@ -18,7 +18,8 @@ Author:     Xillio
 Modified:   26-8-2016
 
 Description:
-        This robot extracts metada from Wikipedia. 
+        This robot extracts metada from Wikipedia.
+        Note: On Linux OS the PhantomJS must be installed manually prior to run this robot.
 */
 use Web, System;
  

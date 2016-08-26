@@ -29,19 +29,19 @@ Description:
         - bins: a list of numbers defining the bin limits used to create the histogram. It has length (n+1)!
         - title: a string which is placed on top of the graph
         - filename: a string with the location where the graph will be saved
-
-        In the below example, 
-            System.print(System.exec(["cmd.exe", "/C", "start example.svg"], System.info().projectPath));
-        is a shortcut for windows users that tries to open the created graph using the OS-defined viewer for SVG files.
+        
+        Note: Set targetPath variable to some valid path according to your disk storage structure and operating system.
 */
 use File, System, Collection, Math, Stream;
- 
+
+var targetPath = "c:/tmp/example.svg";
+
 createHistogram(    [4,97,25,20,1,3,7,1,0,1], 
                     [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100], 
-                    "Histograms, Straight From Your Code!", "example.svg");
-                     
-System.print(System.exec(["cmd.exe", "/C", "start example.svg"], System.info().projectPath));
- 
+                    "Histograms, Straight From Your Code!", targetPath);
+
+System.print("Histogram has been created.");
+
 ////////////////
 /// routines ///
 ////////////////
