@@ -50,3 +50,4 @@ All notable changes to this project will be documented in this file.
 * Display of CHANGELOG.md after new install [CTC-1713]
 * Certain exceptions are logged twice [CTC-1699]
 * Clicking open containing folder crashes Linux [CTC-1698]
+* Alert windows do not automatically get scaled in linux, which causes text to disappear [CTC-1742]
