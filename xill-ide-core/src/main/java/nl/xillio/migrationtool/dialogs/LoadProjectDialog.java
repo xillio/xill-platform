@@ -19,54 +19,42 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
-import nl.xillio.migrationtool.gui.FXController;
 import nl.xillio.migrationtool.gui.ProjectPane;
-import nl.xillio.xill.util.settings.Settings;
 
 import java.io.File;
 
 /**
- * A dialog to add a new project
+ * A dialog to add a new project from an existing source.
  */
-public class NewProjectDialog extends FXMLDialog {
-    @FXML
-    private TextField tfprojectname;
+public class LoadProjectDialog extends FXMLDialog {
+
     @FXML
     private TextField tfprojectfolder;
 
+    private String projectName;
+
     private final ProjectPane projectPane;
-    private String folderValue;
-    private String nameValue = "";
 
     /**
      * Default constructor.
      *
      * @param projectPane the projectPane to which this dialog is attached to.
      */
-    public NewProjectDialog(final ProjectPane projectPane) {
-        super("/fxml/dialogs/NewProject.fxml");
+    public LoadProjectDialog(final ProjectPane projectPane) {
+        super("/fxml/dialogs/LoadProject.fxml");
 
         this.projectPane = projectPane;
-        setTitle("New Project");
-        String initialFolder = FXController.settings.simple().get(Settings.SETTINGS_GENERAL, Settings.DEFAULT_PROJECT_LOCATION);
-        setProjectFolder(initialFolder + File.separator);
-        folderValue = initialFolder;
-        tfprojectname.textProperty().addListener(this::typedInProjectName);
+        setTitle("New project from existing sources");
         tfprojectfolder.textProperty().addListener(this::typesInProjectFolder);
     }
 
     private void typesInProjectFolder(Object source, String oldValue, String newValue) {
         if (tfprojectfolder.isFocused()) {
-            folderValue = newValue;
-            setProjectFolder(folderValue);
+            File newFile = new File(newValue);
+            setProjectFolder(newValue);
+            projectName = newFile.getName();
         }
     }
-
-    private void typedInProjectName(Object source, String oldValue, String newValue) {
-        nameValue = newValue;
-        setProjectFolder(folderValue + File.separator + nameValue);
-    }
-
 
     /**
      * Set the default project folder
@@ -82,13 +70,11 @@ public class NewProjectDialog extends FXMLDialog {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setInitialDirectory(getInitialDirectory());
 
-
         File result = chooser.showDialog(getScene().getWindow());
         if (result != null) {
-            folderValue = result.getPath();
-            typedInProjectName(null, null, nameValue);
+            tfprojectfolder.setText(result.getPath());
+            projectName = result.getName();
         }
-
     }
 
     @FXML
@@ -98,10 +84,9 @@ public class NewProjectDialog extends FXMLDialog {
 
     @FXML
     private void okayBtnPressed(final ActionEvent event) {
-        String projectName = tfprojectname.getText();
         String projectFolder = tfprojectfolder.getText();
 
-        if (projectPane.newProject(projectName, projectFolder, "")) {
+        if (projectPane.loadProject(projectName, projectFolder)) {
             close();
         }
     }
