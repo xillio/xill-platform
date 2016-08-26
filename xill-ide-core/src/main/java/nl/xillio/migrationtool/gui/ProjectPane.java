@@ -189,16 +189,21 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         menuOpenFolder = new MenuItem("Open containing folder");
         menuOpenFolder.setOnAction(e -> {
-            try {
-                Desktop.getDesktop().open(getCurrentItem().getValue().getKey().getParentFile());
-            } catch (IOException ex) {
-                LOGGER.error("Failed to open containing folder.", ex);
-            }
+            Thread openContainingFolderTread = new Thread(() ->{
+                try {
+                    Desktop.getDesktop().open(getCurrentItem().getValue().getKey().getParentFile());
+                } catch (IOException ex) {
+                    LOGGER.error("Failed to open containing folder.", ex);
+                }
+            });
+            openContainingFolderTread.start();
         });
+
+
 
         // Create the context menu.
         ContextMenu menu = new ContextMenu(menuCut, menuCopy, menuPaste, menuRename, menuDelete, menuUpload);
-        if (Desktop.isDesktopSupported()) {
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
             menu.getItems().add(menuOpenFolder);
         }
 
@@ -208,18 +213,21 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     private void addNewButtonContextMenu() {
-        MenuItem menuNewProject = new MenuItem("New project", ProjectPane.createIcon(ProjectPane.NEW_PROJECT_ICON));
+        MenuItem menuLoadProject = new MenuItem("New project from existing sources...", ProjectPane.createIcon(ProjectPane.NEW_PROJECT_ICON));
+        menuLoadProject.setOnAction(e -> loadProjectButtonPressed());
+
+        MenuItem menuNewProject = new MenuItem("New project...", ProjectPane.createIcon(ProjectPane.NEW_PROJECT_ICON));
         menuNewProject.setOnAction(e -> newProjectButtonPressed());
 
-        menuNewFolder = new MenuItem("New folder", ProjectPane.createIcon(ProjectPane.NEW_FOLDER_ICON));
+        menuNewFolder = new MenuItem("New folder...", ProjectPane.createIcon(ProjectPane.NEW_FOLDER_ICON));
         menuNewFolder.setOnAction(e -> newFolderButtonPressed());
 
-        menuNewBot = new MenuItem("New file", ProjectPane.createIcon(ProjectPane.NEW_FILE_ICON));
+        menuNewBot = new MenuItem("New file...", ProjectPane.createIcon(ProjectPane.NEW_FILE_ICON));
         menuNewBot.setOnAction(e -> newBot(null));
 
         menuNewBotFromTemplate = new Menu("New robot from template...");
 
-        ContextMenu menu = new ContextMenu(menuNewProject, menuNewFolder, menuNewBot, menuNewBotFromTemplate);
+        ContextMenu menu = new ContextMenu(menuLoadProject, menuNewProject, menuNewFolder, menuNewBot, menuNewBotFromTemplate);
         btnNew.setOnAction(e -> {
             Bounds bounds = btnNew.localToScreen(btnNew.getBoundsInParent());
             generateTemplateMenu();
@@ -383,7 +391,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                             return false;
                         }
                         if (result.get() == ButtonType.YES) {
-                           tab.save();
+                            tab.save();
                         }
                     }
                 }
@@ -422,6 +430,12 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     /* End of bulk file functionality. */
+
+    @FXML
+    private void loadProjectButtonPressed() {
+        LoadProjectDialog dlg = new LoadProjectDialog(this);
+        dlg.showAndWait();
+    }
 
     @FXML
     private void newProjectButtonPressed() {
@@ -698,7 +712,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         items.forEach(item -> {
             File file = item.getValue().getKey();
             // Check if we have write access to file and we're not soft deleting a project
-            if(!file.canWrite() && !(item == getProject(item) && !hardDeleteProjects)){
+            if (!file.canWrite() && !(item == getProject(item) && !hardDeleteProjects)) {
                 LOGGER.error("Cannot delete " + file.toString() + ": no write access.");
                 AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error while deleting files.", "",
                         "Could not delete: " + file.toString() + ", access was denied.\n\nPlease check if you have write permissions.",
@@ -770,6 +784,37 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     /**
+     * Creates a new project from source
+     *
+     * @param name        the name of the new project
+     * @param folder      the folder representing the project
+     * @return whether creating the project was successful
+     */
+    public boolean loadProject(final String name, final String folder){
+        boolean projectExist = !root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
+                && findItemByPath(root, folder) == null;
+
+        if (projectExist) {
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder.");
+        }
+
+        if ("".equals(folder)) {
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Select a folder to create a new project.");
+        }
+
+        File projectFolder = new File(folder);
+
+        if(!projectFolder.exists()){
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder does not exist.");
+        }
+
+        ProjectSettings project = new ProjectSettings(name, folder, "");
+        settings.project().save(project);
+        addProject(project);
+        return true;
+    }
+
+    /**
      * Creates a new project.
      *
      * @param name        the name of the new project
@@ -779,16 +824,20 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
      */
     public boolean newProject(final String name, final String folder, final String description) {
         // Check if the project is already opened
-        boolean projectDoesntExist = root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
+        boolean projectExists = !root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
                 && findItemByPath(root, folder) == null;
 
-        if (!projectDoesntExist || "".equals(name) || "".equals(folder)) {
-            AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error", "",
-                    "Make sure the name and folder are not empty, and do not exist as a project yet.", ButtonType.OK);
-            error.show();
-            return false;
+        if (projectExists) {
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder.");
         }
 
+        if ("".equals(folder)) {
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Select a folder to create a new project.");
+        }
+
+        if ("".equals(name)) {
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Enter a file name to create a new project.");
+        }
         // Check if project folder already exists under different capitalization
         File projectFolder = new File(folder);
         if (projectFolder.exists()) {
@@ -797,26 +846,23 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 String fileName = projectFolder.getName();
 
                 if (!canonicalFileName.equals(fileName)) {
-                    AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Project already exists", "",
-                            "The selected directory already exists with a different case. Please use \"" + canonicalFileName + "\" or rename your project.", ButtonType.OK);
-                    error.show();
-                    return false;
+                    return showAlertDialog(Alert.AlertType.ERROR, "Error", "",
+                            "The selected directory already exists with a different case. Please use \"" + canonicalFileName + "\" or rename your project.");
                 }
+                return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder.");
             } catch (IOException e) {
                 LOGGER.error("Failed to read directory", e);
             }
         }
-
         // Create the project.
         ProjectSettings project = new ProjectSettings(name, folder, description);
         settings.project().save(project);
-        try {
-            FileUtils.forceMkdir(new File(project.getFolder()));
-        } catch (IOException e) {
-            LOGGER.error("Failed to create project directory", e);
-        }
+            try {
+                FileUtils.forceMkdir(new File(project.getFolder()));
+            } catch (IOException e) {
+                LOGGER.error("Failed to create project directory", e);
+            }
         addProject(project);
-
         return true;
     }
 
@@ -843,6 +889,12 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     /* End of projects */
+
+    public boolean showAlertDialog(Alert.AlertType type, String title, String header, String content) {
+        AlertDialog error = new AlertDialog(type, title, header, content, ButtonType.OK);
+        error.show();
+        return false;
+    }
 
     /* Selection of TreeItems */
 
