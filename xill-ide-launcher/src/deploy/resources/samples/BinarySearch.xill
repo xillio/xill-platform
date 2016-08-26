@@ -27,18 +27,14 @@ Description:
 */
 use Collection, String, Math, System;
 
-// Have some list of strings
-var list = ["Ronald","Lombard","Fletcher","Calvert","Sinclair","Blair","Culver","Dexter","Sherlock","Ellery","Hale","Justin","Frederick","Royce","Dermot","Aubrey","Ian","Howard","Lucas, Luke","Nigel","Graham","Harold, Harry","Lowell","Culbert","Benton","Otis","Dirk","Everett","Dwight","Winthrop","Arthur, Art","Grant","Baird","Montgomery","Conroy","Emrick","Kilby","Wyman","Arvel","Samson","Jacob","Hall","Durwin","Sidney","Homer","Melvin","Carl","Leroy","Gavin","Landon"];
-
-// Binary search works with sorted list only
-var sortedList = Collection.sort(list); // Sort list
-System.print(sortedList); // Print out sorted list
+// Have some sorted list of strings
+var list = ["Arthur","Arvel","Aubrey","Baird","Benton","Blair","Calvert","Carl","Conroy","Culbert","Culver","Dermot","Dexter","Dirk","Durwin","Dwight","Ellery","Emrick","Everett","Fletcher","Frederick","Gavin","Graham","Grant","Hale","Hall","Harold, Harry","Homer","Howard","Ian","Jacob","Justin","Kilby","Landon","Leroy","Lombard","Lowell","Lucas, Luke","Melvin","Montgomery","Nigel","Otis","Ronald","Royce","Samson","Sherlock","Sidney","Sinclair","Winthrop","Wyman"];
 
 // Do binary search
-var index = binarySearch(sortedList, "Aubrey");
+var index = binarySearch(list, "Aubrey");
 
 // Print out the index of found string in the list
-System.print(index); // It will print 2 as Aubrey has index 2 in sortedList
+System.print(index); // It will print 2 as Aubrey has index 2 in list
 
 // Definition of binary sort and other helper functions
 function binarySearch(list, keyword) {
