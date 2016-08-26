@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Copyright (C) 2014 Xillio (support@xillio.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 /*
-Author:     Xillio
-Modified:   7-9-2015
+Author:     Ernst van Rheenen
+Modified:   26-8-2016
 
 Description:
         Once in a while you just need to look up a term in a list. 

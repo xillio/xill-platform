@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 /*
-Author:     Xillio
-Modified:   7-9-2015
+Author:     Jeroen Rombouts
+Modified:   26-8-2016
 
 Description:
         Run this for a (very small) Game of Life simulation. You can select a "blinker", "glider" or "r-pentomino" as starting pattern in line 3.

@@ -26,7 +26,8 @@
 *
 *              The variations are pre-generated, this could be inefficient for large reads.
 *
-* Author: Xillio
+* Author:      Titus Nachbauer
+* Modified:    26-8-2016
 *
 */
 

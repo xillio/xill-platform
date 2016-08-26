@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 /*
-Author:     Xillio
-Modified:   7-9-2015
+Author:     Maurice Bakker
+Modified:   26-8-2016
 
 Description:
         This robot compares two strings and gives you a score that indicates how much the two strings are alike.

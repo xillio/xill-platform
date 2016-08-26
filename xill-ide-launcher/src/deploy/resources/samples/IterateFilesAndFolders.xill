@@ -15,7 +15,7 @@
  */
 /*
 Author:     Xillio
-Modified:   7-9-2015
+Modified:   26-8-2016
 
 Description:
         This robot iterates all files and folders in a current user home folder (e.g. c:\Users\John).

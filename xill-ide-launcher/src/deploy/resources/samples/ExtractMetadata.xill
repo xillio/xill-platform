@@ -15,7 +15,7 @@
  */
 /*
 Author:     Xillio
-Modified:   7-9-2015
+Modified:   26-8-2016
 
 Description:
         The robot extracts metadata from files in current user Pictures folder using ExifTool.

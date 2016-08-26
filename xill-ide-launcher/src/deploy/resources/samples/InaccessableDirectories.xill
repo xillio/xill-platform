@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 /*
-Author:     Xillio
-Modified:   7-9-2015
+Author:     Mark de Wit
+Modified:   26-8-2016
 
 Description:
         List inaccessible folders into an MongoDB collection and sum them up in an Excel file.
