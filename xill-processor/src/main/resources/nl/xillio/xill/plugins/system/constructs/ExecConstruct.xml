@@ -51,9 +51,9 @@ Returns an OBJECT variable containing:
         <example title="Usage">
             <header format="MD">
             Copying a file in a specified working directory. In this specific example,
-            the working directory is specified as `C:/tmp`. The source file source.jpg is copied and
-            the name of the new file is target.jpg. The copy, i.e. target.jpg, is created in the
-            specified working directory, in this case C:/tmp.
+            the working directory is specified as `C:/tmp`. The file `source.jpg` is copied and
+            the name of the new file is `target.jpg`. The copy, i.e. `target.jpg`, is created in the
+            specified working directory, in this case `C:/tmp`.
 
             Example output: {"errors":[],"output":["        1 file(s) copied."],"runtime":19,"exitCode":0}.
             </header>

@@ -18,7 +18,7 @@
 -->
 <function>
     <description>
-This construct throws an error if the provided version is not supported in the current version.
+This construct throws an error if `version` is not supported in the current version of the language.
 It will return the current version of the language if the provided version is supported or if left empty.
 
     </description>

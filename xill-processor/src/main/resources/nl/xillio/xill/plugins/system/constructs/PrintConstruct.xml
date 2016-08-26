@@ -19,11 +19,11 @@
 <function>
     <description>
 This construct prints a message to the console.
-If the provided value of the 'text' parameter is an OBJECT or LIST variable then the JSON representation will be printed.
-If the provided value is an ATOMIC variable then the textual representation will be printed.
+If `text` is an OBJECT or LIST variable then its JSON representation will be printed.
+If `text` an ATOMIC variable then the textual representation will be printed.
 
-The 'logLevel' parameter can be used to change the log level of the message.
-The available log levels are: 'debug', 'info', 'warning'  and 'error'.
+`logLevel` determines the log level of the message.
+The available log levels are: "debug", "info", "warning"  and "error".
 
     </description>
     <examples>
