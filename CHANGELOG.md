@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file.
 * Remove paging from the Xill IDE Console [CTC-1593]
 * Add py, xill, xillt extensions to the mimetype library [CTC-1626]
 * Move cookies in XURL responses to a separate field [CTC-1687]
+* Split the "New project" menu option into "New project..." and "New project from existing sources..." [CTC-1691]
 
 ### Fix
 
