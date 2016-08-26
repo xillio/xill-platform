@@ -21,6 +21,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import me.biesaart.utils.Log;
@@ -28,7 +29,6 @@ import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 public class AlertDialog extends Alert {
 
@@ -50,6 +50,9 @@ public class AlertDialog extends Alert {
         // Set the text.
         this.setTitle(title);
         this.setHeaderText(header);
+
+        // Workaround to get scaled window in Linux (currently bug in javafx)
+        this.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 
         // Set the icon.
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
