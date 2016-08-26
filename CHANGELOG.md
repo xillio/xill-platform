@@ -48,3 +48,4 @@ All notable changes to this project will be documented in this file.
 * Add resolution parameter to `Web.screenshot()` [CTC-1043]
 * Display of CHANGELOG.md after new install [CTC-1713]
 * Certain exceptions are logged twice [CTC-1699]
+* Clicking open containing folder crashes Linux [CTC-1698]
