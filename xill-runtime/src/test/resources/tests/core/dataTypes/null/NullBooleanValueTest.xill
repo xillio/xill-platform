@@ -13,13 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use System, Math, Assert;
+/*
+* Specification: The boolean value of null MUST be false.
+* Input: null
+* Expected: The code is not executed
+*/
 
-var info = System.info();
+use Assert, System;
 
-Assert.isTrue(info.availableProcessors > 1);
-Assert.equal(System.typeOf(info.fileSystem), LIST);
-Assert.isTrue(Math.isNumber(info.memory.free));
-Assert.isTrue(Math.isNumber(info.memory.total));
-Assert.isTrue(Math.isNumber(info.memory.max));
-Assert.isTrue(Math.isNumber(info.memory.used));
+var executed = false;
+
+if (null) {
+	executed = true;
+}
+
+Assert.isFalse(executed);

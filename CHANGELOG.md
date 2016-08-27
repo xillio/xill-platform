@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file.
 * Remove paging from the Xill IDE Console [CTC-1593]
 * Add py, xill, xillt extensions to the mimetype library [CTC-1626]
 * Move cookies in XURL responses to a separate field [CTC-1687]
+* Split the "New project" menu option into "New project..." and "New project from existing sources..." [CTC-1691]
 
 ### Fix
 
@@ -48,3 +49,5 @@ All notable changes to this project will be documented in this file.
 * Add resolution parameter to `Web.screenshot()` [CTC-1043]
 * Display of CHANGELOG.md after new install [CTC-1713]
 * Certain exceptions are logged twice [CTC-1699]
+* Clicking open containing folder crashes Linux [CTC-1698]
+* Alert windows do not automatically get scaled in linux, which causes text to disappear [CTC-1742]

@@ -18,18 +18,41 @@
 -->
 <function>
     <description>
-Returns the current version of the language.  
+This construct throws an error if `version` is not supported in the current version of the language.
+It will return the current version of the language if the provided version is supported or if left empty.
 
-If a required version is provided it will throw an error when an older version is used.
     </description>
     <examples>
         <example title="Usage">
+            <header>Print the current version of the language</header>
             <code>
-                System.version();
-                // Result: 3.0.0
 
-                System.version("3.1.0");
-                // Throws an error and outputs: Version 3.1.0 is not supported in 3.0.0
+                use System;
+
+                var currentVersion = System.version();
+                System.print(currentVersion); //the latest version of the language is printed
+
+            </code>
+        </example>
+        <example>
+            <header>Check if a version is supported in the current version of the language</header>
+            <code>
+                use System;
+
+                /*
+                the provided version is supported. The latest version of the language is printed.
+                */
+                var supportedVersion = System.version(3.0);
+                System.print(supportedVersion);
+
+                /*
+                the provided version is not supported.
+                the error 'Version &lt;provided_version&gt; is not supported in &lt;current_version&gt;' is thrown.
+                'null' is printed.
+                */
+                var notSupportedVersion = System.version(99.0);
+                System.print(notSupportedVersion);
+
             </code>
         </example>
     </examples>

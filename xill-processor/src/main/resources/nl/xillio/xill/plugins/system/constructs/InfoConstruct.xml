@@ -18,9 +18,16 @@
 -->
 <function>
     <description>
-Get a list with various pieces of information about your system.  
+Returns an OBJECT with information about the current system, robot and runtime.
 
-This list contains information about the file system, the running robot and the current runtime.
+|Field|Description|
+|-----|-----------|
+|`availableProcessors`|The number of available processors to this application|
+|`memory`|An OBJECT with information about the memory to this application|
+|`projectPath`|The path to the project of the current robot|
+|`fileSystem`|An OBJECT with information about the current file system|
+|`rootRobotPath`|The path to the robot that is run first|
+|`robotPath`|The path to the robot that executes this function|
     </description>
     <examples>
         <example title="Usage">
