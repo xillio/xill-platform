@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,9 +16,11 @@
 package nl.xillio.xill.plugins.properties;
 
 import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import nl.xillio.plugins.XillPlugin;
 import nl.xillio.xill.api.XillEnvironment;
+import nl.xillio.xill.plugins.properties.services.ContextPropertiesResolver;
 
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -54,5 +56,11 @@ public class PropertiesXillPlugin extends XillPlugin {
                         .collect(Collectors.joining(";"))
         );
         return defaults;
+    }
+
+    @Provides
+    @Singleton
+    ContextPropertiesResolver contextPropertiesResolver() {
+        return ContextPropertiesResolver.defaultXillResolver();
     }
 }

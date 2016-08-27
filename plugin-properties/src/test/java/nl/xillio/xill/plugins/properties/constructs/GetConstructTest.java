@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.properties.constructs;
 
+import nl.xillio.xill.plugins.properties.services.ContextPropertiesResolver;
 import nl.xillio.xill.plugins.properties.services.FileSystemAccess;
 import nl.xillio.xill.plugins.properties.services.PropertyService;
 import nl.xillio.events.EventHost;
@@ -48,7 +49,7 @@ public class GetConstructTest extends TestUtils {
         when(fileSystemAccess.exists(any())).thenReturn(false);
 
         GetConstruct construct = new GetConstruct(
-                new PropertyService(new Properties(), fileSystemAccess)
+                new PropertyService(new Properties(), fileSystemAccess, mock(ContextPropertiesResolver.class))
         );
 
         MetaExpression notFound = process(construct, fromValue("propertyNotExists"));
@@ -67,7 +68,7 @@ public class GetConstructTest extends TestUtils {
         properties.put("defaultValue", "YES");
 
         GetConstruct construct = new GetConstruct(
-                new PropertyService(properties, fileSystemAccess)
+                new PropertyService(properties, fileSystemAccess, mock(ContextPropertiesResolver.class))
         );
 
         MetaExpression result = process(construct, fromValue("defaultValue"));

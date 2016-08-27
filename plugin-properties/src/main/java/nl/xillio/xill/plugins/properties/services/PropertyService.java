@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,11 +48,13 @@ public class PropertyService {
     private final Map<PathPair, Properties> defaultsPropertiesMap = new HashMap<>();
     private final Map<Path, Properties> projectPropertiesMap = new HashMap<>();
     private final FileSystemAccess fileSystemAccess;
+    private final ContextPropertiesResolver contextPropertiesResolver;
 
     @Inject
-    public PropertyService(@Named("defaults") Properties defaultGlobalProperties, FileSystemAccess fileSystemAccess) {
+    public PropertyService(@Named("defaults") Properties defaultGlobalProperties, FileSystemAccess fileSystemAccess, ContextPropertiesResolver contextPropertiesResolver) {
         this.defaultGlobalProperties = defaultGlobalProperties;
         this.fileSystemAccess = fileSystemAccess;
+        this.contextPropertiesResolver = contextPropertiesResolver;
     }
 
     public String getFormattedProperty(String name, String defaultValue, ConstructContext context) {
@@ -77,11 +79,6 @@ public class PropertyService {
     }
 
     synchronized String getProperty(String name, String defaultValue, ConstructContext context) {
-        // Simple override for robotPath
-        if ("xill.robotPath".equals(name)) {
-            return context.getRobotID().getPath().getAbsolutePath();
-        }
-
         // First we check the project
         Path projectFolder = context.getRobotID().getProjectPath().toPath();
         if (!projectPropertiesMap.containsKey(projectFolder)) {
@@ -100,9 +97,11 @@ public class PropertyService {
             return projectProperties.getProperty(name);
         }
 
-        if (defaultValue != null) {
-            // Return the default value override
-            return defaultValue;
+        // Check if this variable is available in the context resolver or a default value is provided
+        String contextProperty = contextPropertiesResolver.resolve(name, context).orElse(defaultValue);
+
+        if (contextProperty != null) {
+            return contextProperty;
         }
 
         // Seems like we have to load a default
@@ -127,7 +126,6 @@ public class PropertyService {
                     defaultGlobalProperties,
                     warningLogger
             );
-            properties.put("xill.projectPath", pathPair.projectFolder.toAbsolutePath().toString());
         } else if (pathPair.isInProject()) {
             // This is a folder from within the project so load parent folder first
             Properties parentDefaults = loadDefaultProperties(
