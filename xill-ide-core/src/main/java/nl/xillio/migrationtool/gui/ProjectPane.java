@@ -197,7 +197,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         menuOpenFolder = new MenuItem("Open containing folder");
         menuOpenFolder.setOnAction(e -> {
-            Thread openContainingFolderTread = new Thread(() ->{
+            Thread openContainingFolderTread = new Thread(() -> {
                 try {
                     Desktop.getDesktop().open(getCurrentItem().getValue().getKey().getParentFile());
                 } catch (IOException ex) {
@@ -208,9 +208,8 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         });
 
 
-
         // Create the context menu.
-        ContextMenu menu = new ContextMenu(menuCut, menuCopy, menuPaste, menuRename,menuNewFolder,menuNewFile, menuDelete, menuUpload);
+        ContextMenu menu = new ContextMenu(menuCut, menuCopy, menuPaste, menuRename, menuNewFolder, menuNewFile, menuDelete, menuUpload);
         if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
             menu.getItems().add(menuOpenFolder);
         }
@@ -798,7 +797,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
      * @param folder      the folder representing the project
      * @return whether creating the project was successful
      */
-    public boolean loadProject(final String name, final String folder){
+    public boolean loadProject(final String name, final String folder) {
         boolean projectExist = !root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
                 && findItemByPath(root, folder) == null;
 
@@ -812,7 +811,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         File projectFolder = new File(folder);
 
-        if(!projectFolder.exists()){
+        if (!projectFolder.exists()) {
             return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder does not exist.");
         }
 
@@ -865,11 +864,11 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         // Create the project.
         ProjectSettings project = new ProjectSettings(name, folder, description);
         settings.project().save(project);
-            try {
-                FileUtils.forceMkdir(new File(project.getFolder()));
-            } catch (IOException e) {
-                LOGGER.error("Failed to create project directory", e);
-            }
+        try {
+            FileUtils.forceMkdir(new File(project.getFolder()));
+        } catch (IOException e) {
+            LOGGER.error("Failed to create project directory", e);
+        }
         addProject(project);
         return true;
     }
