@@ -1,0 +1,133 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+Author:     Jeroen Rombouts
+Modified:   26-8-2016
+
+Description:
+        A neat trick if you want to get a quick graphical analysis of some data, straight from the Xill IDE. 
+        This robot outputs a histogram in the XML-based SVG (Scalable Vector Graphics) format. 
+        These files can be viewed by any web browser or MS Office program. 
+        Include the file below in your projects and use the createHistogram(data, bins, title, filename) function to save the graph. 
+        You can easily create your own graphics by checking the SVG specs.  
+
+        The function requires the following arguments:
+        - data: a list of numbers of length n, which correspond to the data you want to plot
+        - bins: a list of numbers defining the bin limits used to create the histogram. It has length (n+1)!
+        - title: a string which is placed on top of the graph
+        - filename: a string with the location where the graph will be saved
+        
+        Note: Set targetPath variable to some valid path according to your disk storage structure and operating system.
+*/
+use File, System, Collection, Math, Stream;
+
+var targetPath = "c:/tmp/example.svg";
+
+createHistogram(    [4,97,25,20,1,3,7,1,0,1], 
+                    [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100], 
+                    "Histograms, Straight From Your Code!", targetPath);
+
+System.print("Histogram has been created.");
+
+////////////////
+/// routines ///
+////////////////
+ 
+function createHistogram(data, bins, title, filename) {
+     var svg = createGraphBackground(createSVGHeader(), "");
+     svg = drawTheHistogram(drawLegends(svg, data, bins), data, title);
+     finalizeSVG(svg, filename);
+}
+ 
+function drawLegends(svg, histogram, bins) {
+     var nBins = Collection.length(histogram);
+     var max = histogramMax(histogram)*1.1;
+      
+     foreach (_, bin in bins) {
+          var yPos = svg.properties.height-30;
+          var xPos = _ * ((svg.properties.width-100)/nBins) + 50;
+          svg.xml = svg.xml:: "<text x=\"0\" y=\"0\" text-anchor=\"middle\" font-size=\"14\" fill=\"#333\" font-family=\"Verdana,sans-serif\">
+          <tspan x=\""::xPos::"\" y=\""::yPos::"\">"::bin::"</tspan></text>";
+     }
+      
+     var maxTickVal = Math.round(max*0.1-0.5)*10;
+     var tickDist = Math.round(max*0.1);
+     var perPixel = (svg.properties.height-100) / max;
+      
+     var counter = 0;
+     while (true) {
+          var yPos = (svg.properties.height-50) - tickDist*counter*perPixel;
+          var xPos = 30;
+          svg.xml = svg.xml:: "<text x=\"0\" y=\"0\" text-anchor=\"middle\" font-size=\"14\" fill=\"#333\" font-family=\"Verdana,sans-serif\">
+          <tspan x=\""::xPos::"\" y=\""::yPos::"\">"::counter*tickDist::"</tspan></text>
+          <line x1=\"50\" y1=\""::yPos::"\" x2=\""::(svg.properties.width-50)::"\" y2=\""::yPos::"\" style=\"stroke:rgb(32,0,0);stroke-width:1;stroke-opacity:0.1\" />";
+          counter++;
+          if (tickDist*counter > maxTickVal) { break; }
+     }
+     return(svg);
+}
+ 
+function createGraphBackground(svg, graphLimits) {
+     svg.xml = svg.xml :: 
+          "<rect fill=\"#ddd\" x=\""::48::"\" y=\""::48::"\" width=\""::(svg.properties.width-96)::"\" height=\""::(svg.properties.height-96)::"\"/>" ::
+          "<rect fill=\"#eee\" x=\""::"50"::"\" y=\""::50::"\" width=\""::(svg.properties.width-100)::"\" height=\""::(svg.properties.height-100)::"\"/>";
+     return(svg);
+}
+ 
+function drawTheHistogram(svg, histogram, title) {
+     var nBins = Collection.length(histogram);
+     var max = histogramMax(histogram)*1.1;
+      
+     foreach (_, bin in histogram) {
+          var binHeight = (bin/max)*(svg.properties.width-100);
+          var yPos = (svg.properties.height-50) - binHeight;
+          var binWidth = 0.75*((svg.properties.width-100)/nBins);
+          var xPos = _ * ((svg.properties.width-100)/nBins) + 50 + 0.125*((svg.properties.width-100)/nBins);
+          svg.xml = svg.xml ::
+          "<rect fill=\"#e33\" x=\""::xPos::"\" y=\""::yPos::"\" width=\""::binWidth::"\" height=\""::binHeight::"\"/>\n";
+     }
+     svg.xml = svg.xml:: "
+          <text x=\"0\" y=\"0\" text-anchor=\"middle\" font-size=\"16\"  font-family=\"Verdana,sans-serif\">
+          <tspan x=\""::(svg.properties.width*0.5)::"\" y=\""::25::"\" font-weight=\"bold\">"::title::"</tspan></text>";
+     return(svg);
+}
+ 
+function histogramMax(histogram) {
+     var max = 0;
+     foreach(bin in histogram) {
+          if (bin > max) {
+               max = bin;
+          }
+     }
+     return (max);
+}
+function finalizeSVG(svg, path) {
+     svg.xml = svg.xml :: "</svg>";
+     Stream.write(svg.xml, File.openWrite(path));
+}
+ 
+function createSVGHeader() {
+     var xml = "";
+     var svg =
+          {
+              "width" : 500,
+              "height" : 500,
+              "viewBox" : "0 0 500 500",      
+          };
+     xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>
+                    <!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\"><svg width=\""::svg.width::"\" height=\""::svg.height::"\" viewBox=\""::svg.viewBox::"\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
+     return ({"xml" : xml, "properties" : svg});
+}
