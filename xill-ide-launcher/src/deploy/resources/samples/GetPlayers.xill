@@ -1,0 +1,62 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+Author:     Ernst van Rheenen
+Modified:   26-8-2016
+
+Description:
+        The robot prints the players for any Champions League 2015 team.
+        This is an example of HTTP Web Services usage.
+*/
+use XURL, Collection, System;
+  
+// Enter the name of the team you want to lookup below:
+var teamName = "PSV Eindhoven";
+  
+var teams = getTeams();
+var myTeam = collect(filter<findTeam>(teams));
+ 
+if(Collection.length(myTeam) == 1) {
+    System.print("Players in '":: teamName ::"':");
+    foreach(player in getPlayers(myTeam)) {
+        printPlayer(player);   
+    }
+} else {
+    System.print("Unknown team '":: teamName ::"'. Valid team names:");
+    foreach(team in teams) {
+        System.print(team.name);
+    }
+}
+ 
+//get the current teams
+function getTeams() {
+    return XURL.get("http://api.football-data.org/v1/soccerseasons/405/teams").body.teams;    
+}
+ 
+//get the players for a team
+function getPlayers(team) {
+    return XURL.get(team[0]._links.players.href).body.players;
+}
+  
+//filter the team by name
+function findTeam(team) {
+    return team.name == teamName;
+}
+ 
+//print the player's name with his position and jersey number
+function printPlayer(player) {
+    System.print(player.jerseyNumber :: " - " :: player.name :: " - " :: player.position);
+}
