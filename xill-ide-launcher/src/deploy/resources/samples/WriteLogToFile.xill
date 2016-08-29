@@ -13,13 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use System, Math, Assert;
+/*
+Author:     Xillio
+Modified:   26-8-2016
 
-var info = System.info();
-
-Assert.isTrue(info.availableProcessors > 1);
-Assert.equal(System.typeOf(info.fileSystem), LIST);
-Assert.isTrue(Math.isNumber(info.memory.free));
-Assert.isTrue(Math.isNumber(info.memory.total));
-Assert.isTrue(Math.isNumber(info.memory.max));
-Assert.isTrue(Math.isNumber(info.memory.used));
+Description:
+        This robot writes the log message to a file in a current user home folder (e.g. c:\Users\John\test\test.txt on MS Windows or /home/John/test/test.txt on Linux).
+*/
+use File, System, Date, Stream;
+ 
+var newLine = System.properties("line.separator");
+var uri = System.properties("user.home") :: "/test/test.txt";
+var file = File.openAppend(uri);
+ 
+Stream.write(Date.now() :: " INFO - " :: "log message" :: newLine, file);

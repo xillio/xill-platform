@@ -13,13 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use System, Math, Assert;
+/*
+Author:     Xillio
+Modified:   26-8-2016
 
-var info = System.info();
-
-Assert.isTrue(info.availableProcessors > 1);
-Assert.equal(System.typeOf(info.fileSystem), LIST);
-Assert.isTrue(Math.isNumber(info.memory.free));
-Assert.isTrue(Math.isNumber(info.memory.total));
-Assert.isTrue(Math.isNumber(info.memory.max));
-Assert.isTrue(Math.isNumber(info.memory.used));
+Description:
+        This robot extracts metada from Wikipedia.
+        Note: On Linux OS the PhantomJS must be installed manually prior to run this robot.
+*/
+use Web, System;
+ 
+var page = Web.loadPage("https://en.wikipedia.org/wiki/HTML");
+ 
+var metadata = {
+    "title" : Web.xPath(page, "//h1/text()"),
+    "encoding" : Web.xPath(page, "//meta/@charset"),
+    "summary" : Web.getText(Web.xPath(page, "//div[@id='mw-content-text']/p[1]"))
+};
+ 
+System.print(System.toJSON(metadata, true));

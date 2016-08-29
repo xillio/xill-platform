@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use System, Math, Assert;
+/*
+Author:     Xillio
+Modified:   26-8-2016
 
-var info = System.info();
+Description:
+        The robot extracts metadata from files in current user Pictures folder using ExifTool.
+        Note: Set path variable to some valid path according to your disk storage structure and operating system.
+*/
+use ExifTool, System;
+ 
+var path = System.properties("user.home") :: "/Pictures";
+var pictures = ExifTool.scanFolder(path, {}, {"recursive" : true});
 
-Assert.isTrue(info.availableProcessors > 1);
-Assert.equal(System.typeOf(info.fileSystem), LIST);
-Assert.isTrue(Math.isNumber(info.memory.free));
-Assert.isTrue(Math.isNumber(info.memory.total));
-Assert.isTrue(Math.isNumber(info.memory.max));
-Assert.isTrue(Math.isNumber(info.memory.used));
+foreach (picture in pictures) {
+    System.print(System.toJSON(picture, true));
+}

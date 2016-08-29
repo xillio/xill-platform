@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use System, Math, Assert;
+/*
+Author:     Xillio
+Modified:   26-8-2016
 
-var info = System.info();
-
-Assert.isTrue(info.availableProcessors > 1);
-Assert.equal(System.typeOf(info.fileSystem), LIST);
-Assert.isTrue(Math.isNumber(info.memory.free));
-Assert.isTrue(Math.isNumber(info.memory.total));
-Assert.isTrue(Math.isNumber(info.memory.max));
-Assert.isTrue(Math.isNumber(info.memory.used));
+Description:
+        This robot iterates all files in a current user Documents folder (e.g. c:\Users\John\Documents on MS Windows or /home/John/Documents on Linux).
+        Note: Set testPath variable to some valid path according to your disk storage structure and operating system.
+*/
+use File, System;
+ 
+var testPath = System.properties("user.home") :: "/Documents";
+var testFiles = File.iterateFiles(testPath, false);
+ 
+foreach(file in testFiles) {
+        System.print("File " :: File.getSize(file) :: " bytes " :: File.getCreationDate(file) :: " " :: file);
+}

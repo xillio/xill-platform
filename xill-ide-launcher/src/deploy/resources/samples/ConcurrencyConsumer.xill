@@ -13,13 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use System, Math, Assert;
+/*
+Author:     Zbynek Hochmann
+Modified:   26-8-2016
 
-var info = System.info();
+Description:
+        This robot is part of a Concurrency.xill example and does not work as a standalone robot.
+        See Concurrency.xill example for more info.
+*/
+use Concurrency, System;
 
-Assert.isTrue(info.availableProcessors > 1);
-Assert.equal(System.typeOf(info.fileSystem), LIST);
-Assert.isTrue(Math.isNumber(info.memory.free));
-Assert.isTrue(Math.isNumber(info.memory.total));
-Assert.isTrue(Math.isNumber(info.memory.max));
-Assert.isTrue(Math.isNumber(info.memory.used));
+argument data;
+
+var item = Concurrency.pop(data.input);
+while(item != null) {
+    System.print(item);
+    item = Concurrency.pop(data.input);
+}
