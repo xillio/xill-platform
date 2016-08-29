@@ -28,8 +28,8 @@ Returns an OBJECT variable containing:
 
 |Field|Description|
 |-----|-----------|
-|`errors`|A LIST of error messages|
-|`output`|A LIST of output lines|
+|`errors`|A string of error messages|
+|`output`|A string of output lines|
 |`runtime`|The runtime in milliseconds|
 |`exitCode`|The exit code of the process|
 
@@ -39,7 +39,7 @@ Returns an OBJECT variable containing:
             <header>
             In Windows you can execute a batch command by running `cmd.exe` with the `/C` parameter. The example below
             prints the word `test`.
-            Example output: `{"errors":[],"output":["test"],"runtime":14,"exitCode":0}`
+            Example output: {"errors":"","output":"test\r\n","runtime":32,"exitCode":0}
             </header>
             <code>
                 use System;
@@ -55,7 +55,7 @@ Returns an OBJECT variable containing:
             the name of the new file is `target.jpg`. The copy, i.e. `target.jpg`, is created in the
             specified working directory, in this case `C:/tmp`.
 
-            Example output: {"errors":[],"output":["        1 file(s) copied."],"runtime":19,"exitCode":0}.
+            Example output: {"errors":"","output":"        1 file(s) copied.\r\n","runtime":40,"exitCode":0}.
             </header>
             <code>
                 use System;
