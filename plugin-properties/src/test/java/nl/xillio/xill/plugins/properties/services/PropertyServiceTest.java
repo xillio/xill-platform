@@ -52,7 +52,7 @@ public class PropertyServiceTest extends TestUtils {
             }
         };
 
-        PropertyService propertyService = new PropertyService(new Properties(), fileSystemAccess, mock(ContextPropertiesResolver.class));
+        PropertyService propertyService = new PropertyService(new Properties(), fileSystemAccess, new ContextPropertiesResolver());
 
         String result = propertyService.getProperty("testProperty", null, new ConstructContext(
                 robotID,
@@ -85,7 +85,7 @@ public class PropertyServiceTest extends TestUtils {
             }
         };
 
-        PropertyService propertyService = new PropertyService(new Properties(), fileSystemAccess, mock(ContextPropertiesResolver.class));
+        PropertyService propertyService = new PropertyService(new Properties(), fileSystemAccess, new ContextPropertiesResolver());
 
 
         String result = propertyService.getProperty("testProperty", null, new ConstructContext(
@@ -119,7 +119,7 @@ public class PropertyServiceTest extends TestUtils {
             }
         };
 
-        PropertyService propertyService = new PropertyService(new Properties(), fileSystemAccess, mock(ContextPropertiesResolver.class));
+        PropertyService propertyService = new PropertyService(new Properties(), fileSystemAccess, new ContextPropertiesResolver());
 
 
         propertyService.getProperty("testProperty", null, new ConstructContext(
@@ -139,7 +139,7 @@ public class PropertyServiceTest extends TestUtils {
         properties.put("name", "World");
         properties.put("greet", "Hello ${name}!");
 
-        String value = new PropertyService(properties, mock(FileSystemAccess.class), mock(ContextPropertiesResolver.class)).getFormattedProperty("greet", null, new ConstructContext(
+        String value = new PropertyService(properties, mock(FileSystemAccess.class), new ContextPropertiesResolver()).getFormattedProperty("greet", null, new ConstructContext(
                 RobotID.getInstance(new File("test/value.xill"), new File("test")),
                 RobotID.dummyRobot(),
                 null,
@@ -158,7 +158,7 @@ public class PropertyServiceTest extends TestUtils {
         properties.put("name", "World");
         properties.put("greet", "Hello $${name}!");
 
-        String value = new PropertyService(properties, mock(FileSystemAccess.class), mock(ContextPropertiesResolver.class)).getFormattedProperty("greet", null, new ConstructContext(
+        String value = new PropertyService(properties, mock(FileSystemAccess.class), new ContextPropertiesResolver()).getFormattedProperty("greet", null, new ConstructContext(
                 RobotID.getInstance(new File("test/value.xill"), new File("test")),
                 RobotID.dummyRobot(),
                 null,

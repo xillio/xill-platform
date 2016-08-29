@@ -49,7 +49,7 @@ public class GetConstructTest extends TestUtils {
         when(fileSystemAccess.exists(any())).thenReturn(false);
 
         GetConstruct construct = new GetConstruct(
-                new PropertyService(new Properties(), fileSystemAccess, mock(ContextPropertiesResolver.class))
+                new PropertyService(new Properties(), fileSystemAccess, new ContextPropertiesResolver())
         );
 
         MetaExpression notFound = process(construct, fromValue("propertyNotExists"));
@@ -68,7 +68,7 @@ public class GetConstructTest extends TestUtils {
         properties.put("defaultValue", "YES");
 
         GetConstruct construct = new GetConstruct(
-                new PropertyService(properties, fileSystemAccess, mock(ContextPropertiesResolver.class))
+                new PropertyService(properties, fileSystemAccess, new ContextPropertiesResolver())
         );
 
         MetaExpression result = process(construct, fromValue("defaultValue"));
