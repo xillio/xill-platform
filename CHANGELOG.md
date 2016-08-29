@@ -27,6 +27,7 @@ All notable changes to this project will be documented in this file.
 * Add `py`, `xill`, `xillt` extensions to the mimetype library [CTC-1626]
 * Move cookies in XURL responses to a separate field [CTC-1687]
 * Split the "New project" menu option into "New project..." and "New project from existing sources..." [CTC-1691]
+* `System.exec()` outputs one string including EOL charactedrs, instead of a list of lines [CTC-1466]
 
 ### Fix
 
