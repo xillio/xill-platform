@@ -1,0 +1,43 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+Author:     Maurice Bakker
+Modified:   26-8-2016
+
+Description:
+        This bot shows the various date functions available in Xill Platform.
+        Can be used for example to use different date formats and calculate the difference between two dates.
+*/
+use Date, System;
+
+// Dates can be created from a UNIX timestamp
+var date1 = Date.now();
+System.print(date1);
+  
+// Dates can also be created from strings
+var dateString = "24-10-2013, 09:18:41";
+var date2 = Date.parse(dateString, "dd-MM-yyyy, HH:mm:ss");
+System.print(date2);
+  
+// Dates can be modified using text notation
+date2 = Date.change(date2, {"YEARS" : 1, "MONTHS" : 1});
+System.print(date2);
+  
+// Difference between two dates is easily calculated
+System.print(Date.diff(date1, date2));
+  
+// Detailed information about a date is available using dateinfo()
+System.print(Date.info(date1));
