@@ -367,10 +367,21 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
      * @param code the code to set
      */
     public void setCode(final String code) {
+
         if (documentLoaded.get()) {
             if (ace != null) {
-                callOnAceBlocking("setCode", code);
-                clearHistory();
+
+                Object modelistLoaded = callOnAceBlocking("getModelistLoaded");
+                if(modelistLoaded != null && modelistLoaded.toString().equalsIgnoreCase("true")) {
+                    // Editor has fully loaded, load the code in the editor
+                    callOnAceBlocking("setCode", code);
+                    clearHistory();
+                } else {
+                    // try again later
+                    Platform.runLater(() -> {
+                        setCode(code);
+                    });
+                }
             }
             this.code.setValue(code);
         } else {

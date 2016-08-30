@@ -84,7 +84,6 @@
     };
 
     var UndoManager = ace.require("ace/undomanager").UndoManager;
-    var modelist = ace.require("ace/ext/modelist");
 
     function init() {
 
@@ -209,6 +208,18 @@
             var range = editor.selection.getRange();
             editor.session.duplicateLines(range.start.row, range.end.row);
             editor.selection.setRange(range);
+        };
+
+
+        // CTC-1718
+        // Add callback to set flag when the modelist module has been loaded
+        editor._modelistLoaded = false;
+        ace.require("ace/ext/modelist", function() {
+            editor._modelistLoaded = true;
+        });
+        // Add function to get the value of the modelistLoaded flag
+        editor.getModelistLoaded = function() {
+            return editor._modelistLoaded;
         };
     }
 </script>
