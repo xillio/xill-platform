@@ -174,10 +174,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
             gatherResources(resource);
         } catch (XillParsingException e) {
             LOGGER.error("Could not find a robot", e);
-            File errorFile = new File(resource.getURI().toFileString());
-            RobotID robotID = RobotID.getInstance(errorFile, projectFolder);
-
-            Issue issue = new Issue(e.getMessage(), e.getLine(), Issue.Type.ERROR, robotID);
+            Issue issue = new Issue(e.getMessage(), e.getLine(), Issue.Type.ERROR, e.getRobot());
             return Collections.singletonList(issue);
         }
 
