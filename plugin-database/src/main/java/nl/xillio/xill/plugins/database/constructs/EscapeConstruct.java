@@ -27,6 +27,7 @@ import nl.xillio.xill.plugins.database.services.DatabaseService;
 import nl.xillio.xill.plugins.database.services.DatabaseServiceFactory;
 import nl.xillio.xill.plugins.database.util.ConnectionMetadata;
 
+@Deprecated
 public class EscapeConstruct extends BaseDatabaseConstruct {
 
     @Override
