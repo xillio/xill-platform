@@ -5,8 +5,8 @@ All notable changes to this project will be documented in this file.
 
 ### Add
 
-* Add print xill script to IDE [CTC-1645]
-* New option `disableRedirect` on constructs of XURL plugin [CTC-1710]
+* Send selected xill script standard printer by pressing Ctrl+Shift+P [CTC-1645][CTC-1752]
+* New option `enableRedirect` on constructs of XURL plugin [CTC-1710][CTC-1753]
 * Upload resources to server [CTC-1651]
 * Add an overview of all active plugins in the settings about section [CTC-1667]
 * Add an archetype for xill plugins [CTC-1284]
