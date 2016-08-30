@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.database.constructs;
 
+import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.construct.Argument;
@@ -39,7 +40,8 @@ public abstract class SimplesqlConnectConstruct extends BaseDatabaseConstruct {
      * @param databaseName The name of the database.
      * @param defaultPort The default port
      */
-    public SimplesqlConnectConstruct(String databaseName, int defaultPort) {
+    public SimplesqlConnectConstruct(XillThreadFactory xillThreadFactory, String databaseName, int defaultPort) {
+        super(xillThreadFactory);
         this.databaseName = databaseName;
         this.defaultPort = defaultPort;
     }

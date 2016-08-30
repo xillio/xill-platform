@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.plugins.database.constructs;
 
+import com.google.inject.Inject;
+import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.plugins.database.util.Database;
 
 /**
@@ -25,8 +27,9 @@ public class MssqlConnectConstruct extends SimplesqlConnectConstruct {
     /**
      * The constructor of the {@link MssqlConnectConstruct}.
      */
-    public MssqlConnectConstruct() {
-        super(Database.MSSQL.getName(), 1433);
+    @Inject
+    public MssqlConnectConstruct(XillThreadFactory xillThreadFactory) {
+        super(xillThreadFactory, Database.MSSQL.getName(), 1433);
     }
 
 }

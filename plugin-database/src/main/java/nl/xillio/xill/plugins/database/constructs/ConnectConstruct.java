@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.plugins.database.constructs;
 
+import com.google.inject.Inject;
+import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.construct.Argument;
@@ -39,6 +41,11 @@ import java.util.Map;
  * The construct for the connect function.
  */
 public class ConnectConstruct extends BaseDatabaseConstruct {
+
+    @Inject
+    public ConnectConstruct(XillThreadFactory xillThreadFactory) {
+        super(xillThreadFactory);
+    }
 
     @Override
     public ConstructProcessor doPrepareProcess(final ConstructContext context) {

@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.plugins.database.constructs;
 
+import com.google.inject.Inject;
+import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.construct.Argument;
@@ -38,6 +40,11 @@ import java.util.stream.Collectors;
  * @author Sander Visser
  */
 public class StoreObjectConstruct extends BaseDatabaseConstruct {
+
+    @Inject
+    public StoreObjectConstruct(XillThreadFactory xillThreadFactory) {
+        super(xillThreadFactory);
+    }
 
     @Override
     public ConstructProcessor doPrepareProcess(final ConstructContext context) {

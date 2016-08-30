@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.plugins.database.constructs;
 
+import com.google.inject.Inject;
+import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
@@ -27,6 +29,12 @@ import nl.xillio.xill.plugins.database.util.Database;
  * The connect construct for the Oracle database.
  */
 public class OracleConnectConstruct extends BaseDatabaseConstruct {
+
+    @Inject
+    public OracleConnectConstruct(XillThreadFactory xillThreadFactory) {
+        super(xillThreadFactory);
+    }
+
     @Override
     public ConstructProcessor doPrepareProcess(ConstructContext context) {
         Argument[] args = {
