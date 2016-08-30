@@ -82,7 +82,9 @@ public class HotkeysHandler {
         @SuppressWarnings("javadoc")
         RENAME,
         @SuppressWarnings("javadoc")
-        ESCAPE
+        ESCAPE,
+        @SuppressWarnings("javadoc")
+        PRINT
     }
 
     private HashMap<Hotkeys, Hotkey> hotkeys = new HashMap<>();
@@ -119,6 +121,7 @@ public class HotkeysHandler {
         hotkeys.put(Hotkeys.OPENSETTINGS, new Hotkey("Shortcut+P", Settings.OPEN_SETTINGS, "Shortcut to open settings dialog", "tfopensettings"));
         hotkeys.put(Hotkeys.DUPLICATELINES, new Hotkey("Shortcut+D", Settings.DUPLICATE_LINES, "Shortcut to duplicate selected lines", "tfduplicatelines"));
         hotkeys.put(Hotkeys.RENAME, new Hotkey("F2", Settings.RENAME, "Shortcut to rename the selected file/folder.", "tfrename"));
+        hotkeys.put(Hotkeys.PRINT, new Hotkey("Shortcut+Shift+P", Settings.PRINT, "Shortcut to print the currently open robot", "tfprint"));
     }
 
     /**
