@@ -476,14 +476,6 @@ public class FXController implements Initializable, EventHandler<Event> {
     }
 
     @FXML
-    private void buttonPrint() {
-        Tab tab = tpnBots.getSelectionModel().getSelectedItem();
-        if (tab != null) {
-            ((FileTab) tab).getEditorPane().print();
-        }
-    }
-
-    @FXML
     private void buttonSettings() {
         if (!btnSettings.isDisabled()) {
             createSettingsWindow();
