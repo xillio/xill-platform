@@ -170,19 +170,17 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     }
 
     private List<Issue> validate(Resource resource) {
-        List<Issue> issues = gatherResources(resource);
-        // Validate all resources
-        for (Resource currentResource : resourceSet.getResources()) {
-            // Build RobotID
-            File currentFile = new File(currentResource.getURI().toFileString());
-
-            issues.addAll(validate(currentResource, RobotID.getInstance(currentFile, projectFolder)));
-        }
-        return issues;
+        gatherResources(resource);
+        // Validate all resources and concat issues
+        return resourceSet.getResources().stream()
+                .flatMap(
+                        currentResource -> validate(currentResource,
+                                RobotID.getInstance(new File(currentResource.getURI().toFileString()), projectFolder)
+                        ).stream()
+                ).collect(Collectors.toList());
     }
 
-    private List<Issue> gatherResources(final Resource resource) {
-        List<Issue> result = new ArrayList<>();
+    private void gatherResources(final Resource resource) {
         for (EObject root : resource.getContents()) {
             xill.lang.xill.Robot rootRobot = (xill.lang.xill.Robot) root;
 
@@ -198,7 +196,6 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
                 }
             }
         }
-        return result;
     }
 
     private URI getURI(final IncludeStatement include) {
