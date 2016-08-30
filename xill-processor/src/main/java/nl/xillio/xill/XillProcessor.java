@@ -191,10 +191,6 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
                 if (!resourceSet.getURIResourceMap().containsKey(uri)) {
                     // This is not in there yet
                     if (!new File(uri.toFileString()).exists()) {
-                        INode node = NodeModelUtils.getNode(include);
-                        result.add(
-                                new Issue("The library " + uri.toFileString() + " does not exist.", node.getStartLine(), Issue.Type.ERROR, RobotID.getInstance(new File(resource.getURI().toFileString()), projectFolder))
-                        );
                         continue;
                     }
                     Resource library = resourceSet.getResource(uri, true);
