@@ -30,7 +30,7 @@ Check out the code examples for more information about the options.
 | headers             | An object containing the headers                                                  | Set this option to add custom headers to your request                             |
 | insecure            | A boolean *default: false*                                                        | Set this option to true if you want to skip hostname validation                   |
 | multipart           | A boolean *default: false*                                                        | Set this option to true if you want to build a multipart/form-data request        |
-| enableRedirect      | A boolean *default: true*                                                         | Set this option to false if you do not want to automatically follow redirects      |
+| enableRedirect      | A boolean *default: true*                                                         | Set this option to false if you do not want to automatically follow redirects     |
 | responseContentType | A String describing a content type                                                | Set this option to override the the response type auto detector                   |
 | logging             | A String (debug, info, warn or error) *default: none*                             | Set this option to enable logging of requests and responses                       |
 
