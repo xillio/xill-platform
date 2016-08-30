@@ -84,6 +84,19 @@
     };
 
     var UndoManager = ace.require("ace/undomanager").UndoManager;
+    // CTC-1718
+    // Add callback to set xill specific mode once the mode has been loaded
+    var modelist = ace.require("ace/ext/modelist", initMode);
+
+    function initMode() {
+        if(editor != null) {
+            editor.getSession().setMode("ace/mode/xill");
+            editor.setTheme("ace/theme/xillio");
+            langTools.addCompleter(xillCore);
+        } else {
+            window.setTimeout(initMode, 50);
+        }
+    }
 
     function init() {
 
@@ -92,8 +105,6 @@
         var Search = ace.require("ace/search").Search;
         editor = ace.edit('editor');
 
-        editor.getSession().setMode("ace/mode/xill");
-        editor.setTheme("ace/theme/xillio");
 
         var langTools = ace.require("ace/ext/language_tools");
         editor.setOptions({
@@ -101,9 +112,6 @@
             enableLiveAutocompletion: true
         });
         editor.$blockScrolling = Infinity;
-
-        langTools.addCompleter(xillCore);
-
 
         editor.setCode = function (code) {
             this.setValue(code, 1);
@@ -211,16 +219,6 @@
         };
 
 
-        // CTC-1718
-        // Add callback to set flag when the modelist module has been loaded
-        editor._modelistLoaded = false;
-        ace.require("ace/ext/modelist", function() {
-            editor._modelistLoaded = true;
-        });
-        // Add function to get the value of the modelistLoaded flag
-        editor.getModelistLoaded = function() {
-            return editor._modelistLoaded;
-        };
     }
 </script>
 </body>

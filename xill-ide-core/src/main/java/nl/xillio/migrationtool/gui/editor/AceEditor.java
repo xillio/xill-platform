@@ -370,18 +370,8 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
 
         if (documentLoaded.get()) {
             if (ace != null) {
-
-                Object modelistLoaded = callOnAceBlocking("getModelistLoaded");
-                if(modelistLoaded != null && modelistLoaded.toString().equalsIgnoreCase("true")) {
-                    // Editor has fully loaded, load the code in the editor
-                    callOnAceBlocking("setCode", code);
-                    clearHistory();
-                } else {
-                    // try again later
-                    Platform.runLater(() -> {
-                        setCode(code);
-                    });
-                }
+                callOnAceBlocking("setCode", code);
+                clearHistory();
             }
             this.code.setValue(code);
         } else {
