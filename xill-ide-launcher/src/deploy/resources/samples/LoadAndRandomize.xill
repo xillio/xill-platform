@@ -1,0 +1,53 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+Author:     Zbynek Hochmann
+Modified:   26-8-2016
+
+Description:
+        This example loads the names from EnglishBoysNames.txt file (sorted by names) to a list and creates new list with random order.
+*/
+use System, File, Stream, String, Collection, Math;
+
+var file = File.openRead("EnglishBoysNames.txt");
+var line;
+var end = false;
+var list = [];
+
+// Read the names from file to a list
+while (!end) {
+    do {
+        line = Stream.readLine(file); // Read next line
+        list[] = String.trim(line); // Remove whitspace characters from line and store line to a list
+    } fail (e) {
+        if (String.startsWith(e.message, "Could not read line.")) { // There is no more lines in the file
+            end = true;     
+        } else {
+            System.print(e, "error");
+        }
+    }
+}
+
+var rndList = [];
+
+// Take random name from list and move it to the end of rndList - this is repeating until the original list is empty
+while (Collection.length(list)) {
+    var index = Math.random(Collection.length(list)); // Create random index from existing list
+    rndList[] = list[index]; // Add it to rndList
+    Collection.remove(list, index); // Remove it from list
+}
+
+System.print(rndList);
