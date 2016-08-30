@@ -658,7 +658,8 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
      */
     public void autoDetectMode(String file) {
         if (!file.endsWith(XillEnvironment.ROBOT_EXTENSION) && !file.endsWith(XillEnvironment.ROBOT_TEMPLATE_EXTENSION)) {
-            executeJS("editor.session.setMode(modelist.getModeForPath(\"" + file + "\").mode);");
+            // CTC-1718: Add a small delay before switching mode to allow the ace editor to fully initialise
+            executeJS("window.setTimeout(function() {editor.session.setMode(modelist.getModeForPath(\"" + file + "\").mode);}, 500);");
         }
     }
 
