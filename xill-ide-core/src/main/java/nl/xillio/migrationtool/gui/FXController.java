@@ -475,6 +475,18 @@ public class FXController implements Initializable, EventHandler<Event> {
         }
     }
 
+    /*
+    Temporarily disabled print button until functionality is complete,
+    see: https://xillio.atlassian.net/browse/CTC-1752
+    
+    @FXML
+    private void buttonPrint(){
+        Tab tab = tpnBots.getSelectionModel().getSelectedItem();
+        if( tab != null){
+            ((FileTab) tab).getEditorPane().print();
+        }
+    }*/
+
     @FXML
     private void buttonSettings() {
         if (!btnSettings.isDisabled()) {
