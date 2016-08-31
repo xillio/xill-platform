@@ -179,15 +179,17 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
     }
 
     private void onDocumentLoad() {
-        // Set members
-        bindToWindow();
-        // Set code, if it was set before editor loads
-        String codeString = code.get();
-        if (codeString != null) {
-            setCode(codeString);
-        }
-        // get focus
-        callOnAce("focus");
+        Platform.runLater(() -> {
+            // Set members
+            bindToWindow();
+            // Set code, if it was set before editor loads
+            String codeString = code.get();
+            if (codeString != null) {
+                setCode(codeString);
+            }
+            // get focus
+            callOnAce("focus");
+        });
     }
 
     /**
