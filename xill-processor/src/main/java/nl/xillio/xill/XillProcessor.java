@@ -81,7 +81,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
      * @param robotFile     the robot file
      * @param plugins       the plugins
      * @param debugger      the debugger
-     * @throws IOException  is thrown if a file(-related) operation fails.
+     * @throws IOException is thrown if a file(-related) operation fails.
      */
     public XillProcessor(final File projectFolder, final File robotFile, final List<XillPlugin> plugins,
                          final Debugger debugger) throws IOException {
@@ -170,29 +170,17 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     }
 
     private List<Issue> validate(Resource resource) {
-        try {
-            gatherResources(resource);
-        } catch (XillParsingException e) {
-            LOGGER.error("Could not find a robot", e);
-            File errorFile = new File(resource.getURI().toFileString());
-            RobotID robotID = RobotID.getInstance(errorFile, projectFolder);
-
-            Issue issue = new Issue(e.getMessage(), e.getLine(), Issue.Type.ERROR, robotID);
-            return Collections.singletonList(issue);
-        }
-
-        List<Issue> issues = new ArrayList<>();
-        // Validate all resources
-        for (Resource currentResource : resourceSet.getResources()) {
-            // Build RobotID
-            File currentFile = new File(currentResource.getURI().toFileString());
-
-            issues.addAll(validate(currentResource, RobotID.getInstance(currentFile, projectFolder)));
-        }
-        return issues;
+        gatherResources(resource);
+        // Validate all resources and concat issues
+        return resourceSet.getResources().stream()
+                .flatMap(
+                        currentResource -> validate(currentResource,
+                                RobotID.getInstance(new File(currentResource.getURI().toFileString()), projectFolder)
+                        ).stream()
+                ).collect(Collectors.toList());
     }
 
-    private void gatherResources(final Resource resource) throws XillParsingException {
+    private void gatherResources(final Resource resource) {
         for (EObject root : resource.getContents()) {
             xill.lang.xill.Robot rootRobot = (xill.lang.xill.Robot) root;
 
@@ -201,8 +189,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
                 if (!resourceSet.getURIResourceMap().containsKey(uri)) {
                     // This is not in there yet
                     if (!new File(uri.toFileString()).exists()) {
-                        INode node = NodeModelUtils.getNode(include);
-                        throw new XillParsingException("The library " + uri.toFileString() + " does not exist.", node.getStartLine(), RobotID.getInstance(new File(resource.getURI().toFileString()), projectFolder));
+                        continue;
                     }
                     Resource library = resourceSet.getResource(uri, true);
                     gatherResources(library);
@@ -307,8 +294,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
                     // Create an error if the construct does not exist
                     Issue issue = new Issue("No construct with name " + call.getFunction() + " was found in package " + plugin, node.getStartLine(), Issue.Type.ERROR, robotID);
                     issues.add(issue);
-                }
-                else if(construct.isDeprecated()){
+                } else if (construct.isDeprecated()) {
                     Issue issue = new Issue("Call to deprecated construct with name " + call.getFunction(), node.getStartLine(), Issue.Type.WARNING, robotID);
                     issues.add(issue);
                 }
