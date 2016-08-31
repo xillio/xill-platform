@@ -1,0 +1,51 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+Author:     Xillio
+Modified:   26-8-2016
+
+Description:
+        This robot downloads some .pdf files and save them to bookFolder.
+        Note: Set bookFolder variable to some valid path according to your disk storage structure and operating system.
+        Note: On Linux OS the PhantomJS must be installed manually prior to run this robot.
+*/
+use Web, System, String, Hash, Math;
+ 
+var BASE_URL = "http://demo.xillio.com";
+var bookFolder = "c:/temp/ebooks/";
+ 
+var page = Web.loadPage(BASE_URL :: "/wordpress/?p=30");
+var links = Web.xPath(page, "//a");
+ 
+foreach (link in links) {
+    var url = getURL(link);
+    if(String.contains(url, BASE_URL :: "/wordpress/wp-content/uploads")) {
+        dowloadPDF(url, bookFolder);
+    }
+}
+ 
+//downloads a pdf to the book folder
+function dowloadPDF(url, folder) {
+    if(String.endsWith(url, ".pdf")) {
+        var destination = folder :: Hash.toMD5(url) :: ".pdf";
+        Web.download(url, destination, null, 10000);
+    }
+}
+ 
+//returns the url, given a node containing a link
+function getURL(link) {
+    return Web.xPath(link, "./@href");   
+}

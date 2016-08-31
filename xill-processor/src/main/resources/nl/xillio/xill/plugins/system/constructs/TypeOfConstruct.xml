@@ -18,16 +18,22 @@
 -->
 <function>
     <description>
-Check the value of a type. It will evaluate to either ATOMIC, LIST or OBJECT
+Returns the type of the provided variable.
+Evaluates to ATOMIC, LIST or OBJECT.
     </description>
     <examples>
         <example title="Usage">
             <code>
-                System.TypeOf([1,2,3, "Hello Xillio"]);
-                // Result: LIST
+                use System;
 
-                System.TypeOf(null);
-                // Result: ATOMIC
+                var atomicVar = 5; //variable with ATOMIC type
+                var listVar = [1,2,3]; //variable with LIST type
+                var objectVar = {"a":"1","b":"2"}; //variable with OBJECT type
+
+                System.typeOf(atomicVar); //This will return ATOMIC
+                System.typeOf(listVar);   //this will return LIST
+                System.typeOf(objectVar); //this will return OBJECT
+
             </code>
         </example>
     </examples>
