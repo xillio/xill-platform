@@ -53,3 +53,4 @@ All notable changes to this project will be documented in this file.
 * Certain exceptions are logged twice [CTC-1699]
 * Clicking open containing folder crashes Linux [CTC-1698]
 * Alert windows do not automatically get scaled in linux, which causes text to disappear [CTC-1742]
+* Error messages for errors in (transitive) includes [CTC-1514]
