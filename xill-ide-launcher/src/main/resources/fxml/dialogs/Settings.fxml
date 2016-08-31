@@ -454,6 +454,15 @@
                                                                                 <Insets />
                                                                             </padding>
                                                                         </HBox>
+                                                                        <HBox alignment="CENTER_LEFT" disable="false" focusTraversable="false" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" snapToPixel="true" spacing="4.0" visible="true">
+                                                                            <children>
+                                                                                <Label prefWidth="200.0" text="Print" />
+                                                                                <TextField fx:id="tfprint" alignment="TOP_LEFT" depthTest="INHERIT" promptText="" HBox.hgrow="ALWAYS" />
+                                                                            </children>
+                                                                            <padding>
+                                                                                <Insets />
+                                                                            </padding>
+                                                                        </HBox>
                                                                         <HBox styleClass="hbxSettingsHeader">
                                                                             <children>
                                                                                 <Label styleClass="lblSettingsHeader" text="Other" />

@@ -26,7 +26,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Window;
@@ -281,11 +280,10 @@ public class SettingsDialog extends FXMLDialog {
     }
 
     private void openEULAAlertWindow() {
-        Alert alert = new Alert(Alert.AlertType.ERROR, "Unfortunately your system is not able to open this link." +
-                "\n\nPlease enter the following URL into a browser:\n" + EulaUtils.EULA_LOCATION);
-        alert.setTitle("Compatibility");
+
+        Alert alert = new AlertDialog(AlertType.ERROR, "Compatibility", "", "Unfortunately your system is not able to open this link." +
+                "\n\nPlease enter the following URL into a browser:\n" + EulaUtils.EULA_LOCATION + "\n");
         alert.initOwner(this.getScene().getWindow());
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE); // Resizes window correctly in Linux
         alert.show();
     }
 

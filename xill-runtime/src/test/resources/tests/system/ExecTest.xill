@@ -16,7 +16,7 @@
 /*
 * Specification: Running a command with output MUST result in an OBJECT containing stdout, stderr, an exit code and a runtime
 * Input: None
-* Expected: {"output":["test1","test2"], "errors":[], "exitCode":0, "runtime":A number}
+* Expected: {"output":"test1\ntest2\n", "errors":"", "exitCode":0, "runtime":A number}
 */
 
 use Assert, System, Math, String;
@@ -30,16 +30,16 @@ var os = getOS();
 if (os == linux || os == mac) {
     // Using & does not work (since this is not executed in a shell), so simply use \n to break lines 
     output = System.exec(["echo", "test1\ntest2"]);
-    Assert.equal(output.output, ["test1","test2"], "Standard output is incorrect");
+    Assert.equal(output.output, "test1\ntest2\n", "Standard output is incorrect");
 }
 else if (os == windows) {
     // echo is built into cmd
     output = System.exec(["cmd.exe", "/C", "echo test1&echo test2"]);
     // Line breaks on Windows are \r\n
-    Assert.equal(output.output, ["test1","test2"], "Standard output is incorrect");
+    Assert.equal(output.output, "test1\r\ntest2\r\n", "Standard output is incorrect");
 }
 
-Assert.equal(output.errors, [""], "Standard error is incorrect");
+Assert.equal(output.errors, "", "Standard error is incorrect");
 Assert.equal(output.exitCode, 0, "Exit code is not 0");
 Assert.isTrue(Math.isNumber(output.runtime), "Running time is not a number");
 
