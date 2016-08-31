@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
  *
  * @author Sander Visser
  */
+@Deprecated
 public class StoreObjectConstruct extends BaseDatabaseConstruct {
 
     @Override

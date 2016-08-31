@@ -201,7 +201,7 @@ public class EditorPane extends AnchorPane implements FileTabComponent, EventHan
         for (String line : lines) {// Walk through each line of text
             text.setText(line);
             double lineHeight = text.getLayoutBounds().getHeight(); // Calculate line height (it can be multiline because of wrapping)
-            if (lineHeight+curHeight > maxHeight) {
+            if (lineHeight + curHeight > maxHeight) {
                 // This line is beyond the page height, so do the print page
                 text.setText(pageText);
                 printerJob.printPage(text);
@@ -260,6 +260,10 @@ public class EditorPane extends AnchorPane implements FileTabComponent, EventHan
             }
 
             editorReplaceBar.requestFocus();
+            event.consume();
+        } else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(HotkeysHandler.Hotkeys.PRINT)).match(event)) {
+            // Print.
+            print();
             event.consume();
         }
     }

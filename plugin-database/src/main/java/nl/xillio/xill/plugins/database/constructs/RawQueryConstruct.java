@@ -35,6 +35,7 @@ import java.sql.SQLException;
  * @author Geert Konijnendijk
  * @author Sander Visser
  */
+@Deprecated
 public class RawQueryConstruct extends BaseDatabaseConstruct {
 
     @Override

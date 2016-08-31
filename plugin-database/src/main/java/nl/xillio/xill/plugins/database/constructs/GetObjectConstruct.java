@@ -35,6 +35,7 @@ import java.util.LinkedHashMap;
  *
  * @author Sander Visser
  */
+@Deprecated
 public class GetObjectConstruct extends BaseDatabaseConstruct {
 
     @Override
