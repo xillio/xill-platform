@@ -5,8 +5,8 @@ All notable changes to this project will be documented in this file.
 
 ### Add
 
-* Add print xill script to IDE [CTC-1645]
-* New option `disableRedirect` on constructs of XURL plugin [CTC-1710]
+* Send selected xill script standard printer by pressing Ctrl+Shift+P [CTC-1645][CTC-1752]
+* New option `enableRedirect` on constructs of XURL plugin [CTC-1710][CTC-1753]
 * Upload resources to server [CTC-1651]
 * Add an overview of all active plugins in the settings about section [CTC-1667]
 * Add an archetype for xill plugins [CTC-1284]
@@ -33,7 +33,7 @@ All notable changes to this project will be documented in this file.
 
 * Corrected documentation on query construct on JDBC plugin [CTC-1690]
 * Error handling on getting next element in ResultSet is only visible in console [CTC-1685]
-* Callbot displays unspecific error: "Exception in Robot" [CTC-1646]
+* `Callbot` displays unspecific error: "Exception in Robot" [CTC-1646]
 * Expression is already closed with nested list [CTC-1679]
 * Clicking on link in settings panel crashes IDE in Linux [CTC-1704]
 * `Exiftool` plugin will scan the path variable for executable [CTC-1585]
@@ -44,12 +44,13 @@ All notable changes to this project will be documented in this file.
 * Display a descriptive error when a concurrent modification occurs [CTC-1650]
 * File exists dialog does not overwrite file [CTC-1647]
 * Enable change of casing in robot name [CTC-1444]
-* Collection.sort onKeys parameter is ignored for lists [CTC-1700]
+* `Collection.sort()` `onKeys` parameter is now ignored for lists [CTC-1700]
 * Hotkey input fields can contain illegal keywords [CTC-1696]
 * Divide by zero java error for modulo [CTC-1147]
 * OutOfMemoryError when trying to preview large XML-files [CTC-1267]
 * Add resolution parameter to `Web.screenshot()` [CTC-1043]
-* Display of CHANGELOG.md after new install [CTC-1713]
+* Display of `CHANGELOG.md` after new install [CTC-1713]
 * Certain exceptions are logged twice [CTC-1699]
 * Clicking open containing folder crashes Linux [CTC-1698]
 * Alert windows do not automatically get scaled in linux, which causes text to disappear [CTC-1742]
+* Error messages for errors in (transitive) includes [CTC-1514]
