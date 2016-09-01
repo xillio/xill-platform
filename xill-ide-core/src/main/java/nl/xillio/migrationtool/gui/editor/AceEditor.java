@@ -330,21 +330,21 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
      */
     public void paste() {
         String clipboardContent = (String) clipboard.getContent(DataFormat.PLAIN_TEXT);
-        callOnAceBlocking("onPaste", clipboardContent);
+        callOnAce("onPaste", clipboardContent);
     }
 
     /**
      * Steps back in edit history.
      */
     public void undo() {
-        callOnAceBlocking("undo");
+        callOnAce("undo");
     }
 
     /**
      * Steps forward in the edit history.
      */
     public void redo() {
-        callOnAceBlocking("redo");
+        callOnAce("redo");
     }
 
     /**
@@ -396,9 +396,12 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
         return (Boolean) executeJSBlocking("editor.session.getUndoManager().hasUndo()");
     }
 
-
     public void snapshotUndoManager() {
-        undoManager = (JSObject) executeJSBlocking("editor.session.getUndoManager()");
+        executeJS("editor.session.getUndoManager()", this::setUndoManager);
+    }
+
+    private void setUndoManager(Object object) {
+        undoManager = (JSObject) object;
     }
 
     public void restoreUndoManager() {
