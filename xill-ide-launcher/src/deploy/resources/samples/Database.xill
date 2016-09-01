@@ -1,0 +1,97 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+Author:     Xillio
+Modified:   26-8-2016
+
+Description:
+        The robot demonstrates interaction with MariaDB.
+        Note: The connection string must be properly setup otherwise the robot will fail.
+*/
+use System, MariaDB;
+  
+// Connection setup - to running instance of MariaDB database engine  
+MariaDB.connect("jdbc:mariadb://localhost:3306/course?user=user&password=supersecret");
+
+// Create database tables
+createTables();
+
+// Store some data
+storeNewspaper ({
+    "id" : "1",
+    "name" : "Huffington Post",
+    "days" : 7,
+    "weight" : 200.5
+});
+ 
+storeClient ({
+    "id" : "1",
+    "firstName" : "John",
+    "lastName" : "Carpenter",
+    "address" : "Jackson Street 2, New Amsterdam",
+    "newspaper" : 1,
+});
+ 
+// Update the data
+storeNewspaper ({
+    "id" : "1",
+    "weight" : 301.5
+});
+ 
+// Retrieve a data
+var clients = MariaDB.query("SELECT * FROM clients");
+ 
+foreach (client in clients) {
+    System.print(client.firstName :: " " :: client.lastName :: ": " :: getNewspaper(client).name);
+}
+ 
+// Returns the newspaper object for client.
+function getNewspaper(client) {
+    return MariaDB.getObject("newspapers", {"id" : client.newspaper});
+}
+
+function storeClient(client) {
+    MariaDB.storeObject("clients", client, ["id"], true);
+}
+ 
+function storeNewspaper(newspaper) {
+    MariaDB.storeObject("newspapers", newspaper, ["id"], true);
+}
+ 
+function createTables() { 
+    MariaDB.query("
+        CREATE TABLE `newspapers` (
+          `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+          `name` varchar(255) NOT NULL DEFAULT '',
+          `days` int(11) NOT NULL,
+          `weight` float DEFAULT NULL,
+          PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    ");
+     
+    MariaDB.query("
+        CREATE TABLE `clients` (
+          `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+          `lastName` varchar(255) NOT NULL DEFAULT '',
+          `firstName` varchar(255) DEFAULT NULL,
+          `address` varchar(255) NOT NULL DEFAULT '',
+          `newspaper` int(11) unsigned NOT NULL,
+          PRIMARY KEY (`id`),
+          KEY `newspaper` (`newspaper`),
+          CONSTRAINT `clients_ibfk_1` FOREIGN KEY (`newspaper`) REFERENCES `newspapers` (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    ");
+}

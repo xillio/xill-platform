@@ -40,6 +40,7 @@ import java.util.Map;
 /**
  * The construct for the connect function.
  */
+@Deprecated
 public class ConnectConstruct extends BaseDatabaseConstruct {
 
     @Inject

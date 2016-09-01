@@ -22,6 +22,7 @@ import nl.xillio.xill.plugins.database.util.Database;
 /**
  * The connect construct for the Mssql database.
  */
+@Deprecated
 public class MssqlConnectConstruct extends SimplesqlConnectConstruct {
 
     /**

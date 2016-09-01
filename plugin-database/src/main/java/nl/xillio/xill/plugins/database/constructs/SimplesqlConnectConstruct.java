@@ -29,6 +29,7 @@ import java.util.Map;
 /**
  * Base implementation for connect constructs. Individual implementations can override this if they have different needs.
  */
+@Deprecated
 public abstract class SimplesqlConnectConstruct extends BaseDatabaseConstruct {
 
     private final String databaseName;

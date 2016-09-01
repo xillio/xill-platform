@@ -22,6 +22,7 @@ import nl.xillio.xill.plugins.database.util.Database;
 /**
  * The connect construct for the MYsql database.
  */
+@Deprecated
 public class MysqlConnectConstruct extends SimplesqlConnectConstruct {
 
     /**

@@ -39,6 +39,7 @@ import java.util.*;
  * @author Geert Konijnendijk
  * @author Sander Visser
  */
+@Deprecated
 public class QueryConstruct extends BaseDatabaseConstruct {
 
     @Inject
