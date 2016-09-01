@@ -26,7 +26,7 @@
 
     <groupId>nl.xillio.xill</groupId>
     <artifactId>xill-parent</artifactId>
-    <version>3.4.0-SNAPSHOT</version>
+    <version>jenkins-test-1</version>
     <packaging>pom</packaging>
     <inceptionYear>2014</inceptionYear>
 
@@ -61,7 +61,7 @@
     </prerequisites>
 
     <properties>
-        <xill.version>3.4.0-SNAPSHOT</xill.version>
+        <xill.version>jenkins-test-1</xill.version>
         <!-- Dependencies -->
         <java.version>1.8</java.version>
         <testng.version>6.9.10</testng.version>
