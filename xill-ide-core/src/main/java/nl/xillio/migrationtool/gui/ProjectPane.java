@@ -831,20 +831,16 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
      */
     public boolean newProject(final String name, final String folder, final String description) {
         // Check if the project is already opened
-        boolean projectExists = !root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
+        boolean projectDoesntExist = root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
                 && findItemByPath(root, folder) == null;
 
-        if (projectExists) {
-            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder.");
+        if (!projectDoesntExist || "".equals(name) || "".equals(folder)) {
+            AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error", "",
+                    "Make sure the name and folder are not empty, and do not exist as a project yet.", ButtonType.OK);
+            error.show();
+            return false;
         }
 
-        if ("".equals(folder)) {
-            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Select a folder to create a new project.");
-        }
-
-        if ("".equals(name)) {
-            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Enter a file name to create a new project.");
-        }
         // Check if project folder already exists under different capitalization
         File projectFolder = new File(folder);
         if (projectFolder.exists()) {
@@ -853,14 +849,16 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 String fileName = projectFolder.getName();
 
                 if (!canonicalFileName.equals(fileName)) {
-                    return showAlertDialog(Alert.AlertType.ERROR, "Error", "",
-                            "The selected directory already exists with a different case. Please use \"" + canonicalFileName + "\" or rename your project.");
+                    AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Project already exists", "",
+                            "The selected directory already exists with a different case. Please use \"" + canonicalFileName + "\" or rename your project.", ButtonType.OK);
+                    error.show();
+                    return false;
                 }
-                return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder.");
             } catch (IOException e) {
                 LOGGER.error("Failed to read directory", e);
             }
         }
+
         // Create the project.
         ProjectSettings project = new ProjectSettings(name, folder, description);
         settings.project().save(project);
@@ -870,6 +868,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             LOGGER.error("Failed to create project directory", e);
         }
         addProject(project);
+
         return true;
     }
 

@@ -27,6 +27,7 @@ import nl.xillio.xill.plugins.database.util.Database;
 /**
  * The connect construct for the SQLite database.
  */
+@Deprecated
 public class SqliteConnectConstruct extends BaseDatabaseConstruct {
 
     @Override
