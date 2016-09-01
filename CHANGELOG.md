@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 * Add `Date.isBefore()` and `Date.isAfter()` constructs [CTC-1672]
 * Add `Date.fromTimestamp()` construct [CTC-1616]
 * Add `Properties` plugin package [CTC-1663]
+* Add "new folder" and "new file" options to project pane context menu [CTC-1739]
 
 ### Change
 
