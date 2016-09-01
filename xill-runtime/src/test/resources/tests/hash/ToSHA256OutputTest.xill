@@ -1,0 +1,30 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Specification: When an output stream is given the construct MUST forward the input to the output stream.
+ * Input: A string
+ * Expected: A file containing the input
+ */
+
+use Assert, Hash, File;
+
+var input = "foo bar 123 !@#";
+var file = "testresources/hash/output.txt";
+
+var hash = Hash.toSHA256(input, File.openWrite(file));
+Assert.equal(File.getText(file), input);
+Assert.equal(hash, "341f4b54cd2b15d2e1004f6518eb84df874920047b90bb95612c4a8c7d0a6c95");
+
+File.delete(file);
