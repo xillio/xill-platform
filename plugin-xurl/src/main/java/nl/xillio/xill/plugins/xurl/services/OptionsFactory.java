@@ -176,10 +176,10 @@ public class OptionsFactory {
                 options.setTimeout(getInt(value, label()));
             }
         },
-        DISABLE_REDIRECT {
+        ENABLE_REDIRECT {
             @Override
             void apply(Options options, MetaExpression value) {
-                options.setDisableRedirect(getBoolean(value, label()));
+                options.setEnableRedirect(getBoolean(value, label()));
             }
         },
         HEADERS {

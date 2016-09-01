@@ -26,6 +26,7 @@ import nl.xillio.xill.plugins.database.util.Database;
 /**
  * The connect construct for the Oracle database.
  */
+@Deprecated
 public class OracleConnectConstruct extends BaseDatabaseConstruct {
     @Override
     public ConstructProcessor doPrepareProcess(ConstructContext context) {

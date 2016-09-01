@@ -83,14 +83,16 @@
 										<Tooltip text="Save all" />
 									</tooltip>
 								</Button>
-								<Button fx:id="btnPrint" mnemonicParsing="false" onAction="#buttonPrint" styleClass="iconButton" text="Print">
+								<!-- Temporarily disabled until print function is complete, see: https://xillio.atlassian.net/browse/CTC-1752
+
+									<Button fx:id="btnPrint" mnemonicParsing="false" onAction="#buttonPrint" styleClass="iconButton" text="Print">
 									<graphic>
 										<Pane styleClass="icon" />
 									</graphic>
 									<tooltip>
 										<Tooltip text="Print" />
 									</tooltip>
-								</Button>
+								</Button>-->
 								<Button fx:id="btnRobotsProgress" mnemonicParsing="false" onAction="#buttonRobotsProgress" styleClass="iconButton" text="Robots progress">
 									<graphic>
 										<Pane styleClass="icon" />
