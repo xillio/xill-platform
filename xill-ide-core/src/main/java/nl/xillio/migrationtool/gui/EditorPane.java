@@ -318,6 +318,7 @@ public class EditorPane extends AnchorPane implements FileTabComponent, EventHan
             documentState.setValue(DocumentState.SAVED);
         } else {
             documentState.setValue(DocumentState.CHANGED);
+            tab.resetAutoSave();
         }
     }
 
@@ -329,6 +330,13 @@ public class EditorPane extends AnchorPane implements FileTabComponent, EventHan
     public void setLastSavedCode(final String newCode) {
         lastSavedCode = newCode;
         documentState.setValue(DocumentState.SAVED);
+    }
+
+    /**
+     * Return the last saved editor's content
+     */
+    public String getLastSavedCode(){
+        return lastSavedCode;
     }
 
     /**
