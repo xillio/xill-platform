@@ -188,7 +188,7 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
                 setCode(codeString);
             }
             // get focus
-            callOnAce("focus");
+            callOnAceBlocking("focus");
         });
     }
 
@@ -388,12 +388,12 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
         }
     }
 
-    public Boolean hasRedo() {
-        return (Boolean) executeJSBlocking("editor.session.getUndoManager().hasRedo()");
+    public void hasRedo(Consumer<Object> consumer) {
+        executeJS("editor.session.getUndoManager().hasRedo()", consumer);
     }
 
-    public Boolean hasUndo() {
-        return (Boolean) executeJSBlocking("editor.session.getUndoManager().hasUndo()");
+    public void hasUndo(Consumer<Object> consumer) {
+        executeJS("editor.session.getUndoManager().hasUndo()", consumer);
     }
 
     public void snapshotUndoManager() {
@@ -514,7 +514,7 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
     }
 
     private void executeJS(final String js, final Consumer<Object> callback) {
-        Platform.runLater(() -> callback.accept(executeJSBlocking(js)));
+        Platform.runLater(() -> callback.accept(executeJSBlockingEncapsulated(js)));
     }
 
     /**
@@ -527,6 +527,30 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
      * @see WebEngine#executeScript(String)
      */
     private Object executeJSBlocking(final String js) {
+        StringBuilder sb = new StringBuilder("NOT Called from executeJS\n");
+        Arrays.asList(Thread.currentThread().getStackTrace()).forEach(ste -> {
+            sb.append("   ")
+                    .append(ste.getClassName())
+                    .append('#')
+                    .append(ste.getMethodName())
+                    .append(" (")
+                    .append(ste.getLineNumber())
+                    .append(")\n");
+        });
+        LOGGER.warn(sb.toString());
+
+        if (!documentLoaded.get()) {
+            throw new IllegalStateException("Cannot run javascript because the editor has not been loaded yet: " + js);
+        }
+        try {
+            return editor.getEngine().executeScript(js);
+        } catch (JSException e) {
+            LOGGER.error("Failed to execute javascript [" + js + "]");
+            throw e;
+        }
+    }
+  private Object executeJSBlockingEncapsulated(final String js) {
+
         if (!documentLoaded.get()) {
             throw new IllegalStateException("Cannot run javascript because the editor has not been loaded yet: " + js);
         }
@@ -563,7 +587,7 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
      * @see JSObject#call(String, Object...)
      */
     private void callOnAce(final Consumer<Object> callback, String method, Object... args) {
-        Platform.runLater(() -> callback.accept(callOnAceBlocking(method, args)));
+        Platform.runLater(() -> callback.accept(callOnAceBlockingEncapsulated(method, args)));
     }
 
     /**
@@ -573,7 +597,28 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
      * @param args   Arguments to pass to the method
      * @see JSObject#call(String, Object...)
      */
+    private Object callOnAceBlockingEncapsulated(String method, Object... args) {
+        try {
+            return ace.call(method, args);
+        } catch (JSException e) {
+            LOGGER.error("Failed to call on ace [" + method + ": " + Arrays.toString(args) + "] ");
+            throw e;
+        }
+    }
+
     private Object callOnAceBlocking(String method, Object... args) {
+        StringBuilder sb = new StringBuilder("NOT Called from callOnAce\n");
+        Arrays.asList(Thread.currentThread().getStackTrace()).forEach(ste -> {
+            sb.append("   ")
+                    .append(ste.getClassName())
+                    .append('#')
+                    .append(ste.getMethodName())
+                    .append(" (")
+                    .append(ste.getLineNumber())
+                    .append(")\n");
+        });
+        LOGGER.warn(sb.toString());
+
         try {
             return ace.call(method, args);
         } catch (JSException e) {

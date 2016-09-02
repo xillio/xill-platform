@@ -139,22 +139,17 @@ public class EditorPane extends AnchorPane implements FileTabComponent, EventHan
      * editor state immediately, the task is run a couple of times to ensure the state is updated correctly.
      */
     private void updateUndoRedoButtons() {
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
-            private int repeated = 0;
+        editor.hasRedo(this::setBtnRedo);
+        editor.hasUndo(this::setBtnUndo);
+    }
 
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    btnRedo.setDisable(!editor.hasRedo());
-                    btnUndo.setDisable(!editor.hasUndo());
-                });
-                if (repeated++ > 3) {
-                    timer.cancel();
-                }
-            }
-        };
-        timer.scheduleAtFixedRate(task, 0, 500);
+    private void setBtnRedo(Object object) {
+        Boolean hasRedo = (Boolean)object;
+        btnRedo.setDisable(!hasRedo);
+    }
+    private void setBtnUndo(Object object) {
+        Boolean hasUndo = (Boolean)object;
+        btnUndo.setDisable(!hasUndo);
     }
 
     @FXML
