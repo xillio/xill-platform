@@ -176,6 +176,12 @@ public class OptionsFactory {
                 options.setTimeout(getInt(value, label()));
             }
         },
+        ENABLE_REDIRECT {
+            @Override
+            void apply(Options options, MetaExpression value) {
+                options.setEnableRedirect(getBoolean(value, label()));
+            }
+        },
         HEADERS {
             @Override
             void apply(Options options, MetaExpression value) {

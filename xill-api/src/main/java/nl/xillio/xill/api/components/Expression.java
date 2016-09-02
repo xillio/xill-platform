@@ -54,4 +54,10 @@ public interface Expression extends AutoCloseable {
 
     default void close() {
     }
+
+    /**
+     * @return a copy of the expression
+     */
+    Expression copy();
+
 }

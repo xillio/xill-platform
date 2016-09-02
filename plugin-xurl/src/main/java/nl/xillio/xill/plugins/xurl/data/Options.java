@@ -38,6 +38,7 @@ public class Options {
     private int timeout;
     private Header[] headers = new Header[0];
     private String logging;
+    private boolean enableRedirect = true;
 
     public Credentials getBasicAuth() {
         return basicAuth;
@@ -101,6 +102,14 @@ public class Options {
 
     public void setLogging(String logging) {
         this.logging = logging;
+    }
+
+    public boolean isEnableRedirect() {
+        return enableRedirect;
+    }
+
+    public void setEnableRedirect(boolean enableRedirect) {
+        this.enableRedirect = enableRedirect;
     }
 
     public Optional<ContentType> getBodyContentType() {

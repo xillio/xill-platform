@@ -15,27 +15,34 @@
  */
 package nl.xillio.migrationtool.dialogs;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Pair;
 import me.biesaart.utils.FileUtils;
+import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.RobotValidationException;
 import nl.xillio.migrationtool.XillServerUploader;
 import nl.xillio.migrationtool.gui.FXController;
 import nl.xillio.migrationtool.gui.ProjectPane;
 import nl.xillio.xill.util.settings.Settings;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * A dialog to upload an item to the server.
  */
 public class UploadToServerDialog extends FXMLDialog {
+
+    private static final Logger LOGGER = Log.get();
 
     @FXML
     private TextField tfserver;
@@ -81,6 +88,7 @@ public class UploadToServerDialog extends FXMLDialog {
             // Do connect and authenticate to server
             xillServerUploader.authenticate(tfserver.getText(), tfusername.getText(), tfpassword.getText());
         } catch (IOException e) {
+            LOGGER.error("Could not login to server", e);
             AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR, "Upload to server",
                     "Could not login to server.", e.getMessage(),
                     ButtonType.OK);
@@ -116,11 +124,13 @@ public class UploadToServerDialog extends FXMLDialog {
             close();
 
         } catch (IOException e) {
+            LOGGER.error("Uploading process has failed", e);
             AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR, "Upload to server",
                     "Uploading process has failed.", e.getMessage() + (e.getCause() == null ? "" : "\n" + e.getCause().getMessage()),
                     ButtonType.OK);
             dialog.showAndWait();
         } catch (RobotValidationException e) {
+            LOGGER.error("At least one uploaded robot is not valid", e);
             AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Upload to server",
                     "At least one uploaded robot is not valid.", e.getMessage(),
                     ButtonType.OK);
@@ -129,6 +139,12 @@ public class UploadToServerDialog extends FXMLDialog {
     }
 
     private boolean processItems(final List<TreeItem<Pair<File, String>>> items, boolean projectExistCheck, boolean robotExistCheck, final String projectId) throws IOException {
+
+        //check all items (including children) too see if robots have valid names
+        if (checkAllRobots(items)) {
+            return false; //Cancel the upload
+        }
+
         // Recursively go through selected items
         for (TreeItem<Pair<File, String>> item : items) {
             // Check if the item is a project
@@ -148,6 +164,61 @@ public class UploadToServerDialog extends FXMLDialog {
             }
         }
         return true;
+    }
+
+    private boolean checkAllRobots(final List<TreeItem<Pair<File, String>>> items) {
+        //iterate over all items
+        for (TreeItem<Pair<File, String>> item : items) {
+            //check robots only
+            if (item.getParent() != projectPane.getRoot() && !item.getValue().getKey().isDirectory() && invalidFile(item)) {
+                return true;
+            }
+            //check children too
+            if (!item.getChildren().isEmpty() && checkAllRobots(item.getChildren())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean invalidFile(TreeItem<Pair<File, String>> item) {
+        final File itemFile = item.getValue().getKey();
+        final boolean isXill = itemFile.getName().matches("^.*\\.xill$"); //it is a robot
+        final boolean validName = itemFile.getName().matches("^[_a-zA-Z][a-zA-Z0-9_]*\\.xill$"); //name is valid
+
+        if (isXill && !validName) {
+            //the xill robot has an invalid name, show dialog.
+            ButtonType cancelUpload = new ButtonType("Cancel Upload");
+            AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR,
+                    "Invalid robot name found",
+                    "The robot '" + itemFile.getName() + "' has an invalid name.",
+                    "Do you want to rename the robot or cancel the whole upload?",
+                    new ButtonType("Rename"), cancelUpload
+            );
+            final Optional<ButtonType> result = dialog.showAndWait();
+
+            if (!result.isPresent() || result.get() == cancelUpload) {
+                return true; //do not upload
+            } else {
+                List<String> selectedItems = getSelectedPaths(); //we need to get the paths for reselection
+                RenameDialog dlg = new RenameDialog(item); //open rename dialog
+                dlg.showAndWait();
+                Platform.runLater(() -> reselectItems(selectedItems)); //reselect the items
+                return invalidFile(item); //check again for invalid names
+            }
+        }
+        return false; //the file is valid
+    }
+
+    private List<String> getSelectedPaths() {
+        return this.treeItems.stream().map(pairTreeItem -> pairTreeItem.getValue().getKey().getAbsolutePath()).collect(Collectors.toList());
+    }
+
+    private void reselectItems(List<String> items) {
+        //reselect the items that were deselected because of a rename
+        for (String item : items) {
+            projectPane.select(item);
+        }
     }
 
     private boolean uploadProject(final TreeItem<Pair<File, String>> item, boolean existCheck) throws IOException {
@@ -232,7 +303,7 @@ public class UploadToServerDialog extends FXMLDialog {
         }
 
         // Validate robot name
-        return itemFile.getName().matches("^[a-zA-Z][a-zA-Z0-9_]*\\.xill$");
+        return itemFile.getName().matches("^[_a-zA-Z][a-zA-Z0-9_]*\\.xill$");
     }
 
     private boolean uploadRobot(final File robotFile, final File projectFolder, final boolean existCheck, String projectId) throws IOException {

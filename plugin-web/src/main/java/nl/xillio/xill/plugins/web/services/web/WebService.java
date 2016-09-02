@@ -37,6 +37,9 @@ import java.util.Set;
 @ImplementedBy(WebServiceImpl.class)
 public interface WebService {
 
+    int MIN_VIEWPORT_WIDTH = 400;
+    int MIN_VIEWPORT_HEIGHT = 300;
+
     /**
      * Tries to click a {@link WebVariable}.
      *
@@ -197,9 +200,11 @@ public interface WebService {
      * Makes a screenshot on a {@link WebVariable} and returns it as file.
      *
      * @param var The variable we're screenshotting.
+     * @param width The width of the screenshot in pixels. (0 if current viewport size is used)
+     * @param height The height of the screenshot in pixels. (0 if current viewport size is used)
      * @return A path to the file containing the screenshot.
      */
-    Path getScreenshotAsFilePath(WebVariable var);
+    Path getScreenshotAsFilePath(WebVariable var, int width, int height);
 
     /**
      * Checks whether a {@link WebVariable} is selected.
@@ -284,9 +289,9 @@ public interface WebService {
      * Sets the drivers default options of a {@link WebVariable}.
      *
      * @param var     The variable we're setting the options for.
-     * @param timeOut A timeout in milliseconds.
+     * @param options The options.
      */
-    void setDriverOptions(WebVariable var, int timeOut);
+    void setDriverOptions(WebVariable var, Options options);
 
     /**
      * Closes a {@link WebVariable} and all pages associated.

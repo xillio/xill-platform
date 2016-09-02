@@ -212,6 +212,9 @@ public class Settings {
     public static final String PRINT_MARGIN_COLUMN = "PrintMarginColumn";
 
     /** */
+    public static final String PRINTER_FONT_SIZE = "PrinterFontSize";
+
+    /** */
     public static final String SHOW_GUTTER = "ShowGutter";
 
     /** */
@@ -307,6 +310,9 @@ public class Settings {
 
     /** */
     public static final String ESCAPE = "Escape";
+
+    /** */
+    public static final String PRINT = "Print";
 
     // =============================================================================
 
