@@ -529,23 +529,25 @@ public class RobotTab extends FileTab implements Initializable {
         if (currentRobot != robot) {
 
             currentRobot = robot;
-            String code;
-            try {
-                code = FileUtils.readFileToString(robot.getPath());
-            } catch (IOException e) {
-                return;
-            }
-            // Load the code
-            editorPane.getEditor().setCode(code);
-            editorPane.getEditor().refreshBreakpoints(robot);
+            Platform.runLater(() -> {
+                String code;
+                try {
+                    code = FileUtils.readFileToString(robot.getPath());
+                } catch (IOException e) {
+                    return;
+                }
+                // Load the code
+                editorPane.getEditor().setCode(code);
+                editorPane.getEditor().refreshBreakpoints(robot);
 
-            if (robot == getProcessor().getRobotID()) {
-                // We are moving back to the current robot
-                editorPane.getEditor().restoreUndoManager();
-            }
+                if (robot == getProcessor().getRobotID()) {
+                    // We are moving back to the current robot
+                    editorPane.getEditor().restoreUndoManager();
+                }
 
-            // Blocker
-            editorPane.getEditor().setEditable(currentRobot == getProcessor().getRobotID());
+                // Blocker
+                editorPane.getEditor().setEditable(currentRobot == getProcessor().getRobotID());
+            });
 
             // Remove the 'edited' state
             Platform.runLater(() -> editorPane.getDocumentState().setValue(DocumentState.SAVED));
