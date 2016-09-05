@@ -343,8 +343,8 @@ public class FXController implements Initializable, EventHandler<Event> {
             if (!isWhiteListed(document.getName())) {
                 AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING,
                         "Unsupported file type",
-                        "The file '" + document.getName() + "' has an unsupported type and this editor may not work correctly." + System.lineSeparator() +
-                                "The editing of non-text-files is ill advised and may corrupt the file.",
+                        "The file '" + document.getName() + "' has an unsupported type.",
+                                "The editing of non-text-files is ill advised and may corrupt the file." + System.lineSeparator() +
                         "Do you want to continue?",
                         ButtonType.YES, ButtonType.NO);
                 final Optional<ButtonType> result = dialog.showAndWait();
