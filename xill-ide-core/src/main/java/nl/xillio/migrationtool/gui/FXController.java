@@ -360,7 +360,7 @@ public class FXController implements Initializable, EventHandler<Event> {
     }
 
     private boolean isWhiteListed(String fileName) {
-        List<String> whiteList = Arrays.asList("txt", "xml");
+        List<String> whiteList = Arrays.asList("xill", "txt", "properties", "html", "htm", "css", "xslt", "xsl", "xml", "json", "js", "md", "cfg", "ini", "bat", "sh", "sbot");
         String extension = "";
 
         int i = fileName.lastIndexOf('.');
