@@ -46,6 +46,7 @@ import nl.xillio.xill.util.HotkeysHandler.Hotkeys;
 import nl.xillio.xill.util.settings.Settings;
 import nl.xillio.xill.util.settings.SettingsHandler;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.pegdown.PegDownProcessor;
 import org.slf4j.Logger;
 
@@ -361,16 +362,7 @@ public class FXController implements Initializable, EventHandler<Event> {
 
     private boolean isWhiteListed(String fileName) {
         List<String> whiteList = Arrays.asList("xill", "txt", "properties", "html", "htm", "css", "xslt", "xsl", "xml", "json", "js", "md", "cfg", "ini", "bat", "sh", "sbot");
-        String extension = "";
-
-        int i = fileName.lastIndexOf('.');
-        if (i > 0) {
-            extension = fileName.substring(i + 1);
-        }
-        if (whiteList.contains(extension)) {
-            return true;
-        }
-        return false;
+        return whiteList.contains(FilenameUtils.getExtension(fileName));
     }
 
     @FXML
