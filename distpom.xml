@@ -24,7 +24,7 @@
     <description>The JavaFX bootstrapper for the Xill IDE</description>
 
     <groupId>nl.xillio.xill</groupId>
-    <version>3.4.0-M3</version><!-- Xill Platform Version -->
+    <version>3.4.0-M3</version><!-- Xill Platform Version --><!--Keep these comments for the version-change script!-->
     <packaging>pom</packaging>
     <inceptionYear>2014</inceptionYear>
     <artifactId>xill-ide</artifactId>
