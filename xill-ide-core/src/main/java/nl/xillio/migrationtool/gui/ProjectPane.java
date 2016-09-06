@@ -179,6 +179,14 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         menuRename = new MenuItem("Rename...");
         menuRename.setOnAction(e -> renameButtonPressed());
 
+        // New Folder
+        MenuItem menuCreateFolder = new MenuItem("New Folder...");
+        menuCreateFolder.setOnAction(e -> newFolderButtonPressed());
+
+        // New File
+        MenuItem menuNewFile = new MenuItem("New File...");
+        menuNewFile.setOnAction(e -> newBot(null));
+
         // Delete.
         menuDelete = new MenuItem("Delete...");
         menuDelete.setOnAction(e -> deleteButtonPressed());
@@ -201,7 +209,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
 
         // Create the context menu.
-        ContextMenu menu = new ContextMenu(menuCut, menuCopy, menuPaste, menuRename, menuDelete, menuUpload);
+        ContextMenu menu = new ContextMenu(menuCut, menuCopy, menuPaste, menuRename, menuCreateFolder, menuNewFile, menuDelete, menuUpload);
         if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
             menu.getItems().add(menuOpenFolder);
         }
