@@ -361,7 +361,7 @@ public class FXController implements Initializable, EventHandler<Event> {
     }
 
     private boolean isWhiteListed(String fileName) {
-        List<String> whiteList = Arrays.asList("xill", "txt", "properties", "html", "htm", "css", "xslt", "xsl", "xml", "json", "js", "md", "cfg", "ini", "bat", "sh", "sbot");
+        List<String> whiteList = Arrays.asList("xill", "txt", "properties", "html", "htm", "css", "xslt", "xml", "json", "js", "md", "cfg", "ini", "bat", "sh", "sbot");
         return whiteList.contains(FilenameUtils.getExtension(fileName));
     }
 
