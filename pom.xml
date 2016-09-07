@@ -26,7 +26,7 @@
 
     <groupId>nl.xillio.xill</groupId>
     <artifactId>xill-build</artifactId>
-    <version>jenkins-test8</version>
+    <version>jenkins-test9</version>
     <packaging>pom</packaging>
     <inceptionYear>2014</inceptionYear>
 
