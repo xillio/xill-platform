@@ -1,7 +1,8 @@
  {
 
-"sonarHost": "https://sonaross.xillio.com",
+   "sonarHost": "https://sonaross.xillio.com",
 
-"sonarProjectKey": "nl.xillio.xill:xill-build:origin/develop"
+   "sonarProjectKey": "nl.xillio.xill:xill-build:origin/develop"
 
+   "sonarExclusions": "xill-ide-core/**/*"
 } 
