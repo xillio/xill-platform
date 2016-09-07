@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 * Add `Date.isBefore()` and `Date.isAfter()` constructs [CTC-1672]
 * Add `Date.fromTimestamp()` construct [CTC-1616]
 * Add `Properties` plugin package [CTC-1663]
+* Add "new folder" and "new file" options to project pane context menu [CTC-1739]
 
 ### Change
 
@@ -28,6 +29,7 @@ All notable changes to this project will be documented in this file.
 * Move cookies in XURL responses to a separate field [CTC-1687]
 * Split the "New project" menu option into "New project..." and "New project from existing sources..." [CTC-1691]
 * `System.exec()` outputs one string including EOL charactedrs, instead of a list of lines [CTC-1466]
+* Warn user when uploading .xill file with illegal name [CTC-1723]
 
 ### Fix
 
@@ -53,3 +55,4 @@ All notable changes to this project will be documented in this file.
 * Certain exceptions are logged twice [CTC-1699]
 * Clicking open containing folder crashes Linux [CTC-1698]
 * Alert windows do not automatically get scaled in linux, which causes text to disappear [CTC-1742]
+* Error messages for errors in (transitive) includes [CTC-1514]
