@@ -29,6 +29,7 @@
     <inceptionYear>2014</inceptionYear>
     <artifactId>xill-ide-dist</artifactId>
 
+    
     <build>
         <plugins>
             <!-- Maven Assembly Plugin -->
