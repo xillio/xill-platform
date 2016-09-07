@@ -26,7 +26,7 @@
 
     <groupId>nl.xillio.xill</groupId>
     <artifactId>xill-parent</artifactId>
-    <version>3.4.0-SNAPSHOT</version>
+    <version>3.4.0-PRE-SERVER</version>
     <packaging>pom</packaging>
     <inceptionYear>2014</inceptionYear>
 
@@ -37,6 +37,18 @@
 
     <url>http://xill.io/</url>
 
+    <distributionManagement>
+        <repository>
+            <id>MavenXillio-releases</id>
+            <name>MavenXillio-releases</name>
+            <url>https://maven.xillio.com/artifactory/libs-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>MavenXillio-snapshots</name>
+            <url>https://maven.xillio.com/artifactory/binary-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -61,7 +73,7 @@
     </prerequisites>
 
     <properties>
-        <xill.version>3.4.0-SNAPSHOT</xill.version>
+        <xill.version>3.4.0-PRE-SERVER</xill.version>
         <!-- Dependencies -->
         <java.version>1.8</java.version>
         <testng.version>6.9.10</testng.version>
