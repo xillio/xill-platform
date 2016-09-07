@@ -30,6 +30,7 @@ All notable changes to this project will be documented in this file.
 * Split the "New project" menu option into "New project..." and "New project from existing sources..." [CTC-1691]
 * `System.exec()` outputs one string including EOL charactedrs, instead of a list of lines [CTC-1466]
 * Warn user when uploading .xill file with illegal name [CTC-1723]
+* `Date.parse()` and `Date.format()` now no longer assume local time but default to UTC [CTC-1737]
 
 ### Fix
 
