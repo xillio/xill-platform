@@ -4,5 +4,4 @@
 
    "sonarProjectKey": "nl.xillio.xill:xill-build:origin/develop"
 
-   "sonarExclusions": "xill-ide-core/**/*"
 } 
