@@ -24,10 +24,10 @@
     <description>A binary distribution of the Xill IDE</description>
 
     <groupId>nl.xillio.xill</groupId>
-    <version>jenkins-test7</version><!-- Xill Platform Version --><!--Keep these comments for the version-change script!-->
+    <version>jenkins-test8</version><!-- Xill Platform Version --><!--Keep these comments for the version-change script!-->
     <packaging>pom</packaging>
     <inceptionYear>2014</inceptionYear>
-    <artifactId>xill-ide-dist</artifactId>
+    <artifactId>xill-ide-distr</artifactId>
 
     <build>
         <finalName>${project.artifactId}-${project.version}-${os.classifier}-${os.arch}</finalName>

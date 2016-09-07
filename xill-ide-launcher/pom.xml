@@ -27,7 +27,7 @@
     <parent>
         <groupId>nl.xillio.xill</groupId>
         <artifactId>xill-parent</artifactId>
-        <version>jenkins-test7</version>
+        <version>jenkins-test8</version>
         <relativePath>../xill-parent</relativePath>
     </parent>
 
