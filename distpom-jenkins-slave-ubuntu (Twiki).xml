@@ -27,7 +27,7 @@
     <version>jenkins-test10</version><!-- Xill Platform Version --><!--Keep these comments for the version-change script!-->
     <packaging>pom</packaging>
     <inceptionYear>2014</inceptionYear>
-    <artifactId>xill-ide-dist</artifactId>
+    <artifactId>xill-ide-dist-linux</artifactId>
 
     <build>
         <finalName>${project.artifactId}-${project.version}-${os.classifier}-${os.arch}</finalName>
