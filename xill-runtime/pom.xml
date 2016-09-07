@@ -30,7 +30,7 @@
     <parent>
         <groupId>nl.xillio.xill</groupId>
         <artifactId>xill-parent</artifactId>
-        <version>jenkins-test3</version>
+        <version>jenkins-test4</version>
         <relativePath>../xill-parent</relativePath>
     </parent>
 
