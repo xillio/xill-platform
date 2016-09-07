@@ -20,7 +20,7 @@ sed -i "s/<xill.version>.*<\/xill.version>/<xill.version>$1<\/xill.version>/" xi
 if [ "$2" != "-jenkins" ]
 	then
 		mvn versions:set -DnewVersion=$1
-		cd xill-parent/
+		pushd xill-parent/ >> /dev/null
 		mvn versions:set -DnewVersion=$1
-		cd ..
+		popd >> /dev/null
 fi
