@@ -1,4 +1,4 @@
-﻿﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Copyright (C) 2014 Xillio (support@xillio.com)
@@ -24,7 +24,7 @@
     <description>A binary distribution of the Xill IDE</description>
 
     <groupId>nl.xillio.xill</groupId>
-    <version>jenkins-test11</version><!-- Xill Platform Version --><!--Keep these comments for the version-change script!-->
+    <version>jenkins-test12</version>
     <packaging>pom</packaging>
     <inceptionYear>2014</inceptionYear>
     <artifactId>xill-ide-dist</artifactId>
@@ -39,7 +39,7 @@
                 <version>2.6</version>
                 <configuration>
                     <descriptors>
-                        <descriptor>${project.basedir}/xill-assemblies/src/main/resources/assemblies/dist-zip.xml</descriptor>
+                        <descriptor>${project.basedir}/dist-zip.xml</descriptor>
                     </descriptors>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>

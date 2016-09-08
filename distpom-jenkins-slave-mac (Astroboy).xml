@@ -20,68 +20,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Xill IDE Distribution</name>
-    <description>A binary distribution of the Xill IDE</description>
+    <parent>
+        <groupId>nl.xillio.xill</groupId>
+        <artifactId>xill-ide-dist</artifactId>
+        <relativePath>./distpom.xml</relativePath>
+    </parent>
 
-    <groupId>nl.xillio.xill</groupId>
-    <version>jenkins-test10</version><!-- Xill Platform Version --><!--Keep these comments for the version-change script!-->
-    <packaging>pom</packaging>
-    <inceptionYear>2014</inceptionYear>
     <artifactId>xill-ide-dist-mac</artifactId>
-
-    <build>
-        <finalName>${project.artifactId}-${project.version}-${os.classifier}-${os.arch}</finalName>
-        <plugins>
-            <!-- Maven Assembly Plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <descriptors>
-                        <descriptor>${project.basedir}/xill-assemblies/src/main/resources/assemblies/dist-zip.xml</descriptor>
-                    </descriptors>
-                    <appendAssemblyId>false</appendAssemblyId>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
-    <profiles>
-        <profile>
-            <id>windows</id>
-            <activation>
-                <os>
-                    <family>Windows</family>
-                </os>
-            </activation>
-            <properties>
-                <os.classifier>win</os.classifier>
-            </properties>
-        </profile>
-        <profile>
-            <id>mac</id>
-            <activation>
-                <os>
-                    <family>mac</family>
-                </os>
-            </activation>
-            <properties>
-                <os.classifier>osx</os.classifier>
-            </properties>
-        </profile>
-        <profile>
-            <id>unix</id>
-            <activation>
-                <os>
-                    <name>!mac os x</name>
-                    <family>unix</family>
-                </os>
-            </activation>
-            <properties>
-                <os.classifier>unix</os.classifier>
-            </properties>
-        </profile>
-    </profiles>
 
 </project>
