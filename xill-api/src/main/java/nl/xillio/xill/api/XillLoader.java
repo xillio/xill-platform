@@ -36,6 +36,12 @@ public class XillLoader {
      * @throws IOException if no environment could be found
      */
     public static XillEnvironment getEnv(Path coreFolder) throws IOException {
+        // Try to load the XillEnvironment from the classpath first
+        XillEnvironment environment = loadXillEnvironment(null);
+        if (environment != null) {
+            return environment;
+        }
+
         return getEnv(coreFolder, XillEnvironment.class.getClassLoader());
     }
 
@@ -56,15 +62,22 @@ public class XillLoader {
                 // This check if to improve performance. We only load from processor jars
                 URL url = jarFile.toUri().toURL();
                 URLClassLoader classLoader = new URLClassLoader(new URL[]{url}, parentClassLoader);
-                ServiceLoader<XillEnvironment> loader = ServiceLoader.load(XillEnvironment.class, classLoader);
-
-                for (XillEnvironment environment : loader) {
-                    return environment;
+                XillEnvironment xillEnvironment = loadXillEnvironment(classLoader);
+                if (xillEnvironment != null) {
+                    return xillEnvironment;
                 }
             }
         }
 
         throw new NoSuchFileException("No XillEnvirionment implementation found in " + coreFolder);
+    }
+
+    private static XillEnvironment loadXillEnvironment(ClassLoader classLoader) {
+        ServiceLoader<XillEnvironment> loader = ServiceLoader.load(XillEnvironment.class, classLoader);
+        for (XillEnvironment environment : loader) {
+            return environment;
+        }
+        return null;
     }
 
     /**

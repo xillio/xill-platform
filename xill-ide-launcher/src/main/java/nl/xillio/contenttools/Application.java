@@ -51,6 +51,8 @@ public class Application extends javafx.application.Application {
         Files.createDirectories(PLUGIN_FOLDER);
         environment = XillLoader.getEnv(PLUGIN_FOLDER);
 
+        System.out.println(System.getProperty("java.class.path"));
+
         try {
             SingleInstanceHandler.start();
             launch(args);
@@ -63,6 +65,11 @@ public class Application extends javafx.application.Application {
     @Override
     public void start(final Stage stage) throws Exception {
         LOGGER.info("Loading IDE");
+        // Try to load the IDE from the classpath first
+        if (loadIDE(stage, null)) {
+            return;
+        }
+
         IDEJarFinder finder = new IDEJarFinder();
         Files.walkFileTree(PLUGIN_FOLDER, finder);
 
@@ -70,24 +77,31 @@ public class Application extends javafx.application.Application {
 
         for (Path file : finder.getMatches()) {
             URLClassLoader classLoader = new URLClassLoader(new URL[]{file.toUri().toURL()});
-            ServiceLoader<ContenttoolsPlugin> loader = ServiceLoader.load(ContenttoolsPlugin.class, classLoader);
-
-            Iterator<ContenttoolsPlugin> iterator = loader.iterator();
-            if (iterator.hasNext()) {
-                ContenttoolsPlugin ide = iterator.next();
-                ide.start(stage, environment);
-
-                SingleInstanceHandler.addListener(message -> Arrays.stream(message)
-                        .filter(e -> e.endsWith(XillEnvironment.ROBOT_EXTENSION))
-                        .forEach(ide.getSingleInstanceHandler()));
-                getParameters().getUnnamed().stream()
-                        .filter(e -> e.endsWith(XillEnvironment.ROBOT_EXTENSION))
-                        .forEach(ide.getSingleInstanceHandler());
+            if (loadIDE(stage, classLoader)) {
                 return;
             }
         }
 
         throw new IOException("Could not find implementation of ide");
+    }
+
+    private boolean loadIDE(Stage stage, URLClassLoader classLoader) {
+        ServiceLoader<ContenttoolsPlugin> loader = ServiceLoader.load(ContenttoolsPlugin.class, classLoader);
+
+        Iterator<ContenttoolsPlugin> iterator = loader.iterator();
+        if (iterator.hasNext()) {
+            ContenttoolsPlugin ide = iterator.next();
+            ide.start(stage, environment);
+
+            SingleInstanceHandler.addListener(message -> Arrays.stream(message)
+                    .filter(e -> e.endsWith(XillEnvironment.ROBOT_EXTENSION))
+                    .forEach(ide.getSingleInstanceHandler()));
+            getParameters().getUnnamed().stream()
+                    .filter(e -> e.endsWith(XillEnvironment.ROBOT_EXTENSION))
+                    .forEach(ide.getSingleInstanceHandler());
+            return true;
+        }
+        return false;
     }
 
     private static class IDEJarFinder extends SimpleFileVisitor<Path> {
