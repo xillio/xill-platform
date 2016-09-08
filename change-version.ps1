@@ -28,11 +28,9 @@ function replace-tag-in-file {
     echo "Changed $tag in $file to $replacement"
 }
 
+replace-tag-in-file -file distpom.xml -tag version -replacement $version -suffix "<!-- Xill Platform Version -->"
 replace-tag-in-file -file xill-parent\pom.xml -tag xill.version -replacement $version
-mvn -f distpom.xml versions:set "-DnewVersion=$version"
 mvn versions:set "-DnewVersion=$version"
 cd xill-parent
 mvn versions:set "-DnewVersion=$version"
 cd ..
-mvn -f distpom.xml versions:commit
-mvn versions:commit
