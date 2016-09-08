@@ -46,6 +46,13 @@ public class DateServiceImplTest {
         Assert.assertEquals(ds.parseDate("2015-02-14 12:32:15.012 GMT", "yyyy-MM-dd HH:mm:ss.nnn z").getZoned(), justOneDate.getZoned());
     }
 
+    @Test
+    public void testParseDateWithoutTimeZone() {
+        DateService ds = new DateServiceImpl();
+        Date justOneDate = ds.parseDate("2015-02-14 12:32:15.012", "yyyy-MM-dd HH:mm:ss.nnn");
+        Assert.assertEquals(ds.formatDate(justOneDate, null), "2015-02-14 12:32:15");
+    }
+
     @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "No dateStyle or timeStyle was provided")
     public void testLocalizedFormatter() {
         DateService ds = new DateServiceImpl();
