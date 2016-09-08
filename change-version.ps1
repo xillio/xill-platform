@@ -29,8 +29,13 @@ function replace-tag-in-file {
 }
 
 replace-tag-in-file -file distpom.xml -tag version -replacement $version -suffix "<!-- Xill Platform Version -->"
+replace-tag-in-file -file 'distpom-jenkins-slave-mac (Astroboy).xml' -tag version -replacement $version -suffix "<!-- Xill Platform Version -->"
+replace-tag-in-file -file 'distpom-jenkins-slave-ubuntu (Twiki).xml' -tag version -replacement $version -suffix "<!-- Xill Platform Version -->"
+replace-tag-in-file -file 'distpom-jenkins-slave-win64 (Johnny5).xml' -tag version -replacement $version -suffix "<!-- Xill Platform Version -->"
 replace-tag-in-file -file xill-parent\pom.xml -tag xill.version -replacement $version
 mvn versions:set "-DnewVersion=$version"
+mvn versions:commit
 cd xill-parent
 mvn versions:set "-DnewVersion=$version"
+mvn versions:commit
 cd ..

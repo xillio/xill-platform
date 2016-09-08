@@ -16,6 +16,9 @@
 #
 
 sed -i "s/<version>.*<\/version><!-- Xill Platform Version -->/<version>$1<\/version><!-- Xill Platform Version -->/" distpom.xml
+sed -i "s/<version>.*<\/version><!-- Xill Platform Version -->/<version>$1<\/version><!-- Xill Platform Version -->/" distpom-jenkins-slave-mac\ \(Astroboy\).xml
+sed -i "s/<version>.*<\/version><!-- Xill Platform Version -->/<version>$1<\/version><!-- Xill Platform Version -->/" distpom-jenkins-slave-ubuntu\ \(Twiki\).xml
+sed -i "s/<version>.*<\/version><!-- Xill Platform Version -->/<version>$1<\/version><!-- Xill Platform Version -->/" distpom-jenkins-slave-win64\ \(Johnny5\).xml
 sed -i "s/<xill.version>.*<\/xill.version>/<xill.version>$1<\/xill.version>/" xill-parent/pom.xml
 if [ "$2" != "-jenkins" ]
 	then
