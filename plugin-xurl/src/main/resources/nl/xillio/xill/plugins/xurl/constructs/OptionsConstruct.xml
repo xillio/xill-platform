@@ -18,7 +18,10 @@
 -->
 <function>
     <description>
-Perform an options request and return the response from the server.
+Perform an options request to `url` with the given `options` and return the response from the server.
+
+The format of the `options` parameter is described in the _Request_ section. The return value is
+described in the _Response_ section.
 
 ## Request
 
@@ -27,16 +30,16 @@ To set various options for the request you can use the options parameter. The pa
 option names as keys and their respective values as values.
 Check out the code examples for more information about the options.
 
-| Option Name         | Value                                                                             | Description                                                                       |
-| ------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| basicAuth           | An object containing a username and a password                                    | Set these credentials to perform basic authentication                             |
-| proxy               | An object contains at least a host but optionally a port or username and password | Set these options to connect through a proxy                                      |
-| timeout             | An integer that represents the timeout in milliseconds                            | Set this option to limit the time a request can take                              |
-| headers             | An object containing the headers                                                  | Set this option to add custom headers to your request                             |
-| insecure            | A boolean *default: false*                                                        | Set this option to true if you want to skip hostname validation                   |
-| enableRedirect      | A boolean *default: true*                                                         | Set this option to false if you do not want to automatically follow redirects     |
-| responseContentType | A String describing a content type                                                | Set this option to override the the response type auto detector                   |
-| logging             | A String (debug, info, warn or error) *default: none*                             | Set this option to enable logging of requests and responses                       |
+| Option Name         | Value                                                                                                   | Description                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| basicAuth           | An OBJECT containing `username` and `password` fields                                                   | Set these credentials to perform basic authentication                             |
+| proxy               | An OBJECT containing at least a `host` field but optionally `port` or `username` and `password` fields  | Set these options to connect through a proxy                                      |
+| timeout             | A ATOMIC that represents the timeout in milliseconds                                                    | Set this option to limit the time a request can take                              |
+| headers             | An OBJECT containing the headers                                                                        | Set this option to add custom headers to your request                             |
+| insecure            | An ATOMIC *default: false*                                                                              | Set this option to true if you want to skip hostname validation                   |
+| enableRedirect      | An ATOMIC *default: true*                                                                               | Set this option to false if you do not want to automatically follow redirects     |
+| responseContentType | An ATOMIC describing a content type                                                                     | Set this option to override the response type auto detector                       |
+| logging             | An ATOMIC (debug, info, warn or error) *default: null*                                                  | Set this option to enable logging of requests and responses                       |
 
 ## Response
 If the request is performed without errors the return value will be an object that describes the response.
