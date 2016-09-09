@@ -63,6 +63,7 @@
     <properties>
         <sonar.jacoco.itReportPath>${project.build.directory}/jacoco-it.exec</sonar.jacoco.itReportPath>
         <sonar.jacoco.reportPath>${project.build.directory}/jacoco-ut.exec</sonar.jacoco.reportPath>
+        <sonar.exclusions>xill-ide-core/**/*</sonar.exclusions>
         <sonar.language>java</sonar.language>
     </properties>
     <modules>
