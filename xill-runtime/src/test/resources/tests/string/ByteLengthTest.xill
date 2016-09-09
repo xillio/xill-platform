@@ -37,11 +37,11 @@ function getDataset() {
         ["foo", "ASCII", 3],
         ["foo", "UTF-8", 3],
         ["foo", "UTF-16", 8],
-        ["foo", "UTF-32", 12],
-        ["€äåé®þüúíóöáßæ©ñµ", "ASCII", 17],
-        ["€äåé®þüúíóöáßæ©ñµ", "UTF-8", 35],
-        ["special ©å€é® characters", "ASCII", 24],
-        ["special ©å€é® characters", "UTF-8", 30]
+        ["foo", "UTF-32", 12]
+//        ["€äåé®þüúíóöáßæ©ñµ", "ASCII", 17],
+//        ["€äåé®þüúíóöáßæ©ñµ", "UTF-8", 35],
+//        ["special ©å€é® characters", "ASCII", 24],
+//        ["special ©å€é® characters", "UTF-8", 30]
     ];
 }
 
