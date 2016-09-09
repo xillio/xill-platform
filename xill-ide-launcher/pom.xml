@@ -113,9 +113,21 @@
         <profile>
             <id>developer</id>
             <dependencies>
+                <!-- ElasticSearch will log with log4j1, prevent this by replacing log4j with the slf4j bridge -->
                 <dependency>
                     <groupId>nl.xillio.xill</groupId>
                     <artifactId>xill-processor</artifactId>
+                    <scope>runtime</scope>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>log4j</groupId>
+                            <artifactId>log4j</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>log4j-over-slf4j</artifactId>
                     <scope>runtime</scope>
                 </dependency>
                 <dependency>
@@ -196,6 +208,7 @@
                 <dependency>
                     <groupId>nl.xillio.xill</groupId>
                     <artifactId>xill-ide-core</artifactId>
+                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>
