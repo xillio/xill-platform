@@ -30,6 +30,8 @@
                 <include>README*</include>
                 <include>LICENSE*</include>
                 <include>NOTICE*</include>
+                <include>CHANGELOG*</include>
+                <include>CONTRIBUTING*</include>
             </includes>
         </fileSet>
 
