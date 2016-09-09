@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -58,6 +59,9 @@ public class UploadToServerDialog extends FXMLDialog {
     private final XillServerUploader xillServerUploader = new XillServerUploader();
     private List<String> uploadedRobots = new LinkedList<>();
     private String uploadedProjectId = "";
+
+    private static final String MAX_FILE_SIZE_SETTINGS_KEY = "spring.http.multipart.max-file-size";
+    private long maxFileSize; // Maximum file size that Xill server accepts
 
     /**
      * Default constructor.
@@ -104,8 +108,16 @@ public class UploadToServerDialog extends FXMLDialog {
 
             uploadedRobots.clear();
 
+            // Get current server settings
+            queryServerSettings();
+
+            // Process items (do selected robots and resources size check only prior to upload itself starts)
+            if (!processItems(treeItems, true, true, null, true)) {
+                return; // Process has been user interrupted - so no success dialog is shown
+            }
+
             // Process items (do selected robots and resources upload)
-            if (!processItems(treeItems, true, true, null)) {
+            if (!processItems(treeItems, true, true, null, false)) {
                 return; // Process has been user interrupted - so no success dialog is shown
             }
 
@@ -138,7 +150,7 @@ public class UploadToServerDialog extends FXMLDialog {
         }
     }
 
-    private boolean processItems(final List<TreeItem<Pair<File, String>>> items, boolean projectExistCheck, boolean robotExistCheck, final String projectId) throws IOException {
+    private boolean processItems(final List<TreeItem<Pair<File, String>>> items, boolean projectExistCheck, boolean robotExistCheck, final String projectId, boolean noUpload) throws IOException {
 
         //check all items (including children) too see if robots have valid names
         if (checkAllRobots(items)) {
@@ -149,21 +161,29 @@ public class UploadToServerDialog extends FXMLDialog {
         for (TreeItem<Pair<File, String>> item : items) {
             // Check if the item is a project
             if (item.getParent() == projectPane.getRoot()) {// Project
-                if (!uploadProject(item, projectExistCheck)) {
+                if (!uploadProject(item, projectExistCheck, noUpload)) {
                     return false;
                 }
             } else if (item.getValue().getKey().isDirectory()) {// Directory
                 // Upload items from inside the directory
-                if (!uploadFolder(item, projectExistCheck)) {
+                if (!uploadFolder(item, projectExistCheck, noUpload)) {
                     return false;
                 }
             } else {// Robot or resource
-                if (!uploadItem(item, robotExistCheck, projectId)) {
+                if (!uploadItem(item, robotExistCheck, projectId, noUpload)) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    private void queryServerSettings() throws IOException {
+        Map<String, String> settings = xillServerUploader.querySettings();
+        if (!settings.containsKey(MAX_FILE_SIZE_SETTINGS_KEY)) {
+            throw new IOException("Invalid response from the server.");
+        }
+        maxFileSize = Long.valueOf(settings.get(MAX_FILE_SIZE_SETTINGS_KEY));
     }
 
     private boolean checkAllRobots(final List<TreeItem<Pair<File, String>>> items) {
@@ -221,61 +241,65 @@ public class UploadToServerDialog extends FXMLDialog {
         }
     }
 
-    private boolean uploadProject(final TreeItem<Pair<File, String>> item, boolean existCheck) throws IOException {
+    private boolean uploadProject(final TreeItem<Pair<File, String>> item, boolean existCheck, boolean noUpload) throws IOException {
         final File projectFolder = projectPane.getProject(item).getValue().getKey();
         final String projectName = xillServerUploader.getProjectName(projectFolder);
 
         String projectId = xillServerUploader.findProject(projectName);
 
-        // Check for project existence on the server
-        if (existCheck && projectId != null) {
-            AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Uploading project",
-                    String.format("The project %1$s already exists on the server", projectName), "Do you want to overwrite entire project?",
-                    ButtonType.YES, ButtonType.NO);
-            if (dialog.showAndWait().get().getButtonData() == ButtonBar.ButtonData.NO) {
-                return false;
+        if (!noUpload) {
+            // Check for project existence on the server
+            if (existCheck && projectId != null) {
+                AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Uploading project",
+                        String.format("The project %1$s already exists on the server", projectName), "Do you want to overwrite entire project?",
+                        ButtonType.YES, ButtonType.NO);
+                if (dialog.showAndWait().get().getButtonData() == ButtonBar.ButtonData.NO) {
+                    return false;
+                }
+                // Yes, the existing project will be overwritten
+                xillServerUploader.deleteProject(projectId); // Delete the project on the server
             }
-            // Yes, the existing project will be overwritten
-            xillServerUploader.deleteProject(projectId); // Delete the project on the server
+            projectId = xillServerUploader.ensureProjectExist(projectName);
         }
-        projectId = xillServerUploader.ensureProjectExist(projectName);
 
         // Upload all project items
-        return processItems(item.getChildren(), false, false, projectId);
+        return processItems(item.getChildren(), false, false, projectId, noUpload);
     }
 
-    private boolean uploadItem(final TreeItem<Pair<File, String>> item, boolean existCheck, final String projectId) throws IOException {
+    private boolean uploadItem(final TreeItem<Pair<File, String>> item, boolean existCheck, final String projectId, boolean noUpload) throws IOException {
         // Get the selected item info
         final File itemFile = item.getValue().getKey();
         final File projectFolder = projectPane.getProject(item).getValue().getKey();
 
         // Determine if the item is robot or resource
         if (isRobot(itemFile, projectFolder)) {
-            return uploadRobot(itemFile, projectFolder, existCheck, projectId);
+            return uploadRobot(itemFile, projectFolder, existCheck, projectId, noUpload);
         } else {
-            return uploadResource(itemFile, projectFolder, existCheck, projectId);
+            return uploadResource(itemFile, projectFolder, existCheck, projectId, noUpload);
         }
     }
 
-    private boolean uploadFolder(final TreeItem<Pair<File, String>> item, boolean existCheck) throws IOException {
+    private boolean uploadFolder(final TreeItem<Pair<File, String>> item, boolean existCheck, boolean noUpload) throws IOException {
         final File projectFolder = projectPane.getProject(item).getValue().getKey();
         final String projectName = xillServerUploader.getProjectName(projectFolder);
 
         String projectId = xillServerUploader.findProject(projectName);
 
-        // Check for project existence on the server
-        if (existCheck && projectId != null) {
-            AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Uploading folder",
-                    String.format("The project %1$s already exists on the server", projectName), "Do you want to upload the folder content?",
-                    ButtonType.YES, ButtonType.NO);
-            if (dialog.showAndWait().get().getButtonData() == ButtonBar.ButtonData.NO) {
-                return false;
+        if (!noUpload) {
+            // Check for project existence on the server
+            if (existCheck && projectId != null) {
+                AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Uploading folder",
+                        String.format("The project %1$s already exists on the server", projectName), "Do you want to upload the folder content?",
+                        ButtonType.YES, ButtonType.NO);
+                if (dialog.showAndWait().get().getButtonData() == ButtonBar.ButtonData.NO) {
+                    return false;
+                }
             }
+            projectId = xillServerUploader.ensureProjectExist(projectName);
         }
-        projectId = xillServerUploader.ensureProjectExist(projectName);
 
         // Upload all items from within the folder
-        return processItems(item.getChildren(), false, false, projectId);
+        return processItems(item.getChildren(), false, false, projectId, noUpload);
     }
 
     /**
@@ -306,13 +330,27 @@ public class UploadToServerDialog extends FXMLDialog {
         return itemFile.getName().matches("^[_a-zA-Z][a-zA-Z0-9_]*\\.xill$");
     }
 
-    private boolean uploadRobot(final File robotFile, final File projectFolder, final boolean existCheck, String projectId) throws IOException {
+    private boolean uploadRobot(final File robotFile, final File projectFolder, final boolean existCheck, String projectId, boolean noUpload) throws IOException {
+
         final String code;
         code = FileUtils.readFileToString(robotFile);
 
         final String robotFqn = xillServerUploader.getFqn(robotFile, projectFolder);
         if (projectId == null) {
             projectId = xillServerUploader.ensureProjectExist(xillServerUploader.getProjectName(projectFolder));
+        }
+
+        // Check if robot does not exceed the multipart file size limit
+        if (robotFile.length() > maxFileSize) {
+            AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR, "Uploading robot",
+                    "The robot cannot be uploaded to the Xill server.", String.format("The size of robot %1$s exceeds the server file size limit.", robotFqn),
+                    ButtonType.CLOSE);
+            dialog.showAndWait();
+            return false;
+        }
+
+        if (noUpload) {
+            return true;
         }
 
         // Check for robot existence on the server
@@ -336,10 +374,23 @@ public class UploadToServerDialog extends FXMLDialog {
         return true;
     }
 
-    private boolean uploadResource(final File resourceFile, final File projectFolder, final boolean existCheck, String projectId) throws IOException {
+    private boolean uploadResource(final File resourceFile, final File projectFolder, final boolean existCheck, String projectId, boolean noUpload) throws IOException {
         final String resourceName = xillServerUploader.getResourceName(resourceFile, projectFolder);
         if (projectId == null) {
             projectId = xillServerUploader.ensureProjectExist(xillServerUploader.getProjectName(projectFolder));
+        }
+
+        // Check if resource does not exceed the multipart file size limit
+        if (resourceFile.length() > maxFileSize) {
+            AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR, "Uploading resource",
+                    "The resource cannot be uploaded to the Xill server.", String.format("The size of resource %1$s exceeds the server file size limit.", resourceName),
+                    ButtonType.CLOSE);
+            dialog.showAndWait();
+            return false;
+        }
+
+        if (noUpload) {
+            return true;
         }
 
         // Check for resource existence on the server

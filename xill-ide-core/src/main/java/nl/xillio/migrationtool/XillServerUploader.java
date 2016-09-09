@@ -403,6 +403,22 @@ public class XillServerUploader implements AutoCloseable {
         processAcknowledgedMessage(doPost(String.format("projects/%1$s/resources/%2$s", projectId, urlEncode(resourceName)), httpEntity));
     }
 
+    /**
+     * Query Xill server for current server settings.
+     *
+     * @return The server settings.
+     * @throws IOException if the request fails
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, String> querySettings() throws IOException {
+        final String response = doGet("settings");
+        try {
+            return (Map<String, String>) jsonParser.fromJson(response, Map.class);
+        } catch (JsonException e) {
+            throw new IOException("The server response is invalid.", e);
+        }
+    }
+
     private void processAcknowledgedMessage(final String response) throws IOException {
         try {
             final Object jsonParsed = jsonParser.fromJson(response, Map.class);
