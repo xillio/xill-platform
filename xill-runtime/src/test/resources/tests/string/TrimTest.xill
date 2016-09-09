@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 /*
-* Specification: calling String.matches with a regex escaped by String.regexEscape on the unescaped string MUST match
-* Input: "^regex$"
-* Expected: String.matches returns true
+* Specification: trim MUST trim the string. If internal is true is MUST also replace all white spaces with a single space.
+* Input: See dataset
+* Expected: See dataset
 */
 
-use Assert;
-use String;
-use System;
+use Assert, String;
 
-var regex = "^regex$";
+// Input, internal, expected.
+var dataset = [
+	["     foo    ", false, "foo"],
+	["  foo   bar   \n\r\n  baz ", false, "foo   bar   \n\r\n  baz"],
+	["  foo\tbar   \n\r\n  baz ", true, "foo bar baz"],
+	[[" foo ", "  bar   baz  "], false, ["foo", "bar   baz"]],
+	[[" foo\t \tbar", "  bar\nbaz  "], true, ["foo bar", "bar baz"]]
+];
 
-var escaped = String.regexEscape(regex);
-var matches = String.matches(regex, escaped);
-
-Assert.isTrue(matches, "Escaped regex and original do not match");
+foreach (item in dataset) {
+	Assert.equal(String.trim(item[0], item[1]), item[2]);
+}
