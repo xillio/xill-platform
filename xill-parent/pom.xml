@@ -205,11 +205,11 @@
                 <version>${xill.version}</version>
             </dependency>
             <dependency>
-            <groupId>nl.xillio.xill</groupId>
-            <artifactId>plugin-xml</artifactId>
-            <type>zip</type>
-            <version>${xill.version}</version>
-        </dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-xml</artifactId>
+                <type>zip</type>
+                <version>${xill.version}</version>
+            </dependency>
             <dependency>
                 <groupId>nl.xillio.xill</groupId>
                 <artifactId>plugin-mariadb</artifactId>

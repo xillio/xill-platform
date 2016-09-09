@@ -51,8 +51,6 @@ public class Application extends javafx.application.Application {
         Files.createDirectories(PLUGIN_FOLDER);
         environment = XillLoader.getEnv(PLUGIN_FOLDER);
 
-        System.out.println(System.getProperty("java.class.path"));
-
         try {
             SingleInstanceHandler.start();
             launch(args);
