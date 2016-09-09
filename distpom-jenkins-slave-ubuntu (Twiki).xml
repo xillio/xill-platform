@@ -39,7 +39,7 @@
                 <version>2.6</version>
                 <configuration>
                     <descriptors>
-                        <descriptor>${project.basedir}/xill-assemblies/src/main/resources/assemblies/dist-zip.xml</descriptor>
+                        <descriptor>${project.basedir}/dist-zip.xml</descriptor>
                     </descriptors>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
