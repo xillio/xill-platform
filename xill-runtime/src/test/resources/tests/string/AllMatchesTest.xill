@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 /*
-* Specification: Getting the length in bytes of null should throw an error
-* Expected: An error is thrown and the code after the construct call in the do-block is not executed
-* Input: null
+* Specification: allMatches MUST return the list of matches from the regex, or null if it did not match.
+* Input: See dataset
+* Expected: See dataset
 */
 
-use String, Assert;
+use Assert, String;
 
-do {
-    String.byteLength(null);
-    Assert.error("String.byteLength with null did not error.");
-} success {
-    Assert.error("String.byteLength with null was successful.");
+// Value, regex, expected.
+var dataset = [
+	["abc def ghi jkl. Mno", "\\w+", ["abc", "def", "ghi", "jkl", "Mno"]],
+	["foo for fox for", "fo[rx]", ["for", "fox", "for"]],
+	["abcabc", "a", ["a", "a"]],
+	["foo", "bar", []]
+];
+
+foreach (item in dataset) {
+	Assert.equal(String.allMatches(item[0], item[1]), item[2]);
 }

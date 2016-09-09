@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 /*
-* Specification: Getting the length in bytes of a string given a certain encoding must return the right length
+* Specification: Getting the length in bytes of a string given a certain encoding MUST return the right length.
 * Expected: The correct length in bytes (see dataset)
 * Input: See dataset
 */
 
-use String, Assert, System;
+use String, Assert;
 
 foreach (item in getDataset()) {
     testByteLength(item);
