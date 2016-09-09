@@ -263,7 +263,7 @@ public class XillServerUploader implements AutoCloseable {
         try {
             String responseJson = doPost(String.format("projects/%1$s/validate", projectId), jsonParser.toJson(robotFqns));
             Map<String, String> response = jsonParser.fromJson(responseJson, Map.class);
-            if (response.get("valid").equals("true")) {
+            if ("true".equals(response.get("valid"))) {
                 return;
             }
             // Not valid robot
