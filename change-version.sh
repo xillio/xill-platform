@@ -23,7 +23,9 @@ sed -i "" "s/<xill.version>.*<\/xill.version>/<xill.version>$1<\/xill.version>/"
 if [ "$2" != "-jenkins" ]
 	then
 		mvn versions:set -DnewVersion=$1
+		mvn versions:commit
 		pushd xill-parent/ >> /dev/null
 		mvn versions:set -DnewVersion=$1
+		mvn versions:commit
 		popd >> /dev/null
 fi
