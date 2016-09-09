@@ -25,7 +25,6 @@ import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
@@ -256,7 +255,6 @@ public class RobotTab extends FileTab implements Initializable {
             processor = Loader.getXill().buildProcessor(projectPath.toPath(), documentPath.toPath(), processor.getDebugger());
         } catch (IOException e) {
             AlertDialog error = new AlertDialog(AlertType.ERROR, "Failed to save robot", "", e.getMessage());
-            error.getDialogPane().setMinHeight(Region.USE_PREF_SIZE); // Workaround to get scaled window in Linux (bug in javafx)
             error.show();
             LOGGER.error("Failed to save robot", e);
         }
@@ -531,23 +529,25 @@ public class RobotTab extends FileTab implements Initializable {
         if (currentRobot != robot) {
 
             currentRobot = robot;
-            String code;
-            try {
-                code = FileUtils.readFileToString(robot.getPath());
-            } catch (IOException e) {
-                return;
-            }
-            // Load the code
-            editorPane.getEditor().setCode(code);
-            editorPane.getEditor().refreshBreakpoints(robot);
+            Platform.runLater(() -> {
+                String code;
+                try {
+                    code = FileUtils.readFileToString(robot.getPath());
+                } catch (IOException e) {
+                    return;
+                }
+                // Load the code
+                editorPane.getEditor().setCode(code);
+                editorPane.getEditor().refreshBreakpoints(robot);
 
-            if (robot == getProcessor().getRobotID()) {
-                // We are moving back to the current robot
-                editorPane.getEditor().restoreUndoManager();
-            }
+                if (robot == getProcessor().getRobotID()) {
+                    // We are moving back to the current robot
+                    editorPane.getEditor().restoreUndoManager();
+                }
 
-            // Blocker
-            editorPane.getEditor().setEditable(currentRobot == getProcessor().getRobotID());
+                // Blocker
+                editorPane.getEditor().setEditable(currentRobot == getProcessor().getRobotID());
+            });
 
             // Remove the 'edited' state
             Platform.runLater(() -> editorPane.getDocumentState().setValue(DocumentState.SAVED));

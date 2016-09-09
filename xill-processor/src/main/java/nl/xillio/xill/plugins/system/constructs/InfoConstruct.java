@@ -42,7 +42,7 @@ public class InfoConstruct extends Construct {
 
         Map<String, Object> values = new HashMap<>();
 
-        values.put("filesystem", infoService.getFileSystemInfo().getRootProperties());
+        values.put("fileSystem", infoService.getFileSystemInfo().getRootProperties());
         values.putAll(infoService.getRuntimeInfo().getProperties());
         values.putAll(infoService.getRobotRuntimeInfo(context).getProperties());
 

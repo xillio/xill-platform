@@ -1,0 +1,32 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Specification: toSHA1 MUST return the correct SHA1 hash.
+ * Input: See dataset
+ * Expected: See dataset
+ */
+
+use Assert, Hash, File;
+
+var data = {
+	"": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+	"foo bar 123 !@#": "00f00021937e1cd22478ff6e13df71cd58581dcf",
+	1234567890: "01b307acba4f54f55aafc33bb06bbbf6ca803e9a"
+};
+
+foreach(input, hash in data) {
+	Assert.equal(Hash.toSHA1(input), hash);
+}
+Assert.equal(Hash.toSHA1(File.openRead("testresources/hash/hashMe.txt")), "288ad886fe73b67f6e2bfbf2ae623548cc4c902c");

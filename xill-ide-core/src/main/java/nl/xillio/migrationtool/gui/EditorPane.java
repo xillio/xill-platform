@@ -18,8 +18,6 @@ package nl.xillio.migrationtool.gui;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.print.JobSettings;
@@ -44,13 +42,11 @@ import nl.xillio.xill.util.settings.Settings;
 import org.slf4j.Logger;
 
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * The editor pane for files. Contains most of the UI, apart from the left panel.
  */
-public class EditorPane extends AnchorPane implements FileTabComponent, EventHandler<KeyEvent>, ChangeListener<String> {
+public class EditorPane extends AnchorPane implements FileTabComponent, EventHandler<KeyEvent> {
     private static final Logger LOGGER = Log.get();
 
     protected final AceEditor editor;
@@ -107,7 +103,10 @@ public class EditorPane extends AnchorPane implements FileTabComponent, EventHan
 
         editorReplaceBar.setSearchable(editor);
         editorReplaceBar.setButton(tbnEditorSearch, 1);
-        editor.getCodeProperty().addListener(this);
+        editor.getCodeProperty().addListener((observable, oldValue, newValue) -> {
+            updateUndoRedoButtons();
+            updateDocumentState(newValue);
+        });
         editor.setReplaceBar(editorReplaceBar);
         editor.getOnDocumentLoaded().addListener(e -> editor.autoDetectMode(tab.getDocument().getName()));
 
@@ -135,26 +134,23 @@ public class EditorPane extends AnchorPane implements FileTabComponent, EventHan
     /**
      * Update the state of the undo/redo buttons.
      *
-     * Due to some strange behaviour when using the delete key on a selection after opening a robot NOT updating the
-     * editor state immediately, the task is run a couple of times to ensure the state is updated correctly.
+     * In a previous version there was a repeating task, this is replaced by some callback things. It is not the full
+     * solution, but for now it works in most cases. The editor needs a neat rebuild to exterminate the problem completely.
      */
     private void updateUndoRedoButtons() {
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
-            private int repeated = 0;
+        Platform.runLater(() -> {
+            editor.onRedo(this::setBtnRedo);
+            editor.onUndo(this::setBtnUndo);
+        });
+    }
 
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    btnRedo.setDisable(!editor.hasRedo());
-                    btnUndo.setDisable(!editor.hasUndo());
-                });
-                if (repeated++ > 3) {
-                    timer.cancel();
-                }
-            }
-        };
-        timer.scheduleAtFixedRate(task, 0, 500);
+    private void setBtnRedo(Object object) {
+        Boolean hasRedo = (Boolean)object;
+        btnRedo.setDisable(!hasRedo);
+    }
+    private void setBtnUndo(Object object) {
+        Boolean hasUndo = (Boolean)object;
+        btnUndo.setDisable(!hasUndo);
     }
 
     @FXML
@@ -201,7 +197,7 @@ public class EditorPane extends AnchorPane implements FileTabComponent, EventHan
         for (String line : lines) {// Walk through each line of text
             text.setText(line);
             double lineHeight = text.getLayoutBounds().getHeight(); // Calculate line height (it can be multiline because of wrapping)
-            if (lineHeight+curHeight > maxHeight) {
+            if (lineHeight + curHeight > maxHeight) {
                 // This line is beyond the page height, so do the print page
                 text.setText(pageText);
                 printerJob.printPage(text);
@@ -261,6 +257,10 @@ public class EditorPane extends AnchorPane implements FileTabComponent, EventHan
 
             editorReplaceBar.requestFocus();
             event.consume();
+        } else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(HotkeysHandler.Hotkeys.PRINT)).match(event)) {
+            // Print.
+            print();
+            event.consume();
         }
     }
 
@@ -295,12 +295,6 @@ public class EditorPane extends AnchorPane implements FileTabComponent, EventHan
     private void buttonRemoveAllBreakpoints() {
         BreakpointPool.INSTANCE.clear();
         tab.getGlobalController().getTabs().forEach(editorTab -> editorTab.getEditorPane().getEditor().clearBreakpoints());
-    }
-
-    @Override
-    public void changed(final ObservableValue<? extends String> source, final String oldValue, final String newValue) {
-        updateUndoRedoButtons();
-        updateDocumentState(newValue);
     }
 
     /**

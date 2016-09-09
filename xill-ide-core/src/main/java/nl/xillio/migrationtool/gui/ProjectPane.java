@@ -35,7 +35,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
 import javafx.util.Pair;
@@ -180,6 +179,14 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         menuRename = new MenuItem("Rename...");
         menuRename.setOnAction(e -> renameButtonPressed());
 
+        // New Folder
+        MenuItem menuCreateFolder = new MenuItem("New Folder...");
+        menuCreateFolder.setOnAction(e -> newFolderButtonPressed());
+
+        // New File
+        MenuItem menuNewFile = new MenuItem("New File...");
+        menuNewFile.setOnAction(e -> newBot(null));
+
         // Delete.
         menuDelete = new MenuItem("Delete...");
         menuDelete.setOnAction(e -> deleteButtonPressed());
@@ -190,16 +197,20 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         menuOpenFolder = new MenuItem("Open containing folder");
         menuOpenFolder.setOnAction(e -> {
-            try {
-                Desktop.getDesktop().open(getCurrentItem().getValue().getKey().getParentFile());
-            } catch (IOException ex) {
-                LOGGER.error("Failed to open containing folder.", ex);
-            }
+            Thread openContainingFolderTread = new Thread(() -> {
+                try {
+                    Desktop.getDesktop().open(getCurrentItem().getValue().getKey().getParentFile());
+                } catch (IOException ex) {
+                    LOGGER.error("Failed to open containing folder.", ex);
+                }
+            });
+            openContainingFolderTread.start();
         });
 
+
         // Create the context menu.
-        ContextMenu menu = new ContextMenu(menuCut, menuCopy, menuPaste, menuRename, menuDelete, menuUpload);
-        if (Desktop.isDesktopSupported()) {
+        ContextMenu menu = new ContextMenu(menuCut, menuCopy, menuPaste, menuRename, menuCreateFolder, menuNewFile, menuDelete, menuUpload);
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
             menu.getItems().add(menuOpenFolder);
         }
 
@@ -209,18 +220,21 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     private void addNewButtonContextMenu() {
-        MenuItem menuNewProject = new MenuItem("New project", ProjectPane.createIcon(ProjectPane.NEW_PROJECT_ICON));
+        MenuItem menuLoadProject = new MenuItem("New project from existing sources...", ProjectPane.createIcon(ProjectPane.NEW_PROJECT_ICON));
+        menuLoadProject.setOnAction(e -> loadProjectButtonPressed());
+
+        MenuItem menuNewProject = new MenuItem("New project...", ProjectPane.createIcon(ProjectPane.NEW_PROJECT_ICON));
         menuNewProject.setOnAction(e -> newProjectButtonPressed());
 
-        menuNewFolder = new MenuItem("New folder", ProjectPane.createIcon(ProjectPane.NEW_FOLDER_ICON));
+        menuNewFolder = new MenuItem("New folder...", ProjectPane.createIcon(ProjectPane.NEW_FOLDER_ICON));
         menuNewFolder.setOnAction(e -> newFolderButtonPressed());
 
-        menuNewBot = new MenuItem("New file", ProjectPane.createIcon(ProjectPane.NEW_FILE_ICON));
+        menuNewBot = new MenuItem("New file...", ProjectPane.createIcon(ProjectPane.NEW_FILE_ICON));
         menuNewBot.setOnAction(e -> newBot(null));
 
         menuNewBotFromTemplate = new Menu("New robot from template...");
 
-        ContextMenu menu = new ContextMenu(menuNewProject, menuNewFolder, menuNewBot, menuNewBotFromTemplate);
+        ContextMenu menu = new ContextMenu(menuLoadProject, menuNewProject, menuNewFolder, menuNewBot, menuNewBotFromTemplate);
         btnNew.setOnAction(e -> {
             Bounds bounds = btnNew.localToScreen(btnNew.getBoundsInParent());
             generateTemplateMenu();
@@ -384,7 +398,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                             return false;
                         }
                         if (result.get() == ButtonType.YES) {
-                           tab.save();
+                            tab.save();
                         }
                     }
                 }
@@ -423,6 +437,12 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     /* End of bulk file functionality. */
+
+    @FXML
+    private void loadProjectButtonPressed() {
+        LoadProjectDialog dlg = new LoadProjectDialog(this);
+        dlg.showAndWait();
+    }
 
     @FXML
     private void newProjectButtonPressed() {
@@ -586,7 +606,6 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             } catch (IOException e) {
                 LOGGER.error("Failed to create file.", e);
                 AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error creating robot.", "", "Could not create '" + chosen.toString() + "'.");
-                error.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 error.showAndWait();
             } catch (TemplateException e) {
                 new AlertDialog(Alert.AlertType.ERROR, "Invalid template", "The template you want to use could not be processed!", e.getMessage()).show();
@@ -700,12 +719,11 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         items.forEach(item -> {
             File file = item.getValue().getKey();
             // Check if we have write access to file and we're not soft deleting a project
-            if(!file.canWrite() && !(item == getProject(item) && !hardDeleteProjects)){
+            if (!file.canWrite() && !(item == getProject(item) && !hardDeleteProjects)) {
                 LOGGER.error("Cannot delete " + file.toString() + ": no write access.");
                 AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error while deleting files.", "",
                         "Could not delete: " + file.toString() + ", access was denied.\n\nPlease check if you have write permissions.",
                         ButtonType.OK);
-                error.getDialogPane().setMinHeight(Region.USE_PREF_SIZE); // Workaround to get scaled window in Linux (currently bug in javafx)
                 error.showAndWait();
             }
 
@@ -720,7 +738,6 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                     LOGGER.error("Could not delete " + file.toString(), e);
                     AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error while deleting files.", "",
                             "An error occurred while deleting files.\n" + e.getMessage(), ButtonType.OK);
-                    error.getDialogPane().setMinHeight(Region.USE_PREF_SIZE); // Workaround to get scaled window in Linux (currently bug in javafx)
                     error.showAndWait();
                 }
             }
@@ -771,6 +788,37 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         root.getChildren().remove(item);
         settings.project().delete(item.getValue().getValue());
         select(root);
+    }
+
+    /**
+     * Creates a new project from source
+     *
+     * @param name        the name of the new project
+     * @param folder      the folder representing the project
+     * @return whether creating the project was successful
+     */
+    public boolean loadProject(final String name, final String folder) {
+        boolean projectExist = !root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
+                && findItemByPath(root, folder) == null;
+
+        if (projectExist) {
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder.");
+        }
+
+        if ("".equals(folder)) {
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Select a folder to create a new project.");
+        }
+
+        File projectFolder = new File(folder);
+
+        if (!projectFolder.exists()) {
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder does not exist.");
+        }
+
+        ProjectSettings project = new ProjectSettings(name, folder, "");
+        settings.project().save(project);
+        addProject(project);
+        return true;
     }
 
     /**
@@ -847,6 +895,12 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     /* End of projects */
+
+    public boolean showAlertDialog(Alert.AlertType type, String title, String header, String content) {
+        AlertDialog error = new AlertDialog(type, title, header, content, ButtonType.OK);
+        error.show();
+        return false;
+    }
 
     /* Selection of TreeItems */
 

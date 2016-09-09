@@ -18,20 +18,56 @@
 -->
 <function>
     <description>
-Prints a message to the console.  
+This construct prints a message to the console.
+If `text` is an OBJECT or LIST variable then its JSON representation will be printed.
+If `text` an ATOMIC variable then the textual representation will be printed.
 
-When printing an object or list it will print the JSON representation.  
-If you print an atomic value it will print the string value.
+`logLevel` determines the log level of the message.
+The available log levels are: "debug", "info", "warning"  and "error".
+
     </description>
     <examples>
         <example title="Usage">
-            <header>Printing a message to the console</header>
+            <header>Printing ATOMIC,LIST and OBJECT variables to the console</header>
             <code>
-                System.print("Hello Xillio!");
+                use System;
+
+                var atomic = "Xillio";
+                var list = [1,2,3,"Xillio"];
+                var object = {"a":"Xill","b":"example"};
+
+                System.print(atomic);
+                System.print(list);
+                System.print(object);
+
+                /*
+                The following is printed to the console:
+                Xillio
+                [1,2,3,"Xillio"]
+                {"a":"Xill","b":"example"}
+                */
+
             </code>
-            <header>Throwing an error</header>
+        </example>
+        <example>
+            <header>Printing to the console with different log levels</header>
             <code>
-                System.print("Pause me", "error");
+                use System;
+
+                var example = "This is an example.";
+
+                System.print(example,"debug");
+                System.print(example,"info");
+                System.print(example,"warning");
+                System.print(example,"error");
+
+                /*
+                The following is printed to the console:
+                DEBUG|This is an example.
+                INFO |This is an example.
+                WARN |This is an example.
+                ERROR|This is an example.
+                */
             </code>
         </example>
     </examples>

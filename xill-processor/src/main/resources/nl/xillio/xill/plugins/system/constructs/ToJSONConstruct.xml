@@ -18,21 +18,53 @@
 -->
 <function>
     <description>
-Converts an expression to a JSON string.  
+This construct parses an ATOMIC, LIST or OBJECT variable to a JSON string and returns it as an ATOMIC variable.
+If `pretty` is set to true then the JSON string will be formatted.
 
 Note that circular references cannot be parsed and will be substituted.  
-To pretty print the JSON string set pretty to true
+
     </description>
     <examples>
         <example title="Usage">
             <code>
-                System.toJSON([1,2,3, "Hello Xillio"]);
-                // Result: "[1,2,3,\"Hello Xillio\"]"
+                use System;
 
-                var list = [1];
-                list[] = list;
-                System.toJSON(list, true);
-                // Result: "[1,\"&lt;&lt;CIRCULAR REFERENCE&gt;&gt;\"]"
+                var atomic = "hello world";
+                var atomicJSON = System.toJSON(atomic);
+                var atomicPretty = System.toJSON(atomic, true);
+
+                /*
+                Printing these variable to console:
+                atomicJSON   :"hello world"
+                atomicPretty :"hello world"
+                */
+
+                var list = [1,2,"hello","world"];
+                var listJSON = System.toJSON(list);
+                var listPretty = System.toJSON(list, true);
+
+                /*
+                Printing these variable to console:
+                listJSON   : [1,2,"hello","world"]
+                listPretty : [ 1, 2, "hello", "world" ]
+                */
+
+                var object = {"a":"hello","b":"world","c":{"a":"example","b":"xillio"}};
+                var objectJSON = System.toJSON(object);
+                var objectPretty = System.toJSON(object, true);
+
+                /*
+                Printing these variable to console:
+                objectJSON   : {"a":"hello","b":"world","c":{"a":"example","b":"xillio"}}
+                objectPretty : {
+                                "a" : "hello",
+                                "b" : "world",
+                                "c" : {
+                                  "a" : "example",
+                                  "b" : "xillio"
+                                 }
+                               }
+                */
             </code>
         </example>
     </examples>

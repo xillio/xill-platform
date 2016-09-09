@@ -1,0 +1,107 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+Author:     Ernst van Rheenen
+Modified:   26-8-2016
+
+Description:
+        Once in a while you just need to look up a term in a list. 
+        E.g. when you want to check if a string is a valid weekday or month but perhaps also to find out if a word has been spelled correctly. 
+        In first two cases a simple Collection.contains() will suffice, but in the latter the linear lookup time in the huge list will cost you a lot of performance.
+
+        The following script performs a binary lookup in a list. It requires that the list is sorted using Collection.sort() before use. 
+        Note that this only works well when you are dealing with a static list, otherwise you will loose a lot of performance with sorting every time.
+*/
+use Collection, String, Math, System;
+
+// Have some sorted list of strings
+var list = ["Arthur","Arvel","Aubrey","Baird","Benton","Blair","Calvert","Carl","Conroy","Culbert","Culver","Dermot","Dexter","Dirk","Durwin","Dwight","Ellery","Emrick","Everett","Fletcher","Frederick","Gavin","Graham","Grant","Hale","Hall","Harold, Harry","Homer","Howard","Ian","Jacob","Justin","Kilby","Landon","Leroy","Lombard","Lowell","Lucas, Luke","Melvin","Montgomery","Nigel","Otis","Ronald","Royce","Samson","Sherlock","Sidney","Sinclair","Winthrop","Wyman"];
+
+// Do binary search
+var index = binarySearch(list, "Aubrey");
+
+// Print out the index of found string in the list
+System.print(index); // It will print 2 as Aubrey has index 2 in list
+
+// Definition of binary sort and other helper functions
+function binarySearch(list, keyword) {
+    var minIndex = 0;
+    var maxIndex = Collection.length(list) - 1;
+    var currentIndex = 0;
+    var currentElement = "";
+     
+    while (minIndex <= maxIndex) {
+        currentIndex = Math.round((minIndex + maxIndex) / 2);
+         
+        currentElement = list[currentIndex];
+         
+        var compare = stringCompare(currentElement, keyword);
+         
+        if (compare < 0) {
+            minIndex = currentIndex + 1;
+        }
+        else if (compare > 0) {
+            maxIndex = currentIndex - 1;
+        }
+        else {
+            return currentIndex;
+        }
+    }
+     
+    return -1;
+}
+ 
+function stringCompare(word1, word2) {
+    if(word1 == word2) {
+        return 0;
+    }
+     
+    var index = 0;
+    var letter1 = "";
+    var letter2 = "";
+    var minLength = min(String.length(word1), String.length(word2));
+     
+    while(letter1 == letter2 && index < minLength) {
+        letter1 = String.substring(word1, index, index + 1);
+        letter2 = String.substring(word2, index, index + 1);
+        index ++;
+    }
+     
+    if(letter1 == letter2) {
+        if(String.length(word1) > String.length(word2)) {
+            return 1;
+        }
+        return -1;
+    }
+     
+    if(azPos(letter1) > azPos(letter2)) {
+        return 1;
+    }
+     
+    return -1;
+}
+ 
+function min(num1, num2){
+    if(num1 < num2) {
+        return num1;
+    }
+    return num2;
+}
+ 
+function azPos(letter){
+    var az = "_0123456789AÁÄÂÀBCDEÉËÊÈFGHIÍÏÌÎJKLMNOÓÖÔÒPQRSTUÚÜÛÙVWXYZaáäâàbcdeéëêèfghiíïìîjklmnoóöôòpqrstuúüûùvwxyz";
+    return String.indexOf(az, letter) + 1;
+}

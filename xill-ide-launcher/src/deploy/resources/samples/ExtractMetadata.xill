@@ -1,0 +1,31 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+Author:     Xillio
+Modified:   26-8-2016
+
+Description:
+        The robot extracts metadata from files in current user Pictures folder using ExifTool.
+        Note: Set path variable to some valid path according to your disk storage structure and operating system.
+*/
+use ExifTool, System;
+ 
+var path = System.properties("user.home") :: "/Pictures";
+var pictures = ExifTool.scanFolder(path, {}, {"recursive" : true});
+
+foreach (picture in pictures) {
+    System.print(System.toJSON(picture, true));
+}

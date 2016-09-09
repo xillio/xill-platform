@@ -16,8 +16,12 @@
 package nl.xillio.migrationtool.dialogs;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import me.biesaart.utils.Log;
@@ -47,6 +51,9 @@ public class AlertDialog extends Alert {
         this.setTitle(title);
         this.setHeaderText(header);
 
+        // Workaround to get scaled window in Linux (currently bug in javafx)
+        this.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+
         // Set the icon.
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
         try (InputStream image = this.getClass().getResourceAsStream("/icon.png")) {
@@ -55,6 +62,17 @@ public class AlertDialog extends Alert {
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
+        }
+
+        // Hook each button into the enter pressed event.
+        getButtonTypes().stream().map(getDialogPane()::lookupButton).forEach(button -> button.addEventHandler(KeyEvent.KEY_PRESSED, this::enterPressed));
+    }
+
+    private void enterPressed(KeyEvent event) {
+        // Check if enter was pressed and the target is a button.
+        if (KeyCode.ENTER.equals(event.getCode()) && event.getTarget() instanceof Button) {
+            ((Button) event.getTarget()).fire();
+            event.consume();
         }
     }
 }
