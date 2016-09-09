@@ -46,7 +46,7 @@ function getDataset() {
         ["foo", "UTF-32", 12],
         [lipsum, "UTF-8", 3126 + 4 * String.length(System.properties("line.separator"))],
 //        ["€äåé®þüúíóöáßæ©ñµ", "ASCII", 17],
-        ["€äåé®þüúíóöáßæ©ñµ", "UTF-8", 35],
+//        ["€äåé®þüúíóöáßæ©ñµ", "UTF-8", 35],
         ["special ©å€é® characters", "ASCII", 24],
         ["special ©å€é® characters", "UTF-8", 30]
     ];
