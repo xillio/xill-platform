@@ -190,7 +190,7 @@ header which can be overridden using the `responseContentType` option.
             <code>
                 use XURL, System, File;
 
-                var filePath = "C:\\tmp\\note.txt";
+                var filePath = System.info().robotPath;
 
                 var response = XURL.post(
                     "https://httpbin.org/post",
@@ -219,7 +219,7 @@ header which can be overridden using the `responseContentType` option.
                 use XURL, System;
 
                 var response = XURL.post(
-                    "http://example.com/login",
+                    "https://httpbin.org/post",
                     "This is an example of an authenticated request",
                     {
                         // Set the basicAuth option
@@ -233,17 +233,32 @@ header which can be overridden using the `responseContentType` option.
                 var prettyJson = System.toJSON(response, true);
                 System.print(prettyJson);
             </code>
-            <header>Send a request with a custom content type</header>
+            <header>Send a request with a custom content type header</header>
             <code>
                 use XURL, System;
 
                 var response = XURL.post(
-                    "http://myserver.com/documentum",
+                    "https://httpbin.org/post",
                     '{ "data": "My Document" }',
                     {
                         "headers": {
                             "Content-Type": "application/vnd.emc.documentum+json"
                         }
+                    }
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Override the detected response content type</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.post(
+                    "https://httpbin.org/post",
+                    '{ "data": "My Document" }',
+                    {
+                        "responseContentType": "text"
                     }
                 );
 

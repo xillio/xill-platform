@@ -117,15 +117,48 @@ header which can be overridden using the `responseContentType` option.
     </description>
     <examples>
         <example title="Usage">
-            <header>Check how big a get request would be</header>
+            <header>Make a minimal head request</header>
             <code>
                 use XURL, System;
 
                 var response = XURL.head(
-                    "http://jsonplaceholder.typicode.com/photos/43"
+                    "https://httpbin.org/"
                 );
 
-                System.print(response.headers["Content-Length"]);
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Send a request under basic authentication</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.head(
+                    "https://httpbin.org/",
+                    {
+                        // Set the basicAuth option
+                        "basicAuth": {
+                            "username": "user",
+                            "password": "passwd"
+                        }
+                    }
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Enable debug logging for requests</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.head(
+                    "https://httpbin.org/",
+                    {
+                        "logging": "debug"
+                    }
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
             </code>
         </example>
     </examples>

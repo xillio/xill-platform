@@ -117,15 +117,78 @@ header which can be overridden using the *responseContentType* option.
     </description>
     <examples>
         <example title="Usage">
-            <header>Check available methods</header>
+            <header>Make a minimal options request</header>
             <code>
                 use XURL, System;
 
                 var response = XURL.options(
-                    "http://jsonplaceholder.typicode.com/posts"
+                    "https://httpbin.org/"
                 );
 
-                System.print(response.headers["Access-Control-Allow-Methods"]);
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Send a request under basic authentication</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.options(
+                    "https://httpbin.org/",
+                    {
+                        // Set the basicAuth option
+                        "basicAuth": {
+                            "username": "user",
+                            "password": "passwd"
+                        }
+                    }
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Send a request with a custom content type header</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.options(
+                    "https://httpbin.org/",
+                    {
+                        "headers": {
+                            "Content-Type": "application/vnd.emc.documentum+json"
+                        }
+                    }
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Override the detected response content type</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.options(
+                    "https://httpbin.org/",
+                    {
+                        "responseContentType": "text"
+                    }
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Enable debug logging for requests</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.options(
+                    "https://httpbin.org/",
+                    {
+                        "logging": "debug"
+                    }
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
             </code>
         </example>
     </examples>

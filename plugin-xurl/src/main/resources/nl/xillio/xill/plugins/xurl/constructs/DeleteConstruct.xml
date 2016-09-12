@@ -122,7 +122,53 @@ header which can be overridden using the `responseContentType` option.
                 use XURL, System;
 
                 var response = XURL.delete(
-                    "http://jsonplaceholder.typicode.com/posts/43"
+                    "https://httpbin.org/delete"
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Send a request under basic authentication</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.delete(
+                    "https://httpbin.org/delete",
+                    {
+                        // Set the basicAuth option
+                        "basicAuth": {
+                            "username": "user",
+                            "password": "passwd"
+                        }
+                    }
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Override the detected response content type</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.delete(
+                    "https://httpbin.org/delete",
+                    {
+                        "responseContentType": "text"
+                    }
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Enable debug logging for requests</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.delete(
+                    "https://httpbin.org/delete",
+                    {
+                        "logging": "debug"
+                    }
                 );
 
                 var prettyJson = System.toJSON(response, true);

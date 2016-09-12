@@ -116,7 +116,7 @@ header which can be overridden using the `responseContentType` option.
     }
     </description>
     <examples>
-        <example title="Simple usage">
+        <example title="Usage">
             <header>Make a minimal get request</header>
             <code>
                 use XURL, System;
@@ -125,25 +125,70 @@ header which can be overridden using the `responseContentType` option.
                     "https://httpbin.org/get"
                 );
 
-                System.print(response);
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
             </code>
-        </example>
-        <example title="HTTP basic authentication">
-            <header>Make a get request to a HTTP basic protected resource</header>
+            <header>Send a request under basic authentication</header>
             <code>
                 use XURL, System;
 
-                var options = {"basicAuth": {
-                    "username": "user",
-                    "password": "password"
-                }};
+                var response = XURL.get(
+                    "https://httpbin.org/get",
+                    {
+                        // Set the basicAuth option
+                        "basicAuth": {
+                            "username": "user",
+                            "password": "passwd"
+                        }
+                    }
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Send a request with a custom content type header</header>
+            <code>
+                use XURL, System;
 
                 var response = XURL.get(
                     "https://httpbin.org/get",
-                    options
+                    {
+                        "headers": {
+                            "Content-Type": "application/vnd.emc.documentum+json"
+                        }
+                    }
                 );
 
-                System.print(response);
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Override the detected response content type</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.get(
+                    "https://httpbin.org/get",
+                    {
+                        "responseContentType": "text"
+                    }
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Enable debug logging for requests</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.get(
+                    "https://httpbin.org/get",
+                    {
+                        "logging": "debug"
+                    }
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
             </code>
         </example>
     </examples>
