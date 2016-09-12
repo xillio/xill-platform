@@ -112,12 +112,12 @@ public class UploadToServerDialog extends FXMLDialog {
             queryServerSettings();
 
             // Process items (do selected robots and resources size check only prior to upload itself starts)
-            if (!processItems(treeItems, true, true, null, true)) {
+            if (!processItems(treeItems, true, null, true)) {
                 return; // Process has been user interrupted - so no success dialog is shown
             }
 
             // Process items (do selected robots and resources upload)
-            if (!processItems(treeItems, true, true, null, false)) {
+            if (!processItems(treeItems, true, null, false)) {
                 return; // Process has been user interrupted - so no success dialog is shown
             }
 
@@ -150,7 +150,22 @@ public class UploadToServerDialog extends FXMLDialog {
         }
     }
 
-    private boolean processItems(final List<TreeItem<Pair<File, String>>> items, boolean projectExistCheck, boolean robotExistCheck, final String projectId, boolean noUpload) throws IOException {
+    /**
+     * Iterate given level of tree items, process them and recursively iterate and process all child tree levels.
+     *
+     * @param items         The list of items in one tree level (the first call means base level and the next recursive calls mean child levels).
+     * @param existCheck    If true then it will check for project or robot existence on the server and ask user about overwriting it if already exists.
+     *                       This (true option) is used when the first level of tree is being processed.
+     *                      If false then the check for project or robot existence on the server is not carried out.
+     *                       This (false option) is used when processing the child levels of the tree.
+     * @param projectId     The identificator of the project in the server database.
+     *                       If projectId is null it means the id is not known yet and will be determined by querying the server using project folder name.
+     * @param noUpload      If true then all requests to server will not be carried out.
+     *                       This (true option) is used for iterating of all tree items (including all child items) and checking if their size does not exceed limit.
+     * @return              True if processing was successful. False if processing failed and will be stopped completely.
+     * @throws IOException  In case of communication error with the server or some other IO error.
+     */
+    private boolean processItems(final List<TreeItem<Pair<File, String>>> items, boolean existCheck, final String projectId, boolean noUpload) throws IOException {
 
         //check all items (including children) too see if robots have valid names
         if (checkAllRobots(items)) {
@@ -161,16 +176,16 @@ public class UploadToServerDialog extends FXMLDialog {
         for (TreeItem<Pair<File, String>> item : items) {
             // Check if the item is a project
             if (item.getParent() == projectPane.getRoot()) {// Project
-                if (!uploadProject(item, projectExistCheck, noUpload)) {
+                if (!uploadProject(item, existCheck, noUpload)) {
                     return false;
                 }
             } else if (item.getValue().getKey().isDirectory()) {// Directory
                 // Upload items from inside the directory
-                if (!uploadFolder(item, projectExistCheck, noUpload)) {
+                if (!uploadFolder(item, existCheck, noUpload)) {
                     return false;
                 }
             } else {// Robot or resource
-                if (!uploadItem(item, robotExistCheck, projectId, noUpload)) {
+                if (!uploadItem(item, existCheck, projectId, noUpload)) {
                     return false;
                 }
             }
@@ -241,6 +256,15 @@ public class UploadToServerDialog extends FXMLDialog {
         }
     }
 
+    /**
+     * Uploads entire project to Xill server.
+     *
+     * @param item          The project tree item.
+     * @param existCheck    True if project existence check should be done (see {@link UploadToServerDialog#processItems} for details).
+     * @param noUpload      True if all request to server will be not carried out (see {@link UploadToServerDialog#processItems} for details).
+     * @return              True if processing was successful. False if processing failed and will be stopped completely.
+     * @throws IOException  In case of communication error with the server or some other IO error.
+     */
     private boolean uploadProject(final TreeItem<Pair<File, String>> item, boolean existCheck, boolean noUpload) throws IOException {
         final File projectFolder = projectPane.getProject(item).getValue().getKey();
         final String projectName = xillServerUploader.getProjectName(projectFolder);
@@ -263,9 +287,18 @@ public class UploadToServerDialog extends FXMLDialog {
         }
 
         // Upload all project items
-        return processItems(item.getChildren(), false, false, projectId, noUpload);
+        return processItems(item.getChildren(), false, projectId, noUpload);
     }
 
+    /**
+     * Uploads robot or resource to Xill server.
+     *
+     * @param item          The robot or resource tree item.
+     * @param existCheck    True if robot or resource existence check should be done (see {@link UploadToServerDialog#processItems} for details).
+     * @param noUpload      True if all request to server will be not carried out (see {@link UploadToServerDialog#processItems} for details).
+     * @return              True if processing was successful. False if processing failed and will be stopped completely.
+     * @throws IOException  In case of communication error with the server or some other IO error.
+     */
     private boolean uploadItem(final TreeItem<Pair<File, String>> item, boolean existCheck, final String projectId, boolean noUpload) throws IOException {
         // Get the selected item info
         final File itemFile = item.getValue().getKey();
@@ -279,6 +312,15 @@ public class UploadToServerDialog extends FXMLDialog {
         }
     }
 
+    /**
+     * Uploads folder to Xill server.
+     *
+     * @param item          The folder tree item.
+     * @param existCheck    True if project existence check should be done (see {@link UploadToServerDialog#processItems} for details).
+     * @param noUpload      True if all request to server will be not carried out (see {@link UploadToServerDialog#processItems} for details).
+     * @return              True if processing was successful. False if processing failed and will be stopped completely.
+     * @throws IOException  In case of communication error with the server or some other IO error.
+     */
     private boolean uploadFolder(final TreeItem<Pair<File, String>> item, boolean existCheck, boolean noUpload) throws IOException {
         final File projectFolder = projectPane.getProject(item).getValue().getKey();
         final String projectName = xillServerUploader.getProjectName(projectFolder);
@@ -299,7 +341,7 @@ public class UploadToServerDialog extends FXMLDialog {
         }
 
         // Upload all items from within the folder
-        return processItems(item.getChildren(), false, false, projectId, noUpload);
+        return processItems(item.getChildren(), false, projectId, noUpload);
     }
 
     /**
