@@ -56,14 +56,14 @@ Check out the code examples for more information about the options.
 | logging             | An ATOMIC (debug, info, warn or error) *default: null*                                                  | Set this option to enable logging of requests and responses                       |
 
 ### Multipart
-When the request needs to have a multipart body, the multipart option needs to be set. The body of such a request has
-to be an OBJECT in the following format:
+To make multipart requests you simply set the multipart option to `true`
+and conform to the multipart body syntax:
 
     {
-        "part1": {
-            "content":"The content",
-            "type":"text",
-            "contentType":"text/plain; charset=UTF-8"
+        "[PART NAME]": {
+            "type": "file|stream|text",
+            "contentType": "RFC 822 Content Type",
+            "content": "SEE BELOW"
         }
     }
 
@@ -71,24 +71,32 @@ or a LIST in the following format:
 
     [
         {
-            "name":"part1",
-            "content":"The content",
-            "type":"text",
-            "contentType":"text/plain; charset=UTF-8"
+            "name":"[PART NAME]",
+            "type":"file|stream|text",
+            "contentType":"RFC 822 Content Type"
+            "content":"SEE BELOW",
         }
     ]
 
 The two bodies above are equivalent. Passing the body as a LIST allows for multiple parts with the same name.
 
-The body can arbitrarily many parts containing at least the content and type options. The contentType option is optional.
+The body can contain arbitrarily many parts containing at least the content and type options. The contentType option is optional.
 See the table below for an explanation of the options a body part should consist of.
 
-| Option Name            | Value                                                                                                            | Description                                                                    |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| name                   | A string containing the part name                                                                                | The part name, should only be present when the body is a LIST                  |
-| content                | A string containing a filename or a stream, depending on the type option                                         | The content of the body part                                                   |
-| type                   | Can be "text", "file" or "stream"                                                                                | Determines the type of the content option                                      |
-| contentType (optional) | A string containing an HTTP content type, or a default depending on the content option's type if not specified   | The content type of the body part's content, this option will not be validated |
+| Option Name            | Value                                                                                                                                                                            | Description                                                                    |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| name                   | A string containing the part name                                                                                                                                                | The part name, should only be present when the body is a LIST                  |
+| content                | A string containing an ATOMIC (possibly containing a file path) or a stream, depending on the type option                                                                        | The content of the body part                                                   |
+| type                   | Can be `"text"`, `"file"` or `"stream"`, see below for more information                                                                                                          | Determines the type of the content option                                      |
+| contentType (optional) | A string containing an [RFC 822](https://www.w3.org/Protocols/rfc1341/4_Content-Type.html) content type, or a default depending on the content option's type if not specified    | The content type of the body part's content, this option will not be validated |
+
+The field `type` instructs the request how to interpret the provided content.
+
+| Type field | Content field                                                                                                          |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------- |
+| file       | A file path. A file post will be made with the target file as a payload.                                               |
+| stream     | A (binary) stream will be expected and consumed. Note that retries are not possible when providing streams as content. |
+| text       | Plain text will be sent as the body. If you provide a stream it will be read as text.                                  |
 
 ## Response
 If the request is performed without errors the return value will be an object that describes the response.

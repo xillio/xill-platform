@@ -1,4 +1,7 @@
-Perform a XXXX request and return the response from the server.
+Perform a XXX request to `url` with the given `body` and `options` and return the response from the server.
+
+The format of the `body` and `options` parameters is described in the _Request_ section. The return value is
+described in the _Response_ section.
 
 ## Request
 ### Body
@@ -22,20 +25,20 @@ The passed value should be an object containing
 option names as keys and their respective values as values.
 Check out the code examples for more information about the options.
 
-| Option Name         | Value                                                                             | Description                                                                       |
-| ------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| basicAuth           | An object containing a username and a password                                    | Set these credentials to perform basic authentication                             |
-| proxy               | An object contains at least a host but optionally a port or username and password | Set these options to connect through a proxy                                      |
-| timeout             | An integer that represents the timeout in milliseconds                            | Set this option to limit the time a request can take                              |
-| headers             | An object containing the headers                                                  | Set this option to add custom headers to your request                             |
-| insecure            | A boolean *default: false*                                                        | Set this option to true if you want to skip hostname validation                   |
-| multipart           | A boolean *default: false*                                                        | Set this option to true if you want to build a multipart/form-data request        |
-| enableRedirect      | A boolean *default: true*                                                         | Set this option to false if you do not want to automatically follow redirects     |
-| responseContentType | A String describing a content type                                                | Set this option to override the the response type auto detector                   |
-| logging             | A String (debug, info, warn or error) *default: none*                             | Set this option to enable logging of requests and responses                       |
+| Option Name         | Value                                                                                                   | Description                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| basicAuth           | An OBJECT containing `username` and `password` fields                                                   | Set these credentials to perform basic authentication                             |
+| proxy               | An OBJECT containing at least a `host` field but optionally `port` or `username` and `password` fields  | Set these options to connect through a proxy                                      |
+| timeout             | A ATOMIC that represents the timeout in milliseconds                                                    | Set this option to limit the time a request can take                              |
+| headers             | An OBJECT containing the headers                                                                        | Set this option to add custom headers to your request                             |
+| insecure            | An ATOMIC *default: false*                                                                              | Set this option to true if you want to skip hostname validation                   |
+| enableRedirect      | An ATOMIC *default: true*                                                                               | Set this option to false if you do not want to automatically follow redirects     |
+| multipart           | An ATOMIC *default: false*                                                                              | Set this option to true if you want to build a multipart/form-data request        |
+| responseContentType | An ATOMIC describing a content type                                                                     | Set this option to override the response type auto detector                       |
+| logging             | An ATOMIC (debug, info, warn or error) *default: null*                                                  | Set this option to enable logging of requests and responses                       |
 
 ### Multipart
-To make multipart requests you simply set the multipart option to *true* 
+To make multipart requests you simply set the multipart option to `true`
 and conform to the multipart body syntax:
 
     {
@@ -46,23 +49,44 @@ and conform to the multipart body syntax:
         }
     }
 
-Read more about the [RFC 822](https://www.w3.org/Protocols/rfc1341/4_Content-Type.html).
+or a LIST in the following format:
 
-The field *type* instructs the request how to interpret the provided content.
+    [
+        {
+            "name":"[PART NAME]",
+            "type":"file|stream|text",
+            "contentType":"RFC 822 Content Type"
+            "content":"SEE BELOW",
+        }
+    ]
+
+The two bodies above are equivalent. Passing the body as a LIST allows for multiple parts with the same name.
+
+The body can contain arbitrarily many parts containing at least the content and type options. The contentType option is optional.
+See the table below for an explanation of the options a body part should consist of.
+
+| Option Name            | Value                                                                                                                                                                            | Description                                                                    |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| name                   | A string containing the part name                                                                                                                                                | The part name, should only be present when the body is a LIST                  |
+| content                | A string containing an ATOMIC (possibly containing a file path) or a stream, depending on the type option                                                                        | The content of the body part                                                   |
+| type                   | Can be `"text"`, `"file"` or `"stream"`, see below for more information                                                                                                          | Determines the type of the content option                                      |
+| contentType (optional) | A string containing an [RFC 822](https://www.w3.org/Protocols/rfc1341/4_Content-Type.html) content type, or a default depending on the content option's type if not specified    | The content type of the body part's content, this option will not be validated |
+
+The field `type` instructs the request how to interpret the provided content.
 
 | Type field | Content field                                                                                                          |
 | ---------- | ---------------------------------------------------------------------------------------------------------------------- |
 | file       | A file path. A file post will be made with the target file as a payload.                                               |
 | stream     | A (binary) stream will be expected and consumed. Note that retries are not possible when providing streams as content. |
-| text       | Plain text will be sent as the body. If you provide a stream it will be read as text.                                  | 
+| text       | Plain text will be sent as the body. If you provide a stream it will be read as text.                                  |
 
 ## Response
 If the request is performed without errors the return value will be an 
 object that describes the response.
 
 ### Status
-The *status* field contains an object that has a *code* field that 
-contains the HTTP Status Code and a *phrase* field that contains the 
+The `status` field contains an object that has a `code` field that 
+contains the HTTP Status Code and a `phrase` field that contains the 
 description.
 
     {
@@ -74,7 +98,7 @@ description.
     }
     
 ### Headers
-The *headers* field contains an object that has the header names as keys 
+The `headers` field contains an object that has the header names as keys 
 and header values as values.
 
     {
@@ -91,7 +115,7 @@ and header values as values.
     }
 
 ### Version
-The *version* field contains a string describing the current HTTP 
+The `version` field contains a string describing the current HTTP 
 protocol version.
 
     {
@@ -100,9 +124,9 @@ protocol version.
     }
 
 ### Body
-The *body* field contains the response body. The type of content in here 
+The `body` field contains the response body. The type of content in here 
 is auto detected form the Content-Type header which can be overridden
- using the *responseContentType* option.
+ using the `responseContentType` option.
 
 | Content-Type    | Result                                         |
 | --------------- | ---------------------------------------------- |
