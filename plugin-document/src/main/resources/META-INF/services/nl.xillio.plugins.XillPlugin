@@ -1,0 +1,3 @@
+nl.xillio.xill.plugins.contenttype.ContentTypeXillPlugin
+nl.xillio.xill.plugins.document.DocumentXillPlugin
+nl.xillio.xill.plugins.mongodb.MongoXillPlugin
