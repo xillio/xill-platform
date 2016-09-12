@@ -122,6 +122,7 @@ public class QueryingService {
         }
     }
 
+    @SuppressWarnings("squid:S2095") //getResultSet() is only ever called from within a try-with-resources
     private ResultSet getResultSet(Statement statement) {
         try {
             return statement.getResultSet();
