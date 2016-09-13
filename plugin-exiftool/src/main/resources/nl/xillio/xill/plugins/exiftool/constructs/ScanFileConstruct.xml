@@ -67,7 +67,7 @@ add the directory containing exiftool to your PATH environmental variable
 * (Optional) Set your systems's envirionmental variable *perl_bin* to the path of the perl installation.
 (Defaults to */usr/bin/perl*)
 * Restart Xill IDE
-
+me
 ### Mac OSX
 * Download the exiftool osx executable from *sno.phy.queensu.ca/~phil/exiftool/* (bottom link)
 * Install the application
