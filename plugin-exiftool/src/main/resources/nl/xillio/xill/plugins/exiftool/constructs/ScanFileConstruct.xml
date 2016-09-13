@@ -60,8 +60,9 @@ the steps to install the required files.
 
 ### Linux
 Install the package through your system's package manager and restart Xill or follow the instructions below.
-* Download the exiftool perl source from *sno.phy.queensu.ca/~phil/exiftool/* (top link)
-* Extract the archive to your hard drive
+
+* Download the exiftool perl sources from *sno.phy.queensu.ca/~phil/exiftool/* (top link)
+* Extract the archive(s) to your hard drive
 * Set your system's environmental variable *exiftool_bin* to the absolute path of the exiftool file or
 add the directory containing exiftool to your PATH environmental variable
 * (Optional) Set your systems's envirionmental variable *perl_bin* to the path of the perl installation.
@@ -69,8 +70,14 @@ add the directory containing exiftool to your PATH environmental variable
 * Restart Xill IDE
 
 ### Mac OSX
-* Download the exiftool osx executable from *sno.phy.queensu.ca/~phil/exiftool/* (bottom link)
-* Install the application
+
+#### Using Homebrew
+If you have the homebrew package manager installed (see http://brew.sh ) you can simply enter the following in a terminal window:
+```brew install exiftool```
+
+#### Manual install
+* Download the exiftool osx executables from *sno.phy.queensu.ca/~phil/exiftool/* (bottom link)
+* Install the applications
 * (Optional) Set your system's environmental variable *exiftool_bin* to the absolute path of the
 exiftool file or add the directory containing exiftool to your PATH environmental variable
 (Defaults to */usr/local/bin/exiftool*)
