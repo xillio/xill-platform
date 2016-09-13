@@ -17,6 +17,7 @@ package nl.xillio.xill.plugins.system.constructs;
 
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.services.json.JsonException;
@@ -66,12 +67,52 @@ public class ParseJSONConstructTest extends TestUtils {
     }
 
     /**
+     * Test the process method under normal circumstances
+     */
+    @Test(expectedExceptions = InvalidUserInputException.class)
+    public void testNestedListException() throws JsonException {
+        // Initialize
+        ArrayList<MetaExpression> list = new ArrayList<>();
+        ArrayList<MetaExpression> nestedList = new ArrayList<>();
+        nestedList.add(fromValue(true));
+        list.add(fromValue("test"));
+        list.add(fromValue(nestedList));
+
+        // Mock context
+        JsonParser parser = mock(JsonParser.class);
+
+        // Run method
+        ParseJSONConstruct.process(fromValue(list), parser);
+    }
+
+    /**
      * Test the process method with null input
      */
     @Test(expectedExceptions = RobotRuntimeException.class)
     public void testProcessNullInput() {
         // Run method
         ParseJSONConstruct.process(NULL, null);
+    }
+
+    /**
+     * Test the process method with empty list as input
+     */
+    @Test(expectedExceptions = RobotRuntimeException.class)
+    public void testProcessNullListInput() {
+        ArrayList<MetaExpression> list = new ArrayList<>();
+        list.add(NULL);
+
+        // Run method
+        ParseJSONConstruct.process(fromValue(list), null);
+    }
+
+    /**
+     * Test the process method with empty list as input
+     */
+    @Test(expectedExceptions = InvalidUserInputException.class)
+    public void testProcessEmptyListInput() {
+        // Run method
+        ParseJSONConstruct.process(fromValue(new ArrayList<>()), null);
     }
 
     /**
