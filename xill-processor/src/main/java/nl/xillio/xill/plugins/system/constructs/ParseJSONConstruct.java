@@ -52,7 +52,7 @@ public class ParseJSONConstruct extends Construct {
         if (json.getType() == ExpressionDataType.LIST) {
             ArrayList<MetaExpression> input = json.getValue();
 
-            if(input.isEmpty()){
+            if (input.isEmpty()) {
                 throw new InvalidUserInputException("The provided LIST is empty", json.getStringValue(),
                         "A LIST containing ATOMICS that represent JSON strings", "[\"{\\\"1\\\":\\\"value\\\",\\\"2\\\":\\\"anotherValue\\\"}\"]");
             }
