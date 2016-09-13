@@ -56,3 +56,4 @@ All notable changes to this project will be documented in this file.
 * Clicking open containing folder crashes Linux [CTC-1698]
 * Alert windows do not automatically get scaled in linux, which causes text to disappear [CTC-1742]
 * Error messages for errors in (transitive) includes [CTC-1514]
+* Auto-save does not work for non-robot files [CTC-1754]
