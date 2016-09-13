@@ -41,13 +41,18 @@ public class ParseJSONConstructTest extends TestUtils {
      */
     @Test
     public void testProcess() throws JsonException {
-        // Mock context
+        // Initialize
         String json = "[\"this\", \"is\", \"valid\", \"json\"]";
-        ArrayList<?> expectedResult = new ArrayList<>();
-        MetaExpression expression = mockExpression(ATOMIC);
-        when(expression.getStringValue()).thenReturn(json);
+        ArrayList<String> expectedOutput = new ArrayList<>();
+        expectedOutput.add("this");
+        expectedOutput.add("is");
+        expectedOutput.add("valid");
+        expectedOutput.add("json");
+        MetaExpression expression = fromValue(json);
+
+        // Mock context
         JsonParser parser = mock(JsonParser.class);
-        when(parser.fromJson(eq(json), any())).thenReturn(expectedResult);
+        when(parser.fromJson(eq(json), any())).thenReturn(expectedOutput);
 
         // Run method
         MetaExpression result = ParseJSONConstruct.process(expression, parser);
@@ -56,8 +61,8 @@ public class ParseJSONConstructTest extends TestUtils {
         verify(parser).fromJson(eq(json), any());
 
         // Assertions
-        Assert.assertEquals(result.getValue(), expectedResult);
-
+        Assert.assertEquals((ArrayList) result.getValue(), parseObject(expectedOutput).getValue());
+        Assert.assertTrue(result.getValue() instanceof ArrayList);
     }
 
     /**
