@@ -67,7 +67,44 @@ public class ParseJSONConstructTest extends TestUtils {
     }
 
     /**
-     * Test the process method under normal circumstances
+     * Test the process method under normal circumstances with a LIST as argument
+     */
+    @Test
+    public void testListProcess() throws JsonException {
+        // Initialize
+        ArrayList<MetaExpression> json = new ArrayList<>();
+        json.add(fromValue("[\"this\", \"is\"]"));
+        json.add(fromValue("[\"valid\", \"json\"]"));
+
+        ArrayList<ArrayList<String>> expectedOutput = new ArrayList<>();
+        ArrayList<String> outputList1 = new ArrayList<>();
+        outputList1.add("this");
+        outputList1.add("is");
+        ArrayList<String> outputList2 = new ArrayList<>();
+        outputList2.add("valid");
+        outputList2.add("json");
+        expectedOutput.add(outputList1);
+        expectedOutput.add(outputList2);
+        MetaExpression expression = fromValue(json);
+
+        // Mock context
+        JsonParser parser = mock(JsonParser.class);
+        when(parser.fromJson(eq("[\"this\", \"is\"]"), any())).thenReturn(outputList1);
+        when(parser.fromJson(eq("[\"valid\", \"json\"]"), any())).thenReturn(outputList2);
+
+        // Run method
+        MetaExpression result = ParseJSONConstruct.process(expression, parser);
+
+        // Verify calls to service
+        verify(parser, times(2)).fromJson(any(), any());
+
+        // Assertions
+        Assert.assertEquals((ArrayList) result.getValue(), parseObject(expectedOutput).getValue());
+        Assert.assertTrue(result.getValue() instanceof ArrayList);
+    }
+
+    /**
+     * Test the process method when a nested list is given
      */
     @Test(expectedExceptions = InvalidUserInputException.class)
     public void testNestedListException() throws JsonException {
