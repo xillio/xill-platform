@@ -39,7 +39,7 @@ import java.util.NoSuchElementException;
  */
 public class StatementIterator implements Iterator<Object>, AutoCloseable {
 
-    private Statement stmt;
+    private Statement statement;
 
     private ResultSet currentSet;
     private ResultSetMetaData currentMeta;
@@ -49,10 +49,10 @@ public class StatementIterator implements Iterator<Object>, AutoCloseable {
     /**
      * Create an iterator over all results of a {@link Statement}. When iterating is finished the statement is closed.
      *
-     * @param stmt The statement to iterate over
+     * @param statement The statement to iterate over
      */
-    public StatementIterator(Statement stmt) {
-        this.stmt = stmt;
+    public StatementIterator(Statement statement) {
+        this.statement = statement;
         retrieveNextResult(true);
         hasNext = currentSet != null || currentUpdateCount != -1;
     }
@@ -60,15 +60,15 @@ public class StatementIterator implements Iterator<Object>, AutoCloseable {
     /**
      * Sets the currentUpdateCount or the currentSet depending on the current result of the statement.
      */
+    @SuppressWarnings("squid:S2095") //currentSet is closed in iterator close() method
     void retrieveNextResult(boolean resultSetPossible) {
         try {
-            if (resultSetPossible)
-                currentSet = stmt.getResultSet();
-            // If the result is no ResultSet it should be an update count
-            if (currentSet == null)
-                currentUpdateCount = stmt.getUpdateCount();
-            else {
-                // Initialise the ResultSet
+            if (resultSetPossible) {
+                currentSet = statement.getResultSet();
+            }
+            if (currentSet == null) {
+                currentUpdateCount = statement.getUpdateCount();
+            } else {
                 advance();
                 if (currentSet != null) {
                     currentMeta = currentSet.getMetaData();
@@ -86,12 +86,12 @@ public class StatementIterator implements Iterator<Object>, AutoCloseable {
         currentSet = null;
         currentUpdateCount = -1;
         try {
-            boolean resultSet = stmt.getMoreResults();
+            boolean resultSet = statement.getMoreResults();
             retrieveNextResult(resultSet);
             // If the next result is no result and no update count, iterating has finished
             hasNext = currentSet != null || currentUpdateCount != -1;
             if (!hasNext)
-                stmt.close();
+                statement.close();
         } catch (SQLException e) {
             throw new StatementIterationException(e);
         }
@@ -183,8 +183,8 @@ public class StatementIterator implements Iterator<Object>, AutoCloseable {
      */
     @Override
     public void close() throws SQLException {
-        if (stmt != null) {
-            stmt.close();
+        if (statement != null) {
+            statement.close();
         }
 
         if (currentSet != null) {
