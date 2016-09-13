@@ -34,7 +34,7 @@ Check out the code examples for more information about the options.
 | ------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
 | basicAuth           | An OBJECT containing `username` and `password` fields                                                   | Set these credentials to perform basic authentication                             |
 | proxy               | An OBJECT containing at least a `host` field but optionally `port` or `username` and `password` fields  | Set these options to connect through a proxy                                      |
-| timeout             | A ATOMIC that represents the timeout in milliseconds                                                    | Set this option to limit the time a request can take                              |
+| timeout             | An ATOMIC that represents the timeout in milliseconds                                                   | Set this option to limit the time a request can take                              |
 | headers             | An OBJECT containing the headers                                                                        | Set this option to add custom headers to your request                             |
 | insecure            | An ATOMIC *default: false*                                                                              | Set this option to true if you want to skip hostname validation                   |
 | enableRedirect      | An ATOMIC *default: true*                                                                               | Set this option to false if you do not want to automatically follow redirects     |
@@ -87,7 +87,7 @@ header which can be overridden using the `responseContentType` option.
 
 | Content-Type    | Result                                         |
 | --------------- | ---------------------------------------------- |
-| Contains "json" | The json parsed to an expression               |
+| Contains "json" | The JSON parsed to an expression               |
 | Contains "xml"  | An XML node that can be used by the XML plugin |
 | Contains "text" | A plain text string                            |
 | Otherwise       | A stream containing the data                   |
