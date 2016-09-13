@@ -27,7 +27,7 @@ For more build information you should check out [BUILD.md](BUILD.md)
 
 ### The build cannot resolve com.oracle:ojdbc7:12.1.0.1.0
 
-Oracle does not allow this artifact to be published our Maven repositories.
+Oracle does not allow this artifact to be published on our Maven repositories.
 To build this project you will have to set up your environment to pull the
 jar file from their repository: [Take me to the instructions!](http://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9017)
 
