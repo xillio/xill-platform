@@ -18,7 +18,7 @@
 -->
 <function>
     <description>
-Perform an options request to `url` with the given `options` and return the response from the server.
+Performs an options request to `url` with the given `options` and returns the response from the server.
 
 The format of the `options` parameter is described in the _Request_ section. The return value is
 described in the _Response_ section.

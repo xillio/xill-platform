@@ -1,4 +1,4 @@
-Perform a XXX request to `url` with the given `body` and `options` and return the response from the server.
+Performs a XXX request to `url` with the given `body` and `options` and returns the response from the server.
 
 The format of the `body` and `options` parameters is described in the _Request_ section. The return value is
 described in the _Response_ section.
