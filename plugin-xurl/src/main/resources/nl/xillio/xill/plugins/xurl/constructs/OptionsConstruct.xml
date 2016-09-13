@@ -45,8 +45,8 @@ Check out the code examples for more information about the options.
 If the request is performed without errors the return value will be an object that describes the response.
 
 ### Status
-The *status* field contains an object that has a *code* field that contains the HTTP Status Code
-and a *phrase* field that contains the description.
+The `status` field contains an object that has a `code` field that contains the HTTP Status Code
+and a `phrase` field that contains the description.
 
     {
         "status": {
@@ -57,7 +57,7 @@ and a *phrase* field that contains the description.
     }
 
 ### Headers
-The *headers* field contains an object that has the header names as keys and header values as values.
+The `headers` field contains an object that has the header names as keys and header values as values.
 
     {
         "headers" : {
@@ -74,7 +74,7 @@ The *headers* field contains an object that has the header names as keys and hea
     }
 
 ### Version
-The *version* field contains a string describing the current HTTP protocol version.
+The `version` field contains a string describing the current HTTP protocol version.
 
     {
         "version": "HTTP/1.1",
@@ -82,8 +82,8 @@ The *version* field contains a string describing the current HTTP protocol versi
     }
 
 ### Body
-The *body* field contains the response body. The type of content in here is auto detected form the Content-Type
-header which can be overridden using the *responseContentType* option.
+The `body` field contains the response body. The type of content in here is auto detected form the Content-Type
+header which can be overridden using the `responseContentType` option.
 
 | Content-Type    | Result                                         |
 | --------------- | ---------------------------------------------- |
