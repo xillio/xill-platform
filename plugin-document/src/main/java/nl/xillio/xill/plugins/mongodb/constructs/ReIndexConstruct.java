@@ -33,6 +33,7 @@ import org.bson.BsonString;
 public class ReIndexConstruct extends AbstractMongoApiConstruct {
 
     @Override
+    @SuppressWarnings("squid:S2095")
     protected Argument[] getApiArguments() {
         return new Argument[]{
                 new Argument("collection", ATOMIC)
@@ -40,7 +41,6 @@ public class ReIndexConstruct extends AbstractMongoApiConstruct {
     }
 
     @Override
-    @SuppressWarnings("squid:S2095")
     MetaExpression process(MetaExpression[] arguments, Connection connection, ConstructContext context) {
         String collection = arguments[0].getStringValue();
 
