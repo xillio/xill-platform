@@ -24,7 +24,7 @@
 
     <fileSets>
         <fileSet>
-            <directory>${project.basedir}</directory>
+            <directory>${project.basedir}/..</directory>
             <outputDirectory></outputDirectory>
             <includes>
                 <include>README*</include>
@@ -36,21 +36,21 @@
         </fileSet>
 
         <fileSet>
-            <directory>${project.basedir}/xill-ide-launcher/target/jfx/native/</directory>
+            <directory>${project.basedir}/target/jfx/native/</directory>
             <outputDirectory></outputDirectory>
             <includes>
                 <include>*.pkg</include>
             </includes>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/xill-ide-launcher/target/jfx/native/Xill IDE</directory>
+            <directory>${project.basedir}/target/jfx/native/Xill IDE</directory>
             <outputDirectory></outputDirectory>
             <includes>
                 <include>**/*</include>
             </includes>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/xill-ide-launcher/target/jfx/native/XillIDE</directory>
+            <directory>${project.basedir}/target/jfx/native/XillIDE</directory>
             <outputDirectory></outputDirectory>
             <includes>
                 <include>**/*</include>
