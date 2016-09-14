@@ -29,6 +29,7 @@ import nl.xillio.xill.plugins.database.util.Database;
 @Deprecated
 public class OracleConnectConstruct extends BaseDatabaseConstruct {
     @Override
+    @SuppressWarnings("squid:S2095")
     public ConstructProcessor doPrepareProcess(ConstructContext context) {
         Argument[] args = {
                 new Argument("database", ATOMIC),

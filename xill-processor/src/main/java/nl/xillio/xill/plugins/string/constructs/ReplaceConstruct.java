@@ -51,6 +51,7 @@ public class ReplaceConstruct extends Construct {
     }
 
     @Override
+    @SuppressWarnings("squid:S2095")
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         Argument args[] = {
                 new Argument("text", ATOMIC),

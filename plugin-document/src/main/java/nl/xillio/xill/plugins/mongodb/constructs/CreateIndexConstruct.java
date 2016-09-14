@@ -41,6 +41,7 @@ public class CreateIndexConstruct extends AbstractCollectionApiConstruct {
 
 
     @Override
+    @SuppressWarnings("squid:S2095")
     protected Argument[] getApiArguments() {
         return new Argument[]{
                 new Argument("keys", OBJECT),

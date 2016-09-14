@@ -45,6 +45,7 @@ public class InsertConstruct extends AbstractCollectionApiConstruct {
     }
 
     @Override
+    @SuppressWarnings("squid:S2095")
     protected Argument[] getApiArguments() {
         return new Argument[]{
                 new Argument("documents", LIST),

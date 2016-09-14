@@ -46,6 +46,7 @@ public abstract class SimplesqlConnectConstruct extends BaseDatabaseConstruct {
     }
 
     @Override
+    @SuppressWarnings("squid:S2095")
     public ConstructProcessor doPrepareProcess(ConstructContext context) {
         Argument[] args =
                 {

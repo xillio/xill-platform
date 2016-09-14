@@ -40,6 +40,7 @@ public class ReIndexConstruct extends AbstractMongoApiConstruct {
     }
 
     @Override
+    @SuppressWarnings("squid:S2095")
     MetaExpression process(MetaExpression[] arguments, Connection connection, ConstructContext context) {
         String collection = arguments[0].getStringValue();
 

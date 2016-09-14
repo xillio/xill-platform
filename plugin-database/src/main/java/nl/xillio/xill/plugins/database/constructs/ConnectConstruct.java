@@ -42,6 +42,7 @@ import java.util.Map;
 public class ConnectConstruct extends BaseDatabaseConstruct {
 
     @Override
+    @SuppressWarnings("squid:S2095")
     public ConstructProcessor doPrepareProcess(final ConstructContext context) {
         Argument[] args =
                 {new Argument("database", ATOMIC),

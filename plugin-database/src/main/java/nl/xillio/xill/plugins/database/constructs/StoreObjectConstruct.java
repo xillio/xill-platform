@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 public class StoreObjectConstruct extends BaseDatabaseConstruct {
 
     @Override
+    @SuppressWarnings("squid:S2095")
     public ConstructProcessor doPrepareProcess(final ConstructContext context) {
         Argument[] args =
                 {

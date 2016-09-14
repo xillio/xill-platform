@@ -70,6 +70,7 @@ public abstract class AbstractRequestConstruct extends Construct {
 
     protected abstract Content process(String url, Options options, Content body);
 
+    @SuppressWarnings("squid:S2095")
     private Argument[] buildArguments() {
         if (hasBody) {
             return new Argument[]{

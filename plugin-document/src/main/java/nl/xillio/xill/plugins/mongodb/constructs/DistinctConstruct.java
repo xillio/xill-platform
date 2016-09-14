@@ -32,6 +32,7 @@ import org.bson.Document;
 public class DistinctConstruct extends AbstractCollectionApiConstruct {
 
     @Override
+    @SuppressWarnings("squid:S2095")
     protected Argument[] getApiArguments() {
         return new Argument[]{
                 new Argument("field", ATOMIC),
