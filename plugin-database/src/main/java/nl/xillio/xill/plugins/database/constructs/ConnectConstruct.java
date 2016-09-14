@@ -42,7 +42,7 @@ import java.util.Map;
 public class ConnectConstruct extends BaseDatabaseConstruct {
 
     @Override
-    @SuppressWarnings("squid:S2095")
+    @SuppressWarnings("squid:S2095")  // Suppress "Resources should be closed": Arguments do not need to be closed here, because ConstructProcessor closes them
     public ConstructProcessor doPrepareProcess(final ConstructContext context) {
         Argument[] args =
                 {new Argument("database", ATOMIC),

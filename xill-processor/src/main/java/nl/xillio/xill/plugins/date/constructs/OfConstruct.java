@@ -36,7 +36,7 @@ import java.time.ZoneId;
 public class OfConstruct extends BaseDateConstruct {
 
     @Override
-    @SuppressWarnings("squid:S2095")
+    @SuppressWarnings("squid:S2095")  // Suppress "Resources should be closed": Arguments do not need to be closed here, because ConstructProcessor closes them
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         Argument args[] = {new Argument("year"), new Argument("month"),
                 new Argument("day"), new Argument("hour"),

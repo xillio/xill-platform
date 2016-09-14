@@ -70,7 +70,7 @@ public abstract class AbstractRequestConstruct extends Construct {
 
     protected abstract Content process(String url, Options options, Content body);
 
-    @SuppressWarnings("squid:S2095")
+    @SuppressWarnings("squid:S2095")  // Suppress "Resources should be closed": Arguments do not need to be closed here, because ConstructProcessor closes them
     private Argument[] buildArguments() {
         if (hasBody) {
             return new Argument[]{

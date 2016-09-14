@@ -46,7 +46,7 @@ public abstract class SimplesqlConnectConstruct extends BaseDatabaseConstruct {
     }
 
     @Override
-    @SuppressWarnings("squid:S2095")
+    @SuppressWarnings("squid:S2095")  // Suppress "Resources should be closed": Arguments do not need to be closed here, because ConstructProcessor closes them
     public ConstructProcessor doPrepareProcess(ConstructContext context) {
         Argument[] args =
                 {

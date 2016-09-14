@@ -31,7 +31,7 @@ import org.bson.Document;
 public class DropIndexConstruct extends AbstractCollectionApiConstruct {
 
     @Override
-    @SuppressWarnings("squid:S2095")
+    @SuppressWarnings("squid:S2095")  // Suppress "Resources should be closed": Arguments do not need to be closed here, because ConstructProcessor closes them
     protected Argument[] getApiArguments() {
         return new Argument[]{
                 new Argument("index", ATOMIC, OBJECT)
