@@ -68,7 +68,7 @@ add the directory containing exiftool to your PATH environmental variable
 * (Optional) Set your systems's envirionmental variable *perl_bin* to the path of the perl installation.
 (Defaults to */usr/bin/perl*)
 * Restart Xill IDE
-
+me
 ### Mac OSX
 
 #### Using Homebrew
