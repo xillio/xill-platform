@@ -65,21 +65,20 @@ The two bodies above are equivalent. Passing the body as a LIST allows for multi
 The body can contain multiple parts containing at least the name, content and type options. The contentType option is optional.
 See the table below for an explanation of the options which a body part should consist of.
 
-| Option Name            | Value                                                                                                                                                                            | Description                                                                    |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| name                   | An ATOMIC containing the part name                                                                                                                                               | The part name                                                                  |
-| content                | An ATOMIC containing a file path or a stream, depending on the type option                                                                                                       | The content of the body part                                                   |
-| type                   | Can be `"text"`, `"file"` or `"stream"`, see below for more information                                                                                                          | Determines the type of the content option                                      |
-| contentType (optional) | An ATOMIC containing a [RFC 822](https://www.w3.org/Protocols/rfc1341/4_Content-Type.html) content type, or a default depending on the content option's type if not specified    | The content type of the body part's content, this option will not be validated |
+| Option Name            | Value                                                                                                                                                                                            | Description                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| name                   | An ATOMIC containing the part name                                                                                                                                                               | The part name                                                                  |
+| content                | An ATOMIC containing a file path or a stream, depending on the type option                                                                                                                       | The content of the body part                                                   |
+| type                   | Can be `"text"`, `"file"` or `"stream"`, see below for more information                                                                                                                          | Determines the type of the content option                                      |
+| contentType (optional) | An ATOMIC containing a [RFC 822](https://www.w3.org/Protocols/rfc1341/4_Content-Type.html) content type, or the default (described in the table below) if this option is not given               | The content type of the body part's content, this option will not be validated |
 
 The field `type` instructs the request how to interpret the provided content.
 
-| Type field | Content field                                                                                                          |
-| ---------- | ---------------------------------------------------------------------------------------------------------------------- |
-| file       | A file path. A file patch will be made with the target file as a payload.                                              |
-| stream     | A (binary) stream will be expected and consumed. Note that retries are not possible when providing streams as content. |
-| text       | Plain text will be sent as the body. If you provide a stream it will be read as text.                                  |
-
+| Type field | Content field                                                                                                          | Default content type        |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| file       | A file path. A file patch will be made with the target file as a payload.                                              | application/octet-stream    |
+| stream     | A (binary) stream will be expected and consumed. Note that retries are not possible when providing streams as content. | application/octet-stream    |
+| text       | Plain text will be sent as the body. If you provide a stream it will be read as text.                                  | text/plain                  |
 ## Response
 If the request is performed without errors the return value will be an 
 object that describes the response.
