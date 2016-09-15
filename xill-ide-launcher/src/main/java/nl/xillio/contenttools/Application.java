@@ -89,7 +89,7 @@ public class Application extends javafx.application.Application {
         throw new IOException("Could not find implementation of ide");
     }
 
-    private static synchronized void setArgs(List<String> args) {
+    private static void setArgs(List<String> args) {
         if (args == null) {
             Application.args = args;
         }
