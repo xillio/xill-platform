@@ -132,7 +132,7 @@ public enum TypeConverter {
     DATE(Date.class) {
         @Override
         protected Object convert(Object o) {
-            return DEFAULT_DATE_FORMAT.format((Date) o);
+            return THREADSAFE_DATE_FORMAT.get().format((Date) o);
         }
     },
     /**
@@ -168,7 +168,12 @@ public enum TypeConverter {
     };
 
     private static final int ARRAY_RESULTSET_VALUE_INDEX = 2;
-    private static final DateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final ThreadLocal<DateFormat> THREADSAFE_DATE_FORMAT = new ThreadLocal<DateFormat>() {
+        @Override
+        protected DateFormat initialValue() {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        }
+    };
 
     // A convertor should be able to convert this class and all extending classes
     private Class<?> accepts;
