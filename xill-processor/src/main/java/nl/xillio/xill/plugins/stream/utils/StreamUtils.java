@@ -86,15 +86,19 @@ public class StreamUtils {
      * @throws IOException  Is thrown if a stream(-related) operation fails.
      */
     public static String readLine(BufferedInputStream inputStream, Charset charset) throws IOException {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            return readLine(inputStream,charset,outputStream);
+        }
+    }
 
+    private static String readLine(BufferedInputStream inputStream, Charset charset,ByteArrayOutputStream outputStream) throws IOException{
         int c = inputStream.read();
         if (c == -1) {
             throw new IOException("The end of the stream has been reached");
         }
 
         while (c != '\n' && c != '\r' && c != -1) {
-            output.write(c);
+            outputStream.write(c);
             c = inputStream.read();
         }
 
@@ -111,7 +115,7 @@ public class StreamUtils {
             }
         }
 
-        return new String(output.toByteArray(), charset);
+        return new String(outputStream.toByteArray(), charset);
     }
 
     /**
