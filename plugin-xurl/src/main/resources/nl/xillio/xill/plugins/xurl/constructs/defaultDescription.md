@@ -70,7 +70,7 @@ See the table below for an explanation of the options which a body part should c
 | name                   | An ATOMIC containing the part name                                                                                                                                                               | The part name                                                                  |
 | content                | An ATOMIC containing a file path or a stream, depending on the type option                                                                                                                       | The content of the body part                                                   |
 | type                   | Can be `"text"`, `"file"` or `"stream"`, see below for more information                                                                                                                          | Determines the type of the content option                                      |
-| contentType (optional) | An ATOMIC containing a [RFC 822](https://www.w3.org/Protocols/rfc1341/4_Content-Type.html) content type, or the default (described in the table below) if this option is not given               | The content type of the body part's content, this option will not be validated |
+| contentType (optional) | An ATOMIC containing a [RFC 822](https://www.w3.org/Protocols/rfc1341/4_Content-Type.html) content type, or the default (described in the table below) if this option is not given               | The content-type field in the form part, this option will not be validated     |
 
 The field `type` instructs the request how to interpret the provided content.
 
