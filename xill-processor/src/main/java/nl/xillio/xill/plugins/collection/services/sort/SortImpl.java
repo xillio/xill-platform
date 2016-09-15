@@ -145,15 +145,6 @@ public class SortImpl implements Sort {
                 return reverseOrder ? priorityB - priorityA : priorityA - priorityB;
             }
 
-            // These objects are of the same type.
-            try {
-                if (objectA.equals(objectB)) {
-                    result = 0;
-                }
-            } catch (NullPointerException e) {
-                result = 0;
-            }
-
             if (objectA instanceof Collection) {
                 result = ((Collection<?>) objectA).size() - ((Collection<?>) objectB).size();
             }
