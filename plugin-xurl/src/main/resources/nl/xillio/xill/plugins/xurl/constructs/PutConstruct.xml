@@ -78,17 +78,22 @@ or a LIST in the following format:
         }
     ]
 
-The two bodies above are equivalent. Passing the body as a LIST allows for multiple parts with the same name.
+The two bodies above are equivalent. A body can contain multiple parts.
 
-The body can contain multiple parts containing at least the name, content and type options. The contentType option is optional.
+A part must contain a `[PART NAME]` (as shown above). This could either be as a key when using the OBJECT syntax for the multipart body,
+or this could be with a `name` option when using the LIST syntax for the multipart body.
+Passing the body as a LIST allows for multiple parts with the same name.
+
+A part must contain at least the content and type options. The contentType option is optional.
 See the table below for an explanation of the options which a body part should consist of.
 
 | Option Name            | Value                                                                                                                                                                                            | Description                                                                    |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
-| name                   | An ATOMIC containing the part name                                                                                                                                                               | The part name                                                                  |
+| name                   | An ATOMIC containing the part name                                                                                                                                                               | The part name in case of using LISTS                                           |
 | content                | An ATOMIC containing a file path or a stream, depending on the type option                                                                                                                       | The content of the body part                                                   |
 | type                   | Can be `"text"`, `"file"` or `"stream"`, see below for more information                                                                                                                          | Determines the type of the content option                                      |
 | contentType (optional) | An ATOMIC containing a [RFC 822](https://www.w3.org/Protocols/rfc1341/4_Content-Type.html) content type, or the default (described in the table below) if this option is not given               | The content-type field in the form part, this option will not be validated     |
+
 The field `type` instructs the request how to interpret the provided content.
 
 | Type field | Content field                                                                                                          | Default content type        |
