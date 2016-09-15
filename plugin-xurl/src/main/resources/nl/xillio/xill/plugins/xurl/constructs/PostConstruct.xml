@@ -84,7 +84,7 @@ A part must contain a `[PART NAME]` (as shown above). This could either be as a 
 or this could be with a `name` option when using the LIST syntax for the multipart body.
 Passing the body as a LIST allows for multiple parts with the same name.
 
-A part must contain at least the content and type options. The contentType option is optional.
+A part must contain at least the `content` and `type` options. The `contentType` option is optional.
 See the table below for an explanation of the options which a body part should consist of.
 
 | Option Name            | Value                                                                                                                                                                                            | Description                                                                    |
