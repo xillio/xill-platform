@@ -16,8 +16,6 @@
 package nl.xillio.xill.plugins.collection.services.sort;
 
 import com.google.inject.Singleton;
-import nl.xillio.xill.api.errors.RobotRuntimeException;
-
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
