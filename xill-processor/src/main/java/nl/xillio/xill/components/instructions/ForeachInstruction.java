@@ -19,7 +19,6 @@ import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.components.*;
 import nl.xillio.xill.api.errors.NotImplementedException;
 import nl.xillio.xill.api.errors.RobotConcurrentModificationException;
-import nl.xillio.xill.api.errors.RobotRuntimeException;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -30,7 +29,8 @@ import java.util.function.Supplier;
 public class ForeachInstruction extends CompoundInstruction {
     private final InstructionSet instructionSet;
     private final Processable list;
-    private final VariableDeclaration valueVar, keyVar;
+    private final VariableDeclaration valueVar;
+    private final VariableDeclaration keyVar;
 
     /**
      * Create a {@link ForeachInstruction} with key and value variables
