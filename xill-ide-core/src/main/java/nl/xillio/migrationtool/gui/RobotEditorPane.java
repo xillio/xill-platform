@@ -140,9 +140,11 @@ public class RobotEditorPane extends EditorPane implements RobotTabComponent {
      */
     @Override
     protected void updateDocumentState(final String newCode) {
-        super.updateDocumentState(newCode);
+        if (getLastSavedCode().equals(newCode)) {
+            documentState.setValue(DocumentState.SAVED);
+        } else {
+            documentState.setValue(DocumentState.CHANGED);
 
-        if (documentState.getValue() == DocumentState.CHANGED) {
             // Only trigger auto-save if we are ready to run
             Status currentStatus = robotTab().getStatusBar().statusProperty().get();
 
