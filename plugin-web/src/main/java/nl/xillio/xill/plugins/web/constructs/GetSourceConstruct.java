@@ -28,13 +28,10 @@ import nl.xillio.xill.plugins.web.services.web.WebService;
  */
 public class GetSourceConstruct extends PhantomJSConstruct {
 
-    @Inject
-    private WebService webService;
-
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                page -> process(page, webService),
+                page -> process(page, getWebService()),
                 new Argument("page", ATOMIC));
     }
 

@@ -31,13 +31,10 @@ import java.util.List;
  */
 public class GetTextConstruct extends PhantomJSConstruct {
 
-    @Inject
-    private WebService webService;
-
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                element -> process(element, webService),
+                element -> process(element, getWebService()),
                 new Argument("element", LIST, ATOMIC));
     }
 

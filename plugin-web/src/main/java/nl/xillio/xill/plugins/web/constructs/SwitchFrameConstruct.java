@@ -34,7 +34,7 @@ public class SwitchFrameConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (page, frame) -> process(page, frame, webService),
+                (page, frame) -> process(page, frame, getWebService()),
                 new Argument("page", ATOMIC),
                 new Argument("frame", ATOMIC));
     }

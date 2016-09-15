@@ -31,7 +31,7 @@ public class InputConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (element, text) -> process(element, text, webService),
+                (element, text) -> process(element, text, getWebService()),
                 new Argument("element", ATOMIC),
                 new Argument("text", ATOMIC));
     }
