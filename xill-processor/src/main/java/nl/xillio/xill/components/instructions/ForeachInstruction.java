@@ -129,8 +129,9 @@ public class ForeachInstruction extends CompoundInstruction {
         }
     }
 
-    // Two breaks keep the code readable, while adding code in between if blocks is not possible here
-    @SuppressWarnings("squid:S135")
+    //squid:S135 Two breaks keep the code readable, while adding code in between if blocks is not possible here
+    //squid:S2095 suppress 'close this MetaExpression': The metaExpressions do not have to be closed here. They are closed somewhere else later.
+    @SuppressWarnings({"squid:S135","squid:S2095"})
     private InstructionFlow<MetaExpression> doIterations(Debugger debugger, Iterator<MetaExpression> valueIterator, Set<String> keySet) {
         InstructionFlow<MetaExpression> result = InstructionFlow.doResume();
         int index = 0;
