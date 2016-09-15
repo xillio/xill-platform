@@ -16,6 +16,7 @@
 package nl.xillio.xill.plugins.collection.services.sort;
 
 import com.google.inject.Singleton;
+import nl.xillio.xill.api.errors.RobotRuntimeException;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -91,9 +92,8 @@ public class SortImpl implements Sort {
 
         // Sort recursive
         if (recursive) {
-            for (String key : map.keySet()) {
-                Object child = map.get(key);
-                map.put(key, asSorted(child, true, onKeys, sorter, results));
+            for (Map.Entry<String,Object> entry : map.entrySet()) {
+                map.put(entry.getKey(), asSorted(entry.getValue(), true, onKeys, sorter, results));
             }
         }
 
@@ -103,28 +103,36 @@ public class SortImpl implements Sort {
     //returns the priority of the type of the input.
     public static int getPriorityIndex(final Object object) {
 
+        int index;
+        if (object instanceof List) {
+            index = 0;
+        }
+        else if (object instanceof Map) {
+            index = 1;
+        }
+        else if (object instanceof Boolean) {
+            index = 2;
+        }
+        else if (object instanceof Number) {
+            index = 3;
+        }
+        else if (object != null) {
+            index = 4;
+        }
+        else{
+            index = 5;
+        }
 
-        if (object instanceof List)
-            return 0;
-        if (object instanceof Map)
-            return 1;
-        if (object instanceof Boolean)
-            return 2;
-        if (object instanceof Number)
-            return 3;
-        if (object != null)
-            return 4;
-
-        return 5;
+        return index;
     }
 
     public static class Sorter implements Comparator<Object> {
         public static final Sorter NORMAL = new Sorter(false);
         public static final Sorter REVERSE = new Sorter(true);
-        private final boolean reverse;
+        private final boolean reverseOrder;
 
         private Sorter(final boolean reverseOrder) {
-            reverse = reverseOrder;
+            this.reverseOrder = reverseOrder;
         }
 
         @Override
@@ -134,7 +142,7 @@ public class SortImpl implements Sort {
             int priorityB = getPriorityIndex(objectB);
             int result = 0;
             if (priorityA != priorityB) {
-                return reverse ? priorityB - priorityA : priorityA - priorityB;
+                return reverseOrder ? priorityB - priorityA : priorityA - priorityB;
             }
 
             // These objects are of the same type.
@@ -168,7 +176,7 @@ public class SortImpl implements Sort {
                 result = objectA.toString().compareTo(objectB.toString());
             }
 
-            if (reverse) {
+            if (reverseOrder) {
                 result = -result;
             }
 
@@ -176,7 +184,7 @@ public class SortImpl implements Sort {
         }
 
         public boolean isReverse(){
-            return reverse;
+            return reverseOrder;
         }
 
     }
