@@ -19,7 +19,7 @@
 * Input: String "foo" and (invalid) encoding "bar"
 */
 
-use String, Assert;
+use Assert, String;
 
 do {
     String.byteLength("foo", "bar");
