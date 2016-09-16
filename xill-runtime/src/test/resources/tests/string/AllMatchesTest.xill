@@ -26,7 +26,9 @@ var dataset = [
 	["abc def ghi jkl. Mno", "\\w+", ["abc", "def", "ghi", "jkl", "Mno"]],
 	["foo for fox for", "fo[rx]", ["for", "fox", "for"]],
 	["abcabc", "a", ["a", "a"]],
-	["foo", "bar", []]
+	["foo", "bar", []],
+	["ab", "", ["", "", ""]],
+	["", "ab", []]
 ];
 
 foreach (item in dataset) {
