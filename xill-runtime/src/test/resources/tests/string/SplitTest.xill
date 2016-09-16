@@ -26,6 +26,7 @@ var dataset = [
 	["split at spaces", " ", false, ["split", "at", "spaces"]],
 	["split   spaces", " ", true, ["split", "", "", "spaces"]],
 	["split   spaces", " ", false, ["split", "spaces"]],
+	["split", "", false, ["s", "p", "l", "i", "t"]],
 	["foo bar baz foo bar baz", "ba", false, ["foo ", "r ", "z foo ", "r ", "z"]],
 	[246246246, 46, true, [2, 2, 2, ""]]
 ];

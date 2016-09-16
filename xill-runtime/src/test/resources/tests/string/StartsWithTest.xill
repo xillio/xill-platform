@@ -26,6 +26,7 @@ var dataset = [
 	["foobar", "foo", true],
 	["foobar", "bar", false],
 	["", "", true],
+	["abc", "", true],
 	["12345", 12, true],
 	[true, true, true]
 ];
