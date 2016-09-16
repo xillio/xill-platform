@@ -32,3 +32,4 @@ var dataset = [
 foreach (item in dataset) {
 	Assert.equal(String.absoluteURL("example.com/" :: item[0], item[1]), "http://example.com/" :: item[2]);
 }
+Assert.equal(String.absoluteURL("http://google.com", "http://example.com"), "http://example.com");
