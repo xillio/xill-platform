@@ -39,7 +39,7 @@ public class SetCookieConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (page, cookies) -> process(page, cookies, cookieFactory, webService),
+                (page, cookies) -> process(page, cookies, cookieFactory, getWebService()),
                 new Argument("page"),
                 new Argument("cookies", LIST, OBJECT));
     }

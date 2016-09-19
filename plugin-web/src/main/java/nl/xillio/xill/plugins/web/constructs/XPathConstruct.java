@@ -35,7 +35,7 @@ public class XPathConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (element, xPath) -> process(element, xPath, webService),
+                (element, xPath) -> process(element, xPath, getWebService()),
                 new Argument("element", ATOMIC),
                 new Argument("xPath", ATOMIC));
     }

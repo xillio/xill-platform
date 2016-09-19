@@ -15,16 +15,13 @@
  */
 package nl.xillio.migrationtool;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import me.biesaart.utils.Log;
+import nl.xillio.migrationtool.gui.FXController;
+import nl.xillio.xill.api.XillEnvironment;
+import nl.xillio.xill.services.json.JacksonParser;
+import nl.xillio.xill.services.json.JsonException;
+import nl.xillio.xill.services.json.JsonParser;
+import nl.xillio.xill.util.settings.ProjectSettings;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -37,13 +34,15 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 
-import me.biesaart.utils.Log;
-import nl.xillio.migrationtool.gui.FXController;
-import nl.xillio.xill.api.XillEnvironment;
-import nl.xillio.xill.services.json.JacksonParser;
-import nl.xillio.xill.services.json.JsonException;
-import nl.xillio.xill.services.json.JsonParser;
-import nl.xillio.xill.util.settings.ProjectSettings;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Client for Xill server.
@@ -264,7 +263,7 @@ public class XillServerUploader implements AutoCloseable {
         try {
             String responseJson = doPost(String.format("projects/%1$s/validate", projectId), jsonParser.toJson(robotFqns));
             Map<String, String> response = jsonParser.fromJson(responseJson, Map.class);
-            if (response.get("valid").equals("true")) {
+            if ("true".equals(response.get("valid"))) {
                 return;
             }
             // Not valid robot
@@ -381,7 +380,7 @@ public class XillServerUploader implements AutoCloseable {
         HashMap<String, String> data = new HashMap<>();
         data.put("code", code);
         try {
-            doPut(String.format("projects/%1$s/robots/%2$s", projectId, urlEncode(robotFqn)), jsonParser.toJson(data));
+            processAcknowledgedMessage(doPut(String.format("projects/%1$s/robots/%2$s", projectId, urlEncode(robotFqn)), jsonParser.toJson(data)));
         } catch (JsonException e) {
             throw new IOException("Could not upload robot " + robotFqn + "to the server.", e);
         }
@@ -401,7 +400,35 @@ public class XillServerUploader implements AutoCloseable {
                 .addBinaryBody("file", resourceFile)
                 .build();
 
-        doPost(String.format("projects/%1$s/resources/%2$s", projectId, urlEncode(resourceName)), httpEntity);
+        processAcknowledgedMessage(doPost(String.format("projects/%1$s/resources/%2$s", projectId, urlEncode(resourceName)), httpEntity));
+    }
+
+    /**
+     * Query Xill server for current server settings.
+     *
+     * @return The server settings.
+     * @throws IOException if the request fails
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, String> querySettings() throws IOException {
+        final String response = doGet("settings");
+        try {
+            return (Map<String, String>) jsonParser.fromJson(response, Map.class);
+        } catch (JsonException e) {
+            throw new IOException("The server response is invalid.", e);
+        }
+    }
+
+    private void processAcknowledgedMessage(final String response) throws IOException {
+        try {
+            final Object jsonParsed = jsonParser.fromJson(response, Map.class);
+            boolean ack = (Boolean) jsonPath("acknowledged", jsonParsed);
+            if (!ack) {
+                throw new IOException((String) jsonPath("errorMessage", jsonParsed));
+            }
+        } catch (JsonException e) {
+            throw new IOException("The server response is invalid.", e);
+        }
     }
 
     private String urlEncode(final String uri) throws IOException {
