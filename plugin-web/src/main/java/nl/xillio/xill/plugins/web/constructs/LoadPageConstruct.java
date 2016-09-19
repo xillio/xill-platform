@@ -48,7 +48,7 @@ public class LoadPageConstruct extends PhantomJSConstruct implements AutoCloseab
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (url, options) -> process(url, options, optionsFactory, webService),
+                (url, options) -> process(url, options, optionsFactory, getWebService()),
                 new Argument("url", ATOMIC),
                 new Argument("options", NULL, OBJECT));
     }
