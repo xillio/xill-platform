@@ -134,39 +134,44 @@ public class SortImpl implements Sort {
         }
 
         @Override
-        @SuppressWarnings({"unchecked", "squid:S1166"})
         public int compare(final Object objectA, final Object objectB) {
             int priorityA = getPriorityIndex(objectA);
             int priorityB = getPriorityIndex(objectB);
-            int result = 0;
+            int result;
             if (priorityA != priorityB) {
                 return reverseOrder ? priorityB - priorityA : priorityA - priorityB;
+            } else if (objectA == objectB || objectA.equals(objectB)) {
+                return 0;
             }
 
-            if (objectA instanceof Collection) {
-                result = ((Collection<?>) objectA).size() - ((Collection<?>) objectB).size();
-            }
-
-            if (objectA instanceof Number) {
-                Number numberA = (Number) objectA;
-                Number numberB = (Number) objectB;
-
-                result = Double.compare(numberA.doubleValue(), numberB.doubleValue());
-            }
-            if (objectA instanceof Boolean) {
-                boolean booleanA = (boolean) objectA;
-                boolean booleanB = (boolean) objectB;
-                result = Boolean.compare(booleanA, booleanB);
-            }
-            if (objectA instanceof Entry) {
-                result = ((Entry<String, Object>) objectA).getValue().toString().compareTo(((Entry<String, Object>) objectB).getValue().toString());
-            }
-            if (objectA instanceof String) {
-                result = objectA.toString().compareTo(objectB.toString());
-            }
+            result = getSortResult(objectA, objectB);
 
             if (reverseOrder) {
                 result = -result;
+            }
+
+            return result;
+        }
+
+        @SuppressWarnings("unchecked")
+        private int getSortResult(Object objectA, Object objectB) {
+            assert (objectA.getClass().equals(objectB.getClass()));
+            int result = 0;
+
+            if (objectA instanceof Collection) {
+                result = ((Collection<?>) objectA).size() - ((Collection<?>) objectB).size();
+            } else if (objectA instanceof Number) {
+                Number numberA = (Number) objectA;
+                Number numberB = (Number) objectB;
+                result = Double.compare(numberA.doubleValue(), numberB.doubleValue());
+            } else if (objectA instanceof Boolean) {
+                boolean booleanA = (boolean) objectA;
+                boolean booleanB = (boolean) objectB;
+                result = Boolean.compare(booleanA, booleanB);
+            } else if (objectA instanceof Entry) {
+                result = ((Entry<String, Object>) objectA).getValue().toString().compareTo(((Entry<String, Object>) objectB).getValue().toString());
+            } else if (objectA instanceof String) {
+                result = objectA.toString().compareTo(objectB.toString());
             }
 
             return result;
