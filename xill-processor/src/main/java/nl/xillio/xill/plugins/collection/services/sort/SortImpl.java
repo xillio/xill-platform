@@ -34,7 +34,7 @@ public class SortImpl implements Sort {
         return asSorted(input, recursive, onKeys, sorter, new IdentityHashMap<>());
     }
 
-    public static Object asSorted(final Object input, final boolean recursive, final boolean onKeys, final Sorter sorter, final Map<Object, Object> results) {
+    static Object asSorted(final Object input, final boolean recursive, final boolean onKeys, final Sorter sorter, final Map<Object, Object> results) {
         if (results.containsKey(input)) {
             return results.get(input);
         }
@@ -48,7 +48,7 @@ public class SortImpl implements Sort {
         return input;
     }
 
-    public static Object asSortedList(final Object input, final boolean recursive, final boolean onKeys, Sorter sorter, final Map<Object, Object> results){
+    static Object asSortedList(final Object input, final boolean recursive, final boolean onKeys, Sorter sorter, final Map<Object, Object> results){
         @SuppressWarnings("unchecked")
         List<?> list = (List<?>) input;
         List<Object> sorted = list.stream().sorted((a,b) -> {
@@ -69,7 +69,7 @@ public class SortImpl implements Sort {
         return sorted;
     }
 
-    public static Object asSortedMap(final Object input, final boolean recursive, final boolean onKeys, Sorter sorter, final Map<Object, Object> results){
+    static Object asSortedMap(final Object input, final boolean recursive, final boolean onKeys, Sorter sorter, final Map<Object, Object> results){
         // Sort the map by extracting single entries and sorting them either by key or
         @SuppressWarnings("unchecked")
         Entry<String, Object>[] sortedEntries = ((Map<String, Object>) input)
@@ -99,7 +99,7 @@ public class SortImpl implements Sort {
     }
 
     //returns the priority of the type of the input.
-    public static int getPriorityIndex(final Object object) {
+    static int getPriorityIndex(final Object object) {
 
         int index;
         if (object instanceof List) {
@@ -124,9 +124,9 @@ public class SortImpl implements Sort {
         return index;
     }
 
-    public static class Sorter implements Comparator<Object> {
-        public static final Sorter NORMAL = new Sorter(false);
-        public static final Sorter REVERSE = new Sorter(true);
+    static class Sorter implements Comparator<Object> {
+        static final Sorter NORMAL = new Sorter(false);
+        static final Sorter REVERSE = new Sorter(true);
         private final boolean reverseOrder;
 
         private Sorter(final boolean reverseOrder) {
