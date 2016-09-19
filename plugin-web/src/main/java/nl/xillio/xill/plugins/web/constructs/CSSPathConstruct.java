@@ -40,7 +40,7 @@ public class CSSPathConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (element, csspath) -> process(element, csspath, webService),
+                (element, csspath) -> process(element, csspath, getWebService()),
                 new Argument("element", ATOMIC),
                 new Argument("cssPath", ATOMIC));
     }
