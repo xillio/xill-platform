@@ -246,6 +246,12 @@
                 <type>zip</type>
                 <version>${xill.version}</version>
             </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-template</artifactId>
+                <type>zip</type>
+                <version>${xill.version}</version>
+            </dependency>
             <!-- External Dependencies -->
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>

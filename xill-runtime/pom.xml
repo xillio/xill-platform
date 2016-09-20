@@ -63,6 +63,7 @@
                 <module>../plugin-rest</module>
                 <module>../plugin-exiftool</module>
                 <module>../plugin-properties</module>
+                <module>../plugin-template</module>
             </modules>
         </profile>
         <profile>
