@@ -15,7 +15,6 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
-import com.google.inject.Inject;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
@@ -31,13 +30,10 @@ import java.util.List;
  */
 public class GetTextConstruct extends PhantomJSConstruct {
 
-    @Inject
-    private WebService webService;
-
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                element -> process(element, webService),
+                element -> process(element, getWebService()),
                 new Argument("element", LIST, ATOMIC));
     }
 

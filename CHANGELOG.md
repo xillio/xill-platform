@@ -58,3 +58,4 @@ All notable changes to this project will be documented in this file.
 * Alert windows do not automatically get scaled in linux, which causes text to disappear [CTC-1742]
 * Error messages for errors in (transitive) includes [CTC-1514]
 * Auto-save does not work for non-robot files [CTC-1754]
+* HttpResponseException on upload of large project [CTC-1751]
