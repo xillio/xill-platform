@@ -132,7 +132,8 @@
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
-                    <encoding>UTF-8</encoding>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
                 </configuration>
                 <executions>
                     <execution>
@@ -149,6 +150,7 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
                 <executions>
                     <execution>
