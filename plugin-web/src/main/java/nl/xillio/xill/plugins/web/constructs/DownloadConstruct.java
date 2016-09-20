@@ -38,7 +38,7 @@ public class DownloadConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (url, fileName, webContext, timeout) -> process(url, fileName, webContext, timeout, webService, context),
+                (url, fileName, webContext, timeout) -> process(url, fileName, webContext, timeout, getWebService(), context),
                 new Argument("url", ATOMIC),
                 new Argument("filename", ATOMIC),
                 new Argument("webContext", NULL, ATOMIC),

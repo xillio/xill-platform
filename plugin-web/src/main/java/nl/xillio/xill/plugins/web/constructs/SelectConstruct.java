@@ -31,7 +31,7 @@ public class SelectConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (element, select) -> process(element, select, webService),
+                (element, select) -> process(element, select, getWebService()),
                 new Argument("element", ATOMIC),
                 new Argument("select", ATOMIC));
     }

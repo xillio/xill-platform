@@ -19,7 +19,6 @@ import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.components.*;
 import nl.xillio.xill.api.errors.NotImplementedException;
 import nl.xillio.xill.api.errors.RobotConcurrentModificationException;
-import nl.xillio.xill.api.errors.RobotRuntimeException;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -30,7 +29,8 @@ import java.util.function.Supplier;
 public class ForeachInstruction extends CompoundInstruction {
     private final InstructionSet instructionSet;
     private final Processable list;
-    private final VariableDeclaration valueVar, keyVar;
+    private final VariableDeclaration valueVar;
+    private final VariableDeclaration keyVar;
 
     /**
      * Create a {@link ForeachInstruction} with key and value variables
@@ -129,8 +129,9 @@ public class ForeachInstruction extends CompoundInstruction {
         }
     }
 
-    // Two breaks keep the code readable, while adding code in between if blocks is not possible here
-    @SuppressWarnings("squid:S135")
+    //squid:S135 Two breaks keep the code readable, while adding code in between if blocks is not possible here
+    //squid:S2095 suppress 'close this MetaExpression': The metaExpressions do not have to be closed here. They are closed somewhere else later.
+    @SuppressWarnings({"squid:S135","squid:S2095"})
     private InstructionFlow<MetaExpression> doIterations(Debugger debugger, Iterator<MetaExpression> valueIterator, Set<String> keySet) {
         InstructionFlow<MetaExpression> result = InstructionFlow.doResume();
         int index = 0;

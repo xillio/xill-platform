@@ -29,6 +29,7 @@ class BinaryBehavior extends AbstractBehavior {
     private final IOStream value;
     private final String reference;
 
+    @SuppressWarnings("squid:S2095") //close function is implemented in abstract AbstractBehaviour
     BinaryBehavior(IOStream value) {
         Objects.requireNonNull(value);
         this.value = value;

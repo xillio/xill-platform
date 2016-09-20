@@ -31,7 +31,7 @@ public class RemoveAllCookiesConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                page -> process(page, webService),
+                page -> process(page, getWebService()),
                 new Argument("page", ATOMIC));
     }
 
