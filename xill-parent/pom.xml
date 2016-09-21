@@ -93,6 +93,7 @@
         <httpclient.version>4.5.1</httpclient.version>
         <jsoup.version>1.8.3</jsoup.version>
         <mongo.java.driver.version>3.2.2</mongo.java.driver.version>
+        <mysql.driver.version>6.0.2</mysql.driver.version>
 
         <!-- Build Info -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -401,6 +402,12 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
                 <version>${log4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.driver.version}</version>
             </dependency>
 
             <dependency>
