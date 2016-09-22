@@ -50,7 +50,7 @@ public class ScreenshotConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (page, fileName, options) -> process(page, fileName, options, fileService, webService, context),
+                (page, fileName, options) -> process(page, fileName, options, fileService, getWebService(), context),
                 new Argument("page", ATOMIC),
                 new Argument("filename", ATOMIC),
                 new Argument("options", NULL, OBJECT));

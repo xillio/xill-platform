@@ -130,17 +130,9 @@ public enum TypeConverter {
      * Converts a {@link Date} to a String representation
      */
     DATE(Date.class) {
-        // Define a threadsafe dateformat
-        private ThreadLocal<DateFormat> TS_DATE_FORMAT = new ThreadLocal<DateFormat>() {
-            @Override
-            protected DateFormat initialValue() {
-                return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            }
-        };
-
         @Override
         protected Object convert(Object o) {
-            return TS_DATE_FORMAT.get().format((Date) o);
+            return THREADSAFE_DATE_FORMAT.get().format((Date) o);
         }
     },
     /**
@@ -153,7 +145,7 @@ public enum TypeConverter {
             try {
                 ResultSet array = ((Array) o).getResultSet();
                 while (array.next()) {
-                    result.add(convertJDBCType(array.getObject(ARRAY_RESULTSET_VALUE)));
+                    result.add(convertJDBCType(array.getObject(ARRAY_RESULTSET_VALUE_INDEX)));
                 }
             } catch (SQLException e) {
                 throw new ConversionException(e);
@@ -175,8 +167,13 @@ public enum TypeConverter {
         }
     };
 
-    // The index of the value in an Array ResultSet
-    private static final int ARRAY_RESULTSET_VALUE = 2;
+    private static final int ARRAY_RESULTSET_VALUE_INDEX = 2;
+    private static final ThreadLocal<DateFormat> THREADSAFE_DATE_FORMAT = new ThreadLocal<DateFormat>() {
+        @Override
+        protected DateFormat initialValue() {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        }
+    };
 
     // A convertor should be able to convert this class and all extending classes
     private Class<?> accepts;
