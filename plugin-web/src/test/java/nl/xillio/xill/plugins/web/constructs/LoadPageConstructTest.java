@@ -68,7 +68,7 @@ public class LoadPageConstructTest extends TestUtils {
         when(webService.getEntityFromPool(any(), any())).thenReturn(entity);
         when(entity.getPage()).thenReturn(pageVariable);
         when(webService.getCurrentUrl(pageVariable)).thenReturn(urlValue);
-
+        when(optionsFactory.processOptions(any())).thenReturn(null);
         // run
         MetaExpression output = process(construct, url, options);
 

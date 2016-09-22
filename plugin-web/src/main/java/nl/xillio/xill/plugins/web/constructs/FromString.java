@@ -21,7 +21,6 @@ import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
-import nl.xillio.xill.api.errors.RobotRuntimeException;
 
 import java.io.File;
 import java.io.IOException;
