@@ -44,7 +44,7 @@ public class FromString extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                content -> process(content, optionsFactory, fileService, webService, pool),
+                content -> process(content, optionsFactory, fileService, getWebService(), pool),
                 new Argument("content", ATOMIC));
     }
 

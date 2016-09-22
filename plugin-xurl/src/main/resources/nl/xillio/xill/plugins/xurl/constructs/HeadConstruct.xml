@@ -18,7 +18,10 @@
 -->
 <function>
     <description>
-Perform a head request and return the response from the server.
+Performs a head request to `url` with the given `options` and returns the response from the server.
+
+The format of the `options` parameter is described in the _Request_ section. The return value is
+described in the _Response_ section.
 
 ## Request
 
@@ -27,23 +30,23 @@ To set various options for the request you can use the options parameter. The pa
 option names as keys and their respective values as values.
 Check out the code examples for more information about the options.
 
-| Option Name         | Value                                                                             | Description                                                                       |
-| ------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| basicAuth           | An object containing a username and a password                                    | Set these credentials to perform basic authentication                             |
-| proxy               | An object contains at least a host but optionally a port or username and password | Set these options to connect through a proxy                                      |
-| timeout             | An integer that represents the timeout in milliseconds                            | Set this option to limit the time a request can take                              |
-| headers             | An object containing the headers                                                  | Set this option to add custom headers to your request                             |
-| insecure            | A boolean *default: false*                                                        | Set this option to true if you want to skip hostname validation                   |
-| enableRedirect      | A boolean *default: true*                                                         | Set this option to false if you do not want to automatically follow redirects     |
-| responseContentType | A String describing a content type                                                | Set this option to override the the response type auto detector                   |
-| logging             | A String (debug, info, warn or error) *default: none*                             | Set this option to enable logging of requests and responses                       |
+| Option Name         | Value                                                                                                   | Description                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| basicAuth           | An OBJECT containing `username` and `password` fields                                                   | Set these credentials to perform basic authentication                             |
+| proxy               | An OBJECT containing at least a `host` field but optionally `port` or `username` and `password` fields  | Set these options to connect through a proxy                                      |
+| timeout             | An ATOMIC that represents the timeout in milliseconds                                                   | Set this option to limit the time a request can take                              |
+| headers             | An OBJECT containing the headers                                                                        | Set this option to add custom headers to your request                             |
+| insecure            | An ATOMIC *default: false*                                                                              | Set this option to true if you want to skip hostname validation                   |
+| enableRedirect      | An ATOMIC *default: true*                                                                               | Set this option to false if you do not want to automatically follow redirects     |
+| responseContentType | An ATOMIC describing a content type                                                                     | Set this option to override the response type auto detector                       |
+| logging             | An ATOMIC (debug, info, warn or error) *default: null*                                                  | Set this option to enable logging of requests and responses                       |
 
 ## Response
 If the request is performed without errors the return value will be an object that describes the response.
 
 ### Status
-The *status* field contains an object that has a *code* field that contains the HTTP Status Code 
-and a *phrase* field that contains the description.
+The `status` field contains an object that has a `code` field that contains the HTTP Status Code
+and a `phrase` field that contains the description.
 
     {
         "status": {
@@ -54,7 +57,7 @@ and a *phrase* field that contains the description.
     }
     
 ### Headers
-The *headers* field contains an object that has the header names as keys and header values as values.
+The `headers` field contains an object that has the header names as keys and header values as values.
 
     {
         "headers" : {
@@ -71,7 +74,7 @@ The *headers* field contains an object that has the header names as keys and hea
     }
 
 ### Version
-The *version* field contains a string describing the current HTTP protocol version.
+The `version` field contains a string describing the current HTTP protocol version.
 
     {
         "version": "HTTP/1.1",
@@ -79,12 +82,12 @@ The *version* field contains a string describing the current HTTP protocol versi
     }
 
 ### Body
-The *body* field contains the response body. The type of content in here is auto detected form the Content-Type 
-header which can be overridden using the *responseContentType* option.
+The `body` field contains the response body. The type of content in here is auto detected form the Content-Type
+header which can be overridden using the `responseContentType` option.
 
 | Content-Type    | Result                                         |
 | --------------- | ---------------------------------------------- |
-| Contains "json" | The json parsed to an expression               |
+| Contains "json" | The JSON parsed to an expression               |
 | Contains "xml"  | An XML node that can be used by the XML plugin |
 | Contains "text" | A plain text string                            |
 | Otherwise       | A stream containing the data                   |
@@ -114,15 +117,48 @@ header which can be overridden using the *responseContentType* option.
     </description>
     <examples>
         <example title="Usage">
-            <header>Check how big a get request would be</header>
+            <header>Make a minimal head request</header>
             <code>
                 use XURL, System;
 
                 var response = XURL.head(
-                    "http://jsonplaceholder.typicode.com/photos/43"
+                    "https://httpbin.org/"
                 );
 
-                System.print(response.headers["Content-Length"]);
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Send a request under basic authentication</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.head(
+                    "https://httpbin.org/",
+                    {
+                        // Set the basicAuth option
+                        "basicAuth": {
+                            "username": "user",
+                            "password": "passwd"
+                        }
+                    }
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Enable debug logging for requests</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.head(
+                    "https://httpbin.org/",
+                    {
+                        "logging": "debug"
+                    }
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
             </code>
         </example>
     </examples>
