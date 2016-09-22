@@ -60,7 +60,7 @@ public class UrlUtilityServiceImpl implements UrlUtilityService {
     }
 
     @Override
-    public String tryConvert(final String pageUrl, final String relativeUrl) throws IllegalArgumentException {
+    public String tryConvert(final String pageUrl, final String relativeUrl) {
         if (relativeUrl.startsWith("http://") || relativeUrl.startsWith("https://")) {
             return cleanupUrl(relativeUrl);
         } else if (relativeUrl.matches("//w+.*")) {

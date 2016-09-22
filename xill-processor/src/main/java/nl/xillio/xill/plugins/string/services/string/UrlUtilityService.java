@@ -56,7 +56,7 @@ public interface UrlUtilityService {
      * @throws IllegalArgumentException Is thrown when an illegal argument has been provided.
      * @throws PatternSyntaxException   Is thrown when the relative URL cannot be converted.
      */
-    String tryConvert(final String pageUrl, final String relativeUrl) throws IllegalArgumentException;
+    String tryConvert(final String pageUrl, final String relativeUrl);
 
     /**
      * Writes a given output in a file.

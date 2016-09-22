@@ -29,8 +29,6 @@ import nl.xillio.xill.plugins.string.services.string.UrlUtilityService;
  * Converts a relative URL string to an absolute URL using a string, pageUrl, as base URL.
  */
 public class AbsoluteURLConstruct extends Construct {
-
-    @Inject
     private UrlUtilityService urlUtilityService;
 
     @Override
@@ -41,7 +39,7 @@ public class AbsoluteURLConstruct extends Construct {
                 new Argument("relativeUrl", ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression pageUrlVar, final MetaExpression relativeUrlVar, final UrlUtilityService urlUtilityService) {
+    private MetaExpression process(final MetaExpression pageUrlVar, final MetaExpression relativeUrlVar, final UrlUtilityService urlUtilityService) {
         String pageUrl = pageUrlVar.getStringValue().trim();
         String relativeUrl = relativeUrlVar.getStringValue().trim();
 
@@ -67,7 +65,7 @@ public class AbsoluteURLConstruct extends Construct {
         return tryProcessUrl(pageUrl, relativeUrl, urlUtilityService);
     }
 
-    private static MetaExpression tryProcessUrl(String pageUrl, String relativeUrl, final UrlUtilityService urlUtilityService) {
+    private MetaExpression tryProcessUrl(String pageUrl, String relativeUrl, final UrlUtilityService urlUtilityService) {
         // Convert the relative url to an absolute one.
         try {
             String processed = urlUtilityService.tryConvert(pageUrl, relativeUrl);
@@ -81,5 +79,10 @@ public class AbsoluteURLConstruct extends Construct {
             throw new InvalidUserInputException("Illegal argument was handed to the matcher when trying to convert the URL.", pageUrl, "Correct page url.",
                     "use String;\nString.absoluteURL(\"http://www.xillio.nl/calendar/\", \"movies\");", e);
         }
+    }
+
+    @Inject
+    void setUrlUtilityService(UrlUtilityService urlUtilityService) {
+        this.urlUtilityService = urlUtilityService;
     }
 }
