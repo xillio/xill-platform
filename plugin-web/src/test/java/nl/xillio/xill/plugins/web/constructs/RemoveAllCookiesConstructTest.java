@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.web.constructs;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.PageVariable;
@@ -48,7 +47,7 @@ public class RemoveAllCookiesConstructTest extends TestUtils {
         when(page.getMeta(PageVariable.class)).thenReturn(pageVariable);
 
         // run
-        MetaExpression output = process(construct,page);
+        MetaExpression output = process(construct, page);
 
         // Wheter we parse the pageVariable only once
         verify(page, times(2)).getMeta(PageVariable.class);
@@ -73,7 +72,7 @@ public class RemoveAllCookiesConstructTest extends TestUtils {
         when(input.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = process(construct,input);
+        MetaExpression output = process(construct, input);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -100,7 +99,7 @@ public class RemoveAllCookiesConstructTest extends TestUtils {
         doThrow(new RobotRuntimeException("breaking in webService")).when(webService).deleteCookies(pageVariable);
 
         // run
-        process(construct,page);
+        process(construct, page);
     }
 
     /**
@@ -117,7 +116,7 @@ public class RemoveAllCookiesConstructTest extends TestUtils {
         when(page.getMeta(PageVariable.class)).thenReturn(null);
 
         // run
-        process(construct,page);
+        process(construct, page);
     }
 
 }

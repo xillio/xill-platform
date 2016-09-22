@@ -22,7 +22,6 @@ import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.WebVariable;
-import nl.xillio.xill.plugins.web.services.web.WebService;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -53,7 +52,7 @@ public class DownloadConstruct extends PhantomJSConstruct {
      * @throws OperationFailedException target could not be downloaded
      * @return null variable
      */
-    private MetaExpression process(final MetaExpression urlVar, final MetaExpression fileName, final MetaExpression webContextVar, final MetaExpression timeoutVar,final ConstructContext context) {
+    private MetaExpression process(final MetaExpression urlVar, final MetaExpression fileName, final MetaExpression webContextVar, final MetaExpression timeoutVar, final ConstructContext context) {
 
         String url = urlVar.getStringValue();
         if (url.isEmpty()) {

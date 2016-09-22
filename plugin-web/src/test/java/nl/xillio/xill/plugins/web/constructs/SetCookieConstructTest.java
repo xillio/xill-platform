@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.web.constructs;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.CookieFactory;
@@ -62,7 +61,7 @@ public class SetCookieConstructTest extends TestUtils {
         when(cookie.getValue()).thenReturn(cookieContent);
 
         // run
-        MetaExpression output = process(construct,page, cookie);
+        MetaExpression output = process(construct, page, cookie);
 
         // verify
         verify(page, times(2)).getMeta(PageVariable.class);
@@ -88,7 +87,7 @@ public class SetCookieConstructTest extends TestUtils {
         when(page.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = process(construct,page,cookie);
+        MetaExpression output = process(construct, page, cookie);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -109,7 +108,7 @@ public class SetCookieConstructTest extends TestUtils {
         when(cookie.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = process(construct,page,cookie);
+        MetaExpression output = process(construct, page, cookie);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -147,7 +146,7 @@ public class SetCookieConstructTest extends TestUtils {
         cookiesContent.add(firstCookie);
 
         // run
-        MetaExpression output = process(construct,page,cookies);
+        MetaExpression output = process(construct, page, cookies);
 
         // verify
         verify(page, times(2)).getMeta(PageVariable.class);
@@ -190,7 +189,7 @@ public class SetCookieConstructTest extends TestUtils {
         cookiesContent.add(firstCookie);
 
         // run
-        process(construct,page, cookies);
+        process(construct, page, cookies);
     }
 
     /**
@@ -209,6 +208,6 @@ public class SetCookieConstructTest extends TestUtils {
         MetaExpression cookies = mockExpression(OBJECT);
 
         // run
-        process(construct,page,cookies);
+        process(construct, page, cookies);
     }
 }

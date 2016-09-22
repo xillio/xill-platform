@@ -19,10 +19,10 @@ import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.NodeVariable;
-import nl.xillio.xill.plugins.web.data.WebVariable;
 import nl.xillio.xill.plugins.web.services.web.WebService;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
 import static org.mockito.Mockito.*;
 
 /**
@@ -46,7 +46,7 @@ public class ClickConstructTest extends TestUtils {
         when(input.getMeta(NodeVariable.class)).thenReturn(nodeVariable);
 
         // run
-        MetaExpression output = process(construct,input);
+        MetaExpression output = process(construct, input);
 
         // verify
         verify(input, times(2)).getMeta(NodeVariable.class);
@@ -71,7 +71,7 @@ public class ClickConstructTest extends TestUtils {
         when(input.getMeta(NodeVariable.class)).thenReturn(null);
 
         // run
-        process(construct,input);
+        process(construct, input);
     }
 
     /**
@@ -85,7 +85,7 @@ public class ClickConstructTest extends TestUtils {
         construct.setWebService(webService);
 
         // run
-        MetaExpression output = process(construct,NULL);
+        MetaExpression output = process(construct, NULL);
 
         // assert
         Assert.assertEquals(output, NULL);

@@ -21,7 +21,6 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.web.data.WebVariable;
-import nl.xillio.xill.plugins.web.services.web.WebService;
 
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class RemoveCookieConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (page, cookie) -> process(page, cookie),
+                this::process,
                 new Argument("page", ATOMIC),
                 new Argument("cookie", ATOMIC, LIST));
     }

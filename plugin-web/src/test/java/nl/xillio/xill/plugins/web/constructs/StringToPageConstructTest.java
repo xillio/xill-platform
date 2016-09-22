@@ -72,7 +72,7 @@ public class StringToPageConstructTest extends TestUtils {
         when(entity.getPage()).thenReturn(pageVariable);
 
         // run
-        process(construct,content);
+        process(construct, content);
 
         // verify
         verify(fileService, times(1)).createTempFile(anyString(), anyString());
@@ -106,7 +106,7 @@ public class StringToPageConstructTest extends TestUtils {
         when(fileService.createTempFile(anyString(), anyString())).thenThrow(new IOException());
 
         // run
-        process(construct,content);
+        process(construct, content);
     }
 
     /**
@@ -136,6 +136,6 @@ public class StringToPageConstructTest extends TestUtils {
         when(fileService.createTempFile(anyString(), anyString())).thenThrow(new RobotRuntimeException("error"));
 
         // run
-        process(construct,content);
+        process(construct, content);
     }
 }

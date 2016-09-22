@@ -15,7 +15,6 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
-import com.google.inject.Inject;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
@@ -24,8 +23,6 @@ import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.WebVariable;
-import nl.xillio.xill.plugins.web.services.web.FileService;
-import nl.xillio.xill.plugins.web.services.web.WebService;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -72,7 +69,7 @@ public class ScreenshotConstruct extends PhantomJSConstruct {
         int width = 0;
         int height = 0;
         if (!optionsVar.isNull()) {
-            final MetaExpression value = ((Map<String, MetaExpression>)optionsVar.getValue()).get("resolution");
+            final MetaExpression value = ((Map<String, MetaExpression>) optionsVar.getValue()).get("resolution");
             if (value == null || value.getType() != LIST) {
                 throw new InvalidUserInputException("Invalid options.", optionsVar.getStringValue(), EXPECTED_INPUT, EXAMPLE);
             }

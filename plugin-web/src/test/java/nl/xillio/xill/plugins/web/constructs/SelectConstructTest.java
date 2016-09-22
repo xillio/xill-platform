@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.web.constructs;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.NodeVariable;
@@ -54,7 +53,7 @@ public class SelectConstructTest extends TestUtils {
         when(webService.isSelected(nodeVariable)).thenReturn(false);
 
         // run
-        MetaExpression output = process(construct,node, select);
+        MetaExpression output = process(construct, node, select);
 
         // verify
         verify(node, times(2)).getMeta(NodeVariable.class);
@@ -79,7 +78,7 @@ public class SelectConstructTest extends TestUtils {
         when(page.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = process(construct,page, element);
+        MetaExpression output = process(construct, page, element);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -108,7 +107,7 @@ public class SelectConstructTest extends TestUtils {
         when(webService.isSelected(nodeVariable)).thenReturn(true);
 
         // run
-        MetaExpression output = process(construct,node, select);
+        MetaExpression output = process(construct, node, select);
 
         // verify
         verify(node, times(2)).getMeta(NodeVariable.class);
@@ -137,7 +136,7 @@ public class SelectConstructTest extends TestUtils {
         MetaExpression select = mockExpression(ATOMIC);
 
         // run
-        process(construct,node, select);
+        process(construct, node, select);
     }
 
     /**
@@ -163,7 +162,7 @@ public class SelectConstructTest extends TestUtils {
         when(webService.isSelected(nodeVariable)).thenThrow(new RobotRuntimeException("I broke."));
 
         // run
-        process(construct,node, select);
+        process(construct, node, select);
     }
 
 }

@@ -19,7 +19,6 @@ import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.services.web.HTMLService;
-import nl.xillio.xill.plugins.web.services.web.WebService;
 import org.testng.annotations.Test;
 
 import static org.mockito.Matchers.any;
@@ -53,7 +52,7 @@ public class TidyConstructTest extends TestUtils {
         when(service.tidyHTML(any(), anyBoolean())).thenReturn(TIDIED_HTML);
 
         // run
-        MetaExpression result = process(construct,DEFAULT_HTML, TRUE, SYNTAX_HTML, TRUE);
+        MetaExpression result = process(construct, DEFAULT_HTML, TRUE, SYNTAX_HTML, TRUE);
 
         // verify
         verify(service).tidyHTML(INPUT_HTML, true);
@@ -75,7 +74,7 @@ public class TidyConstructTest extends TestUtils {
 
 
         // run
-        MetaExpression result = process(construct,DEFAULT_HTML, TRUE, SYNTAX_XHTML, TRUE);
+        MetaExpression result = process(construct, DEFAULT_HTML, TRUE, SYNTAX_XHTML, TRUE);
 
         // verify
         verify(service).tidyXHTML(INPUT_HTML, true);
@@ -96,7 +95,7 @@ public class TidyConstructTest extends TestUtils {
         when(service.tidyHTMLBodyFragment(any(), anyBoolean())).thenReturn(TIDIED_HTML);
 
         // run
-        MetaExpression result = process(construct,DEFAULT_HTML, FALSE, SYNTAX_HTML, TRUE);
+        MetaExpression result = process(construct, DEFAULT_HTML, FALSE, SYNTAX_HTML, TRUE);
 
         // verify
         verify(service).tidyHTMLBodyFragment(INPUT_HTML, true);
@@ -117,7 +116,7 @@ public class TidyConstructTest extends TestUtils {
         when(service.tidyXHTMLBodyFragment(any(), anyBoolean())).thenReturn(TIDIED_HTML);
 
         // run
-        MetaExpression result = process(construct,DEFAULT_HTML, FALSE, SYNTAX_XHTML, TRUE);
+        MetaExpression result = process(construct, DEFAULT_HTML, FALSE, SYNTAX_XHTML, TRUE);
 
         // verify
         verify(service).tidyXHTMLBodyFragment(INPUT_HTML, true);
@@ -137,6 +136,6 @@ public class TidyConstructTest extends TestUtils {
         construct.setHtmlService(service);
         MetaExpression syntax = mockExpression(ATOMIC, false, Double.NaN, "wrong");
         // run
-        process(construct,DEFAULT_HTML, TRUE, syntax, TRUE);
+        process(construct, DEFAULT_HTML, TRUE, syntax, TRUE);
     }
 }

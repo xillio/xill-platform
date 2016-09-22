@@ -20,14 +20,12 @@ import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.errors.OperationFailedException;
-import nl.xillio.xill.plugins.web.InvalidUrlException;
 import nl.xillio.xill.plugins.web.data.*;
 import nl.xillio.xill.plugins.web.services.web.FileService;
 import nl.xillio.xill.plugins.web.services.web.HTMLService;
 import nl.xillio.xill.plugins.web.services.web.WebService;
 import org.openqa.selenium.Cookie;
 
-import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 

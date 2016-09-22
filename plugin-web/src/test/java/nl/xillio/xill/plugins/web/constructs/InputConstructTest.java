@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.web.constructs;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.NodeVariable;
@@ -52,7 +51,7 @@ public class InputConstructTest extends TestUtils {
         when(text.getStringValue()).thenReturn("Text");
 
         // run
-        MetaExpression output = process(construct,input, text);
+        MetaExpression output = process(construct, input, text);
 
         // verify
         verify(input, times(2)).getMeta(NodeVariable.class);
@@ -77,7 +76,7 @@ public class InputConstructTest extends TestUtils {
         when(input.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = process(construct,input, text);
+        MetaExpression output = process(construct, input, text);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -106,7 +105,7 @@ public class InputConstructTest extends TestUtils {
         doThrow(new RobotRuntimeException("I broke!")).when(webService).sendKeys(nodeVariable, "Text");
 
         // run
-        process(construct,input, text);
+        process(construct, input, text);
     }
 
     /**
@@ -128,7 +127,7 @@ public class InputConstructTest extends TestUtils {
         when(input.getMeta(NodeVariable.class)).thenReturn(null);
 
         // run
-        MetaExpression output = process(construct,input, text);
+        MetaExpression output = process(construct, input, text);
 
         // verify
         verify(input, times(2)).getMeta(NodeVariable.class);

@@ -15,7 +15,6 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
-import com.google.inject.Inject;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
@@ -23,10 +22,8 @@ import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.web.InvalidUrlException;
 import nl.xillio.xill.plugins.web.data.Options;
-import nl.xillio.xill.plugins.web.data.OptionsFactory;
 import nl.xillio.xill.plugins.web.data.PhantomJSPool;
 import nl.xillio.xill.plugins.web.data.WebVariable;
-import nl.xillio.xill.plugins.web.services.web.WebService;
 
 import java.net.MalformedURLException;
 

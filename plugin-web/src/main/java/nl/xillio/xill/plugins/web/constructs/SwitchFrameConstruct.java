@@ -22,7 +22,6 @@ import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.web.data.NodeVariable;
 import nl.xillio.xill.plugins.web.data.WebVariable;
-import nl.xillio.xill.plugins.web.services.web.WebService;
 
 /**
  * Switch current page context to a provided frame
@@ -32,7 +31,7 @@ public class SwitchFrameConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (page, frame) -> process(page, frame),
+                this::process,
                 new Argument("page", ATOMIC),
                 new Argument("frame", ATOMIC));
     }
@@ -48,16 +47,16 @@ public class SwitchFrameConstruct extends PhantomJSConstruct {
         checkPageType(pageVar);
         WebVariable driver = getPage(pageVar);
 
-        if(frameVar.getMeta(NodeVariable.class) != null){
+        if (frameVar.getMeta(NodeVariable.class) != null) {
             WebVariable element = getNode(frameVar);
-            getWebService().switchToFrame(driver,element);
-        } else{
+            getWebService().switchToFrame(driver, element);
+        } else {
             Object frame = MetaExpression.extractValue(frameVar);
-            if(frame instanceof Integer){
+            if (frame instanceof Integer) {
                 getWebService().switchToFrame(driver, (Integer) frame);
-            } else if(frame instanceof  String){
-                getWebService().switchToFrame(driver,(String) frame);
-            } else{
+            } else if (frame instanceof String) {
+                getWebService().switchToFrame(driver, (String) frame);
+            } else {
                 throw new OperationFailedException("prepare switching the frame", "Could not resolve \'frame\' parameter.");
             }
         }

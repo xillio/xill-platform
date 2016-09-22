@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.web.constructs;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.PageVariable;
@@ -72,7 +71,7 @@ public class DownloadConstructTest extends TestUtils {
         when(timeoutVar.getNumberValue().intValue()).thenReturn(timeoutNumber.intValue());
 
         // run
-        MetaExpression output = process(construct,urlVar, targetFileVar, webContextVar, timeoutVar);
+        MetaExpression output = process(construct, urlVar, targetFileVar, webContextVar, timeoutVar);
 
         // verify
         verify(webContextVar, times(2)).getMeta(PageVariable.class);
@@ -120,7 +119,7 @@ public class DownloadConstructTest extends TestUtils {
         Mockito.doThrow(new MalformedURLException("")).when(webService).download(url, targetFile, webContext, timeoutNumber.intValue());
 
         // run
-        process(construct,urlVar, targetFileVar, webContextVar, timeoutVar);
+        process(construct, urlVar, targetFileVar, webContextVar, timeoutVar);
     }
 
     /**
@@ -161,7 +160,7 @@ public class DownloadConstructTest extends TestUtils {
         Mockito.doThrow(new IOException("")).when(webService).download(url, targetFile, webContext, timeoutNumber.intValue());
 
         // run
-        process(construct,urlVar, targetFileVar, webContextVar, timeoutVar);
+        process(construct, urlVar, targetFileVar, webContextVar, timeoutVar);
     }
 
     /**
@@ -182,7 +181,7 @@ public class DownloadConstructTest extends TestUtils {
         MetaExpression timeoutVar = mockExpression(ATOMIC);
 
         // run
-        process(construct,urlVar, targetFileVar, webContextVar, timeoutVar);
+        process(construct, urlVar, targetFileVar, webContextVar, timeoutVar);
     }
 
     /**
@@ -204,6 +203,6 @@ public class DownloadConstructTest extends TestUtils {
         MetaExpression timeoutVar = mockExpression(ATOMIC);
 
         // run
-        process(construct,urlVar, targetFileVar, webContextVar, timeoutVar);
+        process(construct, urlVar, targetFileVar, webContextVar, timeoutVar);
     }
 }

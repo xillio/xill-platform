@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.web.constructs;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
@@ -73,7 +72,7 @@ public class ScreenshotConstructTest extends TestUtils {
         when(webService.getScreenshotAsFilePath(pageVariable, 0, 0)).thenReturn(srcFile);
 
         // run
-        MetaExpression output = process(construct,page, name, options);
+        MetaExpression output = process(construct, page, name, options);
 
         // Wheter we parse the pageVariable only once
         verify(page, times(2)).getMeta(PageVariable.class);
@@ -102,7 +101,7 @@ public class ScreenshotConstructTest extends TestUtils {
         MetaExpression options = mockExpression(OBJECT);
 
         // run
-        MetaExpression output = process(construct,input, fileName, options);
+        MetaExpression output = process(construct, input, fileName, options);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -137,7 +136,7 @@ public class ScreenshotConstructTest extends TestUtils {
         when(webService.getScreenshotAsFilePath(pageVariable, 0, 0)).thenThrow(new RobotRuntimeException(""));
 
         // run
-        process(construct,page, name, options);
+        process(construct, page, name, options);
     }
 
     /**
@@ -175,9 +174,9 @@ public class ScreenshotConstructTest extends TestUtils {
         // The process
         when(webService.getScreenshotAsFilePath(pageVariable, 0, 0)).thenReturn(srcFile);
         when(TestUtils.CONSTRUCT_FILE_RESOLVER.buildPath(null, name)).thenReturn(desFile);
-        doThrow(new IOException()).when(fileService).copyFile(any(),any());
+        doThrow(new IOException()).when(fileService).copyFile(any(), any());
         // run
-        MetaExpression output = process(construct,page, name, options);
+        MetaExpression output = process(construct, page, name, options);
 
         // Wheter we parse the pageVariable only once
         verify(page, times(2)).getMeta(PageVariable.class);
@@ -216,7 +215,7 @@ public class ScreenshotConstructTest extends TestUtils {
         when(name.getStringValue()).thenReturn(nameValue);
 
         // run
-        process(construct,page, name, options);
+        process(construct, page, name, options);
     }
 
     /**
@@ -243,7 +242,7 @@ public class ScreenshotConstructTest extends TestUtils {
         MetaExpression page = mockExpression(ATOMIC);
 
         // run
-        process(construct,page, name, options);
+        process(construct, page, name, options);
     }
 
     /**
@@ -275,7 +274,7 @@ public class ScreenshotConstructTest extends TestUtils {
         when(options.getValue()).thenReturn(optionMap);
 
         // run
-        process(construct,page, name, options);
+        process(construct, page, name, options);
     }
 
     /**
@@ -316,6 +315,6 @@ public class ScreenshotConstructTest extends TestUtils {
         when(options.getValue()).thenReturn(optionMap);
 
         // run
-        process(construct,page, name, options);
+        process(construct, page, name, options);
     }
 }

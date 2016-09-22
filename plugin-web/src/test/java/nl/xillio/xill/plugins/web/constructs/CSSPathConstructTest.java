@@ -16,15 +16,11 @@
 package nl.xillio.xill.plugins.web.constructs;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
-import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.NodeVariable;
 import nl.xillio.xill.plugins.web.data.PageVariable;
 import nl.xillio.xill.plugins.web.services.web.WebService;
-import org.openqa.selenium.InvalidElementStateException;
-import org.openqa.selenium.InvalidSelectorException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -73,7 +69,7 @@ public class CSSPathConstructTest extends TestUtils {
         when(webService.createNodeVariable(nodeVariable, secondResult)).thenReturn(secondResult);
 
         // run
-        MetaExpression output = process(construct,element, cssPath);
+        MetaExpression output = process(construct, element, cssPath);
         // assert
         Assert.assertEquals(output.getType(), LIST);
         @SuppressWarnings("unchecked")
@@ -95,7 +91,7 @@ public class CSSPathConstructTest extends TestUtils {
         when(input.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = process(construct,input, csspath);
+        MetaExpression output = process(construct, input, csspath);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -130,7 +126,7 @@ public class CSSPathConstructTest extends TestUtils {
         when(webService.createNodeVariable(nodeVariable, firstResult)).thenReturn(firstResult);
 
         // run
-        MetaExpression output = process(construct,element, cssPath);
+        MetaExpression output = process(construct, element, cssPath);
 
         // assert
         Assert.assertEquals(output.getType(), ATOMIC);
@@ -160,7 +156,7 @@ public class CSSPathConstructTest extends TestUtils {
         when(webService.findElementsWithCssPath(nodeVariable, query)).thenReturn(Arrays.asList());
 
         // run
-        MetaExpression output = process(construct,element, cssPath);
+        MetaExpression output = process(construct, element, cssPath);
 
         // verify tht we stop before asking the attribute
         verify(webService, times(0)).getAttribute(any(), anyString());
@@ -192,7 +188,7 @@ public class CSSPathConstructTest extends TestUtils {
         when(webService.findElementsWithCssPath(nodeVariable, query)).thenReturn(Arrays.asList());
 
         // run
-        process(construct,element, cssPath);
+        process(construct, element, cssPath);
     }
 
 
@@ -200,7 +196,7 @@ public class CSSPathConstructTest extends TestUtils {
      * Test the construct when a page variable is given
      */
     @Test
-    public void processPage(){
+    public void processPage() {
         // Mock
         WebService webService = mock(WebService.class);
         CSSPathConstruct construct = new CSSPathConstruct();
@@ -211,17 +207,17 @@ public class CSSPathConstructTest extends TestUtils {
         PageVariable pageVariable = mock(PageVariable.class);
 
         when(element.getMeta(PageVariable.class)).thenReturn(pageVariable);
-        
+
         // The css path
         String query = "cssPath";
         MetaExpression cssPath = mockExpression(ATOMIC);
         when(cssPath.getStringValue()).thenReturn(query);
 
         // The process
-        when(webService.findElementsWithCssPath(pageVariable,query)).thenReturn(Arrays.asList());
+        when(webService.findElementsWithCssPath(pageVariable, query)).thenReturn(Arrays.asList());
 
         // Run
-        Assert.assertEquals(process(construct,element,cssPath), NULL);
+        Assert.assertEquals(process(construct, element, cssPath), NULL);
 
     }
 

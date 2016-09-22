@@ -17,7 +17,6 @@ package nl.xillio.xill.plugins.web.constructs;
 
 import com.google.common.collect.Sets;
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.NodeVariable;
@@ -61,7 +60,7 @@ public class PageInfoConstructTest extends TestUtils {
         when(webService.getCookies(pageVariable)).thenReturn(Sets.newHashSet(first));
 
         // runs
-        MetaExpression output = process(construct,input);
+        MetaExpression output = process(construct, input);
 
         // verify
         verify(input, times(2)).getMeta(PageVariable.class);
@@ -90,7 +89,7 @@ public class PageInfoConstructTest extends TestUtils {
         when(input.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = process(construct,input);
+        MetaExpression output = process(construct, input);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -111,7 +110,7 @@ public class PageInfoConstructTest extends TestUtils {
         when(input.getMeta(NodeVariable.class)).thenReturn(null);
 
         // run
-        process(construct,input);
+        process(construct, input);
     }
 
     /**
@@ -139,6 +138,6 @@ public class PageInfoConstructTest extends TestUtils {
         when(webService.getCookies(pageVariable)).thenReturn(Sets.newHashSet(first));
 
         // runs
-        process(construct,input);
+        process(construct, input);
     }
 }

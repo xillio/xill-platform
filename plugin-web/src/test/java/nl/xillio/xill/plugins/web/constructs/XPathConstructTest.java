@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.web.constructs;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.NodeVariable;
@@ -70,7 +69,7 @@ public class XPathConstructTest extends TestUtils {
         when(webService.getAttribute(element, "innerHTML")).thenReturn(elementText);
 
         // run
-        MetaExpression output = process(construct,page, xpath);
+        MetaExpression output = process(construct, page, xpath);
 
         // verify
         verify(webService, times(1)).getAttribute(eq(element), anyString());
@@ -112,7 +111,7 @@ public class XPathConstructTest extends TestUtils {
         when(webService.getAttribute(element2, "innerHTML")).thenReturn(element2Text);
 
         // run
-        MetaExpression output = process(construct,node, xpath);
+        MetaExpression output = process(construct, node, xpath);
 
         // verify
         verify(webService, times(2)).getAttribute(any(), anyString());
@@ -158,7 +157,7 @@ public class XPathConstructTest extends TestUtils {
         when(webService.getAttribute(element2, "innerHTML")).thenReturn(element2Text);
 
         // run
-        MetaExpression output = process(construct,page, xpath);
+        MetaExpression output = process(construct, page, xpath);
 
         // verify
         verify(webService, times(2)).getAttribute(any(), anyString());
@@ -197,7 +196,7 @@ public class XPathConstructTest extends TestUtils {
         when(webService.findElementsWithXpath(pageVariable, shortenedXPathValue)).thenReturn(Collections.emptyList());
 
         // run
-        MetaExpression output = process(construct,page, xpath);
+        MetaExpression output = process(construct, page, xpath);
 
         // verify
         verify(webService, times(0)).getAttribute(any(), anyString());
@@ -246,7 +245,7 @@ public class XPathConstructTest extends TestUtils {
         when(webService.getAttribute(element2, "attribute")).thenReturn(element2Result);
 
         // run
-        MetaExpression output = process(construct,page, xpath);
+        MetaExpression output = process(construct, page, xpath);
 
         // verify
         verify(webService, times(2)).getAttribute(any(), anyString());
@@ -291,7 +290,7 @@ public class XPathConstructTest extends TestUtils {
         when(webService.getAttribute(element1, "attribute")).thenReturn(null);
 
         // run
-        MetaExpression output = process(construct,page, xpath);
+        MetaExpression output = process(construct, page, xpath);
 
         // verify
         verify(webService, times(1)).getAttribute(any(), anyString());
@@ -314,7 +313,7 @@ public class XPathConstructTest extends TestUtils {
         when(page.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = process(construct,page, xpath);
+        MetaExpression output = process(construct, page, xpath);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -350,6 +349,6 @@ public class XPathConstructTest extends TestUtils {
         when(webService.getAttribute(element, "outerHTML")).thenThrow(new RobotRuntimeException("crash due to selenium"));
 
         // run
-        MetaExpression output = process(construct,page, xpath);
+        MetaExpression output = process(construct, page, xpath);
     }
 }

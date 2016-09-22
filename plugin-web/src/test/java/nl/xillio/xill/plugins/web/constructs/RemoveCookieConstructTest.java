@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.web.constructs;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.PageVariable;
@@ -66,7 +65,7 @@ public class RemoveCookieConstructTest extends TestUtils {
         when(cookie.getType()).thenReturn(LIST);
 
         // run
-        MetaExpression output = process(construct,page, cookie);
+        MetaExpression output = process(construct, page, cookie);
 
         // verify
 
@@ -103,7 +102,7 @@ public class RemoveCookieConstructTest extends TestUtils {
         when(input.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = process(construct,input, cookie);
+        MetaExpression output = process(construct, input, cookie);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -123,7 +122,7 @@ public class RemoveCookieConstructTest extends TestUtils {
         when(cookie.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = process(construct,input, cookie);
+        MetaExpression output = process(construct, input, cookie);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -151,7 +150,7 @@ public class RemoveCookieConstructTest extends TestUtils {
         when(cookie.getType()).thenReturn(ATOMIC);
 
         // run
-        MetaExpression output = process(construct,page, cookie);
+        MetaExpression output = process(construct, page, cookie);
 
         // Wheter we parse the pageVariable only once
         verify(page, times(2)).getMeta(PageVariable.class);
@@ -192,7 +191,7 @@ public class RemoveCookieConstructTest extends TestUtils {
         // we make it break
         doThrow(new RobotRuntimeException("Resistance is futile.")).when(webService).deleteCookieNamed(any(), anyString());
 
-        process(construct,page, cookie);
+        process(construct, page, cookie);
     }
 
     /**
@@ -212,6 +211,6 @@ public class RemoveCookieConstructTest extends TestUtils {
         MetaExpression cookie = mockExpression(ATOMIC);
 
         // run
-        process(construct,page, cookie);
+        process(construct, page, cookie);
     }
 }

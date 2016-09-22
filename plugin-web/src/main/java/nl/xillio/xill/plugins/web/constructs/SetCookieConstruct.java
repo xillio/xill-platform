@@ -15,7 +15,6 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
-import com.google.inject.Inject;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
@@ -36,7 +35,7 @@ public class SetCookieConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (page, cookies) -> process(page, cookies),
+                this::process,
                 new Argument("page"),
                 new Argument("cookies", LIST, OBJECT));
     }

@@ -15,14 +15,11 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
-import com.google.inject.Inject;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
-import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
-import nl.xillio.xill.plugins.web.services.web.HTMLService;
 
 /**
  * Construct for tidying HTML or XHTML.

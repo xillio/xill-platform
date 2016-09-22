@@ -15,15 +15,12 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
-import com.google.inject.Inject;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
-import nl.xillio.xill.plugins.web.data.OptionsFactory;
-import nl.xillio.xill.plugins.web.services.web.FileService;
-import nl.xillio.xill.plugins.web.services.web.WebService;
+import nl.xillio.xill.api.errors.RobotRuntimeException;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,14 +33,14 @@ public class FromString extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                content -> process(content),
+                this::process,
                 new Argument("content", ATOMIC));
     }
 
     /**
-     * @param contentVar     input string variable (HTML code of a web page)
-     * @throws OperationFailedException if the string could not not be written to a file
+     * @param contentVar input string variable (HTML code of a web page)
      * @return PAGE variable
+     * @throws OperationFailedException if the string could not not be written to a file
      */
     private MetaExpression process(final MetaExpression contentVar) {
         String content = contentVar.getStringValue();
@@ -55,9 +52,14 @@ public class FromString extends PhantomJSConstruct {
             LoadPageConstruct loadPage = new LoadPageConstruct();
             loadPage.setOptionsFactory(getOptionsFactory());
             loadPage.setWebService(getWebService());
-            return loadPage.process(fromValue(uri), NULL);
+            MetaExpression output = loadPage.process(fromValue(uri), NULL);
+            loadPage.close();
+            return output;
+
         } catch (IOException e) {
             throw new OperationFailedException("write the string to a file.", "An IO error occurred.", e);
+        } catch (Exception e) {
+            throw new RobotRuntimeException("Something went wrong");
         }
     }
 

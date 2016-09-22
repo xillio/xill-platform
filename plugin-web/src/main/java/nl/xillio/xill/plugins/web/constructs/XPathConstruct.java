@@ -21,7 +21,6 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.web.data.WebVariable;
-import nl.xillio.xill.plugins.web.services.web.WebService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,7 @@ public class XPathConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (element,xPath) -> process(element,xPath),
+                this::process,
                 new Argument("element", ATOMIC),
                 new Argument("xPath", ATOMIC));
     }

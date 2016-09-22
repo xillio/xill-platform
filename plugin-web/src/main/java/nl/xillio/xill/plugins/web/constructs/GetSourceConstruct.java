@@ -19,7 +19,6 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
-import nl.xillio.xill.plugins.web.services.web.WebService;
 
 /**
  * Gets the HTML content of the web page.

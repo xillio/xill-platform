@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.web.constructs;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.NodeVariable;
@@ -53,7 +52,7 @@ public class SwitchFrameConstructTest extends TestUtils {
         when(node.getMeta(NodeVariable.class)).thenReturn(nodeVariable);
 
         // run
-        MetaExpression output = process(construct,page, node);
+        MetaExpression output = process(construct, page, node);
 
         // verify
         verify(page, times(2)).getMeta(PageVariable.class);
@@ -84,7 +83,7 @@ public class SwitchFrameConstructTest extends TestUtils {
         MetaExpression frame = fromValue(frameValue);
 
         // run
-        MetaExpression output = process(construct,page, frame);
+        MetaExpression output = process(construct, page, frame);
 
         // verify
         verify(webService, times(1)).switchToFrame(pageVariable, frameValue);
@@ -113,7 +112,7 @@ public class SwitchFrameConstructTest extends TestUtils {
         MetaExpression frame = fromValue(frameValue);
 
         // run
-        MetaExpression output = process(construct,page, frame);
+        MetaExpression output = process(construct, page, frame);
 
         // verify
         verify(webService, times(1)).switchToFrame(pageVariable, frameValue);
@@ -147,7 +146,7 @@ public class SwitchFrameConstructTest extends TestUtils {
         when(frame.getNumberValue()).thenReturn(frameValue);
 
         // run
-        process(construct,page, frame);
+        process(construct, page, frame);
     }
 
 
@@ -166,6 +165,6 @@ public class SwitchFrameConstructTest extends TestUtils {
         MetaExpression frame = mockExpression(ATOMIC);
 
         // run
-        process(construct,page, frame);
+        process(construct, page, frame);
     }
 }

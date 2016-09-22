@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.web.constructs;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.NodeVariable;
@@ -48,7 +47,7 @@ public class FocusConstructTest extends TestUtils {
         when(element.getMeta(NodeVariable.class)).thenReturn(nodeVariable);
 
         // run
-        MetaExpression output = process(construct,element);
+        MetaExpression output = process(construct, element);
 
         // verify
         verify(element, times(2)).getMeta(NodeVariable.class);
@@ -71,7 +70,7 @@ public class FocusConstructTest extends TestUtils {
         when(input.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = process(construct,input);
+        MetaExpression output = process(construct, input);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -92,7 +91,7 @@ public class FocusConstructTest extends TestUtils {
         when(element.getMeta(NodeVariable.class)).thenReturn(null);
 
         // run
-        process(construct,element);
+        process(construct, element);
 
         // verify
         verify(element, times(1)).getMeta(NodeVariable.class);
@@ -115,7 +114,7 @@ public class FocusConstructTest extends TestUtils {
         doThrow(new RobotRuntimeException("Error")).when(webService).moveToElement(any());
 
         // run
-        process(construct,element);
+        process(construct, element);
 
         // verify
         verify(element, times(1)).getMeta(NodeVariable.class);
