@@ -22,11 +22,12 @@ import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
-import nl.xillio.xill.data.ConfigurationMetadata;
+import nl.xillio.xill.data.EngineMetadata;
 import nl.xillio.xill.services.TemplateService;
 import nl.xillio.xill.services.files.FileResolver;
 
 import java.nio.file.Path;
+import java.util.Map;
 
 /**
  * This construct generates a new file using a template and a data model
@@ -34,12 +35,12 @@ import java.nio.file.Path;
  * @author Pieter Soels
  * @since 3.5.0
  */
-public class ConfigureConstruct extends Construct {
+public class GetEngineConstruct extends Construct {
     private final TemplateService templateService;
     private final FileResolver fileResolver;
 
     @Inject
-    public ConfigureConstruct(TemplateService templateService, FileResolver fileResolver) {
+    public GetEngineConstruct(TemplateService templateService, FileResolver fileResolver) {
         this.templateService = templateService;
         this.fileResolver = fileResolver;
     }
@@ -47,25 +48,30 @@ public class ConfigureConstruct extends Construct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (templateDirectory, options) -> process(templateDirectory, options, context),
-                new Argument("templateDirectory", ATOMIC),
+                (options) -> process(options, context),
                 new Argument("options", NULL, OBJECT)
         );
     }
 
-    private MetaExpression process(MetaExpression templateDirectory, MetaExpression options, ConstructContext context) {
-        Path path = fileResolver.buildPath(context, templateDirectory);
-        Configuration cfg;
+    private MetaExpression process(MetaExpression options, ConstructContext context) {
+        MetaExpression templateDir = getTemplateDir(options, context);
+        Path path = fileResolver.buildPath(context, templateDir);
+        Configuration cfg = templateService.parseConfiguration(path, options.getValue());
 
-        if(options.isNull()) {
-            cfg = templateService.getDefaultConfiguration(path);
-        } else {
-            cfg = templateService.parseConfiguration(path, extractValue(options));
-        }
-
-        MetaExpression result = fromValue("A variable containing the Configuration for the Template plugin");
-        ConfigurationMetadata configuration = new ConfigurationMetadata(cfg);
+        MetaExpression result = fromValue("[TemplateEngine: " + path + "]");
+        EngineMetadata configuration = new EngineMetadata(cfg);
         result.storeMeta(configuration);
         return result;
+    }
+
+    private MetaExpression getTemplateDir(MetaExpression options, ConstructContext context) {
+        if (!options.isNull()) {
+            Map<String, MetaExpression> optionsObject = options.getValue();
+
+            if (optionsObject.containsKey("templatesDirectory")) {
+                return optionsObject.get("templatesDirectory");
+            }
+        }
+        return fromValue(context.getRootRobot().getProjectPath().getPath());
     }
 }

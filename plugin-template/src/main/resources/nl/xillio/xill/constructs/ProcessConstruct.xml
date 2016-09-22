@@ -33,7 +33,7 @@ This construct generates a new file using a template and a data model.
                     "key2" : "value2"
                 };
 
-                var config = Template.configure(templateDir);
+                var config = Template.getEngine(templateDir);
                 Template.process("template.txt", output , model, config);
             </code>
         </example>

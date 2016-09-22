@@ -23,7 +23,7 @@ import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
-import nl.xillio.xill.data.ConfigurationMetadata;
+import nl.xillio.xill.data.EngineMetadata;
 import nl.xillio.xill.services.TemplateService;
 import nl.xillio.xill.services.files.FileResolver;
 
@@ -60,13 +60,13 @@ public class ProcessConstruct extends Construct {
     }
 
     private MetaExpression process(MetaExpression templateName, MetaExpression output, MetaExpression model, MetaExpression configuration, ConstructContext context) {
-        Configuration cfg = configuration.getMeta(ConfigurationMetadata.class).getConfiguration();
+        Configuration cfg = configuration.getMeta(EngineMetadata.class).getConfiguration();
         OutputStream stream;
 
         try {
             stream = output.getBinaryValue().getOutputStream();
         } catch (IOException e) {
-            throw new OperationFailedException("create a stream.", e.getMessage() , e);
+            throw new OperationFailedException("create a stream.", e.getMessage(), e);
         }
 
         templateService.generate(

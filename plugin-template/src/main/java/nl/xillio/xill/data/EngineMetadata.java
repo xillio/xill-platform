@@ -24,14 +24,14 @@ import nl.xillio.xill.api.data.MetadataExpression;
  *
  * @author Pieter Soels
  */
-public class ConfigurationMetadata implements MetadataExpression {
+public class EngineMetadata implements MetadataExpression {
     private Configuration configuration;
 
-    public ConfigurationMetadata(Configuration configuration) {
+    public EngineMetadata(Configuration configuration) {
         this.configuration = configuration;
     }
 
-    public Configuration getConfiguration(){
+    public Configuration getConfiguration() {
         return configuration;
     }
 }
