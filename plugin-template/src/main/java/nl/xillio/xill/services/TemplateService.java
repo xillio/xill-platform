@@ -31,6 +31,7 @@ package nl.xillio.xill.services;
  */
 
 import com.google.inject.ImplementedBy;
+import freemarker.template.Configuration;
 
 import java.io.OutputStream;
 import java.nio.file.Path;
@@ -46,13 +47,30 @@ import java.nio.file.Path;
 public interface TemplateService {
 
     /**
+     * Set the default configuration for the use of the template engine
+     *
+     * @param input The directory of the templates
+     * @return the default configuration for the template engine
+     */
+    Configuration getDefaultConfiguration(Path input);
+
+    /**
+     * Set the configuration for the use of the template engine
+     *
+     * @param input     The directory of the templates
+     * @param options   Options to set the configuration to
+     * @return the parsed configuration for the template engine
+     */
+    Configuration parseConfiguration(Path input, Object options);
+
+    /**
      * Generate textual file from given template and model
      *
-     * @param input         The path to the template file
+     * @param templateName  The name and extension of the template file
      * @param output        The writer to write the result to
-     * @param model         The data to insert in the template
-     * @param configuration Configuration for the template engine
-     * @return eventual errors
+     * @param model         The data model to insert in the template
+     * @param configuration The generated configuration for the template engine
+     * @return null
      */
-    String generate(Path input, OutputStream output, Object model, String configuration);
+    String generate(String templateName, OutputStream output, Object model, Configuration configuration);
 }

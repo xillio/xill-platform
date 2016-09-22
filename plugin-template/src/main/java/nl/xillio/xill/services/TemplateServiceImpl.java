@@ -19,7 +19,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
-import nl.xillio.xill.api.errors.RobotRuntimeException;
+import nl.xillio.xill.api.errors.OperationFailedException;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -35,8 +35,22 @@ import java.nio.file.Path;
 class TemplateServiceImpl implements TemplateService {
 
     @Override
-    public String generate(Path input, OutputStream output, Object model, String configuration) {
-        OutputStreamWriter writer = new OutputStreamWriter(output);
+    public Configuration getDefaultConfiguration(Path input) {
+        Configuration cfg = new Configuration(Configuration.VERSION_2_3_23);
+        cfg.setDefaultEncoding("UTF-8");
+        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+        cfg.setLogTemplateExceptions(false);
+
+        try {
+            cfg.setDirectoryForTemplateLoading(input.toFile());
+        } catch (IOException e) {
+            throw new OperationFailedException("processing of template.", e.getMessage(), e);
+        }
+        return cfg;
+    }
+
+    @Override
+    public Configuration parseConfiguration(Path input, Object options) {
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_23);
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
@@ -44,10 +58,21 @@ class TemplateServiceImpl implements TemplateService {
 
         try {
             cfg.setDirectoryForTemplateLoading(input.toFile().getParentFile());
-            Template template = cfg.getTemplate(input.toFile().getName());
+        } catch (IOException e) {
+            throw new OperationFailedException("processing of template.", e.getMessage(), e);
+        }
+        return cfg;
+    }
+
+    @Override
+    public String generate(String templateName, OutputStream output, Object model, Configuration cfg) {
+        OutputStreamWriter writer = new OutputStreamWriter(output);
+
+        try {
+            Template template = cfg.getTemplate(templateName);
             template.process(model, writer);
         } catch (IOException | TemplateException e) {
-            throw new RobotRuntimeException(e.getMessage(), e);
+            throw new OperationFailedException("processing of template.", e.getMessage(), e);
         }
         return "";
     }

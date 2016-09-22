@@ -26,14 +26,15 @@ This construct generates a new file using a template and a data model.
             <code>
                 use Template, File;
 
-                var template = "C:/tmp/template.txt";
+                var templateDir = "C:/tmp";
                 var output = File.openWrite("C:/tmp/output.txt");
                 var model = {
                     "key1" : "value1",
                     "key2" : "value2"
                 };
 
-                Template.generate(template, output , model);
+                var config = Template.configure(templateDir);
+                Template.process("template.txt", output , model, config);
             </code>
         </example>
     </examples>
