@@ -45,7 +45,9 @@ public class StringToPageConstructTest extends TestUtils {
     @Test
     public void testProcessNormalUsage() throws IOException {
         // mock
-        FromString construct = new FromString();
+        LoadPageConstruct loadpageConstruct = mock(LoadPageConstruct.class);
+
+        FromString construct = new FromString(loadpageConstruct);
 
         WebService webService = mock(WebService.class);
         FileService fileService = mock(FileService.class);
@@ -54,7 +56,7 @@ public class StringToPageConstructTest extends TestUtils {
         construct.setWebService(webService);
         construct.setFileService(fileService);
         construct.setOptionsFactory(optionsFactory);
-
+        loadpageConstruct.setWebService(webService);
         // the content variable
         String contentValue = "This is the content";
         MetaExpression content = mockExpression(ATOMIC);
@@ -77,7 +79,6 @@ public class StringToPageConstructTest extends TestUtils {
         // verify
         verify(fileService, times(1)).createTempFile(anyString(), anyString());
         verify(fileService, times(1)).getAbsolutePath(file);
-        verify(webService, times(1)).getEntityFromPool(any(), any());
     }
 
     /**
@@ -88,7 +89,8 @@ public class StringToPageConstructTest extends TestUtils {
     @Test(expectedExceptions = RobotRuntimeException.class)
     public void testProcessIOException() throws IOException {
         // mock
-        FromString construct = new FromString();
+        LoadPageConstruct loadpageConstruct = mock(LoadPageConstruct.class);
+        FromString construct = new FromString(loadpageConstruct);
         WebService webService = mock(WebService.class);
         FileService fileService = mock(FileService.class);
         OptionsFactory optionsFactory = mock(OptionsFactory.class);
@@ -117,7 +119,8 @@ public class StringToPageConstructTest extends TestUtils {
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "error")
     public void testProcessExceptionThrown() throws Exception {
         // mock
-        FromString construct = new FromString();
+        LoadPageConstruct loadpageConstruct = mock(LoadPageConstruct.class);
+        FromString construct = new FromString(loadpageConstruct);
 
         WebService webService = mock(WebService.class);
         FileService fileService = mock(FileService.class);

@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
+import com.google.inject.Inject;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
@@ -29,6 +30,15 @@ import java.io.IOException;
  * It loads web page from a provided string (the string represents HTML code of a web page)
  */
 public class FromString extends PhantomJSConstruct {
+
+
+    private final LoadPageConstruct loadpageConstruct;
+
+    @Inject
+    public FromString(LoadPageConstruct loadpageConstruct) {
+        this.loadpageConstruct = loadpageConstruct;
+    }
+
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
@@ -49,17 +59,10 @@ public class FromString extends PhantomJSConstruct {
             File htmlFile = getFileService().createTempFile("ct_sel", ".html");
             getFileService().writeStringToFile(htmlFile.toPath(), content);
             String uri = "file:///" + getFileService().getAbsolutePath(htmlFile);
-            LoadPageConstruct loadPage = new LoadPageConstruct();
-            loadPage.setOptionsFactory(getOptionsFactory());
-            loadPage.setWebService(getWebService());
-            MetaExpression output = loadPage.process(fromValue(uri), NULL);
-            loadPage.close();
-            return output;
+            return loadpageConstruct.process(fromValue(uri), NULL);
 
         } catch (IOException e) {
             throw new OperationFailedException("write the string to a file.", "An IO error occurred.", e);
-        } catch (Exception e) {
-            throw new RobotRuntimeException("Something went wrong");
         }
     }
 
