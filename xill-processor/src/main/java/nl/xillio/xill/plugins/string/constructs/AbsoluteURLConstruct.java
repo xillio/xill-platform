@@ -64,6 +64,10 @@ public class AbsoluteURLConstruct extends Construct {
             return fromValue(urlUtilityService.getProtocol(pageUrl) + ":" + relativeUrl);
         }
 
+        return tryProcessUrl(pageUrl, relativeUrl, urlUtilityService);
+    }
+
+    private static MetaExpression tryProcessUrl(String pageUrl, String relativeUrl, final UrlUtilityService urlUtilityService) {
         // Convert the relative url to an absolute one.
         try {
             String processed = urlUtilityService.tryConvert(pageUrl, relativeUrl);
@@ -77,6 +81,5 @@ public class AbsoluteURLConstruct extends Construct {
             throw new InvalidUserInputException("Illegal argument was handed to the matcher when trying to convert the URL.", pageUrl, "Correct page url.",
                     "use String;\nString.absoluteURL(\"http://www.xillio.nl/calendar/\", \"movies\");", e);
         }
-
     }
 }
