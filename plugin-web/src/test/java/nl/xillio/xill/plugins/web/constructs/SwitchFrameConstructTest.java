@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link SwitchFrameConstruct}.
  */
-public class SwitchFrameConstructTest extends ExpressionBuilderHelper {
+public class SwitchFrameConstructTest extends TestUtils {
 
     /**
      * Test the process under normal circumstances with a webelement given.
@@ -38,19 +39,21 @@ public class SwitchFrameConstructTest extends ExpressionBuilderHelper {
     public void testProcessWithWebElement() {
         // mock
         WebService webService = mock(WebService.class);
+        SwitchFrameConstruct construct = new SwitchFrameConstruct();
+        construct.setWebService(webService);
 
         // the page
-        MetaExpression page = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
         PageVariable pageVariable = mock(PageVariable.class);
         when(page.getMeta(PageVariable.class)).thenReturn(pageVariable);
 
         // The element
         NodeVariable nodeVariable = mock(NodeVariable.class);
-        MetaExpression node = mock(MetaExpression.class);
+        MetaExpression node = mockExpression(ATOMIC);
         when(node.getMeta(NodeVariable.class)).thenReturn(nodeVariable);
 
         // run
-        MetaExpression output = SwitchFrameConstruct.process(page, node, webService);
+        MetaExpression output = process(construct,page, node);
 
         // verify
         verify(page, times(2)).getMeta(PageVariable.class);
@@ -68,9 +71,11 @@ public class SwitchFrameConstructTest extends ExpressionBuilderHelper {
     public void testProcessWithInteger() {
         // mock
         WebService webService = mock(WebService.class);
+        SwitchFrameConstruct construct = new SwitchFrameConstruct();
+        construct.setWebService(webService);
 
         // the page
-        MetaExpression page = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
         PageVariable pageVariable = mock(PageVariable.class);
         when(page.getMeta(PageVariable.class)).thenReturn(pageVariable);
 
@@ -79,7 +84,7 @@ public class SwitchFrameConstructTest extends ExpressionBuilderHelper {
         MetaExpression frame = fromValue(frameValue);
 
         // run
-        MetaExpression output = SwitchFrameConstruct.process(page, frame, webService);
+        MetaExpression output = process(construct,page, frame);
 
         // verify
         verify(webService, times(1)).switchToFrame(pageVariable, frameValue);
@@ -95,9 +100,11 @@ public class SwitchFrameConstructTest extends ExpressionBuilderHelper {
     public void testProcessWithString() {
         // mock
         WebService webService = mock(WebService.class);
+        SwitchFrameConstruct construct = new SwitchFrameConstruct();
+        construct.setWebService(webService);
 
         // the page
-        MetaExpression page = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
         PageVariable pageVariable = mock(PageVariable.class);
         when(page.getMeta(PageVariable.class)).thenReturn(pageVariable);
 
@@ -106,7 +113,7 @@ public class SwitchFrameConstructTest extends ExpressionBuilderHelper {
         MetaExpression frame = fromValue(frameValue);
 
         // run
-        MetaExpression output = SwitchFrameConstruct.process(page, frame, webService);
+        MetaExpression output = process(construct,page, frame);
 
         // verify
         verify(webService, times(1)).switchToFrame(pageVariable, frameValue);
@@ -122,15 +129,17 @@ public class SwitchFrameConstructTest extends ExpressionBuilderHelper {
     public void testProcessInvalidVariableType() {
         // mock
         WebService webService = mock(WebService.class);
+        SwitchFrameConstruct construct = new SwitchFrameConstruct();
+        construct.setWebService(webService);
 
         // the page
         PageVariable pageVariable = mock(PageVariable.class);
-        MetaExpression page = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
         when(page.getMeta(PageVariable.class)).thenReturn(pageVariable);
 
         // The frame
         int frameValue = 42;
-        MetaExpression frame = mock(MetaExpression.class);
+        MetaExpression frame = mockExpression(ATOMIC);
         when(frame.getValue()).thenReturn(null);
         when(frame.isNull()).thenReturn(true);
         when(frame.getMeta(NodeVariable.class)).thenReturn(null);
@@ -138,7 +147,7 @@ public class SwitchFrameConstructTest extends ExpressionBuilderHelper {
         when(frame.getNumberValue()).thenReturn(frameValue);
 
         // run
-        SwitchFrameConstruct.process(page, frame, webService);
+        process(construct,page, frame);
     }
 
 
@@ -149,12 +158,14 @@ public class SwitchFrameConstructTest extends ExpressionBuilderHelper {
     public void testNoPageGiven() {
         // mock
         WebService webService = mock(WebService.class);
+        SwitchFrameConstruct construct = new SwitchFrameConstruct();
+        construct.setWebService(webService);
 
         // the page
-        MetaExpression page = mock(MetaExpression.class);
-        MetaExpression frame = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
+        MetaExpression frame = mockExpression(ATOMIC);
 
         // run
-        SwitchFrameConstruct.process(page, frame, webService);
+        process(construct,page, frame);
     }
 }

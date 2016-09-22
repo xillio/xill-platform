@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.*;
 /**
  * test the {@link GetSourceConstruct}.
  */
-public class GetSourceConstructTest extends ExpressionBuilderHelper {
+public class GetSourceConstructTest extends TestUtils {
 
     /**
      * test the construct with normal input.
@@ -41,15 +42,18 @@ public class GetSourceConstructTest extends ExpressionBuilderHelper {
 
         // mock
         WebService webService = mock(WebService.class);
+        GetSourceConstruct construct = new GetSourceConstruct();
+        construct.setWebService(webService);
 
         MetaExpression page = fromValue("MyPage");
         PageVariable pageVariable = mock(PageVariable.class);
         page.storeMeta(pageVariable);
 
+
         when(webService.getSource(pageVariable)).thenReturn(html);
 
         // run
-        MetaExpression output = GetSourceConstruct.process(page, webService);
+        MetaExpression output = process(construct,page);
 
         // verify
 
@@ -67,9 +71,11 @@ public class GetSourceConstructTest extends ExpressionBuilderHelper {
     public void testNullInput() {
         // mock
         WebService webService = mock(WebService.class);
+        GetSourceConstruct construct = new GetSourceConstruct();
+        construct.setWebService(webService);
 
         // run
-        MetaExpression output = GetSourceConstruct.process(NULL, webService);
+        MetaExpression output = process(construct,NULL);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -82,10 +88,12 @@ public class GetSourceConstructTest extends ExpressionBuilderHelper {
     public void testProcessNoPageGiven() {
         // mock
         WebService webService = mock(WebService.class);
+        GetSourceConstruct construct = new GetSourceConstruct();
+        construct.setWebService(webService);
         // the input
         MetaExpression input = fromValue("No Page");
 
         // run
-        GetSourceConstruct.process(input, webService);
+        process(construct,input);
     }
 }

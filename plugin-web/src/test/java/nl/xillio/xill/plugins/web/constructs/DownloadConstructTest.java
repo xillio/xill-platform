@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link DownloadConstruct}.
  */
-public class DownloadConstructTest extends ExpressionBuilderHelper {
+public class DownloadConstructTest extends TestUtils {
 
     /**
      * Test the process with normal usage
@@ -45,32 +45,34 @@ public class DownloadConstructTest extends ExpressionBuilderHelper {
     public void testProcessNormalUsage() throws IOException {
         // mock
         WebService webService = mock(WebService.class);
+        DownloadConstruct construct = new DownloadConstruct();
+        construct.setWebService(webService);
 
         // The page
         PageVariable webContext = mock(PageVariable.class);
-        MetaExpression webContextVar = mock(MetaExpression.class);
+        MetaExpression webContextVar = mockExpression(ATOMIC);
         when(webContextVar.getMeta(PageVariable.class)).thenReturn(webContext);
 
         // The URL
         String url = "http://www.something.com/doc.pdf";
-        MetaExpression urlVar = mock(MetaExpression.class);
+        MetaExpression urlVar = mockExpression(ATOMIC);
         when(urlVar.getStringValue()).thenReturn(url);
 
         // The target file
         String fileName = "c:/tmp/doc.pdf";
-        MetaExpression targetFileVar = mock(MetaExpression.class);
+        MetaExpression targetFileVar = mockExpression(ATOMIC);
         when(targetFileVar.getStringValue()).thenReturn(fileName);
         Path targetFile = mock(Path.class);
         when(TestUtils.CONSTRUCT_FILE_RESOLVER.buildPath(null, targetFileVar)).thenReturn(targetFile);
         TestUtils.setFileResolverReturnValue(targetFile);
 
         Number timeoutNumber = 5000;
-        MetaExpression timeoutVar = mock(MetaExpression.class);
+        MetaExpression timeoutVar = mockExpression(ATOMIC);
         when(timeoutVar.getNumberValue()).thenReturn(timeoutNumber);
         when(timeoutVar.getNumberValue().intValue()).thenReturn(timeoutNumber.intValue());
 
         // run
-        MetaExpression output = DownloadConstruct.process(urlVar, targetFileVar, webContextVar, timeoutVar, webService, null);
+        MetaExpression output = process(construct,urlVar, targetFileVar, webContextVar, timeoutVar);
 
         // verify
         verify(webContextVar, times(2)).getMeta(PageVariable.class);
@@ -89,34 +91,36 @@ public class DownloadConstructTest extends ExpressionBuilderHelper {
     public void testMalformedURL() throws IOException {
         // mock
         WebService webService = mock(WebService.class);
+        DownloadConstruct construct = new DownloadConstruct();
+        construct.setWebService(webService);
 
         // The page
         PageVariable webContext = mock(PageVariable.class);
-        MetaExpression webContextVar = mock(MetaExpression.class);
+        MetaExpression webContextVar = mockExpression(ATOMIC);
         when(webContextVar.getMeta(PageVariable.class)).thenReturn(webContext);
 
         // The URL
         String url = "www.something.com/doc.pdf";
-        MetaExpression urlVar = mock(MetaExpression.class);
+        MetaExpression urlVar = mockExpression(ATOMIC);
         when(urlVar.getStringValue()).thenReturn(url);
 
         // The target file
         String fileName = "c:/tmp/doc.pdf";
-        MetaExpression targetFileVar = mock(MetaExpression.class);
+        MetaExpression targetFileVar = mockExpression(ATOMIC);
         when(targetFileVar.getStringValue()).thenReturn(url);
         Path targetFile = mock(Path.class);
         when(TestUtils.CONSTRUCT_FILE_RESOLVER.buildPath(null, targetFileVar)).thenReturn(targetFile);
         TestUtils.setFileResolverReturnValue(targetFile);
 
         Number timeoutNumber = 5000;
-        MetaExpression timeoutVar = mock(MetaExpression.class);
+        MetaExpression timeoutVar = mockExpression(ATOMIC);
         when(timeoutVar.getNumberValue()).thenReturn(timeoutNumber);
         when(timeoutVar.getNumberValue().intValue()).thenReturn(timeoutNumber.intValue());
 
         Mockito.doThrow(new MalformedURLException("")).when(webService).download(url, targetFile, webContext, timeoutNumber.intValue());
 
         // run
-        DownloadConstruct.process(urlVar, targetFileVar, webContextVar, timeoutVar, webService, null);
+        process(construct,urlVar, targetFileVar, webContextVar, timeoutVar);
     }
 
     /**
@@ -128,34 +132,36 @@ public class DownloadConstructTest extends ExpressionBuilderHelper {
     public void testDownloadFailed() throws IOException {
         // mock
         WebService webService = mock(WebService.class);
+        DownloadConstruct construct = new DownloadConstruct();
+        construct.setWebService(webService);
 
         // The page
         PageVariable webContext = mock(PageVariable.class);
-        MetaExpression webContextVar = mock(MetaExpression.class);
+        MetaExpression webContextVar = mockExpression(ATOMIC);
         when(webContextVar.getMeta(PageVariable.class)).thenReturn(webContext);
 
         // The URL
         String url = "www.something.com/doc.pdf";
-        MetaExpression urlVar = mock(MetaExpression.class);
+        MetaExpression urlVar = mockExpression(ATOMIC);
         when(urlVar.getStringValue()).thenReturn(url);
 
         // The target file
         String fileName = "c:/tmp/doc.pdf";
-        MetaExpression targetFileVar = mock(MetaExpression.class);
+        MetaExpression targetFileVar = mockExpression(ATOMIC);
         when(targetFileVar.getStringValue()).thenReturn(url);
         Path targetFile = mock(Path.class);
         when(TestUtils.CONSTRUCT_FILE_RESOLVER.buildPath(null, targetFileVar)).thenReturn(targetFile);
         TestUtils.setFileResolverReturnValue(targetFile);
 
         Number timeoutNumber = 5000;
-        MetaExpression timeoutVar = mock(MetaExpression.class);
+        MetaExpression timeoutVar = mockExpression(ATOMIC);
         when(timeoutVar.getNumberValue()).thenReturn(timeoutNumber);
         when(timeoutVar.getNumberValue().intValue()).thenReturn(timeoutNumber.intValue());
 
         Mockito.doThrow(new IOException("")).when(webService).download(url, targetFile, webContext, timeoutNumber.intValue());
 
         // run
-        DownloadConstruct.process(urlVar, targetFileVar, webContextVar, timeoutVar, webService, null);
+        process(construct,urlVar, targetFileVar, webContextVar, timeoutVar);
     }
 
     /**
@@ -167,14 +173,16 @@ public class DownloadConstructTest extends ExpressionBuilderHelper {
     public void testNullURL() throws IOException {
         // mock
         WebService webService = mock(WebService.class);
-        MetaExpression webContextVar = mock(MetaExpression.class);
-        MetaExpression urlVar = mock(MetaExpression.class);
+        DownloadConstruct construct = new DownloadConstruct();
+        construct.setWebService(webService);
+        MetaExpression webContextVar = mockExpression(ATOMIC);
+        MetaExpression urlVar = mockExpression(ATOMIC);
         when(urlVar.getStringValue()).thenReturn("");
-        MetaExpression targetFileVar = mock(MetaExpression.class);
-        MetaExpression timeoutVar = mock(MetaExpression.class);
+        MetaExpression targetFileVar = mockExpression(ATOMIC);
+        MetaExpression timeoutVar = mockExpression(ATOMIC);
 
         // run
-        DownloadConstruct.process(urlVar, targetFileVar, webContextVar, timeoutVar, webService, null);
+        process(construct,urlVar, targetFileVar, webContextVar, timeoutVar);
     }
 
     /**
@@ -186,14 +194,16 @@ public class DownloadConstructTest extends ExpressionBuilderHelper {
     public void testNullFilename() throws IOException {
         // mock
         WebService webService = mock(WebService.class);
-        MetaExpression webContextVar = mock(MetaExpression.class);
-        MetaExpression urlVar = mock(MetaExpression.class);
+        DownloadConstruct construct = new DownloadConstruct();
+        construct.setWebService(webService);
+        MetaExpression webContextVar = mockExpression(ATOMIC);
+        MetaExpression urlVar = mockExpression(ATOMIC);
         when(urlVar.getStringValue()).thenReturn("A");
-        MetaExpression targetFileVar = mock(MetaExpression.class);
+        MetaExpression targetFileVar = mockExpression(ATOMIC);
         when(targetFileVar.getStringValue()).thenReturn("");
-        MetaExpression timeoutVar = mock(MetaExpression.class);
+        MetaExpression timeoutVar = mockExpression(ATOMIC);
 
         // run
-        DownloadConstruct.process(urlVar, targetFileVar, webContextVar, timeoutVar, webService, null);
+        process(construct,urlVar, targetFileVar, webContextVar, timeoutVar);
     }
 }

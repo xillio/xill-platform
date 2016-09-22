@@ -19,7 +19,6 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
-import nl.xillio.xill.plugins.web.PhantomJSConstruct;
 import nl.xillio.xill.plugins.web.services.web.WebService;
 
 /**
@@ -30,7 +29,7 @@ public class FocusConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                element -> process(element, getWebService()),
+                this::process,
                 new Argument("element", ATOMIC));
     }
 
@@ -38,14 +37,14 @@ public class FocusConstruct extends PhantomJSConstruct {
      * @param elementVar input variable (should be of a NODE type)
      * @return null variable
      */
-    static MetaExpression process(final MetaExpression elementVar, final WebService webService) {
+    private MetaExpression process(final MetaExpression elementVar) {
 
         if (elementVar.isNull()) {
             return NULL;
         }
 
         checkNodeType(elementVar);
-        webService.moveToElement(getNode(elementVar));
+        getWebService().moveToElement(getNode(elementVar));
 
         return NULL;
 

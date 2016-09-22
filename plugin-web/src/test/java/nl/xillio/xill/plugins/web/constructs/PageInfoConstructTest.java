@@ -16,6 +16,7 @@
 package nl.xillio.xill.plugins.web.constructs;
 
 import com.google.common.collect.Sets;
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
@@ -33,7 +34,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link PageInfoConstruct}.
  */
-public class PageInfoConstructTest extends ExpressionBuilderHelper {
+public class PageInfoConstructTest extends TestUtils {
 
     /**
      * Tests the construct under normal circumstances
@@ -42,9 +43,10 @@ public class PageInfoConstructTest extends ExpressionBuilderHelper {
     public void testProcessNormalUsage() {
         // mock
         WebService webService = mock(WebService.class);
-
+        PageInfoConstruct construct = new PageInfoConstruct();
+        construct.setWebService(webService);
         // The page
-        MetaExpression input = mock(MetaExpression.class);
+        MetaExpression input = mockExpression(ATOMIC);
         PageVariable pageVariable = mock(PageVariable.class);
         when(input.getMeta(PageVariable.class)).thenReturn(pageVariable);
 
@@ -59,7 +61,7 @@ public class PageInfoConstructTest extends ExpressionBuilderHelper {
         when(webService.getCookies(pageVariable)).thenReturn(Sets.newHashSet(first));
 
         // runs
-        MetaExpression output = PageInfoConstruct.process(input, webService);
+        MetaExpression output = process(construct,input);
 
         // verify
         verify(input, times(2)).getMeta(PageVariable.class);
@@ -82,11 +84,13 @@ public class PageInfoConstructTest extends ExpressionBuilderHelper {
     public void testNullInput() {
         // mock
         WebService webService = mock(WebService.class);
-        MetaExpression input = mock(MetaExpression.class);
+        PageInfoConstruct construct = new PageInfoConstruct();
+        construct.setWebService(webService);
+        MetaExpression input = mockExpression(ATOMIC);
         when(input.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = PageInfoConstruct.process(input, webService);
+        MetaExpression output = process(construct,input);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -99,14 +103,15 @@ public class PageInfoConstructTest extends ExpressionBuilderHelper {
     public void testProcessNoNodeGiven() {
         // mock
         WebService webService = mock(WebService.class);
-
+        PageInfoConstruct construct = new PageInfoConstruct();
+        construct.setWebService(webService);
         // The input
-        MetaExpression input = mock(MetaExpression.class);
+        MetaExpression input = mockExpression(ATOMIC);
 
         when(input.getMeta(NodeVariable.class)).thenReturn(null);
 
         // run
-        PageInfoConstruct.process(input, webService);
+        process(construct,input);
     }
 
     /**
@@ -116,9 +121,10 @@ public class PageInfoConstructTest extends ExpressionBuilderHelper {
     public void testProcessWhenItBreaks() {
         // mock
         WebService webService = mock(WebService.class);
-
+        PageInfoConstruct construct = new PageInfoConstruct();
+        construct.setWebService(webService);
         // The input
-        MetaExpression input = mock(MetaExpression.class);
+        MetaExpression input = mockExpression(ATOMIC);
         PageVariable pageVariable = mock(PageVariable.class);
         when(input.getMeta(PageVariable.class)).thenReturn(pageVariable);
 
@@ -133,6 +139,6 @@ public class PageInfoConstructTest extends ExpressionBuilderHelper {
         when(webService.getCookies(pageVariable)).thenReturn(Sets.newHashSet(first));
 
         // runs
-        PageInfoConstruct.process(input, webService);
+        process(construct,input);
     }
 }

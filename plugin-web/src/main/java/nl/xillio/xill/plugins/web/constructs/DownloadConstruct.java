@@ -21,7 +21,6 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
-import nl.xillio.xill.plugins.web.PhantomJSConstruct;
 import nl.xillio.xill.plugins.web.data.WebVariable;
 import nl.xillio.xill.plugins.web.services.web.WebService;
 
@@ -38,7 +37,7 @@ public class DownloadConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (url, fileName, webContext, timeout) -> process(url, fileName, webContext, timeout, getWebService(), context),
+                (url, fileName, webContext, timeout) -> process(url, fileName, webContext, timeout, context),
                 new Argument("url", ATOMIC),
                 new Argument("filename", ATOMIC),
                 new Argument("webContext", NULL, ATOMIC),
@@ -50,12 +49,11 @@ public class DownloadConstruct extends PhantomJSConstruct {
      * @param fileName      A file where the downloaded content is to be stored
      * @param webContextVar An optional page or node variable that is used for take-over the cookies and use is during the download
      * @param timeoutVar    The timeout in miliseconds
-     * @param webService    Web service
      * @param context       The context of this construct
      * @throws OperationFailedException target could not be downloaded
      * @return null variable
      */
-    public static MetaExpression process(final MetaExpression urlVar, final MetaExpression fileName, final MetaExpression webContextVar, final MetaExpression timeoutVar, final WebService webService, final ConstructContext context) {
+    private MetaExpression process(final MetaExpression urlVar, final MetaExpression fileName, final MetaExpression webContextVar, final MetaExpression timeoutVar,final ConstructContext context) {
 
         String url = urlVar.getStringValue();
         if (url.isEmpty()) {
@@ -81,7 +79,7 @@ public class DownloadConstruct extends PhantomJSConstruct {
         }
 
         try {
-            return fromValue(webService.download(url, targetFile, webContext, timeout));
+            return fromValue(getWebService().download(url, targetFile, webContext, timeout));
         } catch (MalformedURLException e) {
             throw new OperationFailedException("download from current URL.", "Invalid URL found.", e);
         } catch (IOException e) {

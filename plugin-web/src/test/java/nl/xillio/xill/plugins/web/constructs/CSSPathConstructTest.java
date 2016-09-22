@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.OperationFailedException;
@@ -38,7 +39,7 @@ import static org.mockito.Mockito.*;
 /**
  * Tests the {@link CSSPathConstruct}.
  */
-public class CSSPathConstructTest extends ExpressionBuilderHelper {
+public class CSSPathConstructTest extends TestUtils {
 
     /**
      * test the construct with normal input.
@@ -47,15 +48,17 @@ public class CSSPathConstructTest extends ExpressionBuilderHelper {
     public void testNormalNodeUsage() {
         // mock
         WebService webService = mock(WebService.class);
+        CSSPathConstruct construct = new CSSPathConstruct();
+        construct.setWebService(webService);
 
         // The element
-        MetaExpression element = mock(MetaExpression.class);
+        MetaExpression element = mockExpression(ATOMIC);
         NodeVariable nodeVariable = mock(NodeVariable.class);
         when(element.getMeta(NodeVariable.class)).thenReturn(nodeVariable);
 
         // The css path
         String query = "cssPath";
-        MetaExpression cssPath = mock(MetaExpression.class);
+        MetaExpression cssPath = mockExpression(ATOMIC);
         when(cssPath.getStringValue()).thenReturn(query);
 
         // The result from findElements
@@ -70,7 +73,7 @@ public class CSSPathConstructTest extends ExpressionBuilderHelper {
         when(webService.createNodeVariable(nodeVariable, secondResult)).thenReturn(secondResult);
 
         // run
-        MetaExpression output = CSSPathConstruct.process(element, cssPath, webService);
+        MetaExpression output = process(construct,element, cssPath);
         // assert
         Assert.assertEquals(output.getType(), LIST);
         @SuppressWarnings("unchecked")
@@ -85,12 +88,14 @@ public class CSSPathConstructTest extends ExpressionBuilderHelper {
     public void testNullInput() {
         // mock
         WebService webService = mock(WebService.class);
-        MetaExpression input = mock(MetaExpression.class);
-        MetaExpression csspath = mock(MetaExpression.class);
+        CSSPathConstruct construct = new CSSPathConstruct();
+        construct.setWebService(webService);
+        MetaExpression input = mockExpression(ATOMIC);
+        MetaExpression csspath = mockExpression(ATOMIC);
         when(input.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = CSSPathConstruct.process(input, csspath, webService);
+        MetaExpression output = process(construct,input, csspath);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -103,15 +108,17 @@ public class CSSPathConstructTest extends ExpressionBuilderHelper {
     public void testProcessSingleResultValue() {
         // mock
         WebService webService = mock(WebService.class);
+        CSSPathConstruct construct = new CSSPathConstruct();
+        construct.setWebService(webService);
 
         // The element
-        MetaExpression element = mock(MetaExpression.class);
+        MetaExpression element = mockExpression(ATOMIC);
         NodeVariable nodeVariable = mock(NodeVariable.class);
         when(element.getMeta(NodeVariable.class)).thenReturn(nodeVariable);
 
         // The css path
         String query = "cssPath";
-        MetaExpression cssPath = mock(MetaExpression.class);
+        MetaExpression cssPath = mockExpression(ATOMIC);
         when(cssPath.getStringValue()).thenReturn(query);
 
         // The result of findElements
@@ -123,7 +130,7 @@ public class CSSPathConstructTest extends ExpressionBuilderHelper {
         when(webService.createNodeVariable(nodeVariable, firstResult)).thenReturn(firstResult);
 
         // run
-        MetaExpression output = CSSPathConstruct.process(element, cssPath, webService);
+        MetaExpression output = process(construct,element, cssPath);
 
         // assert
         Assert.assertEquals(output.getType(), ATOMIC);
@@ -136,22 +143,24 @@ public class CSSPathConstructTest extends ExpressionBuilderHelper {
     public void testProcessNoValueFound() {
         // mock
         WebService webService = mock(WebService.class);
+        CSSPathConstruct construct = new CSSPathConstruct();
+        construct.setWebService(webService);
 
         // The element
-        MetaExpression element = mock(MetaExpression.class);
+        MetaExpression element = mockExpression(ATOMIC);
         NodeVariable nodeVariable = mock(NodeVariable.class);
         when(element.getMeta(NodeVariable.class)).thenReturn(nodeVariable);
 
         // The css path
         String query = "cssPath";
-        MetaExpression cssPath = mock(MetaExpression.class);
+        MetaExpression cssPath = mockExpression(ATOMIC);
         when(cssPath.getStringValue()).thenReturn(query);
 
         // The process
         when(webService.findElementsWithCssPath(nodeVariable, query)).thenReturn(Arrays.asList());
 
         // run
-        MetaExpression output = CSSPathConstruct.process(element, cssPath, webService);
+        MetaExpression output = process(construct,element, cssPath);
 
         // verify tht we stop before asking the attribute
         verify(webService, times(0)).getAttribute(any(), anyString());
@@ -167,21 +176,23 @@ public class CSSPathConstructTest extends ExpressionBuilderHelper {
     public void testNoNodeOrPageGiven() {
         // mock
         WebService webService = mock(WebService.class);
+        CSSPathConstruct construct = new CSSPathConstruct();
+        construct.setWebService(webService);
 
         // The element
-        MetaExpression element = mock(MetaExpression.class);
+        MetaExpression element = mockExpression(ATOMIC);
         NodeVariable nodeVariable = mock(NodeVariable.class);
 
         // The css path
         String query = "cssPath";
-        MetaExpression cssPath = mock(MetaExpression.class);
+        MetaExpression cssPath = mockExpression(ATOMIC);
         when(cssPath.getStringValue()).thenReturn(query);
 
         // The process
         when(webService.findElementsWithCssPath(nodeVariable, query)).thenReturn(Arrays.asList());
 
         // run
-        CSSPathConstruct.process(element, cssPath, webService);
+        process(construct,element, cssPath);
     }
 
 
@@ -192,23 +203,25 @@ public class CSSPathConstructTest extends ExpressionBuilderHelper {
     public void processPage(){
         // Mock
         WebService webService = mock(WebService.class);
+        CSSPathConstruct construct = new CSSPathConstruct();
+        construct.setWebService(webService);
 
         // The element
-        MetaExpression element = mock(MetaExpression.class);
+        MetaExpression element = mockExpression(ATOMIC);
         PageVariable pageVariable = mock(PageVariable.class);
 
         when(element.getMeta(PageVariable.class)).thenReturn(pageVariable);
-
+        
         // The css path
         String query = "cssPath";
-        MetaExpression cssPath = mock(MetaExpression.class);
+        MetaExpression cssPath = mockExpression(ATOMIC);
         when(cssPath.getStringValue()).thenReturn(query);
 
         // The process
         when(webService.findElementsWithCssPath(pageVariable,query)).thenReturn(Arrays.asList());
 
         // Run
-        Assert.assertEquals(CSSPathConstruct.process(element,cssPath,webService), NULL);
+        Assert.assertEquals(process(construct,element,cssPath), NULL);
 
     }
 

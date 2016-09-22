@@ -20,7 +20,6 @@ import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
-import nl.xillio.xill.plugins.web.PhantomJSConstruct;
 import nl.xillio.xill.plugins.web.data.WebVariable;
 import nl.xillio.xill.plugins.web.services.web.WebService;
 
@@ -35,7 +34,7 @@ public class XPathConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (element, xPath) -> process(element, xPath, getWebService()),
+                (element,xPath) -> process(element,xPath),
                 new Argument("element", ATOMIC),
                 new Argument("xPath", ATOMIC));
     }
@@ -43,10 +42,9 @@ public class XPathConstruct extends PhantomJSConstruct {
     /**
      * @param elementVar input variable (should be of a NODE or PAGE type)
      * @param xPathVar   string variable specifying XPath selector
-     * @param webService The web service we're using.
      * @return NODE variable or list of NODE variables or null variable (according to count of selected web elements - more/1/0)
      */
-    public static MetaExpression process(final MetaExpression elementVar, final MetaExpression xPathVar, final WebService webService) {
+    private MetaExpression process(final MetaExpression elementVar, final MetaExpression xPathVar) {
 
         String query = xPathVar.getStringValue();
 
@@ -55,13 +53,13 @@ public class XPathConstruct extends PhantomJSConstruct {
         }
 
         if (isNodeAndNotPage(elementVar)) {
-            return processSELNode(getNode(elementVar), query, webService);
+            return processSELNode(getNode(elementVar), query);
         } else {
-            return processSELNode(getPage(elementVar), query, webService);
+            return processSELNode(getPage(elementVar), query);
         }
     }
 
-    private static MetaExpression processSELNode(final WebVariable driver, final String query, final WebService webService) {
+    private MetaExpression processSELNode(final WebVariable driver, final String query) {
         String cleanedQuery = query;
         boolean textQuery = query.endsWith("/text()");
         boolean attributeQuery = query.matches("^.*(@[:A-z_][-:\\w\\.]*)$");
@@ -74,17 +72,17 @@ public class XPathConstruct extends PhantomJSConstruct {
             cleanedQuery = stripAttributeQuery(query);
         }
 
-        List<WebVariable> results = webService.findElementsWithXpath(driver, cleanedQuery);
+        List<WebVariable> results = getWebService().findElementsWithXpath(driver, cleanedQuery);
 
         if (results.isEmpty()) {
             return NULL;
         } else if (results.size() == 1) {
-            return parseSELVariable(driver, results.get(0), textQuery, attribute, webService);
+            return parseSELVariable(driver, results.get(0), textQuery, attribute);
         } else {
             ArrayList<MetaExpression> list = new ArrayList<>();
 
             for (WebVariable he : results) {
-                list.add(parseSELVariable(driver, he, textQuery, attribute, webService));
+                list.add(parseSELVariable(driver, he, textQuery, attribute));
             }
 
             return fromValue(list);
@@ -98,7 +96,7 @@ public class XPathConstruct extends PhantomJSConstruct {
      * @throws OperationFailedException if the index is out of bounds
      * @return The stripped query
      */
-    private static String stripTextTag(final String query) {
+    private String stripTextTag(final String query) {
         try {
             return query.substring(0, query.length() - 7);
         } catch (IndexOutOfBoundsException e) {
@@ -113,7 +111,7 @@ public class XPathConstruct extends PhantomJSConstruct {
      * @throws OperationFailedException if the index is out of bounds
      * @return The attribute name.
      */
-    private static String getAttribute(final String xpath) {
+    private String getAttribute(final String xpath) {
         try {
             return xpath.substring(xpath.lastIndexOf('@') + 1);
         } catch (IndexOutOfBoundsException e) {
@@ -128,7 +126,7 @@ public class XPathConstruct extends PhantomJSConstruct {
      * @throws OperationFailedException if the index is out of bounds
      * @return The stripped query.
      */
-    private static String stripAttributeQuery(final String query) {
+    private String stripAttributeQuery(final String query) {
         try {
             return query.substring(0, query.lastIndexOf('/'));
         } catch (IndexOutOfBoundsException e) {
@@ -136,17 +134,17 @@ public class XPathConstruct extends PhantomJSConstruct {
         }
     }
 
-    private static MetaExpression parseSELVariable(final WebVariable driver, final WebVariable element, final boolean textquery, final String attribute, final WebService webService) {
+    private MetaExpression parseSELVariable(final WebVariable driver, final WebVariable element, final boolean textquery, final String attribute) {
         if (textquery) {
-            return fromValue(webService.getAttribute(element, "innerHTML"));
+            return fromValue(getWebService().getAttribute(element, "innerHTML"));
         } else if (attribute != null) {
-            String val = webService.getAttribute(element, attribute);
+            String val = getWebService().getAttribute(element, attribute);
             if (val == null) {
                 return NULL;
             }
             return fromValue(val);
         } else {
-            return createNode(driver, element, webService);
+            return createNode(driver, element, getWebService());
         }
     }
 }

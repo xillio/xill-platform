@@ -21,7 +21,6 @@ import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
-import nl.xillio.xill.plugins.web.PhantomJSConstruct;
 import nl.xillio.xill.plugins.web.data.OptionsFactory;
 import nl.xillio.xill.plugins.web.services.web.FileService;
 import nl.xillio.xill.plugins.web.services.web.WebService;
@@ -33,34 +32,30 @@ import java.io.IOException;
  * It loads web page from a provided string (the string represents HTML code of a web page)
  */
 public class FromString extends PhantomJSConstruct {
-    @Inject
-    private FileService fileService;
-    @Inject
-    private OptionsFactory optionsFactory;
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                content -> process(content, optionsFactory, fileService, getWebService()),
+                content -> process(content),
                 new Argument("content", ATOMIC));
     }
 
     /**
      * @param contentVar     input string variable (HTML code of a web page)
-     * @param optionsFactory The factory for creating options the {@link LoadPageConstruct} will be using.
-     * @param fileService    The service for files we're using.
-     * @param webService     The webservice the {@link LoadPageConstruct} will be using.
      * @throws OperationFailedException if the string could not not be written to a file
      * @return PAGE variable
      */
-    public static MetaExpression process(final MetaExpression contentVar, final OptionsFactory optionsFactory, final FileService fileService, final WebService webService) {
+    private MetaExpression process(final MetaExpression contentVar) {
         String content = contentVar.getStringValue();
 
         try {
-            File htmlFile = fileService.createTempFile("ct_sel", ".html");
-            fileService.writeStringToFile(htmlFile.toPath(), content);
-            String uri = "file:///" + fileService.getAbsolutePath(htmlFile);
-            return LoadPageConstruct.process(fromValue(uri), NULL, optionsFactory, webService);
+            File htmlFile = getFileService().createTempFile("ct_sel", ".html");
+            getFileService().writeStringToFile(htmlFile.toPath(), content);
+            String uri = "file:///" + getFileService().getAbsolutePath(htmlFile);
+            LoadPageConstruct loadPage = new LoadPageConstruct();
+            loadPage.setOptionsFactory(getOptionsFactory());
+            loadPage.setWebService(getWebService());
+            return loadPage.process(fromValue(uri), NULL);
         } catch (IOException e) {
             throw new OperationFailedException("write the string to a file.", "An IO error occurred.", e);
         }

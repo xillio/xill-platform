@@ -19,7 +19,6 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
-import nl.xillio.xill.plugins.web.PhantomJSConstruct;
 import nl.xillio.xill.plugins.web.data.WebVariable;
 import nl.xillio.xill.plugins.web.services.web.WebService;
 
@@ -31,7 +30,7 @@ public class InputConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (element, text) -> process(element, text, getWebService()),
+                (element, text) -> process(element, text),
                 new Argument("element", ATOMIC),
                 new Argument("text", ATOMIC));
     }
@@ -39,10 +38,9 @@ public class InputConstruct extends PhantomJSConstruct {
     /**
      * @param elementVar input variable (should be of a NODE type) - web element
      * @param textVar    input string variable - text to be written to web element
-     * @param webService The webService we're using.
      * @return null variable
      */
-    public static MetaExpression process(final MetaExpression elementVar, final MetaExpression textVar, final WebService webService) {
+    private MetaExpression process(final MetaExpression elementVar, final MetaExpression textVar) {
 
         if (elementVar.isNull()) {
             return NULL;
@@ -54,8 +52,8 @@ public class InputConstruct extends PhantomJSConstruct {
         String text = textVar.getStringValue();
 
         WebVariable element = getNode(elementVar);
-        webService.clear(element);
-        webService.sendKeys(element, text);
+        getWebService().clear(element);
+        getWebService().sendKeys(element, text);
 
         return NULL;
     }

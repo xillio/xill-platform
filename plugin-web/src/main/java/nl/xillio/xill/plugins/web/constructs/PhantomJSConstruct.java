@@ -13,28 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.plugins.web;
+package nl.xillio.xill.plugins.web.constructs;
 
 import com.google.inject.Inject;
 import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.errors.OperationFailedException;
-import nl.xillio.xill.plugins.web.data.NodeVariable;
-import nl.xillio.xill.plugins.web.data.PageVariable;
-import nl.xillio.xill.plugins.web.data.WebVariable;
+import nl.xillio.xill.plugins.web.InvalidUrlException;
+import nl.xillio.xill.plugins.web.data.*;
+import nl.xillio.xill.plugins.web.services.web.FileService;
+import nl.xillio.xill.plugins.web.services.web.HTMLService;
 import nl.xillio.xill.plugins.web.services.web.WebService;
 import org.openqa.selenium.Cookie;
 
+import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 
 /**
  * The base class for all the constructs which use PhantomJS.
  */
-public abstract class PhantomJSConstruct extends Construct {
+abstract class PhantomJSConstruct extends Construct {
 
     private WebService webService;
+    private HTMLService htmlService;
+    private FileService fileService;
+    private OptionsFactory optionsFactory;
+    private CookieFactory cookieFactory;
 
     /**
      * Creates new {@link NodeVariable}.
@@ -152,5 +158,41 @@ public abstract class PhantomJSConstruct extends Construct {
     @Inject
     void setWebService(WebService webService) {
         this.webService = webService;
+    }
+
+    protected HTMLService getHtmlService() {
+        return htmlService;
+    }
+
+    @Inject
+    void setHtmlService(HTMLService htmlService) {
+        this.htmlService = htmlService;
+    }
+
+    protected FileService getFileService() {
+        return fileService;
+    }
+
+    @Inject
+    void setFileService(FileService fileService) {
+        this.fileService = fileService;
+    }
+
+    protected OptionsFactory getOptionsFactory() {
+        return optionsFactory;
+    }
+
+    @Inject
+    void setOptionsFactory(OptionsFactory optionsFactory) {
+        this.optionsFactory = optionsFactory;
+    }
+
+    protected CookieFactory getCookieFactory() {
+        return cookieFactory;
+    }
+
+    @Inject
+    void setCookieFactory(CookieFactory cookieFactory) {
+        this.cookieFactory = cookieFactory;
     }
 }

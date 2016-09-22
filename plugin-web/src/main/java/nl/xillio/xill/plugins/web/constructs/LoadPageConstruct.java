@@ -22,7 +22,6 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.web.InvalidUrlException;
-import nl.xillio.xill.plugins.web.PhantomJSConstruct;
 import nl.xillio.xill.plugins.web.data.Options;
 import nl.xillio.xill.plugins.web.data.OptionsFactory;
 import nl.xillio.xill.plugins.web.data.PhantomJSPool;
@@ -36,8 +35,6 @@ import java.net.MalformedURLException;
  *         Loads the new page via PhantomJS process and holds the context of a page
  */
 public class LoadPageConstruct extends PhantomJSConstruct implements AutoCloseable {
-    @Inject
-    private OptionsFactory optionsFactory;
 
     private static final PhantomJSPool pool = new PhantomJSPool(10);
 
@@ -48,7 +45,7 @@ public class LoadPageConstruct extends PhantomJSConstruct implements AutoCloseab
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (url, options) -> process(url, options, optionsFactory, getWebService()),
+                (url, options) -> process(url, options),
                 new Argument("url", ATOMIC),
                 new Argument("options", NULL, OBJECT));
     }
@@ -56,26 +53,24 @@ public class LoadPageConstruct extends PhantomJSConstruct implements AutoCloseab
     /**
      * @param urlVar         string variable - page URL
      * @param optionsVar     list variable - options for loading the page (see CT help for details)
-     * @param optionsFactory The factory which will create the options.
-     * @param webService     The service we're using.
      * @throws OperationFailedException if the URL is invalid
      * @return PAGE variable
      */
-    public static MetaExpression process(final MetaExpression urlVar, final MetaExpression optionsVar, final OptionsFactory optionsFactory, final WebService webService) {
+    MetaExpression process(final MetaExpression urlVar, final MetaExpression optionsVar) {
         String url = urlVar.getStringValue();
         Options options;
         PhantomJSPool.Entity entity = null;
 
         try {
             // processing input options
-            options = optionsFactory.processOptions(optionsVar);
+            options = getOptionsFactory().processOptions(optionsVar);
             if (options == null) {
                 options = new Options();
             }
-            entity = webService.getEntityFromPool(pool, options);
+            entity = getWebService().getEntityFromPool(pool, options);
             WebVariable page = entity.getPage();
-            webService.httpGet(page, url);
-            return createPage(page, webService);
+            getWebService().httpGet(page, url);
+            return createPage(page, getWebService());
         } catch (MalformedURLException | InvalidUrlException e) {
             release(entity);
             throw new OperationFailedException("load the page.", "Malformed or Invalid URL during httpGet.", e);

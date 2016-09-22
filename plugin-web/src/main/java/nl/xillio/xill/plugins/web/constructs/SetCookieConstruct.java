@@ -21,7 +21,6 @@ import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
-import nl.xillio.xill.plugins.web.PhantomJSConstruct;
 import nl.xillio.xill.plugins.web.data.CookieFactory;
 import nl.xillio.xill.plugins.web.data.WebVariable;
 import nl.xillio.xill.plugins.web.services.web.WebService;
@@ -33,13 +32,11 @@ import java.util.Map;
  * Set cookie in a currently loaded page context
  */
 public class SetCookieConstruct extends PhantomJSConstruct {
-    @Inject
-    private CookieFactory cookieFactory;
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (page, cookies) -> process(page, cookies, cookieFactory, getWebService()),
+                (page, cookies) -> process(page, cookies),
                 new Argument("page"),
                 new Argument("cookies", LIST, OBJECT));
     }
@@ -47,12 +44,10 @@ public class SetCookieConstruct extends PhantomJSConstruct {
     /**
      * @param pageVar       input variable (should be of a PAGE type)
      * @param cookiesVar    input string variable - associated array or list of associated arrays (see CT help for details)
-     * @param cookieFactory The factory which builds cookies.
-     * @param webService    The service we're using for accesing the web.
      * @throws OperationFailedException if the meta expression did not contain a cookie
      * @return null variable
      */
-    public static MetaExpression process(final MetaExpression pageVar, final MetaExpression cookiesVar, final CookieFactory cookieFactory, final WebService webService) {
+    private MetaExpression process(final MetaExpression pageVar, final MetaExpression cookiesVar) {
 
         if (cookiesVar.isNull() || pageVar.isNull()) {
             return NULL;
@@ -65,16 +60,16 @@ public class SetCookieConstruct extends PhantomJSConstruct {
             @SuppressWarnings("unchecked")
             List<MetaExpression> list = (List<MetaExpression>) cookiesVar.getValue();
             for (MetaExpression cookie : list) {
-                processCookie(driver, cookie, cookieFactory, webService);
+                processCookie(driver, cookie, getCookieFactory(), getWebService());
             }
         } else {
-            processCookie(driver, cookiesVar, cookieFactory, webService);
+            processCookie(driver, cookiesVar, getCookieFactory(), getWebService());
         }
 
         return NULL;
     }
 
-    private static void processCookie(final WebVariable driver, final MetaExpression cookie, final CookieFactory cookieFactory, final WebService webService) {
+    private void processCookie(final WebVariable driver, final MetaExpression cookie, final CookieFactory cookieFactory, final WebService webService) {
         if (cookie.getType() != OBJECT) {
             throw new OperationFailedException("Failed to process a cookie", "No OBJECT could be found when processing: " + cookie.getStringValue());
         }

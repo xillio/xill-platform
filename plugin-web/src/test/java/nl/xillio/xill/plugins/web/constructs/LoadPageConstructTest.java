@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
@@ -34,7 +35,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link LoadPageConstruct}.
  */
-public class LoadPageConstructTest extends ExpressionBuilderHelper {
+public class LoadPageConstructTest extends TestUtils {
 
     /**
      * Test the process under normal circumstances.
@@ -46,16 +47,19 @@ public class LoadPageConstructTest extends ExpressionBuilderHelper {
 
         // mock
         WebService webService = mock(WebService.class);
+        LoadPageConstruct construct = new LoadPageConstruct();
+        construct.setWebService(webService);
         OptionsFactory optionsFactory = mock(OptionsFactory.class);
         Options returnedOptions = mock(Options.class);
+        construct.setOptionsFactory(optionsFactory);
 
         // The url
         String urlValue = "This is an url";
-        MetaExpression url = mock(MetaExpression.class);
+        MetaExpression url = mockExpression(ATOMIC);
         when(url.getStringValue()).thenReturn(urlValue);
 
         // The options
-        MetaExpression options = mock(MetaExpression.class);
+        MetaExpression options = mockExpression(OBJECT);
 
         // the process
         // There is currently no other way to do this; we have to sort out the functions one day.
@@ -67,7 +71,7 @@ public class LoadPageConstructTest extends ExpressionBuilderHelper {
         when(webService.getCurrentUrl(pageVariable)).thenReturn(urlValue);
 
         // run
-        MetaExpression output = LoadPageConstruct.process(url, options, optionsFactory, webService);
+        MetaExpression output = process(construct,url, options);
 
         // verify
         verify(optionsFactory, times(1)).processOptions(options);
@@ -88,16 +92,19 @@ public class LoadPageConstructTest extends ExpressionBuilderHelper {
 
         // mock
         WebService webService = mock(WebService.class);
+        LoadPageConstruct construct = new LoadPageConstruct();
+        construct.setWebService(webService);
         OptionsFactory optionsFactory = mock(OptionsFactory.class);
         mock(Options.class);
+        construct.setOptionsFactory(optionsFactory);
 
         // The url
         String urlValue = "This is an url";
-        MetaExpression url = mock(MetaExpression.class);
+        MetaExpression url = mockExpression(ATOMIC);
         when(url.getStringValue()).thenReturn(urlValue);
 
         // The options
-        MetaExpression options = mock(MetaExpression.class);
+        MetaExpression options = mockExpression(OBJECT);
 
         // the process
         // There is currently no other way to do this; we have to sort out the functions one day.
@@ -109,7 +116,7 @@ public class LoadPageConstructTest extends ExpressionBuilderHelper {
         when(webService.getCurrentUrl(pageVariable)).thenReturn(urlValue);
 
         // run
-        MetaExpression output = LoadPageConstruct.process(url, options, optionsFactory, webService);
+        MetaExpression output = process(construct,url, options);
     }
 
     /**
@@ -122,16 +129,19 @@ public class LoadPageConstructTest extends ExpressionBuilderHelper {
 
         // mock
         WebService webService = mock(WebService.class);
+        LoadPageConstruct construct = new LoadPageConstruct();
+        construct.setWebService(webService);
         OptionsFactory optionsFactory = mock(OptionsFactory.class);
         Options returnedOptions = mock(Options.class);
+        construct.setOptionsFactory(optionsFactory);
 
         // The url
         String urlValue = "This is an url";
-        MetaExpression url = mock(MetaExpression.class);
+        MetaExpression url = mockExpression(ATOMIC);
         when(url.getStringValue()).thenReturn(urlValue);
 
         // The options
-        MetaExpression options = mock(MetaExpression.class);
+        MetaExpression options = mockExpression(OBJECT);
 
         // the process
         // There is currently no other way to do this; we have to sort out the functions one day.
@@ -145,6 +155,6 @@ public class LoadPageConstructTest extends ExpressionBuilderHelper {
         doThrow(new MalformedURLException()).when(webService).httpGet(pageVariable, urlValue);
 
         // run
-        LoadPageConstruct.process(url, options, optionsFactory, webService);
+        process(construct,url, options);
     }
 }

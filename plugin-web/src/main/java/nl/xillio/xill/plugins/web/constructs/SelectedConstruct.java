@@ -19,7 +19,6 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
-import nl.xillio.xill.plugins.web.PhantomJSConstruct;
 import nl.xillio.xill.plugins.web.data.WebVariable;
 import nl.xillio.xill.plugins.web.services.web.WebService;
 
@@ -31,16 +30,15 @@ public class SelectedConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                element -> process(element, getWebService()),
+                this::process,
                 new Argument("element", ATOMIC));
     }
 
     /**
      * @param elementVar input variable (should be of a NODE type) - web element
-     * @param webService the service we're using.
      * @return boolean variable (true=selected, false=not selected)
      */
-    public static MetaExpression process(final MetaExpression elementVar, final WebService webService) {
+    private MetaExpression process(final MetaExpression elementVar) {
 
         if (elementVar.isNull()) {
             return NULL;
@@ -48,6 +46,6 @@ public class SelectedConstruct extends PhantomJSConstruct {
 
         checkNodeType(elementVar);
         WebVariable element = getNode(elementVar);
-        return fromValue(webService.isSelected(element));
+        return fromValue(getWebService().isSelected(element));
     }
 }

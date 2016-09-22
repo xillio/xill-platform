@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.*;
 /**
  * The unit tests for the {@link FocusConstruct}.
  */
-public class FocusConstructTest extends ExpressionBuilderHelper {
+public class FocusConstructTest extends TestUtils {
 
     /**
      * test the construct with normal input. No exceptions should be thrown, element.click is called once and output is NULL.
@@ -38,14 +39,16 @@ public class FocusConstructTest extends ExpressionBuilderHelper {
     public void testProcessNormalUsage() {
         // mock
         WebService webService = mock(WebService.class);
+        FocusConstruct construct = new FocusConstruct();
+        construct.setWebService(webService);
 
         // The input
-        MetaExpression element = mock(MetaExpression.class);
+        MetaExpression element = mockExpression(ATOMIC);
         NodeVariable nodeVariable = mock(NodeVariable.class);
         when(element.getMeta(NodeVariable.class)).thenReturn(nodeVariable);
 
         // run
-        MetaExpression output = FocusConstruct.process(element, webService);
+        MetaExpression output = process(construct,element);
 
         // verify
         verify(element, times(2)).getMeta(NodeVariable.class);
@@ -62,11 +65,13 @@ public class FocusConstructTest extends ExpressionBuilderHelper {
     public void testNullInput() {
         // mock
         WebService webService = mock(WebService.class);
-        MetaExpression input = mock(MetaExpression.class);
+        FocusConstruct construct = new FocusConstruct();
+        construct.setWebService(webService);
+        MetaExpression input = mockExpression(ATOMIC);
         when(input.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = FocusConstruct.process(input, webService);
+        MetaExpression output = process(construct,input);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -79,13 +84,15 @@ public class FocusConstructTest extends ExpressionBuilderHelper {
     public void testProcessNoNodeGiven() {
         // mock
         WebService webService = mock(WebService.class);
+        FocusConstruct construct = new FocusConstruct();
+        construct.setWebService(webService);
 
         // The input
-        MetaExpression element = mock(MetaExpression.class);
+        MetaExpression element = mockExpression(ATOMIC);
         when(element.getMeta(NodeVariable.class)).thenReturn(null);
 
         // run
-        FocusConstruct.process(element, webService);
+        process(construct,element);
 
         // verify
         verify(element, times(1)).getMeta(NodeVariable.class);
@@ -98,16 +105,17 @@ public class FocusConstructTest extends ExpressionBuilderHelper {
     public void testProcessFailedToFocus() {
         // mock
         WebService webService = mock(WebService.class);
-
+        FocusConstruct construct = new FocusConstruct();
+        construct.setWebService(webService);
         // The input
         NodeVariable nodeVariable = mock(NodeVariable.class);
-        MetaExpression element = mock(MetaExpression.class);
+        MetaExpression element = mockExpression(ATOMIC);
         when(element.getMeta(NodeVariable.class)).thenReturn(nodeVariable);
 
         doThrow(new RobotRuntimeException("Error")).when(webService).moveToElement(any());
 
         // run
-        FocusConstruct.process(element, webService);
+        process(construct,element);
 
         // verify
         verify(element, times(1)).getMeta(NodeVariable.class);
