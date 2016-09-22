@@ -43,7 +43,7 @@ public interface UrlUtilityService {
      *
      * @param filePath The path to the file we want to read.
      * @return A byteArray with content.
-     * @throws IOException  Is thrown when a file(-related) operation fails.
+     * @throws IOException Is thrown when a file(-related) operation fails.
      */
     byte[] readFileToByteArray(Path filePath) throws IOException;
 
@@ -63,9 +63,16 @@ public interface UrlUtilityService {
      *
      * @param fileName The name of the file.
      * @param output   The output to write.
-     * @throws FileNotFoundException    Is thrown when the provided file is not found.
-     * @throws IOException              Is thrown when a file(-related) operation fails.
+     * @throws FileNotFoundException Is thrown when the provided file is not found.
+     * @throws IOException           Is thrown when a file(-related) operation fails.
      */
     void write(File fileName, byte[] output) throws IOException;
 
+    /**
+     * Gets the protocol that is used in a url (e.g. "http" or "https").
+     *
+     * @param url The url to get the protocol from.
+     * @return The protocol that is used.
+     */
+    String getProtocol(final String url);
 }

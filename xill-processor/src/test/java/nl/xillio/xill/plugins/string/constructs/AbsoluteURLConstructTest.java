@@ -18,7 +18,6 @@ package nl.xillio.xill.plugins.string.constructs;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.OperationFailedException;
-import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.string.services.string.UrlUtilityService;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -135,5 +134,32 @@ public class AbsoluteURLConstructTest {
 
         // Verify
         verify(url, times(1)).tryConvert(pageUrlValue, relativeUrlValue);
+    }
+
+    /**
+     * Test the process when the relative url reuses the protocol.
+     */
+    @Test
+    public void processReuseProtocol() {
+        // Mock.
+        String pageUrlValue = "https://xillio.nl/";
+        MetaExpression pageUrl = mock(MetaExpression.class);
+        when(pageUrl.getStringValue()).thenReturn(pageUrlValue);
+
+        String relativeUrlValue = "//example.com";
+        MetaExpression relativeUrl = mock(MetaExpression.class);
+        when(relativeUrl.getStringValue()).thenReturn(relativeUrlValue);
+
+        UrlUtilityService url = mock(UrlUtilityService.class);
+        when(url.getProtocol(pageUrlValue)).thenReturn("https");
+
+        // Run.
+        MetaExpression result = AbsoluteURLConstruct.process(pageUrl, relativeUrl, url);
+
+        // Verify.
+        verify(url, times(1)).getProtocol(pageUrlValue);
+
+        // Assert.
+        Assert.assertEquals(result.getStringValue(), "https://example.com");
     }
 }
