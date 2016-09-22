@@ -994,8 +994,8 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             LOGGER.warn("Failed to read changed robot content", e);
         }
 
-        if (!tab.getEditorPane().checkChangedCode(newContent)) {
-            return;
+        if (!tab.getEditorPane().checkChangedCode(newContent) || tab.getEditorPane().documentState.getValue().equals(EditorPane.DocumentState.NEW)) {
+            return; // The code was not changed or it is a new document so there could not be any change
         }
 
         tab.requestFocus();
