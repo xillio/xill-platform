@@ -168,6 +168,11 @@ public class Assign implements Processable {
     public MetaExpression processWithValue(final Debugger debugger) {
         MetaExpression value = expression.process(debugger).get();
 
+        // If the stop request or error occurred, interrupt the value assignment process (i.e. don't do any assignment)
+        if(debugger.shouldStop()) {
+            return ExpressionBuilderHelper.NULL;
+        }
+
         // First we check if there is a path
         if (path.isEmpty()) {
             // Assign atomically
@@ -189,7 +194,6 @@ public class Assign implements Processable {
                     break;
                 default:
                     throw new RobotRuntimeException("Cannot assign to atomic variable using a path.");
-
             }
         }
 
