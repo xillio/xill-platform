@@ -34,12 +34,12 @@ public class AbsoluteURLConstruct extends Construct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (pageUrl, relativeUrl) -> process(pageUrl, relativeUrl, urlUtilityService),
+                this::process,
                 new Argument("pageUrl", ATOMIC),
                 new Argument("relativeUrl", ATOMIC));
     }
 
-    private MetaExpression process(final MetaExpression pageUrlVar, final MetaExpression relativeUrlVar, final UrlUtilityService urlUtilityService) {
+    private MetaExpression process(final MetaExpression pageUrlVar, final MetaExpression relativeUrlVar) {
         String pageUrl = pageUrlVar.getStringValue().trim();
         String relativeUrl = relativeUrlVar.getStringValue().trim();
 
