@@ -50,14 +50,14 @@ public class AbsoluteURLConstructTest extends TestUtils {
     @Test
     public void processNormalUsage() {
         // MetaExpressions.
-        MetaExpression pageUrl = fromValue("http://www.xillio.nl/calendar/");
+        MetaExpression pageUrl = fromValue("www.xillio.nl/calendar/");
         MetaExpression relativeUrl = fromValue("../");
 
         // Run.
         MetaExpression result = this.process(construct, pageUrl, relativeUrl);
 
         // Verify.
-        verify(urlUtilityService, times(1)).tryConvert(pageUrl.getStringValue(), relativeUrl.getStringValue());
+        verify(urlUtilityService, times(1)).tryConvert("http://" + pageUrl.getStringValue(), relativeUrl.getStringValue());
 
         // Assert.
         Assert.assertEquals(result.getStringValue(), "http://www.xillio.nl/");
