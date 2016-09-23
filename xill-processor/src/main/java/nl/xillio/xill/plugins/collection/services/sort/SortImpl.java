@@ -155,7 +155,6 @@ public class SortImpl implements Sort {
 
         @SuppressWarnings("unchecked")
         private int getSortResult(Object objectA, Object objectB) {
-            assert (objectA.getClass().equals(objectB.getClass()));
             int result = 0;
 
             if (objectA instanceof Collection) {
