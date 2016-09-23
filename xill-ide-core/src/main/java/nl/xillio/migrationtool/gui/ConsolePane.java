@@ -60,10 +60,8 @@ import static nl.xillio.xill.util.HotkeysHandler.Hotkeys.*;
  * This pane displays the console log stored in elasticsearch
  */
 public class ConsolePane extends AnchorPane implements Searchable, EventHandler<KeyEvent>, RobotTabComponent {
-
     private static final Logger LOGGER = Log.get();
-    private static int LOGCACHESIZE = 500;     // We need a sufficient large number so that the UI thread can keep up
-                                                // with the database but not so big it becomes too heavy on memory
+    private static final int LOG_CACHE_SIZE = 500; // We need a sufficiently large number so that the UI thread can keep up, but not so big that it becomes too heavy on memory.
 
     // Filters
     private final List<Filter> filters = new LinkedList<>();
@@ -104,7 +102,7 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
     private RobotTab tab;
 
     /**
-     * Create an initialize a ConsolePane
+     * Create and initialize a ConsolePane.
      */
     public ConsolePane() {
         try {
@@ -180,8 +178,12 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
 
         // Fix for slower windows systems: add extra delay and then update one last time on robot stop
         getDebugger().getOnRobotStop().addListener(stop -> {
-            Thread finalUpdate = new Thread(()-> {
-                try{Thread.sleep(1000);}catch(InterruptedException e){}
+            Thread finalUpdate = new Thread(() -> {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    LOGGER.warn("Console thread was interrupted while sleeping.", e);
+                }
                 updateLog(Scroll.NONE);
             }, "ConsolePane#onRobotStopRefreshConsole");
             finalUpdate.setDaemon(true);
@@ -189,15 +191,15 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
         });
 
         // Update the log after a log event has occurred
-        ESConsoleClient.getLogEvent(getRobotID()).addListener(msg -> {
-            updateLog(Scroll.NONE);
-        });
+        ESConsoleClient.getLogEvent(getRobotID()).addListener(msg -> updateLog(Scroll.NONE));
 
         // Initialize the master log
         updateFilters();
-        masterLog = new VirtualObservableList<>(new ESDataProvider(getRobotID().toString()), LOGCACHESIZE, filters);
+        masterLog = new VirtualObservableList<>(new ESDataProvider(getRobotID().toString()), LOG_CACHE_SIZE, filters);
         tblConsoleOut.setItems(masterLog);
 
+        // Scroll to the end of the log.
+        tblConsoleOut.scrollTo(masterLog.size() - 1);
     }
 
 
@@ -253,7 +255,7 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
     }
 
     private volatile boolean isUpdating = false;
-    
+
     private void updateLog(Scroll scroll) {
         if (masterLog != null && !isUpdating) {
             isUpdating = true;
@@ -263,7 +265,9 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
                 // Short delay to prevent flooding
                 try {
                     Thread.sleep(500);
-                } catch (InterruptedException e) {}
+                } catch (InterruptedException e) {
+                    LOGGER.warn("Console thread was interrupted while sleeping.", e);
+                }
 
                 // Set filters & force update of the log table
                 masterLog.setFilters(filters);
@@ -305,19 +309,11 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
     /* Filters */
 
     private void addFilterListeners() {
-        // Add listeners for the toggle filters buttons
-        tbnToggleLogsInfo.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            updateFilters();
-        });
-        tbnToggleLogsDebug.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            updateFilters();
-        });
-        tbnToggleLogsWarn.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            updateFilters();
-        });
-        tbnToggleLogsError.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            updateFilters();
-        });
+        // Add listeners for the toggle filters buttons.
+        tbnToggleLogsInfo.selectedProperty().addListener((observable, oldValue, newValue) -> updateFilters());
+        tbnToggleLogsDebug.selectedProperty().addListener((observable, oldValue, newValue) -> updateFilters());
+        tbnToggleLogsWarn.selectedProperty().addListener((observable, oldValue, newValue) -> updateFilters());
+        tbnToggleLogsError.selectedProperty().addListener((observable, oldValue, newValue) -> updateFilters());
     }
 
     private void updateFilters() {
@@ -485,7 +481,7 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
          */
         public void createTextArea() {
             TextInputControl textArea;
-            if(getItem().indexOf('\n') > 0) {
+            if (getItem().indexOf('\n') > 0) {
                 TextArea ta = new TextArea();
                 ta.setWrapText(true);
                 textArea = ta;
