@@ -34,6 +34,7 @@
     <artifactId>xill-ide-launcher</artifactId>
     <properties>
         <mainClass>nl.xillio.contenttools.Application</mainClass>
+        <app.name>Xill IDE</app.name>
     </properties>
 
     <dependencies>
@@ -58,6 +59,7 @@
 
     <build>
         <defaultGoal>jfx:run</defaultGoal>
+        <finalName>Xill IDE-${project.version}</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
@@ -100,7 +102,7 @@
                         </goals>
                         <configuration>
                             <descriptors>
-                                <descriptor>${project.basedir}/src/assembly/${os.classifier}-${os.arch}.xml</descriptor>
+                                <descriptor>${project.basedir}/src/assembly/dist-zip-${os.classifier}.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
@@ -112,11 +114,20 @@
     <profiles>
         <profile>
             <id>release</id>
+            <distributionManagement>
+                <repository>
+                    <id>xillio-releases</id>
+                    <url>https://maven.xillio.com/artifactory/binary-releases</url>
+                </repository>
+            </distributionManagement>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>com.zenjava</groupId>
                         <artifactId>javafx-maven-plugin</artifactId>
+                        <configuration>
+                            <nativeReleaseVersion>${xill.release.version}</nativeReleaseVersion>
+                        </configuration>
                         <executions>
                             <execution>
                                 <goals>
