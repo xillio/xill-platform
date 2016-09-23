@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *         http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,6 +22,7 @@ import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.string.services.string.UrlUtilityService;
 import nl.xillio.xill.plugins.string.services.string.UrlUtilityServiceImpl;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.mockito.Matchers.any;
@@ -32,8 +33,17 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
  * Test the {@link AbsoluteURLConstruct}.
  */
 public class AbsoluteURLConstructTest extends TestUtils {
-    private UrlUtilityService urlUtilityService = spy(new UrlUtilityServiceImpl());
-    private AbsoluteURLConstruct construct = new AbsoluteURLConstruct(urlUtilityService);
+    private UrlUtilityService urlUtilityService;
+    private AbsoluteURLConstruct construct;
+
+    /**
+     * Reset the construct and spied service before each method.
+     */
+    @BeforeMethod
+    private void resetConstruct() {
+        urlUtilityService = spy(new UrlUtilityServiceImpl());
+        construct = new AbsoluteURLConstruct(urlUtilityService);
+    }
 
     /**
      * Test the process method under normal circumstances.
@@ -73,6 +83,26 @@ public class AbsoluteURLConstructTest extends TestUtils {
 
         // Assert.
         Assert.assertEquals(result.getStringValue(), urlReturnValue);
+    }
+
+    /**
+     * Tests the process when an empty relativeUrl is handed and the page url has no trailing slash, in which case the url is just cleaned.
+     */
+    @Test
+    public void processEmptyRelativeUrlNoTrailingSlash() {
+        // MetaExpressions.
+        MetaExpression pageUrl = fromValue("http://www.xillio.nl/calendar");
+        MetaExpression relativeUrl = fromValue("");
+
+        // Run.
+        MetaExpression result = this.process(construct, pageUrl, relativeUrl);
+
+        // Verify.
+        verify(urlUtilityService, times(0)).tryConvert(any(), any());
+        verify(urlUtilityService, times(1)).cleanupUrl(pageUrl.getStringValue());
+
+        // Assert.
+        Assert.assertEquals(result.getStringValue(), pageUrl.getStringValue());
     }
 
     /**
