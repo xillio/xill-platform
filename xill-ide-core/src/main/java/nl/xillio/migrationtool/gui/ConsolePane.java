@@ -21,6 +21,7 @@ import com.sun.javafx.scene.control.skin.VirtualFlow;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -59,12 +60,14 @@ import static nl.xillio.xill.util.HotkeysHandler.Hotkeys.*;
 /**
  * This pane displays the console log stored in elasticsearch
  */
-public class ConsolePane extends AnchorPane implements Searchable, EventHandler<KeyEvent>, RobotTabComponent {
+public class ConsolePane extends AnchorPane implements Searchable, EventHandler<Event>, RobotTabComponent {
     private static final Logger LOGGER = Log.get();
     private static final int LOG_CACHE_SIZE = 500; // We need a sufficiently large number so that the UI thread can keep up, but not so big that it becomes too heavy on memory.
 
-    // Filters
+    private volatile boolean isUpdating = false;
     private final List<Filter> filters = new LinkedList<>();
+    private Scroll scrollBehavior = Scroll.END;
+
     @FXML
     private SearchBar apnConsoleSearchBar;
     @FXML
@@ -148,8 +151,9 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
         resetLabels();
         updateLabels();
 
-        addEventHandler(KeyEvent.KEY_PRESSED, this);
-
+        // Add event handlers.
+        this.addEventHandler(KeyEvent.KEY_PRESSED, this);
+        this.addEventFilter(ScrollEvent.ANY, this);
     }
 
     private static void performSelection(final TableView<LogEntry> table, final int index) {
@@ -174,7 +178,7 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
         }
 
         // On robot start: update the log and scroll to the end
-        getDebugger().getOnRobotStart().addListener(start -> updateLog(Scroll.TOTAL_END));
+        getDebugger().getOnRobotStart().addListener(start -> updateLog());
 
         // Fix for slower windows systems: add extra delay and then update one last time on robot stop
         getDebugger().getOnRobotStop().addListener(stop -> {
@@ -184,14 +188,14 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
                 } catch (InterruptedException e) {
                     LOGGER.warn("Console thread was interrupted while sleeping.", e);
                 }
-                updateLog(Scroll.NONE);
+                updateLog();
             }, "ConsolePane#onRobotStopRefreshConsole");
             finalUpdate.setDaemon(true);
             finalUpdate.start();
         });
 
         // Update the log after a log event has occurred
-        ESConsoleClient.getLogEvent(getRobotID()).addListener(msg -> updateLog(Scroll.NONE));
+        ESConsoleClient.getLogEvent(getRobotID()).addListener(msg -> updateLog());
 
         // Initialize the master log
         updateFilters();
@@ -202,34 +206,40 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
         tblConsoleOut.scrollTo(masterLog.size() - 1);
     }
 
-
     @Override
-    public void handle(final KeyEvent e) {
-        // Copy
-        if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(COPY)).match(e) && tblConsoleOut.isFocused()) {
-            // Get all selected entries
-            StringBuilder text = new StringBuilder();
-            ObservableList<LogEntry> selected = tblConsoleOut.getSelectionModel().getSelectedItems();
+    public void handle(final Event event) {
+        if (event instanceof KeyEvent) {
+            KeyEvent keyEvent = (KeyEvent) event;
 
-            // Append the text from all entries
-            selected.forEach(entry -> text.append(entry.getLine()).append('\n'));
+            // Copy
+            if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(COPY)).match(keyEvent) && tblConsoleOut.isFocused()) {
+                // Get all selected entries
+                StringBuilder text = new StringBuilder();
+                ObservableList<LogEntry> selected = tblConsoleOut.getSelectionModel().getSelectedItems();
 
-            // Set the clipboard content
-            final ClipboardContent content = new ClipboardContent();
-            content.putString(text.toString());
-            Clipboard.getSystemClipboard().setContent(content);
+                // Append the text from all entries
+                selected.forEach(entry -> text.append(entry.getLine()).append('\n'));
 
-            e.consume();
-        }
-        // Clear
-        else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(CLEARCONSOLE)).match(e)) {
-            clear();
-            e.consume();
-        }
-        // Search
-        else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(FIND)).match(e)) {
-            apnConsoleSearchBar.open(1);
-            e.consume();
+                // Set the clipboard content
+                final ClipboardContent content = new ClipboardContent();
+                content.putString(text.toString());
+                Clipboard.getSystemClipboard().setContent(content);
+
+                keyEvent.consume();
+            }
+            // Clear
+            else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(CLEARCONSOLE)).match(keyEvent)) {
+                clear();
+                keyEvent.consume();
+            }
+            // Search
+            else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(FIND)).match(keyEvent)) {
+                apnConsoleSearchBar.open(1);
+                keyEvent.consume();
+            }
+        } else if (event instanceof ScrollEvent) {
+            // Update the scroll mode.
+            scrollBehavior = getVisibleRange(tblConsoleOut)[1] == masterLog.size() - 1 ? Scroll.END : Scroll.NONE;
         }
     }
 
@@ -239,7 +249,6 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
     public void clear() {
         buttonClearConsole();
     }
-
 
     @FXML
     private void buttonClearConsole() {
@@ -254,14 +263,11 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
 
     }
 
-    private volatile boolean isUpdating = false;
-
-    private void updateLog(Scroll scroll) {
+    private void updateLog() {
         if (masterLog != null && !isUpdating) {
             isUpdating = true;
 
             Thread thread = new Thread(() -> {
-
                 // Short delay to prevent flooding
                 try {
                     Thread.sleep(500);
@@ -278,28 +284,20 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
 
                 // Update counters & scroll log
                 Platform.runLater(() -> {
-                    // When the log starts empty, the scrollPanel does not properly sticky the
-                    // bottom location of the log. Hence, we track the log size manually.
-                    long initialSize = masterLog.size();
-
                     // Update counters
                     if (masterLog.size() > 0) {
                         count = (Counter<LogType>) masterLog.getFilterCounts();
                     }
 
-                    // Scroll to bottom when explicitly asked to, or when log started empty.
-                    if (initialSize < 10 || scroll == Scroll.END || scroll == Scroll.TOTAL_END) {
+                    // Check if we should scroll to the end.
+                    if (scrollBehavior == Scroll.END) {
                         tblConsoleOut.scrollTo(masterLog.size() - 1);
-                    } else if (scroll == Scroll.START) {
-                        tblConsoleOut.scrollTo(0);
                     }
 
                     updateLabels();
 
                     isUpdating = false;
                 });
-
-
             }, "ConsolePane#updateLog");
             thread.setDaemon(true);
             thread.start();
@@ -345,8 +343,7 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
         }
 
         // Update the log
-        //updateTimeline.play();
-        updateLog(Scroll.NONE);
+        updateLog();
     }
 
     /* Filter labels */
@@ -364,6 +361,7 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
         tbnToggleLogsError.setText(Integer.toString(count.get(ERROR) + count.get(FATAL)));
     }
 
+    /* Searching */
 
     @Override
     public void searchPattern(final String pattern, final boolean caseSensitive) {
@@ -404,12 +402,6 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
         select(previous);
     }
 
-    private void select(int line) {
-        // Clear and select, scroll to the line
-        tblConsoleOut.getSelectionModel().clearAndSelect(line);
-        tblConsoleOut.scrollTo(line);
-    }
-
     @Override
     public void clearSearch() {
         searchNeedle = "";
@@ -417,6 +409,12 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
         tblConsoleOut.getSelectionModel().clearSelection();
 
         updateFilters();
+    }
+
+    private void select(int line) {
+        // Clear and select, scroll to the line
+        tblConsoleOut.getSelectionModel().clearAndSelect(line);
+        tblConsoleOut.scrollTo(line);
     }
 
     /* Drag selection */
@@ -430,7 +428,7 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
     }
 
     public enum Scroll {
-        NONE, START, END, TOTAL_END, CLEAR
+        NONE, END
     }
 
     /**
@@ -555,21 +553,12 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
         if (skin == null) {
             return new int[] {0, 0};
         }
+
         VirtualFlow<?> flow = (VirtualFlow) skin.getChildren().get(1);
-        int indexFirst;
-        int indexLast;
-        if (flow != null && flow.getFirstVisibleCellWithinViewPort() != null
-                && flow.getLastVisibleCellWithinViewPort() != null) {
-            indexFirst = flow.getFirstVisibleCellWithinViewPort().getIndex();
-            if (indexFirst >= table.getItems().size())
-                indexFirst = table.getItems().size() - 1;
-            indexLast = flow.getLastVisibleCellWithinViewPort().getIndex();
-            if (indexLast >= table.getItems().size())
-                indexLast = table.getItems().size() - 1;
+        if (flow != null && flow.getFirstVisibleCellWithinViewPort() != null && flow.getLastVisibleCellWithinViewPort() != null) {
+            return new int[] {flow.getFirstVisibleCellWithinViewPort().getIndex(), flow.getLastVisibleCellWithinViewPort().getIndex()};
         } else {
-            indexFirst = 0;
-            indexLast = 0;
+            return new int[] {0, 0};
         }
-        return new int[] {indexFirst, indexLast};
     }
 }
