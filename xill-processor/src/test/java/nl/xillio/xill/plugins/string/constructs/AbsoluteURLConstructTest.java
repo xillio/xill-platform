@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,7 +22,6 @@ import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.string.services.string.UrlUtilityService;
 import nl.xillio.xill.plugins.string.services.string.UrlUtilityServiceImpl;
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.mockito.Matchers.any;
@@ -33,16 +32,8 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
  * Test the {@link AbsoluteURLConstruct}.
  */
 public class AbsoluteURLConstructTest extends TestUtils {
-    private AbsoluteURLConstruct construct = new AbsoluteURLConstruct();
     private UrlUtilityService urlUtilityService = spy(new UrlUtilityServiceImpl());
-
-    /**
-     * Set the spied url utility service before each method.
-     */
-    @BeforeMethod()
-    private void injectDependencies() {
-        construct.setUrlUtilityService(urlUtilityService);
-    }
+    private AbsoluteURLConstruct construct = new AbsoluteURLConstruct(urlUtilityService);
 
     /**
      * Test the process method under normal circumstances.
@@ -117,8 +108,8 @@ public class AbsoluteURLConstructTest extends TestUtils {
         when(url.tryConvert(pageUrl.getStringValue(), relativeUrl.getStringValue())).thenReturn(null);
 
         // Run.
-        construct.setUrlUtilityService(url);
-        this.process(construct, pageUrl, relativeUrl);
+        AbsoluteURLConstruct constructWithMock = new AbsoluteURLConstruct(url);
+        this.process(constructWithMock, pageUrl, relativeUrl);
 
         // Verify.
         verify(url, times(1)).tryConvert(pageUrl.getStringValue(), relativeUrl.getStringValue());
@@ -138,8 +129,8 @@ public class AbsoluteURLConstructTest extends TestUtils {
         when(url.tryConvert(pageUrl.getStringValue(), relativeUrl.getStringValue())).thenThrow(new IllegalArgumentException());
 
         // Run.
-        construct.setUrlUtilityService(url);
-        this.process(construct, pageUrl, relativeUrl);
+        AbsoluteURLConstruct constructWithMock = new AbsoluteURLConstruct(url);
+        this.process(constructWithMock, pageUrl, relativeUrl);
 
         // Verify.
         verify(url, times(1)).tryConvert(pageUrl.getStringValue(), relativeUrl.getStringValue());

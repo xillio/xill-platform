@@ -29,7 +29,12 @@ import nl.xillio.xill.plugins.string.services.string.UrlUtilityService;
  * Converts a relative URL string to an absolute URL using a string, pageUrl, as base URL.
  */
 public class AbsoluteURLConstruct extends Construct {
-    private UrlUtilityService urlUtilityService;
+    private final UrlUtilityService urlUtilityService;
+
+    @Inject
+    public AbsoluteURLConstruct(UrlUtilityService urlUtilityService) {
+        this.urlUtilityService = urlUtilityService;
+    }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
@@ -79,10 +84,5 @@ public class AbsoluteURLConstruct extends Construct {
             throw new InvalidUserInputException("Illegal argument was handed to the matcher when trying to convert the URL.", pageUrl, "Correct page url.",
                     "use String;\nString.absoluteURL(\"http://www.xillio.nl/calendar/\", \"movies\");", e);
         }
-    }
-
-    @Inject
-    void setUrlUtilityService(UrlUtilityService urlUtilityService) {
-        this.urlUtilityService = urlUtilityService;
     }
 }
