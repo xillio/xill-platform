@@ -25,6 +25,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -66,7 +67,7 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
 
     private volatile boolean isUpdating = false;
     private final List<Filter> filters = new LinkedList<>();
-    private Scroll scrollBehavior = Scroll.END;
+    private Scroll scroll = Scroll.END;
 
     @FXML
     private SearchBar apnConsoleSearchBar;
@@ -154,6 +155,15 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
         // Add event handlers.
         this.addEventHandler(KeyEvent.KEY_PRESSED, this);
         this.addEventFilter(ScrollEvent.ANY, this);
+        addScrollBarEventHandler();
+    }
+
+    private void addScrollBarEventHandler() {
+        for (Node node : this.lookupAll(".scroll-bar")) {
+            if (node instanceof ScrollBar && ((ScrollBar) node).getOrientation() == Orientation.VERTICAL) {
+                ((ScrollBar) node).valueProperty().addListener(obs -> updateScrollMode());
+            }
+        }
     }
 
     private static void performSelection(final TableView<LogEntry> table, final int index) {
@@ -182,6 +192,7 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
 
         // Fix for slower windows systems: add extra delay and then update one last time on robot stop
         getDebugger().getOnRobotStop().addListener(stop -> {
+            // Do a final log update.
             Thread finalUpdate = new Thread(() -> {
                 try {
                     Thread.sleep(1000);
@@ -192,6 +203,9 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
             }, "ConsolePane#onRobotStopRefreshConsole");
             finalUpdate.setDaemon(true);
             finalUpdate.start();
+
+            // Update the scroll mode.
+            updateScrollMode();
         });
 
         // Update the log after a log event has occurred
@@ -238,9 +252,14 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
                 keyEvent.consume();
             }
         } else if (event instanceof ScrollEvent) {
-            // Update the scroll mode.
-            scrollBehavior = getVisibleRange(tblConsoleOut)[1] == masterLog.size() - 1 ? Scroll.END : Scroll.NONE;
+            updateScrollMode();
         }
+    }
+
+    private void updateScrollMode() {
+        // If the last log item is visible set the scroll mode to END, otherwise set it to NONE.
+        boolean scrollToEnd = getVisibleRange(tblConsoleOut)[1] == masterLog.size() - 1 || masterLog.isEmpty();
+        scroll = scrollToEnd ? Scroll.END : Scroll.NONE;
     }
 
     /**
@@ -290,7 +309,7 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
                     }
 
                     // Check if we should scroll to the end.
-                    if (scrollBehavior == Scroll.END) {
+                    if (scroll == Scroll.END) {
                         tblConsoleOut.scrollTo(masterLog.size() - 1);
                     }
 
