@@ -15,7 +15,6 @@
  */
 package nl.xillio.migrationtool.dialogs;
 
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -36,7 +35,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * A dialog to upload an item to the server.
@@ -59,6 +57,7 @@ public class UploadToServerDialog extends FXMLDialog {
     private final XillServerUploader xillServerUploader = new XillServerUploader();
     private List<String> uploadedRobots = new LinkedList<>();
     private String uploadedProjectId = "";
+    private List<String> invalidRobots = new LinkedList<>();
 
     private static final String MAX_FILE_SIZE_SETTINGS_KEY = "spring.http.multipart.max-file-size";
     private long maxFileSize; // Maximum file size that Xill server accepts
@@ -106,7 +105,9 @@ public class UploadToServerDialog extends FXMLDialog {
             FXController.settings.simple().save(Settings.SERVER, Settings.XILL_SERVER_USERNAME, tfusername.getText());
             FXController.settings.simple().save(Settings.SERVER, Settings.XILL_SERVER_PASSWORD, tfpassword.getText());
 
+            // Clean up
             uploadedRobots.clear();
+            invalidRobots.clear();
 
             // Get current server settings
             queryServerSettings();
@@ -114,6 +115,30 @@ public class UploadToServerDialog extends FXMLDialog {
             // Process items (do selected robots and resources size check only prior to upload itself starts)
             if (!processItems(treeItems, true, null, true)) {
                 return; // Process has been user interrupted - so no success dialog is shown
+            }
+            if (!invalidRobots.isEmpty()) {
+                String msg = "Invalid robots: ";
+                for (String robotName : invalidRobots) {
+                    msg += robotName;
+                    msg += ", ";
+                    if (msg.length() > 100) {
+                        msg += "...";
+                        break;
+                    }
+                }
+                ButtonType skipButton = new ButtonType("Skip invalid");
+                ButtonType cancelButton = new ButtonType("Cancel");
+                AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Upload to server",
+                        String.format("There are %d robots having invalid name.", invalidRobots.size()),
+                        "The names don't comply with the Xill robot naming convention.\n" + msg,
+                        skipButton, cancelButton);
+                Button button = (Button) dialog.getDialogPane().lookupButton(cancelButton);
+                button.setDefaultButton(true);
+                final Optional<ButtonType> result = dialog.showAndWait();
+
+                if (!result.isPresent() || result.get() == cancelButton) {
+                    return; //cancel uploading process
+                }
             }
 
             // Process items (do selected robots and resources upload)
@@ -166,12 +191,6 @@ public class UploadToServerDialog extends FXMLDialog {
      * @throws IOException  In case of communication error with the server or some other IO error.
      */
     private boolean processItems(final List<TreeItem<Pair<File, String>>> items, boolean existCheck, final String projectId, boolean noUpload) throws IOException {
-
-        //check all items (including children) too see if robots have valid names
-        if (checkAllRobots(items)) {
-            return false; //Cancel the upload
-        }
-
         // Recursively go through selected items
         for (TreeItem<Pair<File, String>> item : items) {
             // Check if the item is a project
@@ -201,59 +220,11 @@ public class UploadToServerDialog extends FXMLDialog {
         maxFileSize = Long.valueOf(settings.get(MAX_FILE_SIZE_SETTINGS_KEY));
     }
 
-    private boolean checkAllRobots(final List<TreeItem<Pair<File, String>>> items) {
-        //iterate over all items
-        for (TreeItem<Pair<File, String>> item : items) {
-            //check robots only
-            if (item.getParent() != projectPane.getRoot() && !item.getValue().getKey().isDirectory() && invalidFile(item)) {
-                return true;
-            }
-            //check children too
-            if (!item.getChildren().isEmpty() && checkAllRobots(item.getChildren())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean invalidFile(TreeItem<Pair<File, String>> item) {
+    private boolean isInvalidRobotFile(TreeItem<Pair<File, String>> item) {
         final File itemFile = item.getValue().getKey();
         final boolean isXill = itemFile.getName().matches("^.*\\.xill$"); //it is a robot
         final boolean validName = itemFile.getName().matches("^[_a-zA-Z][a-zA-Z0-9_]*\\.xill$"); //name is valid
-
-        if (isXill && !validName) {
-            //the xill robot has an invalid name, show dialog.
-            ButtonType cancelUpload = new ButtonType("Cancel Upload");
-            AlertDialog dialog = new AlertDialog(Alert.AlertType.ERROR,
-                    "Invalid robot name found",
-                    "The robot '" + itemFile.getName() + "' has an invalid name.",
-                    "Do you want to rename the robot or cancel the whole upload?",
-                    new ButtonType("Rename"), cancelUpload
-            );
-            final Optional<ButtonType> result = dialog.showAndWait();
-
-            if (!result.isPresent() || result.get() == cancelUpload) {
-                return true; //do not upload
-            } else {
-                List<String> selectedItems = getSelectedPaths(); //we need to get the paths for reselection
-                RenameDialog dlg = new RenameDialog(item); //open rename dialog
-                dlg.showAndWait();
-                Platform.runLater(() -> reselectItems(selectedItems)); //reselect the items
-                return invalidFile(item); //check again for invalid names
-            }
-        }
-        return false; //the file is valid
-    }
-
-    private List<String> getSelectedPaths() {
-        return this.treeItems.stream().map(pairTreeItem -> pairTreeItem.getValue().getKey().getAbsolutePath()).collect(Collectors.toList());
-    }
-
-    private void reselectItems(List<String> items) {
-        //reselect the items that were deselected because of a rename
-        for (String item : items) {
-            projectPane.select(item);
-        }
+        return (isXill && !validName);
     }
 
     /**
@@ -300,6 +271,16 @@ public class UploadToServerDialog extends FXMLDialog {
      * @throws IOException  In case of communication error with the server or some other IO error.
      */
     private boolean uploadItem(final TreeItem<Pair<File, String>> item, boolean existCheck, final String projectId, boolean noUpload) throws IOException {
+
+        // Do test for invalid robot name
+        if (isInvalidRobotFile(item)) {
+            if (noUpload) {
+                invalidRobots.add(item.getValue().getValue());
+            } else {
+                return true; // Continue - i.e. skip uploading this robot (with invalid name)
+            }
+        }
+
         // Get the selected item info
         final File itemFile = item.getValue().getKey();
         final File projectFolder = projectPane.getProject(item).getValue().getKey();
