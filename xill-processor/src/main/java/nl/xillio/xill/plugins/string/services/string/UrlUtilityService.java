@@ -43,7 +43,7 @@ public interface UrlUtilityService {
      *
      * @param filePath The path to the file we want to read.
      * @return A byteArray with content.
-     * @throws IOException  Is thrown when a file(-related) operation fails.
+     * @throws IOException Is thrown when a file(-related) operation fails.
      */
     byte[] readFileToByteArray(Path filePath) throws IOException;
 
@@ -56,16 +56,23 @@ public interface UrlUtilityService {
      * @throws IllegalArgumentException Is thrown when an illegal argument has been provided.
      * @throws PatternSyntaxException   Is thrown when the relative URL cannot be converted.
      */
-    String tryConvert(final String pageUrl, final String relativeUrl) throws IllegalArgumentException;
+    String tryConvert(final String pageUrl, final String relativeUrl);
 
     /**
      * Writes a given output in a file.
      *
      * @param fileName The name of the file.
      * @param output   The output to write.
-     * @throws FileNotFoundException    Is thrown when the provided file is not found.
-     * @throws IOException              Is thrown when a file(-related) operation fails.
+     * @throws FileNotFoundException Is thrown when the provided file is not found.
+     * @throws IOException           Is thrown when a file(-related) operation fails.
      */
     void write(File fileName, byte[] output) throws IOException;
 
+    /**
+     * Gets the protocol that is used in a url (e.g. "http" or "https").
+     *
+     * @param url The url to get the protocol from.
+     * @return The protocol that is used.
+     */
+    String getProtocol(final String url);
 }
