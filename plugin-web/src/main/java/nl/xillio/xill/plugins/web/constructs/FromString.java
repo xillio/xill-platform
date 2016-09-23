@@ -23,6 +23,7 @@ import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.web.PhantomJSConstruct;
 import nl.xillio.xill.plugins.web.data.OptionsFactory;
+import nl.xillio.xill.plugins.web.data.PhantomJSPool;
 import nl.xillio.xill.plugins.web.services.web.FileService;
 import nl.xillio.xill.plugins.web.services.web.WebService;
 
@@ -37,11 +38,13 @@ public class FromString extends PhantomJSConstruct {
     private FileService fileService;
     @Inject
     private OptionsFactory optionsFactory;
+    @Inject
+    private PhantomJSPool pool;
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                content -> process(content, optionsFactory, fileService, getWebService()),
+                content -> process(content, optionsFactory, fileService, getWebService(), pool),
                 new Argument("content", ATOMIC));
     }
 
@@ -53,14 +56,14 @@ public class FromString extends PhantomJSConstruct {
      * @throws OperationFailedException if the string could not not be written to a file
      * @return PAGE variable
      */
-    public static MetaExpression process(final MetaExpression contentVar, final OptionsFactory optionsFactory, final FileService fileService, final WebService webService) {
+    public static MetaExpression process(final MetaExpression contentVar, final OptionsFactory optionsFactory, final FileService fileService, final WebService webService, PhantomJSPool pool) {
         String content = contentVar.getStringValue();
 
         try {
             File htmlFile = fileService.createTempFile("ct_sel", ".html");
             fileService.writeStringToFile(htmlFile.toPath(), content);
             String uri = "file:///" + fileService.getAbsolutePath(htmlFile);
-            return LoadPageConstruct.process(fromValue(uri), NULL, optionsFactory, webService);
+            return LoadPageConstruct.process(fromValue(uri), NULL, optionsFactory, webService, pool);
         } catch (IOException e) {
             throw new OperationFailedException("write the string to a file.", "An IO error occurred.", e);
         }

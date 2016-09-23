@@ -13,24 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.plugins.database.constructs;
+package nl.xillio.xill;
 
-import com.google.inject.Inject;
 import nl.xillio.xill.api.XillThreadFactory;
-import nl.xillio.xill.plugins.database.util.Database;
 
 /**
- * The connect construct for the MYsql database.
+ * Default implementation of a {@link XillThreadFactory}. Only creates threads
+ * and does not keep track of them.
+ *
+ * @author Geert Konijnendijk
  */
-@Deprecated
-public class MysqlConnectConstruct extends SimplesqlConnectConstruct {
-
-    /**
-     * The constructor for the {@link MysqlConnectConstruct}.
-     */
-    @Inject
-    public MysqlConnectConstruct(XillThreadFactory xillThreadFactory) {
-        super(xillThreadFactory, Database.MYSQL.getName(), 3306);
+public class XillThreadFactoryImpl implements XillThreadFactory {
+    @Override
+    public Thread create(Runnable target, String name) {
+        return new Thread(target, name);
     }
 
+    @Override
+    public void close() {
+    }
 }

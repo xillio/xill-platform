@@ -1,6 +1,11 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.5.0] - unreleased
+
+### Fix
+* On server threads are not closed when tasks finishes [XSVR-139]
+
 ## [3.4.0] - unreleased
 
 ### Add

@@ -22,10 +22,4 @@ import nl.xillio.plugins.XillPlugin;
  */
 public class DatabaseXillPlugin extends XillPlugin {
 
-    /**
-     * Registers hooks to shutdown opened database connections when the VM terminates
-     */
-    public DatabaseXillPlugin() {
-        BaseDatabaseConstruct.registerShutdownHook();
-    }
 }
