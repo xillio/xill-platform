@@ -15,14 +15,14 @@
  */
 package nl.xillio.xill.plugins.collection.services.sort;
 
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.util.*;
 
 import static nl.xillio.xill.plugins.collection.services.sort.SortImpl.Sorter;
 import static nl.xillio.xill.plugins.collection.services.sort.SortImpl.getPriorityIndex;
-import static nl.xillio.xill.plugins.collection.services.sort.SortImplTest.SortHelpers.createTestMap;
-import static nl.xillio.xill.plugins.collection.services.sort.SortImplTest.SortHelpers.testMapOrder;
+import static nl.xillio.xill.plugins.collection.services.sort.SortImplTest.SortHelpers.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -32,91 +32,108 @@ import static org.testng.Assert.assertTrue;
  */
 public class SortImplTest {
 
-    final String string              = "This is also a unit test";
-    final List<String> single        = Arrays.asList("This", "is", "a", "unit", "test", "!");
+    final String testString = "teststring";
+    final Number testNumberLow = 2;
+    final Number testNumberHigh = 1000;
+    final List<String> testStringList = Arrays.asList("A", "C", "B");
+    final List<String> reversedTestStringList = Arrays.asList("B", "C", "A");
+    final List<String> sortedTestStringList = Arrays.asList("A", "B", "C");
+    final List<String> reversedSortedTestStringList = Arrays.asList("C", "B", "A");
+    final List<Number> testNumberList = Arrays.asList(testNumberHigh, testNumberLow);
+    final List<Number> sortedTestNumberList = Arrays.asList(testNumberLow, testNumberHigh);
+    final List<Boolean> testBooleanList = Arrays.asList(true, false);
+    final List<Boolean> sortedTestBooleanList = Arrays.asList(false, true);
+    List<Object> testNullList = new ArrayList<>();
 
+    @BeforeTest
+    private void fillNullList () {
+        testNullList.add(null);
+        testNullList.add(null);
+    }
 
-    public List<Object> testList(boolean recursive, boolean onKeys, Sorter sorter) throws Exception{
+    public List<Object> testListSort(List<?> inputList, boolean recursive, boolean onKeys, Sorter sorter) throws Exception{
         IdentityHashMap<Object, Object> ihm = new IdentityHashMap<>();
-        final List<Object> inputList     = Arrays.asList(string, single);
         return (List<Object>) SortImpl.asSortedList(inputList, recursive, onKeys, sorter, ihm);
     }
 
     @Test
     public void testAsSortedList() throws Exception {
-
-        // Setting up variables
-        final String string              = "This is also a unit test";
-        final List<String> single        = Arrays.asList("This", "is", "a", "unit", "test", "!");
-        final List<String> revSingle     = Arrays.asList("!", "test", "unit", "a", "is", "This");
-        final List<String> sortedSingle  = Arrays.asList("!", "This", "a", "is", "test", "unit");
-        final List<String> revSortSingle = Arrays.asList("unit", "test", "is", "a", "This", "!");
+        final List<Object> inputList = Arrays.asList(testString, testStringList);
 
         // Testing all parameter settings
-        List<Object> output = testList(false, false, Sorter.NORMAL);
+        List<Object> output = testListSort(inputList, false, false, Sorter.NORMAL);
         assertTrue(output.get(0) instanceof List);
-        assertEquals(output.get(1), string);
+        assertEquals(output.get(1), testString);
 
-        output = testList(true, false, Sorter.NORMAL);
-        assertTrue(output.get(0) instanceof List);
-        assertEquals((List<String>) output.get(0), sortedSingle);
-        assertEquals(output.get(1), string);
+        output = testListSort(inputList, true, false, Sorter.NORMAL);
+        assertEquals((List<String>) output.get(0), sortedTestStringList);
+        assertEquals(output.get(1), testString);
 
-        output = testList(true, true, Sorter.NORMAL);
-        assertTrue(output.get(1) instanceof List);
-        assertEquals((List<String>) output.get(1), single);
-        assertEquals(output.get(0), string);
+        output = testListSort(inputList, true, true, Sorter.NORMAL);
+        assertEquals(output.get(0), testString);
+        assertEquals((List<String>) output.get(1), testStringList);
 
-        output = testList(false, true, Sorter.NORMAL);
-        assertTrue(output.get(1) instanceof List);
-        assertEquals((List<String>) output.get(1), single);
-        assertEquals(output.get(0), string);
+        output = testListSort(inputList, false, true, Sorter.NORMAL);
+        assertEquals(output.get(0), testString);
+        assertEquals((List<String>) output.get(1), testStringList);
 
-        output = testList(false, false, Sorter.REVERSE);
-        assertTrue(output.get(1) instanceof List);
-        assertEquals(output.get(0), string);
+        output = testListSort(inputList, false, false, Sorter.REVERSE);
+        assertEquals(output.get(0), testString);
+        assertEquals((List<String>) output.get(1), testStringList);
 
-        output = testList(true, false, Sorter.REVERSE);
-        assertTrue(output.get(1) instanceof List);
-        assertEquals((List<String>) output.get(1), revSortSingle);
-        assertEquals(output.get(0), string);
+        output = testListSort(inputList, true, false, Sorter.REVERSE);
+        assertEquals(output.get(0), testString);
+        assertEquals((List<String>) output.get(1), reversedSortedTestStringList);
 
-        output = testList(true, true, Sorter.REVERSE);
-        assertTrue(output.get(0) instanceof List);
-        assertEquals((List<String>) output.get(0), revSingle);
-        assertEquals(output.get(1), string);
+        output = testListSort(inputList, true, true, Sorter.REVERSE);
+        assertEquals((List<String>) output.get(0), reversedTestStringList);
+        assertEquals(output.get(1), testString);
 
-        output = testList(false, true, Sorter.REVERSE);
-        assertTrue(output.get(0) instanceof List);
-        assertEquals((List<String>) output.get(0), single);
-        assertEquals(output.get(1), string);
+        //sort on keys, reversed, so string and list are reversed, contents are not
+        output = testListSort(inputList, false, true, Sorter.REVERSE);
+        assertEquals((List<String>) output.get(0), testStringList);
+        assertEquals(output.get(1), testString);
+
+        output = testListSort(testNumberList, false, false, Sorter.NORMAL);
+        assertEquals(output, sortedTestNumberList);
+
+        output = testListSort(testNumberList, false, false, Sorter.REVERSE);
+        assertEquals(output, testNumberList);
+
+        output = testListSort(testBooleanList, false, false, Sorter.NORMAL);
+        assertEquals(output, sortedTestBooleanList);
+
+        output = testListSort(testBooleanList, false, false, Sorter.REVERSE);
+        assertEquals(output, testBooleanList);
+
+        output = testListSort(testNullList, false, false, Sorter.NORMAL);
+        assertEquals(output, testNullList);
     }
 
     @Test
     public void testAsSortedMap() throws Exception{
-        LinkedHashMap<Object, Object> output = createTestMap(false, false, Sorter.NORMAL);
-        testMapOrder(output, 1,0,0,1);
+        LinkedHashMap<Object, Object> output;
 
-        output = createTestMap(true, false, Sorter.NORMAL);
-        testMapOrder(output, 1,0,1,0);
+        output = sortMap(true, false, Sorter.NORMAL);
+        assertEquals(output, getRecursivelySortedTestMap());
 
-        output = createTestMap(false, true, Sorter.NORMAL);
-        testMapOrder(output, 0,1,0,1);
+        output = sortMap(false, true, Sorter.NORMAL);
+        assertEquals(output, getSortedOnKeysTestMap());
+        
+        output = sortMap(true, true, Sorter.NORMAL);
+        assertEquals(output, getSortedOnKeysRecursivleyTestMap());
 
-        output = createTestMap(true, true, Sorter.NORMAL);
-        testMapOrder(output, 0,1,1,0);
+        output = sortMap(false, false, Sorter.REVERSE);
+        assertEquals(output, getReversedTestMap());
 
-        output = createTestMap(false, false, Sorter.REVERSE);
-        testMapOrder(output, 0,1,0,1);
+        output = sortMap(true, false, Sorter.REVERSE);
+        assertEquals(output, getRecursivelyReversedSortedTestMap());
 
-        output = createTestMap(true, false, Sorter.REVERSE);
-        testMapOrder(output, 0,1,0,1);
+        output = sortMap(false, true, Sorter.REVERSE);
+        assertEquals(output, getReversedTestMap());
 
-        output = createTestMap(false, true, Sorter.REVERSE);
-        testMapOrder(output, 1,0,0,1);
-
-        output = createTestMap(true, true, Sorter.REVERSE);
-        testMapOrder(output, 1,0,0,1);
+        output = sortMap(true, true, Sorter.REVERSE);
+        assertEquals(output, getRecursivelyReversedOnKeysTestMap());
     }
 
 
@@ -131,6 +148,106 @@ public class SortImplTest {
     }
 
     static class SortHelpers{
+
+        /**
+         * Helper method that returns a standardized test map with one string value and a nested map with three string values
+         * @return the map
+         */
+        public static LinkedHashMap<Object,Object> getTestMap () {
+            LinkedHashMap<Object, Object> result = new LinkedHashMap<>();
+            result.put("aKey", "stringValue");
+
+            LinkedHashMap<Object, Object> innerMap = new LinkedHashMap<>();
+            innerMap.put("keyA", "valueA");
+            innerMap.put("keyC", "valueC");
+            innerMap.put("keyB", "valueB");
+            result.put("innerMap", innerMap);
+            return result;
+        }
+
+        /**
+         * Helper method that returns a standardized test map with one string value and a nested map with three string values
+         * @return the map
+         */
+        public static LinkedHashMap<Object,Object> getReversedTestMap () {
+            LinkedHashMap<Object, Object> result = new LinkedHashMap<>();
+            LinkedHashMap<Object, Object> innerMap = new LinkedHashMap<>();
+            innerMap.put("keyA", "valueA");
+            innerMap.put("keyC", "valueC");
+            innerMap.put("keyB", "valueB");
+            result.put("innerMap", innerMap);
+            result.put("aKey", "stringValue");
+            return result;
+        }
+
+        /**
+         * Helper method that returns a standardized test map with one string value and a nested map with three string values
+         * @return the map
+         */
+        public static LinkedHashMap<Object,Object> getSortedOnKeysTestMap () {
+            return getTestMap();
+        }
+
+        /**
+         * Helper method that returns a standardized test map with one string value and a nested map with three string values
+         * @return the map
+         */
+        public static LinkedHashMap<Object,Object> getSortedOnKeysRecursivleyTestMap () {
+            LinkedHashMap<Object, Object> result = new LinkedHashMap<>();
+            LinkedHashMap<Object, Object> innerMap = new LinkedHashMap<>();
+            result.put("aKey", "stringValue");
+            innerMap.put("keyA", "valueA");
+            innerMap.put("keyB", "valueB");
+            innerMap.put("keyC", "valueC");
+            result.put("innerMap", innerMap);
+            return result;
+        }
+
+        /**
+         * Helper method that returns a standardized test map with one string value and a nested map with three string values
+         * @return the map
+         */
+        public static LinkedHashMap<Object,Object> getRecursivelySortedTestMap () {
+            LinkedHashMap<Object, Object> result = new LinkedHashMap<>();
+            LinkedHashMap<Object, Object> innerMap = new LinkedHashMap<>();
+            innerMap.put("keyA", "valueA");
+            innerMap.put("keyB", "valueB");
+            innerMap.put("keyC", "valueC");
+            result.put("innerMap", innerMap);
+            result.put("aKey", "stringValue");
+            return result;
+        }
+
+        /**
+         * Helper method that returns a standardized test map with one string value and a nested map with three string values
+         * @return the map
+         */
+        public static LinkedHashMap<Object,Object> getRecursivelyReversedOnKeysTestMap () {
+            LinkedHashMap<Object, Object> result = new LinkedHashMap<>();
+            LinkedHashMap<Object, Object> innerMap = new LinkedHashMap<>();
+            innerMap.put("keyC", "valueC");
+            innerMap.put("keyB", "valueB");
+            innerMap.put("keyA", "valueA");
+            result.put("innerMap", innerMap);
+            result.put("aKey", "stringValue");
+            return result;
+        }
+
+        /**
+         * Helper method that returns a standardized test map with one string value and a nested map with three string values
+         * @return the map
+         */
+        public static LinkedHashMap<Object,Object> getRecursivelyReversedSortedTestMap () {
+            LinkedHashMap<Object, Object> result = new LinkedHashMap<>();
+            LinkedHashMap<Object, Object> innerMap = new LinkedHashMap<>();
+            result.put("aKey", "stringValue");
+            innerMap.put("keyC", "valueC");
+            innerMap.put("keyB", "valueB");
+            innerMap.put("keyA", "valueA");
+            result.put("innerMap", innerMap);
+            return result;
+        }
+
         /**
          * Helper function to run the {@link SortImpl#asSortedMap(Object, boolean, boolean, Sorter, IdentityHashMap)} with various parameters.
          * @param recursive a {@link Boolean} to indicate if the map should be recursively sorted
@@ -138,46 +255,9 @@ public class SortImplTest {
          * @param sorter a {@link Sorter} object which will be used to sort
          * @return a {@link LinkedHashMap} containing the sorted objects
          */
-        public static LinkedHashMap<Object, Object> createTestMap(boolean recursive, boolean onKeys, Sorter sorter) {
+        public static LinkedHashMap<Object, Object> sortMap(boolean recursive, boolean onKeys, Sorter sorter) {
             IdentityHashMap<Object, Object> ihm = new IdentityHashMap<>();
-            LinkedHashMap<Object, Object> input = new LinkedHashMap<>();
-            input.put("akey1", "value1");
-
-            LinkedHashMap<Object, Object> innerMap = new LinkedHashMap<>();
-            innerMap.put("key2", "value2");
-            innerMap.put("3yek", "3eulav");
-            input.put("innerMap", innerMap);
-
-            return (LinkedHashMap<Object, Object>) SortImpl.asSortedMap(input, recursive, onKeys, sorter, ihm);
-        }
-
-        /**
-         * Helper function to test that the position of all elements in the result map is correct.
-         * @param output the output of {@link SortImpl#asSortedMap(Object, boolean, boolean, Sorter, IdentityHashMap)}
-         * @param positionKey1 the expected position of the element: <"akey1", "value1">
-         * @param positionInnerMap the expected position of the inner map
-         * @param positionKey2 the expected position of the element: <"key2", "value2"> within the inner map
-         * @param position3yek the expected position of the element: <"3yek", "3eulav"> within the inner map
-         */
-        public static void testMapOrder(Object output, int positionKey1, int positionInnerMap, int positionKey2, int position3yek){
-            LinkedHashMap<Object, Object> out = (LinkedHashMap<Object, Object>) output;
-            Iterator iterator = out.entrySet().iterator();
-            Map.Entry<Object, Object>[] elements = new Map.Entry[2];
-
-            elements[0] = (Map.Entry<Object, Object>) iterator.next();
-            elements[1] = (Map.Entry<Object, Object>) iterator.next();
-
-            LinkedHashMap<String, String> innerMap = (LinkedHashMap<String, String>) elements[positionInnerMap].getValue();
-            Iterator innerIterator = innerMap.entrySet().iterator();
-            Map.Entry<String, String>[] innerElements = new Map.Entry[2];
-
-            innerElements[0] = (Map.Entry<String, String>) innerIterator.next();
-            innerElements[1] = (Map.Entry<String, String>) innerIterator.next();
-
-            assertTrue(elements[positionInnerMap].getValue() instanceof LinkedHashMap);
-            assertEquals(elements[positionKey1].getValue(), "value1");
-            assertEquals(innerElements[positionKey2].getValue(), "value2");
-            assertEquals(innerElements[position3yek].getValue(), "3eulav");
+            return (LinkedHashMap<Object, Object>) SortImpl.asSortedMap(getTestMap(), recursive, onKeys, sorter, ihm);
         }
     }
 
