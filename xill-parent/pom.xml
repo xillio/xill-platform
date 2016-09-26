@@ -37,6 +37,18 @@
 
     <url>http://xill.io/</url>
 
+    <distributionManagement>
+        <repository>
+            <id>MavenXillio-releases</id>
+            <name>MavenXillio-releases</name>
+            <url>https://maven.xillio.com/artifactory/libs-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>MavenXillio-snapshots</name>
+            <url>https://maven.xillio.com/artifactory/binary-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -95,12 +107,13 @@
         <mongo.java.driver.version>3.2.2</mongo.java.driver.version>
 
         <!-- Build Info -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
         <sonar.jacoco.itReportPath>${project.basedir}/../target/jacoco-it.exec</sonar.jacoco.itReportPath>
         <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco-ut.exec</sonar.jacoco.reportPath>
         <sonar.language>java</sonar.language>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <repositories>
@@ -501,6 +514,7 @@
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
                 <plugin>

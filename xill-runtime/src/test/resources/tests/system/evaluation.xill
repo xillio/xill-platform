@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.plugins.database.constructs;
+ 
+use System, XML, Assert;
 
-import com.google.inject.Inject;
-import nl.xillio.xill.api.XillThreadFactory;
-import nl.xillio.xill.plugins.database.util.Database;
+// Test correct expression evaluation (CTC-1721)
+var x = true;
 
-/**
- * The connect construct for the MYsql database.
- */
-@Deprecated
-public class MysqlConnectConstruct extends SimplesqlConnectConstruct {
+do {
+    x = true && throwerror();
+} fail(error) {
+    Assert.isTrue(x == true);
+}
 
-    /**
-     * The constructor for the {@link MysqlConnectConstruct}.
-     */
-    @Inject
-    public MysqlConnectConstruct(XillThreadFactory xillThreadFactory) {
-        super(xillThreadFactory, Database.MYSQL.getName(), 3306);
-    }
-
+private function throwerror() {
+    XML.fromString("<Welles></Nietes>");
 }

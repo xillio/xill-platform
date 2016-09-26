@@ -16,7 +16,9 @@
 package nl.xillio.xill.plugins.database;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import me.biesaart.utils.Log;
+import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
@@ -35,6 +37,7 @@ import java.util.Map.Entry;
 /**
  * The base class for each construct in the database plugin.
  */
+@Singleton
 public abstract class BaseDatabaseConstruct extends Construct {
 
     private static final int VALIDATION_TIMEOUT = 1000;
@@ -45,6 +48,11 @@ public abstract class BaseDatabaseConstruct extends Construct {
 
     @Inject
     protected DatabaseServiceFactory factory;
+
+    @Inject
+    public BaseDatabaseConstruct(XillThreadFactory xillThreadFactory) {
+        registerShutdownHook(xillThreadFactory);
+    }
 
     @Override
     public final ConstructProcessor prepareProcess(ConstructContext context) {
@@ -62,8 +70,26 @@ public abstract class BaseDatabaseConstruct extends Construct {
     /**
      * Add hook to close all connections when runtime terminates
      */
-    public static void registerShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> lastConnections.forEach((k, v) -> closeConnection(v.getConnection()))));
+    public void registerShutdownHook(XillThreadFactory xillThreadFactory) {
+        // Close all connections when the VM stops (used in the IDE)
+        Runtime.getRuntime().addShutdownHook(new Thread(this::closeAllConnections));
+        // Close all connections when the XillEnvironment stops (used in Xill Server)
+        Thread closeConnectionsThread = xillThreadFactory.create(new Runnable() {
+            @Override
+            public synchronized void run() {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    closeAllConnections();
+                }
+            }
+        }, "Database Plugin Connections Cleanup");
+        closeConnectionsThread.setDaemon(true);
+        closeConnectionsThread.start();
+    }
+
+    private void closeAllConnections() {
+        lastConnections.forEach((k, v) -> closeConnection(v.getConnection()));
     }
 
     /**
@@ -71,7 +97,7 @@ public abstract class BaseDatabaseConstruct extends Construct {
      *
      * @param c
      */
-    private static void closeConnection(Connection c) {
+    private void closeConnection(Connection c) {
         try {
             c.close();
         } catch (SQLException e) {

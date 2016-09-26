@@ -24,7 +24,10 @@ import org.testng.annotations.Test;
 
 import java.util.*;
 
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 
 public class AssignTest extends TestUtils {
@@ -90,6 +93,17 @@ public class AssignTest extends TestUtils {
 
         assign.process(debugger);
         assertEquals(variableDeclaration.getVariable().getStringValue(), "[{\"test\":[{\"other\":4,\"hello\":\"New Value\"}]}]");
+    }
+
+    @Test
+    public void testAssignWithDebuggerStop() {
+        Debugger debugger = spy(new NullDebugger());
+        doReturn(true).when(debugger).shouldStop();
+
+        VariableDeclaration variableDeclaration = new VariableDeclaration(fromValue("Hello"), "testVar");
+        variableDeclaration.process(debugger);
+
+        assertTrue(variableDeclaration.getVariable().isNull());
     }
 
     private MetaExpression map(String key, MetaExpression value) {

@@ -48,6 +48,7 @@ public class LoadPageConstructTest extends ExpressionBuilderHelper {
         WebService webService = mock(WebService.class);
         OptionsFactory optionsFactory = mock(OptionsFactory.class);
         Options returnedOptions = mock(Options.class);
+        PhantomJSPool pool = mock(PhantomJSPool.class);
 
         // The url
         String urlValue = "This is an url";
@@ -67,7 +68,7 @@ public class LoadPageConstructTest extends ExpressionBuilderHelper {
         when(webService.getCurrentUrl(pageVariable)).thenReturn(urlValue);
 
         // run
-        MetaExpression output = LoadPageConstruct.process(url, options, optionsFactory, webService);
+        MetaExpression output = LoadPageConstruct.process(url, options, optionsFactory, webService, pool);
 
         // verify
         verify(optionsFactory, times(1)).processOptions(options);
@@ -89,7 +90,7 @@ public class LoadPageConstructTest extends ExpressionBuilderHelper {
         // mock
         WebService webService = mock(WebService.class);
         OptionsFactory optionsFactory = mock(OptionsFactory.class);
-        mock(Options.class);
+        PhantomJSPool pool = mock(PhantomJSPool.class);
 
         // The url
         String urlValue = "This is an url";
@@ -109,7 +110,7 @@ public class LoadPageConstructTest extends ExpressionBuilderHelper {
         when(webService.getCurrentUrl(pageVariable)).thenReturn(urlValue);
 
         // run
-        MetaExpression output = LoadPageConstruct.process(url, options, optionsFactory, webService);
+        MetaExpression output = LoadPageConstruct.process(url, options, optionsFactory, webService, pool);
     }
 
     /**
@@ -124,6 +125,7 @@ public class LoadPageConstructTest extends ExpressionBuilderHelper {
         WebService webService = mock(WebService.class);
         OptionsFactory optionsFactory = mock(OptionsFactory.class);
         Options returnedOptions = mock(Options.class);
+        PhantomJSPool pool = mock(PhantomJSPool.class);
 
         // The url
         String urlValue = "This is an url";
@@ -136,7 +138,6 @@ public class LoadPageConstructTest extends ExpressionBuilderHelper {
         // the process
         // There is currently no other way to do this; we have to sort out the functions one day.
         when(optionsFactory.processOptions(options)).thenReturn(returnedOptions);
-        ;
         PageVariable pageVariable = mock(PageVariable.class);
         PhantomJSPool.Entity entity = mock(PhantomJSPool.Entity.class);
         when(webService.getEntityFromPool(any(), any())).thenReturn(entity);
@@ -145,6 +146,6 @@ public class LoadPageConstructTest extends ExpressionBuilderHelper {
         doThrow(new MalformedURLException()).when(webService).httpGet(pageVariable, urlValue);
 
         // run
-        LoadPageConstruct.process(url, options, optionsFactory, webService);
+        LoadPageConstruct.process(url, options, optionsFactory, webService, pool);
     }
 }
