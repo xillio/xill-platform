@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadFactory;
 
 /**
  * This class encapsulates the pooling mechanism for Selenium's PhantomJS processes used in Web.loadpage() Xill
