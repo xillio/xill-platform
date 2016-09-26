@@ -37,6 +37,18 @@
 
     <url>http://xill.io/</url>
 
+    <distributionManagement>
+        <repository>
+            <id>MavenXillio-releases</id>
+            <name>MavenXillio-releases</name>
+            <url>https://maven.xillio.com/artifactory/libs-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>MavenXillio-snapshots</name>
+            <url>https://maven.xillio.com/artifactory/binary-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>

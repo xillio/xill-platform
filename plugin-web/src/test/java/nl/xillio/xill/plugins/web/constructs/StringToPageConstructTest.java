@@ -47,6 +47,7 @@ public class StringToPageConstructTest {
         WebService webService = mock(WebService.class);
         FileService fileService = mock(FileService.class);
         OptionsFactory optionsFactory = mock(OptionsFactory.class);
+        PhantomJSPool pool = mock(PhantomJSPool.class);
 
         // the content variable
         String contentValue = "This is the content";
@@ -65,7 +66,7 @@ public class StringToPageConstructTest {
         when(entity.getPage()).thenReturn(pageVariable);
 
         // run
-        FromString.process(content, optionsFactory, fileService, webService);
+        FromString.process(content, optionsFactory, fileService, webService, pool);
 
         // verify
         verify(fileService, times(1)).createTempFile(anyString(), anyString());
@@ -84,6 +85,7 @@ public class StringToPageConstructTest {
         WebService webService = mock(WebService.class);
         FileService fileService = mock(FileService.class);
         OptionsFactory optionsFactory = mock(OptionsFactory.class);
+        PhantomJSPool pool = mock(PhantomJSPool.class);
 
         // the content variable
         String contentValue = "This is the content";
@@ -94,7 +96,7 @@ public class StringToPageConstructTest {
         when(fileService.createTempFile(anyString(), anyString())).thenThrow(new IOException());
 
         // run
-        FromString.process(content, optionsFactory, fileService, webService);
+        FromString.process(content, optionsFactory, fileService, webService, pool);
     }
 
     /**
@@ -108,6 +110,7 @@ public class StringToPageConstructTest {
         WebService webService = mock(WebService.class);
         FileService fileService = mock(FileService.class);
         OptionsFactory optionsFactory = mock(OptionsFactory.class);
+        PhantomJSPool pool = mock(PhantomJSPool.class);
 
         // the content variable
         String contentValue = "This is the content";
@@ -118,6 +121,6 @@ public class StringToPageConstructTest {
         when(fileService.createTempFile(anyString(), anyString())).thenThrow(new RobotRuntimeException("error"));
 
         // run
-        FromString.process(content, optionsFactory, fileService, webService);
+        FromString.process(content, optionsFactory, fileService, webService, pool);
     }
 }
