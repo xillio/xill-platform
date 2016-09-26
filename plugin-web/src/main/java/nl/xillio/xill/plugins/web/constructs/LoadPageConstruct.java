@@ -33,10 +33,6 @@ import java.net.MalformedURLException;
  */
 public class LoadPageConstruct extends PhantomJSConstruct {
 
-    static {
-        Options.extractNativeBinary();
-    }
-
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(

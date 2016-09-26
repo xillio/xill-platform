@@ -18,6 +18,7 @@ package nl.xillio.xill.plugins.web;
 import com.google.inject.Inject;
 import nl.xillio.plugins.XillPlugin;
 import nl.xillio.xill.api.XillThreadFactory;
+import nl.xillio.xill.plugins.web.data.Options;
 import nl.xillio.xill.plugins.web.data.PhantomJSPool;
 
 /**
@@ -30,6 +31,7 @@ public class WebXillPlugin extends XillPlugin {
 
     @Inject
     public WebXillPlugin(XillThreadFactory xillThreadFactory) {
+        Options.extractNativeBinary();
         this.xillThreadFactory = xillThreadFactory;
     }
 
