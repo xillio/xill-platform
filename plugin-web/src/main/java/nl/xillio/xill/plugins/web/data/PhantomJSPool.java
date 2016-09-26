@@ -59,9 +59,13 @@ public class PhantomJSPool {
             @Override
             public synchronized void run() {
                 try {
-                    wait();
+                    // Guard for spurious wakeups using a while loop
+                    while (true) {
+                        wait();
+                    }
                 } catch (InterruptedException e) {
                     dispose();
+                    Thread.currentThread().interrupt();
                 }
             }
         }, "PhantomJSPool Dispose");

@@ -39,7 +39,6 @@ public class RegexServiceImpl implements RegexService {
     // Regex for escaping a string so it can be included inside a regex
     public static final Pattern REGEX_ESCAPE_PATTERN = Pattern.compile("\\\\[a-zA-Z0-9]|\\[|\\]|\\^|\\$|\\-|\\.|\\{|\\}|\\?|\\*|\\+|\\||\\(|\\)");
 
-    private static final Logger LOGGER = Log.get();
     private final CachedTimer cachedTimer;
 
     /**

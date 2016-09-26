@@ -78,9 +78,13 @@ public abstract class BaseDatabaseConstruct extends Construct {
             @Override
             public synchronized void run() {
                 try {
-                    wait();
+                    // Guard for spurious wakeups using a while loop
+                    while (true) {
+                        wait();
+                    }
                 } catch (InterruptedException e) {
                     closeAllConnections();
+                    Thread.currentThread().interrupt();
                 }
             }
         }, "Database Plugin Connections Cleanup");
