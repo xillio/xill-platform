@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * A dialog to upload an item to the server.
@@ -116,27 +115,18 @@ public class UploadToServerDialog extends FXMLDialog {
             if (!processItems(treeItems, true, null, true)) {
                 return; // Process has been user interrupted - so no success dialog is shown
             }
-            if (!invalidRobots.isEmpty()) {
-                String msg = "Invalid robots: ";
+            if (!invalidRobots.isEmpty()) { // Some robots have invalid name
+                String invalidRobotsList = "";
                 for (String robotName : invalidRobots) {
-                    msg += robotName;
-                    msg += ", ";
-                    if (msg.length() > 100) {
-                        msg += "...";
-                        break;
+                    if (!invalidRobotsList.isEmpty()) {
+                        invalidRobotsList += "\n";
                     }
+                    invalidRobotsList += robotName;
                 }
-                ButtonType skipButton = new ButtonType("Skip invalid");
-                ButtonType cancelButton = new ButtonType("Cancel");
-                AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Upload to server",
-                        String.format("There are %d robots having invalid name.", invalidRobots.size()),
-                        "The names don't comply with the Xill robot naming convention.\n" + msg,
-                        skipButton, cancelButton);
-                Button button = (Button) dialog.getDialogPane().lookupButton(cancelButton);
-                button.setDefaultButton(true);
-                final Optional<ButtonType> result = dialog.showAndWait();
 
-                if (!result.isPresent() || result.get() == cancelButton) {
+                InvalidRobotNamesDialog dialog = new InvalidRobotNamesDialog(invalidRobots.size(), invalidRobotsList);
+                dialog.showAndWait();
+                if (dialog.isCanceled()) {
                     return; //cancel uploading process
                 }
             }
