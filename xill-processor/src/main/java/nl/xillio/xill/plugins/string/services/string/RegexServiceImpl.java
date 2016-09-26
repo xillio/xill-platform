@@ -17,12 +17,10 @@ package nl.xillio.xill.plugins.string.services.string;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import me.biesaart.utils.Log;
 import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.string.constructs.RegexConstruct;
 import nl.xillio.xill.plugins.string.exceptions.FailedToGetMatcherException;
-import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +37,6 @@ public class RegexServiceImpl implements RegexService {
     // Regex for escaping a string so it can be included inside a regex
     public static final Pattern REGEX_ESCAPE_PATTERN = Pattern.compile("\\\\[a-zA-Z0-9]|\\[|\\]|\\^|\\$|\\-|\\.|\\{|\\}|\\?|\\*|\\+|\\||\\(|\\)");
 
-    private static final Logger LOGGER = Log.get();
     private final CachedTimer cachedTimer;
 
     /**
