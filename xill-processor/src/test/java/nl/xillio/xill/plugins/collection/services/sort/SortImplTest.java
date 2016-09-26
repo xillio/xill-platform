@@ -32,53 +32,72 @@ import static org.testng.Assert.assertTrue;
 public class SortImplTest {
 
     final String testString = "teststring";
+    final Number testNumberLow = 2;
+    final Number testNumberHigh = 1000;
     final List<String> testStringList = Arrays.asList("A", "C", "B");
     final List<String> reversedTestStringList = Arrays.asList("B", "C", "A");
     final List<String> sortedTestStringList = Arrays.asList("A", "B", "C");
     final List<String> reversedSortedTestStringList = Arrays.asList("C", "B", "A");
+    final List<Number> testNumberList = Arrays.asList(testNumberHigh, testNumberLow);
+    final List<Number> sortedTestNumberList = Arrays.asList(testNumberLow, testNumberHigh);
+    final List<Boolean> testBooleanList = Arrays.asList(true, false);
+    final List<Boolean> sortedTestBooleanList = Arrays.asList(false, true);
 
 
-    public List<Object> testList(boolean recursive, boolean onKeys, Sorter sorter) throws Exception{
+    public List<Object> testListSort(List<?> inputList, boolean recursive, boolean onKeys, Sorter sorter) throws Exception{
         IdentityHashMap<Object, Object> ihm = new IdentityHashMap<>();
-        final List<Object> inputList     = Arrays.asList(testString, testStringList);
         return (List<Object>) SortImpl.asSortedList(inputList, recursive, onKeys, sorter, ihm);
     }
 
     @Test
     public void testAsSortedList() throws Exception {
+        final List<Object> inputList = Arrays.asList(testString, testStringList);
+
         // Testing all parameter settings
-        List<Object> output = testList(false, false, Sorter.NORMAL);
+        List<Object> output = testListSort(inputList, false, false, Sorter.NORMAL);
         assertTrue(output.get(0) instanceof List);
         assertEquals(output.get(1), testString);
 
-        output = testList(true, false, Sorter.NORMAL);
+        output = testListSort(inputList, true, false, Sorter.NORMAL);
         assertEquals((List<String>) output.get(0), sortedTestStringList);
         assertEquals(output.get(1), testString);
 
-        output = testList(true, true, Sorter.NORMAL);
+        output = testListSort(inputList, true, true, Sorter.NORMAL);
         assertEquals(output.get(0), testString);
         assertEquals((List<String>) output.get(1), testStringList);
 
-        output = testList(false, true, Sorter.NORMAL);
+        output = testListSort(inputList, false, true, Sorter.NORMAL);
         assertEquals(output.get(0), testString);
         assertEquals((List<String>) output.get(1), testStringList);
 
-        output = testList(false, false, Sorter.REVERSE);
+        output = testListSort(inputList, false, false, Sorter.REVERSE);
         assertEquals(output.get(0), testString);
         assertEquals((List<String>) output.get(1), testStringList);
 
-        output = testList(true, false, Sorter.REVERSE);
+        output = testListSort(inputList, true, false, Sorter.REVERSE);
         assertEquals(output.get(0), testString);
         assertEquals((List<String>) output.get(1), reversedSortedTestStringList);
 
-        output = testList(true, true, Sorter.REVERSE);
+        output = testListSort(inputList, true, true, Sorter.REVERSE);
         assertEquals((List<String>) output.get(0), reversedTestStringList);
         assertEquals(output.get(1), testString);
 
         //sort on keys, reversed, so string and list are reversed, contents are not
-        output = testList(false, true, Sorter.REVERSE);
+        output = testListSort(inputList, false, true, Sorter.REVERSE);
         assertEquals((List<String>) output.get(0), testStringList);
         assertEquals(output.get(1), testString);
+
+        output = testListSort(testNumberList, false, false, Sorter.NORMAL);
+        assertEquals(output, sortedTestNumberList);
+
+        output = testListSort(testNumberList, false, false, Sorter.REVERSE);
+        assertEquals(output, testNumberList);
+
+        output = testListSort(testBooleanList, false, false, Sorter.NORMAL);
+        assertEquals(output, sortedTestBooleanList);
+
+        output = testListSort(testBooleanList, false, false, Sorter.REVERSE);
+        assertEquals(output, testBooleanList);
     }
 
     @Test
