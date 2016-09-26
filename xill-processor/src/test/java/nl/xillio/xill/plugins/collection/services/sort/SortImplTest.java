@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.collection.services.sort;
 
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.util.*;
@@ -42,7 +43,13 @@ public class SortImplTest {
     final List<Number> sortedTestNumberList = Arrays.asList(testNumberLow, testNumberHigh);
     final List<Boolean> testBooleanList = Arrays.asList(true, false);
     final List<Boolean> sortedTestBooleanList = Arrays.asList(false, true);
+    List<Object> testNullList = new ArrayList<>();
 
+    @BeforeTest
+    private void fillNullList () {
+        testNullList.add(null);
+        testNullList.add(null);
+    }
 
     public List<Object> testListSort(List<?> inputList, boolean recursive, boolean onKeys, Sorter sorter) throws Exception{
         IdentityHashMap<Object, Object> ihm = new IdentityHashMap<>();
@@ -98,6 +105,9 @@ public class SortImplTest {
 
         output = testListSort(testBooleanList, false, false, Sorter.REVERSE);
         assertEquals(output, testBooleanList);
+
+        output = testListSort(testNullList, false, false, Sorter.NORMAL);
+        assertEquals(output, testNullList);
     }
 
     @Test
