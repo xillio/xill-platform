@@ -18,12 +18,15 @@ package nl.xillio.xill.plugins.web.constructs;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
+import nl.xillio.xill.plugins.web.InvalidUrlException;
 import nl.xillio.xill.plugins.web.data.Options;
 import nl.xillio.xill.plugins.web.data.OptionsFactory;
 import nl.xillio.xill.plugins.web.data.PageVariable;
 import nl.xillio.xill.plugins.web.data.PhantomJSPool;
 import nl.xillio.xill.plugins.web.services.web.WebService;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.net.MalformedURLException;
@@ -36,6 +39,32 @@ import static org.mockito.Mockito.*;
  */
 public class LoadPageConstructTest extends TestUtils {
 
+    private WebService webService;
+    private LoadPageConstruct construct;
+    private OptionsFactory optionsFactory;
+    private Options returnedOptions;
+    private MetaExpression url;
+    private MetaExpression options;
+    private static final String URL_VALUE = "This is a url";
+
+    @BeforeMethod
+    private void prepareTest() {
+        // mock
+        webService = mock(WebService.class);
+        construct = new LoadPageConstruct();
+        construct.setWebService(webService);
+        optionsFactory = mock(OptionsFactory.class);
+        returnedOptions = mock(Options.class);
+        construct.setOptionsFactory(optionsFactory);
+
+        // The url
+        url = mockExpression(ATOMIC);
+        when(url.getStringValue()).thenReturn(URL_VALUE);
+
+        // The options
+        options = mockExpression(OBJECT);
+    }
+
     /**
      * Test the process under normal circumstances.
      *
@@ -44,22 +73,6 @@ public class LoadPageConstructTest extends TestUtils {
     @Test
     public void testNormalUsage() throws Exception {
 
-        // mock
-        WebService webService = mock(WebService.class);
-        LoadPageConstruct construct = new LoadPageConstruct();
-        construct.setWebService(webService);
-        OptionsFactory optionsFactory = mock(OptionsFactory.class);
-        Options returnedOptions = mock(Options.class);
-        construct.setOptionsFactory(optionsFactory);
-
-        // The url
-        String urlValue = "This is an url";
-        MetaExpression url = mockExpression(ATOMIC);
-        when(url.getStringValue()).thenReturn(urlValue);
-
-        // The options
-        MetaExpression options = mockExpression(OBJECT);
-
         // the process
         // There is currently no other way to do this; we have to sort out the functions one day.
         when(optionsFactory.processOptions(options)).thenReturn(returnedOptions);
@@ -67,7 +80,7 @@ public class LoadPageConstructTest extends TestUtils {
         PhantomJSPool.Entity entity = mock(PhantomJSPool.Entity.class);
         when(webService.getEntityFromPool(any(), any())).thenReturn(entity);
         when(entity.getPage()).thenReturn(pageVariable);
-        when(webService.getCurrentUrl(pageVariable)).thenReturn(urlValue);
+        when(webService.getCurrentUrl(pageVariable)).thenReturn(URL_VALUE);
         when(optionsFactory.processOptions(any())).thenReturn(null);
         // run
         MetaExpression output = process(construct, url, options);
@@ -78,7 +91,7 @@ public class LoadPageConstructTest extends TestUtils {
         verify(webService, times(1)).getCurrentUrl(pageVariable);
 
         // assert
-        Assert.assertEquals(output.getStringValue(), urlValue);
+        Assert.assertEquals(output.getStringValue(), URL_VALUE);
     }
 
     /**
@@ -89,22 +102,6 @@ public class LoadPageConstructTest extends TestUtils {
     @Test(expectedExceptions = RobotRuntimeException.class)
     public void testFailedToParseOptions() throws Exception {
 
-        // mock
-        WebService webService = mock(WebService.class);
-        LoadPageConstruct construct = new LoadPageConstruct();
-        construct.setWebService(webService);
-        OptionsFactory optionsFactory = mock(OptionsFactory.class);
-        mock(Options.class);
-        construct.setOptionsFactory(optionsFactory);
-
-        // The url
-        String urlValue = "This is an url";
-        MetaExpression url = mockExpression(ATOMIC);
-        when(url.getStringValue()).thenReturn(urlValue);
-
-        // The options
-        MetaExpression options = mockExpression(OBJECT);
-
         // the process
         // There is currently no other way to do this; we have to sort out the functions one day.
         when(optionsFactory.processOptions(options)).thenThrow(new RobotRuntimeException("Failed to parse the options."));
@@ -112,7 +109,7 @@ public class LoadPageConstructTest extends TestUtils {
         PhantomJSPool.Entity entity = mock(PhantomJSPool.Entity.class);
         when(webService.getEntityFromPool(any(), any())).thenReturn(entity);
         when(entity.getPage()).thenReturn(pageVariable);
-        when(webService.getCurrentUrl(pageVariable)).thenReturn(urlValue);
+        when(webService.getCurrentUrl(pageVariable)).thenReturn(URL_VALUE);
 
         // run
         MetaExpression output = process(construct, url, options);
@@ -126,32 +123,37 @@ public class LoadPageConstructTest extends TestUtils {
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*URL.*")
     public void testMalFormedURL() throws Exception {
 
-        // mock
-        WebService webService = mock(WebService.class);
-        LoadPageConstruct construct = new LoadPageConstruct();
-        construct.setWebService(webService);
-        OptionsFactory optionsFactory = mock(OptionsFactory.class);
-        Options returnedOptions = mock(Options.class);
-        construct.setOptionsFactory(optionsFactory);
-
-        // The url
-        String urlValue = "This is an url";
-        MetaExpression url = mockExpression(ATOMIC);
-        when(url.getStringValue()).thenReturn(urlValue);
-
-        // The options
-        MetaExpression options = mockExpression(OBJECT);
-
         // the process
         // There is currently no other way to do this; we have to sort out the functions one day.
         when(optionsFactory.processOptions(options)).thenReturn(returnedOptions);
-        ;
         PageVariable pageVariable = mock(PageVariable.class);
         PhantomJSPool.Entity entity = mock(PhantomJSPool.Entity.class);
         when(webService.getEntityFromPool(any(), any())).thenReturn(entity);
         when(entity.getPage()).thenReturn(pageVariable);
-        when(webService.getCurrentUrl(pageVariable)).thenReturn(urlValue);
-        doThrow(new MalformedURLException()).when(webService).httpGet(pageVariable, urlValue);
+        when(webService.getCurrentUrl(pageVariable)).thenReturn(URL_VALUE);
+        doThrow(new MalformedURLException()).when(webService).httpGet(pageVariable, URL_VALUE);
+
+        // run
+        process(construct, url, options);
+    }
+
+    /**
+     * Test the error handling when httpGet returns a MalFormedURLException.
+     *
+     * @throws Exception
+     */
+    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*URL.*")
+    public void testInvalidURLException() throws Exception {
+
+        // the process
+        // There is currently no other way to do this; we have to sort out the functions one day.
+        when(optionsFactory.processOptions(options)).thenReturn(returnedOptions);
+        PageVariable pageVariable = mock(PageVariable.class);
+        PhantomJSPool.Entity entity = mock(PhantomJSPool.Entity.class);
+        when(webService.getEntityFromPool(any(), any())).thenReturn(entity);
+        when(entity.getPage()).thenReturn(pageVariable);
+        when(webService.getCurrentUrl(pageVariable)).thenReturn(URL_VALUE);
+        doThrow(new InvalidUrlException("Invalid URL: " + URL_VALUE)).when(webService).httpGet(pageVariable, URL_VALUE);
 
         // run
         process(construct, url, options);
