@@ -17,12 +17,10 @@ package nl.xillio.xill.plugins.string.services.string;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import me.biesaart.utils.Log;
 import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.string.constructs.RegexConstruct;
 import nl.xillio.xill.plugins.string.exceptions.FailedToGetMatcherException;
-import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;

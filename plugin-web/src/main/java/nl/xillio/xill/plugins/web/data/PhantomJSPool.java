@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * This class encapsulates the pooling mechanism for Selenium's PhantomJS processes used in Web.loadpage() Xill
@@ -60,7 +61,7 @@ public class PhantomJSPool {
             public synchronized void run() {
                 try {
                     // Guard for spurious wakeups using a while loop
-                    while (true) {
+                    while (!Thread.currentThread().isInterrupted()) {
                         wait();
                     }
                 } catch (InterruptedException e) {

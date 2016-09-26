@@ -79,7 +79,7 @@ public abstract class BaseDatabaseConstruct extends Construct {
             public synchronized void run() {
                 try {
                     // Guard for spurious wakeups using a while loop
-                    while (true) {
+                    while (!Thread.currentThread().isInterrupted()) {
                         wait();
                     }
                 } catch (InterruptedException e) {
