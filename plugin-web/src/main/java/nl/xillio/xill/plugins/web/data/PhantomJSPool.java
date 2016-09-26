@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.web.data;
 
 import com.google.inject.Inject;
-import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import me.biesaart.utils.Log;
 import nl.xillio.xill.api.XillThreadFactory;
@@ -60,9 +59,13 @@ public class PhantomJSPool implements AutoCloseable {
             @Override
             public synchronized void run() {
                 try {
-                    wait();
+                    // Guard for spurious wakeups using a while loop
+                    while (!Thread.currentThread().isInterrupted()) {
+                        wait();
+                    }
                 } catch (InterruptedException e) {
                     close();
+                    Thread.currentThread().interrupt();
                 }
             }
         }, "PhantomJSPool Dispose");
@@ -259,7 +262,7 @@ public class PhantomJSPool implements AutoCloseable {
         }
 
         @Override
-        public void close() throws Exception {
+        public void close() {
             release();
         }
     }

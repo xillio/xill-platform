@@ -54,27 +54,19 @@ public class LoadPageConstruct extends PhantomJSConstruct {
     MetaExpression process(final MetaExpression urlVar, final MetaExpression optionsVar) {
         String url = urlVar.getStringValue();
         Options options;
-        PhantomJSPool.Entity entity = null;
 
-        try {
-            // processing input options
-            options = getOptionsFactory().processOptions(optionsVar);
-            if (options == null) {
-                options = new Options();
-            }
-            entity = getWebService().getEntityFromPool(getPhantomJSPool(), options);
+        // processing input options
+        options = getOptionsFactory().processOptions(optionsVar);
+        if (options == null) {
+            options = new Options();
+        }
+
+        try (PhantomJSPool.Entity entity = getWebService().getEntityFromPool(getPhantomJSPool(), options)) {
             WebVariable page = entity.getPage();
             getWebService().httpGet(page, url);
             return createPage(page, getWebService());
         } catch (MalformedURLException | InvalidUrlException e) {
-            release(entity);
             throw new OperationFailedException("load the page.", "Malformed or Invalid URL during httpGet.", e);
-        }
-    }
-
-    private static void release(PhantomJSPool.Entity entity) {
-        if (entity != null) {
-            entity.release();
         }
     }
 }
