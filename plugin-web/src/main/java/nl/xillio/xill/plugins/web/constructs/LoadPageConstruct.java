@@ -31,9 +31,7 @@ import java.net.MalformedURLException;
  * @author Zbynek Hochmann
  *         Loads the new page via PhantomJS process and holds the context of a page
  */
-public class LoadPageConstruct extends PhantomJSConstruct implements AutoCloseable {
-
-    private static final PhantomJSPool pool = new PhantomJSPool(10);
+public class LoadPageConstruct extends PhantomJSConstruct {
 
     static {
         Options.extractNativeBinary();
@@ -64,7 +62,7 @@ public class LoadPageConstruct extends PhantomJSConstruct implements AutoCloseab
             if (options == null) {
                 options = new Options();
             }
-            entity = getWebService().getEntityFromPool(pool, options);
+            entity = getWebService().getEntityFromPool(getPhantomJSPool(), options);
             WebVariable page = entity.getPage();
             getWebService().httpGet(page, url);
             return createPage(page, getWebService());
@@ -78,11 +76,5 @@ public class LoadPageConstruct extends PhantomJSConstruct implements AutoCloseab
         if (entity != null) {
             entity.release();
         }
-    }
-
-    @Override
-    public void close() throws Exception {
-        // it will dispose entire PJS pool (all PJS processes will be terminated and temporary PJS files deleted)
-        pool.dispose();
     }
 }

@@ -28,13 +28,13 @@ import java.io.IOException;
 /**
  * It loads web page from a provided string (the string represents HTML code of a web page)
  */
-public class FromString extends PhantomJSConstruct {
+public class FromStringConstruct extends PhantomJSConstruct {
 
 
     private final LoadPageConstruct loadpageConstruct;
 
     @Inject
-    public FromString(LoadPageConstruct loadpageConstruct) {
+    public FromStringConstruct(LoadPageConstruct loadpageConstruct) {
         this.loadpageConstruct = loadpageConstruct;
     }
 

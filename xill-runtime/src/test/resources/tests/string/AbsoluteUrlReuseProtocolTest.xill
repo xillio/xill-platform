@@ -13,24 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.plugins.database.constructs;
+/*
+* Specification: Calling absoluteUrl with a relative url that starts with "//" MUST reuse the protocol from the base url.
+* Input: Urls "https://google.com/" and "//example.com"
+* Expected: "https://example.com/" (note the https at the beginning)
+*/
 
-import com.google.inject.Inject;
-import nl.xillio.xill.api.XillThreadFactory;
-import nl.xillio.xill.plugins.database.util.Database;
+use Assert, String;
 
-/**
- * The connect construct for the MYsql database.
- */
-@Deprecated
-public class MysqlConnectConstruct extends SimplesqlConnectConstruct {
-
-    /**
-     * The constructor for the {@link MysqlConnectConstruct}.
-     */
-    @Inject
-    public MysqlConnectConstruct(XillThreadFactory xillThreadFactory) {
-        super(xillThreadFactory, Database.MYSQL.getName(), 3306);
-    }
-
-}
+Assert.equal(String.absoluteURL("https://google.com/", "//example.com"), "https://example.com");

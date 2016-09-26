@@ -39,6 +39,7 @@ abstract class PhantomJSConstruct extends Construct {
     private FileService fileService;
     private OptionsFactory optionsFactory;
     private CookieFactory cookieFactory;
+    private PhantomJSPool phantomJSPool;
 
     /**
      * Creates new {@link NodeVariable}.
@@ -192,5 +193,14 @@ abstract class PhantomJSConstruct extends Construct {
     @Inject
     void setCookieFactory(CookieFactory cookieFactory) {
         this.cookieFactory = cookieFactory;
+    }
+
+    protected PhantomJSPool getPhantomJSPool() {
+        return phantomJSPool;
+    }
+
+    @Inject
+    void setPhantomJSPool(PhantomJSPool phantomJSPool) {
+        this.phantomJSPool = phantomJSPool;
     }
 }

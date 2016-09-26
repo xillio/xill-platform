@@ -15,8 +15,10 @@
  */
 package nl.xillio.xill.plugins.string.services.string;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import me.biesaart.utils.Log;
+import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.string.constructs.RegexConstruct;
 import nl.xillio.xill.plugins.string.exceptions.FailedToGetMatcherException;
@@ -40,13 +42,13 @@ public class RegexServiceImpl implements RegexService {
     private static final Logger LOGGER = Log.get();
     private final CachedTimer cachedTimer;
 
-
     /**
      * The implementation of the {@link RegexService}
      */
-    public RegexServiceImpl() {
+    @Inject
+    public RegexServiceImpl(XillThreadFactory xillThreadFactory) {
         cachedTimer = new CachedTimer();
-        Thread thread = new Thread(cachedTimer);
+        Thread thread = xillThreadFactory.create(cachedTimer, "Regex Cached Timer");
         thread.setDaemon(true);
         thread.start();
     }
@@ -162,20 +164,15 @@ public class RegexServiceImpl implements RegexService {
      */
     private class CachedTimer implements Runnable {
         private long cachedTime;
-        private boolean isRunning = true;
-
-        public CachedTimer() {
-            Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
-        }
 
         @Override
         public void run() {
-            while (isRunning) {
+            while (!Thread.currentThread().isInterrupted()) {
                 cachedTime = System.currentTimeMillis();
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
-                    LOGGER.error("Exception while running timer", e);
+                    break;
                 }
             }
         }
@@ -183,11 +180,6 @@ public class RegexServiceImpl implements RegexService {
         public long getCachedTime() {
             return cachedTime;
         }
-
-        public void stop() {
-            this.isRunning = false;
-        }
-
     }
 
 }

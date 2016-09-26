@@ -33,7 +33,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 /**
- * test the {@link FromString}.
+ * test the {@link FromStringConstruct}.
  */
 public class StringToPageConstructTest extends TestUtils {
 
@@ -47,7 +47,7 @@ public class StringToPageConstructTest extends TestUtils {
         // mock
         LoadPageConstruct loadpageConstruct = mock(LoadPageConstruct.class);
 
-        FromString construct = new FromString(loadpageConstruct);
+        FromStringConstruct construct = new FromStringConstruct(loadpageConstruct);
 
         WebService webService = mock(WebService.class);
         FileService fileService = mock(FileService.class);
@@ -90,7 +90,7 @@ public class StringToPageConstructTest extends TestUtils {
     public void testProcessIOException() throws IOException {
         // mock
         LoadPageConstruct loadpageConstruct = mock(LoadPageConstruct.class);
-        FromString construct = new FromString(loadpageConstruct);
+        FromStringConstruct construct = new FromStringConstruct(loadpageConstruct);
         WebService webService = mock(WebService.class);
         FileService fileService = mock(FileService.class);
         OptionsFactory optionsFactory = mock(OptionsFactory.class);
@@ -120,7 +120,7 @@ public class StringToPageConstructTest extends TestUtils {
     public void testProcessExceptionThrown() throws Exception {
         // mock
         LoadPageConstruct loadpageConstruct = mock(LoadPageConstruct.class);
-        FromString construct = new FromString(loadpageConstruct);
+        FromStringConstruct construct = new FromStringConstruct(loadpageConstruct);
 
         WebService webService = mock(WebService.class);
         FileService fileService = mock(FileService.class);
