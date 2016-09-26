@@ -22,6 +22,7 @@ import javafx.scene.control.*;
 import javafx.util.Pair;
 import me.biesaart.utils.FileUtils;
 import me.biesaart.utils.Log;
+import me.biesaart.utils.StringUtils;
 import nl.xillio.migrationtool.RobotValidationException;
 import nl.xillio.migrationtool.XillServerUploader;
 import nl.xillio.migrationtool.gui.FXController;
@@ -116,15 +117,7 @@ public class UploadToServerDialog extends FXMLDialog {
                 return; // Process has been user interrupted - so no success dialog is shown
             }
             if (!invalidRobots.isEmpty()) { // Some robots have invalid name
-                String invalidRobotsList = "";
-                for (String robotName : invalidRobots) {
-                    if (!invalidRobotsList.isEmpty()) {
-                        invalidRobotsList += "\n";
-                    }
-                    invalidRobotsList += robotName;
-                }
-
-                InvalidRobotNamesDialog dialog = new InvalidRobotNamesDialog(invalidRobots.size(), invalidRobotsList);
+                InvalidRobotNamesDialog dialog = new InvalidRobotNamesDialog(invalidRobots.size(), StringUtils.join(invalidRobots.toArray(), '\n'));
                 dialog.showAndWait();
                 if (dialog.isCanceled()) {
                     return; //cancel uploading process
