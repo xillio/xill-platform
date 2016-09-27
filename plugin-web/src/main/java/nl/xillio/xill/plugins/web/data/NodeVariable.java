@@ -55,10 +55,6 @@ public class NodeVariable implements WebVariable {
 
     @Override
     public String getTextPreview() {
-        if (element != null) {
-            return element.getAttribute("outerHTML");
-        } else {
-            return driver.getPageSource();
-        }
+        return element.getAttribute("outerHTML");
     }
 }
