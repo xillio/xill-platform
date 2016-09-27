@@ -15,7 +15,10 @@
  */
 package nl.xillio.xill.plugins.web.data;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import me.biesaart.utils.Log;
+import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.data.MetadataExpression;
 import nl.xillio.xill.plugins.web.services.web.WebService;
 import org.slf4j.Logger;
@@ -29,11 +32,17 @@ import java.util.List;
  *
  * @author Zbynek Hochmann
  */
-public class PhantomJSPool {
+@Singleton
+public class PhantomJSPool implements AutoCloseable {
     private static final Logger LOGGER = Log.get();
 
     private final int maxPoolSize; // Maximum number of entities in pool (an entity is a PhantomJS process).
     private List<Entity> poolEntities = new ArrayList<>();
+
+    @Inject
+    public PhantomJSPool(XillThreadFactory xillThreadFactory) {
+        this(10, xillThreadFactory);
+    }
 
     /**
      * Creates PJS pool
@@ -41,9 +50,27 @@ public class PhantomJSPool {
      * @param maxPoolSize Maximum amount of entities (PhantomJS processes) that can
      *                    be in the pool at one time
      */
-    public PhantomJSPool(final int maxPoolSize) {
+    public PhantomJSPool(final int maxPoolSize, XillThreadFactory xillThreadFactory) {
         this.maxPoolSize = maxPoolSize;
-        Runtime.getRuntime().addShutdownHook(new Thread(this::dispose));
+        // A hook disposing PhantomJS processes when the IDE stops
+        Runtime.getRuntime().addShutdownHook(new Thread(this::close));
+        // A Thread stopping PhantomJS processes when the XillEnvironment on the server is closed
+        Thread disposeThread = xillThreadFactory.create(new Runnable() {
+            @Override
+            public synchronized void run() {
+                try {
+                    // Guard for spurious wakeups using a while loop
+                    while (!Thread.currentThread().isInterrupted()) {
+                        wait();
+                    }
+                } catch (InterruptedException e) {
+                    close();
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }, "PhantomJSPool Dispose");
+        disposeThread.setDaemon(true);
+        disposeThread.start();
     }
 
     /**
@@ -109,7 +136,7 @@ public class PhantomJSPool {
      * Disposes entire PJS pool - i.e. all pool entities (~all PhantomJS
      * processes in the pool will be terminated)
      */
-    public void dispose() {
+    public void close() {
         try {
             poolEntities.forEach(PhantomJSPool.Entity::dispose);
             poolEntities.clear();
@@ -235,7 +262,7 @@ public class PhantomJSPool {
         }
 
         @Override
-        public void close() throws Exception {
+        public void close() {
             release();
         }
     }
