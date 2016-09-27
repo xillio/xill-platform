@@ -31,5 +31,6 @@ public class XillThreadFactoryImpl implements XillThreadFactory {
 
     @Override
     public void close() {
+        // No cleanup needs to happen here since this implementation does not keep track of created threads
     }
 }
