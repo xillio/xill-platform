@@ -92,9 +92,9 @@ public class XillCellTest {
         when(cell.getNumericCellValue()).thenReturn(1.0);
         when(testCell.getValue()).thenReturn(1.0);
         Object value = testCell.getValue();
-        assertTrue(value instanceof Integer);
-        assertEquals(value, 1);
-
+        assertTrue(value instanceof Long);
+        assertEquals(value, 1L); //changed from Integer to Long in CTC-1590
+        
         doReturn(true).when(testCell).isNull();
         assertEquals(testCell.getValue(), null);
 
