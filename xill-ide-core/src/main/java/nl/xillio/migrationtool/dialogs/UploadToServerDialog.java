@@ -255,18 +255,18 @@ public class UploadToServerDialog extends FXMLDialog {
      */
     private boolean uploadItem(final TreeItem<Pair<File, String>> item, boolean existCheck, final String projectId, boolean noUpload) throws IOException {
 
+        // Get the selected item info
+        final File itemFile = item.getValue().getKey();
+        final File projectFolder = projectPane.getProject(item).getValue().getKey();
+
         // Do test for invalid robot name
         if (isInvalidRobotFile(item)) {
             if (noUpload) {
-                invalidRobots.add(item.getValue().getValue());
+                invalidRobots.add(xillServerUploader.getFqn(itemFile, projectFolder));
             } else {
                 return true; // Continue - i.e. skip uploading this robot (with invalid name)
             }
         }
-
-        // Get the selected item info
-        final File itemFile = item.getValue().getKey();
-        final File projectFolder = projectPane.getProject(item).getValue().getKey();
 
         // Determine if the item is robot or resource
         if (isRobot(itemFile, projectFolder)) {
