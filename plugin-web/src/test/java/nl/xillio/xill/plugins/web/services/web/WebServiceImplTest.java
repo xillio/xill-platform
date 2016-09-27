@@ -1033,32 +1033,4 @@ public class WebServiceImplTest {
         // run
         implementation.download(url, Paths.get("42"), null, 1000);
     }
-
-    @Test
-    public void testNodeTextPreview() {
-        // mock
-        String data = "Some node content";
-
-        WebElement element = mock(WebElement.class);
-        when(element.getAttribute(anyString())).thenReturn(data);
-        NodeVariable nodeVariable = new NodeVariable(null, element);
-
-        // run
-        String result = nodeVariable.getTextPreview();
-        Assert.assertEquals(result, data);
-    }
-
-    @Test
-    public void testPageTextPreview() {
-        // mock
-        String data = "Some page content";
-
-        WebDriver driver = mock(WebDriver.class);
-        when(driver.getPageSource()).thenReturn(data);
-        PageVariable pageVariable = new PageVariable(driver, null);
-
-        // run
-        String result = pageVariable.getTextPreview();
-        Assert.assertEquals(result, data);
-    }
 }
