@@ -18,11 +18,13 @@ package nl.xillio.xill.services;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.OperationFailedException;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 
 /**
  * This class is responsible for processing a template given a model and a configuration
@@ -49,6 +51,13 @@ public class TemplateProcessor {
 
             // Flush the buffer of the writer and do not close it since the underlying stream would be closed as well
             writer.flush();
+        } catch (UnsupportedEncodingException e){
+            throw new InvalidUserInputException(
+                    "The given encoding is not supported by FreeMarker.",
+                    e.getMessage(),
+                    "A FreeMarker supported encoding.",
+                    "\"encoding\" : \"UNICODE\"",
+                    e);
         } catch (IOException | TemplateException e) {
             throw new OperationFailedException("process template.", e.getMessage(), e);
         }
