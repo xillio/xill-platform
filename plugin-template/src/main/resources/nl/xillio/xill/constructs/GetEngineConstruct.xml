@@ -19,6 +19,17 @@
 <function>
     <description>
 This construct parses given options and returns the engine for the template plugin.
+
+The options object is optional which results in using the default engine which is build up with the following options:
+
+        var options = {
+            "templatesDirectory" : ".", // Project root
+            "encoding" : "UTF-8",
+            "strongCache" : 0,
+            "softCache" : 2147483647, // Max integer
+            "logTemplateExceptions" : true
+        };
+
     </description>
     <examples>
         <example title="Get the default engine">
