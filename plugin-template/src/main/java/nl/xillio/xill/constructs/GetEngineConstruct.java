@@ -24,10 +24,6 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.data.EngineMetadata;
 import nl.xillio.xill.services.ConfigurationFactory;
-import nl.xillio.xill.services.files.FileResolver;
-
-import java.nio.file.Path;
-import java.util.Map;
 
 /**
  * This construct generates a new file using a template and a data model
@@ -37,12 +33,10 @@ import java.util.Map;
  */
 public class GetEngineConstruct extends Construct {
     private final ConfigurationFactory configurationFactory;
-    private final FileResolver fileResolver;
 
     @Inject
-    public GetEngineConstruct(ConfigurationFactory configurationFactory, FileResolver fileResolver) {
+    public GetEngineConstruct(ConfigurationFactory configurationFactory) {
         this.configurationFactory = configurationFactory;
-        this.fileResolver = fileResolver;
     }
 
     @Override
@@ -54,24 +48,10 @@ public class GetEngineConstruct extends Construct {
     }
 
     private MetaExpression process(MetaExpression options, ConstructContext context) {
-        MetaExpression templateDir = getTemplateDir(options, context);
-        Path path = fileResolver.buildPath(context, templateDir);
-        Configuration cfg = configurationFactory.parseConfiguration(path, options.getValue());
-
-        MetaExpression result = fromValue("[TemplateEngine: " + path + "]");
+        Configuration cfg = configurationFactory.parseConfiguration(options.getValue(), context);
+        MetaExpression result = fromValue("[TemplateEngine]");
         EngineMetadata configuration = new EngineMetadata(cfg);
         result.storeMeta(configuration);
         return result;
-    }
-
-    private MetaExpression getTemplateDir(MetaExpression options, ConstructContext context) {
-        if (!options.isNull()) {
-            Map<String, MetaExpression> optionsObject = options.getValue();
-
-            if (optionsObject.containsKey("templatesDirectory")) {
-                return optionsObject.get("templatesDirectory");
-            }
-        }
-        return fromValue(context.getRootRobot().getProjectPath().getPath());
     }
 }

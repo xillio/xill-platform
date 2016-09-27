@@ -15,12 +15,15 @@
  */
 package nl.xillio.xill.services;
 
+import com.google.inject.Inject;
 import freemarker.cache.NullCacheStorage;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import nl.xillio.xill.api.components.MetaExpression;
+import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
+import nl.xillio.xill.services.files.FileResolver;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -36,13 +39,70 @@ import java.util.function.Supplier;
  * @since 3.5.0
  */
 public class ConfigurationFactory {
+    private final static String TEMPLATES_DIRECTORY = "templatesDirectory";
     private final static String ENCODING = "encoding";
     private final static String LOG_TEMPLATE_EXCEPTIONS = "logTemplateExceptions";
     private final static String NO_CACHING = "noCaching";
     private final static String STRONG_CACHE = "strongCache";
     private final static String SOFT_CACHE = "softCache";
+    private final FileResolver fileResolver;
 
-    private Configuration getDefaultConfiguration(Path templatePath) {
+    @Inject
+    public ConfigurationFactory(FileResolver fileResolver) {
+        this.fileResolver = fileResolver;
+    }
+
+    /**
+     * Parse the configuration by the options given and return the template engines' configuration
+     *
+     * @param options The options that should be parsed for the configuration
+     * @param context The construct's context with the robot information attached
+     * @return The configuration for the template engine
+     */
+    public Configuration parseConfiguration(Map<String, MetaExpression> options, ConstructContext context) {
+        if (options == null) {
+            return buildDefaultConfiguration(context);
+        }
+
+        Configuration cfg = instanceConfiguration(options, context);
+
+        if (options.containsKey(ENCODING)) {
+            cfg.setDefaultEncoding(options.get(ENCODING).getStringValue());
+        }
+        if (options.containsKey(LOG_TEMPLATE_EXCEPTIONS)) {
+            cfg.setLogTemplateExceptions(options.get(LOG_TEMPLATE_EXCEPTIONS).getBooleanValue());
+        }
+
+        if (options.containsKey(NO_CACHING) && options.get(NO_CACHING).getBooleanValue()) {
+            cfg.setCacheStorage(new NullCacheStorage());
+        } else {
+            String strongCache = get(options, STRONG_CACHE).orElse("0");
+            String softCache = get(options, SOFT_CACHE).orElse(Integer.toString(Integer.MAX_VALUE));
+            setSetting(
+                    cfg,
+                    Configuration.CACHE_STORAGE_KEY,
+                    "strong:" + strongCache + ", soft:" + softCache,
+                    () -> SOFT_CACHE + ": " + softCache + ", " + STRONG_CACHE + ": " + strongCache
+            );
+        }
+
+        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+
+        return cfg;
+    }
+
+    /**
+     * Build the default configuration with the project root as templates directory
+     *
+     * @param context The construct's context with the robot information attached
+     * @return The default configuration with the project root as templates directory
+     */
+    public Configuration buildDefaultConfiguration(ConstructContext context) {
+        Path path = context.getRootRobot().getProjectPath().toPath();
+        return buildDefaultConfiguration(path);
+    }
+
+    private Configuration buildDefaultConfiguration(Path templatePath) {
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_23);
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
@@ -62,44 +122,14 @@ public class ConfigurationFactory {
         return cfg;
     }
 
-    /**
-     * Parse the configuration by the options given and return the template engines' configuration
-     *
-     * @param templatePath  A path to the folder containing the templates
-     * @param options       The options that should be parsed for the configuration
-     * @return The configuration for the template engine
-     */
-    public Configuration parseConfiguration(Path templatePath, Map<String, MetaExpression> options) {
-        Configuration cfg = getDefaultConfiguration(templatePath);
-
-        if (options == null) {
-            return cfg;
-        }
-
-        if (options.containsKey(ENCODING)) {
-            cfg.setDefaultEncoding(options.get(ENCODING).getStringValue());
-        }
-        if (options.containsKey(LOG_TEMPLATE_EXCEPTIONS)) {
-            cfg.setLogTemplateExceptions(options.get(LOG_TEMPLATE_EXCEPTIONS).getBooleanValue());
-        }
-
-
-        if (options.containsKey(NO_CACHING) && options.get(NO_CACHING).getBooleanValue()) {
-            cfg.setCacheStorage(new NullCacheStorage());
-        } else {
-            String strongCache = get(options, STRONG_CACHE).orElse("0");
-            String softCache = get(options, SOFT_CACHE).orElse(Integer.toString(Integer.MAX_VALUE));
-            setSetting(
-                    cfg,
-                    Configuration.CACHE_STORAGE_KEY,
-                    "strong:" + strongCache + ", soft:" + softCache,
-                    () -> SOFT_CACHE + ": " + softCache + ", " + STRONG_CACHE + ": " + strongCache
+    private Configuration instanceConfiguration(Map<String, MetaExpression> options, ConstructContext context) {
+        if (options.containsKey(TEMPLATES_DIRECTORY)) {
+            return buildDefaultConfiguration(
+                    fileResolver.buildPath(context, options.get(TEMPLATES_DIRECTORY))
             );
+        } else {
+            return buildDefaultConfiguration(context);
         }
-
-        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-
-        return cfg;
     }
 
     private void setSetting(Configuration cfg, String cacheStorageKey, String value, Supplier<String> input) {

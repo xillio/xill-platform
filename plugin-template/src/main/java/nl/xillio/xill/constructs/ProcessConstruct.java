@@ -24,6 +24,7 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.data.EngineMetadata;
+import nl.xillio.xill.services.ConfigurationFactory;
 import nl.xillio.xill.services.TemplateProcessor;
 
 import java.io.IOException;
@@ -38,32 +39,28 @@ import java.io.OutputStream;
 public class ProcessConstruct extends Construct {
 
     private final TemplateProcessor templateProcessor;
+    private final ConfigurationFactory configurationFactory;
 
     @Inject
-    public ProcessConstruct(TemplateProcessor templateProcessor) {
+    public ProcessConstruct(TemplateProcessor templateProcessor, ConfigurationFactory configurationFactory) {
         this.templateProcessor = templateProcessor;
+        this.configurationFactory = configurationFactory;
     }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                this::process,
+                (templateName, output, model, engine) -> process(templateName, output, model, engine, context),
                 new Argument("templateName", ATOMIC),
                 new Argument("output", ATOMIC),
-                new Argument("model", OBJECT),
-                new Argument("engine", ATOMIC)
+                new Argument("model", emptyObject(), OBJECT),
+                new Argument("engine", NULL, ATOMIC)
         );
     }
 
-    private MetaExpression process(MetaExpression templateName, MetaExpression output, MetaExpression model, MetaExpression engine) {
-        Configuration configuration = engine.getMeta(EngineMetadata.class).getConfiguration();
-        OutputStream stream;
-
-        try {
-            stream = output.getBinaryValue().getOutputStream();
-        } catch (IOException e) {
-            throw new OperationFailedException("create a stream.", e.getMessage(), "Did you provide the template engine to this construct?", e);
-        }
+    private MetaExpression process(MetaExpression templateName, MetaExpression output, MetaExpression model, MetaExpression engine, ConstructContext context) {
+        Configuration configuration = getConfiguration(engine, context);
+        OutputStream stream = getOutputStream(output);
 
         templateProcessor.generate(
                 templateName.getStringValue(),
@@ -72,5 +69,26 @@ public class ProcessConstruct extends Construct {
                 configuration);
 
         return NULL;
+    }
+
+    private Configuration getConfiguration(MetaExpression engine, ConstructContext context) {
+        if (engine.isNull()) {
+            return configurationFactory.buildDefaultConfiguration(context);
+        } else {
+            return engine.getMeta(EngineMetadata.class).getConfiguration();
+        }
+    }
+
+    private OutputStream getOutputStream(MetaExpression output) {
+        try {
+            return output.getBinaryValue().getOutputStream();
+        } catch (IOException e) {
+            throw new OperationFailedException(
+                    "create a stream.",
+                    e.getMessage(),
+                    "Did you provide the template engine to this construct?",
+                    e
+            );
+        }
     }
 }

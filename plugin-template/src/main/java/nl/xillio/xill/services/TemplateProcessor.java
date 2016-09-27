@@ -51,7 +51,7 @@ public class TemplateProcessor {
 
             // Flush the buffer of the writer and do not close it since the underlying stream would be closed as well
             writer.flush();
-        } catch (UnsupportedEncodingException e){
+        } catch (UnsupportedEncodingException e) {
             throw new InvalidUserInputException(
                     "The given encoding is not supported by FreeMarker.",
                     e.getMessage(),
