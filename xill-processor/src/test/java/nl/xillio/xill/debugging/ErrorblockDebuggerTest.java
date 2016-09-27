@@ -121,4 +121,18 @@ public class ErrorblockDebuggerTest {
         assertEquals(hasErrorResult, throwable!=null);
         assertEquals(shouldStopResult, expected);
     }
+
+    @Test
+    public void testGetErroredInstructionEmptyStackTrace() {
+        // Mock
+        when(parentDebugger.getStackTrace()).thenReturn(new ArrayList<>());
+        Throwable throwable = mockThrowable();
+
+        // Run
+        debugger.handle(throwable);
+        Instruction result = debugger.getErroredInstruction();
+
+        // Assert
+        assertNull(result);
+    }
 }
