@@ -30,6 +30,12 @@ import org.apache.http.impl.client.HttpClients;
 @Singleton
 public class ExecutorFactory {
 
+
+    /**
+     * Do NOT use a HttpClientBuilder to create the HttpClients!
+     * It will cause failing cookie authentication.
+     * See https://xillio.atlassian.net/browse/CTC-1804
+     */
     public Executor buildExecutor(Options options) {
 
         if(options.isInsecure() && !options.isEnableRedirect()){
