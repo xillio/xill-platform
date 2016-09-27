@@ -30,7 +30,7 @@ public class ClickConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                element -> process(element, webService),
+                element -> process(element, getWebService()),
                 new Argument("element", ATOMIC));
     }
 

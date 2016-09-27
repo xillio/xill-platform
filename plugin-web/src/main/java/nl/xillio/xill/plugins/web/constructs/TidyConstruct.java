@@ -31,7 +31,8 @@ import nl.xillio.xill.plugins.web.services.web.HTMLService;
  */
 public class TidyConstruct extends Construct {
 
-    private static final String SYNTAX_XHTML = "xhtml", SYNTAX_HTML = "html";
+    private static final String SYNTAX_XHTML = "xhtml";
+    private static final String SYNTAX_HTML = "html";
 
     @Inject
     private HTMLService htmlService;

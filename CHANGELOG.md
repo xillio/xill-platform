@@ -1,6 +1,11 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.5.0] - unreleased
+
+### Fix
+* On server threads are not closed when tasks finishes [XSVR-139]
+
 ## [3.4.0] - unreleased
 
 ### Add
@@ -30,6 +35,7 @@ All notable changes to this project will be documented in this file.
 * Split the "New project" menu option into "New project..." and "New project from existing sources..." [CTC-1691]
 * `System.exec()` outputs one string including EOL charactedrs, instead of a list of lines [CTC-1466]
 * Warn user when uploading .xill file with illegal name [CTC-1723]
+* Add whitelisted filetypes which can be edited without warning: "xill", "txt", "properties", "html", "htm", "css", "xslt", "xml", "json", "js", "md", "cfg", "ini", "bat", "sh", "sbot" [CTC-1755]
 
 ### Fix
 
@@ -57,3 +63,7 @@ All notable changes to this project will be documented in this file.
 * Alert windows do not automatically get scaled in linux, which causes text to disappear [CTC-1742]
 * Error messages for errors in (transitive) includes [CTC-1514]
 * Auto-save does not work for non-robot files [CTC-1754]
+* HttpResponseException on upload of large project [CTC-1751]
+* Expression is evaluated even after an exception happens [CTC-1721]
+* String.absoluteUrl does not allow reusing protocol [CTC-1792]
+* MySQL Error: The server time zone value 'W. Europe Daylight Time' is unrecognized or represents more than one time zone. [CTC-1796]

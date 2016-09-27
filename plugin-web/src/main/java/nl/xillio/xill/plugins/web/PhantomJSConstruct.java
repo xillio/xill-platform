@@ -33,8 +33,8 @@ import java.util.LinkedHashMap;
  * The base class for all the constructs which use PhantomJS.
  */
 public abstract class PhantomJSConstruct extends Construct {
-    @Inject
-    protected WebService webService;
+
+    private WebService webService;
 
     /**
      * Creates new {@link NodeVariable}.
@@ -142,5 +142,15 @@ public abstract class PhantomJSConstruct extends Construct {
         }
 
         return ExpressionBuilderHelper.fromValue(map);
+    }
+
+
+    protected WebService getWebService() {
+        return webService;
+    }
+
+    @Inject
+    void setWebService(WebService webService) {
+        this.webService = webService;
     }
 }
