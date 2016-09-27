@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,7 +60,7 @@ public class UrlUtilityServiceImpl implements UrlUtilityService {
     }
 
     @Override
-    public String tryConvert(final String pageUrl, final String relativeUrl) throws IllegalArgumentException {
+    public String tryConvert(final String pageUrl, final String relativeUrl) {
         if (relativeUrl.startsWith("http://") || relativeUrl.startsWith("https://")) {
             return cleanupUrl(relativeUrl);
         } else if (relativeUrl.matches("//w+.*")) {
@@ -107,5 +106,11 @@ public class UrlUtilityServiceImpl implements UrlUtilityService {
         OutputStream out = new FileOutputStream(file);
         out.write(output);
         out.close();
+    }
+
+    @Override
+    public String getProtocol(String url) {
+        int afterProtocol = url.indexOf("://");
+        return afterProtocol == -1 ? "" : url.substring(0, afterProtocol);
     }
 }

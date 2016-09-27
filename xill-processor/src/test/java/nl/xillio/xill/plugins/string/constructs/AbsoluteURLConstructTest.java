@@ -15,48 +15,53 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.OperationFailedException;
-import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.string.services.string.UrlUtilityService;
+import nl.xillio.xill.plugins.string.services.string.UrlUtilityServiceImpl;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 /**
  * Test the {@link AbsoluteURLConstruct}.
  */
-public class AbsoluteURLConstructTest {
+public class AbsoluteURLConstructTest extends TestUtils {
+    private UrlUtilityService urlUtilityService;
+    private AbsoluteURLConstruct construct;
+
+    /**
+     * Reset the construct and spied service before each method.
+     */
+    @BeforeMethod
+    private void resetConstruct() {
+        urlUtilityService = spy(new UrlUtilityServiceImpl());
+        construct = new AbsoluteURLConstruct(urlUtilityService);
+    }
 
     /**
      * Test the process method under normal circumstances.
      */
     @Test
     public void processNormalUsage() {
-        // Mock
-        String pageUrlValue = "http://www.xillio.nl/calendar/";
-        MetaExpression pageUrl = mock(MetaExpression.class);
-        when(pageUrl.getStringValue()).thenReturn(pageUrlValue);
+        // MetaExpressions.
+        MetaExpression pageUrl = fromValue("www.xillio.nl/calendar/");
+        MetaExpression relativeUrl = fromValue("../");
 
-        String relativeUrlValue = "../";
-        MetaExpression relativeUrl = mock(MetaExpression.class);
-        when(relativeUrl.getStringValue()).thenReturn(relativeUrlValue);
+        // Run.
+        MetaExpression result = this.process(construct, pageUrl, relativeUrl);
 
-        String UrlReturnValue = "http://www.xillio.nl/";
-        UrlUtilityService url = mock(UrlUtilityService.class);
-        when(url.tryConvert(pageUrlValue, relativeUrlValue)).thenReturn(UrlReturnValue);
+        // Verify.
+        verify(urlUtilityService, times(1)).tryConvert("http://" + pageUrl.getStringValue(), relativeUrl.getStringValue());
 
-        // Run
-        MetaExpression result = AbsoluteURLConstruct.process(pageUrl, relativeUrl, url);
-
-        // Verify
-        verify(url, times(1)).tryConvert(pageUrlValue, relativeUrlValue);
-
-        // Assert
-        Assert.assertEquals(result.getStringValue(), UrlReturnValue);
+        // Assert.
+        Assert.assertEquals(result.getStringValue(), "http://www.xillio.nl/");
     }
 
     /**
@@ -64,29 +69,59 @@ public class AbsoluteURLConstructTest {
      */
     @Test
     public void processEmptyRelativeUrl() {
-        // Mock
-        String pageUrlValue = "http://www.xillio.nl/calendar/";
-        MetaExpression pageUrl = mock(MetaExpression.class);
-        when(pageUrl.getStringValue()).thenReturn(pageUrlValue);
+        // MetaExpressions.
+        MetaExpression pageUrl = fromValue("http://www.xillio.nl/calendar/");
+        MetaExpression relativeUrl = fromValue("");
+        String urlReturnValue = "http://www.xillio.nl/calendar";
 
-        String relativeUrlValue = "";
-        MetaExpression relativeUrl = mock(MetaExpression.class);
-        when(relativeUrl.getStringValue()).thenReturn(relativeUrlValue);
+        // Run.
+        MetaExpression result = this.process(construct, pageUrl, relativeUrl);
 
-        String UrlReturnValue = "http://www.xillio.nl/calendar";
-        UrlUtilityService url = mock(UrlUtilityService.class);
-        when(url.tryConvert(pageUrlValue, relativeUrlValue)).thenReturn(UrlReturnValue);
-        when(url.cleanupUrl(UrlReturnValue)).thenReturn(UrlReturnValue);
+        // Verify.
+        verify(urlUtilityService, times(0)).tryConvert(any(), any());
+        verify(urlUtilityService, times(1)).cleanupUrl(urlReturnValue);
 
-        // Run
-        MetaExpression result = AbsoluteURLConstruct.process(pageUrl, relativeUrl, url);
+        // Assert.
+        Assert.assertEquals(result.getStringValue(), urlReturnValue);
+    }
 
-        // Verify
-        verify(url, times(0)).tryConvert(any(), any());
-        verify(url, times(1)).cleanupUrl(UrlReturnValue);
+    /**
+     * Tests the process when an empty relativeUrl is handed and the page url has no trailing slash, in which case the url is just cleaned.
+     */
+    @Test
+    public void processEmptyRelativeUrlNoTrailingSlash() {
+        // MetaExpressions.
+        MetaExpression pageUrl = fromValue("http://www.xillio.nl/calendar");
+        MetaExpression relativeUrl = fromValue("");
 
-        // Assert
-        Assert.assertEquals(result.getStringValue(), UrlReturnValue);
+        // Run.
+        MetaExpression result = this.process(construct, pageUrl, relativeUrl);
+
+        // Verify.
+        verify(urlUtilityService, times(0)).tryConvert(any(), any());
+        verify(urlUtilityService, times(1)).cleanupUrl(pageUrl.getStringValue());
+
+        // Assert.
+        Assert.assertEquals(result.getStringValue(), pageUrl.getStringValue());
+    }
+
+    /**
+     * Test the process when the relative url reuses the protocol.
+     */
+    @Test
+    public void processReuseProtocol() {
+        // MetaExpressions.
+        MetaExpression pageUrl = fromValue("https://xillio.nl/");
+        MetaExpression relativeUrl = fromValue("//example.com");
+
+        // Run.
+        MetaExpression result = this.process(construct, pageUrl, relativeUrl);
+
+        // Verify.
+        verify(urlUtilityService, times(1)).getProtocol(pageUrl.getStringValue());
+
+        // Assert.
+        Assert.assertEquals(result.getStringValue(), "https://example.com");
     }
 
     /**
@@ -94,23 +129,20 @@ public class AbsoluteURLConstructTest {
      */
     @Test(expectedExceptions = OperationFailedException.class, expectedExceptionsMessageRegExp = "Could not convert relative URL to absolute URL..*The page url parameter is invalid. Pass correct page url.")
     public void processFailureToConvert() {
-        // Mock
-        String pageUrlValue = "http://www.xillio.nl/calendar/";
-        MetaExpression pageUrl = mock(MetaExpression.class);
-        when(pageUrl.getStringValue()).thenReturn(pageUrlValue);
+        // MetaExpressions.
+        MetaExpression pageUrl = fromValue("http://www.xillio.nl/calendar/");
+        MetaExpression relativeUrl = fromValue("../");
 
-        String relativeUrlValue = "../";
-        MetaExpression relativeUrl = mock(MetaExpression.class);
-        when(relativeUrl.getStringValue()).thenReturn(relativeUrlValue);
-
+        // Mock.
         UrlUtilityService url = mock(UrlUtilityService.class);
-        when(url.tryConvert(pageUrlValue, relativeUrlValue)).thenReturn(null);
+        when(url.tryConvert(pageUrl.getStringValue(), relativeUrl.getStringValue())).thenReturn(null);
 
-        // Run
-        AbsoluteURLConstruct.process(pageUrl, relativeUrl, url);
+        // Run.
+        AbsoluteURLConstruct constructWithMock = new AbsoluteURLConstruct(url);
+        this.process(constructWithMock, pageUrl, relativeUrl);
 
-        // Verify
-        verify(url, times(1)).tryConvert(pageUrlValue, relativeUrlValue);
+        // Verify.
+        verify(url, times(1)).tryConvert(pageUrl.getStringValue(), relativeUrl.getStringValue());
     }
 
     /**
@@ -118,22 +150,19 @@ public class AbsoluteURLConstructTest {
      */
     @Test(expectedExceptions = InvalidUserInputException.class, expectedExceptionsMessageRegExp = "Illegal argument was handed to the matcher when trying to convert the URL..*")
     public void processErrorOnConvert() {
-        // Mock
-        String pageUrlValue = "http://www.xillio.nl/calendar/";
-        MetaExpression pageUrl = mock(MetaExpression.class);
-        when(pageUrl.getStringValue()).thenReturn(pageUrlValue);
+        // MetaExpressions.
+        MetaExpression pageUrl = fromValue("http://www.xillio.nl/calendar/");
+        MetaExpression relativeUrl = fromValue("../");
 
-        String relativeUrlValue = "../";
-        MetaExpression relativeUrl = mock(MetaExpression.class);
-        when(relativeUrl.getStringValue()).thenReturn(relativeUrlValue);
-
+        // Mock.
         UrlUtilityService url = mock(UrlUtilityService.class);
-        when(url.tryConvert(pageUrlValue, relativeUrlValue)).thenThrow(new IllegalArgumentException());
+        when(url.tryConvert(pageUrl.getStringValue(), relativeUrl.getStringValue())).thenThrow(new IllegalArgumentException());
 
-        // Run
-        AbsoluteURLConstruct.process(pageUrl, relativeUrl, url);
+        // Run.
+        AbsoluteURLConstruct constructWithMock = new AbsoluteURLConstruct(url);
+        this.process(constructWithMock, pageUrl, relativeUrl);
 
-        // Verify
-        verify(url, times(1)).tryConvert(pageUrlValue, relativeUrlValue);
+        // Verify.
+        verify(url, times(1)).tryConvert(pageUrl.getStringValue(), relativeUrl.getStringValue());
     }
 }
