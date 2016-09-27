@@ -39,12 +39,12 @@ import java.util.function.Supplier;
  * @since 3.5.0
  */
 public class ConfigurationFactory {
-    private final static String TEMPLATES_DIRECTORY = "templatesDirectory";
-    private final static String ENCODING = "encoding";
-    private final static String LOG_TEMPLATE_EXCEPTIONS = "logTemplateExceptions";
-    private final static String NO_CACHING = "noCaching";
-    private final static String STRONG_CACHE = "strongCache";
-    private final static String SOFT_CACHE = "softCache";
+    private static final String TEMPLATES_DIRECTORY = "templatesDirectory";
+    private static final String ENCODING = "encoding";
+    private static final String LOG_TEMPLATE_EXCEPTIONS = "logTemplateExceptions";
+    private static final String NO_CACHING = "noCaching";
+    private static final String STRONG_CACHE = "strongCache";
+    private static final String SOFT_CACHE = "softCache";
     private final FileResolver fileResolver;
 
     @Inject
