@@ -33,7 +33,7 @@ import java.util.List;
  * @author Zbynek Hochmann
  */
 @Singleton
-public class PhantomJSPool {
+public class PhantomJSPool implements AutoCloseable {
     private static final Logger LOGGER = Log.get();
 
     private final int maxPoolSize; // Maximum number of entities in pool (an entity is a PhantomJS process).
@@ -53,7 +53,7 @@ public class PhantomJSPool {
     public PhantomJSPool(final int maxPoolSize, XillThreadFactory xillThreadFactory) {
         this.maxPoolSize = maxPoolSize;
         // A hook disposing PhantomJS processes when the IDE stops
-        Runtime.getRuntime().addShutdownHook(new Thread(this::dispose));
+        Runtime.getRuntime().addShutdownHook(new Thread(this::close));
         // A Thread stopping PhantomJS processes when the XillEnvironment on the server is closed
         Thread disposeThread = xillThreadFactory.create(new Runnable() {
             @Override
@@ -64,7 +64,7 @@ public class PhantomJSPool {
                         wait();
                     }
                 } catch (InterruptedException e) {
-                    dispose();
+                    close();
                     Thread.currentThread().interrupt();
                 }
             }
@@ -136,7 +136,7 @@ public class PhantomJSPool {
      * Disposes entire PJS pool - i.e. all pool entities (~all PhantomJS
      * processes in the pool will be terminated)
      */
-    public void dispose() {
+    public void close() {
         try {
             poolEntities.forEach(PhantomJSPool.Entity::dispose);
             poolEntities.clear();
@@ -262,7 +262,7 @@ public class PhantomJSPool {
         }
 
         @Override
-        public void close() throws Exception {
+        public void close() {
             release();
         }
     }

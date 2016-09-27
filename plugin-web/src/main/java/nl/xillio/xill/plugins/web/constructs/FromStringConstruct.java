@@ -21,11 +21,6 @@ import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
-import nl.xillio.xill.plugins.web.PhantomJSConstruct;
-import nl.xillio.xill.plugins.web.data.OptionsFactory;
-import nl.xillio.xill.plugins.web.data.PhantomJSPool;
-import nl.xillio.xill.plugins.web.services.web.FileService;
-import nl.xillio.xill.plugins.web.services.web.WebService;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,37 +28,38 @@ import java.io.IOException;
 /**
  * It loads web page from a provided string (the string represents HTML code of a web page)
  */
-public class FromString extends PhantomJSConstruct {
+public class FromStringConstruct extends PhantomJSConstruct {
+
+
+    private final LoadPageConstruct loadpageConstruct;
+
     @Inject
-    private FileService fileService;
-    @Inject
-    private OptionsFactory optionsFactory;
-    @Inject
-    private PhantomJSPool pool;
+    public FromStringConstruct(LoadPageConstruct loadpageConstruct) {
+        this.loadpageConstruct = loadpageConstruct;
+    }
+
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                content -> process(content, optionsFactory, fileService, getWebService(), pool),
+                this::process,
                 new Argument("content", ATOMIC));
     }
 
     /**
-     * @param contentVar     input string variable (HTML code of a web page)
-     * @param optionsFactory The factory for creating options the {@link LoadPageConstruct} will be using.
-     * @param fileService    The service for files we're using.
-     * @param webService     The webservice the {@link LoadPageConstruct} will be using.
-     * @throws OperationFailedException if the string could not not be written to a file
+     * @param contentVar input string variable (HTML code of a web page)
      * @return PAGE variable
+     * @throws OperationFailedException if the string could not not be written to a file
      */
-    public static MetaExpression process(final MetaExpression contentVar, final OptionsFactory optionsFactory, final FileService fileService, final WebService webService, PhantomJSPool pool) {
+    private MetaExpression process(final MetaExpression contentVar) {
         String content = contentVar.getStringValue();
 
         try {
-            File htmlFile = fileService.createTempFile("ct_sel", ".html");
-            fileService.writeStringToFile(htmlFile.toPath(), content);
-            String uri = "file:///" + fileService.getAbsolutePath(htmlFile);
-            return LoadPageConstruct.process(fromValue(uri), NULL, optionsFactory, webService, pool);
+            File htmlFile = getFileService().createTempFile("ct_sel", ".html");
+            getFileService().writeStringToFile(htmlFile.toPath(), content);
+            String uri = "file:///" + getFileService().getAbsolutePath(htmlFile);
+            return loadpageConstruct.process(fromValue(uri), NULL);
+
         } catch (IOException e) {
             throw new OperationFailedException("write the string to a file.", "An IO error occurred.", e);
         }
