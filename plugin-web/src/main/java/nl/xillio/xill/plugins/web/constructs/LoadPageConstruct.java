@@ -39,7 +39,8 @@ public class LoadPageConstruct extends PhantomJSConstruct implements AutoCloseab
     @Inject
     private OptionsFactory optionsFactory;
 
-    private static final PhantomJSPool pool = new PhantomJSPool(10);
+    @Inject
+    private PhantomJSPool pool;
 
     static {
         Options.extractNativeBinary();
@@ -48,7 +49,7 @@ public class LoadPageConstruct extends PhantomJSConstruct implements AutoCloseab
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (url, options) -> process(url, options, optionsFactory, getWebService()),
+                (url, options) -> process(url, options, optionsFactory, getWebService(), pool),
                 new Argument("url", ATOMIC),
                 new Argument("options", NULL, OBJECT));
     }
@@ -61,7 +62,7 @@ public class LoadPageConstruct extends PhantomJSConstruct implements AutoCloseab
      * @throws OperationFailedException if the URL is invalid
      * @return PAGE variable
      */
-    public static MetaExpression process(final MetaExpression urlVar, final MetaExpression optionsVar, final OptionsFactory optionsFactory, final WebService webService) {
+    public static MetaExpression process(final MetaExpression urlVar, final MetaExpression optionsVar, final OptionsFactory optionsFactory, final WebService webService, PhantomJSPool pool) {
         String url = urlVar.getStringValue();
         Options options;
         PhantomJSPool.Entity entity = null;

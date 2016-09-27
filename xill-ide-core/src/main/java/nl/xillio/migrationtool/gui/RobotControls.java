@@ -306,7 +306,7 @@ public class RobotControls implements EventHandler<KeyEvent>, ErrorHandlingPolic
             if (exceptionList.size() == 1) { //exception in root robot
                 log.error(NO_DEV_MARKER, e.getMessage());
             } else { //exception in called robot
-                String message = String.join("\n\t", Lists.reverse(exceptionList.stream().map(f -> f.getMessage()).collect(Collectors.toList())));
+                String message = String.join("\n\t", Lists.reverse(exceptionList.stream().filter(p -> p.getMessage() != null).map(f -> f.getMessage()).collect(Collectors.toList())));
                 log.error(NO_DEV_MARKER, message);
             }
         } else if (root == null) {
