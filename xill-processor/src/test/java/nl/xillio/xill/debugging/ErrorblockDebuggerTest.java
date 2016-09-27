@@ -122,6 +122,9 @@ public class ErrorblockDebuggerTest {
         assertEquals(shouldStopResult, expected);
     }
 
+    /**
+     * Test {@link ErrorBlockDebugger#getErroredInstruction()} when the stack trace is empty
+     */
     @Test
     public void testGetErroredInstructionEmptyStackTrace() {
         // Mock
