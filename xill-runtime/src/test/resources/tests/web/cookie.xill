@@ -35,7 +35,7 @@ Assert.isNull(cookiesBefore[cookieName]);
 var testCookie = {
     "name" : cookieName,
     "path" : "/",
-    "domain" : "xillio.com",
+    "domain" : ".xillio.com",
     "value" : cookieValue,
     "expires" : Date.change(Date.now(), { "YEARS" : 20 })
 };
