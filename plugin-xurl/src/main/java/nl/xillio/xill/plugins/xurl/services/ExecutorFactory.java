@@ -32,16 +32,29 @@ public class ExecutorFactory {
 
     public Executor buildExecutor(Options options) {
 
-        HttpClientBuilder builder = HttpClients.custom();
+        if(options.isInsecure() && !options.isEnableRedirect()){
+            return Executor.newInstance(
+                    HttpClients.custom()
+                            .setSSLHostnameVerifier(new NoopHostnameVerifier()).disableRedirectHandling()
+                            .build()
+            );
+        }
 
         if (options.isInsecure()) {
-            builder.setSSLHostnameVerifier(new NoopHostnameVerifier());
+            return Executor.newInstance(
+                    HttpClients.custom()
+                            .setSSLHostnameVerifier(new NoopHostnameVerifier())
+                            .build()
+            );
         }
 
-        if (!options.isEnableRedirect()) {
-            builder.disableRedirectHandling();
+        if(!options.isEnableRedirect()){
+            return Executor.newInstance(
+                    HttpClients.custom()
+                            .disableRedirectHandling()
+                            .build()
+            );
         }
-
-        return Executor.newInstance(builder.build());
+        return Executor.newInstance();
     }
 }
