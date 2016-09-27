@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.collection.services.sort;
 
 import com.google.inject.Singleton;
-
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -35,7 +34,7 @@ public class SortImpl implements Sort {
         return asSorted(input, recursive, onKeys, sorter, new IdentityHashMap<>());
     }
 
-    public static Object asSorted(final Object input, final boolean recursive, final boolean onKeys, final Sorter sorter, final Map<Object, Object> results) {
+    static Object asSorted(final Object input, final boolean recursive, final boolean onKeys, final Sorter sorter, final Map<Object, Object> results) {
         if (results.containsKey(input)) {
             return results.get(input);
         }
@@ -49,7 +48,7 @@ public class SortImpl implements Sort {
         return input;
     }
 
-    public static Object asSortedList(final Object input, final boolean recursive, final boolean onKeys, Sorter sorter, final Map<Object, Object> results){
+    static Object asSortedList(final Object input, final boolean recursive, final boolean onKeys, Sorter sorter, final Map<Object, Object> results){
         @SuppressWarnings("unchecked")
         List<?> list = (List<?>) input;
         List<Object> sorted = list.stream().sorted((a,b) -> {
@@ -70,7 +69,7 @@ public class SortImpl implements Sort {
         return sorted;
     }
 
-    public static Object asSortedMap(final Object input, final boolean recursive, final boolean onKeys, Sorter sorter, final Map<Object, Object> results){
+    static Object asSortedMap(final Object input, final boolean recursive, final boolean onKeys, Sorter sorter, final Map<Object, Object> results){
         // Sort the map by extracting single entries and sorting them either by key or
         @SuppressWarnings("unchecked")
         Entry<String, Object>[] sortedEntries = ((Map<String, Object>) input)
@@ -91,9 +90,8 @@ public class SortImpl implements Sort {
 
         // Sort recursive
         if (recursive) {
-            for (String key : map.keySet()) {
-                Object child = map.get(key);
-                map.put(key, asSorted(child, true, onKeys, sorter, results));
+            for (Map.Entry<String,Object> entry : map.entrySet()) {
+                map.put(entry.getKey(), asSorted(entry.getValue(), true, onKeys, sorter, results));
             }
         }
 
@@ -101,82 +99,85 @@ public class SortImpl implements Sort {
     }
 
     //returns the priority of the type of the input.
-    public static int getPriorityIndex(final Object object) {
+    static int getPriorityIndex(final Object object) {
 
+        int index;
+        if (object instanceof List) {
+            index = 0;
+        }
+        else if (object instanceof Map) {
+            index = 1;
+        }
+        else if (object instanceof Boolean) {
+            index = 2;
+        }
+        else if (object instanceof Number) {
+            index = 3;
+        }
+        else if (object != null) {
+            index = 4;
+        }
+        else{
+            index = 5;
+        }
 
-        if (object instanceof List)
-            return 0;
-        if (object instanceof Map)
-            return 1;
-        if (object instanceof Boolean)
-            return 2;
-        if (object instanceof Number)
-            return 3;
-        if (object != null)
-            return 4;
-
-        return 5;
+        return index;
     }
 
-    public static class Sorter implements Comparator<Object> {
-        public static final Sorter NORMAL = new Sorter(false);
-        public static final Sorter REVERSE = new Sorter(true);
-        private final boolean reverse;
+    static class Sorter implements Comparator<Object> {
+        static final Sorter NORMAL = new Sorter(false);
+        static final Sorter REVERSE = new Sorter(true);
+        private final boolean reverseOrder;
 
         private Sorter(final boolean reverseOrder) {
-            reverse = reverseOrder;
+            this.reverseOrder = reverseOrder;
         }
 
         @Override
-        @SuppressWarnings({"unchecked", "squid:S1166"})
         public int compare(final Object objectA, final Object objectB) {
             int priorityA = getPriorityIndex(objectA);
             int priorityB = getPriorityIndex(objectB);
-            int result = 0;
+            int result;
             if (priorityA != priorityB) {
-                return reverse ? priorityB - priorityA : priorityA - priorityB;
+                return reverseOrder ? priorityB - priorityA : priorityA - priorityB;
+            } else if (objectA == objectB || objectA.equals(objectB)) {
+                return 0;
             }
 
-            // These objects are of the same type.
-            try {
-                if (objectA.equals(objectB)) {
-                    result = 0;
-                }
-            } catch (NullPointerException e) {
-                result = 0;
-            }
+            result = getSortResult(objectA, objectB);
 
-            if (objectA instanceof Collection) {
-                result = ((Collection<?>) objectA).size() - ((Collection<?>) objectB).size();
-            }
-
-            if (objectA instanceof Number) {
-                Number numberA = (Number) objectA;
-                Number numberB = (Number) objectB;
-
-                result = Double.compare(numberA.doubleValue(), numberB.doubleValue());
-            }
-            if (objectA instanceof Boolean) {
-                boolean booleanA = (boolean) objectA;
-                boolean booleanB = (boolean) objectB;
-                result = Boolean.compare(booleanA, booleanB);
-            }
-            if (objectA instanceof Entry) {
-                result = ((Entry<String, Object>) objectA).getValue().toString().compareTo(((Entry<String, Object>) objectB).getValue().toString());
-            }
-            if (objectA instanceof String) {
-                result = objectA.toString().compareTo(objectB.toString());
-            }
-
-            if (reverse) {
+            if (reverseOrder) {
                 result = -result;
             }
 
             return result;
         }
 
+        @SuppressWarnings("unchecked")
+        private int getSortResult(Object objectA, Object objectB) {
+            int result = 0;
+
+            if (objectA instanceof Collection) {
+                result = ((Collection<?>) objectA).size() - ((Collection<?>) objectB).size();
+            } else if (objectA instanceof Number) {
+                Number numberA = (Number) objectA;
+                Number numberB = (Number) objectB;
+                result = Double.compare(numberA.doubleValue(), numberB.doubleValue());
+            } else if (objectA instanceof Boolean) {
+                boolean booleanA = (boolean) objectA;
+                boolean booleanB = (boolean) objectB;
+                result = Boolean.compare(booleanA, booleanB);
+            } else if (objectA instanceof Entry) {
+                result = ((Entry<String, Object>) objectA).getValue().toString().compareTo(((Entry<String, Object>) objectB).getValue().toString());
+            } else if (objectA instanceof String) {
+                result = objectA.toString().compareTo(objectB.toString());
+            }
+
+            return result;
+        }
+
         public boolean isReverse(){
-            return reverse;
+            return reverseOrder;
         }
 
     }
