@@ -67,3 +67,4 @@ All notable changes to this project will be documented in this file.
 * Expression is evaluated even after an exception happens [CTC-1721]
 * String.absoluteUrl does not allow reusing protocol [CTC-1792]
 * MySQL Error: The server time zone value 'W. Europe Daylight Time' is unrecognized or represents more than one time zone. [CTC-1796]
+* XURL login via cookie authentication fails [CTC-1804]
