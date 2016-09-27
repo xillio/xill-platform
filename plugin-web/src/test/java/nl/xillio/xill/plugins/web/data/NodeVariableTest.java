@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.plugins.web.services.web;
+package nl.xillio.xill.plugins.web.data;
 
 import nl.xillio.xill.plugins.web.data.NodeVariable;
 import org.openqa.selenium.WebElement;
