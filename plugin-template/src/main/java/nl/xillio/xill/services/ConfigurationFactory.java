@@ -17,16 +17,12 @@ package nl.xillio.xill.services;
 
 import freemarker.cache.NullCacheStorage;
 import freemarker.template.Configuration;
-import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
-import nl.xillio.xill.api.errors.OperationFailedException;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -34,20 +30,19 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * This class is the main implementation of the {@link TemplateService}
+ * This class is responsible for creating a configuration
  *
  * @author Pieter Soels
  * @since 3.5.0
  */
-class TemplateServiceImpl implements TemplateService {
+public class ConfigurationFactory {
     private final static String ENCODING = "encoding";
     private final static String LOG_TEMPLATE_EXCEPTIONS = "logTemplateExceptions";
     private final static String NO_CACHING = "noCaching";
     private final static String STRONG_CACHE = "strongCache";
     private final static String SOFT_CACHE = "softCache";
 
-    @Override
-    public Configuration getDefaultConfiguration(Path templatePath) {
+    private Configuration getDefaultConfiguration(Path templatePath) {
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_23);
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
@@ -67,7 +62,13 @@ class TemplateServiceImpl implements TemplateService {
         return cfg;
     }
 
-    @Override
+    /**
+     * Parse the configuration by the options given and return the template engines' configuration
+     *
+     * @param templatePath  A path to the folder containing the templates
+     * @param options       The options that should be parsed for the configuration
+     * @return The configuration for the template engine
+     */
     public Configuration parseConfiguration(Path templatePath, Map<String, MetaExpression> options) {
         Configuration cfg = getDefaultConfiguration(templatePath);
 
@@ -117,20 +118,5 @@ class TemplateServiceImpl implements TemplateService {
 
     private Optional<String> get(Map<String, MetaExpression> data, String key) {
         return Optional.ofNullable(data.get(key)).map(MetaExpression::getStringValue);
-    }
-
-    @Override
-    public void generate(String templateName, OutputStream output, Object model, Configuration cfg) {
-        OutputStreamWriter writer = new OutputStreamWriter(output);
-
-        try {
-            Template template = cfg.getTemplate(templateName);
-            template.process(model, writer);
-
-            // Flush the buffer of the writer and do not close it since the underlying stream would be closed as well
-            writer.flush();
-        } catch (IOException | TemplateException e) {
-            throw new OperationFailedException("processing of template.", e.getMessage(), e);
-        }
     }
 }

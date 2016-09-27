@@ -24,8 +24,7 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.data.EngineMetadata;
-import nl.xillio.xill.services.TemplateService;
-import nl.xillio.xill.services.files.FileResolver;
+import nl.xillio.xill.services.TemplateProcessor;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -38,42 +37,39 @@ import java.io.OutputStream;
  */
 public class ProcessConstruct extends Construct {
 
-    private final TemplateService templateService;
-    private final FileResolver fileResolver;
+    private final TemplateProcessor templateProcessor;
 
     @Inject
-    public ProcessConstruct(TemplateService templateService, FileResolver fileResolver) {
-        this.templateService = templateService;
-        this.fileResolver = fileResolver;
+    public ProcessConstruct(TemplateProcessor templateProcessor) {
+        this.templateProcessor = templateProcessor;
     }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (templateName, output, model, configuration)
-                        -> process(templateName, output, model, configuration, context),
+                this::process,
                 new Argument("templateName", ATOMIC),
                 new Argument("output", ATOMIC),
                 new Argument("model", OBJECT),
-                new Argument("configuration", ATOMIC)
+                new Argument("engine", ATOMIC)
         );
     }
 
-    private MetaExpression process(MetaExpression templateName, MetaExpression output, MetaExpression model, MetaExpression configuration, ConstructContext context) {
-        Configuration cfg = configuration.getMeta(EngineMetadata.class).getConfiguration();
+    private MetaExpression process(MetaExpression templateName, MetaExpression output, MetaExpression model, MetaExpression engine) {
+        Configuration configuration = engine.getMeta(EngineMetadata.class).getConfiguration();
         OutputStream stream;
 
         try {
             stream = output.getBinaryValue().getOutputStream();
         } catch (IOException e) {
-            throw new OperationFailedException("create a stream.", e.getMessage(), e);
+            throw new OperationFailedException("create a stream.", e.getMessage(), "Did you provide the template engine to this construct?", e);
         }
 
-        templateService.generate(
+        templateProcessor.generate(
                 templateName.getStringValue(),
                 stream,
                 extractValue(model),
-                cfg);
+                configuration);
 
         return NULL;
     }

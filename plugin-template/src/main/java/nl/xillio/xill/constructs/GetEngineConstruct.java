@@ -23,7 +23,7 @@ import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.data.EngineMetadata;
-import nl.xillio.xill.services.TemplateService;
+import nl.xillio.xill.services.ConfigurationFactory;
 import nl.xillio.xill.services.files.FileResolver;
 
 import java.nio.file.Path;
@@ -36,12 +36,12 @@ import java.util.Map;
  * @since 3.5.0
  */
 public class GetEngineConstruct extends Construct {
-    private final TemplateService templateService;
+    private final ConfigurationFactory configurationFactory;
     private final FileResolver fileResolver;
 
     @Inject
-    public GetEngineConstruct(TemplateService templateService, FileResolver fileResolver) {
-        this.templateService = templateService;
+    public GetEngineConstruct(ConfigurationFactory configurationFactory, FileResolver fileResolver) {
+        this.configurationFactory = configurationFactory;
         this.fileResolver = fileResolver;
     }
 
@@ -56,7 +56,7 @@ public class GetEngineConstruct extends Construct {
     private MetaExpression process(MetaExpression options, ConstructContext context) {
         MetaExpression templateDir = getTemplateDir(options, context);
         Path path = fileResolver.buildPath(context, templateDir);
-        Configuration cfg = templateService.parseConfiguration(path, options.getValue());
+        Configuration cfg = configurationFactory.parseConfiguration(path, options.getValue());
 
         MetaExpression result = fromValue("[TemplateEngine: " + path + "]");
         EngineMetadata configuration = new EngineMetadata(cfg);
