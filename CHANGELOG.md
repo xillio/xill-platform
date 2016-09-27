@@ -1,6 +1,11 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.5.0] - unreleased
+
+### Fix
+* On server threads are not closed when tasks finishes [XSVR-139]
+
 ## [3.4.0] - unreleased
 
 ### Add
@@ -60,3 +65,4 @@ All notable changes to this project will be documented in this file.
 * Auto-save does not work for non-robot files [CTC-1754]
 * HttpResponseException on upload of large project [CTC-1751]
 * Expression is evaluated even after an exception happens [CTC-1721]
+* String.absoluteUrl does not allow reusing protocol [CTC-1792]
