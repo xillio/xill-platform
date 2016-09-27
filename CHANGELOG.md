@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fix
 * On server threads are not closed when tasks finishes [XSVR-139]
+* Renaming of robot does not work properly on Linux [CTC-1787]
 
 ## [3.4.0] - unreleased
 
