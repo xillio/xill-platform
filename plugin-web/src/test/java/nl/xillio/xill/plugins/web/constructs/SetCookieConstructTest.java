@@ -15,7 +15,7 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.CookieFactory;
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link SetCookieConstruct}.
  */
-public class SetCookieConstructTest extends ExpressionBuilderHelper {
+public class SetCookieConstructTest extends TestUtils {
 
     /**
      * test the process with a list handed
@@ -41,24 +41,27 @@ public class SetCookieConstructTest extends ExpressionBuilderHelper {
     @Test
     public void testNormalObjectUsage() {
         // mock
+        SetCookieConstruct construct = new SetCookieConstruct();
         WebService webService = mock(WebService.class);
         CookieFactory factory = mock(CookieFactory.class);
 
+        construct.setWebService(webService);
+        construct.setCookieFactory(factory);
         // the page
         PageVariable pageVariable = mock(PageVariable.class);
-        MetaExpression page = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
         when(page.getMeta(PageVariable.class)).thenReturn(pageVariable);
 
         // the cookie
         LinkedHashMap<String, MetaExpression> cookieContent = new LinkedHashMap<>();
-        MetaExpression cookie = mock(MetaExpression.class);
-        MetaExpression cookieValue = mock(MetaExpression.class);
+        MetaExpression cookie = mockExpression(OBJECT);
+        MetaExpression cookieValue = mockExpression(ATOMIC);
         cookieContent.put("content", cookieValue);
         when(cookie.getType()).thenReturn(OBJECT);
         when(cookie.getValue()).thenReturn(cookieContent);
 
         // run
-        MetaExpression output = SetCookieConstruct.process(page, cookie, factory, webService);
+        MetaExpression output = process(construct, page, cookie);
 
         // verify
         verify(page, times(2)).getMeta(PageVariable.class);
@@ -76,13 +79,15 @@ public class SetCookieConstructTest extends ExpressionBuilderHelper {
     public void testNullPage() {
         // mock
         WebService webService = mock(WebService.class);
+        SetCookieConstruct construct = new SetCookieConstruct();
+        construct.setWebService(webService);
         CookieFactory factory = mock(CookieFactory.class);
-        MetaExpression page = mock(MetaExpression.class);
-        MetaExpression cookie = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
+        MetaExpression cookie = mockExpression(OBJECT);
         when(page.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = SetCookieConstruct.process(page, cookie, factory, webService);
+        MetaExpression output = process(construct, page, cookie);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -95,13 +100,15 @@ public class SetCookieConstructTest extends ExpressionBuilderHelper {
     public void testNullCookie() {
         // mock
         WebService webService = mock(WebService.class);
+        SetCookieConstruct construct = new SetCookieConstruct();
+        construct.setWebService(webService);
         CookieFactory factory = mock(CookieFactory.class);
-        MetaExpression page = mock(MetaExpression.class);
-        MetaExpression cookie = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
+        MetaExpression cookie = mockExpression(OBJECT);
         when(cookie.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = SetCookieConstruct.process(page, cookie, factory, webService);
+        MetaExpression output = process(construct, page, cookie);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -113,34 +120,37 @@ public class SetCookieConstructTest extends ExpressionBuilderHelper {
     @Test
     public void testNormalListUsage() {
         // mock
+        SetCookieConstruct construct = new SetCookieConstruct();
         WebService webService = mock(WebService.class);
         CookieFactory factory = mock(CookieFactory.class);
 
+        construct.setWebService(webService);
+        construct.setCookieFactory(factory);
         // the page
         PageVariable pageVariable = mock(PageVariable.class);
-        MetaExpression page = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
         when(page.getMeta(PageVariable.class)).thenReturn(pageVariable);
 
         // the cookies
         List<MetaExpression> cookiesContent = new ArrayList<>();
-        MetaExpression cookies = mock(MetaExpression.class);
+        MetaExpression cookies = mockExpression(LIST);
         when(cookies.getType()).thenReturn(LIST);
         when(cookies.getValue()).thenReturn(cookiesContent);
 
         // the first cookie
         LinkedHashMap<String, MetaExpression> cookieContent = new LinkedHashMap<>();
-        MetaExpression firstCookie = mock(MetaExpression.class);
+        MetaExpression firstCookie = mockExpression(OBJECT);
         cookieContent.put("content", firstCookie);
         when(firstCookie.getType()).thenReturn(OBJECT);
         when(firstCookie.getValue()).thenReturn(cookieContent);
         cookiesContent.add(firstCookie);
 
         // run
-        MetaExpression output = SetCookieConstruct.process(page, cookies, factory, webService);
+        MetaExpression output = process(construct, page, cookies);
 
         // verify
         verify(page, times(2)).getMeta(PageVariable.class);
-        verify(cookies, times(1)).getType();
+        verify(cookies, times(2)).getType();
         verify(cookies, times(1)).getValue();
         verify(factory, times(1)).setCookie(pageVariable, cookieContent, webService);
 
@@ -155,29 +165,31 @@ public class SetCookieConstructTest extends ExpressionBuilderHelper {
     public void testListWithNoObject() {
         // mock
         WebService webService = mock(WebService.class);
+        SetCookieConstruct construct = new SetCookieConstruct();
+        construct.setWebService(webService);
         CookieFactory factory = mock(CookieFactory.class);
 
         // the page
         PageVariable pageVariable = mock(PageVariable.class);
-        MetaExpression page = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
         when(page.getMeta(PageVariable.class)).thenReturn(pageVariable);
 
         // the cookies
         List<MetaExpression> cookiesContent = new ArrayList<>();
-        MetaExpression cookies = mock(MetaExpression.class);
+        MetaExpression cookies = mockExpression(LIST);
         when(cookies.getType()).thenReturn(LIST);
         when(cookies.getValue()).thenReturn(cookiesContent);
 
         // the first cookie
         LinkedHashMap<String, MetaExpression> cookieContent = new LinkedHashMap<>();
-        MetaExpression firstCookie = mock(MetaExpression.class);
+        MetaExpression firstCookie = mockExpression(LIST);
         cookieContent.put("content", firstCookie);
         when(firstCookie.getType()).thenReturn(LIST);
         when(firstCookie.getValue()).thenReturn(cookieContent);
         cookiesContent.add(firstCookie);
 
         // run
-        SetCookieConstruct.process(page, cookies, factory, webService);
+        process(construct, page, cookies);
     }
 
     /**
@@ -187,13 +199,15 @@ public class SetCookieConstructTest extends ExpressionBuilderHelper {
     public void testNoPageGiven() {
         // mock
         WebService webService = mock(WebService.class);
+        SetCookieConstruct construct = new SetCookieConstruct();
+        construct.setWebService(webService);
         CookieFactory factory = mock(CookieFactory.class);
 
         // the page
-        MetaExpression page = mock(MetaExpression.class);
-        MetaExpression cookies = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
+        MetaExpression cookies = mockExpression(OBJECT);
 
         // run
-        SetCookieConstruct.process(page, cookies, factory, webService);
+        process(construct, page, cookies);
     }
 }
