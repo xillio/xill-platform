@@ -50,7 +50,7 @@ public class TemplateProcessor {
             // Flush the buffer of the writer and do not close it since the underlying stream would be closed as well
             writer.flush();
         } catch (IOException | TemplateException e) {
-            throw new OperationFailedException("processing of template.", e.getMessage(), e);
+            throw new OperationFailedException("process template.", e.getMessage(), e);
         }
     }
 }

@@ -21,13 +21,61 @@
 This construct parses given options and returns the engine for the template plugin.
     </description>
     <examples>
-        <example title="Usage">
-            <header>Get the default configuration</header>
+        <example title="Get the default engine">
+            <header>
+                This returns an engine with the templates directory pointed to the project root.
+            </header>
             <code>
                 use Template;
 
-                var templateDir = "C:/templates";
-                var config = Template.getEngine(templateDir);
+                var config = Template.getEngine();
+            </code>
+        </example>
+        <example title="Specify templates directory">
+            <header>
+                This returns a default engine with the templates directory specified to the given input.
+            </header>
+            <code>
+                use Template;
+
+                var options = {
+                    "templatesDirectory" : "C:/templates"
+                };
+
+                var config = Template.getEngine(options);
+            </code>
+        </example>
+        <example title="Do not cache templates">
+            <header>
+                This returns a template engine that does not cache the used templates.
+                This does decrease performance, but also its memory usage.
+            </header>
+            <code>
+                use Template;
+
+                var options = {
+                    "noCache" : true
+                };
+
+                var config = Template.getEngine(options);
+            </code>
+        </example>
+        <example title="Specify more options">
+            <header>
+                This returns an engine with given options.
+            </header>
+            <code>
+                use Template;
+
+                var options = {
+                    "templatesDirectory" : "C:/templates",
+                    "strongCache" : 10,
+                    "softCache" : 250,
+                    "encoding" : "UNICODE",
+                    "logTemplateExceptions" : false
+                };
+
+                var config = Template.getEngine(options);
             </code>
         </example>
     </examples>
