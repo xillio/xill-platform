@@ -24,7 +24,7 @@
     <description>A binary distribution of the Xill IDE</description>
 
     <groupId>nl.xillio.xill</groupId>
-    <version>3.4.0-RC1</version><!-- Xill Platform Version --><!--Keep these comments for the version-change script!-->
+    <version>3.4.0-RC2</version><!-- Xill Platform Version --><!--Keep these comments for the version-change script!-->
     <packaging>pom</packaging>
     <inceptionYear>2014</inceptionYear>
     <artifactId>xill-ide-dist</artifactId>
