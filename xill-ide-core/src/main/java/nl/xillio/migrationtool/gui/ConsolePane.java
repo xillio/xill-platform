@@ -21,11 +21,9 @@ import com.sun.javafx.scene.control.skin.VirtualFlow;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -61,7 +59,7 @@ import static nl.xillio.xill.util.HotkeysHandler.Hotkeys.*;
 /**
  * This pane displays the console log stored in elasticsearch
  */
-public class ConsolePane extends AnchorPane implements Searchable, EventHandler<Event>, RobotTabComponent {
+public class ConsolePane extends AnchorPane implements Searchable, EventHandler<KeyEvent>, RobotTabComponent {
     private static final Logger LOGGER = Log.get();
     private static final int LOG_CACHE_SIZE = 500; // We need a sufficiently large number so that the UI thread can keep up, but not so big that it becomes too heavy on memory.
 
@@ -154,16 +152,6 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
 
         // Add event handlers.
         this.addEventHandler(KeyEvent.KEY_PRESSED, this);
-        this.addEventFilter(ScrollEvent.ANY, this);
-        addScrollBarEventHandler();
-    }
-
-    private void addScrollBarEventHandler() {
-        for (Node node : this.lookupAll(".scroll-bar")) {
-            if (node instanceof ScrollBar && ((ScrollBar) node).getOrientation() == Orientation.VERTICAL) {
-                ((ScrollBar) node).valueProperty().addListener(obs -> updateScrollMode());
-            }
-        }
     }
 
     private static void performSelection(final TableView<LogEntry> table, final int index) {
@@ -221,38 +209,32 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
     }
 
     @Override
-    public void handle(final Event event) {
-        if (event instanceof KeyEvent) {
-            KeyEvent keyEvent = (KeyEvent) event;
+    public void handle(final KeyEvent keyEvent) {
+        // Copy
+        if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(COPY)).match(keyEvent) && tblConsoleOut.isFocused()) {
+            // Get all selected entries
+            StringBuilder text = new StringBuilder();
+            ObservableList<LogEntry> selected = tblConsoleOut.getSelectionModel().getSelectedItems();
 
-            // Copy
-            if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(COPY)).match(keyEvent) && tblConsoleOut.isFocused()) {
-                // Get all selected entries
-                StringBuilder text = new StringBuilder();
-                ObservableList<LogEntry> selected = tblConsoleOut.getSelectionModel().getSelectedItems();
+            // Append the text from all entries
+            selected.forEach(entry -> text.append(entry.getLine()).append('\n'));
 
-                // Append the text from all entries
-                selected.forEach(entry -> text.append(entry.getLine()).append('\n'));
+            // Set the clipboard content
+            final ClipboardContent content = new ClipboardContent();
+            content.putString(text.toString());
+            Clipboard.getSystemClipboard().setContent(content);
 
-                // Set the clipboard content
-                final ClipboardContent content = new ClipboardContent();
-                content.putString(text.toString());
-                Clipboard.getSystemClipboard().setContent(content);
-
-                keyEvent.consume();
-            }
-            // Clear
-            else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(CLEARCONSOLE)).match(keyEvent)) {
-                clear();
-                keyEvent.consume();
-            }
-            // Search
-            else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(FIND)).match(keyEvent)) {
-                apnConsoleSearchBar.open(1);
-                keyEvent.consume();
-            }
-        } else if (event instanceof ScrollEvent) {
-            updateScrollMode();
+            keyEvent.consume();
+        }
+        // Clear
+        else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(CLEARCONSOLE)).match(keyEvent)) {
+            clear();
+            keyEvent.consume();
+        }
+        // Search
+        else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(FIND)).match(keyEvent)) {
+            apnConsoleSearchBar.open(1);
+            keyEvent.consume();
         }
     }
 
@@ -285,6 +267,9 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
     private void updateLog() {
         if (masterLog != null && !isUpdating) {
             isUpdating = true;
+
+            // Update the scroll mode.
+            updateScrollMode();
 
             Thread thread = new Thread(() -> {
                 // Short delay to prevent flooding
@@ -446,7 +431,7 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
         return tab.getProcessor().getDebugger();
     }
 
-    public enum Scroll {
+    private enum Scroll {
         NONE, END
     }
 
@@ -570,14 +555,14 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
     private int[] getVisibleRange(TableView table) {
         TableViewSkin<?> skin = (TableViewSkin) table.getSkin();
         if (skin == null) {
-            return new int[] {0, 0};
+            return new int[]{0, 0};
         }
 
         VirtualFlow<?> flow = (VirtualFlow) skin.getChildren().get(1);
         if (flow != null && flow.getFirstVisibleCellWithinViewPort() != null && flow.getLastVisibleCellWithinViewPort() != null) {
-            return new int[] {flow.getFirstVisibleCellWithinViewPort().getIndex(), flow.getLastVisibleCellWithinViewPort().getIndex()};
+            return new int[]{flow.getFirstVisibleCellWithinViewPort().getIndex(), flow.getLastVisibleCellWithinViewPort().getIndex()};
         } else {
-            return new int[] {0, 0};
+            return new int[]{0, 0};
         }
     }
 }
