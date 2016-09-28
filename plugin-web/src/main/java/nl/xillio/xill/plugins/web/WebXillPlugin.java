@@ -15,11 +15,33 @@
  */
 package nl.xillio.xill.plugins.web;
 
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import nl.xillio.plugins.XillPlugin;
+import nl.xillio.xill.api.XillThreadFactory;
+import nl.xillio.xill.plugins.web.data.Options;
+import nl.xillio.xill.plugins.web.data.PhantomJSPool;
 
 /**
  * This package includes all Selenium constructs
  */
 public class WebXillPlugin extends XillPlugin {
+    private PhantomJSPool phantomJSPool;
 
+    public WebXillPlugin() {
+        Options.extractNativeBinary();
+    }
+
+    @Override
+    public void close() throws Exception {
+        phantomJSPool.close();
+        super.close();
+    }
+
+    @Singleton
+    @Provides
+    public PhantomJSPool providesPhantomJSPool(XillThreadFactory xillThreadFactory) {
+        phantomJSPool = new PhantomJSPool(xillThreadFactory);
+        return phantomJSPool;
+    }
 }
