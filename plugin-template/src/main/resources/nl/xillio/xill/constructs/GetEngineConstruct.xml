@@ -20,15 +20,36 @@
     <description>
 This construct parses given options and returns the engine for the template plugin.
 
+This construct uses a third-party library named FreeMarker to process the templates. For more information please
+check their [website](http://freemarker.org/docs/index.html)
+
 The options object is optional which results in using the default engine which is build up with the following options:
 
         var options = {
-            "templatesDirectory" : ".", // Project root
-            "encoding" : "UTF-8",
-            "strongCache" : 0,
-            "softCache" : 2147483647, // Max integer
-            "logTemplateExceptions" : true
+            "templatesDirectory" :      ".",        // Project root
+            "encoding" :                "UTF-8",
+            "noCaching" :               false,
+            "strongCache" :             0,
+            "softCache" :               2147483647, // Max integer
+            "logTemplateExceptions" :   true
         };
+
+## Options
+
+The engine could be configured using the following options:
+
+| Option               | Values                                                                          | Description                                                                                                |
+|----------------------|---------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| templatesDirectory   | An ATOMIC containing a relative path from the project root or an absolute path. | The directory that contains all the templates that will be used with this engine.                          |
+| encoding             | An ATOMIC containing a string.                                                  | This sets the encoding for the template that will be provided in the process-construct.                    |
+| noCaching            | An ATOMIC containing a boolean.                                                 | Set this to true to cache no templates at all (decreased performance and less memory usage).               |
+| strongCache          | An ATOMIC containing a number.                                                  | The amount of templates to hold a hard reference to so it will not be garbage collected.                   |
+| softCache            | An ATOMIC containing a number.                                                  | The amount of templates to hold a soft reference to so it will be garbage collected when memory is needed. |
+
+`strongCache` and `softCache` could be combined. The engine will then place the most used templates in the `strongCache`.
+When `noCaching` is set, `strongCache` and `softCache` will have no meaning for the engine.
+
+When encountering charset or encoding issues please read the [FreeMarker documentation](http://freemarker.org/docs/pgui_misc_charset.html) on this.
 
     </description>
     <examples>
@@ -65,7 +86,7 @@ The options object is optional which results in using the default engine which i
                 use Template;
 
                 var options = {
-                    "noCache" : true
+                    "noCaching" : true
                 };
 
                 var config = Template.getEngine(options);
@@ -82,8 +103,7 @@ The options object is optional which results in using the default engine which i
                     "templatesDirectory" : "C:/templates",
                     "strongCache" : 10,
                     "softCache" : 250,
-                    "encoding" : "UNICODE",
-                    "logTemplateExceptions" : false
+                    "encoding" : "UNICODE"
                 };
 
                 var config = Template.getEngine(options);

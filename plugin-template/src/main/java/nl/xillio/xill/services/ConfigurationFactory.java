@@ -41,7 +41,6 @@ import java.util.function.Supplier;
 public class ConfigurationFactory {
     private static final String TEMPLATES_DIRECTORY = "templatesDirectory";
     private static final String ENCODING = "encoding";
-    private static final String LOG_TEMPLATE_EXCEPTIONS = "logTemplateExceptions";
     private static final String NO_CACHING = "noCaching";
     private static final String STRONG_CACHE = "strongCache";
     private static final String SOFT_CACHE = "softCache";
@@ -68,9 +67,6 @@ public class ConfigurationFactory {
 
         if (options.containsKey(ENCODING)) {
             cfg.setDefaultEncoding(options.get(ENCODING).getStringValue());
-        }
-        if (options.containsKey(LOG_TEMPLATE_EXCEPTIONS)) {
-            cfg.setLogTemplateExceptions(options.get(LOG_TEMPLATE_EXCEPTIONS).getBooleanValue());
         }
 
         if (options.containsKey(NO_CACHING) && options.get(NO_CACHING).getBooleanValue()) {
