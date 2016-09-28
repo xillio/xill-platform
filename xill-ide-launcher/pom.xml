@@ -27,7 +27,7 @@
     <parent>
         <groupId>nl.xillio.xill</groupId>
         <artifactId>xill-parent</artifactId>
-        <version>3.04.00-SNAPSHOT</version>
+        <version>3.4.0-SNAPSHOT</version>
         <relativePath>../xill-parent</relativePath>
     </parent>
 
@@ -53,6 +53,10 @@
         <dependency>
             <groupId>org.pegdown</groupId>
             <artifactId>pegdown</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
         </dependency>
     </dependencies>
 

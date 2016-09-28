@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.plugins.database.constructs;
 
+import com.google.inject.Inject;
+import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.construct.Argument;
@@ -35,7 +37,13 @@ import java.sql.SQLException;
  * @author Geert Konijnendijk
  * @author Sander Visser
  */
+@Deprecated
 public class RawQueryConstruct extends BaseDatabaseConstruct {
+
+    @Inject
+    public RawQueryConstruct(XillThreadFactory xillThreadFactory) {
+        super(xillThreadFactory);
+    }
 
     @Override
     public ConstructProcessor doPrepareProcess(final ConstructContext context) {

@@ -24,6 +24,9 @@
         </Console>
         <Console name="stderr" target="SYSTEM_ERR">
             <PatternLayout pattern="%d{ISO8601} %p\t- (%F:%L) %m%n"/>
+            <Filters>
+                <MarkerFilter marker="NO_DEV" onMatch="DENY" onMismatch="ACCEPT"/>
+            </Filters>
         </Console>
     </Appenders>
     <Loggers>

@@ -38,7 +38,7 @@ public class ExecutorFactory {
             builder.setSSLHostnameVerifier(new NoopHostnameVerifier());
         }
 
-        if (options.isDisableRedirect()) {
+        if (!options.isEnableRedirect()) {
             builder.disableRedirectHandling();
         }
 

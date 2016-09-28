@@ -1,0 +1,47 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+ * Specification: setting a cookie to a loaded web page, fetchting the cookie and check it's value
+ * Output: an object containing the cookie that was set
+ */
+
+use Assert, Date, Web, System;
+
+var cookieName = "CTC1801-cookie";
+var cookieValue = "This is the cookie value for " :: cookieName;
+
+var page = Web.loadPage("http://www.xillio.com");
+var cookiesBefore = Web.pageInfo(page).cookies;
+if (cookiesBefore[cookieName] != null) {
+    Web.removeCookie(page, cookieName);
+}
+cookiesBefore = Web.pageInfo(page).cookies;
+
+Assert.isNull(cookiesBefore[cookieName]);
+
+var testCookie = {
+    "name" : cookieName,
+    "path" : "/",
+    "domain" : ".xillio.com",
+    "value" : cookieValue,
+    "expires" : Date.change(Date.now(), { "YEARS" : 20 })
+};
+
+var res = Web.setCookie(page, testCookie);
+var cookiesAfter = Web.pageInfo(page).cookies;
+
+Assert.equal(System.typeOf(cookiesAfter[cookieName]), "OBJECT");
+Assert.equal(cookiesAfter[cookieName].value, cookieValue);

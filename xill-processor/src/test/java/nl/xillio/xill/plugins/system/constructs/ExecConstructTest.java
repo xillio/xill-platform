@@ -63,10 +63,10 @@ public class ExecConstructTest extends TestUtils {
         @SuppressWarnings("unchecked")
         Map<String, MetaExpression> value = (Map<String, MetaExpression>) result.getValue();
 
-        assertEquals(value.get("output").toString(), "[\"\\u0000\"]");
-        assertEquals(value.get("output").getType(), LIST);
-        assertEquals(value.get("errors").toString(), "[\"\\u0000\\u0000\"]");
-        assertEquals(value.get("errors").getType(), LIST);
+        assertEquals(value.get("output").toString(), "\"\\u0000\"");
+        assertEquals(value.get("output").getType(), ATOMIC);
+        assertEquals(value.get("errors").toString(), "\"\\u0000\\u0000\"");
+        assertEquals(value.get("errors").getType(), ATOMIC);
         assertNotNull(value.get("runtime"));
         assertEquals(value.get("runtime").getType(), ATOMIC);
         assertEquals(value.get("exitCode").getNumberValue(), 0);
@@ -103,10 +103,10 @@ public class ExecConstructTest extends TestUtils {
         @SuppressWarnings("unchecked")
         Map<String, MetaExpression> value = (Map<String, MetaExpression>) result.getValue();
 
-        assertEquals(value.get("output").toString(), "[\"\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\"]");
-        assertEquals(value.get("output").getType(), LIST);
-        assertEquals(value.get("errors").toString(), "[\"\\u0000\\u0000\\u0000\"]");
-        assertEquals(value.get("errors").getType(), LIST);
+        assertEquals(value.get("output").toString(), "\"\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\"");
+        assertEquals(value.get("output").getType(), ATOMIC);
+        assertEquals(value.get("errors").toString(), "\"\\u0000\\u0000\\u0000\"");
+        assertEquals(value.get("errors").getType(), ATOMIC);
         assertNotNull(value.get("runtime"));
         assertEquals(value.get("runtime").getType(), ATOMIC);
         assertEquals(value.get("exitCode").getNumberValue(), 0);
@@ -116,8 +116,8 @@ public class ExecConstructTest extends TestUtils {
     /**
      * Make an input stream that will return a certain amount of null characters
      *
-     * @param length
-     * @return
+     * @param length the maximum length of the stream in bytes
+     * @return the input stream
      */
     private static InputStream mockStream(final int length) {
         InputStream stream = mock(InputStream.class);

@@ -67,6 +67,16 @@ public interface XillEnvironment extends AutoCloseable {
     XillEnvironment setRootInjector(Injector injector);
 
     /**
+     * Sets the {@link XillThreadFactory} used to create threads in plugins.
+     *
+     * Needs to be called before {@link #loadPlugins()}.
+     *
+     * @param xillThreadFactory the factory
+     * @return self
+     */
+    XillEnvironment setXillThreadFactory(XillThreadFactory xillThreadFactory);
+
+    /**
      * Loads plugins from the added folders.
      *
      * @return self

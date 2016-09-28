@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.plugins.database.constructs;
 
+import com.google.inject.Inject;
+import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.MetaExpressionIterator;
 import nl.xillio.xill.api.construct.Argument;
@@ -37,7 +39,13 @@ import java.util.*;
  * @author Geert Konijnendijk
  * @author Sander Visser
  */
+@Deprecated
 public class QueryConstruct extends BaseDatabaseConstruct {
+
+    @Inject
+    public QueryConstruct(XillThreadFactory xillThreadFactory) {
+        super(xillThreadFactory);
+    }
 
     @Override
     public ConstructProcessor doPrepareProcess(final ConstructContext context) {

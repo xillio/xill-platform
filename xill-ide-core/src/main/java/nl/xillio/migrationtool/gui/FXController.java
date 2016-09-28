@@ -46,13 +46,16 @@ import nl.xillio.xill.util.HotkeysHandler.Hotkeys;
 import nl.xillio.xill.util.settings.Settings;
 import nl.xillio.xill.util.settings.SettingsHandler;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.pegdown.PegDownProcessor;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -333,9 +336,33 @@ public class FXController implements Initializable, EventHandler<Event> {
      * @return the tab or null if it could not be created
      */
     private FileTab createTab(File document, File project, boolean isRobot) {
-        FileTab tab = isRobot ? new RobotTab(project, document, this) : new FileTab(project, document, this);
+        FileTab tab;
+        if (isRobot) {
+            tab = new RobotTab(project, document, this);
+        } else {
+            //check white list
+            if (!isWhiteListed(document.getName())) {
+                AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING,
+                        "Unsupported file type",
+                        "The file '" + document.getName() + "' has an unsupported type.",
+                                "The editing of non-text-files is ill advised and may corrupt the file." + System.lineSeparator() +
+                        "Do you want to continue?",
+                        ButtonType.YES, ButtonType.NO);
+                final Optional<ButtonType> result = dialog.showAndWait();
+                if (!result.isPresent() || result.get() == ButtonType.NO) {
+                    return null;
+                }
+            }
+            tab = new FileTab(project, document, this);
+        }
+
         tpnBots.getTabs().add(tab);
         return tab;
+    }
+
+    private boolean isWhiteListed(String fileName) {
+        List<String> whiteList = Arrays.asList("xill", "txt", "properties", "html", "htm", "css", "xslt", "xml", "json", "js", "md", "cfg", "ini", "bat", "sh", "sbot");
+        return whiteList.contains(FilenameUtils.getExtension(fileName));
     }
 
     @FXML
@@ -410,14 +437,20 @@ public class FXController implements Initializable, EventHandler<Event> {
             }
         }
 
-        // Tab is not open yet: open new tab
-        settings.simple().save(Settings.FILE, Settings.LAST_FOLDER, file.getParent());
-
         // Try to get the project path. If there is no project, use the parent directory as the project path.
         String projectPath = projectpane.getProjectPath(file).orElse(file.getParent());
 
-        // Create and open the new tab.
+        //try to create the new tab
         FileTab tab = createTab(file.getAbsoluteFile(), new File(projectPath), isRobot);
+
+        if (tab == null) {
+            return null;
+        }
+
+        // Tab is not open yet: open new tab
+        settings.simple().save(Settings.FILE, Settings.LAST_FOLDER, file.getParent());
+
+        //open the new tab
         tab.requestFocus();
         return tab;
     }
@@ -475,13 +508,17 @@ public class FXController implements Initializable, EventHandler<Event> {
         }
     }
 
+    /*
+    Temporarily disabled print button until functionality is complete,
+    see: https://xillio.atlassian.net/browse/CTC-1752
+    
     @FXML
-    private void buttonPrint() {
+    private void buttonPrint(){
         Tab tab = tpnBots.getSelectionModel().getSelectedItem();
-        if (tab != null) {
+        if( tab != null){
             ((FileTab) tab).getEditorPane().print();
         }
-    }
+    }*/
 
     @FXML
     private void buttonSettings() {
@@ -635,7 +672,7 @@ public class FXController implements Initializable, EventHandler<Event> {
 
         if (lastVersion.compareTo(Loader.SHORT_VERSION) < 0) {
 
-            String changeLogMD = FileUtils.readFileToString(new File("CHANGELOG.md"));
+            String changeLogMD = FileUtils.readFileToString(new File("../CHANGELOG.md"));
             String changeLogHTML = new PegDownProcessor().markdownToHtml(changeLogMD);
 
             settings.simple().save(Settings.INFO, Settings.LAST_VERSION, Loader.SHORT_VERSION);

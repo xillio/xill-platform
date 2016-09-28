@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.plugins.database.constructs;
 
+import com.google.inject.Inject;
+import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.construct.Argument;
@@ -27,7 +29,13 @@ import nl.xillio.xill.plugins.database.util.Database;
 /**
  * The connect construct for the SQLite database.
  */
+@Deprecated
 public class SqliteConnectConstruct extends BaseDatabaseConstruct {
+
+    @Inject
+    public SqliteConnectConstruct(XillThreadFactory xillThreadFactory) {
+        super(xillThreadFactory);
+    }
 
     @Override
     public ConstructProcessor doPrepareProcess(ConstructContext context) {

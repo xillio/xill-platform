@@ -18,7 +18,10 @@
 -->
 <function>
     <description>
-Perform a put request and return the response from the server.
+Performs a put request to `url` with the given `body` and `options` and returns the response from the server.
+
+The format of the `body` and `options` parameters is described in the _Request_ section. The return value is
+described in the _Response_ section.
 
 ## Request
 ### Body
@@ -40,20 +43,20 @@ To set various options for the request you can use the options parameter. The pa
 option names as keys and their respective values as values.
 Check out the code examples for more information about the options.
 
-| Option Name         | Value                                                                             | Description                                                                       |
-| ------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| basicAuth           | An object containing a username and a password                                    | Set these credentials to perform basic authentication                             |
-| proxy               | An object contains at least a host but optionally a port or username and password | Set these options to connect through a proxy                                      |
-| timeout             | An integer that represents the timeout in milliseconds                            | Set this option to limit the time a request can take                              |
-| headers             | An object containing the headers                                                  | Set this option to add custom headers to your request                             |
-| insecure            | A boolean *default: false*                                                        | Set this option to true if you want to skip hostname validation                   |
-| disableRedirect     | A boolean *default :false*                                                        | Set this option to true if you do not want to automatically follow redirects      |
-| multipart           | A boolean *default: false*                                                        | Set this option to true if you want to build a multipart/form-data request        |
-| responseContentType | A String describing a content type                                                | Set this option to override the the response type auto detector                   |
-| logging             | A String (debug, info, warn or error) *default: none*                             | Set this option to enable logging of requests and responses                       |
+| Option Name         | Value                                                                                                   | Description                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| basicAuth           | An OBJECT containing `username` and `password` fields                                                   | Set these credentials to perform basic authentication                             |
+| proxy               | An OBJECT containing at least a `host` field but optionally `port` or `username` and `password` fields  | Set these options to connect through a proxy                                      |
+| timeout             | An ATOMIC that represents the timeout in milliseconds                                                   | Set this option to limit the time a request can take                              |
+| headers             | An OBJECT containing the headers                                                                        | Set this option to add custom headers to your request                             |
+| insecure            | An ATOMIC *default: false*                                                                              | Set this option to true if you want to skip hostname validation                   |
+| enableRedirect      | An ATOMIC *default: true*                                                                               | Set this option to false if you do not want to automatically follow redirects     |
+| multipart           | An ATOMIC *default: false*                                                                              | Set this option to true if you want to build a multipart/form-data request        |
+| responseContentType | An ATOMIC describing a content type                                                                     | Set this option to override the response type auto detector                       |
+| logging             | An ATOMIC (debug, info, warn or error) *default: null*                                                  | Set this option to enable logging of requests and responses                       |
 
 ### Multipart
-To make multipart requests you simply set the multipart option to *true*
+To make multipart requests you simply set the multipart option to `true`
 and conform to the multipart body syntax:
 
     {
@@ -64,22 +67,47 @@ and conform to the multipart body syntax:
         }
     }
 
-Read more about the [RFC 822](https://www.w3.org/Protocols/rfc1341/4_Content-Type.html).
+or a LIST in the following format:
 
-The field *type* instructs the request how to interpret the provided content.
+    [
+        {
+            "name":"[PART NAME]",
+            "type":"file|stream|text",
+            "contentType":"RFC 822 Content Type"
+            "content":"SEE BELOW",
+        }
+    ]
 
-| Type field | Content field                                                                                                          |
-| ---------- | ---------------------------------------------------------------------------------------------------------------------- |
-| file       | A file path. A file post will be made with the target file as a payload.                                               |
-| stream     | A (binary) stream will be expected and consumed. Note that retries are not possible when providing streams as content. |
-| text       | Plain text will be sent as the body. If you provide a stream it will be read as text.                                  |
+The two bodies above are equivalent. A body can contain multiple parts.
+
+A part must contain a `[PART NAME]` (as shown above). This could either be as a key when using the OBJECT syntax for the multipart body,
+or this could be with a `name` option when using the LIST syntax for the multipart body.
+Passing the body as a LIST allows for multiple parts with the same name.
+
+A part must contain at least the `content` and `type` options. The `contentType` option is optional.
+See the table below for an explanation of the options which a body part should consist of.
+
+| Option Name            | Value                                                                                                                                                                                            | Description                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| name                   | An ATOMIC containing the part name                                                                                                                                                               | The part name in case of using LISTS                                           |
+| content                | An ATOMIC containing a file path or a stream, depending on the type option                                                                                                                       | The content of the body part                                                   |
+| type                   | Can be `"text"`, `"file"` or `"stream"`, see below for more information                                                                                                                          | Determines the type of the content option                                      |
+| contentType (optional) | An ATOMIC containing a [RFC 822](https://www.w3.org/Protocols/rfc1341/4_Content-Type.html) content type, or the default (described in the table below) if this option is not given               | The content-type field in the form part, this option will not be validated     |
+
+The field `type` instructs the request how to interpret the provided content.
+
+| Type field | Content field                                                                                                          | Default content type        |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| file       | A file path. A file patch will be made with the target file as a payload.                                              | application/octet-stream    |
+| stream     | A (binary) stream will be expected and consumed. Note that retries are not possible when providing streams as content. | application/octet-stream    |
+| text       | Plain text will be sent as the body. If you provide a stream it will be read as text.                                  | text/plain                  |
 
 ## Response
 If the request is performed without errors the return value will be an object that describes the response.
 
 ### Status
-The *status* field contains an object that has a *code* field that contains the HTTP Status Code 
-and a *phrase* field that contains the description.
+The `status` field contains an object that has a `code` field that contains the HTTP Status Code
+and a `phrase` field that contains the description.
 
     {
         "status": {
@@ -90,7 +118,7 @@ and a *phrase* field that contains the description.
     }
     
 ### Headers
-The *headers* field contains an object that has the header names as keys and header values as values.
+The `headers` field contains an object that has the header names as keys and header values as values.
 
     {
         "headers" : {
@@ -107,7 +135,7 @@ The *headers* field contains an object that has the header names as keys and hea
     }
 
 ### Version
-The *version* field contains a string describing the current HTTP protocol version.
+The `version` field contains a string describing the current HTTP protocol version.
 
     {
         "version": "HTTP/1.1",
@@ -115,12 +143,12 @@ The *version* field contains a string describing the current HTTP protocol versi
     }
 
 ### Body
-The *body* field contains the response body. The type of content in here is auto detected form the Content-Type 
-header which can be overridden using the *responseContentType* option.
+The `body` field contains the response body. The type of content in here is auto detected form the Content-Type
+header which can be overridden using the `responseContentType` option.
 
 | Content-Type    | Result                                         |
 | --------------- | ---------------------------------------------- |
-| Contains "json" | The json parsed to an expression               |
+| Contains "json" | The JSON parsed to an expression               |
 | Contains "xml"  | An XML node that can be used by the XML plugin |
 | Contains "text" | A plain text string                            |
 | Otherwise       | A stream containing the data                   |
@@ -155,11 +183,101 @@ header which can be overridden using the *responseContentType* option.
                 use XURL, System;
 
                 var response = XURL.put(
-                    "http://jsonplaceholder.typicode.com/posts/43",
+                    "https://httpbin.org/put",
+                    "This is my plain text data"
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Send a multipart request</header>
+            <code>
+                use XURL, System, File;
+
+                var filePath = System.info().robotPath;
+
+                var response = XURL.put(
+                    "https://httpbin.org/put",
                     {
-                        "userId": 5,
-                        "title": "This is a custom item",
-                        "body": "This item has no content yet"
+                        "file": {
+                            "content": filePath,
+                            "type": "file",
+                            "contentType": "text/plain"
+                        },
+                        "description": {
+                            "content": "This is an example of a multipart request",
+                            "type": "text"
+                        }
+                    },
+                    {
+                    // Make this request a multipart request
+                    "multipart": true
+                    }
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Send a request under basic authentication</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.put(
+                    "https://httpbin.org/put",
+                    "This is an example of an authenticated request",
+                    {
+                        // Set the basicAuth option
+                        "basicAuth": {
+                            "username": "user",
+                            "password": "passwd"
+                        }
+                    }
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Send a request with a custom content type header</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.put(
+                    "https://httpbin.org/put",
+                    '{ "data": "My Document" }',
+                    {
+                        "headers": {
+                            "Content-Type": "application/vnd.emc.documentum+json"
+                        }
+                    }
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Override the detected response content type</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.put(
+                    "https://httpbin.org/put",
+                    '{ "data": "My Document" }',
+                    {
+                        "responseContentType": "text"
+                    }
+                );
+
+                var prettyJson = System.toJSON(response, true);
+                System.print(prettyJson);
+            </code>
+            <header>Enable debug logging for requests</header>
+            <code>
+                use XURL, System;
+
+                var response = XURL.put(
+                    "https://httpbin.org/put",
+                    "This is my plain text data",
+                    {
+                        "logging": "debug"
                     }
                 );
 

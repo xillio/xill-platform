@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Fetch a property from the project configuration.
+
+## Properties Configuration
+The configuration file should exist in the root of the project and is called *xill.properties*. In here you
+can specify key-value properties using the following syntax: `[PROPERTY-KEY]=[PROPERTY-VALUE]`.
+
+An example of a file that contains 3 properties:
+
+    logging.file=logs/xill.log
+    logging.level=debug
+    server.host=localhost
+
+
+## Defaults
+There are two ways to define a property's default value. Either through a *defaults.properties* file or
+through the *defaultValue* construct parameter. If you specify the default in construct parameter then the value
+in the *defaults.properties* file will be ignored.
+
+### Defaults hierarchy
+You can create the *defaults.properties* file anywhere in your project. The defaults set in that file will then
+apply to all the robots in that folder and all it's subfolders. If a subfolder contains a *defaults.properties*
+file that defines the same property with a different value the value is overridden for all scripts under that
+folder.
+
+## Context Properties
+By default some properties are already available.
+
+| Prefix | Description                     | Example          |
+| ------ | ------------------------------- | ---------------- |
+| sys    | All available system properties | ${sys.user.home} |
+| env    | All environment variables       | ${env.path}      |
+| xill   | Some Xill specific properties   | ${xill.plugins}  |
+
+        **Note!** The env variables are automatically converted to
+        property casing. This means that the JAVA_HOME variable can
+        be accessed through: ${env.java.home}.
+
+### Xill properties
+
+| Name             | Description                                             |
+| xill.plugin      | A list of all plugins loaded in the current environment |
+| xill.projectPath | The path to the currently executing project             |
+| xill.robotPath   | The path to the currently executing robot               |
+
+## Property Replacements
+In the values of your properties you can use an expression syntax to substitute other properties.
+
+    download.file=${xill.projectPath}/avatar.jpg
+
+
+    </description>
+    <examples>
+        <example title="Project Example">
+            <header>defaults.properties</header>
+            <code>
+                # Setting this to localhost will default to the local machine
+                server.host=localhost
+                server.port=9002
+
+                # This property contains property replacements
+                server.url=http://${server.host}:${server.port}
+            </code>
+            <header>xill.properties</header>
+            <code>
+                # Now we connect to a production server
+                server.host=12.4.135.32
+            </code>
+            <header>Server.xill</header>
+            <code>
+                use Properties, XURL;
+
+                function connect() {
+                    var url = Properties.get("server.url");
+                    return XURL.get(url :: "/api");
+                }
+            </code>
+        </example>
+    </examples>
+</function>

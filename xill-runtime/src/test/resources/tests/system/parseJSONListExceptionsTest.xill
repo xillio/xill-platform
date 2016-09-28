@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 /*
-* Specification: Getting the ceiling of a number MUST round it up to the smallest number larger than the given value
-* Expected: The smallest number larger than the given value
-* Input: See dataset
+* Specification: When given a faulty list to this construct, the construct MUST give the proper exception
+* Expected: Exceptions are thrown
+* Input: [], [[]], ["a", {}], {}
 */
 
-use Math, Assert;
+use System, Assert;
 
-var tests = [
-    [6, 6],
-    [3.14, 4],
-    [-3.78, -3],
-    [0.7, 1]
-];
+testInput([]);
+testInput([[]]);
+testInput(["a", {}]);
+testInput({});
 
-foreach (item in tests) {
-    Assert.equal(Math.ceiling(item[0]), item[1]);
+function testInput(input) {
+    do {
+        System.parseJSON(input);
+    } success {
+        Assert.error("Value: " :: input :: ", is parsable to JSON while it should not.");
+    }
 }

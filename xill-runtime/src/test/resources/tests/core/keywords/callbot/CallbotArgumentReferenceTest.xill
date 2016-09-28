@@ -13,21 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
-* Specification: Flooring a number MUST round it down to the largest number smaller than the given value
-* Expected: The largest number smaller than the given value
-* Input: See dataset
+/* 
+* Specification: Arguments given to a called bot MUST be references instead of hard copies (list and object).
+* Input: A list and object, and a bot which adds 1 to each element of the list or object
+* Expected: The elements of the list and object are changed
 */
 
-use Math, Assert;
+use Assert;
 
-var tests = [
-    [6, 6],
-    [3.14, 3],
-    [-3.78, -4],
-    [0.7, 0]
-];
+var init = 7;
+var list = [ init ];
+var object = { 0 : init };
 
-foreach (item in tests) {
-    Assert.equal(Math.floor(item[0]), item[1]);
-}
+callbot("testresources/core/callbot/addOne.xill", list);
+callbot("testresources/core/callbot/addOne.xill", object);
+
+Assert.equal(list[0], init + 1);
+Assert.equal(object[0], init + 1);
