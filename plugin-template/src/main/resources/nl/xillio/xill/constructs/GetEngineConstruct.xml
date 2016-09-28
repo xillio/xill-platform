@@ -21,7 +21,7 @@
 This construct parses given options and returns the engine for the template plugin.
 
 This construct uses a third-party library named FreeMarker to process the templates. For more information please
-check their [website](http://freemarker.org/docs/index.html)
+check their [website](http://freemarker.org/docs/index.html).
 
 The options object is optional which results in using the default engine which is build up with the following options:
 
@@ -43,8 +43,8 @@ The engine could be configured using the following options:
 | templatesDirectory   | An ATOMIC containing a relative path from the project root or an absolute path. | The directory that contains all the templates that will be used with this engine.                          |
 | encoding             | An ATOMIC containing a string.                                                  | This sets the encoding for the template that will be provided in the process-construct.                    |
 | noCaching            | An ATOMIC containing a boolean.                                                 | Set this to true to cache no templates at all (decreased performance and less memory usage).               |
-| strongCache          | An ATOMIC containing a number.                                                  | The amount of templates to hold a hard reference to so it will not be garbage collected.                   |
-| softCache            | An ATOMIC containing a number.                                                  | The amount of templates to hold a soft reference to so it will be garbage collected when memory is needed. |
+| strongCache          | An ATOMIC containing a number (from 0 to 2147483647).                           | The amount of templates to hold a hard reference to so it will not be garbage collected.                   |
+| softCache            | An ATOMIC containing a number (from 0 to 2147483647).                           | The amount of templates to hold a soft reference to so it will be garbage collected when memory is needed. |
 
 `strongCache` and `softCache` could be combined. The engine will then place the most used templates in the `strongCache`.
 When `noCaching` is set, `strongCache` and `softCache` will have no meaning for the engine.

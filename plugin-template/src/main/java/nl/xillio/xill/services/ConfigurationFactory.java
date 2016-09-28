@@ -72,8 +72,26 @@ public class ConfigurationFactory {
         if (options.containsKey(NO_CACHING) && options.get(NO_CACHING).getBooleanValue()) {
             cfg.setCacheStorage(new NullCacheStorage());
         } else {
-            String strongCache = get(options, STRONG_CACHE).orElse("0");
-            String softCache = get(options, SOFT_CACHE).orElse(Integer.toString(Integer.MAX_VALUE));
+            Long strongCache = get(options, STRONG_CACHE).orElse((long) 0);
+            Long softCache = get(options, SOFT_CACHE).orElse((long) Integer.MAX_VALUE);
+
+            if (strongCache < 0 || strongCache > Integer.MAX_VALUE) {
+                throw new InvalidUserInputException(
+                        "The given value for " + STRONG_CACHE + " is not valid",
+                        strongCache.toString(),
+                        "A value between 0 and 2147483647",
+                        "\"" + STRONG_CACHE + "\" : 50"
+                );
+            }
+            if (softCache < 0 || softCache > Integer.MAX_VALUE) {
+                throw new InvalidUserInputException(
+                        "The given value for " + SOFT_CACHE + " is not valid",
+                        softCache.toString(),
+                        "A value between 0 and 2147483647",
+                        "\"" + SOFT_CACHE + "\" : 250"
+                );
+            }
+
             setSetting(
                     cfg,
                     Configuration.CACHE_STORAGE_KEY,
@@ -136,13 +154,24 @@ public class ConfigurationFactory {
                     e.getMessage(),
                     input.get(),
                     "A valid integer",
-                    "{'strongCache': 50}",
+                    "{'" + STRONG_CACHE + "': 50}",
                     e
             );
         }
     }
 
-    private Optional<String> get(Map<String, MetaExpression> data, String key) {
-        return Optional.ofNullable(data.get(key)).map(MetaExpression::getStringValue);
+    private Optional<Long> get(Map<String, MetaExpression> data, String key) {
+        Optional<Number> value = Optional.ofNullable(data.get(key)).map(MetaExpression::getNumberValue);
+        if (value.isPresent() && value.get().equals(Double.NaN)) {
+            // Check whether the extracted value is not a number since the conversion to long would make it 0
+            throw new InvalidUserInputException(
+                    "The given value for " + key + " is not a number",
+                    data.get(key).getStringValue(),
+                    "A value between 0 and 2147483647",
+                    "'" + key + "' : 50"
+            );
+        } else {
+            return value.map(Number::longValue);
+        }
     }
 }
