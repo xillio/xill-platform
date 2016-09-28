@@ -191,9 +191,6 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
             }, "ConsolePane#onRobotStopRefreshConsole");
             finalUpdate.setDaemon(true);
             finalUpdate.start();
-
-            // Update the scroll mode.
-            updateScrollMode();
         });
 
         // Update the log after a log event has occurred
@@ -209,9 +206,9 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
     }
 
     @Override
-    public void handle(final KeyEvent keyEvent) {
+    public void handle(final KeyEvent e) {
         // Copy
-        if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(COPY)).match(keyEvent) && tblConsoleOut.isFocused()) {
+        if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(COPY)).match(e) && tblConsoleOut.isFocused()) {
             // Get all selected entries
             StringBuilder text = new StringBuilder();
             ObservableList<LogEntry> selected = tblConsoleOut.getSelectionModel().getSelectedItems();
@@ -224,17 +221,17 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
             content.putString(text.toString());
             Clipboard.getSystemClipboard().setContent(content);
 
-            keyEvent.consume();
+            e.consume();
         }
         // Clear
-        else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(CLEARCONSOLE)).match(keyEvent)) {
+        else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(CLEARCONSOLE)).match(e)) {
             clear();
-            keyEvent.consume();
+            e.consume();
         }
         // Search
-        else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(FIND)).match(keyEvent)) {
+        else if (KeyCombination.valueOf(FXController.hotkeys.getShortcut(FIND)).match(e)) {
             apnConsoleSearchBar.open(1);
-            keyEvent.consume();
+            e.consume();
         }
     }
 
@@ -268,9 +265,6 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
         if (masterLog != null && !isUpdating) {
             isUpdating = true;
 
-            // Update the scroll mode.
-            updateScrollMode();
-
             Thread thread = new Thread(() -> {
                 // Short delay to prevent flooding
                 try {
@@ -278,6 +272,9 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
                 } catch (InterruptedException e) {
                     LOGGER.warn("Console thread was interrupted while sleeping.", e);
                 }
+
+                // Update the scroll mode.
+                updateScrollMode();
 
                 // Set filters & force update of the log table
                 masterLog.setFilters(filters);
