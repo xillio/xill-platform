@@ -3,8 +3,12 @@ All notable changes to this project will be documented in this file.
 
 ## [3.5.0] - unreleased
 
+### Add
+* `System.parseJSON()` now parses LIST [CTC-1769]
+
 ### Fix
 * On server threads are not closed when tasks finishes [XSVR-139]
+* Renaming of robot does not work properly on Linux [CTC-1787]
 
 ## [3.4.0] - unreleased
 
