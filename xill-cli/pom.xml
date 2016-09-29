@@ -39,6 +39,10 @@
             <artifactId>xill-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <dependency>
             <groupId>me.biesaart</groupId>
             <artifactId>wield</artifactId>
         </dependency>

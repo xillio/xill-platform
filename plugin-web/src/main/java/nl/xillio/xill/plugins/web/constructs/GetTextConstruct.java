@@ -15,12 +15,10 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
-import com.google.inject.Inject;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
-import nl.xillio.xill.plugins.web.PhantomJSConstruct;
 import nl.xillio.xill.plugins.web.data.WebVariable;
 import nl.xillio.xill.plugins.web.services.web.WebService;
 
@@ -31,22 +29,18 @@ import java.util.List;
  */
 public class GetTextConstruct extends PhantomJSConstruct {
 
-    @Inject
-    private WebService webService;
-
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                element -> process(element, webService),
+                this::process,
                 new Argument("element", LIST, ATOMIC));
     }
 
     /**
      * @param elementVar input variable (should be of a NODE type or list of NODE type variables)
-     * @param webService the service we're using.
      * @return string variable that contains the text(s) of the provided web element(s)
      */
-    public static MetaExpression process(final MetaExpression elementVar, final WebService webService) {
+    private MetaExpression process(final MetaExpression elementVar) {
         assertNotNull(elementVar, "element");
 
         String output = "";
@@ -54,16 +48,16 @@ public class GetTextConstruct extends PhantomJSConstruct {
             @SuppressWarnings("unchecked")
             List<MetaExpression> list = (List<MetaExpression>) elementVar.getValue();
             for (MetaExpression item : list) {
-                output += processItem(item, webService);
+                output += processItem(item, getWebService());
             }
         } else {
-            output = processItem(elementVar, webService);
+            output = processItem(elementVar, getWebService());
         }
 
         return fromValue(output);
     }
 
-    private static String processItem(final MetaExpression var, final WebService webService) {
+    private String processItem(final MetaExpression var, final WebService webService) {
         WebVariable element;
 
         String text;

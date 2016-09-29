@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.plugins.database.constructs;
 
+import com.google.inject.Inject;
+import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.components.ExpressionDataType;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.RobotID;
@@ -29,6 +31,11 @@ import nl.xillio.xill.plugins.database.util.ConnectionMetadata;
 
 @Deprecated
 public class EscapeConstruct extends BaseDatabaseConstruct {
+
+    @Inject
+    public EscapeConstruct(XillThreadFactory xillThreadFactory) {
+        super(xillThreadFactory);
+    }
 
     @Override
     public ConstructProcessor doPrepareProcess(ConstructContext context) {
