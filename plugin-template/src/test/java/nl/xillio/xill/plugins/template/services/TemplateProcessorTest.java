@@ -13,15 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill;
-
-import nl.xillio.plugins.XillPlugin;
+package nl.xillio.xill.plugins.template.services;
 
 /**
- * The Template plugin will enable the user to generate (textual) files from a model given a template file
- *
  * @author Pieter Soels
- * @since 3.5.0
  */
-public class TemplateXillPlugin extends XillPlugin {
+public class TemplateProcessorTest {
+
 }

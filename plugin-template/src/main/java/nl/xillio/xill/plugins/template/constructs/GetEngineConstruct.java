@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.constructs;
+package nl.xillio.xill.plugins.template.constructs;
 
 import com.google.inject.Inject;
 import freemarker.template.Configuration;
@@ -22,8 +22,8 @@ import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
-import nl.xillio.xill.data.EngineMetadata;
-import nl.xillio.xill.services.ConfigurationFactory;
+import nl.xillio.xill.plugins.template.data.EngineMetadata;
+import nl.xillio.xill.plugins.template.services.ConfigurationFactory;
 
 /**
  * This construct generates a new file using a template and a data model
@@ -43,7 +43,7 @@ public class GetEngineConstruct extends Construct {
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
                 (options) -> process(options, context),
-                new Argument("options", NULL, OBJECT)
+                new Argument("options", emptyObject(), OBJECT)
         );
     }
 

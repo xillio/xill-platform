@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.constructs;
+package nl.xillio.xill.plugins.template.constructs;
 
 import com.google.inject.Inject;
 import freemarker.template.Configuration;
@@ -23,9 +23,9 @@ import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
-import nl.xillio.xill.data.EngineMetadata;
-import nl.xillio.xill.services.ConfigurationFactory;
-import nl.xillio.xill.services.TemplateProcessor;
+import nl.xillio.xill.plugins.template.data.EngineMetadata;
+import nl.xillio.xill.plugins.template.services.ConfigurationFactory;
+import nl.xillio.xill.plugins.template.services.TemplateProcessor;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.data;
+package nl.xillio.xill.plugins.template.data;
 
 import freemarker.template.Configuration;
 import nl.xillio.xill.api.components.MetaExpression;
