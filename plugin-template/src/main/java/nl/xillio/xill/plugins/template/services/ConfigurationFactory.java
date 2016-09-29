@@ -44,6 +44,10 @@ public class ConfigurationFactory {
     private static final String NO_CACHING = "noCaching";
     private static final String STRONG_CACHE = "strongCache";
     private static final String SOFT_CACHE = "softCache";
+
+    private static final String VALUE_BETWEEN = "A value between 0 and 2147483647";
+    private static final String GIVEN_VALUE = "The given value for ";
+
     private final FileResolver fileResolver;
 
     @Inject
@@ -124,17 +128,17 @@ public class ConfigurationFactory {
 
             if (strongCache < 0 || strongCache > Integer.MAX_VALUE) {
                 throw new InvalidUserInputException(
-                        "The given value for " + STRONG_CACHE + " is not valid",
+                        GIVEN_VALUE + STRONG_CACHE + " is not valid",
                         strongCache.toString(),
-                        "A value between 0 and 2147483647",
+                        VALUE_BETWEEN,
                         "\"" + STRONG_CACHE + "\" : 50"
                 );
             }
             if (softCache < 0 || softCache > Integer.MAX_VALUE) {
                 throw new InvalidUserInputException(
-                        "The given value for " + SOFT_CACHE + " is not valid",
+                        GIVEN_VALUE + SOFT_CACHE + " is not valid",
                         softCache.toString(),
-                        "A value between 0 and 2147483647",
+                        VALUE_BETWEEN,
                         "\"" + SOFT_CACHE + "\" : 250"
                 );
             }
@@ -167,9 +171,9 @@ public class ConfigurationFactory {
         if (value.isPresent() && value.get().equals(Double.NaN)) {
             // Check whether the extracted value is not a number since the conversion to long would make it 0
             throw new InvalidUserInputException(
-                    "The given value for " + key + " is not a number",
+                    GIVEN_VALUE + key + " is not a number",
                     data.get(key).getStringValue(),
-                    "A value between 0 and 2147483647",
+                    VALUE_BETWEEN,
                     "'" + key + "' : 50"
             );
         } else {
