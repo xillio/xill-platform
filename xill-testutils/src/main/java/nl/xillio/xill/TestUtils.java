@@ -129,7 +129,7 @@ public class TestUtils extends ExpressionBuilderHelper {
         }
     }
 
-    protected MetaExpression map(Object... input) {
+    protected MetaExpression createMap(Object... input) {
         if (input.length % 2 != 0) {
             throw new IllegalArgumentException("Input must be an even amount of elements");
         }
@@ -142,7 +142,7 @@ public class TestUtils extends ExpressionBuilderHelper {
         return fromValue(map);
     }
 
-    protected MetaExpression list(Object... input) {
+    protected MetaExpression createList(Object... input) {
         List<MetaExpression> list = Arrays.stream(input)
                 .map(this::parseValue)
                 .collect(Collectors.toList());
