@@ -15,9 +15,87 @@
  */
 package nl.xillio.xill.plugins.template.services;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import nl.xillio.xill.TestUtils;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
+import nl.xillio.xill.api.errors.OperationFailedException;
+import org.mockito.Mockito;
+import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.Paths;
+
+import static org.mockito.Mockito.*;
+
 /**
+ * The unit tests for the {@link TemplateProcessor}.
+ *
  * @author Pieter Soels
  */
-public class TemplateProcessorTest {
+public class TemplateProcessorTest extends TestUtils {
 
+    @Test
+    public void TestNormalUsage() throws IOException {
+        // Mock
+        Configuration configuration = mock(Configuration.class);
+        Template template = mock(Template.class);
+        when(configuration.getTemplate(anyString())).thenReturn(template);
+        OutputStream outputStream = mock(OutputStream.class);
+
+        // Instantiate
+        TemplateProcessor templateProcessor = new TemplateProcessor();
+
+        // Run
+        templateProcessor.generate("", outputStream, null, configuration);
+
+        // Verify
+        verify(outputStream, times(1)).flush();
+        verify(outputStream, times(0)).close();
+    }
+
+    @Test(expectedExceptions = InvalidUserInputException.class)
+    public void TestEncodingException() throws Exception {
+        // Mock
+        OutputStream outputStream = mock(OutputStream.class);
+        Configuration configuration = mock(Configuration.class);
+        Template template = mock(Template.class);
+        when(configuration.getTemplate(anyString())).thenReturn(template);
+        Mockito.doThrow(new UnsupportedEncodingException("")).when(template).process(any(), any());
+
+        // Instantiate
+        TemplateProcessor templateProcessor = new TemplateProcessor();
+
+        // Run
+        templateProcessor.generate("", outputStream, null, configuration);
+    }
+
+    @Test(expectedExceptions = OperationFailedException.class)
+    public void TestIOException() throws IOException {
+        // Mock
+        OutputStream outputStream = mock(OutputStream.class);
+
+        // Instantiate
+        Configuration configuration = new Configuration(Configuration.VERSION_2_3_23);
+        configuration.setDirectoryForTemplateLoading(Paths.get("/").toAbsolutePath().toFile());
+        TemplateProcessor templateProcessor = new TemplateProcessor();
+
+        // Run
+        templateProcessor.generate("", outputStream, null, configuration);
+    }
+
+    @Test(expectedExceptions = OperationFailedException.class)
+    public void TestTemplateException() throws IOException {
+        // Mock
+        OutputStream outputStream = mock(OutputStream.class);
+
+        // Instantiate
+        TemplateProcessor templateProcessor = new TemplateProcessor();
+        Configuration configuration = new Configuration(Configuration.VERSION_2_3_23);
+
+        // Run
+        templateProcessor.generate("", outputStream, null, configuration);
+    }
 }
