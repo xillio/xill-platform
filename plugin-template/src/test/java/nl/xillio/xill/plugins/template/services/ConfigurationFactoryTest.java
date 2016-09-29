@@ -22,11 +22,11 @@ import freemarker.template.TemplateExceptionHandler;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.ConstructContext;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.services.files.FileResolver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 
@@ -43,9 +43,7 @@ public class ConfigurationFactoryTest extends TestUtils {
     public void testNormalUsageDefaultConfig() {
         // Mock
         FileResolver fileResolver = mock(FileResolver.class);
-        ConstructContext constructContext = mock(ConstructContext.class, RETURNS_DEEP_STUBS);
-        Path templatesDir = Paths.get("/").toAbsolutePath();
-        when(constructContext.getRootRobot().getProjectPath().toPath()).thenReturn(templatesDir);
+        ConstructContext constructContext = mockConstructContext();
 
         // Instantiate
         ConfigurationFactory configurationFactory = new ConfigurationFactory(fileResolver);
@@ -63,42 +61,39 @@ public class ConfigurationFactoryTest extends TestUtils {
     public void testNormalUsageParseConfig() {
         // Mock
         FileResolver fileResolver = mock(FileResolver.class);
-        ConstructContext constructContext = mock(ConstructContext.class, RETURNS_DEEP_STUBS);
-        Path templatesDir = Paths.get("/").toAbsolutePath();
-        when(constructContext.getRootRobot().getProjectPath().toPath()).thenReturn(templatesDir);
-        MetaExpression encoding = fromValue("Something");
-        MetaExpression softCache = fromValue(10);
-        MetaExpression strongCache = fromValue(5);
-        LinkedHashMap<String, MetaExpression> map = new LinkedHashMap<>();
-        map.put("encoding", encoding);
-        map.put("softCache", softCache);
-        map.put("strongCache", strongCache);
+        ConstructContext constructContext = mockConstructContext();
 
         // Instantiate
         ConfigurationFactory configurationFactory = new ConfigurationFactory(fileResolver);
 
+        MetaExpression encoding = fromValue("Something");
+        MetaExpression softCache = fromValue(10);
+        MetaExpression strongCache = fromValue(5);
+
+        LinkedHashMap<String, MetaExpression> options = new LinkedHashMap<>();
+        options.put("encoding", encoding);
+        options.put("softCache", softCache);
+        options.put("strongCache", strongCache);
+
         // Run
-        Configuration configuration = configurationFactory.parseConfiguration(map, constructContext);
+        Configuration configuration = configurationFactory.parseConfiguration(options, constructContext);
 
         // Assert
-        Assert.assertEquals(configuration.getDefaultEncoding(), "Something");
+        Assert.assertEquals(configuration.getDefaultEncoding(), encoding.getStringValue());
         Assert.assertEquals(configuration.getTemplateExceptionHandler(), TemplateExceptionHandler.RETHROW_HANDLER);
         Assert.assertFalse(configuration.getLogTemplateExceptions());
         MruCacheStorage cache = (MruCacheStorage) configuration.getCacheStorage();
-        Assert.assertEquals(cache.getSoftSizeLimit(), 10);
-        Assert.assertEquals(cache.getStrongSizeLimit(), 5);
+        Assert.assertEquals(cache.getSoftSizeLimit(), softCache.getNumberValue());
+        Assert.assertEquals(cache.getStrongSizeLimit(), strongCache.getNumberValue());
     }
 
     @Test
     public void testNoCachingParseConfig() {
         // Mock
         FileResolver fileResolver = mock(FileResolver.class);
-        ConstructContext constructContext = mock(ConstructContext.class, RETURNS_DEEP_STUBS);
-        Path templatesDir = Paths.get("/").toAbsolutePath();
-        when(constructContext.getRootRobot().getProjectPath().toPath()).thenReturn(templatesDir);
-        MetaExpression noCaching = fromValue(true);
+        ConstructContext constructContext = mockConstructContext();
         LinkedHashMap<String, MetaExpression> map = new LinkedHashMap<>();
-        map.put("noCaching", noCaching);
+        map.put("noCaching", fromValue(true));
 
         // Instantiate
         ConfigurationFactory configurationFactory = new ConfigurationFactory(fileResolver);
@@ -117,9 +112,7 @@ public class ConfigurationFactoryTest extends TestUtils {
     public void testParseConfigWithoutOptions() {
         // Mock
         FileResolver fileResolver = mock(FileResolver.class);
-        ConstructContext constructContext = mock(ConstructContext.class, RETURNS_DEEP_STUBS);
-        Path templatesDir = Paths.get("/").toAbsolutePath();
-        when(constructContext.getRootRobot().getProjectPath().toPath()).thenReturn(templatesDir);
+        ConstructContext constructContext = mockConstructContext();
 
         // Instantiate
         ConfigurationFactory configurationFactory = new ConfigurationFactory(fileResolver);
@@ -134,5 +127,127 @@ public class ConfigurationFactoryTest extends TestUtils {
         Assert.assertFalse(configuration1.getLogTemplateExceptions());
         Assert.assertFalse(configuration2.getLogTemplateExceptions());
         Assert.assertEquals(configuration1.getCacheStorage().getClass(), configuration2.getCacheStorage().getClass());
+    }
+
+    @Test
+    public void testSoftCacheChange() {
+        // Mock
+        FileResolver fileResolver = mock(FileResolver.class);
+        ConstructContext constructContext = mockConstructContext();
+
+        // Instantiate
+        ConfigurationFactory configurationFactory = new ConfigurationFactory(fileResolver);
+
+        MetaExpression softCache = fromValue(10);
+        LinkedHashMap<String, MetaExpression> options = new LinkedHashMap<>();
+        options.put("softCache", softCache);
+
+        // Run
+        Configuration configuration = configurationFactory.parseConfiguration(options, constructContext);
+
+        // Assert
+        MruCacheStorage cache = (MruCacheStorage) configuration.getCacheStorage();
+        Assert.assertEquals(cache.getSoftSizeLimit(), softCache.getNumberValue());
+        Assert.assertEquals(cache.getStrongSizeLimit(), 0);
+    }
+
+    @Test
+    public void testStrongCacheChange() {
+        // Mock
+        FileResolver fileResolver = mock(FileResolver.class);
+        ConstructContext constructContext = mockConstructContext();
+
+        // Instantiate
+        ConfigurationFactory configurationFactory = new ConfigurationFactory(fileResolver);
+
+        MetaExpression strongCache = fromValue(5);
+        LinkedHashMap<String, MetaExpression> options = new LinkedHashMap<>();
+        options.put("strongCache", strongCache);
+
+        // Run
+        Configuration configuration = configurationFactory.parseConfiguration(options, constructContext);
+
+        // Assert
+        MruCacheStorage cache = (MruCacheStorage) configuration.getCacheStorage();
+        Assert.assertEquals(cache.getSoftSizeLimit(), Integer.MAX_VALUE);
+        Assert.assertEquals(cache.getStrongSizeLimit(), strongCache.getNumberValue());
+    }
+
+    @Test(expectedExceptions = InvalidUserInputException.class)
+    public void testInvalidDirectory() {
+        // Mock
+        FileResolver fileResolver = mock(FileResolver.class);
+        ConstructContext constructContext = mockConstructContext();
+        when(fileResolver.buildPath(constructContext, fromValue("."))).thenReturn(Paths.get("/disaodjhsaiudhsaidsahid").toAbsolutePath());
+
+        // Instantiate
+        ConfigurationFactory configurationFactory = new ConfigurationFactory(fileResolver);
+
+        MetaExpression templatesDirectory = fromValue(".");
+        LinkedHashMap<String, MetaExpression> options = new LinkedHashMap<>();
+        options.put("templatesDirectory", templatesDirectory);
+
+        // Run
+        configurationFactory.parseConfiguration(options, constructContext);
+
+        // Verify
+        verify(fileResolver.buildPath(any(), any()), times(1));
+    }
+
+    @Test(expectedExceptions = InvalidUserInputException.class)
+    public void testInvalidSoftCache() {
+        // Mock
+        FileResolver fileResolver = mock(FileResolver.class);
+        ConstructContext constructContext = mockConstructContext();
+
+        // Instantiate
+        ConfigurationFactory configurationFactory = new ConfigurationFactory(fileResolver);
+
+        MetaExpression softCache = fromValue(-1);
+        LinkedHashMap<String, MetaExpression> options = new LinkedHashMap<>();
+        options.put("softCache", softCache);
+
+        // Run
+        configurationFactory.parseConfiguration(options, constructContext);
+    }
+
+    @Test(expectedExceptions = InvalidUserInputException.class)
+    public void testInvalidStrongCache() {
+        // Mock
+        FileResolver fileResolver = mock(FileResolver.class);
+        ConstructContext constructContext = mockConstructContext();
+
+        // Instantiate
+        ConfigurationFactory configurationFactory = new ConfigurationFactory(fileResolver);
+
+        MetaExpression strongCache = fromValue((long) Integer.MAX_VALUE + 1);
+        LinkedHashMap<String, MetaExpression> options = new LinkedHashMap<>();
+        options.put("strongCache", strongCache);
+
+        // Run
+        configurationFactory.parseConfiguration(options, constructContext);
+    }
+
+    @Test(expectedExceptions = InvalidUserInputException.class)
+    public void testNotANumberCache() {
+        // Mock
+        FileResolver fileResolver = mock(FileResolver.class);
+        ConstructContext constructContext = mockConstructContext();
+
+        // Instantiate
+        ConfigurationFactory configurationFactory = new ConfigurationFactory(fileResolver);
+
+        MetaExpression strongCache = fromValue("test");
+        LinkedHashMap<String, MetaExpression> options = new LinkedHashMap<>();
+        options.put("strongCache", strongCache);
+
+        // Run
+        configurationFactory.parseConfiguration(options, constructContext);
+    }
+
+    private ConstructContext mockConstructContext() {
+        ConstructContext constructContext = mock(ConstructContext.class, RETURNS_DEEP_STUBS);
+        when(constructContext.getRootRobot().getProjectPath().toPath()).thenReturn(Paths.get("/").toAbsolutePath());
+        return constructContext;
     }
 }
