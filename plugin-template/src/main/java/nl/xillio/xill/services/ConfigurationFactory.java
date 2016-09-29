@@ -52,6 +52,17 @@ public class ConfigurationFactory {
     }
 
     /**
+     * Build the default configuration with the project root as templates directory
+     *
+     * @param context The construct's context with the robot information attached
+     * @return The default configuration with the project root as templates directory
+     */
+    public Configuration buildDefaultConfiguration(ConstructContext context) {
+        Path path = context.getRootRobot().getProjectPath().toPath();
+        return buildDefaultConfiguration(path);
+    }
+
+    /**
      * Parse the configuration by the options given and return the template engines' configuration
      *
      * @param options The options that should be parsed for the configuration
@@ -69,51 +80,9 @@ public class ConfigurationFactory {
             cfg.setDefaultEncoding(options.get(ENCODING).getStringValue());
         }
 
-        if (options.containsKey(NO_CACHING) && options.get(NO_CACHING).getBooleanValue()) {
-            cfg.setCacheStorage(new NullCacheStorage());
-        } else {
-            Long strongCache = get(options, STRONG_CACHE).orElse((long) 0);
-            Long softCache = get(options, SOFT_CACHE).orElse((long) Integer.MAX_VALUE);
-
-            if (strongCache < 0 || strongCache > Integer.MAX_VALUE) {
-                throw new InvalidUserInputException(
-                        "The given value for " + STRONG_CACHE + " is not valid",
-                        strongCache.toString(),
-                        "A value between 0 and 2147483647",
-                        "\"" + STRONG_CACHE + "\" : 50"
-                );
-            }
-            if (softCache < 0 || softCache > Integer.MAX_VALUE) {
-                throw new InvalidUserInputException(
-                        "The given value for " + SOFT_CACHE + " is not valid",
-                        softCache.toString(),
-                        "A value between 0 and 2147483647",
-                        "\"" + SOFT_CACHE + "\" : 250"
-                );
-            }
-
-            setSetting(
-                    cfg,
-                    Configuration.CACHE_STORAGE_KEY,
-                    "strong:" + strongCache + ", soft:" + softCache,
-                    () -> SOFT_CACHE + ": " + softCache + ", " + STRONG_CACHE + ": " + strongCache
-            );
-        }
-
-        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+        setCache(cfg, options);
 
         return cfg;
-    }
-
-    /**
-     * Build the default configuration with the project root as templates directory
-     *
-     * @param context The construct's context with the robot information attached
-     * @return The default configuration with the project root as templates directory
-     */
-    public Configuration buildDefaultConfiguration(ConstructContext context) {
-        Path path = context.getRootRobot().getProjectPath().toPath();
-        return buildDefaultConfiguration(path);
     }
 
     private Configuration buildDefaultConfiguration(Path templatePath) {
@@ -143,6 +112,39 @@ public class ConfigurationFactory {
             );
         } else {
             return buildDefaultConfiguration(context);
+        }
+    }
+
+    private void setCache(Configuration cfg, Map<String, MetaExpression> options) {
+        if (options.containsKey(NO_CACHING) && options.get(NO_CACHING).getBooleanValue()) {
+            cfg.setCacheStorage(new NullCacheStorage());
+        } else {
+            Long strongCache = get(options, STRONG_CACHE).orElse((long) 0);
+            Long softCache = get(options, SOFT_CACHE).orElse((long) Integer.MAX_VALUE);
+
+            if (strongCache < 0 || strongCache > Integer.MAX_VALUE) {
+                throw new InvalidUserInputException(
+                        "The given value for " + STRONG_CACHE + " is not valid",
+                        strongCache.toString(),
+                        "A value between 0 and 2147483647",
+                        "\"" + STRONG_CACHE + "\" : 50"
+                );
+            }
+            if (softCache < 0 || softCache > Integer.MAX_VALUE) {
+                throw new InvalidUserInputException(
+                        "The given value for " + SOFT_CACHE + " is not valid",
+                        softCache.toString(),
+                        "A value between 0 and 2147483647",
+                        "\"" + SOFT_CACHE + "\" : 250"
+                );
+            }
+
+            setSetting(
+                    cfg,
+                    Configuration.CACHE_STORAGE_KEY,
+                    "strong:" + strongCache + ", soft:" + softCache,
+                    () -> SOFT_CACHE + ": " + softCache + ", " + STRONG_CACHE + ": " + strongCache
+            );
         }
     }
 

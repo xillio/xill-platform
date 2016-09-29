@@ -20,18 +20,17 @@
     <description>
 This construct parses given options and returns the engine for the template plugin.
 
-This construct uses a third-party library named FreeMarker to process the templates. For more information please
+This plugin uses a third-party library named FreeMarker to process the templates. For more information please
 check their [website](http://freemarker.org/docs/index.html).
 
-The options object is optional which results in using the default engine which is build up with the following options:
+The options paramater is optional which results in using the default engine which is build up with the following options:
 
         var options = {
             "templatesDirectory" :      ".",        // Project root
             "encoding" :                "UTF-8",
             "noCaching" :               false,
             "strongCache" :             0,
-            "softCache" :               2147483647, // Max integer
-            "logTemplateExceptions" :   true
+            "softCache" :               2147483647 // Max integer
         };
 
 ## Options
@@ -110,4 +109,10 @@ When encountering charset or encoding issues please read the [FreeMarker documen
             </code>
         </example>
     </examples>
+    <references>
+        <reference>process</reference>
+    </references>
+    <tags>
+        template, freemarker, configuration
+    </tags>
 </function>
