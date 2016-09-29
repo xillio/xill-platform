@@ -18,6 +18,7 @@ package nl.xillio.xill.plugins.template.services;
 import freemarker.cache.MruCacheStorage;
 import freemarker.cache.NullCacheStorage;
 import freemarker.template.Configuration;
+import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
@@ -28,6 +29,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import static org.mockito.Mockito.*;
@@ -243,6 +245,17 @@ public class ConfigurationFactoryTest extends TestUtils {
 
         // Run
         configurationFactory.parseConfiguration(options, constructContext);
+    }
+
+    @Test(expectedExceptions = InvalidUserInputException.class)
+    void testTemplateException() throws TemplateException {
+        Configuration myMock = mock(Configuration.class);
+        doThrow(new TemplateException("Test", null)).when(myMock).setSetting(anyString(), anyString());
+
+        ConfigurationFactory factory = spy(new ConfigurationFactory(null));
+        doReturn(myMock).when(factory).buildDefaultConfiguration(any());
+
+        factory.parseConfiguration(new HashMap<>(), context());
     }
 
     private ConstructContext mockConstructContext() {
