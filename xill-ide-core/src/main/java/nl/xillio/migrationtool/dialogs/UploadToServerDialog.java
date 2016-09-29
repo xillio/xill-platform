@@ -117,7 +117,7 @@ public class UploadToServerDialog extends FXMLDialog {
                 return; // Process has been user interrupted - so no success dialog is shown
             }
             if (!invalidRobots.isEmpty()) { // Some robots have invalid name
-                InvalidRobotNamesDialog dialog = new InvalidRobotNamesDialog(invalidRobots.size(), StringUtils.join(invalidRobots.toArray(), '\n'));
+                InvalidRobotNamesDialog dialog = new InvalidRobotNamesDialog(StringUtils.join(invalidRobots.toArray(), '\n'));
                 dialog.showAndWait();
                 if (dialog.isCanceled()) {
                     return; //cancel uploading process

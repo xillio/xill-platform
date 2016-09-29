@@ -35,14 +35,12 @@ public class InvalidRobotNamesDialog extends FXMLDialog {
     /**
      * Default constructor.
      *
-     * @param invalidRobotsCount The number of robots with invalid name.
      * @param list The text list of robots with invalid name.
      */
-    public InvalidRobotNamesDialog(int invalidRobotsCount, final String list) {
+    public InvalidRobotNamesDialog(final String list) {
         super("/fxml/dialogs/InvalidRobotNames.fxml");
         setTitle("Upload to server");
         setResizable(false);
-        txtTitle.setText(String.format("There are %d robots having invalid name.", invalidRobotsCount));
         txtList.setText(list);
     }
 

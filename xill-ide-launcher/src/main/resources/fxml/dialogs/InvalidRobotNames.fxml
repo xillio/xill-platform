@@ -23,26 +23,26 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="267.0" prefWidth="400.0" styleClass="root" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="396.0" prefWidth="469.0" styleClass="root" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
 		<VBox styleClass="dialogWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 			<children>
-				<AnchorPane styleClass="dialogContent" VBox.vgrow="ALWAYS">
+				<AnchorPane prefHeight="412.0" prefWidth="598.0" styleClass="dialogContent" VBox.vgrow="ALWAYS">
 					<children>
 						<VBox alignment="CENTER_LEFT" styleClass="dialogFormWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 							<children>
-										<Text fx:id="txtTitle" strokeType="OUTSIDE" strokeWidth="0.0" text="There are 0 robots having invalid name.">
+										<Text fx:id="txtTitle" strokeType="OUTSIDE" strokeWidth="0.0" text="The following robots have invalid names:">
                            <font>
                               <Font size="15.0" />
                            </font>
                         </Text>
-                        <TextArea fx:id="txtList" editable="false" prefHeight="200.0" prefWidth="200.0" />
-                        <Text fx:id="txtTitle1" strokeType="OUTSIDE" strokeWidth="0.0" text="The names don't comply with the Xill robot naming convention." />
+                        <TextArea fx:id="txtList" editable="false" prefHeight="249.0" prefWidth="445.0" />
+                        <Label prefHeight="65.0" prefWidth="445.0" text="Robot names may only contain letters and numbers and must start with a letter, which should be capitalized." wrapText="true" />
 							</children>
 						</VBox>
 					</children>
 				</AnchorPane>
-				<HBox styleClass="buttonsWrapper" VBox.vgrow="NEVER">
+				<HBox prefHeight="108.0" prefWidth="598.0" styleClass="buttonsWrapper" VBox.vgrow="NEVER">
 					<children>
 						<Button fx:id="skipBtn" mnemonicParsing="false" onAction="#skipBtnPressed" prefHeight="29.0" prefWidth="96.0" text="Skip invalid" />
 						<Button fx:id="cancelBtn" cancelButton="true" defaultButton="true" mnemonicParsing="false" onAction="#cancelBtnPressed" text="Cancel" />
