@@ -18,6 +18,7 @@ package nl.xillio.xill.plugins.template.constructs;
 import freemarker.template.Configuration;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
+import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.api.io.SimpleIOStream;
 import nl.xillio.xill.plugins.template.data.EngineMetadata;
@@ -60,7 +61,7 @@ public class ProcessConstructTest extends TestUtils {
         // Assert
         verify(metadata, times(1)).getConfiguration();
         verify(templateProcessor, times(1)).generate(anyString(), any(), any(), any());
-        verify(configurationFactory, times(0)).buildDefaultConfiguration(any());
+        verify(configurationFactory, times(0)).buildDefaultConfiguration(any(ConstructContext.class));
         Assert.assertTrue(result.isNull());
     }
 
@@ -70,7 +71,7 @@ public class ProcessConstructTest extends TestUtils {
         Configuration configuration = mock(Configuration.class);
         ConfigurationFactory configurationFactory = mock(ConfigurationFactory.class);
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
-        when(configurationFactory.buildDefaultConfiguration(any())).thenReturn(configuration);
+        when(configurationFactory.buildDefaultConfiguration(any(ConstructContext.class))).thenReturn(configuration);
 
         // Instantiate
         ProcessConstruct processConstruct = new ProcessConstruct(templateProcessor, configurationFactory);
@@ -85,7 +86,7 @@ public class ProcessConstructTest extends TestUtils {
 
         // Assert
         verify(templateProcessor, times(1)).generate(anyString(), any(), any(), any());
-        verify(configurationFactory, times(1)).buildDefaultConfiguration(any());
+        verify(configurationFactory, times(1)).buildDefaultConfiguration(any(ConstructContext.class));
         Assert.assertTrue(result.isNull());
     }
 

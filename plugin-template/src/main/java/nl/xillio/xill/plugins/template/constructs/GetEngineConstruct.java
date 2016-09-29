@@ -24,6 +24,10 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.plugins.template.data.EngineMetadata;
 import nl.xillio.xill.plugins.template.services.ConfigurationFactory;
+import nl.xillio.xill.plugins.template.services.ConfigurationParser;
+import nl.xillio.xill.services.files.FileResolver;
+
+import java.util.HashMap;
 
 /**
  * This construct generates a new file using a template and a data model
@@ -32,11 +36,17 @@ import nl.xillio.xill.plugins.template.services.ConfigurationFactory;
  * @since 3.5.0
  */
 public class GetEngineConstruct extends Construct {
+    private static final String TEMPLATES_DIRECTORY = "templatesDirectory";
+
     private final ConfigurationFactory configurationFactory;
+    private final ConfigurationParser configurationParser;
+    private final FileResolver fileResolver;
 
     @Inject
-    public GetEngineConstruct(ConfigurationFactory configurationFactory) {
+    public GetEngineConstruct(ConfigurationFactory configurationFactory, ConfigurationParser configurationParser, FileResolver fileResolver) {
         this.configurationFactory = configurationFactory;
+        this.configurationParser = configurationParser;
+        this.fileResolver = fileResolver;
     }
 
     @Override
@@ -48,10 +58,23 @@ public class GetEngineConstruct extends Construct {
     }
 
     private MetaExpression process(MetaExpression options, ConstructContext context) {
-        Configuration cfg = configurationFactory.parseConfiguration(options.getValue(), context);
+        HashMap<String, MetaExpression> optionsObject = options.getValue();
+        Configuration defaultConfiguration = getConfiguration(optionsObject, context);
+        Configuration cfg = configurationParser.parseConfiguration(defaultConfiguration, optionsObject);
+
         MetaExpression result = fromValue("[TemplateEngine]");
         EngineMetadata configuration = new EngineMetadata(cfg);
         result.storeMeta(configuration);
         return result;
+    }
+
+    private Configuration getConfiguration(HashMap<String, MetaExpression> options, ConstructContext context) {
+        if (options.isEmpty() || !options.containsKey(TEMPLATES_DIRECTORY)) {
+            return configurationFactory.buildDefaultConfiguration(context);
+        } else {
+            return configurationFactory.buildDefaultConfiguration(
+                    fileResolver.buildPath(context, options.get(TEMPLATES_DIRECTORY))
+            );
+        }
     }
 }
