@@ -21,7 +21,9 @@
 * Expected: The error message in the fail block should be the same as the provided one
  */
 
-use File, Assert;
+use Assert, File, Mongo;
+
+Mongo.connect("udm_default");
 
 var message = "Nested error";
 
@@ -41,4 +43,47 @@ do {
 } fail (error) {
     Assert.equal(error.message, message,
         "The error message does not match the expected message");
+}
+
+// Test 1: Invalid value
+do {
+    var doc = Mongo.objectId("a.b.c");
+} fail(error) {
+    // System.print(System.toJSON(error, true));
+    Assert.equal(error.message, "invalid hexadecimal representation of an ObjectId: [a.b.c]");
+}
+
+// Test 2: Invalid parameter type
+do {
+    var doc = Mongo.objectId({});
+} fail(error) {
+    Assert.equal(error.message, "Wrong type for argument `string` in objectId(<ATOMIC> string); expected [ATOMIC] but received [OBJECT]");
+}
+
+// Test 3a: Error nested as incorrect function parameter: Using invalid string
+do {
+    var doc = Mongo.findOne("documents", Mongo.objectId("a.b.c"));
+} fail(error) {
+    Assert.equal(error.message, "invalid hexadecimal representation of an ObjectId: [a.b.c]");
+}
+
+// Test 3b: Error nested as correct function parameter: Using invalid string
+do {
+    var doc = Mongo.findOne("documents", {"_id" : Mongo.objectId("a.b.c")});
+} fail(error) {
+    Assert.equal(error.message, "invalid hexadecimal representation of an ObjectId: [a.b.c]");
+}
+
+// Test 4a: Error nested as incorrect function parameter: Using invalid object type
+do {
+    var id1 = Mongo.findOne("documents", Mongo.objectId({}));
+} fail(error) {
+    Assert.equal(error.message, "Wrong type for argument `string` in objectId(<ATOMIC> string); expected [ATOMIC] but received [OBJECT]");
+}
+
+// Test 4b: Error nested as correct function parameter: Using invalid object type
+do {
+    var id1 = Mongo.findOne("documents", {"_id" : Mongo.objectId({})});
+} fail(error) {
+    Assert.equal(error.message, "Wrong type for argument `string` in objectId(<ATOMIC> string); expected [ATOMIC] but received [OBJECT]");
 }
