@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Add
 * `System.parseJSON()` now parses LIST [CTC-1769]
+* Warn users about invalid asset names [CTC-1798]
 
 ### Fix
 * On server threads are not closed when tasks finishes [XSVR-139]
