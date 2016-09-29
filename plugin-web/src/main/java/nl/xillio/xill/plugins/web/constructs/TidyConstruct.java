@@ -15,38 +15,32 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
-import com.google.inject.Inject;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
-import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
-import nl.xillio.xill.plugins.web.services.web.HTMLService;
 
 /**
  * Construct for tidying HTML or XHTML.
  *
  * @author Geert Konijnendijk
  */
-public class TidyConstruct extends Construct {
+public class TidyConstruct extends PhantomJSConstruct {
 
     private static final String SYNTAX_XHTML = "xhtml";
     private static final String SYNTAX_HTML = "html";
 
-    @Inject
-    private HTMLService htmlService;
-
     @Override
     public ConstructProcessor prepareProcess(ConstructContext context) {
-        return new ConstructProcessor((html, fullHTML, syntax, prettyPrint) -> process(html, fullHTML, syntax, prettyPrint, htmlService),
+        return new ConstructProcessor((html, fullHTML, syntax, prettyPrint) -> process(html, fullHTML, syntax, prettyPrint),
                 new Argument("html", ATOMIC),
                 new Argument("fullHTML", fromValue(true), ATOMIC),
                 new Argument("syntax", fromValue(SYNTAX_XHTML), ATOMIC),
                 new Argument("prettyPrint", fromValue(false), ATOMIC));
     }
 
-    static MetaExpression process(MetaExpression html, MetaExpression fullHTML, MetaExpression syntax, MetaExpression prettyPrint, HTMLService htmlService) {
+    private MetaExpression process(MetaExpression html, MetaExpression fullHTML, MetaExpression syntax, MetaExpression prettyPrint) {
         // Get HTML string
         String htmlValue = html.getStringValue();
         // Get whether to parse a body fragment or full html document
@@ -59,15 +53,15 @@ public class TidyConstruct extends Construct {
         // Call the right method for the combination of values
         if (SYNTAX_XHTML.equals(syntaxValue)) {
             if (fullHTMLValue) {
-                return fromValue(htmlService.tidyXHTML(htmlValue, prettyPrintValue));
+                return fromValue(getHtmlService().tidyXHTML(htmlValue, prettyPrintValue));
             } else {
-                return fromValue(htmlService.tidyXHTMLBodyFragment(htmlValue, prettyPrintValue));
+                return fromValue(getHtmlService().tidyXHTMLBodyFragment(htmlValue, prettyPrintValue));
             }
         } else if (SYNTAX_HTML.equals(syntaxValue)) {
             if (fullHTMLValue) {
-                return fromValue(htmlService.tidyHTML(htmlValue, prettyPrintValue));
+                return fromValue(getHtmlService().tidyHTML(htmlValue, prettyPrintValue));
             } else {
-                return fromValue(htmlService.tidyHTMLBodyFragment(htmlValue, prettyPrintValue));
+                return fromValue(getHtmlService().tidyHTMLBodyFragment(htmlValue, prettyPrintValue));
             }
         } else {
             throw new OperationFailedException("parse syntax value.", "Syntax value should be either \"" + SYNTAX_HTML + "\" or \"" + SYNTAX_XHTML + "\"");

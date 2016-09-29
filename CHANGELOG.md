@@ -3,8 +3,12 @@ All notable changes to this project will be documented in this file.
 
 ## [3.5.0] - unreleased
 
+### Add
+* `System.parseJSON()` now parses LIST [CTC-1769]
+
 ### Fix
 * On server threads are not closed when tasks finishes [XSVR-139]
+* Renaming of robot does not work properly on Linux [CTC-1787]
 
 ## [3.4.0] - unreleased
 
@@ -66,3 +70,4 @@ All notable changes to this project will be documented in this file.
 * HttpResponseException on upload of large project [CTC-1751]
 * Expression is evaluated even after an exception happens [CTC-1721]
 * String.absoluteUrl does not allow reusing protocol [CTC-1792]
+* MySQL Error: The server time zone value 'W. Europe Daylight Time' is unrecognized or represents more than one time zone. [CTC-1796]
