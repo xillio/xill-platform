@@ -15,7 +15,7 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.PageVariable;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 /**
  * Tests the {@link RemoveAllCookiesConstruct}.
  */
-public class RemoveAllCookiesConstructTest extends ExpressionBuilderHelper {
+public class RemoveAllCookiesConstructTest extends TestUtils {
 
     /**
      * test the process with normal usage.
@@ -39,14 +39,15 @@ public class RemoveAllCookiesConstructTest extends ExpressionBuilderHelper {
     public void testProcessNormalUsage() throws Exception {
         // mock
         WebService webService = mock(WebService.class);
-
+        RemoveAllCookiesConstruct construct = new RemoveAllCookiesConstruct();
+        construct.setWebService(webService);
         // The page
         PageVariable pageVariable = mock(PageVariable.class);
-        MetaExpression page = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
         when(page.getMeta(PageVariable.class)).thenReturn(pageVariable);
 
         // run
-        MetaExpression output = RemoveAllCookiesConstruct.process(page, webService);
+        MetaExpression output = process(construct, page);
 
         // Wheter we parse the pageVariable only once
         verify(page, times(2)).getMeta(PageVariable.class);
@@ -65,11 +66,13 @@ public class RemoveAllCookiesConstructTest extends ExpressionBuilderHelper {
     public void testNullInput() {
         // mock
         WebService webService = mock(WebService.class);
-        MetaExpression input = mock(MetaExpression.class);
+        RemoveAllCookiesConstruct construct = new RemoveAllCookiesConstruct();
+        construct.setWebService(webService);
+        MetaExpression input = mockExpression(ATOMIC);
         when(input.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = RemoveAllCookiesConstruct.process(input, webService);
+        MetaExpression output = process(construct, input);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -84,17 +87,19 @@ public class RemoveAllCookiesConstructTest extends ExpressionBuilderHelper {
     public void testProcessWhenWebServiceBreaks() throws Exception {
         // mock
         WebService webService = mock(WebService.class);
+        RemoveAllCookiesConstruct construct = new RemoveAllCookiesConstruct();
+        construct.setWebService(webService);
 
         // The page
         PageVariable pageVariable = mock(PageVariable.class);
-        MetaExpression page = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
         when(page.getMeta(PageVariable.class)).thenReturn(pageVariable);
 
         // we make it break
         doThrow(new RobotRuntimeException("breaking in webService")).when(webService).deleteCookies(pageVariable);
 
         // run
-        RemoveAllCookiesConstruct.process(page, webService);
+        process(construct, page);
     }
 
     /**
@@ -104,13 +109,14 @@ public class RemoveAllCookiesConstructTest extends ExpressionBuilderHelper {
     public void testProcessNoPageGiven() {
         // mock
         WebService webService = mock(WebService.class);
-
+        RemoveAllCookiesConstruct construct = new RemoveAllCookiesConstruct();
+        construct.setWebService(webService);
         // The page
-        MetaExpression page = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
         when(page.getMeta(PageVariable.class)).thenReturn(null);
 
         // run
-        RemoveAllCookiesConstruct.process(page, webService);
+        process(construct, page);
     }
 
 }

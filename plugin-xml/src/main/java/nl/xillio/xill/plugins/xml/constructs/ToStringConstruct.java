@@ -32,7 +32,7 @@ public class ToStringConstruct extends Construct {
     @Override
     public ConstructProcessor prepareProcess(ConstructContext context) {
         return new ConstructProcessor(
-                node -> process(node),
+                ToStringConstruct::process,
                 new Argument("node", ATOMIC)
         );
     }
