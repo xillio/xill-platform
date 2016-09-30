@@ -19,13 +19,16 @@
 * Expected: See dataset
 */
 
-use Assert, String;
+use Assert, String, System;
+
+// Get the decimal mark (this can vary per system).
+var decimalMark = String.substring(String.format("%1$.1f", [0.1]), 1, 2);
 
 // String, values, expected.
 var dataset = [
 	["foo %1$s %2$s, %1$s", ["bar", "baz"], "foo bar baz, bar"],
-	["%1$04d %2$.3f", [12, 3.14], "0012 3.140"],
-	["%1$-4d %2$+1.1f", [5.123, 6.7], "5    +6.7"],
+	["%1$04d %2$.3f", [12, 3.14], "0012 3" :: decimalMark :: "140"],
+	["%1$-4d %2$+1.1f", [5.123, 6.7], "5    +6" :: decimalMark :: "7"],
 	["%1$,d %2$3d", [-1234567, 3], "-1,234,567   3"]
 ];
 
