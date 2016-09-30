@@ -15,23 +15,17 @@
  */
 package nl.xillio.xill.plugins.xml.constructs;
 
-import me.biesaart.utils.IOUtils;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.data.XmlNode;
-import nl.xillio.xill.plugins.file.services.files.SimpleTextFileReader;
 import nl.xillio.xill.plugins.xml.services.NodeService;
 import nl.xillio.xill.plugins.xml.services.NodeServiceImpl;
 import nl.xillio.xill.services.files.TextFileReader;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -41,7 +35,7 @@ import static org.testng.Assert.assertTrue;
  */
 public class FromFileConstructTest extends TestUtils {
     private NodeService nodeService = spy(new NodeServiceImpl());
-    private TextFileReader textFileReader = spy(new SimpleTextFileReader());
+    private TextFileReader textFileReader = mock(TextFileReader.class);
     private FromFileConstruct construct = new FromFileConstruct(nodeService, textFileReader);
 
     /**
@@ -49,22 +43,18 @@ public class FromFileConstructTest extends TestUtils {
      */
     @Test
     public void testProcess() throws IOException {
-        // Create test file.
-        Path file = Files.createTempFile(getClass().getSimpleName(), ".xml");
         String source = "<parent><child>inner</child></parent>";
-        Files.copy(IOUtils.toInputStream(source), file, StandardCopyOption.REPLACE_EXISTING);
-        setFileResolverReturnValue(file);
+
+        // Mock.
+        when(textFileReader.getText(any(), any())).thenReturn(source);
 
         // Run.
-        MetaExpression result = this.process(construct, fromValue(file.toAbsolutePath().toString()));
+        MetaExpression result = this.process(construct, fromValue(""));
 
         // Verify.
         verify(nodeService).fromString(source);
 
         // Assert.
         assertTrue(result.hasMeta(XmlNode.class));
-
-        // Delete test file.
-        Files.delete(file);
     }
 }

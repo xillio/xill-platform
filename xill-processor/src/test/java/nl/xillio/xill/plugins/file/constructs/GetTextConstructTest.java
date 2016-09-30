@@ -15,51 +15,58 @@
  */
 package nl.xillio.xill.plugins.file.constructs;
 
-import me.biesaart.utils.IOUtils;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
-import nl.xillio.xill.api.errors.RobotRuntimeException;
-import nl.xillio.xill.plugins.file.services.files.SimpleTextFileReader;
+import nl.xillio.xill.api.errors.OperationFailedException;
+import nl.xillio.xill.services.files.TextFileReader;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Paths;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 
 public class GetTextConstructTest extends TestUtils {
-    private GetTextConstruct construct = new GetTextConstruct(new SimpleTextFileReader());
+    @BeforeClass
+    private void preTest() {
+        setFileResolverReturnValue(Paths.get(""));
+    }
 
     /**
      * Test the construct under normal circumstances.
      */
     @Test
     public void testNormalUsageFromFile() throws IOException {
-        // Create test file
-        Path file = Files.createTempFile(getClass().getSimpleName(), ".txt");
-        Files.copy(IOUtils.toInputStream("File Test"), file, StandardCopyOption.REPLACE_EXISTING);
+        String text = "foo bar";
 
-        setFileResolverReturnValue(file);
+        // Mock.
+        TextFileReader textFileReader = mock(TextFileReader.class);
+        GetTextConstruct construct = new GetTextConstruct(textFileReader);
+        when(textFileReader.getText(any(), any())).thenReturn(text);
 
-        MetaExpression result = this.process(construct, fromValue(file.toAbsolutePath().toString()));
+        // Run.
+        MetaExpression result = this.process(construct, fromValue(""));
 
-        assertEquals(result.getStringValue(), "File Test");
-
-        // Delete test file
-        Files.delete(file);
+        // Assert.
+        assertEquals(result.getStringValue(), text);
     }
 
     /**
      * Test the construct with a non-existent file.
      */
-    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*I don't exist.*")
+    @Test(expectedExceptions = OperationFailedException.class, expectedExceptionsMessageRegExp = ".*get text from the file.*")
     public void testFromFileNotExists() {
-        // Create test file
-        Path file = Paths.get("I don't exist");
+        // Mock.
+        TextFileReader textFileReader = mock(TextFileReader.class);
+        GetTextConstruct construct = new GetTextConstruct(textFileReader);
+        when(textFileReader.getText(any(), any())).thenThrow(new OperationFailedException("get text from the file", "File does not exist."));
 
-        setFileResolverReturnValue(file);
-
-        this.process(construct, fromValue(file.toAbsolutePath().toString()));
+        // Run.
+        this.process(construct, fromValue(""));
     }
 }
