@@ -20,16 +20,10 @@ import nl.xillio.xill.api.data.XmlNode;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.xml.data.XmlNodeVar;
 import nl.xillio.xill.plugins.xml.exceptions.XmlParseException;
-import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.regex.Pattern;
 
 /**
@@ -128,32 +122,6 @@ public class NodeServiceImpl implements NodeService {
         } else {
             attributes.removeNamedItem(attrName);
             return true;
-        }
-    }
-
-    @Override
-    public XmlNode fromFilePath(final Path xmlSource) {
-        String content;
-
-        try (InputStream stream = Files.newInputStream(xmlSource, StandardOpenOption.READ);) {
-            content = IOUtils.toString(stream);
-        } catch (IOException e) {
-            throw new RobotRuntimeException("Read file error.", e);
-        }
-
-        // Remove leading BOM characters.
-        content = LEADING_BOM_PATTERN.matcher(content).replaceFirst("");
-
-        if (content.isEmpty()) {
-            throw new RobotRuntimeException("The file is empty.");
-        }
-
-        try {
-            return new XmlNodeVar(content, true);
-        } catch (XmlParseException e) {
-            throw new RobotRuntimeException("The XML source is invalid.", e);
-        } catch (Exception e) {
-            throw new RobotRuntimeException("Error occured.", e);
         }
     }
 

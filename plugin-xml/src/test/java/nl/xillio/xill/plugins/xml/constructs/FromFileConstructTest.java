@@ -15,17 +15,24 @@
  */
 package nl.xillio.xill.plugins.xml.constructs;
 
+import me.biesaart.utils.IOUtils;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
-import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.data.XmlNode;
+import nl.xillio.xill.plugins.file.services.files.SimpleTextFileReader;
 import nl.xillio.xill.plugins.xml.services.NodeService;
+import nl.xillio.xill.plugins.xml.services.NodeServiceImpl;
+import nl.xillio.xill.services.files.TextFileReader;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
-import static org.mockito.Mockito.*;
-import static org.testng.Assert.assertSame;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tests for the {@link FromFileConstructTest}
@@ -33,36 +40,31 @@ import static org.testng.Assert.assertSame;
  * @author Zbynek Hochmann
  */
 public class FromFileConstructTest extends TestUtils {
+    private NodeService nodeService = spy(new NodeServiceImpl());
+    private TextFileReader textFileReader = spy(new SimpleTextFileReader());
+    private FromFileConstruct construct = new FromFileConstruct(nodeService, textFileReader);
 
     /**
-     * Test the process method under normal circumstances
+     * Test the construct under normal circumstances.
      */
     @Test
-    public void testProcess() {
+    public void testProcess() throws IOException {
+        // Create test file.
+        Path file = Files.createTempFile(getClass().getSimpleName(), ".xml");
+        String source = "<parent><child>inner</child></parent>";
+        Files.copy(IOUtils.toInputStream(source), file, StandardCopyOption.REPLACE_EXISTING);
+        setFileResolverReturnValue(file);
 
-        // Mock
-        Path path = mock(Path.class);
-        setFileResolverReturnValue(path);
+        // Run.
+        MetaExpression result = this.process(construct, fromValue(file.toAbsolutePath().toString()));
 
-        MetaExpression filenameVar = mock(MetaExpression.class);
-        when(filenameVar.getStringValue()).thenReturn(".");
+        // Verify.
+        verify(nodeService).fromString(source);
 
-        ConstructContext context = mock(ConstructContext.class);
+        // Assert.
+        assertTrue(result.hasMeta(XmlNode.class));
 
-        XmlNode xmlNode = mock(XmlNode.class);
-        String text = "test";
-        when(xmlNode.toString()).thenReturn(text);
-
-        NodeService nodeService = mock(NodeService.class);
-        when(nodeService.fromFilePath(any())).thenReturn(xmlNode);
-
-        // Run
-        MetaExpression result = FromFileConstruct.process(context, filenameVar, nodeService);
-
-        // Verify
-        verify(nodeService).fromFilePath(any());
-
-        // Assert
-        assertSame(result.getMeta(XmlNode.class), xmlNode);
+        // Delete test file.
+        Files.delete(file);
     }
 }

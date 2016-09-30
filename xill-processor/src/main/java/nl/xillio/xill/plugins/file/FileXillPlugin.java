@@ -41,7 +41,6 @@ public class FileXillPlugin extends XillPlugin {
     @Override
     public void configure() {
         super.configure();
-
         bind(TextFileReader.class).toInstance(new SimpleTextFileReader());
     }
 }

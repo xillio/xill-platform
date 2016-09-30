@@ -38,6 +38,11 @@
             <groupId>net.sf.saxon</groupId>
             <artifactId>Saxon-HE</artifactId>
         </dependency>
+        <dependency>
+            <groupId>nl.xillio.xill</groupId>
+            <artifactId>xill-processor</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

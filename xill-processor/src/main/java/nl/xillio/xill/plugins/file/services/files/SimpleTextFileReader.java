@@ -31,20 +31,18 @@ public class SimpleTextFileReader implements TextFileReader {
     private static final Pattern LEADING_BOM_PATTERN = Pattern.compile("^\uFEFF+");
 
     @Override
-    public String getText(final Path source, Charset charset) {
+    public String getText(final Path source, final Charset charset) {
         // Check if the source exists, is readable, and is not a directory.
         if (!Files.isReadable(source) || Files.isDirectory(source)) {
             throw new OperationFailedException("open stream for reading", "The file " + source + " is not readable or does not exist.");
         }
 
         String text;
-        if (charset == null) {
-            charset = Charset.defaultCharset();
-        }
+        Charset usedCharset = charset == null ? Charset.defaultCharset() : charset;
 
         // Read the text from the file.
         try (InputStream stream = Files.newInputStream(source, StandardOpenOption.READ)) {
-            text = IOUtils.toString(stream, charset);
+            text = IOUtils.toString(stream, usedCharset);
         } catch (IOException e) {
             throw new OperationFailedException("get text from the file", e.getMessage(), e);
         }
