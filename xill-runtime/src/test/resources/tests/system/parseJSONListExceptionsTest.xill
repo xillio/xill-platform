@@ -13,24 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.plugins.database.constructs;
+/*
+* Specification: When given a faulty list to this construct, the construct MUST give the proper exception
+* Expected: Exceptions are thrown
+* Input: [], [[]], ["a", {}], {}
+*/
 
-import com.google.inject.Inject;
-import nl.xillio.xill.api.XillThreadFactory;
-import nl.xillio.xill.plugins.database.util.Database;
+use System, Assert;
 
-/**
- * The connect construct for the MYsql database.
- */
-@Deprecated
-public class MysqlConnectConstruct extends SimplesqlConnectConstruct {
+testInput([]);
+testInput([[]]);
+testInput(["a", {}]);
+testInput({});
 
-    /**
-     * The constructor for the {@link MysqlConnectConstruct}.
-     */
-    @Inject
-    public MysqlConnectConstruct(XillThreadFactory xillThreadFactory) {
-        super(xillThreadFactory, Database.MYSQL.getName(), 3306);
+function testInput(input) {
+    do {
+        System.parseJSON(input);
+    } success {
+        Assert.error("Value: " :: input :: ", is parsable to JSON while it should not.");
     }
-
 }

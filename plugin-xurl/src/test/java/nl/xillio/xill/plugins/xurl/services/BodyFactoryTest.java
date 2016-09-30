@@ -104,25 +104,25 @@ public class BodyFactoryTest extends TestUtils {
     public Object[][] multipartBodyProvider() {
         return new Object[][]{
                 {
-                        map(
-                                "textInput", map(
+                        createMap(
+                                "textInput", createMap(
                                         "content", "This is my text value",
                                         "type", "text"
                                 ),
-                                "streamInput", map(
+                                "streamInput", createMap(
                                         "content", fromValue(new SimpleIOStream(IOUtils.toInputStream("Hello Stream"), "")),
                                         "type", "stream"
                                 )
                         )
                 },
                 {
-                        list(
-                                map(
+                        createList(
+                                createMap(
                                         "name", "textInput",
                                         "content", "This is my text value",
                                         "type", "text"
                                 )
-                                , map(
+                                , createMap(
                                         "name", "streamInput",
                                         "content", fromValue(new SimpleIOStream(IOUtils.toInputStream("Hello Stream"), "")),
                                         "type", "stream"
@@ -167,27 +167,27 @@ public class BodyFactoryTest extends TestUtils {
     public Object[][] multipartBodyWrongFieldProvider() {
         return new Object[][]{
                 {
-                        map(
-                                "textInput", map(
+                        createMap(
+                                "textInput", createMap(
                                         "name", "This is wrong",
                                         "content", "This is my text value",
                                         "type", "text"
                                 ),
-                                "streamInput", map(
+                                "streamInput", createMap(
                                         "content", fromValue(new SimpleIOStream(IOUtils.toInputStream("Hello Stream"), "")),
                                         "type", "stream"
                                 )
                         )
                 },
                 {
-                        list(
-                                map(
+                        createList(
+                                createMap(
                                         "name", "textInput",
                                         "content", "This is my text value",
                                         "type", "text",
                                         "error", "This is wrong"
                                 )
-                                , map(
+                                , createMap(
                                         "name", "streamInput",
                                         "content", fromValue(new SimpleIOStream(IOUtils.toInputStream("Hello Stream"), "")),
                                         "type", "stream"
