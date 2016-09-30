@@ -137,7 +137,6 @@ public class XillCell {
     public void setCellValue(String value, boolean isFormula) {
         if (isFormula) {
             try {
-                cell.setCellType(Cell.CELL_TYPE_FORMULA);
                 cell.setCellFormula(value);
             } catch (FormulaParseException e) {
                 throw new IllegalArgumentException(e.getMessage(), e);
