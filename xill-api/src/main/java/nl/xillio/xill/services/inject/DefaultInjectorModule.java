@@ -21,6 +21,7 @@ import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Construct;
+import nl.xillio.xill.services.files.TextFileReader;
 import nl.xillio.xill.services.json.JacksonParser;
 import nl.xillio.xill.services.json.JsonParser;
 import nl.xillio.xill.services.json.PrettyJsonParser;

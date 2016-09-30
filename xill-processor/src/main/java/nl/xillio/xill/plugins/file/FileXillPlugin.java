@@ -18,9 +18,11 @@ package nl.xillio.xill.plugins.file;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import nl.xillio.plugins.XillPlugin;
+import nl.xillio.xill.plugins.file.services.files.SimpleTextFileReader;
 import nl.xillio.xill.plugins.file.services.permissions.AclFilePermissionsProvider;
 import nl.xillio.xill.plugins.file.services.permissions.FilePermissionsProvider;
 import nl.xillio.xill.plugins.file.services.permissions.PosixFilePermissionsProvider;
+import nl.xillio.xill.services.files.TextFileReader;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,10 +34,14 @@ public class FileXillPlugin extends XillPlugin {
 
     @Provides
     @Singleton
-    List<FilePermissionsProvider> filePermissionsProviders(
-            AclFilePermissionsProvider acl,
-            PosixFilePermissionsProvider posix) {
-
+    List<FilePermissionsProvider> filePermissionsProviders(AclFilePermissionsProvider acl, PosixFilePermissionsProvider posix) {
         return Arrays.asList(acl, posix);
+    }
+
+    @Override
+    public void configure() {
+        super.configure();
+
+        bind(TextFileReader.class).toInstance(new SimpleTextFileReader());
     }
 }
