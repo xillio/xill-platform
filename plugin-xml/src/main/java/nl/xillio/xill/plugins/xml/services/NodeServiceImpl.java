@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,8 +24,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import java.util.regex.Pattern;
-
 /**
  * This class is the main implementation of the {@link NodeService}
  *
@@ -34,11 +32,9 @@ import java.util.regex.Pattern;
 
 @Singleton
 public class NodeServiceImpl implements NodeService {
-    private static final Pattern LEADING_BOM_PATTERN = Pattern.compile("^\uFEFF+"); // Duplicated in: File::GetTextConstruct.
-
     @Override
     public XmlNode insertNode(final XmlNode parentXmlNode, final String newChildNodeStr, final XmlNode beforeChildXmlNode) {
-        XmlNodeVar newXmlChildNode = null;
+        XmlNodeVar newXmlChildNode;
         try {
             newXmlChildNode = new XmlNodeVar(newChildNodeStr, false);
         } catch (XmlParseException e) {
@@ -86,7 +82,7 @@ public class NodeServiceImpl implements NodeService {
 
     @Override
     public XmlNode replaceNode(final XmlNode orgXmlNode, final String replXmlStr) {
-        XmlNodeVar replXmlNode = null;
+        XmlNodeVar replXmlNode;
         try {
             replXmlNode = new XmlNodeVar(replXmlStr, false);
         } catch (XmlParseException e) {
