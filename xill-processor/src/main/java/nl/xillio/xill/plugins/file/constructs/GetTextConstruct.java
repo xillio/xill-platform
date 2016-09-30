@@ -50,7 +50,7 @@ public class GetTextConstruct extends Construct {
                 new Argument("encoding", NULL, ATOMIC));
     }
 
-    MetaExpression process(final ConstructContext context, final MetaExpression source, final MetaExpression encoding) {
+    private MetaExpression process(final ConstructContext context, final MetaExpression source, final MetaExpression encoding) {
         // Get the charset and path.
         Charset charset = StreamUtils.getCharset(encoding);
         Path path = getPath(context, source);
