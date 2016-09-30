@@ -32,11 +32,6 @@ public class SimpleTextFileReader implements TextFileReader {
 
     @Override
     public String getText(final Path source, final Charset charset) {
-        // Check if the source exists, is readable, and is not a directory.
-        if (!Files.isReadable(source) || Files.isDirectory(source)) {
-            throw new OperationFailedException("open stream for reading", "The file " + source + " is not readable or does not exist.");
-        }
-
         String text;
         Charset usedCharset = charset == null ? Charset.defaultCharset() : charset;
 
