@@ -32,6 +32,7 @@ import static org.testng.Assert.assertTrue;
 
 public class AssignTest extends TestUtils {
     private final Debugger debugger = new NullDebugger();
+    private final static String SYS_LF = System.getProperty("line.separator");
 
     @Test
     public void testAssignToAtomic() {
@@ -56,10 +57,13 @@ public class AssignTest extends TestUtils {
 
 
         Assign assign = new Assign(variableDeclaration, Collections.singletonList(fromValue(1)), fromValue("World"));
-        assertEquals(variableDeclaration.getVariable().getStringValue(), "[\"Hello\"]");
+        assertEquals(variableDeclaration.getVariable().getStringValue(), String.format("[%1$s  \"Hello\"%1$s]", SYS_LF));
 
         assign.process(debugger);
-        assertEquals(variableDeclaration.getVariable().getStringValue(), "[\"Hello\",\"World\"]");
+        assertEquals(variableDeclaration.getVariable().getStringValue(), String.format("[%1$s" +
+                "  \"Hello\",%1$s" +
+                "  \"World\"%1$s" +
+                "]", SYS_LF));
     }
 
     @Test
@@ -89,10 +93,27 @@ public class AssignTest extends TestUtils {
                 fromValue("New Value")
         );
 
-        assertEquals(variableDeclaration.getVariable().getStringValue(), "[{\"test\":[{\"other\":4}]}]");
+        assertEquals(variableDeclaration.getVariable().getStringValue(), String.format("[%1$s" +
+                "  {%1$s" +
+                "    \"test\" : [%1$s" +
+                "      {%1$s" +
+                "        \"other\" : 4%1$s" +
+                "      }%1$s" +
+                "    ]%1$s" +
+                "  }%1$s" +
+                "]", SYS_LF));
 
         assign.process(debugger);
-        assertEquals(variableDeclaration.getVariable().getStringValue(), "[{\"test\":[{\"other\":4,\"hello\":\"New Value\"}]}]");
+        assertEquals(variableDeclaration.getVariable().getStringValue(), String .format("[%1$s" +
+                "  {%1$s" +
+                "    \"test\" : [%1$s" +
+                "      {%1$s" +
+                "        \"other\" : 4,%1$s" +
+                "        \"hello\" : \"New Value\"%1$s" +
+                "      }%1$s" +
+                "    ]%1$s" +
+                "  }%1$s" +
+                "]", SYS_LF));
     }
 
     @Test

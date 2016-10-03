@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.excel.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.excel.datastructures.XillWorkbook;
 import org.testng.annotations.Test;
@@ -23,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -33,7 +33,7 @@ import static org.testng.Assert.assertEquals;
  *
  * @author Daan Knoope
  */
-public class GetSheetNamesConstructTest {
+public class GetSheetNamesConstructTest extends TestUtils {
 
     /**
      * Creates a XillWorkbook on which the test operations will be performed
@@ -56,7 +56,7 @@ public class GetSheetNamesConstructTest {
     public void testProcessReturnsEmptyList() throws Exception {
         MetaExpression workbookInput = createWorkbookInput(new ArrayList<>());
         String result = GetSheetNamesConstruct.process(workbookInput).getStringValue();
-        assertEquals(result, "[]");
+        assertEquals(result, "[ ]");
     }
 
     /**
@@ -66,6 +66,6 @@ public class GetSheetNamesConstructTest {
     public void testProcessReturnsList() throws Exception {
         MetaExpression workbookInput = createWorkbookInput(Arrays.asList("Sheet1", "Sheet2"));
         String result = GetSheetNamesConstruct.process(workbookInput).getStringValue();
-        assertEquals(result, "[\"Sheet1\",\"Sheet2\"]");
+        assertEquals(result, String.format("[%1$s  \"Sheet1\",%1$s  \"Sheet2\"%1$s]", System.getProperty("line.separator")));
     }
 }

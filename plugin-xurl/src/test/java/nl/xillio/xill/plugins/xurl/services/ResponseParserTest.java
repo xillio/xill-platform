@@ -47,6 +47,7 @@ import static org.testng.Assert.assertTrue;
 public class ResponseParserTest extends TestUtils {
     private final XmlNodeFactory nodeFactory = mock(XmlNodeFactory.class);
     private final ResponseParser responseParser = new ResponseParser(new JacksonParser(true), nodeFactory);
+    private final static String SYS_LF = System.getProperty("line.separator");
 
     @Test
     public void testParseFullResponseWithTextBody() throws IOException {
@@ -55,7 +56,18 @@ public class ResponseParserTest extends TestUtils {
 
         MetaExpression result = responseParser.build(mock(Response.class), httpResponse, new Options());
 
-        assertEquals(result.toString(), "{\"status\":{\"code\":200,\"phrase\":\"OK\"},\"headers\":{\"x-header\":\"nice\"},\"version\":\"HTTP/1.0\",\"cookies\":{},\"body\":\"This is the body of my response\"}");
+        assertEquals(result.toString(), String.format("{%1$s" +
+                "  \"status\" : {%1$s" +
+                "    \"code\" : 200,%1$s" +
+                "    \"phrase\" : \"OK\"%1$s" +
+                "  },%1$s" +
+                "  \"headers\" : {%1$s" +
+                "    \"x-header\" : \"nice\"%1$s" +
+                "  },%1$s" +
+                "  \"version\" : \"HTTP/1.0\",%1$s" +
+                "  \"cookies\" : { },%1$s" +
+                "  \"body\" : \"This is the body of my response\"%1$s" +
+                "}", SYS_LF));
     }
 
     @Test
@@ -67,8 +79,23 @@ public class ResponseParserTest extends TestUtils {
 
         MetaExpression result = responseParser.build(mock(Response.class), httpResponse, new Options());
 
-        assertEquals(result.toString(), "{\"status\":{\"code\":200,\"phrase\":\"OK\"},\"headers\":{},\"version\":\"HTTP/1.0\",\"cookies\":{\"myCookie\":{\"name\":\"myCookie\",\"value\":\"This seems to work\",\"path\":\"/\",\"httponly\":true}},\"body\":\"BODY\"}");
-
+        assertEquals(result.toString(), String.format("{%1$s" +
+                "  \"status\" : {%1$s" +
+                "    \"code\" : 200,%1$s" +
+                "    \"phrase\" : \"OK\"%1$s" +
+                "  },%1$s" +
+                "  \"headers\" : { },%1$s" +
+                "  \"version\" : \"HTTP/1.0\",%1$s" +
+                "  \"cookies\" : {%1$s" +
+                "    \"myCookie\" : {%1$s" +
+                "      \"name\" : \"myCookie\",%1$s" +
+                "      \"value\" : \"This seems to work\",%1$s" +
+                "      \"path\" : \"/\",%1$s" +
+                "      \"httponly\" : true%1$s" +
+                "    }%1$s" +
+                "  },%1$s" +
+                "  \"body\" : \"BODY\"%1$s" +
+                "}", SYS_LF));
     }
 
     @Test
@@ -79,12 +106,23 @@ public class ResponseParserTest extends TestUtils {
         MetaExpression result = responseParser.parseBody(httpResponse, null, this.mockResponseStatus());
 
         assertEquals(result.getType(), LIST);
-        assertEquals(result.toString(), "[1,2,3,4,5]");
+        assertEquals(result.toString(), String.format("[%1$s" +
+                "  1,%1$s" +
+                "  2,%1$s" +
+                "  3,%1$s" +
+                "  4,%1$s" +
+                "  5%1$s" +
+                "]", SYS_LF));
     }
 
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*json.*responseContentType.*")
     public void testJsonBodyInvalid() throws IOException {
-        String bodyText = "[1,2,3,4,5";
+        String bodyText = String.format("[%1$s" +
+                "  1,%1$s" +
+                "  2,%1$s" +
+                "  3,%1$s" +
+                "  4,%1$s" +
+                "  5%1$s", SYS_LF);
         HttpResponse httpResponse = jsonResponse(bodyText);
 
         responseParser.parseBody(httpResponse, null, this.mockResponseStatus());

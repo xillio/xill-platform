@@ -20,7 +20,7 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.mongodb.data.MongoObjectId;
 import nl.xillio.xill.services.json.JacksonParser;
 import nl.xillio.xill.services.json.JsonException;
-import nl.xillio.xill.services.json.JsonParser;
+import nl.xillio.xill.services.json.PrettyJsonParser;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.testng.annotations.Test;
@@ -32,7 +32,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 public class MongoConverterTest extends TestUtils {
-    private JsonParser parser = new JacksonParser(false);
+    private PrettyJsonParser parser = new JacksonParser(false);
 
     @Test
     public void testParseEmptyMetaExpression() throws JsonException {
@@ -74,7 +74,11 @@ public class MongoConverterTest extends TestUtils {
         Document document = new Document("$set", new Document("test", 2));
         MetaExpression expression = mongoConverter.parse(document);
 
-        assertEquals(expression.toString(parser), "{\"$set\":{\"test\":2}}");
+        assertEquals(expression.toString(parser), String.format("{%1$s" +
+                "  \"$set\" : {%1$s" +
+                "    \"test\" : 2%1$s" +
+                "  }%1$s" +
+                "}", System.getProperty("line.separator")));
     }
 
     private MetaExpression parse(String json) throws JsonException {

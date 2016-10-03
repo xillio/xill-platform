@@ -27,6 +27,7 @@ import nl.xillio.xill.api.errors.RobotConcurrentModificationException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.services.json.JsonException;
 import nl.xillio.xill.services.json.JsonParser;
+import nl.xillio.xill.services.json.PrettyJsonParser;
 
 import java.time.Instant;
 import java.util.*;
@@ -46,7 +47,7 @@ public abstract class MetaExpression implements Expression, Processable {
     private Throwable closedLocation;
 
     @Inject
-    private static JsonParser jsonParser;
+    private static PrettyJsonParser jsonParser;
     @Inject
     private static Injector injector;
 
@@ -242,7 +243,7 @@ public abstract class MetaExpression implements Expression, Processable {
      * @return JSON representation
      * @throws JsonException if the value cannot be parsed by the JsonParser
      */
-    public String toString(final JsonParser jsonParser) throws JsonException {
+    public String toString(final PrettyJsonParser jsonParser) throws JsonException {
         return jsonParser.toJson((Object) extractValue(this));
     }
 

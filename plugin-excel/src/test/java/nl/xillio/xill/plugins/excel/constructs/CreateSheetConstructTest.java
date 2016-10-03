@@ -101,7 +101,11 @@ public class CreateSheetConstructTest extends TestUtils {
         MetaExpression result = CreateSheetConstruct.process(service, workbookInput, fromValue("name"));
 
         //Assertions
-        assertEquals(result.getStringValue(), "{\"sheetName\":\"name\",\"rows\":0,\"columns\":0}");
+        assertEquals(result.getStringValue(), String.format("{%1$s" +
+                "  \"sheetName\" : \"name\",%1$s" +
+                "  \"rows\" : 0,%1$s" +
+                "  \"columns\" : 0%1$s" +
+                "}", System.getProperty("line.separator")));
         assertEquals(result.getMeta(XillSheet.class), sheet);
     }
 

@@ -47,7 +47,27 @@ public class HungarianAlgorithmConstructTest extends TestUtils {
     public void processNormalUsage() {
         // Mock
         MetaExpression matrix = mock(MetaExpression.class);
-        String hungarianReturnValue = "[{\"sum\":10.0},{\"cells\":[{\"row\":0,\"col\":2},{\"row\":1,\"col\":1},{\"row\":2,\"col\":0}]}]";
+        String hungarianReturnValue = String.format("[%1$s" +
+                "  {%1$s" +
+                "    \"sum\" : 10.0%1$s" +
+                "  },%1$s" +
+                "  {%1$s" +
+                "    \"cells\" : [%1$s" +
+                "      {%1$s" +
+                "        \"row\" : 0,%1$s" +
+                "        \"col\" : 2%1$s" +
+                "      },%1$s" +
+                "      {%1$s" +
+                "        \"row\" : 1,%1$s" +
+                "        \"col\" : 1%1$s" +
+                "      },%1$s" +
+                "      {%1$s" +
+                "        \"row\" : 2,%1$s" +
+                "        \"col\" : 0%1$s" +
+                "      }%1$s" +
+                "    ]%1$s" +
+                "  }%1$s" +
+                "]", System.getProperty("line.separator"));
         when(matrix.getType()).thenReturn(LIST);
         when(matrix.getValue()).thenReturn(Arrays.asList(
                 fromValue(Arrays.asList(fromValue(0), fromValue(1), fromValue(3))),
