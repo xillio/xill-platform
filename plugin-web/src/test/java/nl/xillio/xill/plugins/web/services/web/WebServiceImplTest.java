@@ -92,7 +92,6 @@ public class WebServiceImplTest {
         WebServiceImpl implementation = new WebServiceImpl();
         String tagName = implementation.getTagName(webVariable);
 
-
         // verify
         verify(element, times(1)).getTagName();
 

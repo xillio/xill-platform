@@ -381,7 +381,7 @@ public class WebServiceImpl implements WebService {
         try {
             Files.createDirectories(targetFilePath.getParent());
         } catch (IOException e) {
-            throw new OperationFailedException("copy file to target location", "Was unable to create new folder in path: " + targetFilePath.getParent().toAbsolutePath() + ".", "Check if the supplied path is correct.");
+            throw new OperationFailedException("copy file to target location", "Was unable to create new folder in path: " + targetFilePath.getParent().toAbsolutePath() + ".", "Check if the supplied path is correct.",e);
         }
         Files.copy(stream, targetFilePath, StandardCopyOption.REPLACE_EXISTING);
     }
