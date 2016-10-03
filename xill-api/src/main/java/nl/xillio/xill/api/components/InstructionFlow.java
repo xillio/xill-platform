@@ -91,7 +91,7 @@ public class InstructionFlow<T> {
      * @return the instruction flow
      */
     public static <T> InstructionFlow<T> doReturn(final T value) {
-        return new InstructionFlow<T>(Type.RETURN, value);
+        return new InstructionFlow<>(Type.RETURN, value);
     }
 
     /**
@@ -101,7 +101,7 @@ public class InstructionFlow<T> {
      * @return the instruction flow
      */
     public static <T> InstructionFlow<T> doReturn() {
-        return new InstructionFlow<T>(Type.RETURN, null);
+        return new InstructionFlow<>(Type.RETURN, null);
     }
 
     /**
@@ -109,7 +109,7 @@ public class InstructionFlow<T> {
      * @return a continue token
      */
     public static <T> InstructionFlow<T> doContinue() {
-        return new InstructionFlow<T>(Type.CONTINUE, null);
+        return new InstructionFlow<>(Type.CONTINUE, null);
     }
 
     /**
@@ -117,7 +117,7 @@ public class InstructionFlow<T> {
      * @return a break token
      */
     public static <T> InstructionFlow<T> doBreak() {
-        return new InstructionFlow<T>(Type.BREAK, null);
+        return new InstructionFlow<>(Type.BREAK, null);
     }
 
     /**
@@ -125,7 +125,7 @@ public class InstructionFlow<T> {
      * @return a resume token
      */
     public static <T> InstructionFlow<T> doResume() {
-        return new InstructionFlow<T>(Type.RESUME, null);
+        return new InstructionFlow<>(Type.RESUME, null);
     }
 
     /**
@@ -134,6 +134,6 @@ public class InstructionFlow<T> {
      * @return a resume token with a value
      */
     public static <T> InstructionFlow<T> doResume(final T value) {
-        return new InstructionFlow<T>(Type.RESUME, value);
+        return new InstructionFlow<>(Type.RESUME, value);
     }
 }
