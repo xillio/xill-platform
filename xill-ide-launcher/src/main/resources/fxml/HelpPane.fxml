@@ -16,13 +16,12 @@
     limitations under the License.
 
 -->
-<?import java.lang.*?>
+
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.web.*?>
-<?import nl.xillio.migrationtool.gui.*?>
-
-
+<?import javafx.scene.web.WebView?>
+<?import nl.xillio.migrationtool.gui.HelpSearchBar?>
 <VBox fx:id="vbxHelp" styleClass="sidePane" minHeight="440" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
       AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8"
       xmlns:fx="http://javafx.com/fxml/1">
@@ -63,15 +62,6 @@
                                     </graphic>
                                     <tooltip>
                                         <Tooltip text="Home"/>
-                                    </tooltip>
-                                </Button>
-                                <Button fx:id="btnHelpInfo" mnemonicParsing="false" onAction="#buttonHelpInfo"
-                                        styleClass="iconButton" text="Info">
-                                    <graphic>
-                                        <Pane disable="true" styleClass="icon"/>
-                                    </graphic>
-                                    <tooltip>
-                                        <Tooltip text="Info on current keyword"/>
                                     </tooltip>
                                 </Button>
                             </items>

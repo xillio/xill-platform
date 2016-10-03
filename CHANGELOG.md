@@ -36,6 +36,7 @@ All notable changes to this project will be documented in this file.
 * `System.exec()` outputs one string including EOL charactedrs, instead of a list of lines [CTC-1466]
 * Warn user when uploading .xill file with illegal name [CTC-1723]
 * Add whitelisted filetypes which can be edited without warning: "xill", "txt", "properties", "html", "htm", "css", "xslt", "xml", "json", "js", "md", "cfg", "ini", "bat", "sh", "sbot" [CTC-1755]
+* Remove non-functional infor (i) button above help pane [CTC-1379]
 
 ### Fix
 
