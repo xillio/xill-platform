@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 /*
-* Specification: Getting the length in bytes of null should throw an error
-* Expected: An error is thrown and the code after the construct call in the do-block is not executed
-* Input: null
+* Specification: join MUST join the item into a string using the given delimiter.
+* Input: See dataset
+* Expected: See dataset
 */
 
-use String, Assert;
+use Assert, String;
 
-do {
-    String.byteLength(null);
-    Assert.error("String.byteLength with null did not error.");
-} success {
-    Assert.error("String.byteLength with null was successful.");
+// Input, delimiter, expected.
+var dataset = [
+	["some string", ";", "some string"],
+	[["some", "list", 234], ";", "some;list;234"],
+	[{"some": "object", "key": "value"}, "_", "object_value"],
+	[["string", 123, true, ["list", "item"], {"0": "val"}], "", "string123true[\"list\",\"item\"]{\"0\":\"val\"}"]
+];
+
+foreach (item in dataset) {
+	Assert.equal(String.join(item[0], item[1]), item[2]);
 }
