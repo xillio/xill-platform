@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 /*
-* Specification: Getting the length in bytes of null should throw an error
-* Expected: An error is thrown and the code after the construct call in the do-block is not executed
-* Input: null
+* Specification: length MUST return the length (amout of characters) of the string.
+* Input: See dataset
+* Expected: See dataset
 */
 
-use String, Assert;
+use Assert, String;
 
-do {
-    String.byteLength(null);
-    Assert.error("String.byteLength with null did not error.");
-} success {
-    Assert.error("String.byteLength with null was successful.");
+// String, find, start position, expected.
+var dataset = [
+	["foo bar baz", 11],
+	["€äåé®þüúíóöáßæ©ñµ", 17],
+	["", 0],
+	[12345678, 8],
+	[23.45, 5],
+	[true, 4],
+	[null, 0],
+	[NaN, 3]
+];
+
+foreach (item in dataset) {
+	Assert.equal(String.length(item[0]), item[1]);
 }

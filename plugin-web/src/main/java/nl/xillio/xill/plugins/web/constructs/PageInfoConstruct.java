@@ -19,7 +19,6 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
-import nl.xillio.xill.plugins.web.PhantomJSConstruct;
 import nl.xillio.xill.plugins.web.data.WebVariable;
 import nl.xillio.xill.plugins.web.services.web.WebService;
 import org.openqa.selenium.Cookie;
@@ -34,16 +33,16 @@ public class PageInfoConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                page -> process(page, webService),
+                this::process,
                 new Argument("page", ATOMIC));
     }
 
     /**
      * @param pageVar    input variable (should be of a PAGE type)
-     * @param webService the webService we're using.
      * @return list of string variable
      */
-    public static MetaExpression process(final MetaExpression pageVar, final WebService webService) {
+    private MetaExpression process(final MetaExpression pageVar) {
+        WebService webService = getWebService();
 
         if (pageVar.isNull()) {
             return NULL;

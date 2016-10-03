@@ -15,7 +15,7 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.NodeVariable;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link InputConstruct}.
  */
-public class InputConstructTest extends ExpressionBuilderHelper {
+public class InputConstructTest extends TestUtils {
 
     /**
      * Tests the construct under normal circumstances
@@ -39,18 +39,19 @@ public class InputConstructTest extends ExpressionBuilderHelper {
     public void testProcessNormalUsage() throws Exception {
         // mock
         WebService webService = mock(WebService.class);
-
+        InputConstruct construct = new InputConstruct();
+        construct.setWebService(webService);
         // The input
-        MetaExpression input = mock(MetaExpression.class);
+        MetaExpression input = mockExpression(ATOMIC);
         NodeVariable nodeVariable = mock(NodeVariable.class);
         when(input.getMeta(NodeVariable.class)).thenReturn(nodeVariable);
 
         // The text input
-        MetaExpression text = mock(MetaExpression.class);
+        MetaExpression text = mockExpression(ATOMIC);
         when(text.getStringValue()).thenReturn("Text");
 
         // run
-        MetaExpression output = InputConstruct.process(input, text, webService);
+        MetaExpression output = process(construct, input, text);
 
         // verify
         verify(input, times(2)).getMeta(NodeVariable.class);
@@ -68,12 +69,14 @@ public class InputConstructTest extends ExpressionBuilderHelper {
     public void testNullInput() {
         // mock
         WebService webService = mock(WebService.class);
-        MetaExpression input = mock(MetaExpression.class);
-        MetaExpression text = mock(MetaExpression.class);
+        InputConstruct construct = new InputConstruct();
+        construct.setWebService(webService);
+        MetaExpression input = mockExpression(ATOMIC);
+        MetaExpression text = mockExpression(ATOMIC);
         when(input.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = InputConstruct.process(input, text, webService);
+        MetaExpression output = process(construct, input, text);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -88,19 +91,21 @@ public class InputConstructTest extends ExpressionBuilderHelper {
     public void testProcessFailureToSendKeys() throws Exception {
         // mock
         WebService webService = mock(WebService.class);
+        InputConstruct construct = new InputConstruct();
+        construct.setWebService(webService);
 
         // The input
-        MetaExpression input = mock(MetaExpression.class);
+        MetaExpression input = mockExpression(ATOMIC);
         NodeVariable nodeVariable = mock(NodeVariable.class);
         when(input.getMeta(NodeVariable.class)).thenReturn(nodeVariable);
 
         // The text input
-        MetaExpression text = mock(MetaExpression.class);
+        MetaExpression text = mockExpression(ATOMIC);
         when(text.getStringValue()).thenReturn("Text");
         doThrow(new RobotRuntimeException("I broke!")).when(webService).sendKeys(nodeVariable, "Text");
 
         // run
-        InputConstruct.process(input, text, webService);
+        process(construct, input, text);
     }
 
     /**
@@ -110,17 +115,19 @@ public class InputConstructTest extends ExpressionBuilderHelper {
     public void testProcessNoNodeGiven() {
         // mock
         WebService webService = mock(WebService.class);
+        InputConstruct construct = new InputConstruct();
+        construct.setWebService(webService);
 
         // The input
-        MetaExpression input = mock(MetaExpression.class);
+        MetaExpression input = mockExpression(ATOMIC);
 
         // The text input
-        MetaExpression text = mock(MetaExpression.class);
+        MetaExpression text = mockExpression(ATOMIC);
 
         when(input.getMeta(NodeVariable.class)).thenReturn(null);
 
         // run
-        MetaExpression output = InputConstruct.process(input, text, webService);
+        MetaExpression output = process(construct, input, text);
 
         // verify
         verify(input, times(2)).getMeta(NodeVariable.class);

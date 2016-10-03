@@ -39,7 +39,6 @@ public class Application extends javafx.application.Application {
 
     private static List<String> args;
 
-
     /**
      * Main method
      *
@@ -71,7 +70,7 @@ public class Application extends javafx.application.Application {
         IDEJarFinder finder = new IDEJarFinder();
         Files.walkFileTree(PLUGIN_FOLDER, finder);
 
-        args = getParameters().getUnnamed();
+        setArgs(getParameters().getUnnamed());
 
         for (Path file : finder.getMatches()) {
             URLClassLoader classLoader = new URLClassLoader(new URL[]{file.toUri().toURL()});
@@ -100,6 +99,12 @@ public class Application extends javafx.application.Application {
             return true;
         }
         return false;
+    }
+
+    private static void setArgs(List<String> args) {
+        if (args == null) {
+            Application.args = args;
+        }
     }
 
     private static class IDEJarFinder extends SimpleFileVisitor<Path> {

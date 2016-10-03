@@ -16,15 +16,20 @@
 package nl.xillio.xill.plugins.system.constructs;
 
 import com.google.inject.Inject;
+import nl.xillio.xill.api.components.ExpressionDataType;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.services.json.JsonException;
 import nl.xillio.xill.services.json.JsonParser;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * Forwards a JSON string to GSON
@@ -38,12 +43,39 @@ public class ParseJSONConstruct extends Construct {
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
                 json -> process(json, jsonParser),
-                new Argument("json", ATOMIC));
+                new Argument("json", ATOMIC, LIST));
     }
 
     static MetaExpression process(final MetaExpression json, final JsonParser jsonParser) {
         assertNotNull(json, "input");
-        String jsonValue = json.getStringValue();
+
+        if (json.getType() == ExpressionDataType.LIST) {
+            ArrayList<MetaExpression> input = json.getValue();
+
+            if (input.isEmpty()) {
+                throw new InvalidUserInputException("The provided LIST is empty", json.getStringValue(),
+                        "A LIST containing ATOMICS that represent JSON strings", "[\"{\\\"1\\\":\\\"value\\\",\\\"2\\\":\\\"anotherValue\\\"}\"]");
+            }
+
+            ArrayList<MetaExpression> output = input.stream()
+                    .map(value -> processAtomic(value, jsonParser))
+                    .collect(Collectors.toCollection(ArrayList::new));
+
+            return fromValue(output);
+        } else {
+            return processAtomic(json, jsonParser);
+        }
+    }
+
+    private static MetaExpression processAtomic(final MetaExpression atomicJson, final JsonParser jsonParser) {
+        assertNotNull(atomicJson, "input");
+
+        if (atomicJson.getType() != ExpressionDataType.ATOMIC) {
+            throw new InvalidUserInputException("Could not parse JSON from something else than an ATOMIC.",
+                    atomicJson.getStringValue(), "An ATOMIC representing a JSON string", "\"{\\\"1\\\":\\\"value\\\",\\\"2\\\":\\\"anotherValue\\\"}\"");
+        }
+
+        String jsonValue = atomicJson.getStringValue();
 
         try {
             Object result = jsonParser.fromJson(jsonValue, Object.class);
