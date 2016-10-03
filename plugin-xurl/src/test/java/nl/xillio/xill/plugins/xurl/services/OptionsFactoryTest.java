@@ -19,30 +19,28 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.xurl.data.Options;
 import nl.xillio.xill.plugins.xurl.data.ProxyOptions;
-import org.apache.http.entity.ContentType;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.Optional;
 
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-public class OptionsFactoryTest {
+public class    OptionsFactoryTest {
     private OptionsFactory optionsFactory = new OptionsFactory();
 
     @Test(expectedExceptions = RobotRuntimeException.class)
     public void testUnknownOption() {
-        MetaExpression input = map("I DO NOT EXIST", fromValue(""));
+        MetaExpression input = createMap("I DO NOT EXIST", fromValue(""));
         optionsFactory.build(input);
     }
 
     @Test
     public void testBasicAuth() {
-        MetaExpression auth = map("username", fromValue("MyUser"), "password", fromValue("MyPass123"));
-        MetaExpression input = map("basicAuth", auth);
+        MetaExpression auth = createMap("username", fromValue("MyUser"), "password", fromValue("MyPass123"));
+        MetaExpression input = createMap("basicAuth", auth);
 
         Options options = optionsFactory.build(input);
 
@@ -52,22 +50,22 @@ public class OptionsFactoryTest {
 
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*OBJECT.*")
     public void testBasicAuthNotObject() {
-        MetaExpression input = map("basicAuth", fromValue(""));
+        MetaExpression input = createMap("basicAuth", fromValue(""));
         optionsFactory.build(input);
     }
 
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*password.*")
     public void testBasicAuthNoPassword() {
-        MetaExpression auth = map("username", fromValue("user"));
-        MetaExpression input = map("basicAuth", auth);
+        MetaExpression auth = createMap("username", fromValue("user"));
+        MetaExpression input = createMap("basicAuth", auth);
 
         optionsFactory.build(input);
     }
 
     @Test
     public void testProxyHostAndPort() {
-        MetaExpression proxy = map("host", fromValue("localhost"), "port", fromValue(1234));
-        MetaExpression input = map("proxy", proxy);
+        MetaExpression proxy = createMap("host", fromValue("localhost"), "port", fromValue(1234));
+        MetaExpression input = createMap("proxy", proxy);
 
         Options options = optionsFactory.build(input);
 
@@ -82,7 +80,7 @@ public class OptionsFactoryTest {
         proxyMap.put("password", fromValue("SECURE1"));
         proxyMap.put("host", fromValue("notsolocal"));
 
-        MetaExpression input = map("proxy", fromValue(proxyMap));
+        MetaExpression input = createMap("proxy", fromValue(proxyMap));
 
         Options options = optionsFactory.build(input);
         ProxyOptions proxyOptions = options.getProxyOptions();
@@ -93,21 +91,21 @@ public class OptionsFactoryTest {
 
     @Test
     public void testTimeout() {
-        MetaExpression input = map("timeout", fromValue(5032));
+        MetaExpression input = createMap("timeout", fromValue(5032));
         Options options = optionsFactory.build(input);
         assertEquals(options.getTimeout(), 5032);
     }
 
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*number.*")
     public void testTimeoutNaN() {
-        MetaExpression input = map("timeout", fromValue("Hello"));
+        MetaExpression input = createMap("timeout", fromValue("Hello"));
         optionsFactory.build(input);
     }
 
     @Test
     public void testHeaders() {
-        MetaExpression headers = map("Header1", fromValue("COOL VALUE"), "header-X", fromValue("NOT SO COOL VALUE"));
-        MetaExpression input = map("headers", headers);
+        MetaExpression headers = createMap("Header1", fromValue("COOL VALUE"), "header-X", fromValue("NOT SO COOL VALUE"));
+        MetaExpression input = createMap("headers", headers);
 
         Options options = optionsFactory.build(input);
 
@@ -116,14 +114,14 @@ public class OptionsFactoryTest {
 
     @Test
     public void testInsecure() {
-        MetaExpression input = map("insecure", fromValue(true));
+        MetaExpression input = createMap("insecure", fromValue(true));
         Options options = optionsFactory.build(input);
         assertTrue(options.isInsecure());
     }
 
     @Test
     public void testResponseContentType() {
-        MetaExpression input = map("responseContentType", fromValue("application/xml"));
+        MetaExpression input = createMap("responseContentType", fromValue("application/xml"));
         Options options = optionsFactory.build(input);
 
         assertEquals(options.getResponseContentType().toString(), "application/xml");
@@ -143,7 +141,7 @@ public class OptionsFactoryTest {
 
     @Test
     public void testLogging() {
-        MetaExpression input = map("logging", fromValue("info"));
+        MetaExpression input = createMap("logging", fromValue("info"));
 
         Options options = optionsFactory.build(input);
 
@@ -151,13 +149,13 @@ public class OptionsFactoryTest {
     }
 
 
-    private MetaExpression map(String name, MetaExpression value) {
+    private MetaExpression createMap(String name, MetaExpression value) {
         LinkedHashMap<String, MetaExpression> result = new LinkedHashMap<>();
         result.put(name, value);
         return fromValue(result);
     }
 
-    private MetaExpression map(String name, MetaExpression value, String name2, MetaExpression value2) {
+    private MetaExpression createMap(String name, MetaExpression value, String name2, MetaExpression value2) {
         LinkedHashMap<String, MetaExpression> result = new LinkedHashMap<>();
         result.put(name, value);
         result.put(name2, value2);

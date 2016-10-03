@@ -1,0 +1,52 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+* Specification: wrap MUST wrap the string into a maximum of width.
+* Input: See dataset
+* Expected: See dataset
+*/
+
+use Assert, String, System;
+
+// Input, width, wrap long words.
+var dataset = [
+	["Lorem ipsum dolor sit amet, consectetur adipiscing elit.", 10, false],
+	["Cras congue elit at lacus cursus, et accumsan eros ornare.", 5, true],
+	["Lorem Ipsum is simply dummy text of the printing and typesetting industry.", 1, true],
+	["Contrary to popular belief, Lorem Ipsum is not simply random text.", 1, false],
+	["The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters.", 0, true],
+	["There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.", -1, false]
+];
+
+foreach (item in dataset) {
+	var width = item[1];
+	var wrapLong = item[2];
+
+	// Wrap the string and get the individual lines.
+	var wrapped = String.wrap(item[0], width, wrapLong);
+	var lines = String.split(wrapped, "\n");
+	
+	// If the width <= 0, 1 is used.
+	if (width <= 0) {
+		width = 1;
+	}
+	
+	// Check if each line length is shorter than the given width, or if wrapLong is false.
+	foreach (line in lines) {
+		var shortEnough = String.length(line) <= width;
+		Assert.isTrue(shortEnough || !wrapLong);
+	}
+}
