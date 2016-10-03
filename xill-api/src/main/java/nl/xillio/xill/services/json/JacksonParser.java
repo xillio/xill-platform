@@ -52,11 +52,14 @@ public class JacksonParser implements PrettyJsonParser {
         }
     }
 
-    private final ObjectMapper mapper = new ObjectMapper(new Factory());
+    private final ObjectMapper mapper;
 
     public JacksonParser(boolean pretty) {
         if (pretty) {
+            mapper = new ObjectMapper(new Factory());
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        } else {
+            mapper = new ObjectMapper();
         }
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));

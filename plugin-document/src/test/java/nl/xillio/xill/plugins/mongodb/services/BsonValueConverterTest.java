@@ -25,6 +25,7 @@ import org.bson.types.ObjectId;
 import org.testng.annotations.Test;
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 
 import static nl.xillio.xill.api.components.ExpressionBuilder.*;
@@ -47,8 +48,8 @@ public class BsonValueConverterTest {
         assertEquals(converter.convert(new BsonInt64(13423L)), fromValue(13423L));
         assertEquals(converter.convert(new BsonBoolean(false)), FALSE);
         assertEquals(converter.convert(new BsonNull()), NULL);
-        assertEquals(converter.convert(new BsonDocument("key", new BsonString("value"))).toString(parser), String.format("{%1$s  \"key\" : \"value\"%1$s}", System.getProperty("line.separator")));
-        assertEquals(converter.convert(new BsonArray(Collections.singletonList(new BsonString("hello world")))).toString(parser), String.format("[%1$s  \"hello world\"%1$s]", System.getProperty("line.separator")));
+        assertEquals(converter.convert(new BsonDocument("key", new BsonString("value"))).toString(parser), "{\"key\":\"value\"}");
+        assertEquals(converter.convert(new BsonArray(Collections.singletonList(new BsonString("hello world")))).toString(parser), "[\"hello world\"]");
     }
 
 

@@ -15,8 +15,8 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
+import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.string.exceptions.FailedToGetMatcherException;
 import nl.xillio.xill.plugins.string.services.string.RegexService;
@@ -59,13 +59,7 @@ public class AllMatchesConstructTest extends ExpressionBuilderHelper {
         MetaExpression timeout = mock(MetaExpression.class);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
-        String ReturnValue = String.format("[%1$s" +
-                "  \"abc\",%1$s" +
-                "  \"def\",%1$s" +
-                "  \"ghi\",%1$s" +
-                "  \"jkl\",%1$s" +
-                "  \"Mno\"%1$s" +
-                "]", System.getProperty("line.separator"));
+        String ReturnValue = "[\"abc\",\"def\",\"ghi\",\"jkl\",\"Mno\"]";
         RegexService regexService = mock(RegexService.class);
         List<String> returnStatement = Arrays.asList("abc", "def", "ghi", "jkl", "Mno");
         when(regexService.tryMatch(any())).thenReturn(returnStatement);

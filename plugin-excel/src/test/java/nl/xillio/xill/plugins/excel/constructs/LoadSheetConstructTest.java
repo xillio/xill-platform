@@ -23,6 +23,7 @@ import nl.xillio.xill.plugins.excel.datastructures.XillSheet;
 import nl.xillio.xill.plugins.excel.datastructures.XillWorkbook;
 import org.testng.annotations.Test;
 
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -86,11 +87,7 @@ public class LoadSheetConstructTest extends TestUtils {
         MetaExpression result = LoadSheetConstruct.process(input, fromValue("Sheet"));
 
         //Check results
-        assertEquals(result.getStringValue(), String.format("{%1$s" +
-                "  \"sheetName\" : \"SheetName\",%1$s" +
-                "  \"rows\" : 3,%1$s" +
-                "  \"columns\" : 5%1$s" +
-                "}", System.getProperty("line.separator")));
+        assertEquals(result.getStringValue(), "{\"sheetName\":\"SheetName\",\"rows\":3,\"columns\":5}");
         XillSheet resultSheet = result.getMeta(XillSheet.class);
         assertEquals(resultSheet, sheet);
     }

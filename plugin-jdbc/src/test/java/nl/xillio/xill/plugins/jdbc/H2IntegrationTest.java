@@ -134,11 +134,7 @@ public class H2IntegrationTest extends TestUtils {
 
         MetaExpression result = run(getObjectConstruct, fromValue("test"), fromValue(example));
 
-        assertEquals(result.toString(), String.format("{%1$s" +
-                "  \"NUM\" : 1337,%1$s" +
-                "  \"VALUE\" : null,%1$s" +
-                "  \"BINARY\" : null%1$s" +
-                "}", System.getProperty("line.separator")));
+        assertEquals(result.toString(), "{\"NUM\":1337,\"VALUE\":null,\"BINARY\":null}");
     }
 
     @Test(dependsOnMethods = "createTable")

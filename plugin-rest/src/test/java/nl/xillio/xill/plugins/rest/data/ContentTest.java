@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.rest.data;
 
 import me.biesaart.utils.IOUtils;
-import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.services.json.JacksonParser;
 import nl.xillio.xill.services.json.JsonException;
@@ -35,7 +34,7 @@ import static org.testng.Assert.assertEquals;
 /**
  * Test class for the Content class.
  */
-public class ContentTest extends TestUtils {
+public class ContentTest {
 
     /**
      * Tests the getMeta() method of the Content class.
@@ -59,13 +58,7 @@ public class ContentTest extends TestUtils {
 
         // Call to getMeta()
         MetaExpression result = content.getMeta(new JacksonParser(false), null);
-        assertEquals(result.toString(), String.format("{%1$s" +
-                "  \"body\" : \"XILLIDE\",%1$s" +
-                "  \"status\" : 200,%1$s" +
-                "  \"headers\" : {%1$s" +
-                "    \"type\" : \"XILLSERVER\"%1$s" +
-                "  }%1$s" +
-                "}", System.getProperty("line.separator")));
+        assertEquals(result.toString(), "{\"body\":\"XILLIDE\",\"status\":200,\"headers\":{\"type\":\"XILLSERVER\"}}");
     }
 
     /**
@@ -77,6 +70,7 @@ public class ContentTest extends TestUtils {
      */
     @Test
     public void testPartialGetMetaBody() throws IOException, JsonException {
+
         HttpResponse fullResponse = mock(HttpResponse.class, RETURNS_DEEP_STUBS);
         when(fullResponse.getEntity().getContent()).thenReturn(IOUtils.toInputStream("application/json"));
         Header header = new BasicHeader("type", "application/json");
@@ -84,6 +78,6 @@ public class ContentTest extends TestUtils {
         when(httpEntity.getContentType()).thenReturn(header);
         JsonParser jsonParser = new JacksonParser(false);
         Object o = jsonParser.fromJson("{\"body\":\"XILLIDE\"}", Object.class);
-        assertEquals(String.format("{%1$s  \"body\" : \"XILLIDE\"%1$s}", System.getProperty("line.separator")), MetaExpression.parseObject(o).toString());
+        assertEquals("{\"body\":\"XILLIDE\"}", MetaExpression.parseObject(o).toString());
     }
 }

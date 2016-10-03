@@ -39,7 +39,9 @@ public class PrintConstruct extends Construct {
     static MetaExpression process(final MetaExpression textVar, final MetaExpression logLevel, final Logger robotLog) {
         String level = logLevel.getStringValue();
 
+        textVar.usePrettyJson(true);
         String text = textVar.getStringValue();
+        textVar.usePrettyJson(false);
 
         if ("debug".equalsIgnoreCase(level)) {
             robotLog.debug(text);
