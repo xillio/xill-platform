@@ -89,6 +89,12 @@ public class XillCellTest {
         when(testCell.getValue()).thenReturn(2.5);
         assertEquals(testCell.getValue(), 2.5);
 
+        when(cell.getNumericCellValue()).thenReturn(9523372036854770000.0);
+        when(testCell.getValue()).thenReturn(9523372036854770000.0);
+        Object testValue = testCell.getValue();
+        assertTrue(testValue instanceof Double);
+        assertEquals(testValue,9523372036854770000.0);
+
         when(cell.getNumericCellValue()).thenReturn(1.0);
         when(testCell.getValue()).thenReturn(1.0);
         Object value = testCell.getValue();
