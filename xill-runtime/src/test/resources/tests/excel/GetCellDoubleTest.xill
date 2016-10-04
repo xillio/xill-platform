@@ -16,17 +16,17 @@
 /*
 * Specification: Reading a cell from an Excel workbook containing a number that is either a double OR bigger than max Long MUST result in an double variable
 * Input: double sheet of testresources/excel/getCellWorkbook.xlsx
-* Expected: 1,5 1000,0005 -1,5 -1000,0005 12345678910,5 -12345678910,5 9523372036854770000
+* Expected: 1,5 1000,0005 -1,5 -1000,0005 12345678910,5 -12345678910,5 9523372036854770000, -9523372036854770000
 */
 
 use Assert, Excel, Math, String;
 
 var wb = Excel.loadWorkbook("testresources/excel/getCellWorkbook.xlsx");
 var sheet = Excel.loadSheet(wb, "double");
-var output = [0,0,1.5, 1000.0005, -1.5, -1000.0005, 12345678910.5, -12345678910.5, 9523372036854770000];
+var output = [0,0,1.5, 1000.0005, -1.5, -1000.0005, 12345678910.5, -12345678910.5, 9523372036854770000, -9523372036854770000];
 
 var i = 2;
-while(i < 9){
+while(i < 10){
     var cell = Excel.getCell(sheet, 1, i);
     Assert.notNull(cell, "Cell contains null or could not be read.");
     Assert.isTrue(Math.isNumber(cell), "Cell does not contain a number.");

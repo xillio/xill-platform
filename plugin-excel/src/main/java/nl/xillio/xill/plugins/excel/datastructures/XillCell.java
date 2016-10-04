@@ -105,7 +105,7 @@ public class XillCell {
         } else {
             Double temp = cell.getNumericCellValue();
             // Check if temp is an integer or double.
-            if (Double.doubleToRawLongBits(Math.floor(temp) - temp) == 0 && temp < Long.MAX_VALUE) {
+            if (Double.doubleToRawLongBits(Math.floor(temp) - temp) == 0 && Math.abs(temp) < Long.MAX_VALUE) {
                 toReturn = temp.longValue();
             } else {
                 toReturn = temp;
