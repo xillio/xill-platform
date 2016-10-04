@@ -24,7 +24,7 @@ var templatesDirectory = "testresources/template/";
 var testName = "processEngineParameter";
 
 var options = {
-    "templatesDirectory" :      templatesDirectory,
+    "templatesDirectory" :      ".",
     "encoding" :                "UTF-8",
     "noCaching" :               true
 };
@@ -33,7 +33,7 @@ do {
     // Run
     var engine = Template.getEngine(options);
     var output = File.openWrite(templatesDirectory :: testName :: "-Output.txt");
-    Template.process(testName :: "-Template.txt", output, {}, engine);
+    Template.process(templatesDirectory :: testName :: "-Template.txt", output, {}, engine);
     
     // Assert
     var expected = Stream.getText(File.openRead(templatesDirectory :: testName :: "-ExpectedOutput.txt"));
