@@ -134,7 +134,7 @@ public class AbsoluteURLConstructTest extends TestUtils {
         MetaExpression result = this.process(construct, pageUrl, relativeUrl);
 
         // Verify.
-        verify(urlUtilityService, times(1)).getProtocol(pageUrl.getStringValue());
+        verify(urlUtilityService, times(2)).getProtocol(pageUrl.getStringValue());
 
         // Assert.
         Assert.assertEquals(result.getStringValue(), "https://example.com");

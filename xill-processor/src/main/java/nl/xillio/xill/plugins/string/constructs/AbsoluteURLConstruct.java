@@ -51,7 +51,7 @@ public class AbsoluteURLConstruct extends Construct {
         String relativeUrl = relativeUrlVar.getStringValue().trim();
 
         // Check if the protocol is specified in the page url.
-        boolean hasProtocol = Pattern.compile("^\\w+:\\/\\/").matcher(pageUrl).find();
+        boolean hasProtocol = !"".equals(urlUtilityService.getProtocol(pageUrl));
         if(!hasProtocol)
             pageUrl = "http://" + pageUrl;
 

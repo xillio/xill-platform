@@ -38,7 +38,7 @@ public class UrlUtilityServiceImpl implements UrlUtilityService {
         }
 
         if (relativeurl.startsWith("../")) {
-            Matcher m = Pattern.compile("(http(s)?://.*)(/[^/]*/[^/]*)").matcher(pageurl);
+            Matcher m = Pattern.compile("(.+:[//].*)(/[^/]*/[^/]*)").matcher(pageurl);
             if (m.matches()) {
                 String parenturl = m.group(1);
                 return getParentUrl(parenturl + "/", relativeurl.substring(3));
@@ -61,7 +61,7 @@ public class UrlUtilityServiceImpl implements UrlUtilityService {
 
     @Override
     public String tryConvert(final String pageUrl, final String relativeUrl) {
-        if (relativeUrl.startsWith("http://") || relativeUrl.startsWith("https://")) {
+        if(relativeUrl.matches(".+:[//].*")){
             return cleanupUrl(relativeUrl);
         } else if (relativeUrl.matches("//w+.*")) {
             Matcher m = Pattern.compile("(https?:).*").matcher(pageUrl);
@@ -73,7 +73,7 @@ public class UrlUtilityServiceImpl implements UrlUtilityService {
         } else if (relativeUrl.matches("www(\\.\\w+){2,}.*")) {
             return cleanupUrl("http://" + relativeUrl);
         } else if (relativeUrl.startsWith("/")) {
-            Matcher m = Pattern.compile("(http(s)?://[^/]*)(/.*)?").matcher(pageUrl);
+            Matcher m = Pattern.compile("(.+://[^/]*)(/.*)?").matcher(pageUrl);
             if (m.matches()) {
                 String baseurl = m.group(1);
                 return cleanupUrl(baseurl + relativeUrl);
@@ -85,7 +85,7 @@ public class UrlUtilityServiceImpl implements UrlUtilityService {
                 return cleanupUrl(parentUrl);
             }
         } else {
-            Matcher m = Pattern.compile("(http(s)?://.*)(/[^/]*\\.(htm|html|jsp|php|asp|aspx|shtml|py|cgi|pl|cfm|jspx|php4|php3|rb|rhtml|dll|xml|xhtml|asx|do)[?/]?.*)").matcher(pageUrl);
+            Matcher m = Pattern.compile("(.+:[//].*)(/[^/]*\\.(htm|html|jsp|php|asp|aspx|shtml|py|cgi|pl|cfm|jspx|php4|php3|rb|rhtml|dll|xml|xhtml|asx|do)[?/]?.*)").matcher(pageUrl);
             if (m.matches()) {
                 // Reference to a page
                 String parenturl = m.group(1);
