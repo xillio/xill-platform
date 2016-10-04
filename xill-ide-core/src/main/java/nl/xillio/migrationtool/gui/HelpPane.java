@@ -225,10 +225,6 @@ public class HelpPane extends AnchorPane {
         forward();
     }
 
-    @FXML
-    private void buttonHelpInfo() {
-    }
-
     @Override
     public void requestFocus() {
         webFunctionDoc.requestFocus();
