@@ -84,9 +84,9 @@ public class ProcessConstruct extends Construct {
             return output.getBinaryValue().getOutputStream();
         } catch (IOException e) {
             throw new OperationFailedException(
-                    "create a stream.",
+                    "retrieve the stream from the output parameter",
                     e.getMessage(),
-                    "Did you provide the template engine to this construct?",
+                    "Did you set the output parameter properly?",
                     e
             );
         }

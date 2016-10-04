@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 /*
-* Specification: The template plugin MUST be able to parse a template (not containing variables) without a model
-* Expected: Hello World!
-* Input: 
-*   Hello <#if 1 == 1>${"World"}<#else>Error</#if>!
-*   <#-- Comment -->
+* Specification: The template plugin MUST be able to insert lists in the template
+* Expected: 
+*   1
+*   2
+*   3
+*
+* Input: {"input" : [1,2,3]}
 */
 include tests.template.NoTestTemplateRunner;
 
-var testName = "processMinimalUsage";
+var testName = "processList";
+var model = {
+    "input" : [1,2,3]
+};
 
-run(testName, {}, null);
+run(testName, model, null);

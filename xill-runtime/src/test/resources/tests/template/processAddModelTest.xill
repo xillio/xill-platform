@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 /*
-* Specification: The template plugin MUST be able to parse a template (not containing variables) without a model
-* Expected: Hello World!
-* Input: 
-*   Hello <#if 1 == 1>${"World"}<#else>Error</#if>!
-*   <#-- Comment -->
+* Specification: When given a model, the template engine MUST be able to use this model.
+* Expected: Hello Rikkert!
+* Input: {"company" : {"name" : Xillio, "owner" : "Rikkert"}}
 */
 include tests.template.NoTestTemplateRunner;
 
-var testName = "processMinimalUsage";
+var testName = "processAddModel";
+var model = {
+    "company" : {
+        "name" : "Xillio" , 
+        "owner" : "Rikkert"
+    }
+};
 
-run(testName, {}, null);
+run(testName, model, null);

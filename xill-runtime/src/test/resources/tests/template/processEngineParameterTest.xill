@@ -14,30 +14,33 @@
  * limitations under the License.
  */
 /*
-* Specification: The template plugin MUST throw an error when a variable could not be filled in.
-* Expected: Error
-* Input: Hello ${user}!
+* Specification: The template plugin MUST be able to use the given engine
+* Expected: Hello World!
+* Input: Hello World!
 */
-use Assert, String, File, Stream, Template;
+use Assert, Template, File, Stream;
 
-include tests.template.NoTestTemplateRunner;
-
-var testName = "processNoKeyValueException";
 var templatesDirectory = "testresources/template/";
+var testName = "processEngineParameter";
+
+var options = {
+    "templatesDirectory" :      templatesDirectory,
+    "encoding" :                "UTF-8",
+    "noCaching" :               true
+};
 
 do {
     // Run
+    var engine = Template.getEngine(options);
     var output = File.openWrite(templatesDirectory :: testName :: "-Output.txt");
-    Template.process(templatesDirectory :: testName :: "-Template.txt", output);
+    Template.process(testName :: "-Template.txt", output, {}, engine);
     
     // Assert
     var expected = Stream.getText(File.openRead(templatesDirectory :: testName :: "-ExpectedOutput.txt"));
     var outputFile = Stream.getText(File.openRead(templatesDirectory :: testName :: "-Output.txt"));
     Assert.equal(outputFile, expected, "The expected output is not the same as the generated output");
 } fail (e) {
-    Assert.isTrue(String.contains(e.message, "user"));   
-} success {
-    Assert.error("The processing of the template should throw an error");
+    Assert.error(e.message);
 } finally {
     File.delete(templatesDirectory :: testName :: "-Output.txt");
 }
