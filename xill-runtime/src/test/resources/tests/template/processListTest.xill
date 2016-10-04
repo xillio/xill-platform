@@ -22,7 +22,7 @@
 *
 * Input: {"input" : [1,2,3]}
 */
-include tests.template.NoTestTemplateRunner;
+include testresources.template.NoTestTemplateRunner;
 
 var testName = "processList";
 var model = {

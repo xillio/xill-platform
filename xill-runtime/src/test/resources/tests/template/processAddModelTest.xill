@@ -18,7 +18,7 @@
 * Expected: Hello Rikkert!
 * Input: {"company" : {"name" : Xillio, "owner" : "Rikkert"}}
 */
-include tests.template.NoTestTemplateRunner;
+include testresources.template.NoTestTemplateRunner;
 
 var testName = "processAddModel";
 var model = {

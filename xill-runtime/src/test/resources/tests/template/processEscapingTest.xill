@@ -18,7 +18,7 @@
 * Expected: \l ${foo}
 * Input:${input} ${r"${foo}"} with {"input" : "\\l"} 
 */
-include tests.template.NoTestTemplateRunner;
+include testresources.template.NoTestTemplateRunner;
 
 var testName = "processEscaping";
 var model = {

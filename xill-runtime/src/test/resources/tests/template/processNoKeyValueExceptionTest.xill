@@ -20,7 +20,7 @@
 */
 use Assert, String, File, Stream, Template;
 
-include tests.template.NoTestTemplateRunner;
+include testresources.template.NoTestTemplateRunner;
 
 var testName = "processNoKeyValueException";
 var templatesDirectory = "testresources/template/";
