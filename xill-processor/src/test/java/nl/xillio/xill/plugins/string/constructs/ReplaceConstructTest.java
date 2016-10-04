@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  */
 public class ReplaceConstructTest {
     private int timeoutValue = 10000;
-    
+
     /**
      * Test the process method when we use regex and want to replace all.
      *
@@ -63,7 +63,7 @@ public class ReplaceConstructTest {
         boolean replaceAllValue = true;
         MetaExpression replaceAll = mock(MetaExpression.class);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
-        
+
         MetaExpression timeout = mock(MetaExpression.class);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
@@ -115,7 +115,7 @@ public class ReplaceConstructTest {
         boolean replaceAllValue = false;
         MetaExpression replaceAll = mock(MetaExpression.class);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
-        
+
         MetaExpression timeout = mock(MetaExpression.class);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
@@ -167,7 +167,7 @@ public class ReplaceConstructTest {
         boolean replaceAllValue = true;
         MetaExpression replaceAll = mock(MetaExpression.class);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
-        
+
         MetaExpression timeout = mock(MetaExpression.class);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
@@ -219,7 +219,7 @@ public class ReplaceConstructTest {
         boolean replaceAllValue = false;
         MetaExpression replaceAll = mock(MetaExpression.class);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
-        
+
         MetaExpression timeout = mock(MetaExpression.class);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
@@ -271,7 +271,7 @@ public class ReplaceConstructTest {
         boolean replaceAllValue = true;
         MetaExpression replaceAll = mock(MetaExpression.class);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
-        
+
         MetaExpression timeout = mock(MetaExpression.class);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 

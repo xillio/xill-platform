@@ -59,7 +59,7 @@ public class FormatConstructTest {
      * @throws PatternSyntaxException
      */
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "SyntaxError in the system provided pattern: .*")
-    public void processPatternSyntaxException() throws IllegalArgumentException{
+    public void processPatternSyntaxException() throws IllegalArgumentException {
         // Mock
         String fileNameValue = "decimal %d%n";
         MetaExpression fileName = mock(MetaExpression.class);
@@ -93,7 +93,7 @@ public class FormatConstructTest {
      * @throws PatternSyntaxException
      */
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Illegal argument handed when trying to match: .*")
-    public void processIllegalArgumentException() throws IllegalArgumentException{
+    public void processIllegalArgumentException() throws IllegalArgumentException {
         // Mock
         String fileNameValue = "decimal %d%n";
         MetaExpression fileName = mock(MetaExpression.class);
@@ -127,7 +127,7 @@ public class FormatConstructTest {
      * @throws PatternSyntaxException
      */
     @Test(expectedExceptions = OperationFailedException.class, expectedExceptionsMessageRegExp = "Could not format a date/time..*Date/Time conversions are not supported..*")
-    public void processDateTimeConversion() throws IllegalArgumentException{
+    public void processDateTimeConversion() throws IllegalArgumentException {
         // Mock
         String fileNameValue = "decimal %T%n";
         MetaExpression fileName = mock(MetaExpression.class);
@@ -164,7 +164,7 @@ public class FormatConstructTest {
      * @throws PatternSyntaxException
      */
     @Test(expectedExceptions = InvalidUserInputException.class, expectedExceptionsMessageRegExp = "Unexpected conversion type..*Z.*")
-    public void processUnexpectedConversion() throws IllegalArgumentException{
+    public void processUnexpectedConversion() throws IllegalArgumentException {
         // Mock
         String fileNameValue = "decimal %Z%n";
         MetaExpression fileName = mock(MetaExpression.class);
@@ -201,7 +201,7 @@ public class FormatConstructTest {
      * @throws PatternSyntaxException
      */
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Not enough arguments: .*")
-    public void processMissingFormatException() throws IllegalArgumentException{
+    public void processMissingFormatException() throws IllegalArgumentException {
         // Mock
         String textValue = "decimal";
         MetaExpression text = mock(MetaExpression.class);
@@ -238,7 +238,7 @@ public class FormatConstructTest {
      * @throws PatternSyntaxException
      */
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Illegal format handed: .*")
-    public void processIllegalFormatException() throws IllegalArgumentException{
+    public void processIllegalFormatException() throws IllegalArgumentException {
         // Mock
         String textValue = "decimal";
         MetaExpression text = mock(MetaExpression.class);
