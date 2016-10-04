@@ -45,20 +45,21 @@ import java.util.stream.Collectors;
 public class XillDebugger implements Debugger {
     private static final Logger LOGGER = Log.get();
     private final List<Breakpoint> breakpoints;
-    private DebugInfo debugInfo = new DebugInfo();
     private ProgressInfo progressInfo = new ProgressInfo();
-    private Instruction pausedOnInstruction = null;
     private final EventHost<RobotStartedAction> onRobotStarted = new EventHost<>();
     private final EventHost<RobotStoppedAction> onRobotStopped = new EventHost<>();
     private final EventHost<RobotPausedAction> onRobotPaused = new EventHost<>();
     private final EventHost<RobotContinuedAction> onRobotContinued = new EventHost<>();
     private final EventHostEx<Object> onRobotInterrupt = new EventHostEx<>();
     private final EventHost<nl.xillio.xill.api.ProgressInfo> onSetProgressInfo = new EventHost<>();
-    private ErrorHandlingPolicy handler = new NullDebugger();
     private final Stack<nl.xillio.xill.api.components.Instruction> currentStack = new Stack<>();
     private final Stack<CounterWrapper> functionStack = new Stack<>();
-    private Mode mode = Mode.RUNNING;
     private final LinkedList<Debugger> childDebuggers = new LinkedList<>();
+    private DebugInfo debugInfo = new DebugInfo();
+    private Instruction pausedOnInstruction = null;
+    private ErrorHandlingPolicy handler = new NullDebugger();
+    private Mode mode = Mode.RUNNING;
+    private OutputHandler outputHandler;
 
 
     /**
@@ -334,10 +335,10 @@ public class XillDebugger implements Debugger {
             parent = parent.getHostInstruction().getParentInstruction();
             bottomPosition--;
         }
-        while (value==null && parent!=null && !(parent instanceof FunctionDeclaration));
+        while (value == null && parent != null && !(parent instanceof FunctionDeclaration));
 
         // If the variable was not found in a function call, look for it at robot level
-        if (value==null) {
+        if (value == null) {
             value = dec.peek(0);
         }
 
@@ -378,12 +379,21 @@ public class XillDebugger implements Debugger {
 
     @Override
     public void handle(final Throwable e) throws RobotRuntimeException {
+        if (outputHandler != null) {
+            nl.xillio.xill.api.components.Instruction instruction = getStackTrace().stream().findFirst().orElse(null);
+            outputHandler.inspect(instruction, e);
+        }
         handler.handle(e);
     }
 
     @Override
     public void setErrorHandler(final ErrorHandlingPolicy handler) {
         this.handler = handler;
+    }
+
+    @Override
+    public void setOutputHandler(OutputHandler handler) {
+        this.outputHandler = handler;
     }
 
     @Override
@@ -401,6 +411,7 @@ public class XillDebugger implements Debugger {
     @Override
     public Debugger createChild() {
         Debugger debugger = new StoppableDebugger(this);
+        debugger.setOutputHandler(outputHandler);
         childDebuggers.add(debugger);
         return debugger;
     }

@@ -18,26 +18,60 @@
 -->
 <function>
     <description>
-This construct takes a JSON string and converts it to an ATOMIC, LIST or OBJECT variable.
+Takes one or more `JSON` strings and converts it to one or more `ATOMIC`, `LIST` or `OBJECT` variables.
+
+When provided an `ATOMIC`, this construct will parse that single `JSON` string to a variable. When provided
+a `LIST`, all the top-level elements of that list will be parsed as single `JSON` strings to a variable.
+These variables will then be combined in a `LIST`.
+
+The given `ATOMIC` or `LIST`, and the elements of that `LIST`, may not be `null` or empty.
+
+For more information about and syntax of `JSON`, see [http://www.json.org/](http://www.json.org/).
     </description>
     <examples>
-        <example title="Usage">
+        <example title="Default usage">
+            <header>
+                This robot parses the given string to JSON resulting in an OBJECT.
+                This OBJECT contains a LIST of employees named John Doe, Anna Jane Smith and Peter Jones.
+            </header>
             <code>
                 use System;
 
-                var object = {"a":"hello","b":"world","c":{"a":"example","b":"xillio"}};
-                var object_JSON_String = System.toJSON(object); //we convert the OBJECT variable to a JSON string
-                var object_parsed = System.parseJSON(object_JSON_String);
+                var json = '{ "employees" : [' ::
+                    '{ "firstName":"John" , "lastName":"Doe" },' ::
+                    '{ "firstName":"Anna" , "middleName":"Jane", "lastName":"Smith" },' ::
+                    '{ "firstName":"Peter" , "lastName":"Jones" } ]}';
 
-                System.print(object_parsed.c.a);
+                var parsedObject = System.parseJSON(json);
 
-                /*
-                printed to the console:
-                example
-                */
+                System.print(parsedObject.employees);
+            </code>
+        </example>
+        <example title="Multiple JSON strings">
+            <header>
+                When having a LIST of JSON strings, it is also possible to parse the whole LIST at once.
+                In this case, three different JSON strings representing three different extractions will be parsed at once.
+                This creates three OBJECTS in the resulting LIST.
+            </header>
+            <code>
+                use System;
+
+                var jsonList = [
+                '{"Extraction1" : {"Status" : "OK", "Code" : 200}}',
+                '{"Extraction2" : {"Status" : "FAILED", "Code": 404}}',
+                '{"Extraction3" : {"Status" : "IN PROGRESS"}}'];
+
+                var parsedList = System.parseJSON(jsonList);
+
+                System.print(parsedList[0]);
+                System.print(parsedList[1]);
+                System.print(parsedList[2]);
             </code>
         </example>
     </examples>
+    <references>
+        <reference>toJSON</reference>
+    </references>
     <searchTags>
         json, parse, convert, read, api, rest
     </searchTags>

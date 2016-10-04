@@ -20,9 +20,7 @@ import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
-import nl.xillio.xill.plugins.web.PhantomJSConstruct;
 import nl.xillio.xill.plugins.web.data.WebVariable;
-import nl.xillio.xill.plugins.web.services.web.WebService;
 
 import java.util.List;
 
@@ -34,7 +32,7 @@ public class RemoveCookieConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (page, cookie) -> process(page, cookie, getWebService()),
+                this::process,
                 new Argument("page", ATOMIC),
                 new Argument("cookie", ATOMIC, LIST));
     }
@@ -42,11 +40,10 @@ public class RemoveCookieConstruct extends PhantomJSConstruct {
     /**
      * @param pageVar    input variable (should be of a PAGE type)
      * @param cookieVar  input variable - string (cookie name) or list of strings or boolean
-     * @param webService the webService we're using.
      * @throws OperationFailedException if an (unknown) error has occurred
      * @return null variable
      */
-    public static MetaExpression process(final MetaExpression pageVar, final MetaExpression cookieVar, final WebService webService) {
+    private MetaExpression process(final MetaExpression pageVar, final MetaExpression cookieVar) {
 
         if (cookieVar.isNull() || pageVar.isNull()) {
             return NULL;
@@ -61,11 +58,11 @@ public class RemoveCookieConstruct extends PhantomJSConstruct {
                 List<MetaExpression> list = (List<MetaExpression>) cookieVar.getValue();
                 for (MetaExpression cookie : list) {
                     cookieName = cookie.getStringValue();
-                    webService.deleteCookieNamed(driver, cookieName);
+                    getWebService().deleteCookieNamed(driver, cookieName);
                 }
             } else {
                 cookieName = cookieVar.getStringValue();
-                webService.deleteCookieNamed(driver, cookieName);
+                getWebService().deleteCookieNamed(driver, cookieName);
             }
         } catch (Exception e) {
             throw new OperationFailedException("delete cookie: " + cookieName, "Unknown error: " + e.getMessage(), e);

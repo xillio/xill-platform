@@ -28,6 +28,9 @@ import java.util.ServiceLoader;
  * A utility class to create environments.
  */
 public class XillLoader {
+    private XillLoader() {
+        // None shall have
+    }
     /**
      * Loads a XillEnvironment from a specific folder.
      *
@@ -82,7 +85,7 @@ public class XillLoader {
             return super.visitFile(file, attrs);
         }
 
-        public List<Path> getJarFiles() {
+        private List<Path> getJarFiles() {
             return jarFiles;
         }
     }

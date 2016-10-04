@@ -15,7 +15,7 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.NodeVariable;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link XPathConstruct}
  */
-public class XPathConstructTest extends ExpressionBuilderHelper {
+public class XPathConstructTest extends TestUtils {
 
     /**
      * tests the process under normal circumstances with a page given.
@@ -47,15 +47,17 @@ public class XPathConstructTest extends ExpressionBuilderHelper {
     public void testNormalUsageWithPageAndTextQueryAndOneElement() {
         // mock
         WebService webService = mock(WebService.class);
+        XPathConstruct construct = new XPathConstruct();
+        construct.setWebService(webService);
 
         // The page
-        MetaExpression page = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
         PageVariable pageVariable = mock(PageVariable.class);
         when(page.getMeta(PageVariable.class)).thenReturn(pageVariable);
 
         // The xpath
         String xPathValue = "xpath/text()";
-        MetaExpression xpath = mock(MetaExpression.class);
+        MetaExpression xpath = mockExpression(ATOMIC);
         when(xpath.getStringValue()).thenReturn(xPathValue);
 
         // The WebElement
@@ -67,7 +69,7 @@ public class XPathConstructTest extends ExpressionBuilderHelper {
         when(webService.getAttribute(element, "innerHTML")).thenReturn(elementText);
 
         // run
-        MetaExpression output = XPathConstruct.process(page, xpath, webService);
+        MetaExpression output = process(construct, page, xpath);
 
         // verify
         verify(webService, times(1)).getAttribute(eq(element), anyString());
@@ -84,15 +86,17 @@ public class XPathConstructTest extends ExpressionBuilderHelper {
     public void testNormalUsageWithNodeAndTextQueryAndMoreElements() {
         // mock
         WebService webService = mock(WebService.class);
+        XPathConstruct construct = new XPathConstruct();
+        construct.setWebService(webService);
 
         // The node
         NodeVariable nodeVariable = mock(NodeVariable.class);
-        MetaExpression node = mock(MetaExpression.class);
+        MetaExpression node = mockExpression(ATOMIC);
         when(node.getMeta(NodeVariable.class)).thenReturn(nodeVariable);
 
         // The xpath
         String xPathValue = "xpath/text()";
-        MetaExpression xpath = mock(MetaExpression.class);
+        MetaExpression xpath = mockExpression(ATOMIC);
         when(xpath.getStringValue()).thenReturn(xPathValue);
 
         // The WebElements
@@ -107,7 +111,7 @@ public class XPathConstructTest extends ExpressionBuilderHelper {
         when(webService.getAttribute(element2, "innerHTML")).thenReturn(element2Text);
 
         // run
-        MetaExpression output = XPathConstruct.process(node, xpath, webService);
+        MetaExpression output = process(construct, node, xpath);
 
         // verify
         verify(webService, times(2)).getAttribute(any(), anyString());
@@ -128,15 +132,17 @@ public class XPathConstructTest extends ExpressionBuilderHelper {
     public void testNormalUsageWithPageAndTextQueryAndMoreElements() {
         // mock
         WebService webService = mock(WebService.class);
+        XPathConstruct construct = new XPathConstruct();
+        construct.setWebService(webService);
 
         // The page
-        MetaExpression page = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
         PageVariable pageVariable = mock(PageVariable.class);
         when(page.getMeta(PageVariable.class)).thenReturn(pageVariable);
 
         // The xpath
         String xPathValue = "xpath/text()";
-        MetaExpression xpath = mock(MetaExpression.class);
+        MetaExpression xpath = mockExpression(ATOMIC);
         when(xpath.getStringValue()).thenReturn(xPathValue);
 
         // The WebElements
@@ -151,7 +157,7 @@ public class XPathConstructTest extends ExpressionBuilderHelper {
         when(webService.getAttribute(element2, "innerHTML")).thenReturn(element2Text);
 
         // run
-        MetaExpression output = XPathConstruct.process(page, xpath, webService);
+        MetaExpression output = process(construct, page, xpath);
 
         // verify
         verify(webService, times(2)).getAttribute(any(), anyString());
@@ -172,23 +178,25 @@ public class XPathConstructTest extends ExpressionBuilderHelper {
     public void testNormalUsageWithPageAndTextQueryAndNoElements() {
         // mock
         WebService webService = mock(WebService.class);
+        XPathConstruct construct = new XPathConstruct();
+        construct.setWebService(webService);
 
         // The page
-        MetaExpression page = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
         PageVariable pageVariable = mock(PageVariable.class);
         when(page.getMeta(PageVariable.class)).thenReturn(pageVariable);
 
         // The xpath
         String xPathValue = "xpath";
         String shortenedXPathValue = "shorter xpath";
-        MetaExpression xpath = mock(MetaExpression.class);
+        MetaExpression xpath = mockExpression(ATOMIC);
         when(xpath.getStringValue()).thenReturn(xPathValue);
 
         // process SEL node
         when(webService.findElementsWithXpath(pageVariable, shortenedXPathValue)).thenReturn(Collections.emptyList());
 
         // run
-        MetaExpression output = XPathConstruct.process(page, xpath, webService);
+        MetaExpression output = process(construct, page, xpath);
 
         // verify
         verify(webService, times(0)).getAttribute(any(), anyString());
@@ -205,15 +213,17 @@ public class XPathConstructTest extends ExpressionBuilderHelper {
     public void testNormalUsageWithPageAndAttributeQueryAndMoreElements() {
         // mock
         WebService webService = mock(WebService.class);
+        XPathConstruct construct = new XPathConstruct();
+        construct.setWebService(webService);
 
         // The page
-        MetaExpression page = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
         PageVariable pageVariable = mock(PageVariable.class);
         when(page.getMeta(PageVariable.class)).thenReturn(pageVariable);
 
         // The xpath
         String xPathValue = "xpath/@attribute";
-        MetaExpression xpath = mock(MetaExpression.class);
+        MetaExpression xpath = mockExpression(ATOMIC);
         when(xpath.getStringValue()).thenReturn(xPathValue);
 
         // The WebElements
@@ -235,7 +245,7 @@ public class XPathConstructTest extends ExpressionBuilderHelper {
         when(webService.getAttribute(element2, "attribute")).thenReturn(element2Result);
 
         // run
-        MetaExpression output = XPathConstruct.process(page, xpath, webService);
+        MetaExpression output = process(construct, page, xpath);
 
         // verify
         verify(webService, times(2)).getAttribute(any(), anyString());
@@ -256,15 +266,17 @@ public class XPathConstructTest extends ExpressionBuilderHelper {
     public void testNormalUsageWithPageAndOneAttributeAndNoAttributeFound() {
         // mock
         WebService webService = mock(WebService.class);
+        XPathConstruct construct = new XPathConstruct();
+        construct.setWebService(webService);
 
         // The page
-        MetaExpression page = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
         PageVariable pageVariable = mock(PageVariable.class);
         when(page.getMeta(PageVariable.class)).thenReturn(pageVariable);
 
         // The xpath
         String xPathValue = "xpath/@attribute";
-        MetaExpression xpath = mock(MetaExpression.class);
+        MetaExpression xpath = mockExpression(ATOMIC);
         when(xpath.getStringValue()).thenReturn(xPathValue);
 
         // The WebElements
@@ -278,7 +290,7 @@ public class XPathConstructTest extends ExpressionBuilderHelper {
         when(webService.getAttribute(element1, "attribute")).thenReturn(null);
 
         // run
-        MetaExpression output = XPathConstruct.process(page, xpath, webService);
+        MetaExpression output = process(construct, page, xpath);
 
         // verify
         verify(webService, times(1)).getAttribute(any(), anyString());
@@ -294,12 +306,14 @@ public class XPathConstructTest extends ExpressionBuilderHelper {
     public void testNullPage() {
         // mock
         WebService webService = mock(WebService.class);
-        MetaExpression page = mock(MetaExpression.class);
-        MetaExpression xpath = mock(MetaExpression.class);
+        XPathConstruct construct = new XPathConstruct();
+        construct.setWebService(webService);
+        MetaExpression page = mockExpression(ATOMIC);
+        MetaExpression xpath = mockExpression(ATOMIC);
         when(page.isNull()).thenReturn(true);
 
         // run
-        MetaExpression output = XPathConstruct.process(page, xpath, webService);
+        MetaExpression output = process(construct, page, xpath);
 
         // assert
         Assert.assertEquals(output, NULL);
@@ -313,15 +327,17 @@ public class XPathConstructTest extends ExpressionBuilderHelper {
     public void testProcessWhenCreateNodeFails() {
         // mock
         WebService webService = mock(WebService.class);
+        XPathConstruct construct = new XPathConstruct();
+        construct.setWebService(webService);
 
         // The page
-        MetaExpression page = mock(MetaExpression.class);
+        MetaExpression page = mockExpression(ATOMIC);
         PageVariable pageVariable = mock(PageVariable.class);
         when(page.getMeta(PageVariable.class)).thenReturn(pageVariable);
 
         // The xpath
         String xPathValue = "xpath";
-        MetaExpression xpath = mock(MetaExpression.class);
+        MetaExpression xpath = mockExpression(ATOMIC);
         when(xpath.getStringValue()).thenReturn(xPathValue);
 
         // The WebElement
@@ -333,6 +349,6 @@ public class XPathConstructTest extends ExpressionBuilderHelper {
         when(webService.getAttribute(element, "outerHTML")).thenThrow(new RobotRuntimeException("crash due to selenium"));
 
         // run
-        MetaExpression output = XPathConstruct.process(page, xpath, webService);
+        MetaExpression output = process(construct, page, xpath);
     }
 }
