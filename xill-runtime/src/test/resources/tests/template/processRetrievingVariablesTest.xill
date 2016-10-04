@@ -14,9 +14,22 @@
  * limitations under the License.
  */
 /*
-* Specification: The template plugin MUST be able to parse a template (not containing variables) without a model
-* Expected: Hello World!
-* Input: 
-*   Hello <#if 1 == 1>${"World"}<#else>Error</#if>!
-*   <#-- Comment -->
+* Specification: The template plugin MUST be able to retrieve all compatible values
+* Expected: See expected output file
+* Input: See model
 */
+use Date;
+
+include testresources.template.NoTestTemplateRunner;
+
+var testName = "processRetrievingVariables";
+var model = {
+    "object" : {"key" : "value"},
+    "list" : [1, "null", "500"],
+    "bool" : true,
+    "double" : 1.2,
+    "date" : Date.of(2015, 12, 31, 10, 5, 0)
+    
+};
+
+run(testName, model, null);

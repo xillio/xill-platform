@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /*
-* Specification: The template plugin MUST be able to insert lists in the template
+* Specification: The template plugin MUST be able to insert LISTs in the template
 * Expected: 
 *   1
 *   2
