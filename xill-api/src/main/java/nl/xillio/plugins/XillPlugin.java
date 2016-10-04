@@ -213,7 +213,7 @@ public abstract class XillPlugin extends AbstractModule implements AutoCloseable
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         purge();
     }
 
