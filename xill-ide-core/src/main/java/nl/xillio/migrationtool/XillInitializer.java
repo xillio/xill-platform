@@ -206,7 +206,7 @@ public class XillInitializer extends Thread {
             xill.addFolder(PLUGIN_FOLDER);
             xill.buildProcessor(Paths.get("."), Paths.get("."));
         } catch (IOException e) {
-            LOGGER.error("Failed to create plugin dir");
+            LOGGER.error("Failed to create plugin dir", e);
         }
         pluginsLoaded = true;
     }

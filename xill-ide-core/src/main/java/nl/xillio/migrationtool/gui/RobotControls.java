@@ -26,6 +26,7 @@ import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.BreakpointPool;
 import nl.xillio.xill.api.Breakpoint;
 import nl.xillio.xill.api.Debugger;
+import nl.xillio.xill.api.DefaultOutputHandler;
 import nl.xillio.xill.api.LogUtil;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.errors.ErrorHandlingPolicy;
@@ -297,7 +298,7 @@ public class RobotControls implements EventHandler<KeyEvent>, ErrorHandlingPolic
 
     @Override
     public void handle(final Throwable e) {
-        Logger log = LogUtil.getLogger(getRobotID());
+        Logger log = LogUtil.getLogger(getRobotID(), new DefaultOutputHandler());
         Throwable root = ExceptionUtils.getRootCause(e);
         List<Throwable> exceptionList = ExceptionUtils.getThrowableList(e);
 
@@ -306,7 +307,7 @@ public class RobotControls implements EventHandler<KeyEvent>, ErrorHandlingPolic
             if (exceptionList.size() == 1) { //exception in root robot
                 log.error(NO_DEV_MARKER, e.getMessage());
             } else { //exception in called robot
-                String message = String.join("\n\t", Lists.reverse(exceptionList.stream().map(f -> f.getMessage()).collect(Collectors.toList())));
+                String message = String.join("\n\t", Lists.reverse(exceptionList.stream().filter(p -> p.getMessage() != null).map(f -> f.getMessage()).collect(Collectors.toList())));
                 log.error(NO_DEV_MARKER, message);
             }
         } else if (root == null) {

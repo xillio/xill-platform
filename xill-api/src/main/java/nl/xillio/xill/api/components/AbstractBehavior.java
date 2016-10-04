@@ -62,7 +62,4 @@ abstract class AbstractBehavior implements Expression {
     public void close() {
         getBinaryValue().close();
     }
-
-    @Override
-    public abstract Expression copy();
 }

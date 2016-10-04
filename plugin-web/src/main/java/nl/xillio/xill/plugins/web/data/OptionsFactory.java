@@ -81,6 +81,7 @@ public class OptionsFactory {
             case "proxyuser":
             case "proxypass":
             case "proxytype":
+            case "pass":
                 break;
 
             case "enablejs":
@@ -131,8 +132,7 @@ public class OptionsFactory {
                 break;
 
             // Needed if we want to set user
-            case "pass":
-                break;
+
 
             case "browser":
                 String browser = value.getStringValue();

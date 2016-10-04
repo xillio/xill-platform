@@ -1,0 +1,54 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+* Specification: When given a list of JSON strings to this construct, it MUST parse each JSON string to the proper JSON and it MUST combine it in a LIST.
+* Expected: The correct JSON for each ATOMIC in the LIST.
+* Input: See data set
+*/
+
+use System, Assert;
+
+// An ATOMIC value in a LIST
+Assert.equal(System.parseJSON(["null"]), [null]);
+Assert.equal(System.parseJSON(["5"]), [5]);
+Assert.equal(System.parseJSON(["false"]), [false]);
+Assert.equal(System.parseJSON(["true"]), [true]);
+Assert.equal(System.parseJSON(['"Hello World"']), ["Hello World"]);
+
+// An OBJECT (as ATOMIC) in a LIST
+Assert.equal(System.parseJSON(["{}"]), [{}]);
+Assert.equal(System.parseJSON(['{"Hello": "World"}']), [{"Hello":"World"}]);
+
+// A LIST (as ATOMIC) in a LIST
+Assert.equal(System.parseJSON(["[]"]), [[]]);
+Assert.equal(System.parseJSON(["[null]"]), [[null]]);
+Assert.equal(System.parseJSON(["[1,2,3,4,{}]"]), [[1,2,3,4,{}]]);
+
+// Multiple ATOMIC values in a LIST
+Assert.equal(System.parseJSON(["null", "null"]), [null, null]);
+Assert.equal(System.parseJSON(["5", "10"]), [5, 10]);
+Assert.equal(System.parseJSON(["false", "true"]), [false, true]);
+Assert.equal(System.parseJSON(["true", "\"Something\""]), [true, "Something"]);
+Assert.equal(System.parseJSON(['"Hello World"', "\"World Hello\""]), ["Hello World", "World Hello"]);
+
+// Multiple OBJECT values (as ATOMICS) in a LIST
+Assert.equal(System.parseJSON(["{}", "[]"]), [{}, []]);
+Assert.equal(System.parseJSON(['{"Hello": "World"}', '{}']), [{"Hello":"World"}, {}]);
+
+// Multiple LIST values (as ATOMICS) in a LIST
+Assert.equal(System.parseJSON(["[]", "[[]]"]), [[], [[]]]);
+Assert.equal(System.parseJSON(["[null]", "[[null], null]"]), [[null], [[null], null]]);
+Assert.equal(System.parseJSON(["[1,2,3,4,{}]", '{"a" : "[1,2,3,4,{}]"}']), [[1,2,3,4,{}], {"a" : "[1,2,3,4,{}]"}]);
