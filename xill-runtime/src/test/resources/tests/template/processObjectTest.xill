@@ -13,3 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+* Specification: The template plugin MUST be able to insert OBJECTs in the template
+* Expected: First: First Second: Second Third: Third
+* Input: {"input" : {"first" : "First" , "second" : "Second", "third" : "Third" }}
+*/
+include testresources.template.NoTestTemplateRunner;
+
+var testName = "processObject";
+var model = {"input" : 
+    {"first" : "First" , 
+    "second" : "Second", 
+    "third" : "Third" }
+};
+
+run(testName, model, null);
