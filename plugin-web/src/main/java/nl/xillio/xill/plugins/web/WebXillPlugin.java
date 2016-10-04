@@ -33,7 +33,7 @@ public class WebXillPlugin extends XillPlugin {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         phantomJSPool.close();
         super.close();
     }

@@ -50,6 +50,13 @@ public interface XillProcessor {
     List<Issue> compileAsSubRobot(RobotID parentRobotId) throws IOException, XillParsingException;
 
     /**
+     * Set the handler for all output of the robots compiled with this processor.
+     *
+     * @param outputHandler the handler
+     */
+    void setOutputHandler(OutputHandler outputHandler);
+
+    /**
      * Tests a robot for syntax errors.
      *
      * @return a list of issues

@@ -19,6 +19,7 @@ import nl.xillio.events.Event;
 import nl.xillio.xill.api.Breakpoint;
 import nl.xillio.xill.api.DebugInfo;
 import nl.xillio.xill.api.Debugger;
+import nl.xillio.xill.api.OutputHandler;
 import nl.xillio.xill.api.components.*;
 import nl.xillio.xill.api.errors.ErrorHandlingPolicy;
 import nl.xillio.xill.api.events.RobotContinuedAction;
@@ -159,6 +160,11 @@ public class DelegateDebugger implements Debugger {
     @Override
     public void setErrorHandler(ErrorHandlingPolicy handler) {
         debugger.setErrorHandler(handler);
+    }
+
+    @Override
+    public void setOutputHandler(OutputHandler handler) {
+        debugger.setOutputHandler(handler);
     }
 
     @Override
