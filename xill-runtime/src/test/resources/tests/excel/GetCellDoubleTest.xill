@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 /*
-* Specification: Reading a cell from an Excel workbook containing an integer MUST result in an integer variable
-* Input: integer sheet of testresources/excel/getCellWorkbook.xlsx
-* Expected: 1, 1000, -1 , -1000, 12345678910, -12345678910
+* Specification: Reading a cell from an Excel workbook containing a number that is either a double OR bigger than max Long MUST result in an double variable
+* Input: double sheet of testresources/excel/getCellWorkbook.xlsx
+* Expected: 1,5 1000,0005 -1,5 -1000,0005 12345678910,5 -12345678910,5 9523372036854770000
 */
 
 use Assert, Excel, Math, String;
 
 var wb = Excel.loadWorkbook("testresources/excel/getCellWorkbook.xlsx");
-var sheet = Excel.loadSheet(wb, "integer");
-var output = [0,0, 1,1000,-1,-1000,12345678910,-12345678910];
+var sheet = Excel.loadSheet(wb, "double");
+var output = [0,0,1.5, 1000.0005, -1.5, -1000.0005, 12345678910.5, -12345678910.5, 9523372036854770000];
 
 var i = 2;
-while(i < 8){
+while(i < 9){
     var cell = Excel.getCell(sheet, 1, i);
     Assert.notNull(cell, "Cell contains null or could not be read.");
     Assert.isTrue(Math.isNumber(cell), "Cell does not contain a number.");
-    // Test that the result is not a double by checking if the string value contains a dot
-    Assert.isFalse(String.contains(cell, ".") || String.contains(cell, ","), "String value contains a dot or comma, so this is a floating point value: " :: cell);
+    // Test that the result is a float by checking if the string value contains a dot
+    Assert.isTrue(String.contains(cell, ".") || String.contains(cell, ","), "String value contains a dot or comma, so this is a floating point value: " :: cell);
     Assert.equal(cell,output[i], cell :: " is not equal to the expected value: " :: output[i - 1]);
     i++;
 }
-
