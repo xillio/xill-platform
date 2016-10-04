@@ -15,9 +15,7 @@
  */
 package nl.xillio.xill.plugins.template.services;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
+import freemarker.template.*;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.OperationFailedException;
 
@@ -57,6 +55,21 @@ public class TemplateProcessor {
                     e.getMessage(),
                     "A FreeMarker supported encoding.",
                     "\"encoding\" : \"UNICODE\"",
+                    e);
+        } catch (TemplateNotFoundException e) {
+            throw new InvalidUserInputException(
+                    "The given template could not be found.",
+                    e.getTemplateName(),
+                    "A valid template name with extension (located in the templatesDirectory)",
+                    "template.txt",
+                    e);
+        } catch (MalformedTemplateNameException e) {
+            throw new InvalidUserInputException(
+                    "The given template has an invalid name.",
+                    e.getTemplateName(),
+                    "A valid template name with extension (located in the templatesDirectory)" +
+                            "in compliance with the TemplateNameFormat of FreeMarker.",
+                    "template.txt",
                     e);
         } catch (IOException | TemplateException e) {
             throw new OperationFailedException("process template.", e.getMessage(), e);

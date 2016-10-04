@@ -16,6 +16,7 @@
 package nl.xillio.xill.plugins.template.services;
 
 import freemarker.template.Configuration;
+import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
@@ -26,7 +27,6 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Paths;
 
 import static org.mockito.Mockito.*;
 
@@ -73,20 +73,23 @@ public class TemplateProcessorTest extends TestUtils {
     }
 
     @Test(expectedExceptions = OperationFailedException.class)
-    public void TestIOException() throws IOException {
+    public void TestIOException() throws Exception {
         // Mock
         OutputStream outputStream = mock(OutputStream.class);
+        Configuration configuration = mock(Configuration.class);
+        Template template = mock(Template.class);
+        when(configuration.getTemplate(anyString())).thenReturn(template);
+        Mockito.doThrow(new IOException(""))
+                .when(template).process(any(), any());
 
         // Instantiate
-        Configuration configuration = new Configuration(Configuration.VERSION_2_3_23);
-        configuration.setDirectoryForTemplateLoading(Paths.get("/").toAbsolutePath().toFile());
         TemplateProcessor templateProcessor = new TemplateProcessor();
 
         // Run
         templateProcessor.generate("", outputStream, null, configuration);
     }
 
-    @Test(expectedExceptions = OperationFailedException.class)
+    @Test(expectedExceptions = InvalidUserInputException.class, expectedExceptionsMessageRegExp = ".*The given template could not be found.*")
     public void TestTemplateException() throws IOException {
         // Mock
         OutputStream outputStream = mock(OutputStream.class);
@@ -94,6 +97,23 @@ public class TemplateProcessorTest extends TestUtils {
         // Instantiate
         TemplateProcessor templateProcessor = new TemplateProcessor();
         Configuration configuration = new Configuration(Configuration.VERSION_2_3_23);
+
+        // Run
+        templateProcessor.generate("", outputStream, null, configuration);
+    }
+
+    @Test(expectedExceptions = InvalidUserInputException.class, expectedExceptionsMessageRegExp = ".*invalid name.*")
+    public void TestMalformedTemplateNameException() throws Exception {
+        // Mock
+        OutputStream outputStream = mock(OutputStream.class);
+        Configuration configuration = mock(Configuration.class);
+        Template template = mock(Template.class);
+        when(configuration.getTemplate(anyString())).thenReturn(template);
+        Mockito.doThrow(new MalformedTemplateNameException("name", ""))
+                .when(template).process(any(), any());
+
+        // Instantiate
+        TemplateProcessor templateProcessor = new TemplateProcessor();
 
         // Run
         templateProcessor.generate("", outputStream, null, configuration);
