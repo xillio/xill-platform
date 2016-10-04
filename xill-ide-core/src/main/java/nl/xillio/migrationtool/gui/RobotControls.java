@@ -26,6 +26,7 @@ import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.BreakpointPool;
 import nl.xillio.xill.api.Breakpoint;
 import nl.xillio.xill.api.Debugger;
+import nl.xillio.xill.api.DefaultOutputHandler;
 import nl.xillio.xill.api.LogUtil;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.errors.ErrorHandlingPolicy;
@@ -297,7 +298,7 @@ public class RobotControls implements EventHandler<KeyEvent>, ErrorHandlingPolic
 
     @Override
     public void handle(final Throwable e) {
-        Logger log = LogUtil.getLogger(getRobotID());
+        Logger log = LogUtil.getLogger(getRobotID(), new DefaultOutputHandler());
         Throwable root = ExceptionUtils.getRootCause(e);
         List<Throwable> exceptionList = ExceptionUtils.getThrowableList(e);
 
