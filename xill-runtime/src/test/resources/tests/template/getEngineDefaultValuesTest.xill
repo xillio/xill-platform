@@ -1,0 +1,38 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+* Specification: The default values MUST be parsable by the getEngine construct
+* Expected: Not null and no errors
+* Input: See values below
+*/
+use Assert, Template;
+
+var options = {
+    "templatesDirectory" :      ".",        // Project root
+    "encoding" :                "UTF-8",
+    "noCaching" :               false,
+    "strongCache" :             0,
+    "softCache" :               2147483647 // Max integer
+};
+
+var engine;
+do {
+    engine = Template.getEngine(options);    
+} fail (e) {
+    Assert.error("The default value parsing should not fail. Message: " :: e.message);
+}
+
+Assert.notNull(engine, "The engine should not be null.");
