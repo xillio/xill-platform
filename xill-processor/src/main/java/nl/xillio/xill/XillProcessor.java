@@ -18,9 +18,7 @@ package nl.xillio.xill;
 import com.google.inject.Injector;
 import me.biesaart.utils.Log;
 import nl.xillio.plugins.XillPlugin;
-import nl.xillio.xill.api.Debugger;
-import nl.xillio.xill.api.Issue;
-import nl.xillio.xill.api.LanguageFactory;
+import nl.xillio.xill.api.*;
 import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.construct.Construct;
@@ -65,14 +63,13 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     private final XtextResourceSet resourceSet;
 
     private final IResourceValidator validator;
-
-    private Robot robot;
-
     private final File robotFile;
     private final File projectFolder;
     private final List<XillPlugin> plugins;
     private final Debugger debugger;
     private final Map<Construct, String> argumentSignatures = new HashMap<>();
+    private Robot robot;
+    private OutputHandler outputHandler = new DefaultOutputHandler();
 
     /**
      * Create a new processor that can run a file.
@@ -81,7 +78,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
      * @param robotFile     the robot file
      * @param plugins       the plugins
      * @param debugger      the debugger
-     * @throws IOException is thrown if a file(-related) operation fails.
+     * @throws IOException if thrown if a file(-related) operation fails.
      */
     public XillProcessor(final File projectFolder, final File robotFile, final List<XillPlugin> plugins,
                          final Debugger debugger) throws IOException {
@@ -124,6 +121,13 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
         }
     }
 
+    @Override
+    public void setOutputHandler(final OutputHandler outputHandler) {
+        Objects.requireNonNull(outputHandler);
+        this.outputHandler = outputHandler;
+        this.debugger.setOutputHandler(outputHandler);
+    }
+
     private List<Issue> compile(final File robotPath, RobotID rootRobot) throws XillParsingException {
         Resource resource = resourceSet.getResource(URI.createFileURI(robotPath.getAbsolutePath()), true);
 
@@ -132,7 +136,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
             rootRobot = robotID;
         }
 
-        LanguageFactory<xill.lang.xill.Robot> factory = new XillProgramFactory(plugins, getDebugger(), rootRobot);
+        LanguageFactory<xill.lang.xill.Robot> factory = new XillProgramFactory(plugins, getDebugger(), rootRobot, outputHandler);
 
 
         List<Issue> issues = validate(resource);
@@ -402,7 +406,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
      */
     private String getSignature(Construct construct) {
         if (!argumentSignatures.containsKey(construct)) {
-            ConstructContext context = new ConstructContext(getRobotID(), getRobotID(), construct, null, null, null, null);
+            ConstructContext context = new ConstructContext(getRobotID(), getRobotID(), construct, null, null, outputHandler, null, null);
             try (ConstructProcessor processor = construct.prepareProcess(context)) {
 
                 List<String> args = new ArrayList<>();

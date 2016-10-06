@@ -1,0 +1,54 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+* Specification: Getting the length in bytes of a string given a certain encoding MUST return the right length.
+* Expected: The correct length in bytes (see dataset)
+* Input: See dataset
+*/
+
+use String, Assert, System;
+
+foreach (item in getDataset()) {
+    testByteLength(item);
+}
+
+function testByteLength(item) {
+    Assert.equal(String.byteLength(item[0], item[1]), item[2]);
+}
+
+function getDataset() {
+	// 5 Paragraphs of lorem ipsum.
+    var lipsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vel bibendum orci. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut malesuada consectetur dolor nec mollis. Donec dapibus viverra tristique. Fusce non ligula est. Quisque malesuada odio tortor, eu eleifend mi cursus in. Quisque posuere vehicula leo nec rhoncus. Suspendisse ut mi diam. Nunc efficitur, nulla at ornare luctus, leo justo eleifend odio, vitae imperdiet orci velit nec enim.
+    Duis fringilla feugiat lectus, quis suscipit tortor iaculis nec. Quisque congue, felis eget molestie commodo, felis velit facilisis orci, eget lacinia nunc orci eu libero. Maecenas bibendum at sem sit amet iaculis. Nullam semper dictum nibh. Mauris dictum lorem non dui lacinia, nec dapibus sem placerat. Nullam tincidunt interdum magna. Nam aliquam ligula sed tempor ultrices.
+    Nam suscipit elementum laoreet. Aliquam finibus, velit vitae viverra eleifend, augue massa fringilla arcu, quis hendrerit dolor augue eget turpis. Vivamus finibus, ligula volutpat feugiat iaculis, magna lorem accumsan turpis, vel rhoncus metus turpis ut ipsum. Pellentesque vitae ex nibh. Morbi leo neque, fermentum ut nunc in, vehicula vestibulum ante. Sed condimentum metus nec lectus ornare sollicitudin. Aliquam eu volutpat elit, vitae mattis ante. Curabitur mi nisi, finibus sed arcu et, porttitor consectetur sapien. Praesent ut aliquam magna, rutrum malesuada mauris. Phasellus purus tellus, gravida nec nunc sit amet, ultricies commodo massa. Nulla sit amet metus vel felis viverra tempus ac euismod augue. Vestibulum tristique quam enim, quis lobortis purus posuere vitae. Nam commodo suscipit sapien. Sed leo metus, fringilla posuere libero in, aliquam aliquet dolor. Suspendisse malesuada dapibus sagittis.
+    Vivamus sed ante vel nulla blandit tempor. Aenean sollicitudin, purus vel facilisis faucibus, dolor mauris lobortis eros, at accumsan ligula dui sit amet sapien. Nulla dapibus non justo quis semper. Aliquam lacinia in leo vel posuere. Sed malesuada ante et congue ultrices. Phasellus malesuada, purus a faucibus elementum, sem eros eleifend nibh, non lobortis ipsum tortor quis magna. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sagittis enim id velit rhoncus lacinia. Suspendisse volutpat leo vel eros molestie, vitae lobortis nulla feugiat. Ut dapibus fermentum orci commodo suscipit.
+    In eu nisl pellentesque, varius ex a, condimentum ante. Aenean pharetra consequat varius. Cras tincidunt auctor sem at cursus. Nam eleifend, leo ut consequat accumsan, arcu odio efficitur mi, eget tristique metus eros non metus. Nulla augue leo, aliquet ut libero sit amet, maximus feugiat sapien. Curabitur sit amet vehicula tortor, nec consectetur eros. Maecenas sit amet aliquam augue. Nullam at semper quam. Quisque eu maximus risus. Nam porttitor ut urna vitae scelerisque. Donec pulvinar, odio at sodales venenatis, est ipsum placerat velit, et porta ex nibh a nulla. Aenean aliquam vehicula dui et gravida. Vivamus facilisis lectus id est tristique mattis. Vivamus vel erat non metus bibendum eleifend id ut sapien. Quisque id purus massa.";
+    
+    // Each sublist contains: string to test, encoding, expected length.
+    return [
+        ["", "UTF-8", 0],
+        ["foo", "ASCII", 3],
+        ["foo", "UTF-8", 3],
+        ["foo", "UTF-16", 8],
+        ["foo", "UTF-32", 12],
+        [lipsum, "UTF-8", 3126 + 4 * String.length(System.properties("line.separator"))]
+//        ["€äåé®þüúíóöáßæ©ñµ", "ASCII", 17],
+//        ["€äåé®þüúíóöáßæ©ñµ", "UTF-8", 35],
+//        ["special ©å€é® characters", "ASCII", 24],
+//        ["special ©å€é® characters", "UTF-8", 30]
+    ];
+}
+

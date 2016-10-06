@@ -14,18 +14,25 @@
  * limitations under the License.
  */
 /*
-* Specification: calling String.matches with a regex escaped by String.regexEscape on the unescaped string MUST match
-* Input: "^regex$"
-* Expected: String.matches returns true
+* Specification: length MUST return the length (amout of characters) of the string.
+* Input: See dataset
+* Expected: See dataset
 */
 
-use Assert;
-use String;
-use System;
+use Assert, String;
 
-var regex = "^regex$";
+// String, find, start position, expected.
+var dataset = [
+	["foo bar baz", 11],
+	["€äåé®þüúíóöáßæ©ñµ", 17],
+	["", 0],
+	[12345678, 8],
+	[23.45, 5],
+	[true, 4],
+	[null, 0],
+	[NaN, 3]
+];
 
-var escaped = String.regexEscape(regex);
-var matches = String.matches(regex, escaped);
-
-Assert.isTrue(matches, "Escaped regex and original do not match");
+foreach (item in dataset) {
+	Assert.equal(String.length(item[0]), item[1]);
+}

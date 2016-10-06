@@ -84,6 +84,7 @@ public class H2IntegrationTest extends TestUtils {
         MetaExpression result = run(queryConstruct, fromValue("INSERT INTO test (num) VALUES (?)"), fromValue(Collections.singletonList(fromValue(1337))));
         assertEquals(result.getNumberValue().intValue(), 1);
     }
+
     /**
      * This will use storeObject to insert a row
      */
