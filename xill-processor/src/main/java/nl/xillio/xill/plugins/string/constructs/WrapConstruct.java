@@ -27,19 +27,24 @@ import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
  * Wraps a piece of text to a certain width
  */
 public class WrapConstruct extends Construct {
+
+    public final StringUtilityService stringService;
     @Inject
-    StringUtilityService stringService;
+    public WrapConstruct(StringUtilityService stringService)
+    {
+        this.stringService = stringService;
+    }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (text, width, wrapLongWords) -> process(text, width, wrapLongWords, stringService),
+                this::process,
                 new Argument("text", ATOMIC),
                 new Argument("width", ATOMIC),
                 new Argument("wrapLongWords", ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression text, final MetaExpression width, final MetaExpression wrapLong, final StringUtilityService stringService) {
+    private MetaExpression process(final MetaExpression text, final MetaExpression width, final MetaExpression wrapLong) {
 
         String result = stringService.wrap(text.getStringValue(), width.getNumberValue().intValue(), wrapLong.getBooleanValue());
         return fromValue(result);

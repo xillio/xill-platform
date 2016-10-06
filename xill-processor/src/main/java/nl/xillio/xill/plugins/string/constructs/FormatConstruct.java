@@ -46,26 +46,27 @@ import java.util.regex.PatternSyntaxException;
  * @author Sander
  */
 public class FormatConstruct extends Construct {
-    @Inject
-    private RegexService regexService;
-    @Inject
-    private StringUtilityService stringService;
+    private final RegexService regexService;
+    private final StringUtilityService stringService;
 
     /**
      * Create a new {@link FormatConstruct}
      */
-    public FormatConstruct() {
+    @Inject
+    public FormatConstruct(RegexService regexService, StringUtilityService stringService) {
+        this.regexService = regexService;
+        this.stringService = stringService;
     }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (textVar, valueVar) -> process(textVar, valueVar, regexService, stringService),
+                this::process,
                 new Argument("text", ATOMIC),
                 new Argument("values", LIST));
     }
 
-    static MetaExpression process(final MetaExpression textVar, final MetaExpression valueVar, final RegexService regexService, final StringUtilityService stringService) {
+    private MetaExpression process(final MetaExpression textVar, final MetaExpression valueVar) {
         assertNotNull(textVar, "text");
 
         List<MetaExpression> formatList = new ArrayList<>();
@@ -74,7 +75,7 @@ public class FormatConstruct extends Construct {
         List<MetaExpression> numberList = (List<MetaExpression>) valueVar.getValue();
 
         try {
-            Matcher matcher = regexService.getMatcher("%[[^a-zA-Z%]]*([a-zA-Z]|[%])", textVar.getStringValue(), RegexConstruct.REGEX_TIMEOUT);
+            Matcher matcher = regexService.getMatcher("%[[^a-zA-Z%]]*([a-zA-Z]|[%])", textVar.getStringValue(), regexService.getRegexTimeout());
             List<String> tryFormat = regexService.tryMatch(matcher);
             for (String s : tryFormat) {
                 formatList.add(fromValue(s));

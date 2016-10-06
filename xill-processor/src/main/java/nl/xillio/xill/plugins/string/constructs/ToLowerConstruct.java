@@ -29,17 +29,21 @@ import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
  * @author Sander
  */
 public class ToLowerConstruct extends Construct {
+
+    public final StringUtilityService stringService;
     @Inject
-    StringUtilityService stringService;
+    public ToLowerConstruct(StringUtilityService stringService){
+        this.stringService = stringService;
+    }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                string -> process(string, stringService),
+                this::process,
                 new Argument("string", ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression string, final StringUtilityService stringService) {
+    private MetaExpression process(final MetaExpression string) {
 
         return string.isNull() ? NULL : fromValue(stringService.toLowerCase(string.getStringValue()));
     }

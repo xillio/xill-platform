@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
 import org.testng.Assert;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link IndexOfConstruct}.
  */
-public class IndexOfConstructTest {
+public class IndexOfConstructTest extends TestUtils{
 
     /**
      * Test the process method under normal circumstances.
@@ -34,22 +35,24 @@ public class IndexOfConstructTest {
     public void processNormalUsage() {
         // Mock
         String parentValue = "abcdefgabcdefg";
-        MetaExpression parent = mock(MetaExpression.class);
+        MetaExpression parent = mockExpression(ATOMIC);
         when(parent.getStringValue()).thenReturn(parentValue);
 
         String childValue = "a";
-        MetaExpression child = mock(MetaExpression.class);
+        MetaExpression child = mockExpression(ATOMIC);
         when(child.getStringValue()).thenReturn(childValue);
 
         int indexValue = 2;
-        MetaExpression index = mock(MetaExpression.class);
+        MetaExpression index = mockExpression(ATOMIC);
         when(index.getNumberValue()).thenReturn(indexValue);
 
         int returnValue = 7;
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(stringService.indexOf(parentValue, childValue, indexValue)).thenReturn(returnValue);
+
+        IndexOfConstruct construct = new IndexOfConstruct(stringService);
         // Run
-        MetaExpression result = IndexOfConstruct.process(parent, child, index, stringService);
+        MetaExpression result = process(construct, parent, child, index);
 
         // Verify
         verify(stringService, times(1)).indexOf(parentValue, childValue, indexValue);

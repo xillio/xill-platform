@@ -138,8 +138,8 @@ public class AbsoluteURLConstructTest extends TestUtils {
         when(url.tryConvert(pageUrl.getStringValue(), relativeUrl.getStringValue())).thenReturn(null);
 
         // Run.
-        AbsoluteURLConstruct constructWithMock = new AbsoluteURLConstruct(url);
-        this.process(constructWithMock, pageUrl, relativeUrl);
+        AbsoluteURLConstruct construct = new AbsoluteURLConstruct(url);
+        process(construct, pageUrl, relativeUrl);
 
         // Verify.
         verify(url, times(1)).tryConvert(pageUrl.getStringValue(), relativeUrl.getStringValue());
@@ -159,8 +159,8 @@ public class AbsoluteURLConstructTest extends TestUtils {
         when(url.tryConvert(pageUrl.getStringValue(), relativeUrl.getStringValue())).thenThrow(new IllegalArgumentException());
 
         // Run.
-        AbsoluteURLConstruct constructWithMock = new AbsoluteURLConstruct(url);
-        this.process(constructWithMock, pageUrl, relativeUrl);
+        AbsoluteURLConstruct construct = new AbsoluteURLConstruct(url);
+        process(construct, pageUrl, relativeUrl);
 
         // Verify.
         verify(url, times(1)).tryConvert(pageUrl.getStringValue(), relativeUrl.getStringValue());

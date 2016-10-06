@@ -39,6 +39,14 @@ public interface RegexService {
      */
     Matcher getMatcher(String regex, String value, int timeout) throws FailedToGetMatcherException, IllegalArgumentException;
 
+
+    /**
+     * Returns the default Timeout time.
+     *
+     * @return default Timeout time.
+     */
+    int getRegexTimeout();
+
     /**
      * Attempts to match an entire region to a pattern.
      *

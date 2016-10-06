@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
@@ -26,7 +27,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link SubstringConstruct}.
  */
-public class SubstringConstructTest {
+public class SubstringConstructTest extends TestUtils{
 
     /**
      * Test the process method under normal circumstances.
@@ -35,25 +36,27 @@ public class SubstringConstructTest {
     public void processNormalUsage() {
         // Mock
         String stringValue = "testing";
-        MetaExpression string = mock(MetaExpression.class);
+        MetaExpression string = mockExpression(ATOMIC);
         when(string.getStringValue()).thenReturn(stringValue);
         when(string.isNull()).thenReturn(false);
 
         int startValue = 1;
-        MetaExpression start = mock(MetaExpression.class);
+        MetaExpression start = mockExpression(ATOMIC);
         when(start.getNumberValue()).thenReturn(startValue);
         when(start.isNull()).thenReturn(false);
 
         int endValue = 3;
-        MetaExpression end = mock(MetaExpression.class);
+        MetaExpression end = mockExpression(ATOMIC);
         when(end.getNumberValue()).thenReturn(endValue);
         when(end.isNull()).thenReturn(false);
 
         String returnValue = "est";
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(stringService.subString(stringValue, startValue, endValue)).thenReturn(returnValue);
+
+        SubstringConstruct construct = new SubstringConstruct(stringService);
         // Run
-        MetaExpression result = SubstringConstruct.process(string, start, end, stringService);
+        MetaExpression result = process(construct, string, start, end);
 
         // Verify
         verify(stringService, times(1)).subString(stringValue, startValue, endValue);
@@ -69,25 +72,27 @@ public class SubstringConstructTest {
     public void processEndIs0() {
         // Mock
         String stringValue = "testing";
-        MetaExpression string = mock(MetaExpression.class);
+        MetaExpression string = mockExpression(ATOMIC);
         when(string.getStringValue()).thenReturn(stringValue);
         when(string.isNull()).thenReturn(false);
 
         int startValue = 1;
-        MetaExpression start = mock(MetaExpression.class);
+        MetaExpression start = mockExpression(ATOMIC);
         when(start.getNumberValue()).thenReturn(startValue);
         when(start.isNull()).thenReturn(false);
 
         int endValue = 0;
-        MetaExpression end = mock(MetaExpression.class);
+        MetaExpression end = mockExpression(ATOMIC);
         when(end.getNumberValue()).thenReturn(endValue);
         when(end.isNull()).thenReturn(false);
 
         String returnValue = stringValue;
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(stringService.subString(stringValue, startValue, stringValue.length())).thenReturn(returnValue);
+
+        SubstringConstruct construct = new SubstringConstruct(stringService);
         // Run
-        MetaExpression result = SubstringConstruct.process(string, start, end, stringService);
+        MetaExpression result = process(construct, string, start, end);
 
         // Verify
         verify(stringService, times(1)).subString(stringValue, startValue, stringValue.length());
@@ -103,25 +108,27 @@ public class SubstringConstructTest {
     public void processHighStartValue() {
         // Mock
         String stringValue = "testing";
-        MetaExpression string = mock(MetaExpression.class);
+        MetaExpression string = mockExpression(ATOMIC);
         when(string.getStringValue()).thenReturn(stringValue);
         when(string.isNull()).thenReturn(false);
 
         int startValue = 7;
-        MetaExpression start = mock(MetaExpression.class);
+        MetaExpression start = mockExpression(ATOMIC);
         when(start.getNumberValue()).thenReturn(startValue);
         when(start.isNull()).thenReturn(false);
 
         int endValue = 3;
-        MetaExpression end = mock(MetaExpression.class);
+        MetaExpression end = mockExpression(ATOMIC);
         when(end.getNumberValue()).thenReturn(endValue);
         when(end.isNull()).thenReturn(false);
 
         String returnValue = "est";
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(stringService.subString(stringValue, 0, endValue)).thenReturn(returnValue);
+
+        SubstringConstruct construct = new SubstringConstruct(stringService);
         // Run
-        MetaExpression result = SubstringConstruct.process(string, start, end, stringService);
+        MetaExpression result = process(construct, string, start, end);
 
         // Verify
         verify(stringService, times(1)).subString(stringValue, 0, endValue);
@@ -137,24 +144,27 @@ public class SubstringConstructTest {
     public void processErrorThrown() {
         // Mock
         String stringValue = "testing";
-        MetaExpression string = mock(MetaExpression.class);
+        MetaExpression string = mockExpression(ATOMIC);
         when(string.getStringValue()).thenReturn(stringValue);
         when(string.isNull()).thenReturn(false);
 
         int startValue = 1;
-        MetaExpression start = mock(MetaExpression.class);
+        MetaExpression start = mockExpression(ATOMIC);
         when(start.getNumberValue()).thenReturn(startValue);
         when(start.isNull()).thenReturn(false);
 
         int endValue = 3;
-        MetaExpression end = mock(MetaExpression.class);
+        MetaExpression end = mockExpression(ATOMIC);
         when(end.getNumberValue()).thenReturn(endValue);
         when(end.isNull()).thenReturn(false);
 
         Exception returnValue = new StringIndexOutOfBoundsException();
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(stringService.subString(stringValue, startValue, endValue)).thenThrow(returnValue);
-        SubstringConstruct.process(string, start, end, stringService);
+
+        SubstringConstruct construct = new SubstringConstruct(stringService);
+        // Run
+        process(construct, string, start, end);
 
         // Verify
         verify(stringService, times(1)).subString(stringValue, startValue, endValue);

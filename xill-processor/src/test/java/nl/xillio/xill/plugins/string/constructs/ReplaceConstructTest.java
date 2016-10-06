@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
@@ -33,7 +34,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link ReplaceConstruct}.
  */
-public class ReplaceConstructTest {
+public class ReplaceConstructTest extends TestUtils{
     private int timeoutValue = 10000;
     
     /**
@@ -47,26 +48,26 @@ public class ReplaceConstructTest {
     public void processUseRegexReplaceAll() throws IllegalArgumentException, FailedToGetMatcherException {
         // Mock
         String textValue = "ReplaceR";
-        MetaExpression text = mock(MetaExpression.class);
+        MetaExpression text = mockExpression(ATOMIC);
         when(text.getStringValue()).thenReturn(textValue);
 
         String needleValue = "R";
-        MetaExpression needle = mock(MetaExpression.class);
+        MetaExpression needle = mockExpression(ATOMIC);
         when(needle.getStringValue()).thenReturn(needleValue);
 
         String replacementValue = "O";
-        MetaExpression replacement = mock(MetaExpression.class);
+        MetaExpression replacement = mockExpression(ATOMIC);
         when(replacement.getStringValue()).thenReturn(replacementValue);
 
         boolean useRegexValue = true;
-        MetaExpression useRegex = mock(MetaExpression.class);
+        MetaExpression useRegex = mockExpression(ATOMIC);
         when(useRegex.getBooleanValue()).thenReturn(useRegexValue);
 
         boolean replaceAllValue = true;
-        MetaExpression replaceAll = mock(MetaExpression.class);
+        MetaExpression replaceAll = mockExpression(ATOMIC);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
         
-        MetaExpression timeout = mock(MetaExpression.class);
+        MetaExpression timeout = mockExpression(ATOMIC);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         String returnValue = "OeplaceO";
@@ -74,9 +75,10 @@ public class ReplaceConstructTest {
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(regexService.replaceAll(any(), eq(replacementValue))).thenReturn(returnValue);
 
+        ReplaceConstruct construct = new ReplaceConstruct(regexService, stringService);
         // Run
         MetaExpression args[] = {text, needle, replacement, useRegex, replaceAll, timeout};
-        MetaExpression result = ReplaceConstruct.process(args, regexService, stringService);
+        MetaExpression result = process(construct, args);
 
         // Verify
         verify(regexService, times(1)).getMatcher(needleValue, textValue, timeoutValue);
@@ -100,26 +102,26 @@ public class ReplaceConstructTest {
     public void processUseRegexReplaceFirst() throws IllegalArgumentException, FailedToGetMatcherException {
         // Mock
         String textValue = "ReplaceR";
-        MetaExpression text = mock(MetaExpression.class);
+        MetaExpression text = mockExpression(ATOMIC);
         when(text.getStringValue()).thenReturn(textValue);
 
         String needleValue = "R";
-        MetaExpression needle = mock(MetaExpression.class);
+        MetaExpression needle = mockExpression(ATOMIC);
         when(needle.getStringValue()).thenReturn(needleValue);
 
         String replacementValue = "O";
-        MetaExpression replacement = mock(MetaExpression.class);
+        MetaExpression replacement = mockExpression(ATOMIC);
         when(replacement.getStringValue()).thenReturn(replacementValue);
 
         boolean useRegexValue = true;
-        MetaExpression useRegex = mock(MetaExpression.class);
+        MetaExpression useRegex = mockExpression(ATOMIC);
         when(useRegex.getBooleanValue()).thenReturn(useRegexValue);
 
         boolean replaceAllValue = false;
-        MetaExpression replaceAll = mock(MetaExpression.class);
+        MetaExpression replaceAll = mockExpression(ATOMIC);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
         
-        MetaExpression timeout = mock(MetaExpression.class);
+        MetaExpression timeout = mockExpression(ATOMIC);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         String returnValue = "OeplaceO";
@@ -127,9 +129,10 @@ public class ReplaceConstructTest {
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(regexService.replaceFirst(any(), eq(replacementValue))).thenReturn(returnValue);
 
+        ReplaceConstruct construct = new ReplaceConstruct(regexService, stringService);
         // Run
         MetaExpression args[] = {text, needle, replacement, useRegex, replaceAll, timeout};
-        MetaExpression result = ReplaceConstruct.process(args, regexService, stringService);
+        MetaExpression result = process(construct, args);
 
         // Verify
         verify(regexService, times(1)).getMatcher(needleValue, textValue, timeoutValue);
@@ -153,26 +156,26 @@ public class ReplaceConstructTest {
     public void processDontUseRegexReplaceAll() throws IllegalArgumentException, FailedToGetMatcherException {
         // Mock
         String textValue = "ReplaceR";
-        MetaExpression text = mock(MetaExpression.class);
+        MetaExpression text = mockExpression(ATOMIC);
         when(text.getStringValue()).thenReturn(textValue);
 
         String needleValue = "R";
-        MetaExpression needle = mock(MetaExpression.class);
+        MetaExpression needle = mockExpression(ATOMIC);
         when(needle.getStringValue()).thenReturn(needleValue);
 
         String replacementValue = "O";
-        MetaExpression replacement = mock(MetaExpression.class);
+        MetaExpression replacement = mockExpression(ATOMIC);
         when(replacement.getStringValue()).thenReturn(replacementValue);
 
         boolean useRegexValue = false;
-        MetaExpression useRegex = mock(MetaExpression.class);
+        MetaExpression useRegex = mockExpression(ATOMIC);
         when(useRegex.getBooleanValue()).thenReturn(useRegexValue);
 
         boolean replaceAllValue = true;
-        MetaExpression replaceAll = mock(MetaExpression.class);
+        MetaExpression replaceAll = mockExpression(ATOMIC);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
         
-        MetaExpression timeout = mock(MetaExpression.class);
+        MetaExpression timeout = mockExpression(ATOMIC);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         String returnValue = "OeplaceO";
@@ -180,9 +183,10 @@ public class ReplaceConstructTest {
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(stringService.replaceAll(textValue, needleValue, replacementValue)).thenReturn(returnValue);
 
+        ReplaceConstruct construct = new ReplaceConstruct(regexService, stringService);
         // Run
         MetaExpression args[] = {text, needle, replacement, useRegex, replaceAll, timeout};
-        MetaExpression result = ReplaceConstruct.process(args, regexService, stringService);
+        MetaExpression result = process(construct, args);
 
         // Verify
         verify(regexService, times(0)).getMatcher(needleValue, textValue, timeoutValue);
@@ -206,26 +210,26 @@ public class ReplaceConstructTest {
     public void processDontUseRegexReplaceFirst() throws IllegalArgumentException, FailedToGetMatcherException {
         // Mock
         String textValue = "ReplaceR";
-        MetaExpression text = mock(MetaExpression.class);
+        MetaExpression text = mockExpression(ATOMIC);
         when(text.getStringValue()).thenReturn(textValue);
 
         String needleValue = "R";
-        MetaExpression needle = mock(MetaExpression.class);
+        MetaExpression needle = mockExpression(ATOMIC);
         when(needle.getStringValue()).thenReturn(needleValue);
 
         String replacementValue = "O";
-        MetaExpression replacement = mock(MetaExpression.class);
+        MetaExpression replacement = mockExpression(ATOMIC);
         when(replacement.getStringValue()).thenReturn(replacementValue);
 
         boolean useRegexValue = false;
-        MetaExpression useRegex = mock(MetaExpression.class);
+        MetaExpression useRegex = mockExpression(ATOMIC);
         when(useRegex.getBooleanValue()).thenReturn(useRegexValue);
 
         boolean replaceAllValue = false;
-        MetaExpression replaceAll = mock(MetaExpression.class);
+        MetaExpression replaceAll = mockExpression(ATOMIC);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
         
-        MetaExpression timeout = mock(MetaExpression.class);
+        MetaExpression timeout = mockExpression(ATOMIC);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         String returnValue = "OeplaceO";
@@ -233,9 +237,10 @@ public class ReplaceConstructTest {
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(stringService.replaceFirst(textValue, needleValue, replacementValue)).thenReturn(returnValue);
 
+        ReplaceConstruct construct = new ReplaceConstruct(regexService, stringService);
         // Run
         MetaExpression args[] = {text, needle, replacement, useRegex, replaceAll, timeout};
-        MetaExpression result = ReplaceConstruct.process(args, regexService, stringService);
+        MetaExpression result = process(construct, args);
 
         // Verify
         verify(regexService, times(0)).getMatcher(needleValue, textValue, timeoutValue);
@@ -259,26 +264,26 @@ public class ReplaceConstructTest {
     public void processInvalidException() throws IllegalArgumentException, FailedToGetMatcherException {
         // Mock
         String textValue = "ReplaceR";
-        MetaExpression text = mock(MetaExpression.class);
+        MetaExpression text = mockExpression(ATOMIC);
         when(text.getStringValue()).thenReturn(textValue);
 
         String needleValue = "R";
-        MetaExpression needle = mock(MetaExpression.class);
+        MetaExpression needle = mockExpression(ATOMIC);
         when(needle.getStringValue()).thenReturn(needleValue);
 
         String replacementValue = "O";
-        MetaExpression replacement = mock(MetaExpression.class);
+        MetaExpression replacement = mockExpression(ATOMIC);
         when(replacement.getStringValue()).thenReturn(replacementValue);
 
         boolean useRegexValue = true;
-        MetaExpression useRegex = mock(MetaExpression.class);
+        MetaExpression useRegex = mockExpression(ATOMIC);
         when(useRegex.getBooleanValue()).thenReturn(useRegexValue);
 
         boolean replaceAllValue = true;
-        MetaExpression replaceAll = mock(MetaExpression.class);
+        MetaExpression replaceAll = mockExpression(ATOMIC);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
         
-        MetaExpression timeout = mock(MetaExpression.class);
+        MetaExpression timeout = mockExpression(ATOMIC);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         Exception returnValue = new PatternSyntaxException(needleValue, textValue, timeoutValue);
@@ -286,9 +291,10 @@ public class ReplaceConstructTest {
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(regexService.getMatcher(needleValue, textValue, timeoutValue)).thenThrow(returnValue);
 
+        ReplaceConstruct construct = new ReplaceConstruct(regexService, stringService);
         // Run
         MetaExpression args[] = {text, needle, replacement, useRegex, replaceAll, timeout};
-        ReplaceConstruct.process(args, regexService, stringService);
+        process(construct, args);
 
         // Verify
         verify(regexService, times(1)).getMatcher(needleValue, textValue, timeoutValue);
@@ -309,27 +315,27 @@ public class ReplaceConstructTest {
     public void processIllegalArgumentException() throws IllegalArgumentException, FailedToGetMatcherException {
         // Mock
         String textValue = "ReplaceR";
-        MetaExpression text = mock(MetaExpression.class);
+        MetaExpression text = mockExpression(ATOMIC);
         when(text.getStringValue()).thenReturn(textValue);
 
         String needleValue = "R";
-        MetaExpression needle = mock(MetaExpression.class);
+        MetaExpression needle = mockExpression(ATOMIC);
         when(needle.getStringValue()).thenReturn(needleValue);
 
         String replacementValue = "O";
-        MetaExpression replacement = mock(MetaExpression.class);
+        MetaExpression replacement = mockExpression(ATOMIC);
         when(replacement.getStringValue()).thenReturn(replacementValue);
 
         boolean useRegexValue = true;
-        MetaExpression useRegex = mock(MetaExpression.class);
+        MetaExpression useRegex = mockExpression(ATOMIC);
         when(useRegex.getBooleanValue()).thenReturn(useRegexValue);
 
         boolean replaceAllValue = true;
-        MetaExpression replaceAll = mock(MetaExpression.class);
+        MetaExpression replaceAll = mockExpression(ATOMIC);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
 
         int timeoutValue = 10;
-        MetaExpression timeout = mock(MetaExpression.class);
+        MetaExpression timeout = mockExpression(ATOMIC);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         Exception returnValue = new IllegalArgumentException();
@@ -337,9 +343,10 @@ public class ReplaceConstructTest {
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(regexService.getMatcher(needleValue, textValue, timeoutValue)).thenThrow(returnValue);
 
+        ReplaceConstruct construct = new ReplaceConstruct(regexService, stringService);
         // Run
         MetaExpression args[] = {text, needle, replacement, useRegex, replaceAll, timeout};
-        ReplaceConstruct.process(args, regexService, stringService);
+        process(construct, args);
 
         // Verify
         verify(regexService, times(1)).getMatcher(needleValue, textValue, timeoutValue);

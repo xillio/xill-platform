@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
@@ -35,7 +36,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link AllMatchesConstruct}.
  */
-public class AllMatchesConstructTest extends ExpressionBuilderHelper {
+public class AllMatchesConstructTest extends TestUtils {
     private int timeoutValue = 10000;
 
     /**
@@ -49,14 +50,14 @@ public class AllMatchesConstructTest extends ExpressionBuilderHelper {
     public void processNormalUsage() throws IllegalArgumentException, FailedToGetMatcherException, JsonException {
         // Mock
         String text = "abc def ghi jkl. Mno";
-        MetaExpression value = mock(MetaExpression.class);
+        MetaExpression value = mockExpression(ATOMIC);
         when(value.getStringValue()).thenReturn(text);
 
         String regexValue = "\\w+";
-        MetaExpression regex = mock(MetaExpression.class);
+        MetaExpression regex = mockExpression(ATOMIC);
         when(regex.getStringValue()).thenReturn(regexValue);
 
-        MetaExpression timeout = mock(MetaExpression.class);
+        MetaExpression timeout = mockExpression(ATOMIC);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         String ReturnValue = "[\"abc\",\"def\",\"ghi\",\"jkl\",\"Mno\"]";
@@ -64,8 +65,9 @@ public class AllMatchesConstructTest extends ExpressionBuilderHelper {
         List<String> returnStatement = Arrays.asList("abc", "def", "ghi", "jkl", "Mno");
         when(regexService.tryMatch(any())).thenReturn(returnStatement);
 
+        AllMatchesConstruct construct = new AllMatchesConstruct(regexService);
         // Run
-        MetaExpression result = AllMatchesConstruct.process(value, regex, timeout, regexService);
+        MetaExpression result = process(construct, value, regex, timeout);
 
         // Verify
         verify(regexService, times(1)).tryMatch(any());
@@ -87,21 +89,23 @@ public class AllMatchesConstructTest extends ExpressionBuilderHelper {
     public void processInvalidPattern() throws IllegalArgumentException, FailedToGetMatcherException {
         // Mock
         String text = "abc def ghi jkl. Mno";
-        MetaExpression value = mock(MetaExpression.class);
+        MetaExpression value = mockExpression(ATOMIC);
         when(value.getStringValue()).thenReturn(text);
 
         String regexValue = "\\w+";
-        MetaExpression regex = mock(MetaExpression.class);
+        MetaExpression regex = mockExpression(ATOMIC);
         when(regex.getStringValue()).thenReturn(regexValue);
 
-        MetaExpression timeout = mock(MetaExpression.class);
+        MetaExpression timeout = mockExpression(ATOMIC);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         RegexService regexService = mock(RegexService.class);
         Arrays.asList("abc", "def", "ghi", "jkl", "Mno");
         when(regexService.getMatcher(regexValue, text, timeoutValue)).thenThrow(new PatternSyntaxException(regexValue, text, timeoutValue));
 
-        AllMatchesConstruct.process(value, regex, timeout, regexService);
+        AllMatchesConstruct construct = new AllMatchesConstruct(regexService);
+        //Run
+        process(construct, value, regex, timeout);
 
         // Verify
         verify(regexService, times(0)).tryMatch(any());
@@ -119,21 +123,23 @@ public class AllMatchesConstructTest extends ExpressionBuilderHelper {
     public void processIllegalArgument() throws IllegalArgumentException, FailedToGetMatcherException {
         // Mock
         String text = "abc def ghi jkl. Mno";
-        MetaExpression value = mock(MetaExpression.class);
+        MetaExpression value = mockExpression(ATOMIC);
         when(value.getStringValue()).thenReturn(text);
 
         String regexValue = "\\w+";
-        MetaExpression regex = mock(MetaExpression.class);
+        MetaExpression regex = mockExpression(ATOMIC);
         when(regex.getStringValue()).thenReturn(regexValue);
         
-        MetaExpression timeout = mock(MetaExpression.class);
+        MetaExpression timeout = mockExpression(ATOMIC);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         RegexService regexService = mock(RegexService.class);
         Arrays.asList("abc", "def", "ghi", "jkl", "Mno");
         when(regexService.getMatcher(regexValue, text, timeoutValue)).thenThrow(new IllegalArgumentException());
 
-        AllMatchesConstruct.process(value, regex, timeout, regexService);
+        AllMatchesConstruct construct = new AllMatchesConstruct(regexService);
+        //Run
+        process(construct, value, regex, timeout);
 
         // Verify
         verify(regexService, times(0)).tryMatch(any());

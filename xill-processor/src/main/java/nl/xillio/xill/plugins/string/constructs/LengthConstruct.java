@@ -31,11 +31,11 @@ public class LengthConstruct extends Construct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                LengthConstruct::process,
+                this::process,
                 new Argument("value", ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression value) {
+    private MetaExpression process(final MetaExpression value) {
         return value.isNull() ? fromValue(0) : fromValue(value.getStringValue().length());
     }
 }

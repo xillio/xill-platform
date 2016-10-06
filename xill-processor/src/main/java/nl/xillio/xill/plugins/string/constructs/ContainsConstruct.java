@@ -32,18 +32,21 @@ import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
  */
 public class ContainsConstruct extends Construct {
 
-    @Inject
     private StringUtilityService stringService;
+    @Inject
+    public ContainsConstruct(StringUtilityService stringService){
+        this.stringService = stringService;
+    }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (haystack, needle) -> process(haystack, needle, stringService),
+                this::process,
                 new Argument("haystack", ATOMIC, LIST),
                 new Argument("needle", ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression haystack, final MetaExpression needle, final StringUtilityService stringService) {
+    private MetaExpression process(final MetaExpression haystack, final MetaExpression needle) {
         // If either is null then false.
         if (haystack == NULL || needle == NULL) {
             return fromValue(false);

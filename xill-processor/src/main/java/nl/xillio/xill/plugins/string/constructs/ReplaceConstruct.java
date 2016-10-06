@@ -39,15 +39,13 @@ import java.util.regex.PatternSyntaxException;
  * @author Sander
  */
 public class ReplaceConstruct extends Construct {
-    @Inject
-    private RegexService regexService;
-    @Inject
-    private StringUtilityService stringService;
 
-    /**
-     * Create a new {@link ReplaceConstruct}.
-     */
-    public ReplaceConstruct() {
+    public final RegexService regexService;
+    public final StringUtilityService stringService;
+    @Inject
+    public ReplaceConstruct(RegexService regexService, StringUtilityService stringService) {
+        this.regexService = regexService;
+        this.stringService = stringService;
     }
 
     @Override
@@ -59,14 +57,14 @@ public class ReplaceConstruct extends Construct {
                 new Argument("replacement", ATOMIC),
                 new Argument("useRegex", TRUE, ATOMIC),
                 new Argument("replaceAll", TRUE, ATOMIC),
-                new Argument("timeout", fromValue(RegexConstruct.REGEX_TIMEOUT), ATOMIC)};
+                new Argument("timeout", fromValue(regexService.getRegexTimeout()), ATOMIC)};
 
-        return new ConstructProcessor(a -> process(a, regexService, stringService), args);
+        return new ConstructProcessor(this::process, args);
 
     }
 
     @SuppressWarnings("squid:S1166")
-    static MetaExpression process(final MetaExpression[] input, final RegexService regexService, final StringUtilityService stringService) {
+    private MetaExpression process(final MetaExpression[] input) {
 
         for (int i = 0; i < 5; i++) {
             assertNotNull(input[i], "input");

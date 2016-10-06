@@ -32,16 +32,20 @@ import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
  */
 public class EndsWithConstruct extends Construct {
 
+    private StringUtilityService stringService;
     @Inject
-    StringUtilityService stringService;
+    public EndsWithConstruct(StringUtilityService stringService){
+        this.stringService = stringService;
+    }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
-        return new ConstructProcessor((string, suffix) ->
-                process(string, suffix, stringService), new Argument("string", ATOMIC), new Argument("suffix", ATOMIC));
+        return new ConstructProcessor(this::process,
+                new Argument("string", ATOMIC),
+                new Argument("suffix", ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression string1, final MetaExpression string2, final StringUtilityService stringService) {
+    private MetaExpression process(final MetaExpression string1, final MetaExpression string2) {
         assertNotNull(string1, "string1");
         assertNotNull(string2, "string2");
 

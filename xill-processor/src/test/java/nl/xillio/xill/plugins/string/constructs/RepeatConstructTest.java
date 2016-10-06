@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
 import org.testng.Assert;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link RepeatConstruct}.
  */
-public class RepeatConstructTest {
+public class RepeatConstructTest extends TestUtils{
 
     /**
      * Test the process method under normal circumstances.
@@ -34,18 +35,20 @@ public class RepeatConstructTest {
     public void processNormalUsage() {
         // Mock
         String stringValue = "eat, sleep, rave, repeat. ";
-        MetaExpression string = mock(MetaExpression.class);
+        MetaExpression string = mockExpression(ATOMIC);
         when(string.getStringValue()).thenReturn(stringValue);
 
         int repeatValue = 4;
-        MetaExpression repeat = mock(MetaExpression.class);
+        MetaExpression repeat = mockExpression(ATOMIC);
         when(repeat.getNumberValue()).thenReturn(repeatValue);
 
         String returnValue = "eat, sleep, rave, repeat. eat, sleep, rave, repeat. eat, sleep, rave, repeat. eat, sleep rave, repeat. ";
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(stringService.repeat(stringValue, repeatValue)).thenReturn(returnValue);
+
+        RepeatConstruct construct = new RepeatConstruct(stringService);
         // Run
-        MetaExpression result = RepeatConstruct.process(string, repeat, stringService);
+        MetaExpression result = process(construct, string, repeat);
 
         // Verify
         verify(stringService, times(1)).repeat(stringValue, repeatValue);

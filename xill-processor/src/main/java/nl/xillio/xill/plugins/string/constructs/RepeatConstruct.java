@@ -29,18 +29,22 @@ import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
  * @author Sander
  */
 public class RepeatConstruct extends Construct {
+
+    public final StringUtilityService stringService;
     @Inject
-    private StringUtilityService stringService;
+    public RepeatConstruct(StringUtilityService stringService){
+        this.stringService = stringService;
+    }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (string, count) -> process(string, count, stringService),
+                this::process,
                 new Argument("string", ATOMIC),
                 new Argument("count", ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression string, final MetaExpression value, final StringUtilityService stringService) {
+    private MetaExpression process(final MetaExpression string, final MetaExpression value) {
         assertNotNull(string, "string");
         assertNotNull(value, "value");
 

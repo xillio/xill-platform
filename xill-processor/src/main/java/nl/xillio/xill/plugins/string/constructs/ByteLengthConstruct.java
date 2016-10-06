@@ -31,12 +31,12 @@ public class ByteLengthConstruct extends Construct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                ByteLengthConstruct::process,
+                this::process,
                 new Argument("string", ATOMIC),
                 new Argument("encoding", NULL, ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression string, final MetaExpression encoding) {
+    private MetaExpression process(final MetaExpression string, final MetaExpression encoding) {
         assertNotNull(string, "string");
 
         // Get the string and charset.

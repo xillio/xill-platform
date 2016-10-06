@@ -39,20 +39,22 @@ import java.util.regex.PatternSyntaxException;
  */
 public class AllMatchesConstruct extends Construct {
 
-    @Inject
     private RegexService regexService;
+    @Inject
+    public AllMatchesConstruct(RegexService regexService){
+        this.regexService = regexService;
+    }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (valueVar, regexVar, timeout) -> process(valueVar, regexVar, timeout, regexService),
+                (valueVar, regexVar, timeout) -> process(valueVar, regexVar, timeout),
                 new Argument("value", ATOMIC),
                 new Argument("regex", ATOMIC),
-                new Argument("timeout", fromValue(RegexConstruct.REGEX_TIMEOUT), ATOMIC));
+                new Argument("timeout", fromValue(regexService.getRegexTimeout()), ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression textVar, final MetaExpression regexVar, final MetaExpression timeoutVar,
-                                  final RegexService regexService) {
+    private MetaExpression process(final MetaExpression textVar, final MetaExpression regexVar, final MetaExpression timeoutVar) {
 
         List<MetaExpression> list = new ArrayList<>();
 

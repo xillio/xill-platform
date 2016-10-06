@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.OperationFailedException;
@@ -38,7 +39,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link FormatConstruct}.
  */
-public class FormatConstructTest {
+public class FormatConstructTest extends TestUtils{
 
     /**
      * Test the process method under normal circumstances.
@@ -64,12 +65,12 @@ public class FormatConstructTest {
     public void processPatternSyntaxException() throws IllegalArgumentException, FailedToGetMatcherException {
         // Mock
         String fileNameValue = "decimal %d%n";
-        MetaExpression fileName = mock(MetaExpression.class);
+        MetaExpression fileName = mockExpression(ATOMIC);
         when(fileName.getStringValue()).thenReturn(fileNameValue);
         when(fileName.isNull()).thenReturn(false);
 
         ArrayList<MetaExpression> listValue = new ArrayList<>();
-        MetaExpression list = mock(MetaExpression.class);
+        MetaExpression list = mockExpression(LIST);
         when(list.getValue()).thenReturn(listValue);
 
         Exception exception = new PatternSyntaxException("", "", 0);
@@ -77,8 +78,9 @@ public class FormatConstructTest {
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(regexService.getMatcher(anyString(), anyString(), anyInt())).thenThrow(exception);
 
+        FormatConstruct construct = new FormatConstruct(regexService, stringService);
         // Run
-        FormatConstruct.process(fileName, list, regexService, stringService);
+        process(construct, fileName, list);
 
         // Verify
         verify(regexService, times(1)).getMatcher(anyString(), anyString(), anyInt());
@@ -99,12 +101,12 @@ public class FormatConstructTest {
     public void processIllegalArgumentException() throws IllegalArgumentException, FailedToGetMatcherException {
         // Mock
         String fileNameValue = "decimal %d%n";
-        MetaExpression fileName = mock(MetaExpression.class);
+        MetaExpression fileName = mockExpression(ATOMIC);
         when(fileName.getStringValue()).thenReturn(fileNameValue);
         when(fileName.isNull()).thenReturn(false);
 
         ArrayList<MetaExpression> listValue = new ArrayList<>();
-        MetaExpression list = mock(MetaExpression.class);
+        MetaExpression list = mockExpression(LIST);
         when(list.getValue()).thenReturn(listValue);
 
         Exception exception = new IllegalArgumentException();
@@ -112,8 +114,9 @@ public class FormatConstructTest {
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(regexService.getMatcher(anyString(), anyString(), anyInt())).thenThrow(exception);
 
+        FormatConstruct construct = new FormatConstruct(regexService, stringService);
         // Run
-        FormatConstruct.process(fileName, list, regexService, stringService);
+        process(construct, fileName, list);
 
         // Verify
         verify(regexService, times(1)).getMatcher(anyString(), anyString(), anyInt());
@@ -134,14 +137,14 @@ public class FormatConstructTest {
     public void processDateTimeConversion() throws IllegalArgumentException, FailedToGetMatcherException {
         // Mock
         String fileNameValue = "decimal %T%n";
-        MetaExpression fileName = mock(MetaExpression.class);
+        MetaExpression fileName = mockExpression(ATOMIC);
         when(fileName.getStringValue()).thenReturn(fileNameValue);
         when(fileName.isNull()).thenReturn(false);
 
         List<MetaExpression> listValue = new ArrayList<>();
-        MetaExpression listItem = mock(MetaExpression.class);
+        MetaExpression listItem = mockExpression(ATOMIC);
         listValue.add(listItem);
-        MetaExpression list = mock(MetaExpression.class);
+        MetaExpression list = mockExpression(LIST);
         when(list.getValue()).thenReturn(listValue);
 
         String errorValue = "T";
@@ -150,8 +153,9 @@ public class FormatConstructTest {
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(regexService.tryMatch(any())).thenReturn(matchValue);
 
+        FormatConstruct construct = new FormatConstruct(regexService, stringService);
         // Run
-        FormatConstruct.process(fileName, list, regexService, stringService);
+        process(construct, fileName, list);
 
         // Verify
         verify(regexService, times(1)).getMatcher(anyString(), anyString(), anyInt());
@@ -172,14 +176,14 @@ public class FormatConstructTest {
     public void processUnexpectedConversion() throws IllegalArgumentException, FailedToGetMatcherException {
         // Mock
         String fileNameValue = "decimal %Z%n";
-        MetaExpression fileName = mock(MetaExpression.class);
+        MetaExpression fileName = mockExpression(ATOMIC);
         when(fileName.getStringValue()).thenReturn(fileNameValue);
         when(fileName.isNull()).thenReturn(false);
 
         List<MetaExpression> listValue = new ArrayList<>();
-        MetaExpression listItem = mock(MetaExpression.class);
+        MetaExpression listItem = mockExpression(ATOMIC);
         listValue.add(listItem);
-        MetaExpression list = mock(MetaExpression.class);
+        MetaExpression list = mockExpression(LIST);
         when(list.getValue()).thenReturn(listValue);
 
         String errorValue = "Z";
@@ -188,8 +192,9 @@ public class FormatConstructTest {
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(regexService.tryMatch(any())).thenReturn(matchValue);
 
+        FormatConstruct construct = new FormatConstruct(regexService, stringService);
         // Run
-        FormatConstruct.process(fileName, list, regexService, stringService);
+        process(construct, fileName, list);
 
         // Verify
         verify(regexService, times(1)).getMatcher(anyString(), anyString(), anyInt());
@@ -210,14 +215,14 @@ public class FormatConstructTest {
     public void processMissingFormatException() throws IllegalArgumentException, FailedToGetMatcherException {
         // Mock
         String textValue = "decimal";
-        MetaExpression text = mock(MetaExpression.class);
+        MetaExpression text = mockExpression(ATOMIC);
         when(text.getStringValue()).thenReturn(textValue);
         when(text.isNull()).thenReturn(false);
 
         List<MetaExpression> listValue = new ArrayList<>();
-        MetaExpression listItem = mock(MetaExpression.class);
+        MetaExpression listItem = mockExpression(ATOMIC);
         listValue.add(listItem);
-        MetaExpression list = mock(MetaExpression.class);
+        MetaExpression list = mockExpression(LIST);
         when(list.getValue()).thenReturn(listValue);
 
         List<String> matchValue = Arrays.asList();
@@ -226,8 +231,9 @@ public class FormatConstructTest {
         when(regexService.tryMatch(any())).thenReturn(matchValue);
         when(stringService.format(eq(textValue), any())).thenThrow(new MissingFormatArgumentException("argument"));
 
+        FormatConstruct construct = new FormatConstruct(regexService, stringService);
         // Run
-        FormatConstruct.process(text, list, regexService, stringService);
+        process(construct, text, list);
 
         // Verify
         verify(regexService, times(1)).getMatcher(anyString(), anyString(), anyInt());
@@ -248,14 +254,14 @@ public class FormatConstructTest {
     public void processIllegalFormatException() throws IllegalArgumentException, FailedToGetMatcherException {
         // Mock
         String textValue = "decimal";
-        MetaExpression text = mock(MetaExpression.class);
+        MetaExpression text = mockExpression(ATOMIC);
         when(text.getStringValue()).thenReturn(textValue);
         when(text.isNull()).thenReturn(false);
 
         List<MetaExpression> listValue = new ArrayList<>();
-        MetaExpression listItem = mock(MetaExpression.class);
+        MetaExpression listItem = mockExpression(ATOMIC);
         listValue.add(listItem);
-        MetaExpression list = mock(MetaExpression.class);
+        MetaExpression list = mockExpression(LIST);
         when(list.getValue()).thenReturn(listValue);
 
         List<String> matchValue = Arrays.asList();
@@ -264,8 +270,9 @@ public class FormatConstructTest {
         when(regexService.tryMatch(any())).thenReturn(matchValue);
         when(stringService.format(eq(textValue), any())).thenThrow(new IllegalFormatPrecisionException(3));
 
+        FormatConstruct construct = new FormatConstruct(regexService, stringService);
         // Run
-        FormatConstruct.process(text, list, regexService, stringService);
+        process(construct, text, list);
 
         // Verify
         verify(regexService, times(1)).getMatcher(anyString(), anyString(), anyInt());

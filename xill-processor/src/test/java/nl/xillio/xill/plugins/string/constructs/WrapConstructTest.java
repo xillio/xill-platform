@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
 import org.testng.Assert;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link WrapConstruct}.
  */
-public class WrapConstructTest {
+public class WrapConstructTest extends TestUtils{
 
     /**
      * Test the process method under normal circumstances.
@@ -34,22 +35,24 @@ public class WrapConstructTest {
     public void processNormalUsage() {
         // Mock
         String stringValue = "testing";
-        MetaExpression string = mock(MetaExpression.class);
+        MetaExpression string = mockExpression(ATOMIC);
         when(string.getStringValue()).thenReturn(stringValue);
 
         int wrapValue = 5;
-        MetaExpression wrap = mock(MetaExpression.class);
+        MetaExpression wrap = mockExpression(ATOMIC);
         when(wrap.getNumberValue()).thenReturn(wrapValue);
 
         boolean wrapLongWordsValue = true;
-        MetaExpression wrapLongWords = mock(MetaExpression.class);
+        MetaExpression wrapLongWords = mockExpression(ATOMIC);
         when(wrapLongWords.getBooleanValue()).thenReturn(wrapLongWordsValue);
 
         String returnValue = "testi \n ng";
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(stringService.wrap(stringValue, wrapValue, wrapLongWordsValue)).thenReturn(returnValue);
+
+        WrapConstruct construct = new WrapConstruct(stringService);
         // Run
-        MetaExpression result = WrapConstruct.process(string, wrap, wrapLongWords, stringService);
+        MetaExpression result = process(construct, string, wrap, wrapLongWords);
 
         // Verify
         verify(stringService, times(1)).wrap(stringValue, wrapValue, wrapLongWordsValue);

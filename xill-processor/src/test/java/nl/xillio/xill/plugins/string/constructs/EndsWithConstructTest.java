@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
@@ -26,7 +27,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link EndsWithConstruct}.
  */
-public class EndsWithConstructTest {
+public class EndsWithConstructTest extends TestUtils{
 
     /**
      * Test the process method under normal circumstances.
@@ -35,20 +36,22 @@ public class EndsWithConstructTest {
     public void processNormalUsage() {
         // Mock
         String parentValue = "testing";
-        MetaExpression parent = mock(MetaExpression.class);
+        MetaExpression parent = mockExpression(ATOMIC);
         when(parent.getStringValue()).thenReturn(parentValue);
         when(parent.isNull()).thenReturn(false);
 
         String childValue = "ing";
-        MetaExpression child = mock(MetaExpression.class);
+        MetaExpression child = mockExpression(ATOMIC);
         when(child.getStringValue()).thenReturn(childValue);
         when(child.isNull()).thenReturn(false);
 
         boolean returnValue = true;
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(stringService.endsWith(parentValue, childValue)).thenReturn(returnValue);
+
+        EndsWithConstruct construct = new EndsWithConstruct(stringService);
         // Run
-        MetaExpression result = EndsWithConstruct.process(parent, child, stringService);
+        MetaExpression result = process(construct, parent, child);
 
         // Verify
         verify(stringService, times(1)).endsWith(parentValue, childValue);
@@ -64,19 +67,22 @@ public class EndsWithConstructTest {
     public void processNullValueGiven() {
         // Mock
         String parentValue = "testing";
-        MetaExpression parent = mock(MetaExpression.class);
+        MetaExpression parent = mockExpression(ATOMIC);
         when(parent.getStringValue()).thenReturn(parentValue);
         when(parent.isNull()).thenReturn(true);
 
         String childValue = "ing";
-        MetaExpression child = mock(MetaExpression.class);
+        MetaExpression child = mockExpression(ATOMIC);
         when(child.getStringValue()).thenReturn(childValue);
         when(child.isNull()).thenReturn(true);
 
         boolean returnValue = true;
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(stringService.endsWith(parentValue, childValue)).thenReturn(returnValue);
-        EndsWithConstruct.process(parent, child, stringService);
+
+        EndsWithConstruct construct = new EndsWithConstruct(stringService);
+        //Run
+        process(construct, parent, child);
 
         // Verify
         verify(stringService, times(0)).endsWith(parentValue, childValue);

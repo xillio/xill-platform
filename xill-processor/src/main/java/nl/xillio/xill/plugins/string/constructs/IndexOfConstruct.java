@@ -34,19 +34,23 @@ import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
  * @author Sander
  */
 public class IndexOfConstruct extends Construct {
-    @Inject
+
     private StringUtilityService stringService;
+    @Inject
+    public IndexOfConstruct(StringUtilityService stringService){
+        this.stringService = stringService;
+    }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (string1, string2, value) -> process(string1, string2, value, stringService),
+                this::process,
                 new Argument("string1", ATOMIC),
                 new Argument("string2", ATOMIC),
                 new Argument("startPos", fromValue(0), ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression string1, final MetaExpression string2, final MetaExpression value, final StringUtilityService stringService) {
+    private MetaExpression process(final MetaExpression string1, final MetaExpression string2, final MetaExpression value) {
         assertNotNull(string1, "string1");
         assertNotNull(string2, "string2");
 

@@ -32,7 +32,8 @@ public class AbsoluteURLConstruct extends Construct {
     private final UrlUtilityService urlUtilityService;
 
     @Inject
-    public AbsoluteURLConstruct(UrlUtilityService urlUtilityService) {
+    public AbsoluteURLConstruct(UrlUtilityService urlUtilityService)
+    {
         this.urlUtilityService = urlUtilityService;
     }
 

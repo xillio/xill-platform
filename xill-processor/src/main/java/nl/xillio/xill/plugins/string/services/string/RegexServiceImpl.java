@@ -36,7 +36,8 @@ public class RegexServiceImpl implements RegexService {
 
     // Regex for escaping a string so it can be included inside a regex
     public static final Pattern REGEX_ESCAPE_PATTERN = Pattern.compile("\\\\[a-zA-Z0-9]|\\[|\\]|\\^|\\$|\\-|\\.|\\{|\\}|\\?|\\*|\\+|\\||\\(|\\)");
-
+    // The default timeout for regular expressions.
+    private final int REGEX_TIMEOUT = 5000;
     private final CachedTimer cachedTimer;
 
     /**
@@ -57,7 +58,7 @@ public class RegexServiceImpl implements RegexService {
 
         if (timeout < 0) {
             // If no (valid) timeout is given, use the default timeout
-            targetTime = RegexConstruct.REGEX_TIMEOUT + cachedTimer.getCachedTime();
+            targetTime = REGEX_TIMEOUT + cachedTimer.getCachedTime();
         } else if (timeout == 0) {
             // Use no time out
             targetTime = Long.MAX_VALUE;
@@ -66,6 +67,11 @@ public class RegexServiceImpl implements RegexService {
         }
 
         return Pattern.compile(regex, Pattern.DOTALL).matcher(new TimeoutCharSequence(value, targetTime));
+    }
+
+    @Override
+    public int getRegexTimeout(){
+        return REGEX_TIMEOUT;
     }
 
     @Override

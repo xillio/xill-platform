@@ -15,11 +15,13 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
+import com.google.inject.Inject;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
+import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
 
 /**
  * <p>
@@ -33,6 +35,12 @@ import nl.xillio.xill.api.construct.ConstructProcessor;
  */
 public class WordDistanceConstruct extends Construct {
 
+    private StringUtilityService stringService;
+    @Inject
+    public WordDistanceConstruct(StringUtilityService stringService){
+        this.stringService = stringService;
+    }
+
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
 
@@ -43,11 +51,11 @@ public class WordDistanceConstruct extends Construct {
                 new Argument("relative", TRUE));
     }
 
-    static MetaExpression process(final MetaExpression source, final MetaExpression target, final MetaExpression relative) {
+    private MetaExpression process(final MetaExpression source, final MetaExpression target, final MetaExpression relative) {
         assertNotNull(source, "source");
         assertNotNull(target, "target");
 
-        int edits = damlev(source.getStringValue(), target.getStringValue());
+        int edits = stringService.damlev(source.getStringValue(), target.getStringValue());
 
         if (!relative.getBooleanValue()) {
             return fromValue(edits);
@@ -58,72 +66,4 @@ public class WordDistanceConstruct extends Construct {
         return fromValue(similarity);
     }
 
-    private static int damlev(final String source, final String target) {
-        int[] workspace = new int[1024];
-        int lenS = source.length();
-        int lenT = target.length();
-
-        if (lenS * lenT > workspace.length) {
-            workspace = new int[(source.length() + 1) * (target.length() + 1)];
-        }
-
-        int lenS1 = lenS + 1;
-        int lenT1 = lenT + 1;
-
-        if (lenT1 == 1) {
-            return lenS1 - 1;
-        }
-        if (lenS1 == 1) {
-            return lenT1 - 1;
-        }
-
-        int[] dl = workspace;
-        int dlIndex = 0;
-        int sPrevIndex = 0, tPrevIndex = 0, rowBefore = 0, min = 0, cost = 0, tmp = 0;
-        int tri = lenS1 + 2;
-
-        // start row with constant
-        dlIndex = 0;
-        for (tmp = 0; tmp < lenT1; tmp++) {
-            dl[dlIndex] = tmp;
-            dlIndex += lenS1;
-        }
-        for (int sIndex = 0; sIndex < lenS; sIndex++) {
-            dlIndex = sIndex + 1;
-            dl[dlIndex] = dlIndex; // start column with constant
-            for (int tIndex = 0; tIndex < lenT; tIndex++) {
-                rowBefore = dlIndex;
-                dlIndex += lenS1;
-                // deletion
-                min = dl[rowBefore] + 1;
-                // insertion
-                tmp = dl[dlIndex - 1] + 1;
-                if (tmp < min) {
-                    min = tmp;
-                }
-                cost = 1;
-                if (source.charAt(sIndex) == target.charAt(tIndex)) {
-                    cost = 0;
-                }
-                if (sIndex > 0 && tIndex > 0) {
-                    if (source.charAt(sIndex) == target.charAt(tPrevIndex) && source.charAt(sPrevIndex) == target.charAt(tIndex)) {
-                        tmp = dl[rowBefore - tri] + cost;
-                        // transposition
-                        if (tmp < min) {
-                            min = tmp;
-                        }
-                    }
-                }
-                // substitution
-                tmp = dl[rowBefore - 1] + cost;
-                if (tmp < min) {
-                    min = tmp;
-                }
-                dl[dlIndex] = min;
-                tPrevIndex = tIndex;
-            }
-            sPrevIndex = sIndex;
-        }
-        return dl[dlIndex];
-    }
 }
