@@ -138,6 +138,7 @@ public class XillCell {
         if (isFormula) {
             try {
                 cell.setCellFormula(value);
+                getParentSheet().forceFormulaRecalculation();
             } catch (FormulaParseException e) {
                 throw new IllegalArgumentException(e.getMessage(), e);
             }
