@@ -70,6 +70,7 @@ public class StoppableDebugger extends NullDebugger {
         if (errorHandlingPolicy == null) {
             super.handle(e);
         } else {
+            sendToOutputHandler(e);
             errorHandlingPolicy.handle(e);
         }
     }
