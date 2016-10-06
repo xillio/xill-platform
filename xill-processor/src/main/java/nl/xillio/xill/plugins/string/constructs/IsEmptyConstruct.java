@@ -24,7 +24,7 @@ import nl.xillio.xill.api.construct.ConstructProcessor;
 public class IsEmptyConstruct extends Construct {
     @Override
     public ConstructProcessor prepareProcess(ConstructContext context) {
-        return new ConstructProcessor(this::process, new Argument("value", ATOMIC));
+        return new ConstructProcessor(this::process, new Argument("string", ATOMIC));
     }
 
     private MetaExpression process(final MetaExpression value) {
