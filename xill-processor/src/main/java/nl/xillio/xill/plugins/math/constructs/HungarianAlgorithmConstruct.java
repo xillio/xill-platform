@@ -71,10 +71,11 @@ public class HungarianAlgorithmConstruct extends Construct {
     private MetaExpression process(final MetaExpression matrixVar, final MetaExpression maxVar) {
         assertNotNull(matrixVar, "matrix");
 
+        // The example used in the InvalidUserInputException.
+        final String example = "use Math;\nvar matrix = [[0,1,3], [2,2,3], [5,4,1]];\nMath.hungarianAlgorithm(matrix, true);";
+
         if (matrixVar.getType() != LIST) {
-            throw new InvalidUserInputException("No matrix given.", matrixVar.getStringValue(), "Two-dimensional list containing numbers.", "use Math;\n" +
-                    "var matrix = [[0,1,3], [2,2,3], [5,4,1]];\n" +
-                    "Math.hungarianAlgorithm(matrix, true);");
+            throw new InvalidUserInputException("No matrix given.", matrixVar.getStringValue(), "Two-dimensional list containing numbers.", example);
         }
 
         List<MetaExpression> matrix = matrixVar.getValue();
@@ -87,9 +88,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         // Prepare array
         int rows = matrix.size();
         if (rows < 1) {
-            throw new InvalidUserInputException("Not enough data.", matrixVar.getStringValue(), "At least 1 row with data.", "use Math;\n" +
-                    "var matrix = [[0,1,3], [2,2,3], [5,4,1]];\n" +
-                    "Math.hungarianAlgorithm(matrix, true);");
+            throw new InvalidUserInputException("Not enough data.", matrixVar.getStringValue(), "At least 1 row with data.", example);
         }
 
         MetaExpression var = matrix.get(0);
@@ -103,9 +102,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         int columns = varList.size();
 
         if (columns < 1) {
-            throw new InvalidUserInputException("Not enough data.", matrixVar.getStringValue(), "At least 1 column with data.", "use Math;\n" +
-                    "var matrix = [[0,1,3], [2,2,3], [5,4,1]];\n" +
-                    "Math.hungarianAlgorithm(matrix, true);");
+            throw new InvalidUserInputException("Not enough data.", matrixVar.getStringValue(), "At least 1 column with data.", example);
         }
 
         if (rows == 0 || columns == 0) {
@@ -268,22 +265,22 @@ public class HungarianAlgorithmConstruct extends Construct {
         while (!done) {
             switch (step) {
                 case 1:
-                    step = hg_step1(cost);
+                    step = hgStep1(cost);
                     break;
                 case 2:
-                    step = hg_step2(cost, mask, rowCover, colCover);
+                    step = hgStep2(cost, mask, rowCover, colCover);
                     break;
                 case 3:
-                    step = hg_step3(mask, colCover);
+                    step = hgStep3(mask, colCover);
                     break;
                 case 4:
-                    step = hg_step4(cost, mask, rowCover, colCover, zero_RC);
+                    step = hgStep4(cost, mask, rowCover, colCover, zero_RC);
                     break;
                 case 5:
-                    step = hg_step5(mask, rowCover, colCover, zero_RC);
+                    step = hgStep5(mask, rowCover, colCover, zero_RC);
                     break;
                 case 6:
-                    step = hg_step6(cost, rowCover, colCover, maxCost);
+                    step = hgStep6(cost, rowCover, colCover, maxCost);
                     break;
                 case 7:
                     done = true;
@@ -316,7 +313,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         return assignment;
     }
 
-    private static int hg_step1(final double[][] cost) {
+    private static int hgStep1(final double[][] cost) {
         // What STEP 1 does:
         // For each row of the cost matrix, find the smallest element
         // and subtract it from from every other element in its row.
@@ -338,7 +335,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         return 2;
     }
 
-    private static int hg_step2(final double[][] cost, final int[][] mask, final int[] rowCover, final int[] colCover) {
+    private static int hgStep2(final double[][] cost, final int[][] mask, final int[] rowCover, final int[] colCover) {
         // What STEP 2 does:
         // Marks uncovered zeros as starred and covers their row and column.
 
@@ -357,7 +354,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         return 3;
     }
 
-    private static int hg_step3(final int[][] mask, final int[] colCover) {
+    private static int hgStep3(final int[][] mask, final int[] colCover) {
         // What STEP 3 does:
         // Cover columns of starred zeros. Check if all columns are covered.
 
@@ -378,7 +375,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         return count >= mask.length ? 7 : 4;
     }
 
-    private static int hg_step4(final double[][] cost, final int[][] mask, final int[] rowCover, final int[] colCover, final int[] zero_RC) {
+    private static int hgStep4(final double[][] cost, final int[][] mask, final int[] rowCover, final int[] colCover, final int[] zeroRC) {
         // What STEP 4 does:
         // Find an uncovered zero in cost and prime it (if none go to step 6).
         // Check for star in same row:
@@ -389,32 +386,32 @@ public class HungarianAlgorithmConstruct extends Construct {
 
         int step = 4; // Will always be changed, because the while loop will do at least one iteration.
 
-        int[] row_col = new int[2]; // Holds row and col of uncovered zero.
+        int[] rowCol = new int[2]; // Holds row and col of uncovered zero.
         boolean done = false;
         while (!done) {
-            row_col = findUncoveredZero(row_col, cost, rowCover, colCover);
-            if (row_col[0] == -1) {
+            rowCol = findUncoveredZero(rowCol, cost, rowCover, colCover);
+            if (rowCol[0] == -1) {
                 done = true;
                 step = 6;
             } else {
-                mask[row_col[0]][row_col[1]] = 2; // Prime the found uncovered
+                mask[rowCol[0]][rowCol[1]] = 2; // Prime the found uncovered
                 // zero.
 
                 boolean starInRow = false;
-                for (int j = 0; j < mask[row_col[0]].length; j++) {
-                    if (mask[row_col[0]][j] == 1) { // If there is a star in the
+                for (int j = 0; j < mask[rowCol[0]].length; j++) {
+                    if (mask[rowCol[0]][j] == 1) { // If there is a star in the
                         // same row...
                         starInRow = true;
-                        row_col[1] = j; // remember its column.
+                        rowCol[1] = j; // remember its column.
                     }
                 }
 
                 if (starInRow) {
-                    rowCover[row_col[0]] = 1; // Cover the star's row.
-                    colCover[row_col[1]] = 0; // Uncover its column.
+                    rowCover[rowCol[0]] = 1; // Cover the star's row.
+                    colCover[rowCol[1]] = 0; // Uncover its column.
                 } else {
-                    zero_RC[0] = row_col[0]; // Save row of primed zero.
-                    zero_RC[1] = row_col[1]; // Save column of primed zero.
+                    zeroRC[0] = rowCol[0]; // Save row of primed zero.
+                    zeroRC[1] = rowCol[1]; // Save column of primed zero.
                     done = true;
                     step = 5;
                 }
@@ -423,7 +420,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         return step;
     }
 
-    // Aux 1 for hg_step4.
+    // Aux 1 for hgStep4.
     private static int[] findUncoveredZero(final int[] row_col, final double[][] cost, final int[] rowCover, final int[] colCover) {
         row_col[0] = -1; // Just a check value. Not a real index.
         row_col[1] = 0;
@@ -448,7 +445,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         return row_col;
     }
 
-    private static int hg_step5(final int[][] mask, final int[] rowCover, final int[] colCover, final int[] zero_RC) {
+    private static int hgStep5(final int[][] mask, final int[] rowCover, final int[] colCover, final int[] zeroRC) {
         // What STEP 5 does:
         // Construct series of alternating primes and stars. Start with prime
         // from step 4.
@@ -461,8 +458,8 @@ public class HungarianAlgorithmConstruct extends Construct {
         int count = 0; // Counts rows of the path matrix.
         int[][] path = new int[mask[0].length * mask.length][2]; // Path matrix
         // (stores row and col).
-        path[count][0] = zero_RC[0]; // Row of last prime.
-        path[count][1] = zero_RC[1]; // Column of last prime.
+        path[count][0] = zeroRC[0]; // Row of last prime.
+        path[count][1] = zeroRC[1]; // Column of last prime.
 
         boolean done = false;
         while (!done) {
@@ -490,7 +487,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         return 3;
     }
 
-    // Aux 1 for hg_step5.
+    // Aux 1 for hgStep5.
     private static int findStarInCol(final int[][] mask, final int col) {
         int r = -1; // Again this is a check value.
         for (int i = 0; i < mask.length; i++) {
@@ -501,7 +498,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         return r;
     }
 
-    // Aux 2 for hg_step5.
+    // Aux 2 for hgStep5.
     private static int findPrimeInRow(final int[][] mask, final int row) {
         int c = -1;
         for (int j = 0; j < mask[row].length; j++) {
@@ -512,7 +509,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         return c;
     }
 
-    // Aux 3 for hg_step5.
+    // Aux 3 for hgStep5.
     private static void convertPath(final int[][] mask, final int[][] path, final int count) {
         for (int i = 0; i <= count; i++) {
             if (mask[path[i][0]][path[i][1]] == 1) {
@@ -523,7 +520,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         }
     }
 
-    // Aux 4 for hg_step5.
+    // Aux 4 for hgStep5.
     private static void erasePrimes(final int[][] mask) {
         for (int i = 0; i < mask.length; i++) {
             for (int j = 0; j < mask[i].length; j++) {
@@ -534,7 +531,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         }
     }
 
-    // Aux 5 for hg_step5 (and not only).
+    // Aux 5 for hgStep5 (and not only).
     private static void clearCovers(final int[] rowCover, final int[] colCover) {
         for (int i = 0; i < rowCover.length; i++) {
             rowCover[i] = 0;
@@ -544,7 +541,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         }
     }
 
-    private static int hg_step6(final double[][] cost, final int[] rowCover, final int[] colCover, final double maxCost) {
+    private static int hgStep6(final double[][] cost, final int[] rowCover, final int[] colCover, final double maxCost) {
         // What STEP 6 does:
         // Find smallest uncovered value in cost: a. Add it to every element of
         // covered rows
@@ -565,7 +562,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         return 4;
     }
 
-    // Aux 1 for hg_step6.
+    // Aux 1 for hgStep6.
     private static double findSmallest(final double[][] cost, final int[] rowCover, final int[] colCover, final double maxCost) {
         double minval = maxCost; // There cannot be a larger cost than this.
         for (int i = 0; i < cost.length; i++) { // Now find the smallest

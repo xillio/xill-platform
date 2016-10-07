@@ -34,31 +34,23 @@ public class HungarianAlgorithmConstructTest extends TestUtils {
     private HungarianAlgorithmConstruct construct = new HungarianAlgorithmConstruct();
 
     /**
-     * <p>
      * Test the process method under normal circumstances.
-     * </p>
-     * <p>
      * We not only test if the output has the correct type but also the correct value.
-     * </p>
-     * <b>Nothing to verify</b>
      */
     @Test
     public void processNormalUsage() {
-        String hungarianReturnValue = "{\"sum\":10.0,\"cells\":[{\"row\":0,\"col\":2},{\"row\":1,\"col\":1},{\"row\":2,\"col\":0}]}";
-
-        // Variables.
+        String expectedString = "{\"sum\":10.0,\"cells\":[{\"row\":0,\"col\":2},{\"row\":1,\"col\":1},{\"row\":2,\"col\":0}]}";
         MetaExpression matrix = fromValue(Arrays.asList(
                 fromValue(Arrays.asList(fromValue(0), fromValue(1), fromValue(3))),
                 fromValue(Arrays.asList(fromValue(2), fromValue(2), fromValue(3))),
                 fromValue(Arrays.asList(fromValue(5), fromValue(4), fromValue(1)))
         ));
-        MetaExpression max = fromValue(true);
 
         // Run.
-        MetaExpression result = this.process(construct, matrix, max);
+        MetaExpression result = this.process(construct, matrix, fromValue(true));
 
         // Assert.
-        Assert.assertEquals(result.toString(), hungarianReturnValue);
+        Assert.assertEquals(result.toString(), expectedString);
 
         // Check if the result is an object and if the children are the correct type.
         Assert.assertEquals(result.getType(), OBJECT);
@@ -73,6 +65,25 @@ public class HungarianAlgorithmConstructTest extends TestUtils {
         Assert.assertEquals(cellsList.get(0).getType(), OBJECT);
         Assert.assertEquals(cellsList.get(1).getType(), OBJECT);
         Assert.assertEquals(cellsList.get(2).getType(), OBJECT);
+    }
+
+    /**
+     * Test the process when the matrix has more columns than rows, this means it has to be transposed.
+     */
+    @Test
+    public void processTranspose() {
+        String expectedString = "{\"sum\":9.0,\"cells\":[{\"row\":2,\"col\":0},{\"row\":1,\"col\":1}]}";
+        MetaExpression matrix = fromValue(Arrays.asList(
+                fromValue(Arrays.asList(fromValue(0), fromValue(1))),
+                fromValue(Arrays.asList(fromValue(2), fromValue(4))),
+                fromValue(Arrays.asList(fromValue(5), fromValue(2)))
+        ));
+
+        // Run.
+        MetaExpression result = this.process(construct, matrix, fromValue(true));
+
+        // Assert.
+        Assert.assertEquals(result.toString(), expectedString);
     }
 
     /**
