@@ -63,6 +63,9 @@ import java.util.List;
  * @author Konstantinos A. Nedas
  */
 public class HungarianAlgorithmConstruct extends Construct {
+    // The example used in the InvalidUserInputException.
+    private static final String example = "use Math;\nvar matrix = [[0,1,3], [2,2,3], [5,4,1]];\nMath.hungarianAlgorithm(matrix, true);";
+
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(this::process, new Argument("matrix", LIST), new Argument("max", TRUE, ATOMIC));
@@ -70,9 +73,6 @@ public class HungarianAlgorithmConstruct extends Construct {
 
     private MetaExpression process(final MetaExpression matrixVar, final MetaExpression maxVar) {
         assertNotNull(matrixVar, "matrix");
-
-        // The example used in the InvalidUserInputException.
-        final String example = "use Math;\nvar matrix = [[0,1,3], [2,2,3], [5,4,1]];\nMath.hungarianAlgorithm(matrix, true);";
 
         if (matrixVar.getType() != LIST) {
             throw new InvalidUserInputException("No matrix given.", matrixVar.getStringValue(), "Two-dimensional list containing numbers.", example);
@@ -114,7 +114,7 @@ public class HungarianAlgorithmConstruct extends Construct {
             for (int j = 0; j < columns; j++) {
                 array[i][j] = getMatrixValue(matrix, i, j);
                 if (Double.isNaN(array[i][j])) {
-                    throw new RobotRuntimeException("Invalid value `" + extractValue(((List<MetaExpression>) matrix.get(j).getValue()).get(j)) + "` in matrix at [" + i + "," + j + "]");
+                    throw new RobotRuntimeException("Invalid value `" + extractValue(((List<MetaExpression>) matrix.get(i).getValue()).get(j)) + "` in matrix at [" + i + "," + j + "]");
                 }
             }
         }
