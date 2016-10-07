@@ -259,7 +259,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         int[][] mask = new int[cost.length][cost[0].length]; // The mask array.
         int[] rowCover = new int[cost.length]; // The row covering vector.
         int[] colCover = new int[cost[0].length]; // The column covering vector.
-        int[] zero_RC = new int[2]; // Position of last zero from Step 4.
+        int[] zeroRC = new int[2]; // Position of last zero from Step 4.
         int step = 1;
         boolean done = false;
         while (!done) {
@@ -274,10 +274,10 @@ public class HungarianAlgorithmConstruct extends Construct {
                     step = hgStep3(mask, colCover);
                     break;
                 case 4:
-                    step = hgStep4(cost, mask, rowCover, colCover, zero_RC);
+                    step = hgStep4(cost, mask, rowCover, colCover, zeroRC);
                     break;
                 case 5:
-                    step = hgStep5(mask, rowCover, colCover, zero_RC);
+                    step = hgStep5(mask, rowCover, colCover, zeroRC);
                     break;
                 case 6:
                     step = hgStep6(cost, rowCover, colCover, maxCost);
@@ -300,15 +300,6 @@ public class HungarianAlgorithmConstruct extends Construct {
                 }
             }
         }
-
-        // If you want to return the min or max sum, in your own main method
-        // instead of the assignment array, then use the following code:
-        /*
-         * double sum = 0; for (int i=0; i<assignment.length; i++) { sum = sum +
-         * array[assignment[i][0]][assignment[i][1]]; } return sum;
-         */
-        // Of course you must also change the header of the method to:
-        // public static double hgAlgorithm (double[][] array, String sumType)
 
         return assignment;
     }
@@ -421,9 +412,9 @@ public class HungarianAlgorithmConstruct extends Construct {
     }
 
     // Aux 1 for hgStep4.
-    private static int[] findUncoveredZero(final int[] row_col, final double[][] cost, final int[] rowCover, final int[] colCover) {
-        row_col[0] = -1; // Just a check value. Not a real index.
-        row_col[1] = 0;
+    private static int[] findUncoveredZero(final int[] rowCol, final double[][] cost, final int[] rowCover, final int[] colCover) {
+        rowCol[0] = -1; // Just a check value. Not a real index.
+        rowCol[1] = 0;
 
         int i = 0;
         boolean done = false;
@@ -431,8 +422,8 @@ public class HungarianAlgorithmConstruct extends Construct {
             int j = 0;
             while (j < cost[i].length) {
                 if (doubleEqualsZero(cost[i][j]) && rowCover[i] == 0 && colCover[j] == 0) {
-                    row_col[0] = i;
-                    row_col[1] = j;
+                    rowCol[0] = i;
+                    rowCol[1] = j;
                     done = true;
                 }
                 j = j + 1;
@@ -442,7 +433,7 @@ public class HungarianAlgorithmConstruct extends Construct {
                 done = true;
             }
         }
-        return row_col;
+        return rowCol;
     }
 
     private static int hgStep5(final int[][] mask, final int[] rowCover, final int[] colCover, final int[] zeroRC) {
