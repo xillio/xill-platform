@@ -124,6 +124,7 @@
                                 <goals>
                                     <goal>single</goal>
                                 </goals>
+                                <phase>package</phase>
                                 <configuration>
                                     <descriptors>
                                         <descriptor>${project.basedir}/src/assembly/dist-zip-${os.classifier}.xml</descriptor>
