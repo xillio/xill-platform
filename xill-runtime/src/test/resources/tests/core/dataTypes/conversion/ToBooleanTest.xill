@@ -36,7 +36,8 @@ var falses = [
 	"null",
 	0,
 	0.0000,
-	null
+	null,
+	null == "null"
 ];
 
 foreach (t in trues) {
