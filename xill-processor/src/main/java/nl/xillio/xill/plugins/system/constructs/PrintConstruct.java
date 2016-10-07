@@ -34,17 +34,17 @@ public class PrintConstruct extends Construct {
 
     private static PrettyJsonParser prettyJsonParser;
 
+    @Inject
+    PrintConstruct(PrettyJsonParser prettyJsonParser) {
+        PrintConstruct.prettyJsonParser = prettyJsonParser;
+    }
+
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
                 (text, level) -> process(text, level, context.getRootLogger()),
                 new Argument("text", fromValue("")),
                 new Argument("logLevel", fromValue("info"), ATOMIC));
-    }
-
-    @Inject
-    PrintConstruct(PrettyJsonParser prettyJsonParser) {
-        this.prettyJsonParser = prettyJsonParser;
     }
 
     static MetaExpression process(final MetaExpression textVar, final MetaExpression logLevel, final Logger robotLog) {
