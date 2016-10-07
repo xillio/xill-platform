@@ -28,6 +28,6 @@ public class IsEmptyConstruct extends Construct {
     }
 
     private MetaExpression process(final MetaExpression value) {
-        return fromValue(!value.isNull() && value.getStringValue().isEmpty());
+        return fromValue(value.isNull() || value.getStringValue().isEmpty());
     }
 }

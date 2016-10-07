@@ -31,7 +31,7 @@ public class IsEmptyConstructTest extends TestUtils {
         // Tests.
         Map<MetaExpression, Boolean> tests = new HashMap<>();
         tests.put(fromValue("foo"), false);
-        tests.put(NULL, false);
+        tests.put(NULL, true);
         tests.put(fromValue(0), false);
         tests.put(fromValue(""), true);
 

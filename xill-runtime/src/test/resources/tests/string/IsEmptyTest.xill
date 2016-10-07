@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /*
-* Specification: isEmpty MUST return true if the value is not null and empty, or false otherwise.
+* Specification: isEmpty MUST return true if the value is null or empty, or false otherwise.
 * Input: See dataset
 * Expected: See dataset
 */
@@ -24,7 +24,7 @@ use Assert, String;
 // Input, expected.
 var dataset = [
 	["", true],
-	[null, false],
+	[null, true],
 	["foo", false],
 	[0, false],
 	[false, false]
