@@ -18,7 +18,7 @@
 -->
 <function>
     <description>
-Returns `true` if `string` is not `null` and is empty (""), or `false` if it is `null` or not empty.
+Returns `true` if `string` is `null` or empty (""), or `false` otherwise.
     </description>
     <examples>
         <example title="Usage">
@@ -28,7 +28,7 @@ Returns `true` if `string` is not `null` and is empty (""), or `false` if it is 
                 var string = "something";
 
                 if (String.isEmpty(string)) {
-                    System.print("String is empty.");
+                    System.print("String is null or empty.");
                 } else {
                     System.print("String is not empty: " :: string);
                 }
