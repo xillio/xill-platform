@@ -19,14 +19,12 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import nl.xillio.xill.api.data.DateFactory;
-import nl.xillio.xill.services.json.JacksonParser;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Field;
 import java.sql.Date;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.LinkedHashMap;
 
 import static org.testng.Assert.assertEquals;
 
@@ -71,28 +69,5 @@ public class MetaExpressionTest {
                 );
             }
         });
-    }
-
-    @Test
-    public void testUsePrettyJson() throws NoSuchFieldException, IllegalAccessException {
-        Field injectorField = MetaExpression.class.getDeclaredField("prettyJsonParser");
-        injectorField.setAccessible(true);
-        Object currentValue = injectorField.get(null);
-
-        try {
-            injectorField.set(null, new JacksonParser(true));
-
-            LinkedHashMap<String, MetaExpression> map = new LinkedHashMap<>();
-            map.put("test", ExpressionBuilderHelper.fromValue("value"));
-            MetaExpression me = ExpressionBuilderHelper.fromValue(map);
-            me.usePrettyJson(true);
-            String result = me.getStringValue();
-
-            assertEquals(result, String.format("{%1$s" +
-                    "  \"test\" : \"value\"%1$s" +
-                    "}", System.getProperty("line.separator")));
-        } finally {
-            injectorField.set(null, currentValue);
-        }
     }
 }

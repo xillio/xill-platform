@@ -27,7 +27,6 @@ import nl.xillio.xill.api.errors.RobotConcurrentModificationException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.services.json.JsonException;
 import nl.xillio.xill.services.json.JsonParser;
-import nl.xillio.xill.services.json.PrettyJsonParser;
 
 import java.time.Instant;
 import java.util.*;
@@ -50,8 +49,6 @@ public abstract class MetaExpression implements Expression, Processable {
     private static JsonParser jsonParser;
     @Inject
     private static Injector injector;
-    @Inject
-    private static PrettyJsonParser prettyJsonParser;
 
     private MetadataExpressionPool<MetadataExpression> metadataPool;
     private Object value;
@@ -59,7 +56,6 @@ public abstract class MetaExpression implements Expression, Processable {
     private boolean isClosed;
     private int referenceCount;
     private boolean preventDispose;
-    private boolean usePrettyJson = false;
 
     /**
      * Gets a value from the {@link MetadataExpressionPool}.
@@ -228,7 +224,7 @@ public abstract class MetaExpression implements Expression, Processable {
     @Override
     public String toString() {
         try {
-            return toString(usePrettyJson ? prettyJsonParser : jsonParser);
+            return toString(jsonParser);
         } catch (JsonException e) {
             throw new RobotRuntimeException("Failed to parse expression to string.", e);
         }
@@ -657,12 +653,4 @@ public abstract class MetaExpression implements Expression, Processable {
     }
 
     public abstract MetaExpression copy();
-
-    /**
-     * Set the type of json formatter to use.
-     * @param pretty true for pretty
-     */
-    public void usePrettyJson(boolean pretty) {
-        usePrettyJson = pretty;
-    }
 }
