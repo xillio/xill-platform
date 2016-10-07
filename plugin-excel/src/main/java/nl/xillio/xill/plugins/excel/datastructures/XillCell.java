@@ -160,6 +160,7 @@ public class XillCell {
                     throw new RobotRuntimeException("Cannot set cell " + cell.getColumnIndex() + ":" + cell.getRowIndex() + " to a value starting with \"=\" in this workbook type");
                 }
             }
+            cell.setCellType(Cell.CELL_TYPE_BLANK);
             cell.setCellValue(value);
         }
     }
