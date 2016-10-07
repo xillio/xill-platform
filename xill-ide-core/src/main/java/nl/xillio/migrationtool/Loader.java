@@ -65,7 +65,7 @@ public class Loader implements ContenttoolsPlugin {
      * Just the version number + date.
      */
     public static final String LONG_VERSION;
-    public static final String APP_TITLE = Loader.class.getPackage().getImplementationTitle();
+    public static final String APP_TITLE;
     private static final Manifest MANIFEST;
     private static final Logger LOGGER;
     private static XillEnvironment xill;
@@ -75,23 +75,34 @@ public class Loader implements ContenttoolsPlugin {
         Logger logger = Log.get();
         try {
             String path = Loader.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-            MANIFEST = new JarFile(path).getManifest();
+            // Do not try to read the manifest when we are not running from a jar, i.e. this is a development version
+            if (path.endsWith(".jar")) {
+                MANIFEST = new JarFile(path).getManifest();
+            } else {
+                MANIFEST = null;
+            }
         } catch (URISyntaxException | IOException e) {
             throw new XillioRuntimeException("Failed to find running jar file", e);
         }
 
-        String shortVersion = Loader.class.getPackage().getImplementationVersion() == null ? "dev" : Loader.class.getPackage().getImplementationVersion();
-        String date = MANIFEST.getMainAttributes().getValue("Created-On");
-        try {
-            Date parsedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH).parse(date);
-            date = DateFormat.getDateInstance().format(parsedDate);
-        } catch (ParseException e) {
-            logger.error("Failed to parse date from manifest", e);
+        String date;
+        if (MANIFEST != null) {
+            date = MANIFEST.getMainAttributes().getValue("Created-On");
+            try {
+                Date parsedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH).parse(date);
+                date = DateFormat.getDateInstance().format(parsedDate);
+            } catch (ParseException e) {
+                logger.error("Failed to parse date from manifest", e);
+            }
+        } else {
+            date = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH).format(new Date());
         }
-        LONG_VERSION = shortVersion + ", " + date;
-        SHORT_VERSION = shortVersion;
+        SHORT_VERSION = Loader.class.getPackage().getImplementationVersion() == null ? "dev" : Loader.class.getPackage().getImplementationVersion();
         VERSION_DATE = date;
         LOGGER = logger;
+        LONG_VERSION = SHORT_VERSION + ", " + date;
+        String appTitle = Loader.class.getPackage().getImplementationTitle();
+        APP_TITLE = appTitle == null ? "Xill IDE Development" : appTitle;
     }
 
     /**
@@ -245,6 +256,10 @@ public class Loader implements ContenttoolsPlugin {
     }
 
     private void checkJRE() throws IOException {
+        // If we are not running from a jar, i.e. this is a development version, do not run the check
+        if (MANIFEST == null)
+            return;
+
         String expectedVersion = MANIFEST.getMainAttributes().getValue("Build-Jdk");
         if (expectedVersion == null) {
             throw new IOException("No java version was found. This is not a build.");
