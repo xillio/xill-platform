@@ -46,7 +46,7 @@ public class SetProgressConstruct extends Construct {
 
     @Inject
     SetProgressConstruct(ProgressTracker progressTracker) {
-        this.progressTracker = progressTracker;
+        SetProgressConstruct.progressTracker = progressTracker;
     }
 
     @Override
@@ -76,7 +76,7 @@ public class SetProgressConstruct extends Construct {
         return fromValue(true);
     }
 
-    static private void processOption(final String option, final MetaExpression metaValue, final UUID compilerSerialId) {
+    private static void processOption(final String option, final MetaExpression metaValue, final UUID compilerSerialId) {
         if ("onStop".equals(option)) {
             final String value = metaValue.getStringValue();
             if (metaValue.getType() != ATOMIC) {
