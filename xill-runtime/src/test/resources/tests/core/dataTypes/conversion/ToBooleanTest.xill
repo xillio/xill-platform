@@ -23,11 +23,9 @@ use Assert;
 
 var trues = [
 	true,
-	"true",
 	"string",
-	true == "true",
-	false == "false",
-	0 == "0"
+	1.23,
+	-20
 ];
 
 var falses = [
