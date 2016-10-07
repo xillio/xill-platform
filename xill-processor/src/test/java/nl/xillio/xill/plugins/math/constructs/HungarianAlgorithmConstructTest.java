@@ -72,7 +72,7 @@ public class HungarianAlgorithmConstructTest extends TestUtils {
      */
     @Test
     public void processTranspose() {
-        String expectedString = "{\"sum\":9.0,\"cells\":[{\"row\":2,\"col\":0},{\"row\":1,\"col\":1}]}";
+        String expectedString = "{\"sum\":2.0,\"cells\":[{\"row\":0,\"col\":0},{\"row\":2,\"col\":1}]}";
         MetaExpression matrix = fromValue(Arrays.asList(
                 fromValue(Arrays.asList(fromValue(0), fromValue(1))),
                 fromValue(Arrays.asList(fromValue(2), fromValue(4))),
@@ -80,7 +80,7 @@ public class HungarianAlgorithmConstructTest extends TestUtils {
         ));
 
         // Run.
-        MetaExpression result = this.process(construct, matrix, fromValue(true));
+        MetaExpression result = this.process(construct, matrix, fromValue(false));
 
         // Assert.
         Assert.assertEquals(result.toString(), expectedString);
