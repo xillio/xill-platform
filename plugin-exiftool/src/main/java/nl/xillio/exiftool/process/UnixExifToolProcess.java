@@ -30,10 +30,8 @@ public class UnixExifToolProcess extends AbstractExifToolProcess {
     protected Process buildProcess(ProcessBuilder processBuilder) throws IOException {
         // Check perl_bin existence
         String perlBin = System.getenv("perl_bin");
-        if (perlBin != null) {
-            if (!exist(perlBin, true)) {
-                throw new IOException("Please set correct perl_bin environmental variable.");
-            }
+        if (perlBin != null && !exist(perlBin, true)) {
+            throw new IOException("Please set correct perl_bin environmental variable.");
         }
 
         // Check exiftool_bin existence
