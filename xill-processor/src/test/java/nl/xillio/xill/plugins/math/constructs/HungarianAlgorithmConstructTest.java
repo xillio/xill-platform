@@ -31,6 +31,8 @@ import java.util.List;
  * Test the {@link HungarianAlgorithmConstruct}.
  */
 public class HungarianAlgorithmConstructTest extends TestUtils {
+    private HungarianAlgorithmConstruct construct = new HungarianAlgorithmConstruct();
+
     /**
      * <p>
      * Test the process method under normal circumstances.
@@ -53,7 +55,7 @@ public class HungarianAlgorithmConstructTest extends TestUtils {
         MetaExpression max = fromValue(true);
 
         // Run.
-        MetaExpression result = HungarianAlgorithmConstruct.process(matrix, max);
+        MetaExpression result = this.process(construct, matrix, max);
 
         // Assert.
         Assert.assertEquals(result.toString(), hungarianReturnValue);
@@ -78,7 +80,7 @@ public class HungarianAlgorithmConstructTest extends TestUtils {
      */
     @Test(expectedExceptions = InvalidUserInputException.class, expectedExceptionsMessageRegExp = "Not enough data\\..*At least 1 row with data\\..*")
     public void processTooFewRows() {
-        HungarianAlgorithmConstruct.process(emptyList(), fromValue(true));
+        this.process(construct, emptyList());
     }
 
     /**
@@ -88,7 +90,7 @@ public class HungarianAlgorithmConstructTest extends TestUtils {
     public void processTooFewColumns() {
         MetaExpression matrix = fromValue(Collections.singletonList(emptyList()));
 
-        HungarianAlgorithmConstruct.process(matrix, fromValue(true));
+        this.process(construct, matrix);
     }
 
     /**
@@ -101,6 +103,6 @@ public class HungarianAlgorithmConstructTest extends TestUtils {
                 fromValue(Arrays.asList(fromValue(2), fromValue("error")))
         ));
 
-        HungarianAlgorithmConstruct.process(matrix, fromValue(true));
+        this.process(construct, matrix);
     }
 }

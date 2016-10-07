@@ -65,10 +65,10 @@ import java.util.List;
 public class HungarianAlgorithmConstruct extends Construct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
-        return new ConstructProcessor(HungarianAlgorithmConstruct::process, new Argument("matrix", LIST), new Argument("max", TRUE, ATOMIC));
+        return new ConstructProcessor(this::process, new Argument("matrix", LIST), new Argument("max", TRUE, ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression matrixVar, final MetaExpression maxVar) {
+    private MetaExpression process(final MetaExpression matrixVar, final MetaExpression maxVar) {
         assertNotNull(matrixVar, "matrix");
 
         if (matrixVar.getType() != LIST) {
