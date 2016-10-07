@@ -26,7 +26,7 @@ import nl.xillio.xill.util.settings.Settings;
 import java.io.File;
 
 /**
- * A dialog to add a new project
+ * A dialog to add a new project.
  */
 public class NewProjectDialog extends FXMLDialog {
     @FXML
@@ -35,8 +35,8 @@ public class NewProjectDialog extends FXMLDialog {
     private TextField tfprojectfolder;
 
     private final ProjectPane projectPane;
-    private String folderValue;
-    private String nameValue = "";
+    private final String initalFoldervalue;
+    private boolean hasBeenTypedInProjectFolder;
 
     /**
      * Default constructor.
@@ -48,25 +48,43 @@ public class NewProjectDialog extends FXMLDialog {
 
         this.projectPane = projectPane;
         setTitle("New Project");
-        String initialFolder = FXController.settings.simple().get(Settings.SETTINGS_GENERAL, Settings.DEFAULT_PROJECT_LOCATION);
-        setProjectFolder(initialFolder + File.separator);
-        folderValue = initialFolder;
-        tfprojectname.textProperty().addListener(this::typedInProjectName);
-        tfprojectfolder.textProperty().addListener(this::typesInProjectFolder);
-    }
 
-    private void typesInProjectFolder(Object source, String oldValue, String newValue) {
-        if (tfprojectfolder.isFocused()) {
-            folderValue = newValue;
-            setProjectFolder(folderValue);
-        }
+        setProjectFolder(FXController.settings.simple().get(Settings.SETTINGS_GENERAL, Settings.DEFAULT_PROJECT_LOCATION));
+        initalFoldervalue = tfprojectfolder.getText();
+        tfprojectname.textProperty().addListener(this::typedInProjectName);
+        tfprojectfolder.setOnKeyTyped(e -> hasBeenTypedInProjectFolder = true);
     }
 
     private void typedInProjectName(Object source, String oldValue, String newValue) {
-        nameValue = newValue;
-        setProjectFolder(folderValue + File.separator + nameValue);
+        // The name changed. See if we need to fix this in the project folder field.
+        // This we only do if the project folder field remains untouched
+        if (isProjectFolderUntouched(newValue)) {
+            setProjectFolder(initalFoldervalue + File.separator + newValue);
+        }
     }
 
+    private boolean isProjectFolderUntouched(String newValue) {
+        String project = tfprojectfolder.getText();
+
+        // If the project value equals the initial value then it is untouched
+        if (project.equals(initalFoldervalue)) {
+            hasBeenTypedInProjectFolder = false;
+            return true;
+        }
+
+        // If anyone typed in this field it has been touched
+        if (hasBeenTypedInProjectFolder) {
+            return false;
+        }
+
+        // If the initial value isn't the prefix anymore is het been touched
+        if (!project.startsWith(initalFoldervalue)) {
+            return false;
+        }
+
+        int lastIndex = project.lastIndexOf(File.separatorChar);
+        return project.substring(0, lastIndex).equals(initalFoldervalue);
+    }
 
     /**
      * Set the default project folder
@@ -85,10 +103,13 @@ public class NewProjectDialog extends FXMLDialog {
 
         File result = chooser.showDialog(getScene().getWindow());
         if (result != null) {
-            folderValue = result.getPath();
-            typedInProjectName(null, null, nameValue);
-        }
+            tfprojectfolder.setText(result.getPath());
 
+            // If we have no project name yet we want to auto fill this
+            if (tfprojectname.getText().isEmpty()) {
+                tfprojectname.setText(result.getName());
+            }
+        }
     }
 
     @FXML
