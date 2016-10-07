@@ -27,7 +27,7 @@
     <parent>
         <groupId>nl.xillio.xill</groupId>
         <artifactId>xill-parent</artifactId>
-        <version>3.4.0-RC1</version>
+        <version>3.4.0-RC2</version>
         <relativePath>../xill-parent</relativePath>
     </parent>
 
@@ -37,6 +37,10 @@
         <dependency>
             <groupId>nl.xillio.xill</groupId>
             <artifactId>xill-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
         </dependency>
         <dependency>
             <groupId>me.biesaart</groupId>

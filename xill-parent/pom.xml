@@ -26,7 +26,7 @@
 
     <groupId>nl.xillio.xill</groupId>
     <artifactId>xill-parent</artifactId>
-    <version>3.4.0-RC1</version>
+    <version>3.4.0-RC2</version>
     <packaging>pom</packaging>
     <inceptionYear>2014</inceptionYear>
 
@@ -62,7 +62,7 @@
 
     <properties>
         <xill.release.version>3.4.0</xill.release.version>
-        <xill.version>${xill.release.version}-RC1</xill.version>
+        <xill.version>${xill.release.version}-RC2</xill.version>
         <!-- Dependencies -->
         <java.version>1.8</java.version>
         <testng.version>6.9.10</testng.version>
@@ -94,6 +94,7 @@
         <httpclient.version>4.5.1</httpclient.version>
         <jsoup.version>1.8.3</jsoup.version>
         <mongo.java.driver.version>3.2.2</mongo.java.driver.version>
+        <mysql.driver.version>6.0.2</mysql.driver.version>
 
         <!-- Build Info -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -402,6 +403,12 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
                 <version>${log4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.driver.version}</version>
             </dependency>
 
             <dependency>
