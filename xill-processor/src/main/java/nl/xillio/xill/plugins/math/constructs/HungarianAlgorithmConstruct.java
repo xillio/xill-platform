@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *         http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -149,10 +149,8 @@ public class HungarianAlgorithmConstruct extends Construct {
         }
 
         // Prepare results
-        List<MetaExpression> result = new ArrayList<>();
-        LinkedHashMap<String, MetaExpression> sumMap = new LinkedHashMap<>();
-        sumMap.put("sum", fromValue(sum));
-        result.add(fromValue(sumMap));
+        LinkedHashMap<String, MetaExpression> result = new LinkedHashMap<>();
+        result.put("sum", fromValue(sum));
 
         List<MetaExpression> cells = new ArrayList<>();
         for (int[] element : assignment) {
@@ -161,9 +159,7 @@ public class HungarianAlgorithmConstruct extends Construct {
             item.put("col", fromValue(element[1]));
             cells.add(fromValue(item));
         }
-        LinkedHashMap<String, MetaExpression> cellsMap = new LinkedHashMap<>();
-        cellsMap.put("cells", fromValue(cells));
-        result.add(fromValue(cellsMap));
+        result.put("cells", fromValue(cells));
 
         return fromValue(result);
     }
