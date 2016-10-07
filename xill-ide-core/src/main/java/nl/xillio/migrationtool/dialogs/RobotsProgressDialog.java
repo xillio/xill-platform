@@ -29,9 +29,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ProgressBarTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
+import nl.xillio.migrationtool.gui.FXController;
 import nl.xillio.migrationtool.gui.RobotTab;
 import nl.xillio.migrationtool.gui.StatusBar;
-import nl.xillio.xill.api.ProgressInfo;
 
 import java.util.function.Consumer;
 
@@ -44,14 +45,12 @@ public class RobotsProgressDialog extends FXMLDialog {
         private final StringProperty robotID;
         private final SimpleDoubleProperty progress;
         private final StatusBar statusBar;
-        private final Consumer<StatusBar> removalListener;
 
-        Row(String robotID, StatusBar statusBar, Consumer<StatusBar> removalListener) {
+        Row(String robotID, StatusBar statusBar) {
             this.robotID = new SimpleStringProperty(robotID);
             this.progress = new SimpleDoubleProperty();
             this.progress.bind(statusBar.progressProperty());
             this.statusBar = statusBar;
-            this.removalListener = removalListener;
         }
 
         public void setProgress(double progress) {
@@ -73,10 +72,6 @@ public class RobotsProgressDialog extends FXMLDialog {
         public StatusBar getStatusBar() {
             return statusBar;
         }
-
-        public Consumer<StatusBar> getRemovalListener() {
-            return removalListener;
-        }
     }
 
     @FXML
@@ -84,34 +79,33 @@ public class RobotsProgressDialog extends FXMLDialog {
     @FXML
     private Button btnClose;
 
-    private ObservableList<Row> table = FXCollections.observableArrayList();
+    private final ObservableList<Row> table = FXCollections.observableArrayList();
+    private final Consumer<StatusBar> addListener;
+    private final Consumer<StatusBar> removalListener;
 
     public RobotsProgressDialog(final ObservableList<Tab> tabs) {
         super("/fxml/dialogs/RobotsProgress.fxml");
         setTitle("List of robots progress");
+        this.initModality(Modality.NONE);
+
+        addListener = this::addProgressBar;
+
+        // Define listener for progress bar removal event
+        removalListener = statusBar ->
+                Platform.runLater(() -> {
+                    Row row = table.stream().filter(p -> p.getStatusBar() == statusBar).findFirst().orElse(null);
+                    if (row != null) {
+                        row.progressProperty().unbind();
+                        table.remove(row);
+                    }
+                });
 
         // Iterate all currently open robot tabs and add to list those having progress bar active
         tabs.filtered(t -> t instanceof RobotTab).forEach(t -> {
-            RobotTab tab = (RobotTab)t;
-            ProgressInfo progressInfo = tab.getStatusBar().getProgressInfo();
-
+            RobotTab tab = (RobotTab) t;
             // Check if progress is used and if so then add it to the table
-            if (!(progressInfo == null || progressInfo.getProgress() < 0)) {
-
-                // Define listener for progress bar removal event
-                Consumer<StatusBar> removalListener = statusBar ->
-                    Platform.runLater(() -> {
-                        Row row = table.stream().filter(p -> p.getStatusBar() == tab.getStatusBar()).findFirst().orElse(null);
-                        if (row != null) {
-                            row.progressProperty().unbind();
-                            row.getStatusBar().getOnProgressRemove().removeListener(row.getRemovalListener());
-                            table.remove(row);
-                        }
-                    });
-
-                // Add new progress bar item to table ans set listener
-                table.add(new Row(tab.getName(), tab.getStatusBar(), removalListener));
-                tab.getStatusBar().getOnProgressRemove().addListener(removalListener);
+            if (tab.getStatusBar().progressProperty().get() >= 0) {
+                addProgressBar(tab.getStatusBar());
             }
         });
 
@@ -135,7 +129,25 @@ public class RobotsProgressDialog extends FXMLDialog {
         tblRobotsProgress.setItems(table);
 
         // Define action when dialog is about to close
-        setOnCloseRequest(e -> table.forEach(row -> row.getStatusBar().getOnProgressRemove().removeListener(row.getRemovalListener())));
+        setOnCloseRequest(e -> {
+            // Remove listeners
+            FXController.ON_PROGRESS_ADD.getEvent().removeListener(addListener);
+            FXController.ON_PROGRESS_REMOVE.getEvent().removeListener(removalListener);
+        });
+
+        // Add listeners
+        FXController.ON_PROGRESS_ADD.getEvent().addListener(addListener);
+        FXController.ON_PROGRESS_REMOVE.getEvent().addListener(removalListener);
+    }
+
+    private void addProgressBar(final StatusBar bar) {
+        // Check if given progress bar already exist
+        if (table.stream().filter(p -> p.getStatusBar() == bar).findFirst().orElse(null) != null) {
+            return;
+        }
+
+        // Add new progress bar item to table ans set listener
+        table.add(new Row(bar.getRobotName(), bar));
     }
 
     @FXML

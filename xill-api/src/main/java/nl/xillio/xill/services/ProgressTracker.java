@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.api;
+package nl.xillio.xill.services;
+
+import java.util.UUID;
 
 /**
- * This interface represents the ProgressInfo object that contains information about the robot progress
+ * This interface provides information about the progress of currently running robots.
  */
-public interface ProgressInfo {
+public interface ProgressTracker extends XillService {
     /**
      * Defines what will progress bar do after the robot is stopped (i.e. manually stopped or finished)
      */
@@ -42,23 +44,40 @@ public interface ProgressInfo {
     }
 
     /**
-     * Getter for OnStopBehavior
+     * Setter for onStopBehaviour value.
      *
-     * @return the action what will progress bar do after the robot is stopped
+     * @param compilerSerialId the identificator of progress info
+     * @param onStopBehavior the onStopBehaviour value
      */
-    OnStopBehavior getOnStopBehavior();
+    void setOnStopBehavior(UUID compilerSerialId, OnStopBehavior onStopBehavior);
 
     /**
-     * Setter for progress value
+     * Getter for onStopBehaviour value.
+     *
+     * @param compilerSerialId the identificator of progress info
+     * @return the onStopBehaviour value
+     */
+    OnStopBehavior getOnStopBehavior(UUID compilerSerialId);
+
+    /**
+     * Setter for progress value.
      *
      * @param progress the current progress (0-1 or <0 for hiding the progress bar)
      */
-    void setProgress(double progress);
+    void setProgress(UUID compilerSerialId, double progress);
 
     /**
-     * Getter for progress value
+     * Getter for progress value.
      *
      * @return the current progress value
      */
-    double getProgress();
+    double getProgress(UUID compilerSerialId);
+
+    /**
+     * Removes progress info from the map.
+     *
+     * @param compilerSerialId the identificator of progress info
+     * @return true if the item was removed, false if the given item was not found in a map
+     */
+    boolean remove(UUID compilerSerialId);
 }

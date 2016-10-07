@@ -66,6 +66,8 @@ public class FXController implements Initializable, EventHandler<Event> {
      */
     public static final SettingsHandler settings = SettingsHandler.getSettingsHandler();
     public static final EventHost<String> OPEN_ROBOT_EVENT = new EventHost<>();
+    public static final EventHost<StatusBar> ON_PROGRESS_ADD = new EventHost<>();
+    public static final EventHost<StatusBar> ON_PROGRESS_REMOVE = new EventHost<>();
 
     /**
      * Instance of hotkeys handler
@@ -520,7 +522,8 @@ public class FXController implements Initializable, EventHandler<Event> {
     @FXML
     private void buttonRobotsProgress() {
         RobotsProgressDialog dialog = new RobotsProgressDialog(tpnBots.getTabs());
-        dialog.showAndWait();
+        dialog.setAlwaysOnTop(true);
+        dialog.show();
     }
 
     @FXML

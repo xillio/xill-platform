@@ -45,13 +45,11 @@ import java.util.stream.Collectors;
 public class XillDebugger implements Debugger {
     private static final Logger LOGGER = Log.get();
     private final List<Breakpoint> breakpoints;
-    private ProgressInfo progressInfo = new ProgressInfo();
     private final EventHost<RobotStartedAction> onRobotStarted = new EventHost<>();
     private final EventHost<RobotStoppedAction> onRobotStopped = new EventHost<>();
     private final EventHost<RobotPausedAction> onRobotPaused = new EventHost<>();
     private final EventHost<RobotContinuedAction> onRobotContinued = new EventHost<>();
     private final EventHostEx<Object> onRobotInterrupt = new EventHostEx<>();
-    private final EventHost<nl.xillio.xill.api.ProgressInfo> onSetProgressInfo = new EventHost<>();
     private final Stack<nl.xillio.xill.api.components.Instruction> currentStack = new Stack<>();
     private final Stack<CounterWrapper> functionStack = new Stack<>();
     private final LinkedList<Debugger> childDebuggers = new LinkedList<>();
@@ -429,20 +427,6 @@ public class XillDebugger implements Debugger {
     @Override
     public void endFunction(Processable functionDeclaration) {
         functionStack.pop();
-    }
-
-    @Override
-    public Event<nl.xillio.xill.api.ProgressInfo> getOnSetProgressInfo() {
-        return onSetProgressInfo.getEvent();
-    }
-
-    @Override
-    public void setProgressInfo(nl.xillio.xill.api.ProgressInfo progressInfo) {
-        this.progressInfo.setProgress(progressInfo.getProgress());
-        if (progressInfo.getOnStopBehavior() != nl.xillio.xill.api.ProgressInfo.OnStopBehavior.NA) {
-            this.progressInfo.setOnStopBehaviour(progressInfo.getOnStopBehavior());
-        }
-        onSetProgressInfo.invoke(this.progressInfo);
     }
 
     private enum Mode {

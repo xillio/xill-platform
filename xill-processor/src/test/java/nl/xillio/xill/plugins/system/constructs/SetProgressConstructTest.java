@@ -20,8 +20,12 @@ import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
+import nl.xillio.xill.plugins.system.services.info.ProgressTrackerService;
 import org.testng.annotations.Test;
+
 import java.util.LinkedHashMap;
+import java.util.UUID;
+
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
 
@@ -31,7 +35,7 @@ import static org.testng.Assert.assertEquals;
 public class SetProgressConstructTest extends TestUtils {
 
     @Test
-    public void testProcessNormalUsageWOOptions() {
+    public void testProcessNormalUsageWOOptions() throws NoSuchFieldException {
         // Mock
         MetaExpression progress = mockExpression(ATOMIC);
         Number progressValue = 0.5;
@@ -43,12 +47,15 @@ public class SetProgressConstructTest extends TestUtils {
         ConstructContext context = mock(ConstructContext.class);
         Debugger debugger = mock(Debugger.class);
         when(context.getDebugger()).thenReturn(debugger);
+        when(context.getCompilerSerialId()).thenReturn(new UUID(1,1));
+
+        SetProgressConstruct construct = new SetProgressConstruct(new ProgressTrackerService());
 
         // Run the method
-        MetaExpression result = SetProgressConstruct.process(progress, options, context);
+        MetaExpression result = construct.process(progress, options, context);
 
         // Verify
-        verify(context, times(2)).getDebugger();
+        verify(context, times(1)).getDebugger();
 
         // Make assertions
         assertEquals(result.getBooleanValue(), true);
@@ -111,12 +118,15 @@ public class SetProgressConstructTest extends TestUtils {
         ConstructContext context = mock(ConstructContext.class);
         Debugger debugger = mock(Debugger.class);
         when(context.getDebugger()).thenReturn(debugger);
+        when(context.getCompilerSerialId()).thenReturn(new UUID(1,1));
+
+        SetProgressConstruct construct = new SetProgressConstruct(new ProgressTrackerService());
 
         // Run the method
-        MetaExpression result = SetProgressConstruct.process(progress, options, context);
+        MetaExpression result = construct.process(progress, options, context);
 
         // Verify
-        verify(context, times(2)).getDebugger();
+        verify(context, times(1)).getDebugger();
 
         // Make assertions
         assertEquals(result.getBooleanValue(), true);

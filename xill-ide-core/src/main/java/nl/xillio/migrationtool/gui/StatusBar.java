@@ -15,6 +15,9 @@
  */
 package nl.xillio.migrationtool.gui;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -25,19 +28,27 @@ import javafx.scene.Node;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
-import nl.xillio.events.Event;
-import nl.xillio.events.EventHost;
-import nl.xillio.xill.api.Debugger;
+import javafx.util.Duration;
 import me.biesaart.utils.Log;
-import nl.xillio.xill.api.ProgressInfo;
+import nl.xillio.events.Event;
+import nl.xillio.migrationtool.Loader;
+import nl.xillio.xill.api.Debugger;
+import nl.xillio.xill.services.ProgressTracker;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * A status bar, that can be used to represent the progress of the current running robot.
  */
 public class StatusBar extends AnchorPane {
+
+    private ProgressTracker progressTracker;
+    private Timeline progressTimeline;
+    private boolean progressBarVisible = false;
+    private UUID robotCSID;
+    private String robotName;
 
     // Used enum for statuses instead of the strings previously implemented
     public enum Status {
@@ -48,7 +59,6 @@ public class StatusBar extends AnchorPane {
         PAUSED("Paused"),
         COMPILING("Compiling"),
         READY("Ready");
-
 
         private String representation;
 
@@ -66,9 +76,8 @@ public class StatusBar extends AnchorPane {
 
     @FXML
     private ProgressBar barRobotProgress;
-    private final SimpleDoubleProperty progress = new SimpleDoubleProperty();
-    private ProgressInfo progressInfo;
-    private EventHost<StatusBar> onProgressRemove = new EventHost<>();
+    private final SimpleDoubleProperty progressProperty = new SimpleDoubleProperty();
+
     @FXML
     private Labeled lblTimeRemaining;
     @FXML
@@ -86,10 +95,18 @@ public class StatusBar extends AnchorPane {
             Node ui = loader.load();
             getChildren().add(ui);
             lblStatusVal.textProperty().bind(status.asString());
-            barRobotProgress.progressProperty().bind(progress);
+            barRobotProgress.progressProperty().bind(progressProperty);
+            progressProperty.set(-1);
+
+            Platform.runLater(() -> {
+                progressTimeline = new Timeline(new KeyFrame(Duration.millis(1000), a -> updateProgress()));
+                progressTimeline.setCycleCount(Animation.INDEFINITE);
+            });
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
+
+        progressTracker = Loader.getXill().getProgressTracker();
     }
 
     /**
@@ -98,27 +115,35 @@ public class StatusBar extends AnchorPane {
      * @param debugger The debugger to get the {@link Event Events} from
      */
     public void registerDebugger(Debugger debugger) {
-        debugger.getOnRobotStart().addListener(e -> setStatus(Status.RUNNING));
+        debugger.getOnRobotStart().addListener(e -> {
+            robotCSID = e.getCompilerSerialID();
+            progressTimeline.play();
+            setStatus(Status.RUNNING);
+        });
         debugger.getOnRobotStop().addListener(e -> {
             setStatus(Status.STOPPED);
+            progressTimeline.stop();
             // Set progress bar according to its settings
-            if (progressInfo != null) {
-                switch (progressInfo.getOnStopBehavior()) {
+            ProgressTracker.OnStopBehavior onStopBehavior = progressTracker.getOnStopBehavior(robotCSID);
+            if (onStopBehavior != null) {
+                switch (onStopBehavior) {
                     case ZERO: // Set to zero
-                        progress.set(0);
+                        progressProperty().set(0);
                         break;
                     case HIDE: // Hide progress bar
                         barRobotProgress.setVisible(false);
-                        progressInfo.setProgress(-1);
-                        onProgressRemove.invoke(this);
+                        progressBarVisible = false;
+                        progressProperty().set(-1);
+                        FXController.ON_PROGRESS_REMOVE.invoke(this);
                         break;
                     default: // Otherwise do nothing
                 }
             }
+            progressTracker.remove(robotCSID);
+            robotCSID = null;
         });
         debugger.getOnRobotPause().addListener(e -> setStatus(Status.PAUSED));
         debugger.getOnRobotContinue().addListener(e -> setStatus(Status.RUNNING));
-        debugger.getOnSetProgressInfo().addListener(this::setProgress);
     }
 
     /**
@@ -135,49 +160,54 @@ public class StatusBar extends AnchorPane {
     }
 
     /**
-     * This method is called when event is invoked in XillDebugger.setProgressInfo()
-     *
-     * @param progressInfo the ProgressInfo object instantiated in XillDebugger
-     */
-    private void setProgress(final ProgressInfo progressInfo) {
-        this.progressInfo = progressInfo;
-        double newProgress = progressInfo.getProgress();
-        if (newProgress >= 0) {
-            // Set new progress
-            barRobotProgress.setVisible(true);
-            progress.set(newProgress);
-        } else {
-            // Hide progress bar
-            barRobotProgress.setVisible(false);
-            progress.set(0);
-            onProgressRemove.invoke(this);
-        }
-    }
-
-    /**
      * Getter for progress value property
      *
      * @return the progress value property
      */
     public SimpleDoubleProperty progressProperty() {
-        return progress;
+        return progressProperty;
+    }
+
+    private void updateProgress() {
+        if (robotCSID == null) {
+            return;
+        }
+
+        double progress = progressTracker.getProgress(robotCSID);
+        if (progress >= 0) {
+            // Set new progress
+            if (!progressBarVisible) {
+                barRobotProgress.setVisible(true);
+                progressBarVisible = true;
+                FXController.ON_PROGRESS_ADD.invoke(this);
+            }
+            progressProperty.set(progress);
+        } else {
+            // Hide progress bar
+            if (progressBarVisible) {
+                barRobotProgress.setVisible(false);
+                progressBarVisible = false;
+                FXController.ON_PROGRESS_REMOVE.invoke(this);
+            }
+            progressProperty.set(0);
+        }
     }
 
     /**
-     * Getter for ProgressInfo object
+     * Gets a robot name.
      *
-     * @return the ProgressInfo object
+     * @return robot name
      */
-    public ProgressInfo getProgressInfo() {
-        return progressInfo;
+    public String getRobotName() {
+        return robotName;
     }
 
     /**
-     * Getter for onProgressRemove event
+     * Sets a robot name.
      *
-     * @return the onProgressRemove event
+     * @param robotName The robot name
      */
-    public Event<StatusBar> getOnProgressRemove() {
-        return onProgressRemove.getEvent();
+    public void setRobotName(final String robotName) {
+        this.robotName = robotName;
     }
 }

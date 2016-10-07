@@ -16,20 +16,24 @@
 package nl.xillio.xill.plugins.system.constructs;
 
 
+import com.google.inject.Inject;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
-import nl.xillio.xill.debugging.ProgressInfo;
+import nl.xillio.xill.services.ProgressTracker;
 
 import java.util.Map;
+import java.util.UUID;
 
 /**
  Set current robot progress
  */
 public class SetProgressConstruct extends Construct {
+
+    private static ProgressTracker progressTracker;
 
     private static final String EXAMPLE = "use System;\n\n" +
             "var i = 0;\n" +
@@ -39,6 +43,11 @@ public class SetProgressConstruct extends Construct {
             "    System.wait(10);\n" +
             "    System.setProgress(i++/1000); // Set progress value\n" +
             "}";
+
+    @Inject
+    SetProgressConstruct(ProgressTracker progressTracker) {
+        this.progressTracker = progressTracker;
+    }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
@@ -58,18 +67,16 @@ public class SetProgressConstruct extends Construct {
             throw new InvalidUserInputException("Invalid progress value type.", progressVar.getStringValue(), "The valid number from 0-1 or any negative number for hiding the progress bar.", EXAMPLE);
         }
 
-        final ProgressInfo progressInfo = new ProgressInfo(progress);
         if (!optionsVar.isNull()) {
             final Map<String, MetaExpression> options = optionsVar.getValue();
-            options.forEach((option, value) -> processOption(option, value, progressInfo));
+            options.forEach((option, value) -> processOption(option, value, context.getCompilerSerialId()));
         }
-        progressInfo.setProgress(progress);
+        progressTracker.setProgress(context.getCompilerSerialId(), progress);
 
-        context.getDebugger().setProgressInfo(progressInfo);
         return fromValue(true);
     }
 
-    private static void processOption(final String option, final MetaExpression metaValue, final ProgressInfo progressInfo) {
+    static private void processOption(final String option, final MetaExpression metaValue, final UUID compilerSerialId) {
         if ("onStop".equals(option)) {
             final String value = metaValue.getStringValue();
             if (metaValue.getType() != ATOMIC) {
@@ -78,13 +85,13 @@ public class SetProgressConstruct extends Construct {
 
             switch (value) {
                 case "leave":
-                    progressInfo.setOnStopBehaviour(nl.xillio.xill.api.ProgressInfo.OnStopBehavior.LEAVE);
+                    progressTracker.setOnStopBehavior(compilerSerialId, ProgressTracker.OnStopBehavior.LEAVE);
                     break;
                 case "hide":
-                    progressInfo.setOnStopBehaviour(nl.xillio.xill.api.ProgressInfo.OnStopBehavior.HIDE);
+                    progressTracker.setOnStopBehavior(compilerSerialId, ProgressTracker.OnStopBehavior.HIDE);
                     break;
                 case "zero":
-                    progressInfo.setOnStopBehaviour(nl.xillio.xill.api.ProgressInfo.OnStopBehavior.ZERO);
+                    progressTracker.setOnStopBehavior(compilerSerialId, ProgressTracker.OnStopBehavior.ZERO);
                     break;
                 default:
                     throw new InvalidUserInputException("Invalid option value.", value, "One of these values: leave, hide, zero", EXAMPLE);
