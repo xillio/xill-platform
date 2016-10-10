@@ -14,7 +14,7 @@ All notable changes to this project will be documented in this file.
 * Web.xPath result in variable preview is incorrect [CTC-1802]
 * Incorrect error handling in function parameter [CTC-1811]
 
-## [3.4.0] - unreleased
+## [3.4.0] - 2016-10-07
 
 ### Add
 
