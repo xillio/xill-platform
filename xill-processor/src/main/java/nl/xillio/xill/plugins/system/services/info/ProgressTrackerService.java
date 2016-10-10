@@ -18,6 +18,8 @@ package nl.xillio.xill.plugins.system.services.info;
 import com.google.inject.Singleton;
 import nl.xillio.xill.services.ProgressTracker;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -27,40 +29,47 @@ import java.util.UUID;
 @Singleton
 public class ProgressTrackerService implements ProgressTracker {
 
-    private class Progress {
+    private class ProgressInfo {
         private OnStopBehavior progressBarOnStopBehavior = OnStopBehavior.HIDE;
-        private double robotProgress = -1;
+        private double currentProgress = -1; // Current progress (-1 if not set yet)
+        private double startProgress = -1; // The first set progress (-1 if not set yet)
+        private LocalDateTime startTime; // The datetime when the first progress was set (null if not set yet)
     }
 
-    private final HashMap<UUID, Progress> progressData = new HashMap<>();
+    private final HashMap<UUID, ProgressInfo> progressData = new HashMap<>();
 
     @Override
-    public synchronized void setOnStopBehavior(UUID compilerSerialId, OnStopBehavior onStopBehavior) {
+    public void setOnStopBehavior(UUID compilerSerialId, OnStopBehavior onStopBehavior) {
         get(compilerSerialId, true).progressBarOnStopBehavior = onStopBehavior;
     }
 
     @Override
-    public synchronized OnStopBehavior getOnStopBehavior(UUID compilerSerialId) {
-        Progress progress = get(compilerSerialId, false);
-        if (progress == null) {
+    public OnStopBehavior getOnStopBehavior(UUID compilerSerialId) {
+        ProgressInfo progressInfo = get(compilerSerialId, false);
+        if (progressInfo == null) {
             return null;
         } else {
-            return progress.progressBarOnStopBehavior;
+            return progressInfo.progressBarOnStopBehavior;
         }
     }
 
     @Override
-    public synchronized void setProgress(UUID compilerSerialId, double progress) {
-        get(compilerSerialId, true).robotProgress = progress;
+    public void setProgress(UUID compilerSerialId, double progress) {
+        ProgressInfo progressInfo = get(compilerSerialId, true);
+        progressInfo.currentProgress = progress;
+        if (progressInfo.startProgress == -1) {
+            progressInfo.startProgress = progress;
+            progressInfo.startTime = LocalDateTime.now();
+        }
     }
 
     @Override
-    public synchronized double getProgress(UUID compilerSerialId) {
-        Progress progress = get(compilerSerialId, false);
-        if (progress == null) {
-            return -1;
+    public Double getProgress(UUID compilerSerialId) {
+        ProgressInfo progressInfo = get(compilerSerialId, false);
+        if (progressInfo == null) {
+            return null;
         } else {
-            return progress.robotProgress;
+            return progressInfo.currentProgress;
         }
     }
 
@@ -74,15 +83,36 @@ public class ProgressTrackerService implements ProgressTracker {
         }
     }
 
-    private Progress get(UUID compilerSerialId, boolean createIfNotExist) {
+    @Override
+    public Duration getRemainingTime(UUID compilerSerialId) {
+        ProgressInfo progressInfo = get(compilerSerialId, false);
+        if (progressInfo == null) {
+            return null; // CSID not found
+        }
+
+        if (progressInfo.currentProgress == -1 || progressInfo.startProgress == -1 || progressInfo.currentProgress <= progressInfo.startProgress) {
+            return null; // Cannot estimate remaining time
+        }
+
+        if (progressInfo.currentProgress >= 1) {
+            return Duration.ZERO;
+        }
+
+        // Compute remaining time
+        long elapsed = (long) ((progressInfo.currentProgress - progressInfo.startProgress) * 100); // Compute percent elapsed
+        long remains = (long) ((1 - progressInfo.currentProgress)*100); // Compute how many percent remains
+        return Duration.between(progressInfo.startTime, LocalDateTime.now()).dividedBy(elapsed).multipliedBy(remains);
+    }
+
+    private synchronized ProgressInfo get(UUID compilerSerialId, boolean createIfNotExist) {
         if (compilerSerialId == null) {
             return null;
         }
         if (!progressData.containsKey(compilerSerialId)) {
             if (createIfNotExist) {
-                Progress progress = new Progress();
-                progressData.put(compilerSerialId, progress);
-                return progress;
+                ProgressInfo progressInfo = new ProgressInfo();
+                progressData.put(compilerSerialId, progressInfo);
+                return progressInfo;
             } else {
                 return null;
             }

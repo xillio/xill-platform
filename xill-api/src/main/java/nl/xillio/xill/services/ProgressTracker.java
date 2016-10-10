@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.services;
 
+import java.time.Duration;
 import java.util.UUID;
 
 /**
@@ -46,7 +47,7 @@ public interface ProgressTracker extends XillService {
     /**
      * Setter for onStopBehaviour value.
      *
-     * @param compilerSerialId the identificator of progress info
+     * @param compilerSerialId the running robot identificator
      * @param onStopBehavior the onStopBehaviour value
      */
     void setOnStopBehavior(UUID compilerSerialId, OnStopBehavior onStopBehavior);
@@ -54,7 +55,7 @@ public interface ProgressTracker extends XillService {
     /**
      * Getter for onStopBehaviour value.
      *
-     * @param compilerSerialId the identificator of progress info
+     * @param compilerSerialId the running robot identificator
      * @return the onStopBehaviour value
      */
     OnStopBehavior getOnStopBehavior(UUID compilerSerialId);
@@ -62,6 +63,7 @@ public interface ProgressTracker extends XillService {
     /**
      * Setter for progress value.
      *
+     * @param compilerSerialId the running robot identificator
      * @param progress the current progress (0-1 or <0 for hiding the progress bar)
      */
     void setProgress(UUID compilerSerialId, double progress);
@@ -69,15 +71,23 @@ public interface ProgressTracker extends XillService {
     /**
      * Getter for progress value.
      *
-     * @return the current progress value
+     * @return the current progress value between 0-1 (including) or negative number or null if CSID is not found
      */
-    double getProgress(UUID compilerSerialId);
+    Double getProgress(UUID compilerSerialId);
 
     /**
      * Removes progress info from the map.
      *
-     * @param compilerSerialId the identificator of progress info
+     * @param compilerSerialId the running robot identificator
      * @return true if the item was removed, false if the given item was not found in a map
      */
     boolean remove(UUID compilerSerialId);
+
+    /**
+     * Computes the estimation of remaining time for given CSID.
+     *
+     * @param compilerSerialId the running robot identificator
+     * @return positive remaining time till the end of the robot run or null in case that the CSID is not found or there is not enough progress information for computing the estimation of the remaining time
+     */
+    Duration getRemainingTime(UUID compilerSerialId);
 }

@@ -22,6 +22,7 @@ import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -80,6 +81,7 @@ public class StatusBar extends AnchorPane {
 
     @FXML
     private Labeled lblTimeRemaining;
+    private final SimpleStringProperty remainingTimeProperty = new SimpleStringProperty();
     @FXML
     private Labeled lblStatusVal;
     private final ObjectProperty<Status> status = new SimpleObjectProperty<>(Status.READY);
@@ -96,6 +98,7 @@ public class StatusBar extends AnchorPane {
             getChildren().add(ui);
             lblStatusVal.textProperty().bind(status.asString());
             barRobotProgress.progressProperty().bind(progressProperty);
+            lblTimeRemaining.textProperty().bind(remainingTimeProperty);
             progressProperty.set(-1);
 
             Platform.runLater(() -> {
@@ -123,24 +126,28 @@ public class StatusBar extends AnchorPane {
         debugger.getOnRobotStop().addListener(e -> {
             setStatus(Status.STOPPED);
             progressTimeline.stop();
-            // Set progress bar according to its settings
-            ProgressTracker.OnStopBehavior onStopBehavior = progressTracker.getOnStopBehavior(robotCSID);
-            if (onStopBehavior != null) {
-                switch (onStopBehavior) {
-                    case ZERO: // Set to zero
-                        progressProperty().set(0);
-                        break;
-                    case HIDE: // Hide progress bar
-                        barRobotProgress.setVisible(false);
-                        progressBarVisible = false;
-                        progressProperty().set(-1);
-                        FXController.ON_PROGRESS_REMOVE.invoke(this);
-                        break;
-                    default: // Otherwise do nothing
+
+            Platform.runLater(() -> {
+                remainingTimeProperty.set(null);
+                // Set progress bar according to its settings
+                ProgressTracker.OnStopBehavior onStopBehavior = progressTracker.getOnStopBehavior(robotCSID);
+                if (onStopBehavior != null) {
+                    switch (onStopBehavior) {
+                        case ZERO: // Set to zero
+                            progressProperty().set(0);
+                            break;
+                        case HIDE: // Hide progress bar
+                            barRobotProgress.setVisible(false);
+                            progressBarVisible = false;
+                            progressProperty().set(-1);
+                            FXController.ON_PROGRESS_REMOVE.invoke(this);
+                            break;
+                        default: // Otherwise do nothing
+                    }
                 }
-            }
-            progressTracker.remove(robotCSID);
-            robotCSID = null;
+                progressTracker.remove(robotCSID);
+                robotCSID = null;
+            });
         });
         debugger.getOnRobotPause().addListener(e -> setStatus(Status.PAUSED));
         debugger.getOnRobotContinue().addListener(e -> setStatus(Status.RUNNING));
@@ -168,12 +175,19 @@ public class StatusBar extends AnchorPane {
         return progressProperty;
     }
 
+    public SimpleStringProperty remainingTimeProperty() {
+        return remainingTimeProperty;
+    }
+
     private void updateProgress() {
         if (robotCSID == null) {
             return;
         }
 
-        double progress = progressTracker.getProgress(robotCSID);
+        Double progress = progressTracker.getProgress(robotCSID);
+        if (progress == null) {
+            return;
+        }
         if (progress >= 0) {
             // Set new progress
             if (!progressBarVisible) {
@@ -182,11 +196,19 @@ public class StatusBar extends AnchorPane {
                 FXController.ON_PROGRESS_ADD.invoke(this);
             }
             progressProperty.set(progress);
+
+            java.time.Duration remainingTime = progressTracker.getRemainingTime(robotCSID);
+            if (remainingTime != null) {
+                long secRemaining = remainingTime.getSeconds();
+                remainingTimeProperty.set(String.format("%02d:%02d", secRemaining / 60, secRemaining % 60));
+            }
+
         } else {
             // Hide progress bar
             if (progressBarVisible) {
                 barRobotProgress.setVisible(false);
                 progressBarVisible = false;
+                remainingTimeProperty.set(null);
                 FXController.ON_PROGRESS_REMOVE.invoke(this);
             }
             progressProperty.set(0);

@@ -53,10 +53,10 @@ public class ProgressTrackerServiceTest {
         ProgressTrackerService service = new ProgressTrackerService();
 
         // Run
-        double result = service.getProgress(null);
+        Double result = service.getProgress(null);
 
         // Verify
-        assertEquals(result, (double)-1);
+        assertEquals(result, null);
     }
 
     /**

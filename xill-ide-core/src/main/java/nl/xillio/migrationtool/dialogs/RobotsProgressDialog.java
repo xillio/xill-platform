@@ -44,12 +44,15 @@ public class RobotsProgressDialog extends FXMLDialog {
     public class Row {
         private final StringProperty robotID;
         private final SimpleDoubleProperty progress;
+        private final SimpleStringProperty remainingTime;
         private final StatusBar statusBar;
 
         Row(String robotID, StatusBar statusBar) {
             this.robotID = new SimpleStringProperty(robotID);
             this.progress = new SimpleDoubleProperty();
             this.progress.bind(statusBar.progressProperty());
+            this.remainingTime = new SimpleStringProperty();
+            this.remainingTime.bind(statusBar.remainingTimeProperty());
             this.statusBar = statusBar;
         }
 
@@ -67,6 +70,10 @@ public class RobotsProgressDialog extends FXMLDialog {
 
         public SimpleDoubleProperty progressProperty() {
             return progress;
+        }
+
+        public SimpleStringProperty remainingTimeProperty() {
+            return remainingTime;
         }
 
         public StatusBar getStatusBar() {
@@ -96,6 +103,7 @@ public class RobotsProgressDialog extends FXMLDialog {
                     Row row = table.stream().filter(p -> p.getStatusBar() == statusBar).findFirst().orElse(null);
                     if (row != null) {
                         row.progressProperty().unbind();
+                        row.remainingTimeProperty().unbind();
                         table.remove(row);
                     }
                 });
@@ -124,8 +132,15 @@ public class RobotsProgressDialog extends FXMLDialog {
         colProgress.setPrefWidth(250);
         colProgress.setResizable(true);
 
+        // Create Remaining time column
+        TableColumn<Row, Double> colRemainingTime = new TableColumn<>("Remaining time");
+        colRemainingTime.setCellValueFactory(new PropertyValueFactory<>("remainingTime"));
+        colRemainingTime.setMinWidth(100);
+        colRemainingTime.setPrefWidth(150);
+        colRemainingTime.setResizable(true);
+
         // Add columns and items
-        tblRobotsProgress.getColumns().addAll(colRobotID, colProgress);
+        tblRobotsProgress.getColumns().addAll(colRobotID, colProgress, colRemainingTime);
         tblRobotsProgress.setItems(table);
 
         // Define action when dialog is about to close
