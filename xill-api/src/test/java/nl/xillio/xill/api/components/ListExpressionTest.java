@@ -50,6 +50,11 @@ public class ListExpressionTest {
     }
 
     @Test
+    public void testGetBooleanValue() {
+        assertTrue(expression.getBooleanValue());
+    }
+
+    @Test
     public void testGetNumberValue() throws Exception {
         assertEquals(expression.getNumberValue(), Double.NaN);
     }
