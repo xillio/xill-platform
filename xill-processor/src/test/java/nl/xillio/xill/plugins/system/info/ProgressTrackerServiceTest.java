@@ -118,8 +118,10 @@ public class ProgressTrackerServiceTest {
     public void testGetRemainingTime() throws InterruptedException {
         ProgressTrackerService service = new ProgressTrackerService();
         UUID csid = new UUID(1,1);
-        service.setProgress(csid, 0.1);
-        service.setProgress(csid, 0.2);
+        service.setProgress(csid, 0);
+        for (double i=1; i<900; i++) {
+            service.setProgress(csid, i/1000);
+        }
 
         // Run
         Duration result = service.getRemainingTime(csid);
