@@ -68,6 +68,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
+
     <modules>
         <module>xill-plugin-archetype</module>
         <module>xill-api</module>
@@ -75,38 +76,26 @@
         <module>xill-parent</module>
         <module>xill-plugins-parent</module>
         <module>xill-testutils</module>
+        <module>xill-processor</module>
+        <module>plugin-jdbc</module>
+        <module>plugin-mariadb</module>
+        <module>plugin-mssql</module>
+        <module>plugin-oracle</module>
+        <module>plugin-sqlite</module>
+        <module>plugin-mysql</module>
+        <module>plugin-xml</module>
+        <module>plugin-document</module>
+        <module>plugin-database</module>
+        <module>plugin-excel</module>
+        <module>plugin-web</module>
+        <module>plugin-xurl</module>
+        <module>plugin-rest</module>
+        <module>plugin-exiftool</module>
+        <module>plugin-properties</module>
+        <module>xill-ide-core</module>
+        <module>xill-ide-launcher</module>
+        <module>xill-cli</module>
     </modules>
-
-    <profiles>
-        <profile>
-            <id>enable-xill-runtime</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>xill-runtime</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>enable-xill-ide</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>xill-ide-core</module>
-                <module>xill-ide-launcher</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>enable-xill-cli</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>xill-cli</module>
-            </modules>
-        </profile>
-    </profiles>
 
     <build>
         <plugins>

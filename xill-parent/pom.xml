@@ -37,18 +37,6 @@
 
     <url>http://xill.io/</url>
 
-    <distributionManagement>
-        <repository>
-            <id>MavenXillio-releases</id>
-            <name>MavenXillio-releases</name>
-            <url>https://maven.xillio.com/artifactory/libs-releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>snapshots</id>
-            <name>MavenXillio-snapshots</name>
-            <url>https://maven.xillio.com/artifactory/binary-snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -106,6 +94,7 @@
         <jsoup.version>1.8.3</jsoup.version>
         <mongo.java.driver.version>3.2.2</mongo.java.driver.version>
         <mysql.driver.version>6.0.2</mysql.driver.version>
+        <flapdoodle.version>1.50.5</flapdoodle.version>
 
         <!-- Build Info -->
         <timestamp>${maven.build.timestamp}</timestamp>
@@ -157,6 +146,81 @@
     <dependencyManagement>
         <dependencies>
             <!-- Internal Project Dependencies -->
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-database</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-document</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-excel</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-exiftool</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-jdbc</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-mariadb</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-mssql</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-mysql</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-oracle</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-properties</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-rest</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-sqlite</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-web</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-xml</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-xurl</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
             <dependency>
                 <groupId>nl.xillio.xill</groupId>
                 <artifactId>xill-assemblies</artifactId>
@@ -211,56 +275,12 @@
                 <type>zip</type>
                 <version>${xill.version}</version>
             </dependency>
-            <!-- Plugin Zips -->
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>xill-runtime</artifactId>
-                <type>zip</type>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-xml</artifactId>
-                <type>zip</type>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-mariadb</artifactId>
-                <type>zip</type>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-mssql</artifactId>
-                <type>zip</type>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-oracle</artifactId>
-                <type>zip</type>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-sqlite</artifactId>
-                <type>zip</type>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-document</artifactId>
-                <type>zip</type>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-database</artifactId>
-                <type>zip</type>
-                <version>${xill.version}</version>
-            </dependency>
             <!-- External Dependencies -->
+            <dependency>
+                <groupId>de.flapdoodle.embed</groupId>
+                <artifactId>de.flapdoodle.embed.mongo</artifactId>
+                <version>$[flapdoodle.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-server</artifactId>
