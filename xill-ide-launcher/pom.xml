@@ -27,7 +27,7 @@
     <parent>
         <groupId>nl.xillio.xill</groupId>
         <artifactId>xill-parent</artifactId>
-        <version>3.4.0-SNAPSHOT</version>
+        <version>3.5.0-SNAPSHOT</version>
         <relativePath>../xill-parent</relativePath>
     </parent>
 
@@ -113,6 +113,125 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>developer</id>
+            <dependencies>
+                <!-- ElasticSearch will log with log4j1, prevent this by replacing log4j with the slf4j bridge -->
+                <dependency>
+                    <groupId>nl.xillio.xill</groupId>
+                    <artifactId>xill-processor</artifactId>
+                    <scope>runtime</scope>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>log4j</groupId>
+                            <artifactId>log4j</artifactId>
+                        </exclusion>
+                    </exclusions>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>log4j-over-slf4j</artifactId>
+                    <scope>runtime</scope>
+                </dependency>
+                <dependency>
+                    <groupId>nl.xillio.xill</groupId>
+                    <artifactId>plugin-jdbc</artifactId>
+                    <scope>runtime</scope>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>nl.xillio.xill</groupId>
+                    <artifactId>plugin-mariadb</artifactId>
+                    <scope>runtime</scope>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>nl.xillio.xill</groupId>
+                    <artifactId>plugin-mssql</artifactId>
+                    <scope>runtime</scope>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>nl.xillio.xill</groupId>
+                    <artifactId>plugin-oracle</artifactId>
+                    <scope>runtime</scope>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>nl.xillio.xill</groupId>
+                    <artifactId>plugin-sqlite</artifactId>
+                    <scope>runtime</scope>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>nl.xillio.xill</groupId>
+                    <artifactId>plugin-mysql</artifactId>
+                    <scope>runtime</scope>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>nl.xillio.xill</groupId>
+                    <artifactId>plugin-xml</artifactId>
+                    <scope>runtime</scope>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>nl.xillio.xill</groupId>
+                    <artifactId>plugin-document</artifactId>
+                    <scope>runtime</scope>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>nl.xillio.xill</groupId>
+                    <artifactId>plugin-database</artifactId>
+                    <scope>runtime</scope>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>nl.xillio.xill</groupId>
+                    <artifactId>plugin-excel</artifactId>
+                    <scope>runtime</scope>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>nl.xillio.xill</groupId>
+                    <artifactId>plugin-web</artifactId>
+                    <scope>runtime</scope>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>nl.xillio.xill</groupId>
+                    <artifactId>plugin-xurl</artifactId>
+                    <scope>runtime</scope>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>nl.xillio.xill</groupId>
+                    <artifactId>plugin-rest</artifactId>
+                    <scope>runtime</scope>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>nl.xillio.xill</groupId>
+                    <artifactId>plugin-exiftool</artifactId>
+                    <scope>runtime</scope>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>nl.xillio.xill</groupId>
+                    <artifactId>plugin-properties</artifactId>
+                    <scope>runtime</scope>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>nl.xillio.xill</groupId>
+                    <artifactId>xill-ide-core</artifactId>
+                    <scope>runtime</scope>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 </project>
