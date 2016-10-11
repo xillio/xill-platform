@@ -27,11 +27,7 @@
     <parent>
         <groupId>nl.xillio.xill</groupId>
         <artifactId>xill-parent</artifactId>
-<<<<<<< HEAD
-        <version>3.4.0</version>
-=======
         <version>3.5.0-SNAPSHOT</version>
->>>>>>> develop
         <relativePath>../xill-parent</relativePath>
     </parent>
 
