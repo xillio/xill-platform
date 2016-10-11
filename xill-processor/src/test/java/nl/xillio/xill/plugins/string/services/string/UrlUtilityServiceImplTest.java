@@ -21,7 +21,7 @@ import static org.testng.Assert.*;
 
 public class UrlUtilityServiceImplTest {
 
-    private static final UrlUtilityService service = new UrlUtilityServiceImpl();
+    private static final UrlUtilityServiceImpl service = new UrlUtilityServiceImpl();
 
     @Test
     public void testGetProtocol(){
@@ -38,5 +38,16 @@ public class UrlUtilityServiceImplTest {
         assertEquals(service.getProtocol(""), "");
         assertEquals(service.getProtocol("//"), "");
         assertEquals(service.getProtocol("://"), "");
+    }
+
+    @Test
+    public void testGetParentURL(){
+        assertEquals(service.getParentUrl("http://www.xillio.nl/info/", ".."), "http://www.xillio.nl/");
+        assertEquals(service.getParentUrl("http://www.xillio.nl/info/", "../"), "http://www.xillio.nl/");
+        assertEquals(service.getParentUrl("http://www.xillio.nl/info/page1/", "../page2"), "http://www.xillio.nl/info/page2");
+        assertEquals(service.getParentUrl("abc://def.ghi.j/h/k/l/m/", "../../../.."), "abc://def.ghi.j/");
+
+        assertEquals(service.getParentUrl("http:/www.example.com/false", ".."), null); // malformed
+
     }
 }
