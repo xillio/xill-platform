@@ -31,8 +31,8 @@ public class ProgressTrackerService implements ProgressTracker {
 
     private class ProgressInfo {
         private OnStopBehavior progressBarOnStopBehavior = OnStopBehavior.HIDE;
-        private double currentProgress = -1; // Current progress (-1 if not set yet)
-        private double startProgress = -1; // The first set progress (-1 if not set yet)
+        private double currentProgress = -1; // Current progress (<0 if not set yet)
+        private double startProgress = -1; // The first set progress (<0 if not set yet)
         private LocalDateTime startTime; // The datetime when the first progress was set (null if not set yet)
     }
 
@@ -100,7 +100,7 @@ public class ProgressTrackerService implements ProgressTracker {
 
         // Compute remaining time
         long elapsed = (long) ((progressInfo.currentProgress - progressInfo.startProgress) * 100); // Compute percent elapsed
-        long remains = (long) ((1 - progressInfo.currentProgress)*100); // Compute how many percent remains
+        long remains = (long) ((1 - progressInfo.currentProgress) * 100); // Compute how many percent remains
         return Duration.between(progressInfo.startTime, LocalDateTime.now()).dividedBy(elapsed).multipliedBy(remains);
     }
 
