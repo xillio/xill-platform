@@ -46,7 +46,7 @@ public class JoinConstruct extends Construct {
     }
 
     private MetaExpression process(final MetaExpression list, final MetaExpression delimiter) {
-        String output = "";
+        String output;
 
         switch (list.getType()) {
             case ATOMIC:

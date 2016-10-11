@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.string.constructs;
 
 import com.google.inject.Inject;
-import com.google.thirdparty.publicsuffix.PublicSuffixPatterns;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.Construct;

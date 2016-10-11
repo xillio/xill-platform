@@ -24,9 +24,9 @@ import org.testng.annotations.Test;
 import static org.mockito.Mockito.*;
 
 /**
- * Test the {@link ToLowerConstruct}.
+ * Test the {@link RepeatConstruct}.
  */
-public class ToLowerConstructTest extends TestUtils{
+public class LengthConstructTest extends TestUtils{
 
     /**
      * Test the process method under normal circumstances.
@@ -34,24 +34,18 @@ public class ToLowerConstructTest extends TestUtils{
     @Test
     public void processNormalUsage() {
         // Mock
-        String stringValue = "testing";
+        String stringValue = "Incomprehensibilities";
         MetaExpression string = mockExpression(ATOMIC);
         when(string.getStringValue()).thenReturn(stringValue);
-        when(string.isNull()).thenReturn(false);
 
-        String returnValue = "testing";
-        StringUtilityService stringService = mock(StringUtilityService.class);
-        when(stringService.toLowerCase(stringValue)).thenReturn(returnValue);
+        int returnValue = 21;
 
-        ToLowerConstruct construct = new ToLowerConstruct(stringService);
-        // Run
-        MetaExpression result = process(construct, string);
-
-        // Verify
-        verify(stringService, times(1)).toLowerCase(stringValue);
+        //Run
+        LengthConstruct construct = new LengthConstruct();
+        MetaExpression result  = process(construct, string);
 
         // Assert
-        Assert.assertEquals(result.getStringValue(), returnValue);
+        Assert.assertEquals(result.getNumberValue().intValue(), returnValue);
     }
 
     /**
@@ -60,14 +54,13 @@ public class ToLowerConstructTest extends TestUtils{
     @Test
     public void processNullUsage() {
 
-        //Mock
-        StringUtilityService stringService = mock(StringUtilityService.class);
+        int returnValue = 0;
 
-        ToLowerConstruct construct = new ToLowerConstruct(stringService);
         //Run
+        LengthConstruct construct = new LengthConstruct();
         MetaExpression result  = process(construct, NULL);
 
         // Assert
-        Assert.assertEquals(result, NULL);
+        Assert.assertEquals(result.getNumberValue().intValue(), returnValue);
     }
 }

@@ -51,7 +51,7 @@ public class ReplaceConstruct extends Construct {
     @Override
     @SuppressWarnings("squid:S2095")  // Suppress "Resources should be closed": Arguments do not need to be closed here, because ConstructProcessor closes them
     public ConstructProcessor prepareProcess(final ConstructContext context) {
-        Argument args[] = {
+        Argument[] args = {
                 new Argument("text", ATOMIC),
                 new Argument("needle", ATOMIC),
                 new Argument("replacement", ATOMIC),

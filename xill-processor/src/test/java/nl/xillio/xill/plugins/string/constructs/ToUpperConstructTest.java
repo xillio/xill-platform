@@ -53,4 +53,21 @@ public class ToUpperConstructTest extends TestUtils{
         // Assert
         Assert.assertEquals(result.getStringValue(), returnValue);
     }
+
+    /**
+     * Test the process method when null is used.
+     */
+    @Test
+    public void processNullUsage() {
+
+        //Mock
+        StringUtilityService stringService = mock(StringUtilityService.class);
+
+        ToUpperConstruct construct = new ToUpperConstruct(stringService);
+        //Run
+        MetaExpression result  = process(construct, NULL);
+
+        // Assert
+        Assert.assertEquals(result, NULL);
+    }
 }
