@@ -19,9 +19,11 @@ import nl.xillio.xill.plugins.system.services.info.ProgressTrackerService;
 import nl.xillio.xill.services.ProgressTracker;
 import org.testng.annotations.Test;
 
+import java.time.Duration;
 import java.util.UUID;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Test the {@link ProgressTrackerService}
@@ -105,5 +107,72 @@ public class ProgressTrackerServiceTest {
 
         // Verify
         assertEquals(result, behavior);
+    }
+
+    /**
+     * Test getRemainingTime() under common circumstances.
+     *
+     * @throws InterruptedException
+     */
+    @Test
+    public void testGetRemainingTime() throws InterruptedException {
+        ProgressTrackerService service = new ProgressTrackerService();
+        UUID csid = new UUID(1,1);
+        service.setProgress(csid, 0.1);
+        Thread.sleep(20);
+        service.setProgress(csid, 0.2);
+
+        // Run
+        Duration result = service.getRemainingTime(csid);
+
+        // Verify
+        assertTrue(result.getNano() > 1000000);
+    }
+
+    /**
+     * Test getRemainingTime() when CSID is null.
+     */
+    @Test
+    public void testGetRemainingTimeNullCSID() {
+        ProgressTrackerService service = new ProgressTrackerService();
+
+        // Run
+        Duration result = service.getRemainingTime(null);
+
+        // Verify
+        assertEquals(result, null);
+    }
+
+    /**
+     * Test getRemainingTime() when progress is negative.
+     */
+    @Test
+    public void testGetRemainingTimeNegativeProgress() {
+        ProgressTrackerService service = new ProgressTrackerService();
+        UUID csid = new UUID(1,1);
+        service.setProgress(csid, -1);
+
+        // Run
+        Duration result = service.getRemainingTime(csid);
+
+        // Verify
+        assertEquals(result, null);
+    }
+
+    /**
+     * Test getRemainingTime() when progress is 100%.
+     */
+    @Test
+    public void testGetRemainingTimeDoneProgress() {
+        ProgressTrackerService service = new ProgressTrackerService();
+        UUID csid = new UUID(1,1);
+        service.setProgress(csid, 0.5);
+        service.setProgress(csid, 1);
+
+        // Run
+        Duration result = service.getRemainingTime(csid);
+
+        // Verify
+        assertEquals(result, Duration.ZERO);
     }
 }

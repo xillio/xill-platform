@@ -57,7 +57,7 @@ public class ProgressTrackerService implements ProgressTracker {
     public void setProgress(UUID compilerSerialId, double progress) {
         ProgressInfo progressInfo = get(compilerSerialId, true);
         progressInfo.currentProgress = progress;
-        if (progressInfo.startProgress == -1) {
+        if (progressInfo.startProgress < 0) {
             progressInfo.startProgress = progress;
             progressInfo.startTime = LocalDateTime.now();
         }
@@ -90,7 +90,7 @@ public class ProgressTrackerService implements ProgressTracker {
             return null; // CSID not found
         }
 
-        if (progressInfo.currentProgress == -1 || progressInfo.startProgress == -1 || progressInfo.currentProgress <= progressInfo.startProgress) {
+        if (progressInfo.currentProgress < 0 || progressInfo.startProgress < 0 || progressInfo.currentProgress <= progressInfo.startProgress) {
             return null; // Cannot estimate remaining time
         }
 
