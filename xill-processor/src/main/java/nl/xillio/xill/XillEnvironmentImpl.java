@@ -134,6 +134,11 @@ public class XillEnvironmentImpl implements XillEnvironment {
         return Collections.unmodifiableList(invalidPlugins);
     }
 
+    @Override
+    public void close() {
+        getPlugins().forEach(XillPlugin::close);
+    }
+
     private void loadClasspathPlugins() {
         loadPlugins(ServiceLoader.load(XillPlugin.class));
     }
