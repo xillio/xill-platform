@@ -20,7 +20,7 @@
  
  use Stream, File;
  
- var binary = File.openRead("testresources/stream/binary.file");
+ var binary = File.openRead("testresources/stream/binary.dat");
  var text = File.openWrite("utf.txt");
  
  run();

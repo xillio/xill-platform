@@ -17,6 +17,7 @@ package nl.xillio.xill.integration;
 
 
 import me.biesaart.utils.Log;
+import nl.xillio.xill.XillEnvironmentImpl;
 import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.api.XillLoader;
 import nl.xillio.xill.api.XillProcessor;
@@ -38,13 +39,11 @@ import java.nio.file.StandardCopyOption;
 public class RobotsIT {
     private static final Logger LOGGER = Log.get();
     private Path projectPath = Paths.get("target/integration-test", getClass().getName());
-    private Path pluginPath = Paths.get("../xill-ide-launcher/plugins");
     private XillEnvironment xillEnvironment;
 
     @BeforeSuite
     public void loadXill() throws IOException {
-        xillEnvironment = XillLoader.getEnv(pluginPath);
-        xillEnvironment.addFolder(pluginPath);
+        xillEnvironment = new XillEnvironmentImpl();
         xillEnvironment.loadPlugins();
     }
 
@@ -57,11 +56,11 @@ public class RobotsIT {
     public void copyResources() throws IOException {
         Reflections reflections = new Reflections(getResourcesPackage(), new ResourcesScanner());
 
-        for (String r : reflections.getResources(a -> true)) {
+        for (String resource : reflections.getResources(path -> true)) {
             // Open the resource as an input stream from the class path
-            try (InputStream stream = getClass().getResourceAsStream("/" + r)) {
+            try (InputStream stream = getClass().getResourceAsStream("/" + resource)) {
                 // Robot is run from the project path, copy resources to there
-                Path resourcePath = projectPath.resolve(r);
+                Path resourcePath = projectPath.resolve(resource);
 
                 Files.createDirectories(resourcePath.getParent());
                 Files.copy(stream, resourcePath, StandardCopyOption.REPLACE_EXISTING);

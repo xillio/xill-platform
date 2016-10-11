@@ -168,11 +168,6 @@
             </dependency>
             <dependency>
                 <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-jdbc</artifactId>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
                 <artifactId>plugin-mariadb</artifactId>
                 <version>${xill.version}</version>
             </dependency>
@@ -279,7 +274,7 @@
             <dependency>
                 <groupId>de.flapdoodle.embed</groupId>
                 <artifactId>de.flapdoodle.embed.mongo</artifactId>
-                <version>$[flapdoodle.version}</version>
+                <version>${flapdoodle.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
@@ -436,13 +431,11 @@
                 <artifactId>log4j-core</artifactId>
                 <version>${log4j.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.driver.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
@@ -645,41 +638,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>windows</id>
-            <activation>
-                <os>
-                    <family>Windows</family>
-                </os>
-            </activation>
-            <properties>
-                <os.classifier>win</os.classifier>
-            </properties>
-        </profile>
-        <profile>
-            <id>mac</id>
-            <activation>
-                <os>
-                    <family>mac</family>
-                </os>
-            </activation>
-            <properties>
-                <os.classifier>osx</os.classifier>
-            </properties>
-        </profile>
-        <profile>
-            <id>unix</id>
-            <activation>
-                <os>
-                    <name>!mac os x</name>
-                    <family>unix</family>
-                </os>
-            </activation>
-            <properties>
-                <os.classifier>unix</os.classifier>
-            </properties>
-        </profile>
-    </profiles>
 </project>
