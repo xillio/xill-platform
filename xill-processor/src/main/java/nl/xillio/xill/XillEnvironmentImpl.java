@@ -25,6 +25,7 @@ import nl.xillio.util.XillioHomeFolder;
 import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.api.XillProcessor;
+import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.debugging.XillDebugger;
 import nl.xillio.xill.services.inject.DefaultInjectorModule;
 import org.apache.commons.lang3.StringUtils;
@@ -51,6 +52,7 @@ public class XillEnvironmentImpl implements XillEnvironment {
     private Map<String, XillPlugin> loadedPlugins = new HashMap<>();
     private List<PluginLoadFailure> invalidPlugins = new ArrayList<>();
     private boolean needLoad = true;
+    private XillThreadFactory xillThreadFactory;
 
     @Override
     public XillEnvironment setLoadHomeFolder(boolean value) {
@@ -70,6 +72,11 @@ public class XillEnvironmentImpl implements XillEnvironment {
         return this;
     }
 
+    public XillEnvironment setXillThreadFactory(XillThreadFactory xillThreadFactory) {
+        this.xillThreadFactory = xillThreadFactory;
+        return this;
+    }
+
     @Override
     public XillEnvironment loadPlugins() throws IOException {
         if (rootInjector == null) {
@@ -84,8 +91,12 @@ public class XillEnvironmentImpl implements XillEnvironment {
         loadPlugins(folders);
         needLoad = false;
 
+        // Create the default thread factory when one has not been set
+        if (xillThreadFactory == null)
+            xillThreadFactory = new XillThreadFactoryImpl();
+
         List<Module> modules = new ArrayList<>(loadedPlugins.values());
-        modules.add(new DefaultInjectorModule(this));
+        modules.add(new DefaultInjectorModule(this, xillThreadFactory));
         Injector configuredInjector = rootInjector.createChildInjector(modules);
 
         LOGGER.info("Injecting plugin members");
@@ -121,6 +132,11 @@ public class XillEnvironmentImpl implements XillEnvironment {
     @Override
     public List<PluginLoadFailure> getMissingLicensePlugins() {
         return Collections.unmodifiableList(invalidPlugins);
+    }
+
+    @Override
+    public void close() {
+        getPlugins().forEach(XillPlugin::close);
     }
 
     private void loadClasspathPlugins() {

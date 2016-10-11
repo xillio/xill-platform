@@ -1,3 +1,4 @@
+# Xill specifics
 xilliosettings.db
 ESConsole/
 /plugins
@@ -5,6 +6,9 @@ xill-ide-launcher/plugins
 helpfiles/
 test-output/
 xilliosettings.cfg
+
+# Log files
+*.log
 
 # Gradle
 build/
@@ -36,5 +40,4 @@ bin/
 # IntelliJ
 *.iml
 .idea/
-.gitignore
 src/main/resources/

@@ -20,7 +20,6 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
-import nl.xillio.xill.plugins.web.PhantomJSConstruct;
 import nl.xillio.xill.plugins.web.data.WebVariable;
 import nl.xillio.xill.plugins.web.services.web.WebService;
 
@@ -40,7 +39,7 @@ public class CSSPathConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (element, csspath) -> process(element, csspath, webService),
+                this::process,
                 new Argument("element", ATOMIC),
                 new Argument("cssPath", ATOMIC));
     }
@@ -50,7 +49,7 @@ public class CSSPathConstruct extends PhantomJSConstruct {
      * @param cssPathVar string variable specifying CSS Path selector
      * @return NODE variable or list of NODE variables or null variable (according to count of selected web elements - more/1/0)
      */
-    static MetaExpression process(final MetaExpression elementVar, final MetaExpression cssPathVar, final WebService webService) {
+    private MetaExpression process(final MetaExpression elementVar, final MetaExpression cssPathVar) {
 
         String query = cssPathVar.getStringValue();
 
@@ -58,13 +57,13 @@ public class CSSPathConstruct extends PhantomJSConstruct {
             return NULL;
         }
         if (isNodeAndNotPage(elementVar)) {
-            return processSELNode(getNode(elementVar), query, webService);
+            return processSELNode(getNode(elementVar), query, getWebService());
         } else {
-            return processSELNode(getPage(elementVar), query, webService);
+            return processSELNode(getPage(elementVar), query, getWebService());
         }
     }
 
-    private static MetaExpression processSELNode(final WebVariable node, final String selector, final WebService webService) {
+    private MetaExpression processSELNode(final WebVariable node, final String selector, final WebService webService) {
         List<WebVariable> results = webService.findElementsWithCssPath(node, selector);
 
         if (results.isEmpty()) {

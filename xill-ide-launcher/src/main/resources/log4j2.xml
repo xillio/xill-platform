@@ -36,6 +36,8 @@
         </Logger>
         <Logger name="robot" level="all">
         </Logger>
+        <Logger name="org.elasticsearch" level="error" additivity="false">
+        </Logger>
         <Root level="error">
             <AppenderRef ref="stdout"/>
             <AppenderRef ref="stderr" level="warn"/>

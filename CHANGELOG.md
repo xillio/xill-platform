@@ -3,10 +3,18 @@ All notable changes to this project will be documented in this file.
 
 ## [3.5.0] - unreleased
 
+### Add
+* `System.parseJSON()` now parses LIST [CTC-1769]
+* Warn users about invalid asset names [CTC-1798]
+* Support logging on server by adding logging handler that exposes all logging events and exceptions [XSVR-50]
+
 ### Fix
 * On server threads are not closed when tasks finishes [XSVR-139]
+* Renaming of robot does not work properly on Linux [CTC-1787]
+* Web.xPath result in variable preview is incorrect [CTC-1802]
+* Incorrect error handling in function parameter [CTC-1811]
 
-## [3.4.0] - unreleased
+## [3.4.0] - 2016-10-07
 
 ### Add
 

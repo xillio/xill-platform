@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 /*
-* Specification: calling String.matches with a regex escaped by String.regexEscape on the unescaped string MUST match
-* Input: "^regex$"
-* Expected: String.matches returns true
+* Specification: When given a faulty list to this construct, the construct MUST give the proper exception
+* Expected: Exceptions are thrown
+* Input: [], [[]], ["a", {}], {}
 */
 
-use Assert;
-use String;
-use System;
+use System, Assert;
 
-var regex = "^regex$";
+testInput([]);
+testInput([[]]);
+testInput(["a", {}]);
+testInput({});
 
-var escaped = String.regexEscape(regex);
-var matches = String.matches(regex, escaped);
-
-Assert.isTrue(matches, "Escaped regex and original do not match");
+function testInput(input) {
+    do {
+        System.parseJSON(input);
+    } success {
+        Assert.error("Value: " :: input :: ", is parsable to JSON while it should not.");
+    }
+}
