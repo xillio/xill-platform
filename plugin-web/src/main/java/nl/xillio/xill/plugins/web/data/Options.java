@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,6 +24,7 @@ import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.WebXillPlugin;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
@@ -32,7 +33,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -46,7 +46,10 @@ import java.util.concurrent.TimeUnit;
  * non-CLI options are those that can be set whenever at whatever existing PhantomJS process
  */
 public class Options implements MetadataExpression {
-    private static final File PHANTOM_JS_WINDOWS_BIN = new File(XillioHomeFolder.forXill3(), "bin/web/phantomjs.exe");
+    private static final File PHANTOM_JS_BIN = new File(XillioHomeFolder.forXill3(), "bin/web/phantomjs");
+    private static final String PHANTOM_JS_LINUX_RESOURCE = "phantomjs/linux/phantomjs";
+    private static final String PHANTOM_JS_WINDOWS_RESOURCE = "phantomjs/windows/phantomjs";
+    private static final String PHANTOM_JS_MAC_RESOURCE = "phantomjs/mac/phantomjs";
     private static final Logger LOGGER = Log.get();
 
     // Driver options
@@ -199,7 +202,7 @@ public class Options implements MetadataExpression {
     /**
      * Set the viewport dimension.
      *
-     * @param width The width of viewport in the pixels.
+     * @param width  The width of viewport in the pixels.
      * @param height The height of viewport in the pixels.
      */
     public void setResolution(int width, int height) {
@@ -367,32 +370,42 @@ public class Options implements MetadataExpression {
     public static void extractNativeBinary() {
 
         try {
-            String os = System.getProperty("os.name").toLowerCase();
-            // Windows
-            if (os.contains("win")) {
-                System.setProperty("phantomjs.binary.path", PHANTOM_JS_WINDOWS_BIN.getAbsolutePath());
-                if (PHANTOM_JS_WINDOWS_BIN.exists()) {
-                    // We are done here
-                    return;
-                }
+            System.setProperty("phantomjs.binary.path", PHANTOM_JS_BIN.getAbsolutePath());
 
-                LOGGER.info("Deploying PhantomJS binary");
+            if (PHANTOM_JS_BIN.exists()) {
+                // We are done here
+                return;
+            }
 
-                // extract file into the current directory
-                InputStream reader = WebXillPlugin.class.getResourceAsStream("/phantomjs/phantomjs.exe");
-                if (reader == null) {
-                    throw new FileNotFoundException("Cannot find phantomjs.exe resource file!");
-                }
-                FileUtils.touch(PHANTOM_JS_WINDOWS_BIN);
-                FileOutputStream writer = new FileOutputStream(PHANTOM_JS_WINDOWS_BIN);
+            LOGGER.info("Deploying PhantomJS binary");
+
+            // extract file into the current directory
+            String phantomJsResourcePath = getOsSpecificPhantomJSResourcePath();
+            FileUtils.touch(PHANTOM_JS_BIN);
+
+            try (InputStream reader = WebXillPlugin.class.getResourceAsStream(phantomJsResourcePath); FileOutputStream writer = new FileOutputStream(PHANTOM_JS_BIN)) {
                 IOUtils.copy(reader, writer);
 
-                writer.close();
-                reader.close();
             }
         } catch (Exception e) {
             LOGGER.error("Failed to deploy PhantomJS binary", e);
         }
+    }
+
+    private static String getOsSpecificPhantomJSResourcePath() {
+        if (SystemUtils.IS_OS_WINDOWS) {
+            return PHANTOM_JS_WINDOWS_RESOURCE;
+        }
+
+        if (SystemUtils.IS_OS_MAC) {
+            return PHANTOM_JS_MAC_RESOURCE;
+        }
+
+        if (SystemUtils.IS_OS_UNIX) {
+            return PHANTOM_JS_LINUX_RESOURCE;
+        }
+
+        throw new UnsupportedOperationException("PhantomJS is not supported on " + SystemUtils.OS_NAME);
     }
 
     /**

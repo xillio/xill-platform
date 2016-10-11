@@ -90,6 +90,7 @@
         <elasticsearch.version>1.6.0</elasticsearch.version>
         <selenium.version>2.45.0</selenium.version>
         <phantomjs.version>1.2.1</phantomjs.version>
+        <phantomjs.binary.version>2.1.1</phantomjs.binary.version>
         <httpclient.version>4.5.1</httpclient.version>
         <jsoup.version>1.8.3</jsoup.version>
         <mongo.java.driver.version>3.2.2</mongo.java.driver.version>
