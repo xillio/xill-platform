@@ -45,6 +45,12 @@
         <dependency>
             <groupId>nl.xillio.xill</groupId>
             <artifactId>xill.lang.Xill</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
