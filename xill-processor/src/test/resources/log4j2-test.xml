@@ -36,6 +36,8 @@
         </Logger>
         <Logger name="robot" level="all">
         </Logger>
+        <Logger name="nl.xillio.xill.integration.embeddedmongo" level="warn">
+        </Logger>
         <Root level="error">
             <AppenderRef ref="stdout"/>
             <AppenderRef ref="stderr" level="warn"/>

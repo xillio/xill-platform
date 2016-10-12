@@ -49,6 +49,7 @@ public class EmbeddedMongoHelper {
 
         IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder()
                 .defaults(command)
+                .defaultsWithLogger(command, LOGGER)
                 .artifactStore(
                         new ExtractedArtifactStoreBuilder()
                                 .defaults(command)
