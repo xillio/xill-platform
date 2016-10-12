@@ -19,7 +19,6 @@ import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.data.XmlNode;
 import nl.xillio.xill.plugins.xml.services.NodeService;
-import nl.xillio.xill.plugins.xml.services.NodeServiceImpl;
 import nl.xillio.xill.services.files.TextFileReader;
 import org.testng.annotations.Test;
 
@@ -34,7 +33,7 @@ import static org.testng.Assert.assertTrue;
  * @author Zbynek Hochmann
  */
 public class FromFileConstructTest extends TestUtils {
-    private NodeService nodeService = spy(new NodeServiceImpl());
+    private NodeService nodeService = mock(NodeService.class);
     private TextFileReader textFileReader = mock(TextFileReader.class);
     private FromFileConstruct construct = new FromFileConstruct(nodeService, textFileReader);
 
@@ -47,6 +46,7 @@ public class FromFileConstructTest extends TestUtils {
 
         // Mock.
         when(textFileReader.getText(any(), any())).thenReturn(source);
+        when(nodeService.fromString(anyString())).thenReturn(mock(XmlNode.class));
 
         // Run.
         MetaExpression result = this.process(construct, fromValue(""));
