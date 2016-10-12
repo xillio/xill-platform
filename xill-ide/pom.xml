@@ -33,6 +33,10 @@
 
     <artifactId>xill-ide</artifactId>
 
+    <properties>
+        <app.mainClass>nl.xillio.contenttools.Application</app.mainClass>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>nl.xillio.xill</groupId>
@@ -88,5 +92,36 @@
             <artifactId>httpmime</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <defaultGoal>compile exec:exec</defaultGoal>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>-XX:+UseG1GC</argument>
+                                <argument>-XX:NewRatio=3</argument>
+                                <argument>-Xmx4g</argument>
+                                <argument>-Xms1g</argument>
+                                <argument>-classpath</argument>
+                                <classpath/>
+                                <argument>${app.mainClass}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

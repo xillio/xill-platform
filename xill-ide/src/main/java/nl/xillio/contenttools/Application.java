@@ -18,6 +18,7 @@ package nl.xillio.contenttools;
 import javafx.stage.Stage;
 import me.biesaart.utils.Log;
 import nl.xillio.plugins.ContenttoolsPlugin;
+import nl.xillio.xill.XillEnvironmentImpl;
 import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.api.XillLoader;
 import org.slf4j.Logger;
@@ -48,7 +49,9 @@ public class Application extends javafx.application.Application {
     public static void main(final String... args) throws IOException {
         LOGGER.info("Starting host application");
         Files.createDirectories(PLUGIN_FOLDER);
-        environment = XillLoader.getEnv(PLUGIN_FOLDER);
+        environment = new XillEnvironmentImpl();
+        environment.addFolder(PLUGIN_FOLDER);
+        environment.setLoadHomeFolder(true);
 
         try {
             SingleInstanceHandler.start();
