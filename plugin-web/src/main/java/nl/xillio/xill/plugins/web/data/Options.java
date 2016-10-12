@@ -48,7 +48,7 @@ import java.util.concurrent.TimeUnit;
 public class Options implements MetadataExpression {
     private static final File PHANTOM_JS_BIN = new File(XillioHomeFolder.forXill3(), "bin/web/phantomjs");
     private static final String PHANTOM_JS_LINUX_RESOURCE = "phantomjs/linux/phantomjs";
-    private static final String PHANTOM_JS_WINDOWS_RESOURCE = "phantomjs/windows/phantomjs";
+    private static final String PHANTOM_JS_WINDOWS_RESOURCE = "phantomjs/windows/phantomjs.exe";
     private static final String PHANTOM_JS_MAC_RESOURCE = "phantomjs/mac/phantomjs";
     private static final Logger LOGGER = Log.get();
 
