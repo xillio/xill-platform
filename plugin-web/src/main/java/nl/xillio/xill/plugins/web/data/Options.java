@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.web.data;
 
 import me.biesaart.utils.FileUtils;
-import me.biesaart.utils.IOUtils;
 import me.biesaart.utils.Log;
 import nl.xillio.util.XillioHomeFolder;
 import nl.xillio.xill.api.data.MetadataExpression;
@@ -33,7 +32,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -47,9 +45,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class Options implements MetadataExpression {
     private static final File PHANTOM_JS_BIN = new File(XillioHomeFolder.forXill3(), "bin/web/phantomjs");
-    private static final String PHANTOM_JS_LINUX_RESOURCE = "phantomjs/linux/phantomjs";
-    private static final String PHANTOM_JS_WINDOWS_RESOURCE = "phantomjs/windows/phantomjs.exe";
-    private static final String PHANTOM_JS_MAC_RESOURCE = "phantomjs/mac/phantomjs";
+    private static final String PHANTOM_JS_LINUX_RESOURCE = "/phantomjs/linux/phantomjs";
+    private static final String PHANTOM_JS_WINDOWS_RESOURCE = "/phantomjs/windows/phantomjs.exe";
+    private static final String PHANTOM_JS_MAC_RESOURCE = "/phantomjs/mac/phantomjs";
     private static final Logger LOGGER = Log.get();
 
     // Driver options
@@ -383,8 +381,9 @@ public class Options implements MetadataExpression {
             String phantomJsResourcePath = getOsSpecificPhantomJSResourcePath();
             FileUtils.touch(PHANTOM_JS_BIN);
 
-            try (InputStream reader = WebXillPlugin.class.getResourceAsStream(phantomJsResourcePath); FileOutputStream writer = new FileOutputStream(PHANTOM_JS_BIN)) {
-                IOUtils.copy(reader, writer);
+            try (InputStream reader = WebXillPlugin.class.getResourceAsStream(phantomJsResourcePath)) {
+                LOGGER.debug("Deploying {} to {}", phantomJsResourcePath, PHANTOM_JS_BIN);
+                FileUtils.copyInputStreamToFile(reader, PHANTOM_JS_BIN);
             }
         } catch (Exception e) {
             LOGGER.error("Failed to deploy PhantomJS binary", e);
