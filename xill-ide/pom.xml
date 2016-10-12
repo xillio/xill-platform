@@ -145,6 +145,7 @@
                             <copyConfigurationDirectory>true</copyConfigurationDirectory>
                             <configurationDirectory>conf</configurationDirectory>
                             <configurationSourceDirectory>${project.basedir}/src/main/conf</configurationSourceDirectory>
+                            <useWildcardClassPath>true</useWildcardClassPath>
                             <programs>
                                 <program>
                                     <mainClass>${app.mainClass}</mainClass>
