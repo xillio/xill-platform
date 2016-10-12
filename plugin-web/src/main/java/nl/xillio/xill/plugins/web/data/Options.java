@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -385,6 +385,11 @@ public class Options implements MetadataExpression {
                 LOGGER.debug("Deploying {} to {}", phantomJsResourcePath, PHANTOM_JS_BIN);
                 FileUtils.copyInputStreamToFile(reader, PHANTOM_JS_BIN);
             }
+
+            if (!PHANTOM_JS_BIN.setExecutable(true)) {
+                LOGGER.warn("Could not make {} executable", PHANTOM_JS_BIN);
+            }
+
         } catch (Exception e) {
             LOGGER.error("Failed to deploy PhantomJS binary", e);
         }
