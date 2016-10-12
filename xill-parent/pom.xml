@@ -262,25 +262,7 @@
             </dependency>
             <dependency>
                 <groupId>nl.xillio.xill</groupId>
-                <artifactId>xill-ide-launcher</artifactId>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>xill-ide-core</artifactId>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>xill-ide-launcher</artifactId>
-                <type>zip</type>
-                <classifier>jfx</classifier>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>xill-ide-core</artifactId>
-                <type>zip</type>
+                <artifactId>xill-ide</artifactId>
                 <version>${xill.version}</version>
             </dependency>
             <!-- External Dependencies -->
@@ -530,6 +512,11 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>com.zenjava</groupId>
+                    <artifactId>javafx-maven-plugin</artifactId>
+                    <version>8.1.4</version>
+                </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>appassembler-maven-plugin</artifactId>

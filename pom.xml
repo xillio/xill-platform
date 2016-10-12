@@ -100,6 +100,7 @@
         <module>xill-assemblies</module>
         <module>xill-cli</module>
         <module>xill-ide</module>
+        <module>xill-ide-native</module>
         <module>xill-parent</module>
         <module>xill-plugin-archetype</module>
         <module>xill-plugins-parent</module>
@@ -145,6 +146,7 @@
                         <exclude>**/*.icns</exclude>
                         <exclude>**/*.unknown</exclude>
                         <exclude>**/*.dat</exclude>
+                        <exclude>**/LICENSE</exclude>
                     </excludes>
                     <mapping>
                         <fxml>XML_STYLE</fxml>

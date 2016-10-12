@@ -44,9 +44,6 @@
     <fileSets>
         <fileSet>
             <directory>${project.basedir}/target/jfx/native/Xill IDE</directory>
-            <includes>
-                <include>**/*</include>
-            </includes>
             <outputDirectory></outputDirectory>
         </fileSet>
     </fileSets>
