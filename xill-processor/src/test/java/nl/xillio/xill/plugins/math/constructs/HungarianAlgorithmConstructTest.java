@@ -18,7 +18,6 @@ package nl.xillio.xill.plugins.math.constructs;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
-import nl.xillio.xill.api.errors.RobotRuntimeException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -107,7 +106,7 @@ public class HungarianAlgorithmConstructTest extends TestUtils {
     /**
      * Tests whether an exception is thrown when invalid input is provided.
      */
-    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Invalid value `error` in matrix at \\[1,1\\]")
+    @Test(expectedExceptions = InvalidUserInputException.class, expectedExceptionsMessageRegExp = "Invalid value at \\[1,1\\].*")
     public void processInvalidInputInMatrix() {
         MetaExpression matrix = fromValue(Arrays.asList(
                 fromValue(Arrays.asList(fromValue(0), fromValue(1))),

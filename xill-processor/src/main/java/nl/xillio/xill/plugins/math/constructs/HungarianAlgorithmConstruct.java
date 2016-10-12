@@ -21,7 +21,6 @@ import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
-import nl.xillio.xill.api.errors.RobotRuntimeException;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -114,7 +113,7 @@ public class HungarianAlgorithmConstruct extends Construct {
             for (int j = 0; j < columns; j++) {
                 array[i][j] = getMatrixValue(matrix, i, j);
                 if (Double.isNaN(array[i][j])) {
-                    throw new RobotRuntimeException("Invalid value `" + extractValue(((List<MetaExpression>) matrix.get(i).getValue()).get(j)) + "` in matrix at [" + i + "," + j + "]");
+                    throw new InvalidUserInputException("Invalid value at [" + i + "," + j + "].", ((List<MetaExpression>) matrix.get(i).getValue()).get(j).getStringValue(), "A numerical value.", example);
                 }
             }
         }
