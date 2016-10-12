@@ -19,6 +19,7 @@ import freemarker.template.Configuration;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.ConstructContext;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.api.io.SimpleIOStream;
 import nl.xillio.xill.plugins.template.data.EngineMetadata;
@@ -88,6 +89,25 @@ public class ProcessConstructTest extends TestUtils {
         verify(templateProcessor, times(1)).generate(anyString(), any(), any(), any());
         verify(configurationFactory, times(1)).buildDefaultConfiguration(any(ConstructContext.class));
         Assert.assertTrue(result.isNull());
+    }
+
+    @Test(expectedExceptions = InvalidUserInputException.class)
+    public void testInvalidEngine() {
+        // Mock
+        Configuration configuration = mock(Configuration.class);
+        ConfigurationFactory configurationFactory = mock(ConfigurationFactory.class);
+        TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
+
+        // Instantiate
+        ProcessConstruct processConstruct = new ProcessConstruct(templateProcessor, configurationFactory);
+
+        // Run
+        process(
+                processConstruct,
+                fromValue(""),
+                fromValue(new SimpleIOStream(new ByteArrayOutputStream(), "description")),
+                emptyObject(),
+                fromValue(true));
     }
 
     @Test(expectedExceptions = OperationFailedException.class)

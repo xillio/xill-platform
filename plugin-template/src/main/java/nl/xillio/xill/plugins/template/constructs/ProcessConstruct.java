@@ -22,6 +22,7 @@ import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.template.data.EngineMetadata;
 import nl.xillio.xill.plugins.template.services.ConfigurationFactory;
@@ -71,11 +72,20 @@ public class ProcessConstruct extends Construct {
         return NULL;
     }
 
-    private Configuration getConfiguration(MetaExpression engine, ConstructContext context) {
-        if (engine.isNull()) {
+    private Configuration getConfiguration(MetaExpression engineExpression, ConstructContext context) {
+        if (engineExpression.isNull()) {
             return configurationFactory.buildDefaultConfiguration(context);
         } else {
-            return engine.getMeta(EngineMetadata.class).getConfiguration();
+            EngineMetadata engine = engineExpression.getMeta(EngineMetadata.class);
+            if (engine == null) {
+                throw new InvalidUserInputException(
+                        "The given engine variable does not hold a valid engine",
+                        engineExpression.getStringValue(),
+                        "An ATOMIC containing an engine from the getEngine() construct, or null",
+                        "var engine = Template.getEngine(options)");
+            }
+
+            return engine.getConfiguration();
         }
     }
 
