@@ -60,6 +60,17 @@
         <maven>3.3.9</maven>
     </prerequisites>
 
+    <distributionManagement>
+        <repository>
+            <id>xillio-releases</id>
+            <url>https://maven.xillio.com/artifactory/oss-libs-release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>xillio-snapshots</id>
+            <url>https://maven.xillio.com/artifactory/oss-libs-snapshot/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <properties>
         <sonar.jacoco.itReportPath>${project.build.directory}/jacoco-it.exec</sonar.jacoco.itReportPath>
         <sonar.jacoco.reportPath>${project.build.directory}/jacoco-ut.exec</sonar.jacoco.reportPath>

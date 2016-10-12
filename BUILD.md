@@ -6,18 +6,14 @@ platform.
 
 Launching Xill IDE
 ------------------
-To launch Xill IDE you:
-
-1. Run `mvn package`
-2. Start [nl.xillio.contenttools.Application] from `xill-ide-launcher`
+To launch Xill IDE you run `mvn` in the xill-ide module.
 
 In [IntelliJ] you can launch [nl.xillio.contenttools.Application] by
 [creating a run configuration] with the following properties:
 
     Main Class: nl.xillio.contenttools.Application
     VM Options: -Dfile.encoding=utf-8
-    Working Directory: $MODULE_DIR$
-    Use classpath of module: xill-ide-launcher
+    Use classpath of module: xill-ide
 
 Building Xill IDE
 -----------------
