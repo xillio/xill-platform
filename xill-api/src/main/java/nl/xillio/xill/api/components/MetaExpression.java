@@ -46,9 +46,9 @@ public abstract class MetaExpression implements Expression, Processable {
     private Throwable closedLocation;
 
     @Inject
-    private static JsonParser jsonParser;
+    static JsonParser jsonParser;
     @Inject
-    private static Injector injector;
+    static Injector injector;
 
     private MetadataExpressionPool<MetadataExpression> metadataPool;
     private Object value;

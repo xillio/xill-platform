@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.api.components;
 
+import nl.xillio.xill.services.json.JacksonParser;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -31,10 +32,14 @@ import static org.testng.Assert.assertTrue;
  */
 public class ListExpressionTest {
 
-    ListExpression expression;
-    List<MetaExpression> metas;
+    private ListExpression expression;
+    private List<MetaExpression> metas;
+
+    private ListExpression empty;
 
     public ListExpressionTest(){
+        MetaExpression.jsonParser = new JacksonParser(false);
+
         metas = new ArrayList<>();
         metas.add(new AtomicExpression(new BooleanBehavior(true)));
         metas.add(new AtomicExpression(new NumberBehavior(1)));
@@ -42,21 +47,31 @@ public class ListExpressionTest {
         single.add(new AtomicExpression(new StringBehavior("test")));
         metas.add(new ListExpression(single));
         expression = new ListExpression(metas);
+        empty = new ListExpression(new ArrayList<>());
     }
 
     @Test
     public void testGetChildren() throws Exception {
         assertTrue(expression.getChildren().size() == 3);
+        assertTrue(empty.getChildren().isEmpty());
     }
 
     @Test
     public void testGetBooleanValue() {
         assertTrue(expression.getBooleanValue());
+        assertTrue(empty.getBooleanValue());
     }
 
     @Test
-    public void testGetNumberValue() throws Exception {
+    public void testGetNumberValue() {
         assertEquals(expression.getNumberValue(), Double.NaN);
+        assertEquals(empty.getNumberValue(), Double.NaN);
+    }
+
+    @Test
+    public void testGetStringValue() {
+        assertEquals(expression.getStringValue(), "[true,1,[\"test\"]]");
+        assertEquals(empty.getStringValue(), "[]");
     }
 
     @Test
