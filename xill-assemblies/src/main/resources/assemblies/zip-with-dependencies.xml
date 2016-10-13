@@ -31,6 +31,16 @@
     </dependencySets>
     <fileSets>
         <fileSet>
+            <directory>${project.basedir}</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>LICENSE*</include>
+                <include>NOTICE*</include>
+                <include>CHANGELOG*</include>
+                <include>CONTRIBUTING*</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>src/main/deploy</directory>
             <outputDirectory/>
         </fileSet>
