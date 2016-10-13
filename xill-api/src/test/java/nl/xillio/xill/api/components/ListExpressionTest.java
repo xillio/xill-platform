@@ -51,7 +51,7 @@ public class ListExpressionTest {
     }
 
     @Test
-    public void testGetChildren() throws Exception {
+    public void testGetChildren() {
         assertTrue(expression.getChildren().size() == 3);
         assertTrue(empty.getChildren().isEmpty());
     }
@@ -75,7 +75,7 @@ public class ListExpressionTest {
     }
 
     @Test
-    public void testCopy() throws Exception {
+    public void testCopy() {
         ListExpression copy = expression.copy();
 
         assertEquals(copy.getSize(), expression.getSize());
@@ -88,14 +88,14 @@ public class ListExpressionTest {
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
-    public void testCopyClosed() throws Exception{
+    public void testCopyClosed() {
         ListExpression copy = expression.copy();
         copy.close();
         copy.copy();
     }
 
     @Test
-    public void testGetSize() throws Exception {
+    public void testGetSize() {
         assertEquals(expression.getSize(), 3);
     }
 
