@@ -14,14 +14,32 @@
  * limitations under the License.
  */
 /*
-* Specification: Calling String.matches with a regex escaped by String.regexEscape on the unescaped string MUST match.
-* Input: "^regex$"
+* Specification: Calling String.matches with an escaped regular expression by String.regexEscape on the unescaped string MUST match.
+* Input: the regexList containing characters used in regular expressions
 * Expected: String.matches returns true
 */
 
 use Assert, String;
 
-var regex = "^regex$";
+var regexList = [
+            "\\",
+            "\\ ",
+            "\\_",
+            "\\[",
+            "\\\\\\(",
+            "([a-zA-Z0-9_)",
+            "!@#$%^&*()",
+            "\\\\\\\\\\",
+            "",
+            "\\A\\B\\C\\D\\E\\F\\G\\H\\I\\J\\K\\L\\M\\N\\J\\Q\\R\\S\\T\\U\\V\\W\\X\\Y\\Z",
+            "",
+            "&a+a*a{1,2}^",
+            "\n\r\t\\0",
+            "(?:[az])(?>[az])(?=[az])(?![az])",
+            "$'$`"
+            ];
 
-var escaped = String.regexEscape(regex);
-Assert.isTrue(String.matches(regex, escaped));
+foreach(regex in regexList){
+    var escaped = String.regexEscape(regex);
+    Assert.isTrue(String.matches(regex, escaped),"'" :: regex :: "' does not match '" :: escaped :: "'");
+}
