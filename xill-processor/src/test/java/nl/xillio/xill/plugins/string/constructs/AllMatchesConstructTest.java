@@ -16,10 +16,9 @@
 package nl.xillio.xill.plugins.string.constructs;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.ExpressionBuilderHelper;
+import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
-import nl.xillio.xill.plugins.string.exceptions.FailedToGetMatcherException;
 import nl.xillio.xill.plugins.string.services.string.RegexService;
 import nl.xillio.xill.services.json.JacksonParser;
 import nl.xillio.xill.services.json.JsonException;
@@ -42,12 +41,11 @@ public class AllMatchesConstructTest extends TestUtils {
     /**
      * Test the process method under normal circumstances.
      *
-     * @throws FailedToGetMatcherException
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
      */
     @Test
-    public void processNormalUsage() throws IllegalArgumentException, FailedToGetMatcherException, JsonException {
+    public void processNormalUsage() throws IllegalArgumentException, JsonException {
         // Mock
         String text = "abc def ghi jkl. Mno";
         MetaExpression value = mockExpression(ATOMIC);
@@ -81,12 +79,11 @@ public class AllMatchesConstructTest extends TestUtils {
     /**
      * Test the process method under normal circumstances.
      *
-     * @throws FailedToGetMatcherException
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
      */
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Invalid pattern: .*")
-    public void processInvalidPattern() throws IllegalArgumentException, FailedToGetMatcherException {
+    public void processInvalidPattern() throws IllegalArgumentException {
         // Mock
         String text = "abc def ghi jkl. Mno";
         MetaExpression value = mockExpression(ATOMIC);
@@ -104,7 +101,7 @@ public class AllMatchesConstructTest extends TestUtils {
         when(regexService.getMatcher(regexValue, text, timeoutValue)).thenThrow(new PatternSyntaxException(regexValue, text, timeoutValue));
 
         AllMatchesConstruct construct = new AllMatchesConstruct(regexService);
-        //Run
+        // Run
         process(construct, value, regex, timeout);
 
         // Verify
@@ -115,12 +112,11 @@ public class AllMatchesConstructTest extends TestUtils {
     /**
      * Test the process method under normal circumstances.
      *
-     * @throws FailedToGetMatcherException
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
      */
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Illegal argument: .*")
-    public void processIllegalArgument() throws IllegalArgumentException, FailedToGetMatcherException {
+    public void processIllegalArgument() throws IllegalArgumentException {
         // Mock
         String text = "abc def ghi jkl. Mno";
         MetaExpression value = mockExpression(ATOMIC);
@@ -129,7 +125,7 @@ public class AllMatchesConstructTest extends TestUtils {
         String regexValue = "\\w+";
         MetaExpression regex = mockExpression(ATOMIC);
         when(regex.getStringValue()).thenReturn(regexValue);
-        
+
         MetaExpression timeout = mockExpression(ATOMIC);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
@@ -138,7 +134,7 @@ public class AllMatchesConstructTest extends TestUtils {
         when(regexService.getMatcher(regexValue, text, timeoutValue)).thenThrow(new IllegalArgumentException());
 
         AllMatchesConstruct construct = new AllMatchesConstruct(regexService);
-        //Run
+        // Run
         process(construct, value, regex, timeout);
 
         // Verify

@@ -19,7 +19,6 @@ import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
-import nl.xillio.xill.plugins.string.exceptions.FailedToGetMatcherException;
 import nl.xillio.xill.plugins.string.services.string.RegexService;
 import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
 import org.testng.Assert;
@@ -36,16 +35,15 @@ import static org.mockito.Mockito.*;
  */
 public class ReplaceConstructTest extends TestUtils{
     private int timeoutValue = 10000;
-    
+
     /**
      * Test the process method when we use regex and want to replace all.
      *
-     * @throws FailedToGetMatcherException
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
      */
     @Test
-    public void processUseRegexReplaceAll() throws IllegalArgumentException, FailedToGetMatcherException {
+    public void processUseRegexReplaceAll() throws IllegalArgumentException {
         // Mock
         String textValue = "ReplaceR";
         MetaExpression text = mockExpression(ATOMIC);
@@ -68,6 +66,7 @@ public class ReplaceConstructTest extends TestUtils{
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
         
         MetaExpression timeout = mockExpression(ATOMIC);
+
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         String returnValue = "OeplaceO";
@@ -94,12 +93,11 @@ public class ReplaceConstructTest extends TestUtils{
     /**
      * Test the process method when we use regex and want to replace the first
      *
-     * @throws FailedToGetMatcherException
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
      */
     @Test
-    public void processUseRegexReplaceFirst() throws IllegalArgumentException, FailedToGetMatcherException {
+    public void processUseRegexReplaceFirst() throws IllegalArgumentException {
         // Mock
         String textValue = "ReplaceR";
         MetaExpression text = mockExpression(ATOMIC);
@@ -122,6 +120,7 @@ public class ReplaceConstructTest extends TestUtils{
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
         
         MetaExpression timeout = mockExpression(ATOMIC);
+
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         String returnValue = "OeplaceO";
@@ -148,12 +147,11 @@ public class ReplaceConstructTest extends TestUtils{
     /**
      * Test the process method when we don't use regex and want to replace all.
      *
-     * @throws FailedToGetMatcherException
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
      */
     @Test
-    public void processDontUseRegexReplaceAll() throws IllegalArgumentException, FailedToGetMatcherException {
+    public void processDontUseRegexReplaceAll() throws IllegalArgumentException {
         // Mock
         String textValue = "ReplaceR";
         MetaExpression text = mockExpression(ATOMIC);
@@ -176,6 +174,7 @@ public class ReplaceConstructTest extends TestUtils{
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
         
         MetaExpression timeout = mockExpression(ATOMIC);
+
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         String returnValue = "OeplaceO";
@@ -202,12 +201,11 @@ public class ReplaceConstructTest extends TestUtils{
     /**
      * Test the process method when we don't use regex and want to replace only the first.
      *
-     * @throws FailedToGetMatcherException
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
      */
     @Test
-    public void processDontUseRegexReplaceFirst() throws IllegalArgumentException, FailedToGetMatcherException {
+    public void processDontUseRegexReplaceFirst() throws IllegalArgumentException {
         // Mock
         String textValue = "ReplaceR";
         MetaExpression text = mockExpression(ATOMIC);
@@ -230,6 +228,7 @@ public class ReplaceConstructTest extends TestUtils{
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
         
         MetaExpression timeout = mockExpression(ATOMIC);
+
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         String returnValue = "OeplaceO";
@@ -256,12 +255,11 @@ public class ReplaceConstructTest extends TestUtils{
     /**
      * Test the process method when getMatcher throws a PatternSyntax
      *
-     * @throws FailedToGetMatcherException
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
      */
     @Test(expectedExceptions = InvalidUserInputException.class, expectedExceptionsMessageRegExp = "Invalid pattern in regex\\(\\).*")
-    public void processInvalidException() throws IllegalArgumentException, FailedToGetMatcherException {
+    public void processInvalidException() throws IllegalArgumentException {
         // Mock
         String textValue = "ReplaceR";
         MetaExpression text = mockExpression(ATOMIC);
@@ -284,6 +282,7 @@ public class ReplaceConstructTest extends TestUtils{
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
         
         MetaExpression timeout = mockExpression(ATOMIC);
+
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         Exception returnValue = new PatternSyntaxException(needleValue, textValue, timeoutValue);
@@ -307,12 +306,11 @@ public class ReplaceConstructTest extends TestUtils{
     /**
      * Test the method when getMatcher returns an illegalArgumentException.
      *
-     * @throws FailedToGetMatcherException
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
      */
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Error while executing the regex")
-    public void processIllegalArgumentException() throws IllegalArgumentException, FailedToGetMatcherException {
+    public void processIllegalArgumentException() throws IllegalArgumentException {
         // Mock
         String textValue = "ReplaceR";
         MetaExpression text = mockExpression(ATOMIC);

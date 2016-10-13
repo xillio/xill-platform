@@ -19,7 +19,6 @@ import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
-import nl.xillio.xill.plugins.string.exceptions.FailedToGetMatcherException;
 import nl.xillio.xill.plugins.string.services.string.RegexService;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -38,12 +37,11 @@ public class MatchesConstructTest extends TestUtils{
     /**
      * Test the process method with an ATOMIC value given.
      *
-     * @throws FailedToGetMatcherException
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
      */
     @Test
-    public void processStandardInput() throws IllegalArgumentException, FailedToGetMatcherException {
+    public void processStandardInput() throws IllegalArgumentException {
         // Mock
         String valueValue = "I need a doctor";
         MetaExpression value = mockExpression(ATOMIC);
@@ -75,12 +73,11 @@ public class MatchesConstructTest extends TestUtils{
     /**
      * Test the process method for when it throws an error.
      *
-     * @throws FailedToGetMatcherException
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
      */
     @Test(expectedExceptions = InvalidUserInputException.class, expectedExceptionsMessageRegExp = "Invalid pattern in regex\\(\\)..*")
-    public void processInvalidPattern() throws IllegalArgumentException, FailedToGetMatcherException {
+    public void processInvalidPattern() throws IllegalArgumentException {
         // Mock
         String valueValue = "I need a doctor";
         MetaExpression value = mockExpression(ATOMIC);
@@ -109,12 +106,11 @@ public class MatchesConstructTest extends TestUtils{
     /**
      * Test the process method for when it throws an error.
      *
-     * @throws FailedToGetMatcherException
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
      */
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Illegal argument given.")
-    public void processIllegalArgument() throws IllegalArgumentException, FailedToGetMatcherException {
+    public void processIllegalArgument() throws IllegalArgumentException {
         // Mock
         String valueValue = "I need a doctor";
         MetaExpression value = mockExpression(ATOMIC);
