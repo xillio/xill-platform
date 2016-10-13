@@ -14,12 +14,13 @@ All notable changes to this project will be documented in this file.
 ### Fix
 * On server threads are not closed when tasks finishes [XSVR-139]
 * Renaming of robot does not work properly on Linux [CTC-1787]
-* Web.xPath result in variable preview is incorrect [CTC-1802]
+* `Web.xPath()` result in variable preview is incorrect [CTC-1802]
 * Incorrect error handling in function parameter [CTC-1811]
 * Excel plugin has an integer limit [CTC-1590]
 * Under Linux reassigning key bindings to Ctrl + letter does not work [CTC-1758]
 * Exiftool plugin does not check if process was started [CTC-1587]
-* Sring.regexEscape() can result in invalid regular expressions [CTC-1807]
+* `Sring.regexEscape()` can result in invalid regular expressions [CTC-1807]
+* Calling `Excel.setCellValue()` on a formula cell only sets cached value [CTC-1814]
 
 ## [3.4.0] - 2016-10-07
 
