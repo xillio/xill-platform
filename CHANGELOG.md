@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 * Warn users about invalid asset names [CTC-1798]
 * Support logging on server by adding logging handler that exposes all logging events and exceptions [XSVR-50]
 
+### Change
+* Make `System.print` automatically pretty print LISTs and OBJECTs [CTC-1675]
+
 ### Fix
 * On server threads are not closed when tasks finishes [XSVR-139]
 * Renaming of robot does not work properly on Linux [CTC-1787]
