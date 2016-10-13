@@ -22,7 +22,6 @@ import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
-import nl.xillio.xill.plugins.string.exceptions.FailedToGetMatcherException;
 import nl.xillio.xill.plugins.string.services.string.RegexService;
 
 import java.util.ArrayList;
@@ -70,7 +69,7 @@ public class AllMatchesConstruct extends Construct {
             throw new InvalidUserInputException("Invalid pattern: " + e.getMessage(), regex, "A valid regular expression.", "use String;\n" +
                     "var s = \"abc def ghi jkl. Mno\";\n" +
                     "String.allMatches(s, \"\\\\w+\");", e);
-        } catch (IllegalArgumentException | FailedToGetMatcherException e) {
+        } catch (IllegalArgumentException e) {
             throw new InvalidUserInputException("Illegal argument: " + e.getMessage(), text, "A valid text value.", "use String;\n" +
                     "var s = \"abc def ghi jkl. Mno\";\n" +
                     "String.allMatches(s, \"\\\\w+\");", e);

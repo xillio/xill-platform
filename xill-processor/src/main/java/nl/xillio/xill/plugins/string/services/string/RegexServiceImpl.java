@@ -20,7 +20,6 @@ import com.google.inject.Singleton;
 import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.string.constructs.RegexConstruct;
-import nl.xillio.xill.plugins.string.exceptions.FailedToGetMatcherException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +51,7 @@ public class RegexServiceImpl implements RegexService {
 
 
     @Override
-    public Matcher getMatcher(final String regex, final String value, int timeout) throws FailedToGetMatcherException, IllegalArgumentException {
+    public Matcher getMatcher(final String regex, final String value, int timeout) throws IllegalArgumentException {
         long targetTime;
 
         if (timeout < 0) {
