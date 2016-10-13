@@ -38,8 +38,6 @@ public class ListExpressionTest {
     private ListExpression empty;
 
     public ListExpressionTest(){
-        MetaExpression.jsonParser = new JacksonParser(false);
-
         metas = new ArrayList<>();
         metas.add(new AtomicExpression(new BooleanBehavior(true)));
         metas.add(new AtomicExpression(new NumberBehavior(1)));
@@ -66,12 +64,6 @@ public class ListExpressionTest {
     public void testGetNumberValue() {
         assertEquals(expression.getNumberValue(), Double.NaN);
         assertEquals(empty.getNumberValue(), Double.NaN);
-    }
-
-    @Test
-    public void testGetStringValue() {
-        assertEquals(expression.getStringValue(), "[true,1,[\"test\"]]");
-        assertEquals(empty.getStringValue(), "[]");
     }
 
     @Test

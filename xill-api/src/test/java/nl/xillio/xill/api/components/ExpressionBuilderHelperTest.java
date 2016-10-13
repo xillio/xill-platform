@@ -13,17 +13,6 @@ import static org.testng.Assert.assertTrue;
  * @author Geert Konijnendijk
  */
 public class ExpressionBuilderHelperTest {
-
-    private ExpressionBuilderHelper expressionBuilderHelper;
-
-    /**
-     * Create a new instance of {@link ExpressionBuilderHelper} before each test
-     */
-    @BeforeMethod
-    public void createExpressionBuilderHelper() {
-        expressionBuilderHelper = new ExpressionBuilderHelper();
-    }
-
     /**
      * Test {@link ExpressionBuilderHelper#TRUE}
      */

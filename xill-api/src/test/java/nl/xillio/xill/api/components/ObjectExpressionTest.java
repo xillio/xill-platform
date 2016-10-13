@@ -38,8 +38,6 @@ public class ObjectExpressionTest {
 
     // Fill objectExpression with interesting content
     public ObjectExpressionTest(){
-        MetaExpression.jsonParser = new JacksonParser(false);
-
         value = new LinkedHashMap<>();
         value.put("expr1", new AtomicExpression(true));
         value.put("expr2", new AtomicExpression(2));
@@ -95,12 +93,6 @@ public class ObjectExpressionTest {
     public void testGetBooleanValue() {
         assertTrue(objectExpression.getBooleanValue());
         assertTrue(empty.getBooleanValue());
-    }
-
-    @Test
-    public void testGetStringValue() {
-        assertEquals(objectExpression.getStringValue(), "{\"expr1\":true,\"expr2\":2,\"expr3\":\"string\",\"expr4\":[false,-4,\"string2\"],\"expr5\":{\"sub1\":true,\"sub2\":\"string3\"}}");
-        assertEquals(empty.getStringValue(), "{}");
     }
 
     @Test
