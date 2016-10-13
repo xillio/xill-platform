@@ -24,8 +24,7 @@ do {
     Assert.isFalse(noError);
 }
 fail (error) {
-    var bla = String.contains(error.message, "== Actual Input ==\n" :: wrongArgument);
-    Assert.isTrue(bla);
+    Assert.isTrue(String.contains(error.message, "== Actual Input ==\n" :: wrongArgument));
 }
 
 do {
