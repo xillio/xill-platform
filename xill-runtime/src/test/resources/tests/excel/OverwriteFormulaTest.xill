@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.plugins.string.exceptions;
-
-/**
- * <p>An exception to throw when we fail to create a matcher. </p>
- * <p>Exists in order to force a try-catch</p>
- *
- * @author Ivor
+/*
+ * Specification: Setting a cell that contains a formula to something that is not a formula MUST change the type of that cell
+ * Input: None
+ * Expected: Reading a formula cell after a number has been written to it should result in a number
  */
-public class FailedToGetMatcherException extends Exception {
-    /**
-     *
-     */
-    private static final long serialVersionUID = 6749541692981981712L;
 
+use Assert, Excel;
 
-}
+var wb = Excel.createWorkbook("formulaWorkbook");
+var sheet = Excel.createSheet(wb, "formula");
+Excel.setCellFormula(sheet, 1, 1, "1+1");
+Excel.setCellValue(sheet, 1, 1, 1);
+
+var result = Excel.getCell(sheet, 1, 1);
+
+Assert.equal(result, 1, "The cell contents do not match the last set contents");
