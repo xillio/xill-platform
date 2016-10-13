@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 * Incorrect error handling in function parameter [CTC-1811]
 * Excel plugin has an integer limit [CTC-1590]
 * Under Linux reassigning key bindings to Ctrl + letter does not work [CTC-1758]
+* Exiftool plugin does not check if process was started [CTC-1587]
 
 ## [3.4.0] - 2016-10-07
 
