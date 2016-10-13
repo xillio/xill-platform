@@ -27,13 +27,14 @@
     <parent>
         <groupId>nl.xillio.xill</groupId>
         <artifactId>xill-parent</artifactId>
-        <version>3.4.0-SNAPSHOT</version>
+        <version>3.5.0-SNAPSHOT</version>
         <relativePath>../xill-parent</relativePath>
     </parent>
 
     <artifactId>xill-ide-launcher</artifactId>
     <properties>
         <mainClass>nl.xillio.contenttools.Application</mainClass>
+        <app.name>Xill IDE</app.name>
     </properties>
 
     <dependencies>
@@ -62,26 +63,8 @@
 
     <build>
         <defaultGoal>jfx:run</defaultGoal>
+        <finalName>Xill IDE-${project.version}</finalName>
         <plugins>
-            <plugin>
-                <groupId>com.zenjava</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>
-                <version>8.1.4</version>
-                <configuration>
-                    <mainClass>${mainClass}</mainClass>
-                    <appName>Xill IDE</appName>
-                    <additionalAppResources>${project.basedir}/plugins</additionalAppResources>
-                    <jvmArgs>
-                        <jvmArg>-XX:+UseG1GC</jvmArg>
-                        <jvmArg>-XX:NewRatio=3</jvmArg>
-                        <jvmArg>-Xmx1g</jvmArg>
-                        <jvmArg>-Xms1g</jvmArg>
-                    </jvmArgs>
-                    <jvmProperties>
-                        <file.encoding>UTF-8</file.encoding>
-                    </jvmProperties>
-                </configuration>
-            </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <configuration>
@@ -94,20 +77,63 @@
             </plugin>
         </plugins>
     </build>
+
+
     <profiles>
         <profile>
-            <id>build-native</id>
+            <id>release</id>
+            <distributionManagement>
+                <repository>
+                    <id>xillio-releases</id>
+                    <url>https://maven.xillio.com/artifactory/binary-releases</url>
+                </repository>
+            </distributionManagement>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>com.zenjava</groupId>
                         <artifactId>javafx-maven-plugin</artifactId>
+                        <version>8.1.4</version>
+                        <configuration>
+                            <mainClass>${mainClass}</mainClass>
+                            <appName>Xill IDE</appName>
+                            <additionalAppResources>${project.basedir}/plugins</additionalAppResources>
+                            <jvmArgs>
+                                <jvmArg>-XX:+UseG1GC</jvmArg>
+                                <jvmArg>-XX:NewRatio=3</jvmArg>
+                                <jvmArg>-Xmx1g</jvmArg>
+                                <jvmArg>-Xms1g</jvmArg>
+                            </jvmArgs>
+                            <jvmProperties>
+                                <file.encoding>UTF-8</file.encoding>
+                            </jvmProperties>
+                            <nativeReleaseVersion>${xill.release.version}</nativeReleaseVersion>
+                        </configuration>
                         <executions>
                             <execution>
                                 <goals>
                                     <goal>native</goal>
                                 </goals>
                                 <phase>package</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>2.6</version>
+                        <executions>
+                            <execution>
+                                <id>build-dist-zip</id>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <phase>install</phase>
+                                <configuration>
+                                    <descriptors>
+                                        <descriptor>${project.basedir}/src/assembly/dist-zip-${os.classifier}.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

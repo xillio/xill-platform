@@ -16,8 +16,8 @@
 package nl.xillio.exiftool.process;
 
 
+import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * This is the linux implementation of the {@link ExifToolProcess}.
@@ -28,23 +28,41 @@ public class UnixExifToolProcess extends AbstractExifToolProcess {
 
     @Override
     protected Process buildProcess(ProcessBuilder processBuilder) throws IOException {
+        // Check perl_bin existence
+        String perlBin = System.getenv("perl_bin");
+        if (perlBin != null && !exist(perlBin, true)) {
+            throw new IOException("Please set correct perl_bin environmental variable.");
+        }
+
+        // Check exiftool_bin existence
         String exifBin = System.getenv("exiftool_bin");
-        if (exifBin==null) {
+        if (exifBin == null) {
             exifBin = searchExiftoolOnPath();
         }
 
-        if (exifBin == null) {
+        if (exifBin == null || !exist(exifBin, perlBin == null)) { // exifBin must be binary if perlBin does not exist, otherwise exifBin does not need to have an executable flag
             throw new IOException("Please set your exiftool_bin environmental variable to the path to your exiftool installation.");
         }
 
+        // Set up processBuilder
         processBuilder.command(exifBin, "-stay_open", "True", "-@", "-");
 
-        String perlBin = System.getenv("perl_bin");
-        if (perlBin!=null) {
+        if (perlBin != null) {
             processBuilder.command().add(0, perlBin);
         }
 
         return processBuilder.start();
+    }
+
+    private boolean exist(final String fileName, boolean binary) {
+        final File file = new File(fileName);
+        if (!file.isFile()) {
+            return false;
+        }
+        if (binary && !file.canExecute()) {
+            return false;
+        }
+        return true;
     }
 
     @Override
