@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 * Incorrect error handling in function parameter [CTC-1811]
 * Excel plugin has an integer limit [CTC-1590]
 * Under Linux reassigning key bindings to Ctrl + letter does not work [CTC-1758]
+* Make System.print automatically pretty print [CTC-1675]
 
 ## [3.4.0] - 2016-10-07
 
