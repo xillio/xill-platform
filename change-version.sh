@@ -15,15 +15,13 @@
 # limitations under the License.
 #
 
-sed -i "s/<version>.*<\/version><!-- Xill Platform Version -->/<version>$1<\/version><!-- Xill Platform Version -->/" distpom.xml
-sed -i "s/<version>.*<\/version><!-- Xill Platform Version -->/<version>$1<\/version><!-- Xill Platform Version -->/" distpom-jenkins-slave-mac\ \(Astroboy\).xml
-sed -i "s/<version>.*<\/version><!-- Xill Platform Version -->/<version>$1<\/version><!-- Xill Platform Version -->/" distpom-jenkins-slave-ubuntu\ \(Twiki\).xml
-sed -i "s/<version>.*<\/version><!-- Xill Platform Version -->/<version>$1<\/version><!-- Xill Platform Version -->/" distpom-jenkins-slave-win64\ \(Johnny5\).xml
-sed -i "s/<xill.version>.*<\/xill.version>/<xill.version>$1<\/xill.version>/" xill-parent/pom.xml
+sed -i "" "s/<xill.version>.*<\/xill.version>/<xill.version>$1<\/xill.version>/" xill-parent/pom.xml
 if [ "$2" != "-jenkins" ]
 	then
 		mvn versions:set -DnewVersion=$1
+		mvn versions:commit
 		pushd xill-parent/ >> /dev/null
 		mvn versions:set -DnewVersion=$1
+		mvn versions:commit
 		popd >> /dev/null
 fi
