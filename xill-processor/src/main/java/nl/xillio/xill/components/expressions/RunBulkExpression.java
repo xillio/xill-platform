@@ -19,10 +19,7 @@ import me.biesaart.utils.Log;
 import nl.xillio.plugins.XillPlugin;
 import nl.xillio.xill.Xill;
 import nl.xillio.xill.XillProcessor;
-import nl.xillio.xill.api.Debugger;
-import nl.xillio.xill.api.NullDebugger;
-import nl.xillio.xill.api.OutputHandler;
-import nl.xillio.xill.api.StoppableDebugger;
+import nl.xillio.xill.api.*;
 import nl.xillio.xill.api.components.*;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
@@ -37,6 +34,9 @@ import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+
+import static nl.xillio.xill.api.components.ExpressionDataType.ATOMIC;
+import static nl.xillio.xill.api.components.ExpressionDataType.LIST;
 
 /**
  * This class represents calling another robot multiple times in a separate threads
@@ -104,17 +104,26 @@ public class RunBulkExpression implements Processable {
 
         @Override
         public void run() {
+            try {
+                offerItemsToQueue();
+            } catch (InterruptedException e) {
+                LOGGER.error("Interrupted while waiting for queue item", e);
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        /**
+         * Insert items into the queue while there are items and we should continue running.
+         *
+         * @throws InterruptedException When offering an item to the queue is interrupted
+         */
+        private void offerItemsToQueue() throws InterruptedException {
             while (source.hasNext() && !control.shouldStop()) {
-                try {
-                    MetaExpression item = source.next();
-                    while (!queue.offer(item, 100, TimeUnit.MILLISECONDS)) {
-                        if (control.shouldStop()) {
-                            return;
-                        }
+                MetaExpression item = source.next();
+                while (!queue.offer(item, 100, TimeUnit.MILLISECONDS)) {
+                    if (control.shouldStop()) {
+                        return;
                     }
-                } catch (InterruptedException e) {
-                    LOGGER.error("Interrupted while waiting for queue item", e);
-                    return;
                 }
             }
         }
@@ -132,13 +141,13 @@ public class RunBulkExpression implements Processable {
 
         @Override
         public void run() {
-            while (!control.shouldStop()) {
-                try {
+            try {
+                while (!control.shouldStop()) {
                     processQueueItem(queue.poll(100, TimeUnit.MILLISECONDS));
-                } catch (InterruptedException e) {
-                    LOGGER.error("Interrupted while processing queue item", e);
-                    return;
                 }
+            } catch (InterruptedException e) {
+                LOGGER.error("Interrupted while processing queue item", e);
+                Thread.currentThread().interrupt();
             }
         }
 
@@ -162,33 +171,7 @@ public class RunBulkExpression implements Processable {
         private boolean processRobot(final Debugger debugger, final File calledRobotFile, final MetaExpression arg) {
             // Process the robot
             try {
-                StoppableDebugger childDebugger = (StoppableDebugger) debugger.createChild();
-                childDebugger.setStopOnError(stopOnError);
-
-                XillProcessor processor = new XillProcessor(robotID.getProjectPath(), calledRobotFile, plugins, childDebugger);
-                processor.setOutputHandler(outputHandler);
-                processor.compileAsSubRobot(robotID);
-
-                try {
-                    Robot robot = processor.getRobot();
-                    robot.setArgument(arg);
-
-                    processor.getRobot().process(childDebugger);
-                    // Ignoring the returned value from the bot as it won't be processed anyway
-
-                    return !(stopOnError && childDebugger.hasErrorOccurred());
-
-                } catch (Exception e) {
-                    if (e instanceof RobotRuntimeException) {
-                        int line = childDebugger.getStackTrace().get(childDebugger.getStackDepth()).getLineNumber();
-                        childDebugger.endInstruction(null, null);
-                        throw new RobotRuntimeException("Caused by '" + calledRobotFile.getName() + "' (line " + line + ")", e);
-                    }
-                    throw new RobotRuntimeException("An exception occurred while evaluating " + calledRobotFile.getAbsolutePath(), e);
-                } finally {
-                    debugger.removeChild(childDebugger);
-                }
-
+                return runRobot(debugger, calledRobotFile, arg);
             } catch (IOException e) {
                 throw new RobotRuntimeException("Error while calling robot: " + e.getMessage(), e);
             } catch (XillParsingException e) {
@@ -198,6 +181,43 @@ public class RunBulkExpression implements Processable {
             }
 
             return false; // Something went wrong
+        }
+
+        /**
+         * Run a single robot
+         * @param debugger The debugger to use as parent debugger
+         * @param calledRobotFile The file to process
+         * @param arg The argument input to the robot
+         * @return True if the robot was successful, false otherwise
+         * @throws IOException When reading the robot fails
+         * @throws XillParsingException When a compile error occurs
+         */
+        private boolean runRobot(Debugger debugger, File calledRobotFile, MetaExpression arg) throws IOException, XillParsingException {
+            StoppableDebugger childDebugger = (StoppableDebugger) debugger.createChild();
+            childDebugger.setStopOnError(stopOnError);
+
+            XillProcessor processor = new XillProcessor(robotID.getProjectPath(), calledRobotFile, plugins, childDebugger);
+            processor.setOutputHandler(outputHandler);
+            processor.compileAsSubRobot(robotID);
+
+            try {
+                Robot robot = processor.getRobot();
+                robot.setArgument(arg);
+
+                processor.getRobot().process(childDebugger);
+                // Ignoring the returned value from the bot as it won't be processed anyway
+
+                return !(stopOnError && childDebugger.hasErrorOccurred());
+
+            } catch (RobotRuntimeException e) {
+                int line = childDebugger.getStackTrace().get(childDebugger.getStackDepth()).getLineNumber();
+                childDebugger.endInstruction(null, null);
+                throw new RobotRuntimeException("Caused by '" + calledRobotFile.getName() + "' (line " + line + ")", e);
+            } catch (Exception e) {
+                throw new RobotRuntimeException("An exception occurred while evaluating " + calledRobotFile.getAbsolutePath(), e);
+            } finally {
+                debugger.removeChild(childDebugger);
+            }
         }
     }
 
@@ -229,8 +249,8 @@ public class RunBulkExpression implements Processable {
             throw new RobotRuntimeException("Called robot " + otherRobot.getAbsolutePath() + " does not exist.");
         }
 
-        if (!otherRobot.getName().endsWith(Xill.FILE_EXTENSION)) {
-            throw new RobotRuntimeException("Can only call robots with the ." + Xill.FILE_EXTENSION + " extension.");
+        if (!otherRobot.getName().endsWith(XillEnvironment.ROBOT_EXTENSION)) {
+            throw new RobotRuntimeException("Can only call robots with the ." + XillEnvironment.ROBOT_EXTENSION + " extension.");
         }
 
         parseOptions();
@@ -244,21 +264,21 @@ public class RunBulkExpression implements Processable {
             return null;
         }
 
-        switch (result.getType()) {
-            case ATOMIC:
-                if (!result.hasMeta(MetaExpressionIterator.class)) {
-                    List<MetaExpression> list = new LinkedList<>();
-                    list.add(result);
-                    return list.iterator();
-                } else {
-                    return result.getMeta(MetaExpressionIterator.class);
-                }
-            case LIST: // Iterate over list
-                List<MetaExpression> elements = result.getValue();
-                return elements.iterator();
+        ExpressionDataType type = result.getType();
+        if (type == ATOMIC) {
+            if (!result.hasMeta(MetaExpressionIterator.class)) {
+                List<MetaExpression> list = new LinkedList<>();
+                list.add(result);
+                return list.iterator();
+            } else {
+                return result.getMeta(MetaExpressionIterator.class);
+            }
+        } else if (type == LIST) { // Iterate over list
+            List<MetaExpression> elements = result.getValue();
+            return elements.iterator();
+        } else {
+            throw new RobotRuntimeException("Invalid argument!");
         }
-
-        throw new RobotRuntimeException("Invalid argument!");
     }
 
     /**
@@ -290,6 +310,33 @@ public class RunBulkExpression implements Processable {
         Thread master = new MasterThread(source, queue, control);
         master.start();
 
+        // Start workers
+        List<Thread> workingThreads = spawnWorkers(queue, control);
+
+        // Wait for master to complete
+        try {
+            master.join();
+        } catch (InterruptedException e) {
+            LOGGER.error("Interrupted while waiting for join", e);
+            Thread.currentThread().interrupt();
+        }
+
+        waitUntilDone(queue, control);
+
+        control.signalStop();
+
+        joinThreads(workingThreads);
+
+        return control.getRunCount();
+    }
+
+    /**
+     * Create {@link #maxThreadsVal} worker threads and start them
+     * @param queue The queue to pass to the workers
+     * @param control The control to pass to the workers
+     * @return The worker threads
+     */
+    private List<Thread> spawnWorkers(BlockingQueue<MetaExpression> queue, Control control) {
         // Start working threads
         List<Thread> workingThreads = new LinkedList<>();
         for (int i = 0; i < maxThreadsVal; i++) {
@@ -297,35 +344,40 @@ public class RunBulkExpression implements Processable {
             worker.start();
             workingThreads.add(worker);
         }
+        return workingThreads;
+    }
 
-        // Wait for master to complete
-        try {
-            master.join();
-        } catch (InterruptedException e) {
-            LOGGER.error("Interrupted while waiting for join", e);
-        }
-
+    /**
+     * Wait until either the queue is empty or we should stop due to some other reason signalled by {@link Control}
+     * @param queue The queue to wait for to become empty
+     * @param control Stop waiting when the control signals to stop
+     */
+    private void waitUntilDone(BlockingQueue<MetaExpression> queue, Control control) {
         // Wait for until entire queue is processed
         while (!control.shouldStop() && !queue.isEmpty()) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 LOGGER.error("Interrupted while sleeping", e);
+                Thread.currentThread().interrupt();
             }
         }
+    }
 
-        control.signalStop();
-
+    /**
+     * Join all threads and wait until they are joined
+     * @param workingThreads The threads to join
+     */
+    private void joinThreads(List<Thread> workingThreads) {
         // Wait for all worker threads to complete
         workingThreads.forEach(t -> {
             try {
                 t.join();
             } catch (InterruptedException e) {
                 LOGGER.error("Interrupted while waiting for join", e);
+                Thread.currentThread().interrupt();
             }
         });
-
-        return control.getRunCount();
     }
 
     @Override
