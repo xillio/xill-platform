@@ -25,8 +25,8 @@ import java.math.BigInteger;
  */
 public class MathUtils {
     private static final Logger LOGGER = Log.get();
-    private static int INT_MAX_VALUE_LENGTH = Integer.toString(Integer.MAX_VALUE).length();
-    private static int LONG_MAX_VALUE_LENGTH = Long.toString(Long.MAX_VALUE).length();
+    private static final int INT_MAX_VALUE_LENGTH = Integer.toString(Integer.MAX_VALUE).length();
+    private static final int LONG_MAX_VALUE_LENGTH = Long.toString(Long.MAX_VALUE).length();
 
     /**
      * Performs the arithmetic addition operation on two abstract numbers.
@@ -38,34 +38,7 @@ public class MathUtils {
      */
     public static Number add(Number a, Number b) {
         NumberType type = NumberType.forClass(a.getClass(), b.getClass());
-        switch (type) {
-            case INT:
-                Integer intR = addExactWithoutException(a.intValue(), b.intValue());
-                if (intR != null) {
-                    return intR;
-                }
-            case LONG:
-                Long longR = addExactWithoutException(a.longValue(), b.longValue());
-                if (longR != null) {
-                    return longR;
-                }
-            case BIG:
-                BigInteger bigA = getBig(a);
-                BigInteger bigB = getBig(b);
-                return bigA.add(bigB);
-            case DOUBLE:
-                return a.doubleValue() + b.doubleValue();
-            default:
-                throw new UnsupportedOperationException("Type " + type + " is not supported by the add operation.");
-        }
-    }
-
-    private static BigInteger getBig(Number number) {
-        if (number instanceof BigInteger) {
-            return (BigInteger) number;
-        }
-
-        return BigInteger.valueOf(number.longValue());
+        return type.add(a, b);
     }
 
     /**
@@ -78,26 +51,7 @@ public class MathUtils {
      */
     public static Number subtract(Number a, Number b) {
         NumberType type = NumberType.forClass(a.getClass(), b.getClass());
-        switch (type) {
-            case INT:
-                Integer intR = subtractExactWithoutException(a.intValue(), b.intValue());
-                if (intR != null) {
-                    return intR;
-                }
-            case LONG:
-                Long longR = subtractExactWithoutException(a.longValue(), b.longValue());
-                if (longR != null) {
-                    return longR;
-                }
-            case BIG:
-                BigInteger bigA = getBig(a);
-                BigInteger bigB = getBig(b);
-                return bigA.subtract(bigB);
-            case DOUBLE:
-                return a.doubleValue() - b.doubleValue();
-            default:
-                throw new UnsupportedOperationException("Type " + type + " is not supported by the subtract operation.");
-        }
+        return type.subtract(a, b);
     }
 
     /**
@@ -110,36 +64,7 @@ public class MathUtils {
      */
     public static Number divide(Number a, Number b) {
         NumberType type = NumberType.forClass(a.getClass(), b.getClass());
-        switch (type) {
-            case INT:
-                if (b.intValue() == 0) {
-                    if (a.intValue() == 0) {
-                        return Double.NaN;
-                    }
-
-                    return a.intValue() > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
-                }
-                int intResult = a.intValue() / b.intValue();
-                if (intResult * b.intValue() == a.intValue()) {
-                    return intResult;
-                }
-            case LONG:
-                long longResult = a.longValue() / b.longValue();
-                if (longResult * b.longValue() == a.longValue()) {
-                    return longResult;
-                }
-            case BIG:
-                BigInteger bigA = getBig(a);
-                BigInteger bigB = getBig(b);
-                BigInteger result = bigA.divide(bigB);
-                if (result.multiply(bigB).equals(bigA)) {
-                    return result;
-                }
-            case DOUBLE:
-                return a.doubleValue() / b.doubleValue();
-            default:
-                throw new UnsupportedOperationException("Type " + type + " is not supported by the divide operation.");
-        }
+        return type.divide(a, b);
     }
 
     /**
@@ -170,7 +95,7 @@ public class MathUtils {
             case DOUBLE:
                 return a.doubleValue() * b.doubleValue();
             default:
-                throw new UnsupportedOperationException("Type " + type + " is not supported by the multiply operation.");
+                throw new UnsupportedOperationException(createUnsupportedMessage(type, "multiply"));
         }
     }
 
@@ -205,7 +130,7 @@ public class MathUtils {
             case DOUBLE:
                 return a.doubleValue() % b.doubleValue();
             default:
-                throw new UnsupportedOperationException("Type " + type + " is not supported by the modulo operation.");
+                throw new UnsupportedOperationException(createUnsupportedMessage(type, "modulo"));
         }
     }
 
@@ -230,7 +155,7 @@ public class MathUtils {
             case DOUBLE:
                 return Math.pow(a.doubleValue(), b.doubleValue());
             default:
-                throw new UnsupportedOperationException("Type " + type + " is not supported by the power operation.");
+                throw new UnsupportedOperationException(createUnsupportedMessage(type, "power"));
         }
     }
 
@@ -258,8 +183,12 @@ public class MathUtils {
             case DOUBLE:
                 return Double.compare(a.doubleValue(), b.doubleValue());
             default:
-                throw new UnsupportedOperationException("Type " + type + " is not supported by the compare operation.");
+                throw new UnsupportedOperationException(createUnsupportedMessage(type, "compare"));
         }
+    }
+
+    private static String createUnsupportedMessage(NumberType type, String operation) {
+        return "Type " + type + " is not supported by the " + operation + " operation.";
     }
 
     /**
@@ -402,15 +331,155 @@ public class MathUtils {
         }
     }
 
+    private static BigInteger getBig(Number number) {
+        if (number instanceof BigInteger) {
+            return (BigInteger) number;
+        }
+
+        return BigInteger.valueOf(number.longValue());
+    }
+
     /**
      * The supported number types.
      * Note that these types should be ordered from low to high precedence.
      */
     private enum NumberType {
-        DOUBLE(Double.class, Float.class),
-        LONG(Long.class),
-        BIG(BigInteger.class),
-        INT(Integer.class, Byte.class, Short.class);
+        DOUBLE(Double.class, Float.class) {
+            @Override
+            public Number add(Number a, Number b) {
+                return a.doubleValue() + b.doubleValue();
+            }
+
+            @Override
+            public Number subtract(Number a, Number b) {
+                return a.doubleValue() - b.doubleValue();
+            }
+
+            @Override
+            public Number divide(Number a, Number b) {
+                return a.doubleValue() / b.doubleValue();
+            }
+        },
+        LONG(Long.class){
+            @Override
+            public Number add(Number a, Number b) {
+                Long longR = addExactWithoutException(a.longValue(), b.longValue());
+                if (longR != null) {
+                    return longR;
+                } else {
+                    return BIG.add(a, b);
+                }
+            }
+
+            @Override
+            public Number subtract(Number a, Number b) {
+                Long longR = subtractExactWithoutException(a.longValue(), b.longValue());
+                if (longR != null) {
+                    return longR;
+                } else {
+                    return BIG.subtract(a, b);
+                }
+            }
+
+            @Override
+            public Number divide(Number a, Number b) {
+                if (b.longValue() == 0) {
+                    if (a.longValue() == 0) {
+                        return Double.NaN;
+                    }
+
+                    return a.longValue() > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+                }
+
+                long longResult = a.longValue() / b.longValue();
+                // Check if the result is a whole number
+                if (longResult * b.longValue() == a.longValue()) {
+                    return longResult;
+                } else {
+                    return DOUBLE.divide(a, b);
+                }
+            }
+        },
+        BIG(BigInteger.class){
+            @Override
+            public Number add(Number a, Number b) {
+                BigInteger bigA = getBig(a);
+                BigInteger bigB = getBig(b);
+                return bigA.add(bigB);
+            }
+
+            @Override
+            public Number subtract(Number a, Number b) {
+                BigInteger bigA = getBig(a);
+                BigInteger bigB = getBig(b);
+                return bigA.subtract(bigB);
+            }
+
+            @Override
+            public Number divide(Number a, Number b) {
+                BigInteger bigA = getBig(a);
+                BigInteger bigB = getBig(b);
+
+                if (bigB.equals(BigInteger.ZERO)) {
+                    int sign = bigA.signum();
+                    if (sign == 0) {
+                        return Double.NaN;
+                    } else if (sign == 1) {
+                        return Double.POSITIVE_INFINITY;
+                    } else {
+                        return Double.NEGATIVE_INFINITY;
+                    }
+                }
+
+                BigInteger result = bigA.divide(bigB);
+                // Check if the result is a whole number
+                if (result.multiply(bigB).equals(bigA)) {
+                    return result;
+                } else {
+                    return DOUBLE.divide(a, b);
+                }
+            }
+        },
+        INT(Integer.class, Byte.class, Short.class){
+            @Override
+            public Number add(Number a, Number b) {
+                Integer intR = addExactWithoutException(a.intValue(), b.intValue());
+                // Try to add as longs when overflow occurs
+                if (intR != null) {
+                    return intR;
+                } else {
+                    return LONG.add(a, b);
+                }
+            }
+
+            @Override
+            public Number subtract(Number a, Number b) {
+                Integer intR = subtractExactWithoutException(a.intValue(), b.intValue());
+                if (intR != null) {
+                    return intR;
+                } else {
+                    return LONG.subtract(a, b);
+                }
+            }
+
+            @Override
+            public Number divide(Number a, Number b) {
+                if (b.intValue() == 0) {
+                    if (a.intValue() == 0) {
+                        return Double.NaN;
+                    }
+
+                    return a.intValue() > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+                }
+                int intResult = a.intValue() / b.intValue();
+                // Check if the result is a whole number
+                if (intResult * b.intValue() == a.intValue()) {
+                    return intResult;
+                } else {
+                    return DOUBLE.divide(a, b);
+                }
+            }
+        };
 
         private static final NumberType[] values = NumberType.values();
         private final Class<? extends Number>[] numberClasses;
@@ -419,6 +488,12 @@ public class MathUtils {
         NumberType(Class<? extends Number>... numberClasses) {
             this.numberClasses = numberClasses;
         }
+
+        public abstract Number add(Number a, Number b);
+
+        public abstract Number subtract(Number a, Number b);
+
+        public abstract Number divide(Number a, Number b);
 
         /**
          * Tests whether this type supports a class.
