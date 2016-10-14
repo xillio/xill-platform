@@ -29,6 +29,11 @@ public class MathUtils {
     private static final int LONG_MAX_VALUE_LENGTH = Long.toString(Long.MAX_VALUE).length();
 
     /**
+     * Private constructor since this class contains only static methods
+     */
+    private MathUtils() {}
+
+    /**
      * Performs the arithmetic addition operation on two abstract numbers.
      *
      * @param a the left operand

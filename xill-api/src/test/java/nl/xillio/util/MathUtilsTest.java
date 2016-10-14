@@ -81,7 +81,16 @@ public class MathUtilsTest {
                 {4294967296L, 2L, 2147483648L},
                 {4294967296L, 10L, 429496729.6},
                 {new BigInteger("18446744073709551616"), BigInteger.valueOf(2), new BigInteger("9223372036854775808")},
-                {new BigInteger("18446744073709551616"), BigInteger.TEN, 1844674407370955160.6}
+                {new BigInteger("18446744073709551616"), BigInteger.TEN, 1844674407370955160.6},
+                {0, 0, Double.NaN},
+                {1, 0, Double.POSITIVE_INFINITY},
+                {-1, 0, Double.NEGATIVE_INFINITY},
+                {0L, 0L, Double.NaN},
+                {1L, 0L, Double.POSITIVE_INFINITY},
+                {-1L, 0L, Double.NEGATIVE_INFINITY},
+                {BigInteger.ZERO, BigInteger.ZERO, Double.NaN},
+                {BigInteger.ONE, BigInteger.ZERO, Double.POSITIVE_INFINITY},
+                {BigInteger.valueOf(-1), BigInteger.ZERO, Double.NEGATIVE_INFINITY}
         };
     }
 
@@ -108,6 +117,74 @@ public class MathUtilsTest {
     @Test(dataProvider="multiplication")
     public void testMultiplication(Number a, Number b, Number expected) {
         assertEquals(MathUtils.multiply(a, b), expected);
+    }
+
+    /**
+     * @return An array in the form {@code {{leftOperand, rightOperand, expectedResult}}}
+     */
+    @DataProvider(name = "modulo")
+    Object[][] moduloNumbers() {
+        return new Object[][] {
+                {10, 3, 1},
+                {10.0, 3.0, 1.0},
+                {2147483649L, 2L, 1L},
+                {new BigInteger("18446744073709551617"), BigInteger.valueOf(2), BigInteger.ONE},
+                {10, 0, Double.NaN},
+                {10.0, 0.0, Double.NaN},
+                {2147483649L, 0L, Double.NaN},
+                {new BigInteger("18446744073709551617"), BigInteger.ZERO, Double.NaN},
+        };
+    }
+
+    @Test(dataProvider="modulo")
+    public void testModulo(Number a, Number b, Number expected) {
+        assertEquals(MathUtils.modulo(a, b), expected);
+    }
+
+    /**
+     * @return An array in the form {@code {{leftOperand, rightOperand, expectedResult}}}
+     */
+    @DataProvider(name = "power")
+    Object[][] powerNumbers() {
+        return new Object[][] {
+                // Integer powers return a double
+                {10, 3, 1000.0},
+                {10.0, 3.0, 1000.0},
+                // Long powers return a double
+                {2147483649L, 2L, 4611686022722355201.0},
+                {new BigInteger("2147483649"), BigInteger.valueOf(2), new BigInteger("4611686022722355201")},
+        };
+    }
+
+    @Test(dataProvider="power")
+    public void testPower(Number a, Number b, Number expected) {
+        assertEquals(MathUtils.power(a, b), expected);
+    }
+
+    /**
+     * @return An array in the form {@code {{leftOperand, rightOperand, expectedResult}}}
+     */
+    @DataProvider(name = "compare")
+    Object[][] compareNumbers() {
+        return new Object[][] {
+                {10, 3, 1},
+                {3, 10, -1},
+                {3, 3, 0},
+                {10.0, 3.0, 1},
+                {3.0, 10.0, -1},
+                {3.0, 3.0, 0},
+                {10L, 3L, 1},
+                {3L, 10L, -1},
+                {3L, 3L, 0},
+                {BigInteger.valueOf(10), BigInteger.valueOf(3), 1},
+                {BigInteger.valueOf(3), BigInteger.valueOf(10), -1},
+                {BigInteger.valueOf(3), BigInteger.valueOf(3), 0}
+        };
+    }
+
+    @Test(dataProvider="compare")
+    public void testCompare(Number a, Number b, Number expected) {
+        assertEquals(MathUtils.compare(a, b), expected);
     }
 
     @DataProvider(name = "integers")
