@@ -204,11 +204,22 @@ public class MathUtils {
         // Some bits greater than 2^31 that might cause overflow
         // Check the result using the divide operator
         // and check for the special case of Long.MIN_VALUE * -1
-        if ((ax | ay) >>> 31 != 0 && (((y != 0) && (r / y != x)) ||
-                (x == Long.MIN_VALUE && y == -1))) {
+        if ((ax | ay) >>> 31 != 0 && testMultiplyOverflow(x, y, r)) {
                 return null;
         }
         return r;
+    }
+
+    /**
+     * Test if a multiplication has overflown
+     * @param x left operand
+     * @param y right operand
+     * @param result x*y
+     * @return true if the result of the multiplication is incorrect
+     */
+    private static boolean testMultiplyOverflow(long x, long y, long result) {
+        return ((y != 0) && (result / y != x)) ||
+                (x == Long.MIN_VALUE && y == -1);
     }
 
     /**
