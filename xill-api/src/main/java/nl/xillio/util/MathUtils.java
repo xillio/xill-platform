@@ -77,26 +77,7 @@ public class MathUtils {
      */
     public static Number multiply(Number a, Number b) {
         NumberType type = NumberType.forClass(a.getClass(), b.getClass());
-        switch (type) {
-            case INT:
-                Integer intR = multiplyExactWithoutException(a.intValue(), b.intValue());
-                if (intR != null) {
-                    return intR;
-                }
-            case LONG:
-                Long longR = multiplyExactWithoutException(a.longValue(), b.longValue());
-                if (longR != null) {
-                    return longR;
-                }
-            case BIG:
-                BigInteger bigA = getBig(a);
-                BigInteger bigB = getBig(b);
-                return bigA.multiply(bigB);
-            case DOUBLE:
-                return a.doubleValue() * b.doubleValue();
-            default:
-                throw new UnsupportedOperationException(createUnsupportedMessage(type, "multiply"));
-        }
+        return type.multiply(a, b);
     }
 
     /**
@@ -109,29 +90,7 @@ public class MathUtils {
      */
     public static Number modulo(Number a, Number b) {
         NumberType type = NumberType.forClass(a.getClass(), b.getClass());
-        switch (type) {
-            case INT:
-                if (b.intValue() == 0) {
-                    return Double.NaN;
-                }
-                return a.intValue() % b.intValue();
-            case LONG:
-                if (b.longValue() == 0) {
-                    return Double.NaN;
-                }
-                return a.longValue() % b.longValue();
-            case BIG:
-                BigInteger bigA = getBig(a);
-                BigInteger bigB = getBig(b);
-                if (bigB.equals(BigInteger.ZERO)) {
-                    return Double.NaN;
-                }
-                return bigA.mod(bigB);
-            case DOUBLE:
-                return a.doubleValue() % b.doubleValue();
-            default:
-                throw new UnsupportedOperationException(createUnsupportedMessage(type, "modulo"));
-        }
+        return type.modulo(a, b);
     }
 
     /**
@@ -144,19 +103,7 @@ public class MathUtils {
      */
     public static Number power(Number a, Number b) {
         NumberType type = NumberType.forClass(a.getClass(), b.getClass());
-        switch (type) {
-            case INT:
-                return Math.pow(a.intValue(), b.intValue());
-            case LONG:
-                return Math.pow(a.longValue(), b.longValue());
-            case BIG:
-                BigInteger bigA = getBig(a);
-                return bigA.pow(b.intValue());
-            case DOUBLE:
-                return Math.pow(a.doubleValue(), b.doubleValue());
-            default:
-                throw new UnsupportedOperationException(createUnsupportedMessage(type, "power"));
-        }
+        return type.power(a, b);
     }
 
     /**
@@ -171,24 +118,7 @@ public class MathUtils {
      */
     public static int compare(Number a, Number b) {
         NumberType type = NumberType.forClass(a.getClass(), b.getClass());
-        switch (type) {
-            case INT:
-                return Integer.compare(a.intValue(), b.intValue());
-            case LONG:
-                return Long.compare(a.longValue(), b.longValue());
-            case BIG:
-                BigInteger bigA = getBig(a);
-                BigInteger bigB = getBig(b);
-                return bigA.compareTo(bigB);
-            case DOUBLE:
-                return Double.compare(a.doubleValue(), b.doubleValue());
-            default:
-                throw new UnsupportedOperationException(createUnsupportedMessage(type, "compare"));
-        }
-    }
-
-    private static String createUnsupportedMessage(NumberType type, String operation) {
-        return "Type " + type + " is not supported by the " + operation + " operation.";
+        return type.compare(a, b);
     }
 
     /**
@@ -271,14 +201,12 @@ public class MathUtils {
         long r = x * y;
         long ax = Math.abs(x);
         long ay = Math.abs(y);
-        if (((ax | ay) >>> 31 != 0)) {
-            // Some bits greater than 2^31 that might cause overflow
-            // Check the result using the divide operator
-            // and check for the special case of Long.MIN_VALUE * -1
-            if (((y != 0) && (r / y != x)) ||
-                    (x == Long.MIN_VALUE && y == -1)) {
+        // Some bits greater than 2^31 that might cause overflow
+        // Check the result using the divide operator
+        // and check for the special case of Long.MIN_VALUE * -1
+        if ((ax | ay) >>> 31 != 0 && (((y != 0) && (r / y != x)) ||
+                (x == Long.MIN_VALUE && y == -1))) {
                 return null;
-            }
         }
         return r;
     }
@@ -359,6 +287,26 @@ public class MathUtils {
             public Number divide(Number a, Number b) {
                 return a.doubleValue() / b.doubleValue();
             }
+
+            @Override
+            public Number multiply(Number a, Number b) {
+                return a.doubleValue() * b.doubleValue();
+            }
+
+            @Override
+            public Number modulo(Number a, Number b) {
+                return a.doubleValue() % b.doubleValue();
+            }
+
+            @Override
+            public Number power(Number a, Number b) {
+                return Math.pow(a.doubleValue(), b.doubleValue());
+            }
+
+            @Override
+            public int compare(Number a, Number b) {
+                return Double.compare(a.doubleValue(), b.doubleValue());
+            }
         },
         LONG(Long.class){
             @Override
@@ -398,6 +346,34 @@ public class MathUtils {
                 } else {
                     return DOUBLE.divide(a, b);
                 }
+            }
+
+            @Override
+            public Number multiply(Number a, Number b) {
+                Long longR = multiplyExactWithoutException(a.longValue(), b.longValue());
+                if (longR != null) {
+                    return longR;
+                } else {
+                    return BIG.multiply(a, b);
+                }
+            }
+
+            @Override
+            public Number modulo(Number a, Number b) {
+                if (b.longValue() == 0) {
+                    return Double.NaN;
+                }
+                return a.longValue() % b.longValue();
+            }
+
+            @Override
+            public Number power(Number a, Number b) {
+                return Math.pow(a.longValue(), b.longValue());
+            }
+
+            @Override
+            public int compare(Number a, Number b) {
+                return Long.compare(a.longValue(), b.longValue());
             }
         },
         BIG(BigInteger.class){
@@ -439,6 +415,36 @@ public class MathUtils {
                     return DOUBLE.divide(a, b);
                 }
             }
+
+            @Override
+            public Number multiply(Number a, Number b) {
+                BigInteger bigA = getBig(a);
+                BigInteger bigB = getBig(b);
+                return bigA.multiply(bigB);
+            }
+
+            @Override
+            public Number modulo(Number a, Number b) {
+                BigInteger bigA = getBig(a);
+                BigInteger bigB = getBig(b);
+                if (bigB.equals(BigInteger.ZERO)) {
+                    return Double.NaN;
+                }
+                return bigA.mod(bigB);
+            }
+
+            @Override
+            public Number power(Number a, Number b) {
+                BigInteger bigA = getBig(a);
+                return bigA.pow(b.intValue());
+            }
+
+            @Override
+            public int compare(Number a, Number b) {
+                BigInteger bigA = getBig(a);
+                BigInteger bigB = getBig(b);
+                return bigA.compareTo(bigB);
+            }
         },
         INT(Integer.class, Byte.class, Short.class){
             @Override
@@ -479,6 +485,34 @@ public class MathUtils {
                     return DOUBLE.divide(a, b);
                 }
             }
+
+            @Override
+            public Number multiply(Number a, Number b) {
+                Integer intR = multiplyExactWithoutException(a.intValue(), b.intValue());
+                if (intR != null) {
+                    return intR;
+                } else {
+                    return LONG.multiply(a, b);
+                }
+            }
+
+            @Override
+            public Number modulo(Number a, Number b) {
+                if (b.intValue() == 0) {
+                    return Double.NaN;
+                }
+                return a.intValue() % b.intValue();
+            }
+
+            @Override
+            public Number power(Number a, Number b) {
+                return Math.pow(a.intValue(), b.intValue());
+            }
+
+            @Override
+            public int compare(Number a, Number b) {
+                return Integer.compare(a.intValue(), b.intValue());
+            }
         };
 
         private static final NumberType[] values = NumberType.values();
@@ -489,11 +523,68 @@ public class MathUtils {
             this.numberClasses = numberClasses;
         }
 
+        /**
+         * Type-specific add operation
+         * @param a The left operand
+         * @param b The right operand
+         * @return The result of the operation
+         * @throws UnsupportedOperationException If the operation is not supported by the type
+         */
         public abstract Number add(Number a, Number b);
 
+        /**
+         * Type-specific subtract operation
+         * @param a The left operand
+         * @param b The right operand
+         * @return The result of the operation
+         * @throws UnsupportedOperationException If the operation is not supported by the type
+         */
         public abstract Number subtract(Number a, Number b);
 
+        /**
+         * Type-specific divide operation
+         * @param a The left operand
+         * @param b The right operand
+         * @return The result of the operation
+         * @throws UnsupportedOperationException If the operation is not supported by the type
+         */
         public abstract Number divide(Number a, Number b);
+
+        /**
+         * Type-specific multiply operation
+         * @param a The left operand
+         * @param b The right operand
+         * @return The result of the operation
+         * @throws UnsupportedOperationException If the operation is not supported by the type
+         */
+        public abstract Number multiply(Number a, Number b);
+
+        /**
+         * Type-specific modulo operation
+         * @param a The left operand
+         * @param b The right operand
+         * @return The result of the operation
+         * @throws UnsupportedOperationException If the operation is not supported by the type
+         */
+        public abstract Number modulo(Number a, Number b);
+
+        /**
+         * Type-specific power operation
+         * @param a The left operand
+         * @param b The right operand
+         * @return The result of the operation
+         * @throws UnsupportedOperationException If the operation is not supported by the type
+         */
+        public abstract Number power(Number a, Number b);
+
+        /**
+         * Type-specific compare operation
+         * @param a The left operand
+         * @param b The right operand
+         * @return The result of the operation
+         * @throws UnsupportedOperationException If the operation is not supported by the type
+         */
+        public abstract int compare(Number a, Number b);
 
         /**
          * Tests whether this type supports a class.
