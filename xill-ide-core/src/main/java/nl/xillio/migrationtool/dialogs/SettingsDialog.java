@@ -239,7 +239,7 @@ public class SettingsDialog extends FXMLDialog {
             // This is an F* key.
             return modifiers + event.getCode().getName().toUpperCase();
         } else if (event.getEventType() == KeyEvent.KEY_PRESSED && !modifiers.isEmpty()) {
-            final String text = event.getText().toUpperCase();
+            final String text = event.getCode().getName().toUpperCase();
             // This is any other key holding a text value. We require there to be a modifier.
             if (text.length() == 1 && text.charAt(0) >= 33 && text.charAt(0) <= 127) {
                 return modifiers + text;
