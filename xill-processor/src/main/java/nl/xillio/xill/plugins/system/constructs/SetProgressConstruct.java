@@ -33,7 +33,7 @@ import java.util.UUID;
  */
 public class SetProgressConstruct extends Construct {
 
-    private static ProgressTracker progressTracker;
+    private ProgressTracker progressTracker;
 
     private static final String EXAMPLE = "use System;\n\n" +
             "var i = 0;\n" +
@@ -46,7 +46,7 @@ public class SetProgressConstruct extends Construct {
 
     @Inject
     SetProgressConstruct(ProgressTracker progressTracker) {
-        SetProgressConstruct.progressTracker = progressTracker;
+        this.progressTracker = progressTracker;
     }
 
     @Override
@@ -57,11 +57,7 @@ public class SetProgressConstruct extends Construct {
                 new Argument("options", NULL, OBJECT));
     }
 
-    static MetaExpression process(final MetaExpression progressVar, final MetaExpression optionsVar, final ConstructContext context) {
-        if (context.getDebugger() == null) {
-            return fromValue(false);
-        }
-
+    MetaExpression process(final MetaExpression progressVar, final MetaExpression optionsVar, final ConstructContext context) {
         final Double progress = progressVar.getNumberValue().doubleValue();
         if (progress.equals(Double.NaN) || progress.doubleValue() > 1) {
             throw new InvalidUserInputException("Invalid progress value type.", progressVar.getStringValue(), "The valid number from 0-1 for progress or any negative number for hiding the progress bar.", EXAMPLE);
@@ -73,10 +69,10 @@ public class SetProgressConstruct extends Construct {
         }
         progressTracker.setProgress(context.getCompilerSerialId(), progress);
 
-        return fromValue(true);
+        return NULL;
     }
 
-    private static void processOption(final String option, final MetaExpression metaValue, final UUID compilerSerialId) {
+    private void processOption(final String option, final MetaExpression metaValue, final UUID compilerSerialId) {
         if ("onStop".equals(option)) {
             final String value = metaValue.getStringValue();
             if (metaValue.getType() != ATOMIC) {

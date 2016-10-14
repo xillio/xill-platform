@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.system.constructs;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
@@ -26,7 +25,8 @@ import org.testng.annotations.Test;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -45,8 +45,6 @@ public class SetProgressConstructTest extends TestUtils {
         when(options.isNull()).thenReturn(true);
 
         ConstructContext context = mock(ConstructContext.class);
-        Debugger debugger = mock(Debugger.class);
-        when(context.getDebugger()).thenReturn(debugger);
         when(context.getCompilerSerialId()).thenReturn(new UUID(1,1));
 
         SetProgressConstruct construct = new SetProgressConstruct(new ProgressTrackerService());
@@ -54,34 +52,8 @@ public class SetProgressConstructTest extends TestUtils {
         // Run the method
         MetaExpression result = construct.process(progress, options, context);
 
-        // Verify
-        verify(context, times(1)).getDebugger();
-
         // Make assertions
-        assertEquals(result.getBooleanValue(), true);
-    }
-
-    @Test
-    public void testProcessWhenDebuggerIsNull() {
-        // Mock
-        MetaExpression progress = mockExpression(ATOMIC);
-        Number progressValue = 0.5;
-        when(progress.getNumberValue()).thenReturn(progressValue);
-
-        MetaExpression options = mock(MetaExpression.class);
-        when(options.isNull()).thenReturn(true);
-
-        ConstructContext context = mock(ConstructContext.class);
-        when(context.getDebugger()).thenReturn(null);
-
-        // Run the method
-        MetaExpression result = SetProgressConstruct.process(progress, options, context);
-
-        // Verify
-        verify(context).getDebugger();
-
-        // Make assertions
-        assertEquals(result.getBooleanValue(), false);
+        assertEquals(result.isNull(), true);
     }
 
     @Test(expectedExceptions = InvalidUserInputException.class, expectedExceptionsMessageRegExp = "Invalid progress value type\\..*")
@@ -95,11 +67,11 @@ public class SetProgressConstructTest extends TestUtils {
         when(options.isNull()).thenReturn(true);
 
         ConstructContext context = mock(ConstructContext.class);
-        Debugger debugger = mock(Debugger.class);
-        when(context.getDebugger()).thenReturn(debugger);
+
+        SetProgressConstruct construct = new SetProgressConstruct(null);
 
         // Run the method
-        SetProgressConstruct.process(progress, options, context);
+        construct.process(progress, options, context);
     }
 
     private void testProcessNormalUsageWOptions(final String option, final String value) {
@@ -116,8 +88,6 @@ public class SetProgressConstructTest extends TestUtils {
         when(options.getType()).thenReturn(OBJECT);
 
         ConstructContext context = mock(ConstructContext.class);
-        Debugger debugger = mock(Debugger.class);
-        when(context.getDebugger()).thenReturn(debugger);
         when(context.getCompilerSerialId()).thenReturn(new UUID(1,1));
 
         SetProgressConstruct construct = new SetProgressConstruct(new ProgressTrackerService());
@@ -125,11 +95,8 @@ public class SetProgressConstructTest extends TestUtils {
         // Run the method
         MetaExpression result = construct.process(progress, options, context);
 
-        // Verify
-        verify(context, times(1)).getDebugger();
-
         // Make assertions
-        assertEquals(result.getBooleanValue(), true);
+        assertEquals(result.isNull(), true);
     }
 
     @Test
