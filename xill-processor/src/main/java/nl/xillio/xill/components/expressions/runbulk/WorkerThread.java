@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package nl.xillio.xill.components.expressions.runbulk;
 
 import me.biesaart.utils.Log;
@@ -85,11 +100,9 @@ class WorkerThread extends Thread {
         // Process the robot
         try {
             return runRobot(debugger, calledRobotFile, arg);
-        } catch (IOException e) {
-            throw new RobotRuntimeException("Error while calling robot: " + e.getMessage(), e);
-        } catch (XillParsingException e) {
-            throw new RobotRuntimeException("Error while parsing robot: " + e.getMessage(), e);
-        } catch (Exception e) {
+        } catch (WorkerCompileException e) {
+            throw new RobotRuntimeException(e.getMessage(), e);
+        }  catch (Exception e) {
             debugger.handle(e);
         }
 
@@ -105,7 +118,7 @@ class WorkerThread extends Thread {
      * @throws IOException When reading the robot fails
      * @throws XillParsingException When a compile error occurs
      */
-    private boolean runRobot(Debugger debugger, File calledRobotFile, MetaExpression arg) throws IOException, XillParsingException {
+    private boolean runRobot(Debugger debugger, File calledRobotFile, MetaExpression arg) throws WorkerCompileException {
         StoppableDebugger childDebugger = (StoppableDebugger) debugger.createChild();
         childDebugger.setStopOnError(stopOnError);
 

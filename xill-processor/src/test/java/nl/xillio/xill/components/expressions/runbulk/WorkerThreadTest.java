@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package nl.xillio.xill.components.expressions.runbulk;
 
 import nl.xillio.xill.TestUtils;
@@ -56,7 +71,7 @@ public class WorkerThreadTest extends TestUtils {
      * Test {@link WorkerThread#run()} under normal conditions.
      */
     @Test
-    public void testRun() throws InterruptedException, IOException, XillParsingException {
+    public void testRun() throws InterruptedException, WorkerCompileException {
         // mock
         when(control.shouldStop()).thenReturn(false, true);
         MetaExpression item = mockExpression(ExpressionDataType.ATOMIC);
@@ -77,7 +92,7 @@ public class WorkerThreadTest extends TestUtils {
      * Test {@link WorkerThread#run()} when the debugger signals to stop
      */
     @Test
-    public void testRunDebuggerStop() throws InterruptedException, IOException, XillParsingException {
+    public void testRunDebuggerStop() throws InterruptedException, WorkerCompileException {
         // mock
         when(control.shouldStop()).thenReturn(false, true);
         MetaExpression item = mockExpression(ExpressionDataType.ATOMIC);
@@ -95,34 +110,16 @@ public class WorkerThreadTest extends TestUtils {
     }
 
     /**
-     * Test {@link WorkerThread#run()} when the robot file is wrong
-     */
-    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*Wrong robot file.*")
-    public void testRunWrongRobotFile() throws InterruptedException, IOException, XillParsingException {
-        // mock
-        when(control.shouldStop()).thenReturn(false, true);
-        MetaExpression item = mockExpression(ExpressionDataType.ATOMIC);
-        when(queue.poll(anyInt(), any())).thenReturn(item);
-        when(debugger.shouldStop()).thenReturn(false);
-        when(workerRobotFactory.construct(any(), any())).thenThrow(new IOException("Wrong robot file"));
-
-        WorkerThread workerThread = new WorkerThread(queue, control, false, workerRobotFactory);
-
-        // run
-        workerThread.run();
-    }
-
-    /**
      * Test {@link WorkerThread#run()} when the the robot could not be compiled
      */
-    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*Error compiling robot.*")
-    public void testRunErrorCompile() throws InterruptedException, IOException, XillParsingException {
+    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*Robot error.*")
+    public void testRunErrorCompile() throws InterruptedException, WorkerCompileException {
         // mock
         when(control.shouldStop()).thenReturn(false, true);
         MetaExpression item = mockExpression(ExpressionDataType.ATOMIC);
         when(queue.poll(anyInt(), any())).thenReturn(item);
         when(debugger.shouldStop()).thenReturn(false);
-        when(workerRobotFactory.construct(any(), any())).thenThrow(new XillParsingException("Error compiling robot", 0, robotID));
+        when(workerRobotFactory.construct(any(), any())).thenThrow(new WorkerCompileException("Robot error", new Exception()));
 
         WorkerThread workerThread = new WorkerThread(queue, control, false, workerRobotFactory);
 
@@ -134,7 +131,7 @@ public class WorkerThreadTest extends TestUtils {
      * Test {@link WorkerThread#run()} when an exception occurs while running a robot
      */
     @Test
-    public void testRunRobotException() throws InterruptedException, IOException, XillParsingException {
+    public void testRunRobotException() throws InterruptedException, WorkerCompileException {
         // mock
         when(control.shouldStop()).thenReturn(false, true);
         MetaExpression item = mockExpression(ExpressionDataType.ATOMIC);
