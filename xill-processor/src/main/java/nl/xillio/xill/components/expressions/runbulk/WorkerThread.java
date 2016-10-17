@@ -25,7 +25,6 @@ class WorkerThread extends Thread {
 
     private boolean stopOnError = false;
 
-
     private final WorkerRobotFactory robotFactory;
 
     /**

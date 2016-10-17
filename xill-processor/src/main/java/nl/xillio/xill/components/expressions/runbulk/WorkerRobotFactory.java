@@ -35,10 +35,17 @@ class WorkerRobotFactory {
      * @throws IOException When the robot could not be read
      * @throws XillParsingException When the robot could not be compiled
      */
-    public Robot construct(File calledRobotFile, StoppableDebugger childDebugger) throws IOException, XillParsingException {
-        XillProcessor processor = new XillProcessor(robotID.getProjectPath(), calledRobotFile, plugins, childDebugger);
-        processor.setOutputHandler(outputHandler);
-        processor.compileAsSubRobot(robotID);
+    public Robot construct(File calledRobotFile, StoppableDebugger childDebugger) throws WorkerCompileException {
+        XillProcessor processor = null;
+        try {
+            processor = new XillProcessor(robotID.getProjectPath(), calledRobotFile, plugins, childDebugger);
+            processor.setOutputHandler(outputHandler);
+            processor.compileAsSubRobot(robotID);
+        } catch (IOException e) {
+            throw new WorkerCompileException("Could not read robot", e);
+        } catch (XillParsingException e) {
+            throw new WorkerCompileException("Could not parse robot", e);
+        }
         return processor.getRobot();
     }
 }
