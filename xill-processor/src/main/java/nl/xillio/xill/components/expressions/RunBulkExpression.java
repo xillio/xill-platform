@@ -419,6 +419,14 @@ public class RunBulkExpression implements Processable {
             throw new RobotRuntimeException("Invalid max. threads value");
         }
 
+        parseOptions(optionVar);
+    }
+
+    /**
+     * Parse supported options from an OBJECT {@link MetaExpression}
+     * @param optionVar The options OBJECT
+     */
+    private void parseOptions(MetaExpression optionVar) {
         Map<String, MetaExpression> optionParameters = optionVar.getValue();
 
         for (Map.Entry<String, MetaExpression> entry : optionParameters.entrySet()) {
