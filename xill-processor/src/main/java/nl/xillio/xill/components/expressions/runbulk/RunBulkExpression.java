@@ -50,6 +50,8 @@ public class RunBulkExpression implements Processable {
     private RunBulkOptions options;
     private final OutputHandler outputHandler;
 
+    private int maxThreadsVal;
+
     /**
      * Create a new {@link RunBulkExpression}
      *  @param path    the path of the called bot
@@ -120,7 +122,7 @@ public class RunBulkExpression implements Processable {
             return 0; // Nothing to do
         }
 
-        int maxThreadsVal = options.getMaxThreadsVal();
+        maxThreadsVal = options.getMaxThreadsVal();
         if (maxThreadsVal == 0) {// Default value equals the number of logical cores
             maxThreadsVal = Runtime.getRuntime().availableProcessors();
         }
@@ -169,7 +171,7 @@ public class RunBulkExpression implements Processable {
         // Start working threads
         List<Thread> workingThreads = new LinkedList<>();
         WorkerRobotFactory robotFactory = new WorkerRobotFactory(robotID, plugins, outputHandler);
-        for (int i = 0; i < options.getMaxThreadsVal(); i++) {
+        for (int i = 0; i < maxThreadsVal; i++) {
             Thread worker = new WorkerThread(queue, control, options.shouldStopOnError(), robotFactory);
             worker.start();
             workingThreads.add(worker);
