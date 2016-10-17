@@ -57,7 +57,7 @@ class RunBulkOptions {
         }
 
         if (optionVar.getType() != ExpressionDataType.OBJECT) {
-            throw new RobotRuntimeException("Invalid max. threads value");
+            throw new RobotRuntimeException("Invalid options type");
         }
 
         parseOptions(optionVar);
