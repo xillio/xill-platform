@@ -424,24 +424,40 @@ public class RunBulkExpression implements Processable {
         for (Map.Entry<String, MetaExpression> entry : optionParameters.entrySet()) {
             switch (entry.getKey()) {
                 case "maxThreads":
-                    maxThreadsVal = entry.getValue().getNumberValue().intValue();
-                    if (maxThreadsVal < 1) {
-                        throw new RobotRuntimeException("Invalid maxThreads value");
-                    }
+                    parseMaxThreads(entry.getValue());
                     break;
                 case "stopOnError":
-                    String value = entry.getValue().getStringValue();
-                    if ("yes".equals(value)) {
-                        stopOnError = true;
-                    } else if ("no".equals(value)) {
-                        stopOnError = false;
-                    } else {
-                        throw new RobotRuntimeException("Invalid onError value");
-                    }
+                    parseStopOnError(entry.getValue());
                     break;
                 default:
                     throw new RobotRuntimeException("Invalid option");
             }
+        }
+    }
+
+    /**
+     * Parse the stopOnError option from a {@link MetaExpression}
+     * @param value The option value
+     */
+    private void parseStopOnError(MetaExpression value) {
+        String stringValue = value.getStringValue();
+        if ("yes".equals(stringValue)) {
+            stopOnError = true;
+        } else if ("no".equals(stringValue)) {
+            stopOnError = false;
+        } else {
+            throw new RobotRuntimeException("Invalid onError value");
+        }
+    }
+
+    /**
+     * Parse the maxThreads option from a {@link MetaExpression}
+     * @param value The option value
+     */
+    private void parseMaxThreads(MetaExpression value) {
+        maxThreadsVal = value.getNumberValue().intValue();
+        if (maxThreadsVal < 1) {
+            throw new RobotRuntimeException("Invalid maxThreads value");
         }
     }
 }
