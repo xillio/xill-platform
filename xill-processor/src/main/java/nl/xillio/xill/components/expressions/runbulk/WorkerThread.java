@@ -1,21 +1,16 @@
 package nl.xillio.xill.components.expressions.runbulk;
 
 import me.biesaart.utils.Log;
-import nl.xillio.plugins.XillPlugin;
-import nl.xillio.xill.XillProcessor;
 import nl.xillio.xill.api.Debugger;
-import nl.xillio.xill.api.OutputHandler;
 import nl.xillio.xill.api.StoppableDebugger;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.Robot;
-import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.api.errors.XillParsingException;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -28,32 +23,27 @@ class WorkerThread extends Thread {
     private final BlockingQueue<MetaExpression> queue;
     private final RunBulkControl control;
 
-    private final List<XillPlugin> plugins;
     private boolean stopOnError = false;
-    private final OutputHandler outputHandler;
 
-    private final RobotID robotID;
+
+    private final WorkerRobotFactory robotFactory;
 
     /**
      * Create a worker
      * @param queue Queue for receiving jobs from master
      * @param control Controls runBulk threads
-     * @param plugins The loaded plugins
      * @param stopOnError Whether to stop the thread when an error occurs
-     * @param outputHandler Handler to log to
-     * @param robotID The ID of the robot to run
+     * @param robotFactory The factory compiling robots
      */
-    public WorkerThread(final BlockingQueue<MetaExpression> queue, final RunBulkControl control, List<XillPlugin> plugins,
-                 boolean stopOnError, OutputHandler outputHandler, RobotID robotID) {
+    public WorkerThread(final BlockingQueue<MetaExpression> queue, final RunBulkControl control,
+                 boolean stopOnError, WorkerRobotFactory robotFactory) {
         super("RunBulk WorkerThread");
         this.queue = queue;
         this.control = control;
 
-        this.plugins = plugins;
         this.stopOnError = stopOnError;
-        this.outputHandler = outputHandler;
 
-        this.robotID = robotID;
+        this.robotFactory = robotFactory;
     }
 
     /**
@@ -120,15 +110,12 @@ class WorkerThread extends Thread {
         StoppableDebugger childDebugger = (StoppableDebugger) debugger.createChild();
         childDebugger.setStopOnError(stopOnError);
 
-        XillProcessor processor = new XillProcessor(robotID.getProjectPath(), calledRobotFile, plugins, childDebugger);
-        processor.setOutputHandler(outputHandler);
-        processor.compileAsSubRobot(robotID);
+        Robot robot = robotFactory.construct(calledRobotFile, childDebugger);
 
         try {
-            Robot robot = processor.getRobot();
             robot.setArgument(arg);
 
-            processor.getRobot().process(childDebugger);
+            robot.process(childDebugger);
             // Ignoring the returned value from the bot as it won't be processed anyway
 
             return !(stopOnError && childDebugger.hasErrorOccurred());

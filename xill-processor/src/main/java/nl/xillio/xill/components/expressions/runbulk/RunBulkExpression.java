@@ -168,8 +168,9 @@ public class RunBulkExpression implements Processable {
     private List<Thread> spawnWorkers(BlockingQueue<MetaExpression> queue, RunBulkControl control) {
         // Start working threads
         List<Thread> workingThreads = new LinkedList<>();
+        WorkerRobotFactory robotFactory = new WorkerRobotFactory(robotID, plugins, outputHandler);
         for (int i = 0; i < options.getMaxThreadsVal(); i++) {
-            Thread worker = new WorkerThread(queue, control, plugins, options.shouldStopOnError(), outputHandler, robotID);
+            Thread worker = new WorkerThread(queue, control, options.shouldStopOnError(), robotFactory);
             worker.start();
             workingThreads.add(worker);
         }
