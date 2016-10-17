@@ -46,7 +46,7 @@
             <outputDirectory></outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/deploy/resources/</directory>
+            <directory>${project.basedir}/src/deploy/resources</directory>
             <includes>
                 <include>**/*</include>
             </includes>
