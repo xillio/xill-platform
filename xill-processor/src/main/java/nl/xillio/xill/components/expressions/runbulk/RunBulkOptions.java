@@ -32,7 +32,7 @@ class RunBulkOptions {
      * Get the stopOnError option
      * @return Whether to stop threads when an error occurs
      */
-    public boolean isStopOnError() {
+    public boolean shouldStopOnError() {
         return stopOnError;
     }
 
