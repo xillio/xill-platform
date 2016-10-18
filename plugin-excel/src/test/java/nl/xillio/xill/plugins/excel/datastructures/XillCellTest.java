@@ -89,12 +89,18 @@ public class XillCellTest {
         when(testCell.getValue()).thenReturn(2.5);
         assertEquals(testCell.getValue(), 2.5);
 
+        when(cell.getNumericCellValue()).thenReturn(9523372036854770000.0);
+        when(testCell.getValue()).thenReturn(9523372036854770000.0);
+        Object testValue = testCell.getValue();
+        assertTrue(testValue instanceof Double);
+        assertEquals(testValue,9523372036854770000.0);
+
         when(cell.getNumericCellValue()).thenReturn(1.0);
         when(testCell.getValue()).thenReturn(1.0);
         Object value = testCell.getValue();
-        assertTrue(value instanceof Integer);
-        assertEquals(value, 1);
-
+        assertTrue(value instanceof Long);
+        assertEquals(value, 1L); //changed from Integer to Long in CTC-1590
+        
         doReturn(true).when(testCell).isNull();
         assertEquals(testCell.getValue(), null);
 
@@ -129,7 +135,7 @@ public class XillCellTest {
         verify(cell, times(1)).setCellValue(true);
 
         testCell.setNull();
-        verify(cell, times(1)).setCellType(Cell.CELL_TYPE_BLANK);
+        verify(cell, atLeastOnce()).setCellType(Cell.CELL_TYPE_BLANK);
     }
 
     //It is not possible to test what happens when a FormulaParseException is thrown in
