@@ -25,8 +25,6 @@ import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.string.services.string.UrlUtilityService;
 
-import java.util.regex.Pattern;
-
 /**
  * Converts a relative URL string to an absolute URL using a string, pageUrl, as base URL.
  */
@@ -52,8 +50,9 @@ public class AbsoluteURLConstruct extends Construct {
 
         // Check if the protocol is specified in the page url.
         boolean hasProtocol = !"".equals(urlUtilityService.getProtocol(pageUrl));
-        if(!hasProtocol)
+        if(!hasProtocol) {
             pageUrl = "http://" + pageUrl;
+        }
 
         if (pageUrl.endsWith("/") && relativeUrl.isEmpty()) {
             pageUrl = pageUrl.substring(0, pageUrl.length() - 1);
