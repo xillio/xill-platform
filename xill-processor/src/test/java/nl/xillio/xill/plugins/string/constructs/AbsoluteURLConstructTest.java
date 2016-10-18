@@ -173,6 +173,7 @@ public class AbsoluteURLConstructTest extends TestUtils {
         // Mock.
         UrlUtilityService url = mock(UrlUtilityService.class);
         when(url.tryConvert(pageUrl.getStringValue(), relativeUrl.getStringValue())).thenThrow(new IllegalArgumentException());
+        when(url.hasProtocol(pageUrl.getStringValue())).thenReturn(true);
 
         // Run.
         AbsoluteURLConstruct constructWithMock = new AbsoluteURLConstruct(url);

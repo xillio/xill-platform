@@ -113,4 +113,9 @@ public class UrlUtilityServiceImpl implements UrlUtilityService {
         int afterProtocol = url.indexOf("://");
         return afterProtocol == -1 ? "" : url.substring(0, afterProtocol);
     }
+
+    @Override
+    public boolean hasProtocol(String url) {
+        return !"".equals(getProtocol(url));
+    }
 }
