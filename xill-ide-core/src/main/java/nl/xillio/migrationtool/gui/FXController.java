@@ -348,7 +348,10 @@ public class FXController implements Initializable, EventHandler<Event> {
                                 "The editing of non-text-files is ill advised and may corrupt the file." + System.lineSeparator() +
                         "Do you want to continue?",
                         ButtonType.YES, ButtonType.NO);
-                final Optional<ButtonType> result = dialog.showAndWait();
+
+                dialog.showAndWait();
+                final Optional<ButtonType> result = dialog.getResult();
+
                 if (!result.isPresent() || result.get() == ButtonType.NO) {
                     return null;
                 }
@@ -608,7 +611,10 @@ public class FXController implements Initializable, EventHandler<Event> {
                 "You are about to quit the application but " + running + " robot(s) are still running." +
                         "All running robots will be stopped when you quit. Do you want to quit the application?",
                 new ButtonType("Quit", ButtonBar.ButtonData.YES), ButtonType.CANCEL);
-        return dialog.showAndWait().get().getButtonData() == ButtonBar.ButtonData.YES;
+
+        dialog.showAndWait();
+        final Optional<ButtonType> result = dialog.getResult();
+        return result.get().getButtonData() == ButtonBar.ButtonData.YES;
     }
 
     private String formatEditorOptionJSRaw(final String optionJS, final String keyValue) {

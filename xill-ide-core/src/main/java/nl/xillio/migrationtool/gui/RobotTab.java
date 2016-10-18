@@ -322,7 +322,8 @@ public class RobotTab extends FileTab implements Initializable {
         AlertDialog dialog = new AlertDialog(AlertType.WARNING, getName() + " is still running.", "",
                 "Closing the tab will stop the robot. Do you want to close the tab?",
                 new ButtonType("Close", ButtonBar.ButtonData.YES), ButtonType.CANCEL);
-        return dialog.showAndWait().get().getButtonData() == ButtonBar.ButtonData.YES;
+        dialog.showAndWait();
+        return dialog.getResult().get().getButtonData() == ButtonBar.ButtonData.YES;
     }
 
     /**

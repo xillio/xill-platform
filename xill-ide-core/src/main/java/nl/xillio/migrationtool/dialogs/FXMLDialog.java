@@ -55,6 +55,7 @@ public class FXMLDialog extends Stage {
         }
 
         // Hook into the enter pressed event.
+        System.out.println(this.getScene());
         this.getScene().addEventHandler(KeyEvent.KEY_PRESSED, this::enterPressed);
     }
 

@@ -178,8 +178,10 @@ public class Loader implements ContenttoolsPlugin {
         AlertDialog dialog = new AlertDialog(AlertType.ERROR, "Recover settings",
                 "The settings file could not be read", "Do you want to recover the last working settings file?",
                 ButtonType.YES, ButtonType.NO);
-        dialog.resultProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == ButtonType.YES) {
+
+        dialog.showAndWait();
+        //dialog.resultProperty().addListener((observable, oldValue, newValue) -> {
+            if (dialog.getResult().get() == ButtonType.YES) {
                 try {
                     // Recover from backup settings
                     SettingsHandler.recoverSettings();
@@ -203,8 +205,8 @@ public class Loader implements ContenttoolsPlugin {
 
             // When recovery succeeds, continue starting the IDE
             startIDE(primaryStage);
-        });
-        dialog.show();
+        //});
+        //dialog.show();
     }
 
     /**

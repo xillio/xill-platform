@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * A dialog to upload an item to the server.
@@ -231,7 +232,11 @@ public class UploadToServerDialog extends FXMLDialog {
                 AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Uploading project",
                         String.format("The project %1$s already exists on the server", projectName), "Do you want to overwrite entire project?",
                         ButtonType.YES, ButtonType.NO);
-                if (dialog.showAndWait().get().getButtonData() == ButtonBar.ButtonData.NO) {
+
+                dialog.showAndWait();
+                final Optional<ButtonType> result = dialog.getResult();
+
+                if (result.get().getButtonData() == ButtonBar.ButtonData.NO) {
                     return false;
                 }
                 // Yes, the existing project will be overwritten
@@ -297,7 +302,10 @@ public class UploadToServerDialog extends FXMLDialog {
                 AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Uploading folder",
                         String.format("The project %1$s already exists on the server", projectName), "Do you want to upload the folder content?",
                         ButtonType.YES, ButtonType.NO);
-                if (dialog.showAndWait().get().getButtonData() == ButtonBar.ButtonData.NO) {
+
+                dialog.showAndWait();
+                final Optional<ButtonType> result = dialog.getResult();
+                if (result.get().getButtonData() == ButtonBar.ButtonData.NO) {
                     return false;
                 }
             }
@@ -364,7 +372,10 @@ public class UploadToServerDialog extends FXMLDialog {
             AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Uploading robot",
                     String.format("The robot %1$s already exists on the server", robotFile.getName()), "Do you want to overwrite it?",
                     ButtonType.YES, ButtonType.NO);
-            if (dialog.showAndWait().get().getButtonData() == ButtonBar.ButtonData.NO) {
+
+            dialog.showAndWait();
+            final Optional<ButtonType> result = dialog.getResult();
+            if (result.get().getButtonData() == ButtonBar.ButtonData.NO) {
                 return false;
             }
             // Yes, the existing robot will be overwritten
@@ -404,7 +415,10 @@ public class UploadToServerDialog extends FXMLDialog {
             AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Uploading resource",
                     String.format("The resource %1$s already exists on the server", resourceName), "Do you want to overwrite it?",
                     ButtonType.YES, ButtonType.NO);
-            if (dialog.showAndWait().get().getButtonData() == ButtonBar.ButtonData.NO) {
+
+            dialog.showAndWait();
+            final Optional<ButtonType> result = dialog.getResult();
+            if (result.get().getButtonData() == ButtonBar.ButtonData.NO) {
                 return false;
             }
             // Yes, the existing resource will be overwritten

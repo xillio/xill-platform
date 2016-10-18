@@ -311,7 +311,11 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                         "File already exists", "",
                         "The destination file (" + destFile.toString() + ") already exists.",
                         buttonTypeOverwrite, buttonTypeOverwriteAll, buttonTypeSkip, ButtonType.CANCEL);
-                final Optional<ButtonType> result = dialog.showAndWait();
+
+                dialog.showAndWait();
+                final Optional<ButtonType> result = dialog.getResult();
+
+                //final Optional<ButtonType> result = dialog.showAndWait();
 
                 if (result.isPresent()) {
                     if (result.get() == buttonTypeOverwriteAll) {
@@ -373,7 +377,9 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error while pasting files.", "",
                     "An error occurred while pasting files. Press OK to continue or Cancel to abort.\n" + e.getMessage(),
                     ButtonType.OK, ButtonType.CANCEL);
-            final Optional<ButtonType> result = error.showAndWait();
+
+            error.showAndWait();
+            final Optional<ButtonType> result = error.getResult();
 
             // If cancel was pressed, abort.
             if (result.isPresent() && result.get() == ButtonType.CANCEL) {
@@ -392,7 +398,8 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                             "The document " + tab.getDocument().getName() + " is modified.",
                             "Do you want to save the changes?",
                             ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-                    final Optional<ButtonType> result = dialog.showAndWait();
+                    dialog.showAndWait();
+                    final Optional<ButtonType> result = dialog.getResult();
                     if (result.isPresent()) {
                         if (result.get() == ButtonType.CANCEL) {
                             return false;
@@ -472,7 +479,9 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                     "Do you want to stop the robot so you can rename it?",
                     ButtonType.YES, ButtonType.NO
             );
-            final Optional<ButtonType> result = dialog.showAndWait();
+
+            dialog.showAndWait();
+            final Optional<ButtonType> result = dialog.getResult();
             if (!result.isPresent() || result.get() != ButtonType.YES) {
                 return;
             }
@@ -511,14 +520,6 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         if (selectedItems.stream().allMatch(file -> getProject(file) == file)) {
             int projectCount = selectedItems.size();
 
-            // Set up dialog
-            AlertDialog alert = new AlertDialog(Alert.AlertType.CONFIRMATION,
-                    "Delete",
-                    "Are you sure you want to delete " + projectCount + " " + ((projectCount > 1) ? "projects" : "project") + "?" +
-                            (running ? "\nOne or more robots are still running, deleting will terminate them." : ""),
-                    ""
-            );
-
             // Set up dialog content
             CheckBox checkBox = new CheckBox("Delete project contents from disk");
             Label prjText = new Label(selectedItems.stream().map(file -> file.getValue().getKey().getPath())
@@ -530,9 +531,17 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             gridPane.add(prjText, 0, 0);
             gridPane.add(checkBox, 0, 1);
 
-            alert.getDialogPane().setContent(gridPane);
+            // Set up dialog
+            ContentAlertDialog alert = new ContentAlertDialog(Alert.AlertType.CONFIRMATION,
+                    "Delete",
+                    "Are you sure you want to delete " + projectCount + " " + ((projectCount > 1) ? "projects" : "project") + "?" +
+                            (running ? "\nOne or more robots are still running, deleting will terminate them." : ""),
+                    "",
+                    gridPane
+            );
 
-            alert.showAndWait()
+            alert.showAndWait();
+            alert.getResult()
                     .filter(response -> response == ButtonType.OK)
                     .ifPresent(response -> deleteItems(selectedItems, checkBox.isSelected()));
 
@@ -549,9 +558,11 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                             (running ? "\nOne or more robots are still running, deleting will terminate them." : ""),
                     folderCount > 0 ? "Selected files, including all files in selected folders, will be deleted." : "");
 
-            alert.showAndWait()
-                    .filter(response -> response == ButtonType.OK)
-                    .ifPresent(response -> deleteItems(selectedItems, true));
+            alert.showAndWait();
+            if(alert.getResult().get() == ButtonType.OK)
+            {
+                deleteItems(selectedItems, true);
+            }
         }
     }
 
@@ -1007,7 +1018,8 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                     "The file has been modified outside the editor.", "Do you want reload the file?",
                     ButtonType.YES, ButtonType.NO);
 
-            final Optional<ButtonType> result = alert.showAndWait();
+            alert.showAndWait();
+            final Optional<ButtonType> result = alert.getResult();
             if (result.get() == ButtonType.YES) {
                 tab.reload();
             }
