@@ -67,16 +67,7 @@ public class RegexConstruct extends Construct {
             Matcher matcher = regexService.getMatcher(regex, valueVar.getStringValue(), timeout);
 
             if (regexService.matches(matcher)) {
-                List<MetaExpression> list = new ArrayList<>();
-                List<String> listAsStrings = regexService.tryMatchElseNull(matcher);
-                for (String s : listAsStrings) {
-                    if (s != null) {
-                        list.add(fromValue(s));
-                    } else {
-                        list.add(NULL);
-                    }
-                }
-                return fromValue(list);
+                return fromValue(makeList(matcher));
             }
             return NULL;
         } catch (PatternSyntaxException e) {
@@ -85,6 +76,19 @@ public class RegexConstruct extends Construct {
         } catch (IllegalArgumentException e) {
             throw new RobotRuntimeException("Error while executing the regex", e);
         }
+    }
+
+    private List<MetaExpression> makeList(Matcher matcher) {
+        List<MetaExpression> list = new ArrayList<>();
+        List<String> listAsStrings = regexService.tryMatchElseNull(matcher);
+        for (String s : listAsStrings) {
+            if (s != null) {
+                list.add(fromValue(s));
+            } else {
+                list.add(NULL);
+            }
+        }
+        return list;
     }
 
 }

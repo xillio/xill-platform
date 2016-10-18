@@ -72,8 +72,6 @@ public class FormatConstruct extends Construct {
 
         List<MetaExpression> formatList = new ArrayList<>();
         List<Object> list = new ArrayList<>();
-        @SuppressWarnings("unchecked")
-        List<MetaExpression> numberList = (List<MetaExpression>) valueVar.getValue();
 
         try {
             Matcher matcher = regexService.getMatcher("%[[^a-zA-Z%]]*([a-zA-Z]|[%])", textVar.getStringValue(), regexService.getRegexTimeout());
@@ -99,6 +97,7 @@ public class FormatConstruct extends Construct {
     }
 
     private List<Object> CastMetaExpressions(List<Object> list, List<MetaExpression> formatList, final MetaExpression valueVar){
+        @SuppressWarnings("unchecked")
         List<MetaExpression> numberList = (List<MetaExpression>) valueVar.getValue();
         int count = 0;
         String typeString;

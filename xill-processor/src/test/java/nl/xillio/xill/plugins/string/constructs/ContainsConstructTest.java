@@ -56,4 +56,26 @@ public class ContainsConstructTest extends TestUtils{
         // Assert
         Assert.assertEquals(result.getBooleanValue(), returnValue);
     }
+
+    /**
+     * Test the process method when NULL is given.
+     */
+    @Test
+    public void processNULLUsage() {
+        // Mock
+        String parentValue = "testing";
+        MetaExpression parent = mockExpression(ATOMIC);
+        when(parent.getStringValue()).thenReturn(parentValue);
+
+        MetaExpression child = NULL;
+
+        boolean returnValue = false;
+        StringUtilityService stringService = mock(StringUtilityService.class);
+        when(stringService.contains(parentValue, null)).thenReturn(returnValue);
+
+        ContainsConstruct construct = new ContainsConstruct(stringService);
+        // Run
+        MetaExpression result = process(construct, parent, child);
+
+    }
 }
