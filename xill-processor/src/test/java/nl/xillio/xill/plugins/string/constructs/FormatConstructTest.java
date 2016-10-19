@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link FormatConstruct}.
  */
-public class FormatConstructTest extends TestUtils{
+public class FormatConstructTest extends TestUtils {
 
     /**
      * Test the process method under normal circumstances.

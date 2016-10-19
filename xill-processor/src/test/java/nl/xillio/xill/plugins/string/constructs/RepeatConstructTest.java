@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link RepeatConstruct}.
  */
-public class RepeatConstructTest extends TestUtils{
+public class RepeatConstructTest extends TestUtils {
 
     /**
      * Test the process method under normal circumstances.

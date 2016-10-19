@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link ToUpperConstruct}.
  */
-public class ToUpperConstructTest extends TestUtils{
+public class ToUpperConstructTest extends TestUtils {
 
     /**
      * Test the process method under normal circumstances.
@@ -65,7 +65,7 @@ public class ToUpperConstructTest extends TestUtils{
 
         ToUpperConstruct construct = new ToUpperConstruct(stringService);
         //Run
-        MetaExpression result  = process(construct, NULL);
+        MetaExpression result = process(construct, NULL);
 
         // Assert
         Assert.assertEquals(result, NULL);

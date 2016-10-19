@@ -29,9 +29,9 @@ import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
 public class WrapConstruct extends Construct {
 
     public final StringUtilityService stringService;
+
     @Inject
-    public WrapConstruct(StringUtilityService stringService)
-    {
+    public WrapConstruct(StringUtilityService stringService) {
         this.stringService = stringService;
     }
 

@@ -40,8 +40,9 @@ import java.util.List;
 public class SplitConstruct extends Construct {
 
     public final StringUtilityService stringService;
+
     @Inject
-    public SplitConstruct(StringUtilityService stringService){
+    public SplitConstruct(StringUtilityService stringService) {
         this.stringService = stringService;
     }
 

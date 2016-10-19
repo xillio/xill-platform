@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link RepeatConstruct}.
  */
-public class WordDistanceConstructTest extends TestUtils{
+public class WordDistanceConstructTest extends TestUtils {
 
     /**
      * Test the process method with relative distance.
@@ -54,10 +54,10 @@ public class WordDistanceConstructTest extends TestUtils{
 
         //Run
         WordDistanceConstruct construct = new WordDistanceConstruct(stringService);
-        MetaExpression result  = process(construct, source, target, relative);
+        MetaExpression result = process(construct, source, target, relative);
 
         // Assert
-        Assert.assertEquals(result.getNumberValue().intValue(), distanceValue/maxLength);
+        Assert.assertEquals(result.getNumberValue().intValue(), distanceValue / maxLength);
     }
 
     /**
@@ -85,7 +85,7 @@ public class WordDistanceConstructTest extends TestUtils{
 
         //Run
         WordDistanceConstruct construct = new WordDistanceConstruct(stringService);
-        MetaExpression result  = process(construct, source, target, relative);
+        MetaExpression result = process(construct, source, target, relative);
 
         // Assert
         Assert.assertEquals(result.getNumberValue().intValue(), returnValue);

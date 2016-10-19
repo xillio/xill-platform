@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link SubstringConstruct}.
  */
-public class SubstringConstructTest extends TestUtils{
+public class SubstringConstructTest extends TestUtils {
 
     /**
      * Test the process method under normal circumstances.

@@ -31,8 +31,9 @@ import nl.xillio.xill.plugins.string.services.string.RegexService;
 public class RegexEscapeConstruct extends Construct {
 
     public final RegexService regexService;
+
     @Inject
-    public RegexEscapeConstruct(RegexService regexService){
+    public RegexEscapeConstruct(RegexService regexService) {
         this.regexService = regexService;
     }
 

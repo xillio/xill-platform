@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -49,6 +49,7 @@ public class FormatConstruct extends Construct {
     private final StringUtilityService stringService;
 
     private final String explanation = "use String;\nString.format(\"%3$2s %1$2s %1$2s %2$2s\" , [\"a\", \"b\", \"c\"] );";
+
     /**
      * Create a new {@link FormatConstruct}
      */
@@ -70,9 +71,22 @@ public class FormatConstruct extends Construct {
         assertNotNull(textVar, "text");
 
 
-        List<MetaExpression> formatList = new ArrayList<>();
-        List<Object> list = new ArrayList<>();
+        List<MetaExpression> formatList = Format(textVar);
 
+        List<Object> castedList = castMetaExpressions(formatList, valueVar);
+
+        try {
+            return fromValue(stringService.format(textVar.getStringValue(), castedList));
+        } catch (MissingFormatArgumentException e) {
+            throw new InvalidUserInputException("Not enough arguments: " + e.getMessage(), valueVar.getStringValue(), "A correct list of arguments.", explanation, e);
+        } catch (IllegalFormatException e) {
+            throw new InvalidUserInputException("Illegal format handed: " + e.getMessage(), textVar.getStringValue(), "A valid format specifier.", explanation, e);
+        }
+    }
+
+
+    private List<MetaExpression> Format(MetaExpression textVar) {
+        List<MetaExpression> formatList = new ArrayList<>();
         try {
             Matcher matcher = regexService.getMatcher("%[[^a-zA-Z%]]*([a-zA-Z]|[%])", textVar.getStringValue(), regexService.getRegexTimeout());
             List<String> tryFormat = regexService.tryMatch(matcher);
@@ -84,21 +98,14 @@ public class FormatConstruct extends Construct {
         } catch (IllegalArgumentException e) {
             throw new RobotRuntimeException("Illegal argument handed when trying to match: " + e.getMessage(), e);
         }
-
-        List<Object> castedList = CastMetaExpressions(list, formatList, valueVar);
-
-        try {
-            return fromValue(stringService.format(textVar.getStringValue(), castedList));
-        } catch (MissingFormatArgumentException e) {
-            throw new InvalidUserInputException("Not enough arguments: " + e.getMessage(), valueVar.getStringValue(), "A correct list of arguments.", explanation, e);
-        } catch (IllegalFormatException e) {
-            throw new InvalidUserInputException("Illegal format handed: " + e.getMessage(), textVar.getStringValue(), "A valid format specifier.", explanation, e);
-        }
+        return formatList;
     }
 
-    private List<Object> CastMetaExpressions(List<Object> list, List<MetaExpression> formatList, final MetaExpression valueVar){
+
+    private List<Object> castMetaExpressions(List<MetaExpression> formatList, final MetaExpression valueVar) {
         @SuppressWarnings("unchecked")
         List<MetaExpression> numberList = (List<MetaExpression>) valueVar.getValue();
+        List<Object> list = new ArrayList<>();
         int count = 0;
         String typeString;
         for (int j = 0; j < numberList.size() - count; j++) {
@@ -143,7 +150,7 @@ public class FormatConstruct extends Construct {
                 case 'T':
                     throw new OperationFailedException("format a date/time", "Date/Time conversions are not supported.", "Use Date package for formatting the date/time.");
                 default:
-                    throw new InvalidUserInputException("Unexpected conversion type.", typeString, "A supported conversion type.",  explanation);
+                    throw new InvalidUserInputException("Unexpected conversion type.", typeString, "A supported conversion type.", explanation);
             }
         }
         return list;

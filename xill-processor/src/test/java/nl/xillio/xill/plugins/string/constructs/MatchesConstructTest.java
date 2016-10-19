@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link MatchesConstruct}.
  */
-public class MatchesConstructTest extends TestUtils{
+public class MatchesConstructTest extends TestUtils {
     private int timeoutValue = 10000;
 
     /**

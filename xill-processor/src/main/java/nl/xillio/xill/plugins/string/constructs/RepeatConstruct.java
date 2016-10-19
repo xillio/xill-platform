@@ -31,8 +31,9 @@ import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
 public class RepeatConstruct extends Construct {
 
     public final StringUtilityService stringService;
+
     @Inject
-    public RepeatConstruct(StringUtilityService stringService){
+    public RepeatConstruct(StringUtilityService stringService) {
         this.stringService = stringService;
     }
 

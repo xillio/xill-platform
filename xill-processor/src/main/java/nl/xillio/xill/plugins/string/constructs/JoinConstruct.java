@@ -32,8 +32,9 @@ import java.util.Map;
  */
 public class JoinConstruct extends Construct {
     private final StringUtilityService stringService;
+
     @Inject
-    public JoinConstruct(StringUtilityService stringService){
+    public JoinConstruct(StringUtilityService stringService) {
         this.stringService = stringService;
     }
 

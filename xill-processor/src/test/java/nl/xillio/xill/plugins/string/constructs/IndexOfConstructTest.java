@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link IndexOfConstruct}.
  */
-public class IndexOfConstructTest extends TestUtils{
+public class IndexOfConstructTest extends TestUtils {
 
     /**
      * Test the process method under normal circumstances.

@@ -38,9 +38,10 @@ import java.util.regex.PatternSyntaxException;
  */
 public class AllMatchesConstruct extends Construct {
 
-    private RegexService regexService;
+    private final RegexService regexService;
+
     @Inject
-    public AllMatchesConstruct(RegexService regexService){
+    public AllMatchesConstruct(RegexService regexService) {
         this.regexService = regexService;
     }
 

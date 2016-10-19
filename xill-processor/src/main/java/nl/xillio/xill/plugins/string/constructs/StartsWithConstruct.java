@@ -33,8 +33,9 @@ import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
 public class StartsWithConstruct extends Construct {
 
     public final StringUtilityService stringService;
+
     @Inject
-    public StartsWithConstruct(StringUtilityService stringService){
+    public StartsWithConstruct(StringUtilityService stringService) {
         this.stringService = stringService;
     }
 

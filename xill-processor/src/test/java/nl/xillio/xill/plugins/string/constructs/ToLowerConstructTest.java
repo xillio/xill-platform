@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link ToLowerConstruct}.
  */
-public class ToLowerConstructTest extends TestUtils{
+public class ToLowerConstructTest extends TestUtils {
 
     /**
      * Test the process method under normal circumstances.
@@ -65,7 +65,7 @@ public class ToLowerConstructTest extends TestUtils{
 
         ToLowerConstruct construct = new ToLowerConstruct(stringService);
         //Run
-        MetaExpression result  = process(construct, NULL);
+        MetaExpression result = process(construct, NULL);
 
         // Assert
         Assert.assertEquals(result, NULL);

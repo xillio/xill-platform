@@ -42,8 +42,9 @@ import java.util.regex.PatternSyntaxException;
 public class RegexConstruct extends Construct {
 
     private final RegexService regexService;
+
     @Inject
-    public RegexConstruct(RegexService regexService){
+    public RegexConstruct(RegexService regexService) {
         this.regexService = regexService;
     }
 

@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link StartsWithConstruct}.
  */
-public class StartsWithConstructTest extends TestUtils{
+public class StartsWithConstructTest extends TestUtils {
 
     /**
      * Test the process method under normal circumstances.

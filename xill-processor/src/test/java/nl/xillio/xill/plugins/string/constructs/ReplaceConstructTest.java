@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link ReplaceConstruct}.
  */
-public class ReplaceConstructTest extends TestUtils{
+public class ReplaceConstructTest extends TestUtils {
     private int timeoutValue = 10000;
 
     /**
@@ -64,7 +64,7 @@ public class ReplaceConstructTest extends TestUtils{
         boolean replaceAllValue = true;
         MetaExpression replaceAll = mockExpression(ATOMIC);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
-        
+
         MetaExpression timeout = mockExpression(ATOMIC);
 
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
@@ -118,7 +118,7 @@ public class ReplaceConstructTest extends TestUtils{
         boolean replaceAllValue = false;
         MetaExpression replaceAll = mockExpression(ATOMIC);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
-        
+
         MetaExpression timeout = mockExpression(ATOMIC);
 
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
@@ -172,7 +172,7 @@ public class ReplaceConstructTest extends TestUtils{
         boolean replaceAllValue = true;
         MetaExpression replaceAll = mockExpression(ATOMIC);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
-        
+
         MetaExpression timeout = mockExpression(ATOMIC);
 
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
@@ -226,7 +226,7 @@ public class ReplaceConstructTest extends TestUtils{
         boolean replaceAllValue = false;
         MetaExpression replaceAll = mockExpression(ATOMIC);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
-        
+
         MetaExpression timeout = mockExpression(ATOMIC);
 
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
@@ -280,7 +280,7 @@ public class ReplaceConstructTest extends TestUtils{
         boolean replaceAllValue = true;
         MetaExpression replaceAll = mockExpression(ATOMIC);
         when(replaceAll.getBooleanValue()).thenReturn(replaceAllValue);
-        
+
         MetaExpression timeout = mockExpression(ATOMIC);
 
         when(timeout.getNumberValue()).thenReturn(timeoutValue);

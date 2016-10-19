@@ -39,6 +39,7 @@ public class TrimConstructTest extends TestUtils {
     private static final StringUtilityService stringService = new StringUtilityServiceImpl();
 
     private TrimConstruct construct = new TrimConstruct(stringService);
+
     /**
      * Test the process method with a string given and internal set to false.
      */

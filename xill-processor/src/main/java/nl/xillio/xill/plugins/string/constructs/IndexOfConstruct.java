@@ -35,9 +35,10 @@ import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
  */
 public class IndexOfConstruct extends Construct {
 
-    private StringUtilityService stringService;
+    private final StringUtilityService stringService;
+
     @Inject
-    public IndexOfConstruct(StringUtilityService stringService){
+    public IndexOfConstruct(StringUtilityService stringService) {
         this.stringService = stringService;
     }
 

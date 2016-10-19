@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link RepeatConstruct}.
  */
-public class LengthConstructTest extends TestUtils{
+public class LengthConstructTest extends TestUtils {
 
     /**
      * Test the process method under normal circumstances.
@@ -42,7 +42,7 @@ public class LengthConstructTest extends TestUtils{
 
         //Run
         LengthConstruct construct = new LengthConstruct();
-        MetaExpression result  = process(construct, string);
+        MetaExpression result = process(construct, string);
 
         // Assert
         Assert.assertEquals(result.getNumberValue().intValue(), returnValue);
@@ -58,7 +58,7 @@ public class LengthConstructTest extends TestUtils{
 
         //Run
         LengthConstruct construct = new LengthConstruct();
-        MetaExpression result  = process(construct, NULL);
+        MetaExpression result = process(construct, NULL);
 
         // Assert
         Assert.assertEquals(result.getNumberValue().intValue(), returnValue);

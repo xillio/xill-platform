@@ -32,9 +32,10 @@ import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
  */
 public class ContainsConstruct extends Construct {
 
-    private StringUtilityService stringService;
+    private final StringUtilityService stringService;
+
     @Inject
-    public ContainsConstruct(StringUtilityService stringService){
+    public ContainsConstruct(StringUtilityService stringService) {
         this.stringService = stringService;
     }
 

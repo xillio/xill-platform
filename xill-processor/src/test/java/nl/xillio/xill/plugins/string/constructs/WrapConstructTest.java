@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link WrapConstruct}.
  */
-public class WrapConstructTest extends TestUtils{
+public class WrapConstructTest extends TestUtils {
 
     /**
      * Test the process method under normal circumstances.

@@ -70,7 +70,7 @@ public class RegexServiceImpl implements RegexService {
     }
 
     @Override
-    public int getRegexTimeout(){
+    public int getRegexTimeout() {
         return REGEX_TIMEOUT;
     }
 

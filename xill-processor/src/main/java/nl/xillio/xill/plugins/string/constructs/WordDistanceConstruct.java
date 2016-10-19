@@ -35,9 +35,10 @@ import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
  */
 public class WordDistanceConstruct extends Construct {
 
-    private StringUtilityService stringService;
+    private final StringUtilityService stringService;
+
     @Inject
-    public WordDistanceConstruct(StringUtilityService stringService){
+    public WordDistanceConstruct(StringUtilityService stringService) {
         this.stringService = stringService;
     }
 
