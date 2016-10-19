@@ -63,7 +63,7 @@ import java.util.List;
  */
 public class HungarianAlgorithmConstruct extends Construct {
     // The example used in the InvalidUserInputException.
-    private static final String example = "use Math;\nvar matrix = [[0,1,3], [2,2,3], [5,4,1]];\nMath.hungarianAlgorithm(matrix, true);";
+    private static final String EXAMPLE = "use Math;\nvar matrix = [[0,1,3], [2,2,3], [5,4,1]];\nMath.hungarianAlgorithm(matrix, true);";
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
@@ -74,7 +74,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         assertNotNull(matrixVar, "matrix");
 
         if (matrixVar.getType() != LIST) {
-            throw new InvalidUserInputException("No matrix given.", matrixVar.getStringValue(), "Two-dimensional list containing numbers.", example);
+            throw new InvalidUserInputException("No matrix given.", matrixVar.getStringValue(), "Two-dimensional list containing numbers.", EXAMPLE);
         }
 
         List<MetaExpression> matrix = matrixVar.getValue();
@@ -87,7 +87,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         // Prepare array
         int rows = matrix.size();
         if (rows < 1) {
-            throw new InvalidUserInputException("Not enough data.", matrixVar.getStringValue(), "At least 1 row with data.", example);
+            throw new InvalidUserInputException("Not enough data.", matrixVar.getStringValue(), "At least 1 row with data.", EXAMPLE);
         }
 
         MetaExpression var = matrix.get(0);
@@ -101,7 +101,7 @@ public class HungarianAlgorithmConstruct extends Construct {
         int columns = varList.size();
 
         if (columns < 1) {
-            throw new InvalidUserInputException("Not enough data.", matrixVar.getStringValue(), "At least 1 column with data.", example);
+            throw new InvalidUserInputException("Not enough data.", matrixVar.getStringValue(), "At least 1 column with data.", EXAMPLE);
         }
 
         if (rows == 0 || columns == 0) {
@@ -113,7 +113,7 @@ public class HungarianAlgorithmConstruct extends Construct {
             for (int j = 0; j < columns; j++) {
                 array[i][j] = getMatrixValue(matrix, i, j);
                 if (Double.isNaN(array[i][j])) {
-                    throw new InvalidUserInputException("Invalid value at [" + i + "," + j + "].", ((List<MetaExpression>) matrix.get(i).getValue()).get(j).getStringValue(), "A numerical value.", example);
+                    throw new InvalidUserInputException("Invalid value at [" + i + "," + j + "].", ((List<MetaExpression>) matrix.get(i).getValue()).get(j).getStringValue(), "A numerical value.", EXAMPLE);
                 }
             }
         }
