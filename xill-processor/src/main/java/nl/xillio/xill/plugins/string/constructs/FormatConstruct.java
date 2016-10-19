@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *         http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,10 +45,10 @@ import java.util.regex.PatternSyntaxException;
  * @author Sander
  */
 public class FormatConstruct extends Construct {
+
+    private static final String explanation = "use String;\nString.format(\"%3$2s %1$2s %1$2s %2$2s\" , [\"a\", \"b\", \"c\"] );";
     private final RegexService regexService;
     private final StringUtilityService stringService;
-
-    private final String explanation = "use String;\nString.format(\"%3$2s %1$2s %1$2s %2$2s\" , [\"a\", \"b\", \"c\"] );";
 
     /**
      * Create a new {@link FormatConstruct}
@@ -71,7 +71,7 @@ public class FormatConstruct extends Construct {
         assertNotNull(textVar, "text");
 
 
-        List<MetaExpression> formatList = Format(textVar);
+        List<MetaExpression> formatList = formatText(textVar);
 
         List<Object> castedList = castMetaExpressions(formatList, valueVar);
 
@@ -85,7 +85,7 @@ public class FormatConstruct extends Construct {
     }
 
 
-    private List<MetaExpression> Format(MetaExpression textVar) {
+    private List<MetaExpression> formatText(MetaExpression textVar) {
         List<MetaExpression> formatList = new ArrayList<>();
         try {
             Matcher matcher = regexService.getMatcher("%[[^a-zA-Z%]]*([a-zA-Z]|[%])", textVar.getStringValue(), regexService.getRegexTimeout());
