@@ -46,7 +46,7 @@ import java.util.regex.PatternSyntaxException;
  */
 public class FormatConstruct extends Construct {
 
-    private static final String explanation = "use String;\nString.format(\"%3$2s %1$2s %1$2s %2$2s\" , [\"a\", \"b\", \"c\"] );";
+    private static final String EXPLANATION = "use String;\nString.format(\"%3$2s %1$2s %1$2s %2$2s\" , [\"a\", \"b\", \"c\"] );";
     private final RegexService regexService;
     private final StringUtilityService stringService;
 
@@ -78,9 +78,9 @@ public class FormatConstruct extends Construct {
         try {
             return fromValue(stringService.format(textVar.getStringValue(), castedList));
         } catch (MissingFormatArgumentException e) {
-            throw new InvalidUserInputException("Not enough arguments: " + e.getMessage(), valueVar.getStringValue(), "A correct list of arguments.", explanation, e);
+            throw new InvalidUserInputException("Not enough arguments: " + e.getMessage(), valueVar.getStringValue(), "A correct list of arguments.", EXPLANATION, e);
         } catch (IllegalFormatException e) {
-            throw new InvalidUserInputException("Illegal format handed: " + e.getMessage(), textVar.getStringValue(), "A valid format specifier.", explanation, e);
+            throw new InvalidUserInputException("Illegal format handed: " + e.getMessage(), textVar.getStringValue(), "A valid format specifier.", EXPLANATION, e);
         }
     }
 
@@ -150,7 +150,7 @@ public class FormatConstruct extends Construct {
                 case 'T':
                     throw new OperationFailedException("format a date/time", "Date/Time conversions are not supported.", "Use Date package for formatting the date/time.");
                 default:
-                    throw new InvalidUserInputException("Unexpected conversion type.", typeString, "A supported conversion type.", explanation);
+                    throw new InvalidUserInputException("Unexpected conversion type.", typeString, "A supported conversion type.", EXPLANATION);
             }
         }
         return list;
