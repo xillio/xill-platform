@@ -1,27 +1,27 @@
 
 node('linux') {
-    stage "Setup" {
+    stage('Setup') {
         def mvnHome = tool 'mvn-3.3.9'
         def mvn = "${mvnHome}/bin/mvn"
     }
 
-    stage "Checkout" {
+    stage('Checkout') {
         checkout scm
     }
 
-    stage "Clean" {
+    stage('Clean') {
         sh "${mvn} clean"
     }
 
-    stage "Tests" {
+    stage('Tests') {
         sh "${mvn} verify"
     }
 
-    stage "Sonar" {
+    stage('Sonar') {
         sh "${mvn} sonar:sonar"
     }
 
-    stage "Deploy" {
+    stage('Deploy') {
         sh "${mvn} deploy"
     }
 }
