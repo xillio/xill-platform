@@ -26,7 +26,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */package nl.xillio.xill.plugins.string.constructs;
+ */
+package nl.xillio.xill.plugins.string.constructs;
 
 import com.google.inject.Inject;
 import nl.xillio.xill.api.components.MetaExpression;
