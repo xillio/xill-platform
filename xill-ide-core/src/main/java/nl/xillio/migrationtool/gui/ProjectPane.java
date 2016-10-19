@@ -315,8 +315,6 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 dialog.showAndWait();
                 final Optional<ButtonType> result = dialog.getResult();
 
-                //final Optional<ButtonType> result = dialog.showAndWait();
-
                 if (result.isPresent()) {
                     if (result.get() == buttonTypeOverwriteAll) {
                         overwriteAll = true; // Overwrite all

@@ -180,33 +180,31 @@ public class Loader implements ContenttoolsPlugin {
                 ButtonType.YES, ButtonType.NO);
 
         dialog.showAndWait();
-        //dialog.resultProperty().addListener((observable, oldValue, newValue) -> {
-            if (dialog.getResult().get() == ButtonType.YES) {
-                try {
-                    // Recover from backup settings
-                    SettingsHandler.recoverSettings();
-                    // Reload the settings after recovery
-                    SettingsHandler.loadSettings();
-                } catch (IOException e) {
-                    LOGGER.error("Could not recover settings, writing defaults", e);
-                    try {
-                        // Try to write the default settings when the backup settings cannot be loaded
-                        SettingsHandler.forceDefaultSettings();
-                    } catch (IOException e1) {
-                        LOGGER.error("Could not write default settings, exiting", e);
-                        // System.exit is appropriate here since there is a fatal error.
-                        System.exit(1);
-                    }
-                }
-            } else {
-                // Simply exit when the user chooses not to recover the settings
-                Platform.exit();
-            }
 
-            // When recovery succeeds, continue starting the IDE
-            startIDE(primaryStage);
-        //});
-        //dialog.show();
+        if (dialog.getResult().get() == ButtonType.YES) {
+            try {
+                // Recover from backup settings
+                SettingsHandler.recoverSettings();
+                // Reload the settings after recovery
+                SettingsHandler.loadSettings();
+            } catch (IOException e) {
+                LOGGER.error("Could not recover settings, writing defaults", e);
+                try {
+                    // Try to write the default settings when the backup settings cannot be loaded
+                    SettingsHandler.forceDefaultSettings();
+                } catch (IOException e1) {
+                    LOGGER.error("Could not write default settings, exiting", e);
+                    // System.exit is appropriate here since there is a fatal error.
+                    System.exit(1);
+                }
+            }
+        } else {
+            // Simply exit when the user chooses not to recover the settings
+            Platform.exit();
+        }
+
+        // When recovery succeeds, continue starting the IDE
+        startIDE(primaryStage);
     }
 
     /**
