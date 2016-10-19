@@ -1,12 +1,14 @@
 
-node('master') {
+node('linux') {
     stage "Setup"
-
-    sh "echo Hello World"
+    def mvnHome = tools 'mvn-3.3.9'
+    def mvn = "${mvnHome}/bin/mvn"
 
     stage "Clean"
+    sh "${mvn} clean"
 
     stage "Tests"
+    sh "${mvn} verify"
 
     stage "Build"
 

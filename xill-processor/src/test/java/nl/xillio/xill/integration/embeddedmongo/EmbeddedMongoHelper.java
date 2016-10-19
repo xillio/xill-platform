@@ -25,7 +25,6 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.config.IRuntimeConfig;
 import de.flapdoodle.embed.process.exceptions.DistributionException;
 import de.flapdoodle.embed.process.extract.UserTempNaming;
-import de.flapdoodle.embed.process.runtime.Network;
 import me.biesaart.utils.Log;
 import org.slf4j.Logger;
 
@@ -42,7 +41,7 @@ public class EmbeddedMongoHelper {
     private static Logger LOGGER = Log.get();
     private static final MongodStarter starter;
     private static final MongodExecutable executable;
-    private static int port = 27017;
+    private static Net net;
 
     static {
         Command command = Command.MongoD;
@@ -61,16 +60,17 @@ public class EmbeddedMongoHelper {
 
         starter = MongodStarter.getInstance(runtimeConfig);
 
-
         executable = deploy();
     }
 
     private static MongodExecutable deploy() {
         try {
+            net = new Net();
             IMongodConfig mongodConfig = new MongodConfigBuilder()
                     .version(Version.Main.PRODUCTION)
-                    .net(new Net(port, Network.localhostIsIPv6()))
+                    .net(net)
                     .build();
+            System.setProperty("udm.port", Integer.toString(net.getPort()));
             return starter.prepare(mongodConfig);
         } catch (DistributionException e) {
             if (e.getCause() instanceof FileAlreadyExistsException) {
@@ -104,7 +104,7 @@ public class EmbeddedMongoHelper {
     }
 
     public static void cleanupDB() {
-        try (MongoClient conn = new MongoClient("localhost", port)) {
+        try (MongoClient conn = new MongoClient("localhost", net.getPort())) {
             MongoIterable<String> dbs = conn.listDatabaseNames();
             for (String db : dbs)
                 conn.dropDatabase(db);
