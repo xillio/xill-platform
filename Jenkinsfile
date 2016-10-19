@@ -1,4 +1,4 @@
 
-node('linux') {
+node() {
     sh "echo Hello World"
 }
