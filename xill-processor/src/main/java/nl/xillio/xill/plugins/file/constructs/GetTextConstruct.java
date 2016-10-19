@@ -35,10 +35,11 @@ import java.util.regex.Pattern;
 
 /**
  * Read text from a plain text file using the given encoding.
- *
+ * @deprecated use the Stream package to read/write files.
  * @author Thomas biesaart
  */
 @Singleton
+@Deprecated
 public class GetTextConstruct extends Construct {
     private static final Pattern LEADING_BOM_PATTERN = Pattern.compile("^\uFEFF+"); // Duplicated in plugin-XML::NodeServiceImpl.
 

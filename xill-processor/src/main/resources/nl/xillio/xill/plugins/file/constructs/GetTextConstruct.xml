@@ -18,6 +18,8 @@
 -->
 <function>
     <description>
+This method is deprecated. use the Stream package to read/write files.
+
 Read all text from a file.
     </description>
     <examples>
