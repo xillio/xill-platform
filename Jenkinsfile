@@ -6,10 +6,9 @@ node('linux') {
     env.M2_HOME = tool 'mvn-3'
     env.JAVA_HOME = tool 'java-1.8'
 
-    sh 'env > env.txt'
-    for(String line : readFile('env.txt').split("\r?\n")) {
-        println line
-    }
+    bitbucketStatusNotify ( buildState: 'INPROGRESS' )
+
+    sh 'env | sort'
 
     // Inject maven settings file
     configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
@@ -48,5 +47,7 @@ node('linux') {
             sh "${mvn} deploy -DskipTests"
         }
     }
+
+    bitbucketStatusNotify ( buildState: 'SUCCESSFUL' )
 
 }
