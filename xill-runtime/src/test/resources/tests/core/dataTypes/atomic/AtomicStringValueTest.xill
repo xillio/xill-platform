@@ -21,12 +21,12 @@
 
 use Assert, Collection;
 
-var items = [3, "foo", null, true, false];
-var stringValues = ["3", "foo", "null", "true", "false"];
+var items = [3, "foo", true, false];
+var stringValues = ["3", "foo", "true", "false"];
 
 var i = Collection.length(items);
 while (i--) {
     var item = items[i];
     var stringValue = stringValues[i];
-    Assert.isTrue(item==stringValue, item :: " did not have the right string value " :: stringValue);
+    Assert.isTrue(@item==stringValue, item :: " did not have the right string value " :: stringValue);
 }

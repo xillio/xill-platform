@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 /*
- * Specification: An ATOMIC MUST equal its number representation
- * Input: 3, "foo", "5", null, true, false
- * Expected: 3, NaN, 5, NaN, 1, 0
+ * Specification: The number value of null MUST be NaN.
+ * Input: null
+ * Expected: null + 1 = NaN
  */
 
-use Assert, Collection;
+use Assert, System;
 
-var items = [3, "foo", "5", true, false];
-var numberValues = [3, NaN, 5, 1, 0];
-
-var i = Collection.length(items);
-while (i--) {
-    var item = items[i];
-    var numberValue = numberValues[i];
-    Assert.isTrue((item+0)==numberValue, item :: " did not have the right number value " :: numberValue);
-}
+Assert.equal(null + 1, NaN);

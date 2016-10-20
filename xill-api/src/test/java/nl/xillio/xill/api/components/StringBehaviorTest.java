@@ -29,12 +29,12 @@ import static org.testng.Assert.assertTrue;
 public class StringBehaviorTest {
 
     StringBehavior[] stringBehaviors;
-    Double[] numberValues;
+    Number[] numberValues;
     String[] stringValues;
     boolean[] booleanValues;
 
     public StringBehaviorTest(){
-        numberValues = new Double[]{NaN, NaN, 0D, 0D, NaN, NaN};
+        numberValues = new Number[]{NaN, NaN, 0, 0D, NaN, NaN};
         stringValues = new String[]{"test string", "", "0", "0.0", "null", "NaN"};
         booleanValues = new boolean[]{true, false, false, true, false, true};
 
