@@ -100,7 +100,6 @@
         <module>xill-assemblies</module>
         <module>xill-cli</module>
         <module>xill-ide</module>
-        <module>xill-ide-native</module>
         <module>xill-parent</module>
         <module>xill-plugin-archetype</module>
         <module>xill-plugins-parent</module>
@@ -172,4 +171,13 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>build-native</id>
+            <modules>
+                <module>xill-ide-native</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>

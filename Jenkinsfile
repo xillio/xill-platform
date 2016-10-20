@@ -9,7 +9,14 @@ node('linux') {
 
     // Inject maven settings file
     configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-        def mvn = "\"${env.M2_HOME}/bin/mvn\" -s \"$MAVEN_SETTINGS\""
+        dev mvnOptions = [
+                // Use the provided settings.xml
+                "-s \"$MAVEN_SETTINGS\"",
+                // Run in batch mode (headless)
+                "-B"
+        ]
+
+        def mvn = "\"${env.M2_HOME}/bin/mvn\" ${mvnOptions.join(' ')}"
 
         // Check out scm
         stage('Checkout') {
