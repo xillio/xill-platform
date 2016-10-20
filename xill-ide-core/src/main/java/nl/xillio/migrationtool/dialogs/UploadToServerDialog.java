@@ -137,7 +137,7 @@ public class UploadToServerDialog extends FXMLDialog {
 
             // Show success message
             AlertDialog dialog = new AlertDialog(Alert.AlertType.INFORMATION, "Upload to server",
-                    "Uploading process has been successfully finished.", null,
+                    "Uploading process has been successfully finished.", "",
                     ButtonType.OK);
             dialog.showAndWait();
 
