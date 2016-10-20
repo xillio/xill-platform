@@ -304,8 +304,8 @@ public class SettingsDialog extends FXMLDialog {
             validate();
         } catch (ValidationException e) {
             LOGGER.error(e.getMessage(), e);
-            Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
-            alert.initModality(Modality.APPLICATION_MODAL);
+            AlertDialog alert = new AlertDialog(Alert.AlertType.ERROR, "Error", "", e.getMessage());
+            alert.initOwner(this.getScene().getWindow());
             alert.showAndWait();
             return false;
         }

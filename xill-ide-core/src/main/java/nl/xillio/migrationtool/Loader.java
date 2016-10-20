@@ -272,10 +272,6 @@ public class Loader implements ContenttoolsPlugin {
     }
 
     private void alert(String message) {
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.initModality(Modality.APPLICATION_MODAL);
-        alert.setTitle("Warning");
-        alert.setContentText(message);
-        alert.show();
+        new AlertDialog(AlertType.ERROR, "Warning", "", message).showAndWait();
     }
 }
