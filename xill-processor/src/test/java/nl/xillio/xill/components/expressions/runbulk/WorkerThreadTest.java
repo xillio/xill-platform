@@ -139,7 +139,7 @@ public class WorkerThreadTest extends TestUtils {
         MetaExpression item = mockExpression(ExpressionDataType.ATOMIC);
         when(queue.poll(anyInt(), any())).thenReturn(item);
         when(debugger.shouldStop()).thenReturn(false);
-        RuntimeException runtimeException = new RobotRuntimeException("Error running robot");
+        RobotRuntimeException runtimeException = new RobotRuntimeException("Error running robot");
         when(workerRobotFactory.construct(any(), any())).thenReturn(robot);
         when(robot.process(any())).thenThrow(runtimeException);
 
