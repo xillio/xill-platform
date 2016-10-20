@@ -1,4 +1,4 @@
-parallel(
+/*parallel(
         "Windows": {
             buildOn(
                     platform: "windows"
@@ -16,6 +16,10 @@ parallel(
                     platform: "mac"
             )
         }
+)*/
+
+buildOn(
+        platform: "windows"
 )
 
 /**
@@ -39,7 +43,7 @@ def buildOn(Map args) {
         def javaTool = tool 'java-1.8'
 
         withEnv(["JAVA_HOME=$javaTool"]) {
-            
+
             // Inject maven settings file
             configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
                 def mvnOptions = [
