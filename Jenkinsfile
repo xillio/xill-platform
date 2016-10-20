@@ -8,6 +8,8 @@ node('linux') {
 
     def mvn = "\"${env.M2_HOME}/bin/mvn\""
 
+    print env
+
     // Check out scm
     stage('Checkout') {
         checkout scm
