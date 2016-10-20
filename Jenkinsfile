@@ -7,8 +7,8 @@ node('linux') {
     env.JAVA_HOME = tool 'java-1.8'
 
     sh 'env > env.txt'
-    readFile('env.txt').split("\r?\n").each {
-        println it
+    for(String line : readFile('env.txt').split("\r?\n")) {
+        println line
     }
 
     // Inject maven settings file
