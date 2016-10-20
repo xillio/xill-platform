@@ -1,7 +1,16 @@
+parallel(
+        "Windows": {
+            buildOn("windows", false, false)
+        },
 
-for (platform in ['linux', 'windows', 'osx']) {
-    buildOn(platform, false, false)
-}
+        "Linux": {
+            buildOn("linux", false, false)
+        },
+
+        "Mac OSX": {
+            buildOn("mac", false, false)
+        }
+)
 
 /**
  * This function will configure a node to run a build.
@@ -68,7 +77,7 @@ def buildOn(String platform, boolean runSonar, boolean deploy) {
  * @return void
  */
 def cli(String args) {
-    if(isUnix()) {
+    if (isUnix()) {
         sh args
     } else {
         bat args
