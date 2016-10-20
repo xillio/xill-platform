@@ -34,9 +34,9 @@ public class StringBehaviorTest {
     boolean[] booleanValues;
 
     public StringBehaviorTest(){
-        numberValues = new Double[]{NaN, NaN, 0D};
-        stringValues = new String[]{"test string", "", "0.0"};
-        booleanValues = new boolean[]{true, false, true};
+        numberValues = new Double[]{NaN, NaN, 0D, 0D, NaN, NaN};
+        stringValues = new String[]{"test string", "", "0", "0.0", "null", "NaN"};
+        booleanValues = new boolean[]{true, false, false, true, false, true};
 
         stringBehaviors = new StringBehavior[3];
         for(int i = 0; i < stringBehaviors.length; i++)
