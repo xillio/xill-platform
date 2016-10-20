@@ -1,14 +1,20 @@
 parallel(
         "Windows": {
-            buildOn("windows", false, false)
+            buildOn(
+                    platform: "windows"
+            )
         },
 
         "Linux": {
-            buildOn("linux", false, false)
+            buildOn(
+                    platform: "linux"
+            )
         },
 
         "Mac OSX": {
-            buildOn("mac", false, false)
+            buildOn(
+                    platform: "mac"
+            )
         }
 )
 
@@ -19,13 +25,19 @@ parallel(
  * @param deploy set to true to deploy to maven repository
  * @return void
  */
-def buildOn(String platform, boolean runSonar, boolean deploy) {
+def buildOn(Map args) {
+    def platform = args.get('platform', 'linux')
+    def runSonar = args.get('runSonar', false)
+    def deploy = args.get('deploy', false)
+
     node(platform) {
 
         // Gather all required tools
         // Note the escaped quotes to make this work with spaces
-        env.M2_HOME = tool 'mvn-3'
-        env.JAVA_HOME = tool 'java-1.8'
+        def m2Tool = tool 'mvn-3'
+        env.M2_HOME = m2Tool
+        def javaTool = tool 'java-1.8'
+        env.JAVA_HOME = javaTool
 
         // Inject maven settings file
         configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
@@ -36,7 +48,7 @@ def buildOn(String platform, boolean runSonar, boolean deploy) {
                     "-B"
             ]
 
-            def mvn = "\"${env.M2_HOME}/bin/mvn\" ${mvnOptions.join(' ')}"
+            def mvn = "\"${m2Tool}/bin/mvn\" ${mvnOptions.join(' ')}"
 
             // Check out scm
             stage("$platform: Checkout") {
@@ -70,6 +82,7 @@ def buildOn(String platform, boolean runSonar, boolean deploy) {
         }
     }
 }
+
 
 /**
  * This function will delegate arguments to the platform specific command line interface.
