@@ -34,7 +34,8 @@ class MasterThread extends Thread {
     private final RunBulkControl control;
 
     /**
-     * Create a mater thread
+     * Create a master thread.
+     *
      * @param source Source of the jobs
      * @param queue Queue for passing jobs to workers
      * @param control Controls runBulk threads
@@ -47,7 +48,7 @@ class MasterThread extends Thread {
     }
 
     /**
-     * Start inserting items into the internal queue
+     * Start inserting items into the internal queue.
      */
     @Override
     public void run() {
