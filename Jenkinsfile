@@ -3,11 +3,10 @@ node('linux') {
 
     // Gather all required tools
     // Note the escaped quotes to make this work with spaces
-    def mvnHome = tool 'mvn-3.3.9'
-    def mvn = "\"${mvnHome}/bin/mvn\""
-
-    // Set the java version for this build
+    env.M2_HOME = tool 'mvn-3'
     env.JAVA_HOME = tool 'java-1.8'
+
+    def mvn = "\"${env.M2_HOME}/bin/mvn\""
 
     // Check out scm
     stage('Checkout') {

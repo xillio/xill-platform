@@ -76,7 +76,7 @@
         <sonar.jacoco.reportPath>${project.build.directory}/jacoco-ut.exec</sonar.jacoco.reportPath>
         <sonar.exclusions>**/src/main/java/nl/xillio/migrationtool/**/*</sonar.exclusions>
         <sonar.language>java</sonar.language>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonar.host.url>https://sonaross.xillio.com</sonar.host.url>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
