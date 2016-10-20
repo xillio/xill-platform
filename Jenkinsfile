@@ -26,9 +26,9 @@ parallel(
  * @return void
  */
 def buildOn(Map args) {
-    def platform = args.get('platform', 'linux')
-    def runSonar = args.get('runSonar', false)
-    def deploy = args.get('deploy', false)
+    def platform = args.platform ?: 'linux'
+    def runSonar = args.runSonar ?: false
+    def deploy = args.deploy ?: false
 
     node(platform) {
 
