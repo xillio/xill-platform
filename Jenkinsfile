@@ -7,7 +7,7 @@ node('linux') {
     def mvn = "\"${mvnHome}/bin/mvn\""
 
     // Set the java version for this build
-    ENV.JAVA_HOME = tool 'java-1.8'
+    env.JAVA_HOME = tool 'java-1.8'
 
     // Check out scm
     stage('Checkout') {
