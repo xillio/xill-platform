@@ -13,5 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+ * Specification: The runBulk keyword MUST process all input items and MUST block until all threads finish
+ * Input: Filenames "test1", "test2", "test3"
+ * Expected: The files exist after runBulk returns
+ */
 
-runBulk("testresources/core/keywords/runbulk/WriteFile.xill", ["test1", "test2", "test3"]);
+use Assert, File;
+
+var filenames = ["test1", "test2", "test3"];
+
+do {
+    runBulk("NoTestWriteFile.xill", filenames);
+    foreach (f in filenames) {
+        Assert.isTrue(File.exists(f), "File " :: f :: " does not exist");
+    }
+} finally {
+    foreach (f in filenames) {
+        File.delete(f);
+    }
+}
