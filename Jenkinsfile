@@ -13,14 +13,7 @@ for (platform in ['linux', 'windows', 'osx']) {
  * @param deploy set to true to deploy to maven repository
  * @return void
  */
-def buildOn(platform, runSonar, deploy) {
-    // Select the command line runner
-    def cli = bat
-
-    if (isUnix()) {
-        cli = sh
-    }
-
+def buildOn(String platform, boolean runSonar, boolean deploy) {
     node(platform) {
 
         // Gather all required tools
@@ -69,5 +62,18 @@ def buildOn(platform, runSonar, deploy) {
                 }
             }
         }
+    }
+}
+
+/**
+ * This function will delegate arguments to the platform specific command line interface.
+ * @param args
+ * @return void
+ */
+def cli(String args) {
+    if(isUnix()) {
+        sh args
+    } else {
+        bat args
     }
 }
