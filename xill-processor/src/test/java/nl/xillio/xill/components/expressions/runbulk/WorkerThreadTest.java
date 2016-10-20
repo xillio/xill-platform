@@ -51,9 +51,10 @@ public class WorkerThreadTest extends TestUtils {
     private Debugger childDebugger;
     private File robotFile;
     private WorkerRobotFactory workerRobotFactory;
+    private Robot robot;
 
     @BeforeMethod
-    public void mockObjects() {
+    public void mockObjects() throws WorkerCompileException {
         debugger = mock(Debugger.class);
         childDebugger = mock(StoppableDebugger.class);
         when(debugger.createChild()).thenReturn(childDebugger);
@@ -64,6 +65,7 @@ public class WorkerThreadTest extends TestUtils {
         when(control.getCalledRobotFile()).thenReturn(robotFile);
         outputHandler = mock(OutputHandler.class);
         robotID = mock(RobotID.class);
+        robot = mock(Robot.class);
         workerRobotFactory = mock(WorkerRobotFactory.class);
     }
 
@@ -128,17 +130,18 @@ public class WorkerThreadTest extends TestUtils {
     }
 
     /**
-     * Test {@link WorkerThread#run()} when an exception occurs while running a robot
+     * Test {@link WorkerThread#run()} when a {@link RobotRuntimeException} occurs while running a robot
      */
     @Test
-    public void testRunRobotException() throws InterruptedException, WorkerCompileException {
+    public void testRunRobotRuntimeException() throws InterruptedException, WorkerCompileException {
         // mock
         when(control.shouldStop()).thenReturn(false, true);
         MetaExpression item = mockExpression(ExpressionDataType.ATOMIC);
         when(queue.poll(anyInt(), any())).thenReturn(item);
         when(debugger.shouldStop()).thenReturn(false);
-        RuntimeException runtimeException = new RuntimeException("Error running robot");
-        when(workerRobotFactory.construct(any(), any())).thenThrow(runtimeException);
+        RuntimeException runtimeException = new RobotRuntimeException("Error running robot");
+        when(workerRobotFactory.construct(any(), any())).thenReturn(robot);
+        when(robot.process(any())).thenThrow(runtimeException);
 
         WorkerThread workerThread = new WorkerThread(queue, control, false, workerRobotFactory);
 
@@ -146,8 +149,52 @@ public class WorkerThreadTest extends TestUtils {
         workerThread.run();
 
         // verify
-        verify(debugger).handle(runtimeException);
+        verify(debugger).handle(isA(RobotRuntimeException.class));
         verify(control).signalStop();
+    }
+
+    /**
+     * Test {@link WorkerThread#run()} when an {@link Exception} occurs while running a robot
+     */
+    @Test
+    public void testRunException() throws InterruptedException, WorkerCompileException {
+        // mock
+        when(control.shouldStop()).thenReturn(false, true);
+        MetaExpression item = mockExpression(ExpressionDataType.ATOMIC);
+        when(queue.poll(anyInt(), any())).thenReturn(item);
+        when(debugger.shouldStop()).thenReturn(false);
+        RuntimeException runtimeException = new RuntimeException("Error running robot");
+        when(workerRobotFactory.construct(any(), any())).thenReturn(robot);
+        when(robot.process(any())).thenThrow(runtimeException);
+
+        WorkerThread workerThread = new WorkerThread(queue, control, false, workerRobotFactory);
+
+        // run
+        workerThread.run();
+
+        // verify
+        verify(debugger).handle(isA(RobotRuntimeException.class));
+        verify(control).signalStop();
+    }
+
+    /**
+     * Test {@link WorkerThread#run()} when the thread is interrupted
+     */
+    @Test
+    public void testRunInterrupted() throws InterruptedException, WorkerCompileException {
+        // mock
+        when(control.shouldStop()).thenReturn(false, true);
+        MetaExpression item = mockExpression(ExpressionDataType.ATOMIC);
+        when(queue.poll(anyInt(), any())).thenThrow(InterruptedException.class);
+
+        WorkerThread workerThread = new WorkerThread(queue, control, false, workerRobotFactory);
+
+        // run
+        workerThread.run();
+
+        // verify
+        verify(control).shouldStop();
+        verifyNoMoreInteractions(control, debugger);
     }
 
 }
