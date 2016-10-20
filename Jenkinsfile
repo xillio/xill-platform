@@ -37,46 +37,48 @@ def buildOn(Map args) {
         def m2Tool = tool 'mvn-3'
         env.M2_HOME = m2Tool
         def javaTool = tool 'java-1.8'
-        env.JAVA_HOME = javaTool
 
-        // Inject maven settings file
-        configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-            def mvnOptions = [
-                    // Use the provided settings.xml
-                    "-s \"$MAVEN_SETTINGS\"",
-                    // Run in batch mode (headless)
-                    "-B"
-            ]
+        withEnv(["JAVA_HOME=$javaTool"]) {
+            
+            // Inject maven settings file
+            configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                def mvnOptions = [
+                        // Use the provided settings.xml
+                        "-s \"$MAVEN_SETTINGS\"",
+                        // Run in batch mode (headless)
+                        "-B"
+                ]
 
-            def mvn = "\"${m2Tool}/bin/mvn\" ${mvnOptions.join(' ')}"
+                def mvn = "\"${m2Tool}/bin/mvn\" ${mvnOptions.join(' ')}"
 
-            // Check out scm
-            stage("$platform: Checkout") {
-                checkout scm
-            }
-
-            // Clean the repository
-            stage("$platform: Clean") {
-                cli "${mvn} clean"
-            }
-
-            // Run all tests
-            stage("$platform: Tests") {
-                cli "${mvn} verify"
-            }
-
-            if (runSonar) {
-                // Run the sonar analysis
-                stage("$platform: Sonar") {
-                    cli "${mvn} sonar:sonar"
+                // Check out scm
+                stage("$platform: Checkout") {
+                    checkout scm
                 }
-            }
 
-            if (deploy) {
-                // Deploy to repository
-                // No need for tests as we already passed verify
-                stage("$platform: Deploy") {
-                    cli "${mvn} deploy -DskipTests"
+                // Clean the repository
+                stage("$platform: Clean") {
+                    cli "${mvn} clean"
+                }
+
+                // Run all tests
+                stage("$platform: Tests") {
+                    cli "${mvn} verify"
+                }
+
+                if (runSonar) {
+                    // Run the sonar analysis
+                    stage("$platform: Sonar") {
+                        cli "${mvn} sonar:sonar"
+                    }
+                }
+
+                if (deploy) {
+                    // Deploy to repository
+                    // No need for tests as we already passed verify
+                    stage("$platform: Deploy") {
+                        cli "${mvn} deploy -DskipTests"
+                    }
                 }
             }
         }
