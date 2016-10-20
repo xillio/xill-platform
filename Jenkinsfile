@@ -6,6 +6,10 @@ node('linux') {
     env.M2_HOME = tool 'mvn-3'
     env.JAVA_HOME = tool 'java-1.8'
 
+    sh 'env > env.txt'
+    readFile('env.txt').split("\r?\n").each {
+        println it
+    }
 
     // Inject maven settings file
     configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
