@@ -39,23 +39,23 @@ def buildOn(String platform, boolean runSonar, boolean deploy) {
             def mvn = "\"${env.M2_HOME}/bin/mvn\" ${mvnOptions.join(' ')}"
 
             // Check out scm
-            stage('Checkout') {
+            stage("$platform: Checkout") {
                 checkout scm
             }
 
             // Clean the repository
-            stage('Clean') {
+            stage("$platform: Clean") {
                 cli "${mvn} clean"
             }
 
             // Run all tests
-            stage('Tests') {
+            stage("$platform: Tests") {
                 cli "${mvn} verify"
             }
 
             if (runSonar) {
                 // Run the sonar analysis
-                stage('Sonar') {
+                stage("$platform: Sonar") {
                     cli "${mvn} sonar:sonar"
                 }
             }
@@ -63,7 +63,7 @@ def buildOn(String platform, boolean runSonar, boolean deploy) {
             if (deploy) {
                 // Deploy to repository
                 // No need for tests as we already passed verify
-                stage('Deploy') {
+                stage("$platform: Deploy") {
                     cli "${mvn} deploy -DskipTests"
                 }
             }
