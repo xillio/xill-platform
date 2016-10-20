@@ -16,9 +16,13 @@
 package nl.xillio.xill.plugins.system.constructs;
 
 import nl.xillio.xill.TestUtils;
+import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
+import nl.xillio.xill.services.json.JacksonParser;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
+
+import java.util.LinkedHashMap;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -68,5 +72,25 @@ public class PrintConstructTest extends TestUtils {
 
         // Verify calls
         verify(robotLog).info(eq(message));
+    }
+
+    @Test
+    public void testProcessPrettyDebug() {
+        // Mock context
+        LinkedHashMap<String, MetaExpression> map = new LinkedHashMap<>();
+        map.put("test", ExpressionBuilderHelper.fromValue("value"));
+        MetaExpression textVar = ExpressionBuilderHelper.fromValue(map);
+        String level = "debug";
+        MetaExpression logLevel = mockExpression(ATOMIC);
+        when(logLevel.getStringValue()).thenReturn(level);
+        Logger robotLog = mock(Logger.class);
+
+        // Run method
+        PrintConstruct construct = new PrintConstruct(new JacksonParser(true));
+        construct.process(textVar, logLevel, robotLog);
+
+        // Verify calls
+        String message = String.format("{%1$s  \"test\" : \"value\"%1$s}", System.getProperty("line.separator"));
+        verify(robotLog).debug(eq(message));
     }
 }

@@ -19,11 +19,11 @@
 * Input: See dataset
 */
 
-use Math, Assert, System;
+use Math, Assert;
 
 var matrix = [[0,1,3], [2,2,3], [5,4,1]];
-var expectedMax = [{"sum":10.0},{"cells":[{"row":0,"col":2},{"row":1,"col":1},{"row":2,"col":0}]}];
-var expectedMin = [{"sum":3.0},{"cells":[{"row":0,"col":0},{"row":1,"col":1},{"row":2,"col":2}]}];
+var expectedMax = {"sum":10.0,"cells":[{"row":0,"col":2},{"row":1,"col":1},{"row":2,"col":0}]};
+var expectedMin = {"sum":3.0,"cells":[{"row":0,"col":0},{"row":1,"col":1},{"row":2,"col":2}]};
 
 Assert.equal(Math.hungarianAlgorithm(matrix, true), expectedMax);
 Assert.equal(Math.hungarianAlgorithm(matrix, false), expectedMin);
