@@ -9,7 +9,7 @@ node('linux') {
 
     // Inject maven settings file
     configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-        dev mvnOptions = [
+        def mvnOptions = [
                 // Use the provided settings.xml
                 "-s \"$MAVEN_SETTINGS\"",
                 // Run in batch mode (headless)
@@ -39,8 +39,9 @@ node('linux') {
         }
 
         // Deploy to repository
+        // No need for tests as we already passed verify
         stage('Deploy') {
-            sh "${mvn} deploy"
+            sh "${mvn} deploy -DskipTests"
         }
     }
 
