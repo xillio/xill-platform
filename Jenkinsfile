@@ -1,6 +1,3 @@
-def final MVN_TOOL = 'mvn-3'
-def final JAVA_TOOL = 'java-1.8'
-
 
 for (platform in ['linux', 'windows', 'osx']) {
     buildOn(platform, false, false)
@@ -18,8 +15,8 @@ def buildOn(String platform, boolean runSonar, boolean deploy) {
 
         // Gather all required tools
         // Note the escaped quotes to make this work with spaces
-        env.M2_HOME = tool MVN_TOOL
-        env.JAVA_HOME = tool JAVA_TOOL
+        env.M2_HOME = tool 'mvn-3'
+        env.JAVA_HOME = tool 'java-1.8'
 
         // Inject maven settings file
         configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
