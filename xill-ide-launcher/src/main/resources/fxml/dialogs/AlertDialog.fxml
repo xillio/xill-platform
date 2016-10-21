@@ -41,11 +41,11 @@
 				</AnchorPane>
 				<HBox styleClass="buttonsWrapper" VBox.vgrow="NEVER">
 					<children>
-						<Button fx:id="yesBtn" defaultButton="true" mnemonicParsing="false" onAction="#yesBtnPressed" text="Yes" />
-						<Button fx:id="noBtn" defaultButton="true" mnemonicParsing="false" onAction="#noBtnPressed" text="No" />
-						<Button fx:id="applyBtn" defaultButton="true" mnemonicParsing="false" onAction="#applyBtnPressed" text="Apply" />
-						<Button fx:id="okBtn" defaultButton="true" mnemonicParsing="false" onAction="#okayBtnPressed" text="Ok" />
-						<Button fx:id="cancelBtn" cancelButton="true" mnemonicParsing="false" onAction="#cancelBtnPressed" text="Cancel" />
+						<Button fx:id="yesBtn" visible="false" defaultButton="true" mnemonicParsing="false" onAction="#yesBtnPressed" text="Yes" />
+						<Button fx:id="noBtn" visible="false" defaultButton="true" mnemonicParsing="false" onAction="#noBtnPressed" text="No" />
+						<Button fx:id="applyBtn" visible="false" defaultButton="true" mnemonicParsing="false" onAction="#applyBtnPressed" text="Apply" />
+						<Button fx:id="okBtn" visible="false" defaultButton="true" mnemonicParsing="false" onAction="#okayBtnPressed" text="Ok" />
+						<Button fx:id="cancelBtn" visible="false" cancelButton="true" mnemonicParsing="false" onAction="#cancelBtnPressed" text="Cancel" />
 					</children>
 				</HBox>
 			</children>

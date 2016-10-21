@@ -72,7 +72,7 @@ public class AlertDialog extends FXMLDialog {
     /**
      * Used to initialize children.
      *
-     * @param url Used to provice FXMLDialog with a URL.
+     * @param url Used to provide FXMLDialog with a URL.
      */
     protected AlertDialog(String url, Alert.AlertType type, String title, String header, String content, ButtonType... buttons) {
         super(url);
@@ -81,7 +81,6 @@ public class AlertDialog extends FXMLDialog {
     }
 
     private void init(Alert.AlertType type, String title, String header, String content, ButtonType... buttons) {
-        disableAllButtons();
         if(!enableOverrideButtons(buttons))
         {
             enableDefaultButtons(type);
@@ -125,14 +124,6 @@ public class AlertDialog extends FXMLDialog {
      */
     public Optional<ButtonType> getResult() {
         return Optional.ofNullable(pressedButtonType);
-    }
-
-    private void disableAllButtons() {
-        yesBtn.setVisible(false);
-        noBtn.setVisible(false);
-        applyBtn.setVisible(false);
-        okBtn.setVisible(false);
-        cancelBtn.setVisible(false);
     }
 
     private boolean enableOverrideButtons(ButtonType... buttons) {

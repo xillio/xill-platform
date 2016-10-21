@@ -22,7 +22,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 /**
- * Created by ThomTrignol on 18-10-2016.
+ * A custom dialog which contains a gridPane to add custom made elements to.
+ *
+ * @author ThomTrignol
  */
 public class ContentAlertDialog extends AlertDialog {
 

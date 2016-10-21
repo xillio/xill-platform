@@ -343,23 +343,23 @@ public class RobotTab extends FileTab implements Initializable {
         if (autoSaveBotBeforeRun) {
             // Check if the content is unsaved, show the confirmation dialog.
             if (editorPane.getDocumentState().getValue() == DocumentState.CHANGED) {
-                GridPane dp = new GridPane();
+                GridPane gridPane = new GridPane();
 
                 ContentAlertDialog confirmationDialog = new ContentAlertDialog(AlertType.CONFIRMATION,
                         "Do you want to save and run the robot?",
                         "",
-                        "The robot " + currentRobot.getPath().getName() + " needs to be saved before running. Do you want to continue?", dp);
+                        "The robot " + currentRobot.getPath().getName() + " needs to be saved before running. Do you want to continue?",
+                        gridPane);
                 // This enables Xillio icon to be displayed in the upper left corner
                 confirmationDialog.initOwner(editorPane.getScene().getWindow());
 
                 // Compose the dialog pane
-                //DialogPane dp = new DialogPane();
                 VBox checkBoxContainer = new VBox();
 
                 CheckBox cb = new CheckBox("Don't ask me again.");
                 checkBoxContainer.getChildren().add(cb);
 
-                dp.getChildren().add(checkBoxContainer);
+                gridPane.getChildren().add(checkBoxContainer);
                 // Make the dialog close by clicking the close button, inherit styling
                 confirmationDialog.initModality(Modality.APPLICATION_MODAL);
 
@@ -422,9 +422,9 @@ public class RobotTab extends FileTab implements Initializable {
                 LOGGER.error("Exception while processing", e);
                 Platform.runLater(() -> {
                     AlertDialog error = new AlertDialog(Alert.AlertType.ERROR,
-                            e.getClass().getSimpleName(),
+                            "Error",
                             "Exception while processing",
-                            e.getMessage() + "\n" + ExceptionUtils.getStackTrace(e));
+                            e.getClass().getSimpleName() + ", " + e.getMessage());
                     error.initModality(Modality.APPLICATION_MODAL);
                     error.setWidth(1080);
                     error.show();
