@@ -18,6 +18,7 @@ package nl.xillio.xill.api;
 import com.google.inject.Injector;
 import nl.xillio.plugins.PluginLoadFailure;
 import nl.xillio.plugins.XillPlugin;
+import nl.xillio.xill.services.ProgressTracker;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -122,6 +123,13 @@ public interface XillEnvironment extends AutoCloseable {
     default List<PluginLoadFailure> getMissingLicensePlugins() {
         return Collections.emptyList();
     }
+
+    /**
+     * Gets a {@link ProgressTracker} object.
+     *
+     * @return ProgressTracker object
+     */
+    ProgressTracker getProgressTracker();
 
     /**
      * Close all loaded plugins.

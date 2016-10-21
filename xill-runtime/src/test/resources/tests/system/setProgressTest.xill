@@ -13,19 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.plugins.string.exceptions;
 
-/**
- * <p>An exception to throw when we fail to create a matcher. </p>
- * <p>Exists in order to force a try-catch</p>
- *
- * @author Ivor
- */
-public class FailedToGetMatcherException extends Exception {
-    /**
-     *
-     */
-    private static final long serialVersionUID = 6749541692981981712L;
+use Assert, String, System;
 
+var wrongArgument = "leavez";
+var noError = false;
 
+do {
+    System.setProgress(0, {"onStop" : wrongArgument});
+    Assert.isFalse(noError);
+}
+fail (error) {
+    Assert.isTrue(String.contains(error.message, "== Actual Input ==\n" :: wrongArgument));
+}
+
+do {
+    System.setProgress(wrongArgument, {"onStop" : "leave"});
+    Assert.isFalse(noError);
+}
+fail (error) {
+    Assert.isTrue(String.contains(error.message, wrongArgument));
 }

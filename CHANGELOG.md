@@ -6,15 +6,27 @@ All notable changes to this project will be documented in this file.
 ### Add
 * `System.parseJSON()` now parses LIST [CTC-1769]
 * Warn users about invalid asset names [CTC-1798]
-* Support logging on server by adding logging handler that exposes all logging events and exceptions [XSVR-50]
+* Support external logging by adding logging handler that exposes all logging events and exceptions [XSVR-50]
+* Progress bar dialog and `System.setProgress()` construct for overview of robot progress [CTC-1101] 
+
+### Change
+* Make `System.print` automatically pretty print LISTs and OBJECTs [CTC-1675]
+* `Math.HungarianAlgorithm()` now returns an object [CTC-1732]
+* Correct typing inconsistencies for booleans: now the strings "false" and "0" evaluate to `false` [CTC-1733]
 
 ### Fix
 * On server threads are not closed when tasks finishes [XSVR-139]
 * Renaming of robot does not work properly on Linux [CTC-1787]
-* Web.xPath result in variable preview is incorrect [CTC-1802]
+* `Web.xPath()` result in variable preview is incorrect [CTC-1802]
 * Incorrect error handling in function parameter [CTC-1811]
+* Excel plugin has an integer limit [CTC-1590]
+* Under Linux reassigning key bindings to Ctrl + letter does not work [CTC-1758]
+* Exiftool plugin does not check if process was started [CTC-1587]
+* `Sring.regexEscape()` can result in invalid regular expressions [CTC-1807]
+* Calling `Excel.setCellValue()` on a formula cell only sets cached value [CTC-1814]
+* String.absoluteUrl does not allow protocols other than http(s) [CTC-1806]
 
-## [3.4.0] - unreleased
+## [3.4.0] - 2016-10-07
 
 ### Add
 
@@ -76,4 +88,5 @@ All notable changes to this project will be documented in this file.
 * Expression is evaluated even after an exception happens [CTC-1721]
 * String.absoluteUrl does not allow reusing protocol [CTC-1792]
 * MySQL Error: The server time zone value 'W. Europe Daylight Time' is unrecognized or represents more than one time zone. [CTC-1796]
+* XURL login via cookie authentication fails [CTC-1804]
 * Console does not autoscroll to latest entry [CTC-1794]

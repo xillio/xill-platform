@@ -68,8 +68,7 @@ public class XpathServiceImpl implements XpathService {
             Document document = node.getDocument();
             namespaceContext.setDocument(document);
 
-            Object result = this.xPath(xpath, node.getNode(), query);
-
+            Object result = this.evaluateExpression(this.compileXpath(xpath,query),node.getNode());
             if (result instanceof NodeList) {
                 NodeList results = (NodeList) result;
 
@@ -87,15 +86,16 @@ public class XpathServiceImpl implements XpathService {
         return output;
     }
 
-    private Object xPath(final XPath xpath, final Object node, final String expression) throws XPathExpressionException {
-        XPathExpression expr;
+    private XPathExpression compileXpath(final XPath xpath, final String expression) throws XPathExpressionException {
         try {
-            expr = xpath.compile(expression);
+            return xpath.compile(expression);
         } catch (Exception e) { // Sometimes, an unexpected net.sf.saxon.trans.XPathException can be thrown...
             LOGGER.error("Failed to run xpath expression", e);
             throw new XPathExpressionException(e.getMessage());
         }
+    }
 
+    private Object evaluateExpression(XPathExpression expr, final Object node) throws XPathExpressionException {
         try {
             return expr.evaluate(node, XPathConstants.NODESET);
         } catch (Exception e) {
