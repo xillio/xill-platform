@@ -16,7 +16,7 @@
 package nl.xillio.xill.components.expressions.runbulk;
 
 /**
- * Thrown to signal that compilation of a robot in a {@link WorkerRobotFactory} failed
+ * Thrown to signal that compilation of a robot in a {@link WorkerRobotFactory} failed.
  *
  * @author Geert Konijnendijk
  */

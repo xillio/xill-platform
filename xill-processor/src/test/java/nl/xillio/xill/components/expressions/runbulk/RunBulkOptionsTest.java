@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 /**
- * Tests for {@link RunBulkOptions}
+ * Tests for {@link RunBulkOptions}.
  *
  * @author Geert Konijnendijk
  */
@@ -58,7 +58,7 @@ public class RunBulkOptionsTest extends TestUtils {
     }
 
     /**
-     * Test {@link RunBulkOptions#RunBulkOptions(Processable)} with various input
+     * Test {@link RunBulkOptions#RunBulkOptions(Processable)} with various input.
      */
     @Test(dataProvider = "optionsProvider")
     public void testRunBulkOptions(MetaExpression options, int expectedMaxThreads, boolean expectedShouldStopOnError) {
@@ -74,7 +74,7 @@ public class RunBulkOptionsTest extends TestUtils {
     }
 
     /**
-     * Test {@link RunBulkOptions#RunBulkOptions(Processable)} when the processable is null
+     * Test {@link RunBulkOptions#RunBulkOptions(Processable)} when the processable is null.
      */
     @Test
     public void testRunBulkOptionsNull() {
@@ -87,7 +87,7 @@ public class RunBulkOptionsTest extends TestUtils {
     }
 
     /**
-     * Test {@link RunBulkOptions#RunBulkOptions(Processable)} when the wrong type of options is given
+     * Test {@link RunBulkOptions#RunBulkOptions(Processable)} when the wrong type of options is given.
      */
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*The passed value for the \"options\" argument was not an OBJECT.*")
     public void testRunBulkOptionsWrongType() {
@@ -98,6 +98,9 @@ public class RunBulkOptionsTest extends TestUtils {
         new RunBulkOptions(optionsProcessable);
     }
 
+    /**
+     * Test {@link RunBulkOptions#RunBulkOptions(Processable)} when a wrong option is given.
+     */
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*A key in the \"options\" argument was not a valid option name.*")
     public void testRunBulkOptionsWrongOption() {
         // Mock
@@ -107,6 +110,9 @@ public class RunBulkOptionsTest extends TestUtils {
         new RunBulkOptions(optionsProcessable);
     }
 
+    /**
+     * Test {@link RunBulkOptions#RunBulkOptions(Processable)} when a wrong value for the maxThreads option is given.
+     */
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*The \"maxThreads\" value in the \"options\" argument was not valid.*")
     public void testRunBulkOptionsWrongNumThreads() {
         // Mock
@@ -116,6 +122,9 @@ public class RunBulkOptionsTest extends TestUtils {
         new RunBulkOptions(optionsProcessable);
     }
 
+    /**
+     * Test {@link RunBulkOptions#RunBulkOptions(Processable)} when a wrong value for the stopOnError option is given.
+     */
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*The \"stopOnError\" value in the \"options\" argument was not valid.*")
     public void testRunBulkOptionsWrongStopOnError() {
         // Mock

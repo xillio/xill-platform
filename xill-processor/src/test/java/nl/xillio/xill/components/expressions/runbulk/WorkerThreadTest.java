@@ -37,7 +37,7 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests for {@link WorkerThread}
+ * Tests for {@link WorkerThread}.
  *
  * @author Geert Konijnendijk
  */
@@ -91,7 +91,7 @@ public class WorkerThreadTest extends TestUtils {
     }
 
     /**
-     * Test {@link WorkerThread#run()} when the debugger signals to stop
+     * Test {@link WorkerThread#run()} when the debugger signals to stop.
      */
     @Test
     public void testRunDebuggerStop() throws InterruptedException, WorkerCompileException {
@@ -112,7 +112,7 @@ public class WorkerThreadTest extends TestUtils {
     }
 
     /**
-     * Test {@link WorkerThread#run()} when the the robot could not be compiled
+     * Test {@link WorkerThread#run()} when the the robot could not be compiled.
      */
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*Robot error.*")
     public void testRunErrorCompile() throws InterruptedException, WorkerCompileException {
@@ -130,7 +130,7 @@ public class WorkerThreadTest extends TestUtils {
     }
 
     /**
-     * Test {@link WorkerThread#run()} when a {@link RobotRuntimeException} occurs while running a robot
+     * Test {@link WorkerThread#run()} when a {@link RobotRuntimeException} occurs while running a robot.
      */
     @Test
     public void testRunRobotRuntimeException() throws InterruptedException, WorkerCompileException {
@@ -154,7 +154,7 @@ public class WorkerThreadTest extends TestUtils {
     }
 
     /**
-     * Test {@link WorkerThread#run()} when an {@link Exception} occurs while running a robot
+     * Test {@link WorkerThread#run()} when an {@link Exception} occurs while running a robot.
      */
     @Test
     public void testRunException() throws InterruptedException, WorkerCompileException {
@@ -179,7 +179,7 @@ public class WorkerThreadTest extends TestUtils {
     }
 
     /**
-     * Test {@link WorkerThread#run()} when the thread is interrupted
+     * Test {@link WorkerThread#run()} when the thread is interrupted.
      */
     @Test
     public void testRunInterrupted() throws InterruptedException, WorkerCompileException {

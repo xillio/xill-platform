@@ -36,7 +36,7 @@ import static nl.xillio.xill.api.components.ExpressionDataType.ATOMIC;
 import static nl.xillio.xill.api.components.ExpressionDataType.LIST;
 
 /**
- * This class represents calling another robot multiple times in a separate threads
+ * This class represents calling another robot multiple times in a separate threads.
  */
 public class RunBulkExpression implements Processable {
 
@@ -53,8 +53,9 @@ public class RunBulkExpression implements Processable {
     private int maxThreadsVal;
 
     /**
-     * Create a new {@link RunBulkExpression}
-     *  @param path    the path of the called bot
+     * Create a new {@link RunBulkExpression}.
+     *
+     * @param path    the path of the called bot
      * @param robotID the root robot of this tree
      * @param plugins the current plugin loader
      * @param outputHandler
@@ -112,7 +113,7 @@ public class RunBulkExpression implements Processable {
     }
 
     /**
-     * Run the called robot multiple times
+     * Run the called robot multiple times.
      *
      * @return The number of robot runs
      */
@@ -162,7 +163,8 @@ public class RunBulkExpression implements Processable {
     }
 
     /**
-     * Create {@link RunBulkOptions#getMaxThreadsVal()} worker threads and start them
+     * Create {@link RunBulkOptions#getMaxThreadsVal()} worker threads and start them.
+     *
      * @param queue The queue to pass to the workers
      * @param control The control to pass to the workers
      * @return The worker threads
@@ -180,7 +182,8 @@ public class RunBulkExpression implements Processable {
     }
 
     /**
-     * Wait until either the queue is empty or we should stop due to some other reason signalled by {@link RunBulkControl}
+     * Wait until either the queue is empty or we should stop due to some other reason signalled by {@link RunBulkControl}.
+     *
      * @param queue The queue to wait for to become empty
      * @param control Stop waiting when the control signals to stop
      */
@@ -197,7 +200,8 @@ public class RunBulkExpression implements Processable {
     }
 
     /**
-     * Join all threads and wait until they are joined
+     * Join all threads and wait until they are joined.
+     *
      * @param workingThreads The threads to join
      */
     private void joinThreads(List<Thread> workingThreads) {

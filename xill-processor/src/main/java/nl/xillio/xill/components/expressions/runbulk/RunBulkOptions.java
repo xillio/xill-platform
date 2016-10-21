@@ -25,7 +25,7 @@ import nl.xillio.xill.api.errors.RobotRuntimeException;
 import java.util.Map;
 
 /**
- * Parses options of the {@link RunBulkExpression}
+ * Parses options of the {@link RunBulkExpression}.
  */
 class RunBulkOptions {
 
@@ -36,7 +36,7 @@ class RunBulkOptions {
     private int maxThreadsVal;
 
     /**
-     * @param options The processable to parse options from
+     * @param options The processable to parse options from.
      */
     public RunBulkOptions(Processable options) {
         this.options = options;
@@ -46,7 +46,8 @@ class RunBulkOptions {
     }
 
     /**
-     * Get the stopOnError option
+     * Get the stopOnError option.
+     *
      * @return Whether to stop threads when an error occurs
      */
     public boolean shouldStopOnError() {
@@ -54,7 +55,8 @@ class RunBulkOptions {
     }
 
     /**
-     * Get the maxThreadsVal option
+     * Get the maxThreadsVal option.
+     *
      * @return How many workers to start
      */
     public int getMaxThreadsVal() {
@@ -62,7 +64,7 @@ class RunBulkOptions {
     }
 
     /**
-     * Parse the option expression
+     * Parse the option expression.
      */
     private void parseOptions() {
         if (options == null) {
@@ -84,7 +86,8 @@ class RunBulkOptions {
     }
 
     /**
-     * Parse supported options from an OBJECT {@link MetaExpression}
+     * Parse supported options from an OBJECT {@link MetaExpression}.
+     *
      * @param optionVar The options OBJECT
      */
     private void parseOptions(MetaExpression optionVar) {
@@ -108,7 +111,8 @@ class RunBulkOptions {
     }
 
     /**
-     * Parse the stopOnError option from a {@link MetaExpression}
+     * Parse the stopOnError option from a {@link MetaExpression}.
+     *
      * @param value The option value
      */
     private void parseStopOnError(MetaExpression value) {
@@ -126,7 +130,8 @@ class RunBulkOptions {
     }
 
     /**
-     * Parse the maxThreads option from a {@link MetaExpression}
+     * Parse the maxThreads option from a {@link MetaExpression}.
+     *
      * @param value The option value
      */
     private void parseMaxThreads(MetaExpression value) {

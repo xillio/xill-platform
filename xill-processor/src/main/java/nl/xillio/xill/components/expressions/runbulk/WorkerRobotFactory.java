@@ -43,7 +43,8 @@ class WorkerRobotFactory {
     }
 
     /**
-     * Compile a {@link Robot}
+     * Compile a {@link Robot}.
+     *
      * @param calledRobotFile The file to compile
      * @param childDebugger The debugger to compile with
      * @return The compiled robot

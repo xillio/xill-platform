@@ -29,14 +29,14 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests for {@link MasterThread}
+ * Tests for {@link MasterThread}.
  *
  * @author Geert Konijnendijk
  */
 public class MasterThreadTest extends TestUtils {
 
     /**
-     * Test {@link MasterThread#run()} under normal circumstances
+     * Test {@link MasterThread#run()} under normal circumstances.
      */
     @Test
     public void testRun() throws InterruptedException {
@@ -59,7 +59,7 @@ public class MasterThreadTest extends TestUtils {
     }
 
     /**
-     * Test {@link MasterThread#run()} when offering an item to the queue is interrupted
+     * Test {@link MasterThread#run()} when offering an item to the queue is interrupted.
      */
     @Test
     public void testRunInterrupted() throws InterruptedException {
@@ -78,7 +78,7 @@ public class MasterThreadTest extends TestUtils {
     }
 
     /**
-     * Test {@link MasterThread#run()} when {@link RunBulkControl} signals the thread to stop
+     * Test {@link MasterThread#run()} when {@link RunBulkControl} signals the thread to stop.
      */
     @Test
     public void testRunControlStop() throws InterruptedException {

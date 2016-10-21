@@ -25,7 +25,7 @@ import static org.mockito.Mockito.mock;
 import static org.testng.Assert.*;
 
 /**
- * Tests for {@link RunBulkControl}
+ * Tests for {@link RunBulkControl}.
  *
  * @author Geert Konijnendijk
  */
@@ -44,7 +44,7 @@ public class RunBulkControlTest {
     }
 
     /**
-     * Test {@link RunBulkControl#getDebugger()}
+     * Test {@link RunBulkControl#getDebugger()}.
      */
     @Test
     public void testGetDebugger() {
@@ -52,7 +52,7 @@ public class RunBulkControlTest {
     }
 
     /**
-     * Test {@link RunBulkControl#getCalledRobotFile()}
+     * Test {@link RunBulkControl#getCalledRobotFile()}.
      */
     @Test
     public void testGetCalledRobotFile() {
@@ -60,7 +60,7 @@ public class RunBulkControlTest {
     }
 
     /**
-     * Test {@link RunBulkControl#getRunCount()} and {@link RunBulkControl#incRunCount()}
+     * Test {@link RunBulkControl#getRunCount()} and {@link RunBulkControl#incRunCount()}.
      */
     @Test
     public void testGetRunCount() {
@@ -72,7 +72,7 @@ public class RunBulkControlTest {
     }
 
     /**
-     * Test {@link RunBulkControl#shouldStop()} and {@link RunBulkControl#signalStop()}
+     * Test {@link RunBulkControl#shouldStop()} and {@link RunBulkControl#signalStop()}.
      */
     @Test
     public void testShouldStop() {

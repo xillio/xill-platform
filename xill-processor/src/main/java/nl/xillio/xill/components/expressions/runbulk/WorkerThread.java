@@ -30,7 +30,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Thread executing the {@link RunBulkExpression} jobs
+ * Thread executing the {@link RunBulkExpression} jobs.
  */
 class WorkerThread extends Thread {
     private static final Logger LOGGER = Log.get();
@@ -43,7 +43,8 @@ class WorkerThread extends Thread {
     private final WorkerRobotFactory robotFactory;
 
     /**
-     * Create a worker
+     * Create a worker.
+     *
      * @param queue Queue for receiving jobs from master
      * @param control Controls runBulk threads
      * @param stopOnError Whether to stop the thread when an error occurs
@@ -61,7 +62,7 @@ class WorkerThread extends Thread {
     }
 
     /**
-     * Start processing jobs received from the master
+     * Start processing jobs received from the master.
      */
     @Override
     public void run() {
@@ -76,7 +77,8 @@ class WorkerThread extends Thread {
     }
 
     /**
-     * Run the robot for one queue item
+     * Run the robot for one queue item.
+     *
      * @param item The item to process
      */
     private void processQueueItem(final MetaExpression item) {
@@ -110,7 +112,8 @@ class WorkerThread extends Thread {
     }
 
     /**
-     * Run a single robot
+     * Run a single robot.
+     *
      * @param debugger The debugger to use as parent debugger
      * @param calledRobotFile The file to process
      * @param arg The argument input to the robot
