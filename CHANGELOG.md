@@ -6,7 +6,8 @@ All notable changes to this project will be documented in this file.
 ### Add
 * `System.parseJSON()` now parses LIST [CTC-1769]
 * Warn users about invalid asset names [CTC-1798]
-* Support logging on server by adding logging handler that exposes all logging events and exceptions [XSVR-50]
+* Support external logging by adding logging handler that exposes all logging events and exceptions [XSVR-50]
+* Progress bar dialog and `System.setProgress()` construct for overview of robot progress [CTC-1101] 
 
 ### Change
 * Make `System.print` automatically pretty print LISTs and OBJECTs [CTC-1675]
