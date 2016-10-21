@@ -18,6 +18,8 @@ package nl.xillio.xill.plugins.file.services.files;
 import me.biesaart.utils.IOUtils;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.errors.OperationFailedException;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -31,6 +33,18 @@ import static org.testng.Assert.assertEquals;
 
 public class SimpleTextFileReaderTest extends TestUtils {
     private SimpleTextFileReader reader = new SimpleTextFileReader();
+    // Temporary file used in the tests.
+    private Path tempFile;
+
+    @BeforeTest
+    public void createTempFile() throws IOException {
+        tempFile = Files.createTempFile(getClass().getSimpleName(), ".txt");
+    }
+
+    @AfterTest
+    public void cleanup() throws IOException {
+        Files.delete(tempFile);
+    }
 
     /**
      * Test the process under normal circumstances.
@@ -38,18 +52,14 @@ public class SimpleTextFileReaderTest extends TestUtils {
     @Test
     public void testProcessNormal() throws IOException {
         // Create test file.
-        Path file = Files.createTempFile(getClass().getSimpleName(), ".txt");
         String content = "Get text test";
-        Files.copy(IOUtils.toInputStream(content), file, StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(IOUtils.toInputStream(content), tempFile, StandardCopyOption.REPLACE_EXISTING);
 
         // Run.
-        String result = reader.getText(file, Charset.defaultCharset());
+        String result = reader.getText(tempFile, Charset.defaultCharset());
 
         // Assert.
         assertEquals(result, content);
-
-        // Delete test file.
-        Files.delete(file);
     }
 
     /**
@@ -58,19 +68,15 @@ public class SimpleTextFileReaderTest extends TestUtils {
     @Test
     public void testRemoveBom() throws IOException {
         // Create test file.
-        Path file = Files.createTempFile(getClass().getSimpleName(), ".txt");
         String content = "Byte order mark\uFEFF";
         String contentBom = "\uFEFF\uFEFF" + content;
-        Files.copy(IOUtils.toInputStream(contentBom), file, StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(IOUtils.toInputStream(contentBom), tempFile, StandardCopyOption.REPLACE_EXISTING);
 
         // Run.
-        String result = reader.getText(file, null);
+        String result = reader.getText(tempFile, null);
 
         // Assert.
         assertEquals(result, content);
-
-        // Delete test file.
-        Files.delete(file);
     }
 
     /**
@@ -86,8 +92,8 @@ public class SimpleTextFileReaderTest extends TestUtils {
      */
     @Test(expectedExceptions = OperationFailedException.class)
     public void testFileIsDirectory() throws IOException {
-        // Create test directory.
-        Path file = Files.createTempDirectory(getClass().getSimpleName());
+        // Get the system temp directory.
+        Path file = Paths.get(System.getProperty("java.io.tmpdir"));
 
         // Run.
         reader.getText(file, null);
