@@ -89,7 +89,7 @@ public class RunBulkOptionsTest extends TestUtils {
     /**
      * Test {@link RunBulkOptions#RunBulkOptions(Processable)} when the wrong type of options is given
      */
-    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Invalid options type")
+    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*The passed value for the \"options\" argument was not an OBJECT.*")
     public void testRunBulkOptionsWrongType() {
         // Mock
         Processable optionsProcessable = mockOptions(createList());
@@ -98,7 +98,7 @@ public class RunBulkOptionsTest extends TestUtils {
         new RunBulkOptions(optionsProcessable);
     }
 
-    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Invalid option")
+    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*A key in the \"options\" argument was not a valid option name.*")
     public void testRunBulkOptionsWrongOption() {
         // Mock
         Processable optionsProcessable = mockOptions(createMap("invalidOption", 3));
@@ -107,7 +107,7 @@ public class RunBulkOptionsTest extends TestUtils {
         new RunBulkOptions(optionsProcessable);
     }
 
-    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Invalid maxThreads value")
+    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*The \"maxThreads\" value in the \"options\" argument was not valid.*")
     public void testRunBulkOptionsWrongNumThreads() {
         // Mock
         Processable optionsProcessable = mockOptions(createMap("maxThreads", 0));
@@ -116,7 +116,7 @@ public class RunBulkOptionsTest extends TestUtils {
         new RunBulkOptions(optionsProcessable);
     }
 
-    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Invalid onError value")
+    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*The \"stopOnError\" value in the \"options\" argument was not valid.*")
     public void testRunBulkOptionsWrongStopOnError() {
         // Mock
         Processable optionsProcessable = mockOptions(createMap("stopOnError", "invalid"));

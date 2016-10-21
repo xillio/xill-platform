@@ -19,6 +19,7 @@ import nl.xillio.xill.api.NullDebugger;
 import nl.xillio.xill.api.components.ExpressionDataType;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.Processable;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 
 import java.util.Map;
@@ -28,6 +29,7 @@ import java.util.Map;
  */
 class RunBulkOptions {
 
+    public static final String OPTIONS_EXAMPLE = "var options = {\"maxThreads\":4, \"stopOnError\": true}\nrunBulk(\"robot.xill\", [1,2,3], options)";
     private final Processable options;
 
     private boolean stopOnError;
@@ -72,7 +74,10 @@ class RunBulkOptions {
         }
 
         if (optionVar.getType() != ExpressionDataType.OBJECT) {
-            throw new RobotRuntimeException("Invalid options type");
+            throw new InvalidUserInputException("The passed value for the \"options\" argument was not an OBJECT",
+                    optionVar.toString(),
+                    "An OBJECT",
+                    "var options = {\"maxThreads\":4, \"stopOnError\": true}\nrunBulk(\"robot.xill\", [1,2,3], options)");
         }
 
         parseOptions(optionVar);
@@ -94,7 +99,10 @@ class RunBulkOptions {
                     parseStopOnError(entry.getValue());
                     break;
                 default:
-                    throw new RobotRuntimeException("Invalid option");
+                    throw new InvalidUserInputException("A key in the \"options\" argument was not a valid option name",
+                            optionVar.toString(),
+                            "\"maxThreads\" or \"stopOnError\"",
+                            OPTIONS_EXAMPLE);
             }
         }
     }
@@ -110,7 +118,10 @@ class RunBulkOptions {
         } else if ("no".equals(stringValue)) {
             stopOnError = false;
         } else {
-            throw new RobotRuntimeException("Invalid onError value");
+            throw new InvalidUserInputException("The \"stopOnError\" value in the \"options\" argument was not valid",
+                    value.toString(),
+                    "\"yes\" or \"no\"",
+                    OPTIONS_EXAMPLE);
         }
     }
 
@@ -121,7 +132,10 @@ class RunBulkOptions {
     private void parseMaxThreads(MetaExpression value) {
         maxThreadsVal = value.getNumberValue().intValue();
         if (maxThreadsVal < 1) {
-            throw new RobotRuntimeException("Invalid maxThreads value");
+            throw new InvalidUserInputException("The \"maxThreads\" value in the \"options\" argument was not valid",
+                    value.toString(),
+                    "A number",
+                    OPTIONS_EXAMPLE);
         }
     }
 

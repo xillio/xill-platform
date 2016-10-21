@@ -56,7 +56,7 @@ public class WorkerThreadTest extends TestUtils {
     @BeforeMethod
     public void mockObjects() throws WorkerCompileException {
         debugger = mock(Debugger.class);
-        childDebugger = mock(StoppableDebugger.class);
+        childDebugger = mock(StoppableDebugger.class, RETURNS_DEEP_STUBS);
         when(debugger.createChild()).thenReturn(childDebugger);
         queue = mock(BlockingQueue.class);
         robotFile = mock(File.class);
@@ -166,6 +166,7 @@ public class WorkerThreadTest extends TestUtils {
         RuntimeException runtimeException = new RuntimeException("Error running robot");
         when(workerRobotFactory.construct(any(), any())).thenReturn(robot);
         when(robot.process(any())).thenThrow(runtimeException);
+        when(childDebugger.getStackTrace().get(anyInt()).getLineNumber()).thenReturn(0);
 
         WorkerThread workerThread = new WorkerThread(queue, control, false, workerRobotFactory);
 
