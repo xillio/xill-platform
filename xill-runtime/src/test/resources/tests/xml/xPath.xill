@@ -1,0 +1,52 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+use Assert, Collection, String, System, XML;
+
+var testXML = XML.fromFile("testresources/xml/xpathTest.xml");
+var namespaces = {"s": "http://www.xillio.com/s", "t": "http://www.xillio.com/t"};
+
+var types = {"s": "source", "t": "target"};
+
+var errors = {
+    "source" : {},
+    "target" : {}
+};
+var filenames = {
+    "source" : {},
+    "target" : {}
+};
+
+foreach(tp, type in types) {
+    var current = XML.xPath(testXML, "/node/"  :: type :: "/" ::  tp :: ":current", namespaces);
+
+    foreach(i, error in XML.xPath(current, "./" :: tp :: ":fsa/" :: tp :: ":errors/" :: tp :: ":error", namespaces)) {
+        errors[type][i] = XML.xPath(error, "./text()", namespaces);
+    }
+
+    foreach(i, filename in XML.xPath(current, "./" :: tp :: ":file/" :: tp :: ":name", namespaces)) {
+        filenames[type] = XML.xPath(filename, "./text()", namespaces);
+    }
+}
+
+Assert.equal(Collection.length(errors.source), 3, "");
+Assert.equal(Collection.length(errors.target), 0, "");
+Assert.equal(
+    XML.xPath(testXML, "/node/s:source/s:current/s:file/s:path/text()", namespaces),
+    XML.xPath(testXML, "/node/t:target/t:current/t:file/t:path/text()", namespaces),
+    ""
+);
+Assert.equal(filenames["source"], filenames["target"], "");
