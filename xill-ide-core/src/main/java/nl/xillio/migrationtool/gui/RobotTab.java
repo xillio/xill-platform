@@ -144,11 +144,11 @@ public class RobotTab extends FileTab implements Initializable {
         processor.getDebugger().getOnRobotPause().addListener(e -> Platform.runLater(() -> setGraphic(statusIconPaused)));
         processor.getDebugger().getOnRobotContinue().addListener(e -> Platform.runLater(() -> setGraphic(statusIconRunning)));
         apnStatusBar.registerDebugger(processor.getDebugger());
+        apnStatusBar.setRobotName(getName());
     }
 
     @Override
     public void initialize(final URL url, final ResourceBundle resources) {
-
 
         Platform.runLater(() -> {
             getEditorPane().initialize(this);
