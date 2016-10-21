@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<node>
+    <_id>"C:\\projects\\All_Connector_Projects\\TESTSET_CONNECTORS\\csv\\20090803_Mapping_owinsp.csv"</_id>
+    <contentType>file</contentType>
+    <source xmlns:s="http://www.xillio.com/s">
+        <s:current>
+            <s:parent>
+                <s:path>C:\\projects\\All_Connector_Projects\\TESTSET_CONNECTORS\\csv</s:path>
+                <s:id>C:\\projects\\All_Connector_Projects\\TESTSET_CONNECTORS\\csv</s:id>
+            </s:parent>
+            <s:file>
+                <s:rawExtension>csv</s:rawExtension>
+                <s:path>C:\\projects\\All_Connector_Projects\\TESTSET_CONNECTORS\\csv\\20090803_Mapping_owinsp.csv</s:path>
+                <s:extension>csv</s:extension>
+                <s:size type="NumberLong">1189928</s:size>
+                <s:name>20090803_Mapping_owinsp.csv</s:name>
+            </s:file>
+            <s:created>
+                <s:date>2016-08-30T07:40:59.844Z</s:date>
+            </s:created>
+            <s:modified>
+                <s:date>2016-08-30T07:40:59.844Z</s:date>
+            </s:modified>
+            <s:mimeType>
+                <s:category>Text</s:category>
+                <s:type>text/csv</s:type>
+            </s:mimeType>
+            <s:fsa>
+                <s:analyzed>2016-10-13T12:21:49.226Z</s:analyzed>
+                <s:job>MyProject</s:job>
+                <s:root>C:\\projects\\All_Connector_Projects\\TESTSET_CONNECTORS</s:root>
+                <s:sizeScale type="NumberLong">4</s:sizeScale>
+                <s:yearCreated>2016</s:yearCreated>
+                <s:yearModified>2009</s:yearModified>
+                <s:errors>
+                    <s:error>First error!!</s:error>
+                    <s:error>Second error!!</s:error>
+                    <s:error>Third error!!</s:error>
+                </s:errors>
+            </s:fsa>
+            <s:version>1</s:version>
+        </s:current>
+    </source>
+    <target xmlns:t="http://www.xillio.com/t">
+        <t:current>
+            <t:parent>
+                <t:path>C:\\projects\\All_Connector_Projects\\TESTSET_CONNECTORS\\csv</t:path>
+                <t:id>C:\\projects\\All_Connector_Projects\\TESTSET_CONNECTORS\\csv</t:id>
+            </t:parent>
+            <t:file>
+                <t:rawExtension>csv</t:rawExtension>
+                <t:path>C:\\projects\\All_Connector_Projects\\TESTSET_CONNECTORS\\csv\\20090803_Mapping_owinsp.csv</t:path>
+                <t:extension>csv</t:extension>
+                <t:size type="NumberLong">1189928</t:size>
+                <t:name>20090803_Mapping_owinsp.csv</t:name>
+            </t:file>
+            <t:created>
+                <t:date>2016-08-30T07:40:59.844Z</t:date>
+            </t:created>
+            <t:modified>
+                <t:date>2016-08-30T07:40:59.844Z</t:date>
+            </t:modified>
+            <t:mimeType>
+                <t:category>Text</t:category>
+                <t:type>text/csv</t:type>
+            </t:mimeType>
+            <t:fsa>
+                <t:analyzed>2016-10-13T12:21:49.226Z</t:analyzed>
+                <t:job>MyProject</t:job>
+                <t:root>C:\\projects\\All_Connector_Projects\\TESTSET_CONNECTORS</t:root>
+                <t:sizeScale type="NumberLong">4</t:sizeScale>
+                <t:yearCreated>2016</t:yearCreated>
+                <t:yearModified>2009</t:yearModified>
+                <t:errors>
+                </t:errors>
+            </t:fsa>
+            <t:version>1</t:version>
+        </t:current>
+    </target>
+</node>

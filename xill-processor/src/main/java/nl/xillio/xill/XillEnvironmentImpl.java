@@ -27,8 +27,8 @@ import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.api.XillProcessor;
 import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.debugging.XillDebugger;
+import nl.xillio.xill.services.ProgressTracker;
 import nl.xillio.xill.services.inject.DefaultInjectorModule;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -53,6 +53,7 @@ public class XillEnvironmentImpl implements XillEnvironment {
     private List<PluginLoadFailure> invalidPlugins = new ArrayList<>();
     private boolean needLoad = true;
     private XillThreadFactory xillThreadFactory;
+    private ProgressTracker progressTracker;
 
     @Override
     public XillEnvironment setLoadHomeFolder(boolean value) {
@@ -106,6 +107,8 @@ public class XillEnvironmentImpl implements XillEnvironment {
         LOGGER.info("Loading constructs");
         // Load constructs
         loadedPlugins.values().forEach(XillPlugin::initialize);
+
+        progressTracker = configuredInjector.getInstance(ProgressTracker.class);
 
         return this;
     }
@@ -206,4 +209,12 @@ public class XillEnvironmentImpl implements XillEnvironment {
         }
     }
 
+    /**
+     * Gets a {@link ProgressTracker} object.
+     *
+     * @return ProgressTracker object
+     */
+    public ProgressTracker getProgressTracker() {
+        return progressTracker;
+    }
 }
