@@ -85,10 +85,18 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <goals>
-                            <goal>native</goal>
-                        </goals>
+                        <id>create-jfxjar</id>
                         <phase>package</phase>
+                        <goals>
+                            <goal>build-jar</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>create-native</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build-native</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
