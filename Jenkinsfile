@@ -1,40 +1,61 @@
-/*parallel(
-        "Windows": {
-            buildOn(
-                    platform: "windows"
-            )
-        },
+def branchName = env.BRANCH_NAME
+def nativeProfile = '-P build-native'
 
-        "Linux": {
-            buildOn(
-                    platform: "linux"
-            )
-        },
+if ('master'.equals(branchName) || branchName ==~ /d+\.d+\.d+/) {
+    println 'This commit is on the master or a release branch. A full test and deployment will be executed...'
 
-        "Mac OSX": {
-            buildOn(
-                    platform: "mac"
-            )
-        }
-)*/
+    parallel(
+            "Windows": {
+                buildOn(
+                        platform: "windows",
+                        mavenArgs: nativeProfile,
+                        deploy: true
+                )
+            },
 
-buildOn(
-        platform: "windows"
-)
+            "Linux": {
+                buildOn(
+                        platform: "linux",
+                        mavenArgs: nativeProfile,
+                        deploy: true
+                )
+            },
+
+            "Mac OSX": {
+                buildOn(
+                        platform: "mac",
+                        mavenArgs: nativeProfile,
+                        runSonar: true,
+                        deploy: true
+                )
+            }
+    )
+
+} else {
+    println 'This commit is not on a release branch. Skipping deployment.'
+
+    buildOn(
+            platform: 'slave',
+            runSonar: true
+    )
+
+}
 
 /**
  * This function will configure a node to run a build.
  * @param platform the os to run on (node label)
  * @param runSonar set to true to run a sonar analysis
  * @param deploy set to true to deploy to maven repository
+ * @param mavenArgs additional arguments to pass to maven
  * @return void
  */
 def buildOn(Map args) {
     def platform = args.platform ?: 'linux'
     def runSonar = args.runSonar ?: false
     def deploy = args.deploy ?: false
+    def mavenArgs = args.mavenArgs ?: ''
 
-    node(platform) {
+    node("xill-platform ${platform}") {
 
         // Gather all required tools
         // Note the escaped quotes to make this work with spaces
@@ -53,7 +74,7 @@ def buildOn(Map args) {
                         "-B"
                 ]
 
-                def mvn = "\"${m2Tool}/bin/mvn\" ${mvnOptions.join(' ')}"
+                def mvn = "\"${m2Tool}/bin/mvn\" ${mvnOptions.join(' ')} ${mavenArgs}"
 
                 // Check out scm
                 stage("$platform: Checkout") {
@@ -73,7 +94,7 @@ def buildOn(Map args) {
                 if (runSonar) {
                     // Run the sonar analysis
                     stage("$platform: Sonar") {
-                        cli "${mvn} sonar:sonar"
+                        cli "${mvn} sonar:sonar -Dsonar.branch=${branchName}"
                     }
                 }
 
@@ -88,7 +109,6 @@ def buildOn(Map args) {
         }
     }
 }
-
 
 /**
  * This function will delegate arguments to the platform specific command line interface.
