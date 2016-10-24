@@ -1,8 +1,7 @@
-def branchName = env.BRANCH_NAME
-def nativeProfile = '-P build-native'
-
-if ('master'.equals(branchName) || branchName ==~ /d+\.d+\.d+/) {
+if ('master'.equals(env.BRANCH_NAME) || env.BRANCH_NAME ==~ /d+\.d+\.d+/) {
     println 'This commit is on the master or a release branch. A full test and deployment will be executed...'
+
+    def nativeProfile = '-P build-native'
 
     parallel(
             "Windows": {
@@ -94,7 +93,7 @@ def buildOn(Map args) {
                 if (runSonar) {
                     // Run the sonar analysis
                     stage("$platform: Sonar") {
-                        cli "${mvn} sonar:sonar -Dsonar.branch=${branchName}"
+                        cli "${mvn} sonar:sonar -Dsonar.branch=${env.BRANCH_NAME}"
                     }
                 }
 
