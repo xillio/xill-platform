@@ -61,7 +61,7 @@ def buildOn(Map args) {
         def m2Tool = tool 'mvn-3'
         def javaTool = tool 'java-1.8'
 
-        withEnv(["JAVA_HOME=$javaTool", "M2_HOME=$m2Tool"]) {
+        withEnv(["JAVA_HOME=$javaTool", "M2_HOME=$m2Tool", "JFXRT_HOME=$javaTool"]) {
 
             // Inject maven settings file
             configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
