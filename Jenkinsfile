@@ -60,8 +60,9 @@ def buildOn(Map args) {
         // Note the escaped quotes to make this work with spaces
         def m2Tool = tool 'mvn-3'
         def javaTool = tool 'java-1.8'
+        def jfxrt = platform == 'mac' ? "$javaTool/Contents/Home/jre" : javaTool
 
-        withEnv(["JAVA_HOME=$javaTool", "M2_HOME=$m2Tool", "JFXRT_HOME=$javaTool"]) {
+        withEnv(["JAVA_HOME=$javaTool", "M2_HOME=$m2Tool", "JFXRT_HOME=$jfxrt"]) {
 
             // Inject maven settings file
             configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
