@@ -60,6 +60,7 @@
     </distributionManagement>
 
     <build>
+        <finalName>xill-ide-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>com.zenjava</groupId>

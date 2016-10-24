@@ -38,7 +38,7 @@
             <outputDirectory></outputDirectory>
         </file>
         <file>
-            <source>${project.basedir}/target/jfx/native/${app.name}-${xill.release.version}.pkg</source>
+            <source>${project.basedir}/target/jfx/native/Xill IDE-${project.version}.pkg</source>
             <outputDirectory></outputDirectory>
         </file>
     </files>
