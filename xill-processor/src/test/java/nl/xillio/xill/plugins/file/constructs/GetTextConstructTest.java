@@ -15,88 +15,58 @@
  */
 package nl.xillio.xill.plugins.file.constructs;
 
-import me.biesaart.utils.IOUtils;
-import me.biesaart.utils.IOUtilsService;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
-import nl.xillio.xill.api.construct.ConstructProcessor;
-import nl.xillio.xill.api.errors.RobotRuntimeException;
-import nl.xillio.xill.api.io.IOStream;
-import nl.xillio.xill.api.io.SimpleIOStream;
-import nl.xillio.xill.plugins.file.services.files.FileStreamFactory;
+import nl.xillio.xill.api.errors.OperationFailedException;
+import nl.xillio.xill.services.files.TextFileReader;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 
 public class GetTextConstructTest extends TestUtils {
+    @BeforeClass
+    private void preTest() {
+        setFileResolverReturnValue(Paths.get(""));
+    }
 
+    /**
+     * Test the construct under normal circumstances.
+     */
     @Test
     public void testNormalUsageFromFile() throws IOException {
-        // Create test file
-        Path file = Files.createTempFile(getClass().getSimpleName(), ".txt");
-        Files.copy(IOUtils.toInputStream("File Test"), file, StandardCopyOption.REPLACE_EXISTING);
+        String text = "foo bar";
 
-        GetTextConstruct construct = new GetTextConstruct(new FileStreamFactory(), new IOUtilsService());
-        setFileResolverReturnValue(file);
+        // Mock.
+        TextFileReader textFileReader = mock(TextFileReader.class);
+        GetTextConstruct construct = new GetTextConstruct(textFileReader);
+        when(textFileReader.getText(any(), any())).thenReturn(text);
 
-        MetaExpression result = ConstructProcessor.process(
-                construct.prepareProcess(context(construct)),
-                fromValue(file.toAbsolutePath().toString())
-        );
+        // Run.
+        MetaExpression result = this.process(construct, fromValue(""));
 
-        assertEquals(result.getStringValue(), "File Test");
-
-        // Delete test file
-        Files.delete(file);
+        // Assert.
+        assertEquals(result.getStringValue(), text);
     }
 
-    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*I don't exist.*")
+    /**
+     * Test the construct with a non-existent file.
+     */
+    @Test(expectedExceptions = OperationFailedException.class, expectedExceptionsMessageRegExp = ".*get text from the file.*")
     public void testFromFileNotExists() {
-        // Create test file
-        Path file = Paths.get("I don't exist");
+        // Mock.
+        TextFileReader textFileReader = mock(TextFileReader.class);
+        GetTextConstruct construct = new GetTextConstruct(textFileReader);
+        when(textFileReader.getText(any(), any())).thenThrow(new OperationFailedException("get text from the file", "File does not exist."));
 
-        GetTextConstruct construct = new GetTextConstruct(new FileStreamFactory(), new IOUtilsService());
-        setFileResolverReturnValue(file);
-
-        ConstructProcessor.process(
-                construct.prepareProcess(context(construct)),
-                fromValue(file.toAbsolutePath().toString())
-        );
-    }
-
-    @Test
-    public void testIfStreamClosed() throws IOException {
-        // Create test file
-        Path file = Files.createTempFile(getClass().getSimpleName(), ".txt");
-        Files.copy(IOUtils.toInputStream("File Test"), file, StandardCopyOption.REPLACE_EXISTING);
-
-        GetTextConstruct construct = new GetTextConstruct(new FileStreamFactory(), new IOUtilsService());
-        setFileResolverReturnValue(file);
-
-        MetaExpression result = ConstructProcessor.process(
-                construct.prepareProcess(context(construct)),
-                fromValue(file.toAbsolutePath().toString())
-        );
-
-        assertEquals(result.getStringValue(), "File Test");
-
-        // Try to delete the test file, this can only happen if the getText actually closed the stream
-        Files.delete(file);
-
-        // If the stream is correctly closed, the delete is not queued and we will get a no such file Exception
-        // Else you would get an exception when trying to open a stream with the not yet deleted file. in this case the test fails.
-        try {
-            Files.newInputStream(file.toAbsolutePath());
-        }
-        catch(java.nio.file.NoSuchFileException e)        {
-            // We found the correct exception. This is expected behavior.
-        }
+        // Run.
+        this.process(construct, fromValue(""));
     }
 }

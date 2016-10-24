@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.plugins.system;
+/*
+* Specification: isEmpty MUST return true if the value is null or empty, or false otherwise.
+* Input: See dataset
+* Expected: See dataset
+*/
 
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import nl.xillio.plugins.XillPlugin;
-import nl.xillio.xill.plugins.system.services.info.ProgressTrackerService;
-import nl.xillio.xill.services.ProgressTracker;
+use Assert, String;
 
-/**
- * This package includes all system constructs.
- */
-public class SystemXillPlugin extends XillPlugin {
-    @Provides
-    @Singleton
-    ProgressTracker progressTracker() {
-        return new ProgressTrackerService();
-    }
+// Input, expected.
+var dataset = [
+	["", true],
+	[null, true],
+	["foo", false],
+	[0, false],
+	[false, false]
+];
+
+foreach (item in dataset) {
+	Assert.equal(String.isEmpty(item[0]), item[1]);
 }

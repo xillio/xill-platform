@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.plugins.system;
+package nl.xillio.xill.services.files;
 
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import nl.xillio.plugins.XillPlugin;
-import nl.xillio.xill.plugins.system.services.info.ProgressTrackerService;
-import nl.xillio.xill.services.ProgressTracker;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
 
 /**
- * This package includes all system constructs.
+ * This interface describes a service that will get text from a file.
  */
-public class SystemXillPlugin extends XillPlugin {
-    @Provides
-    @Singleton
-    ProgressTracker progressTracker() {
-        return new ProgressTrackerService();
-    }
+public interface TextFileReader {
+    /**
+     * Get the text from a file.
+     *
+     * @param source  The source to read the text from.
+     * @param charset The charset to use. If this is null, the default charset will be used.
+     * @return The text from the source file.
+     */
+    String getText(Path source, Charset charset);
 }

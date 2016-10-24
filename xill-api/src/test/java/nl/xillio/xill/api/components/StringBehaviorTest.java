@@ -27,48 +27,48 @@ import static org.testng.Assert.assertTrue;
  * @author Daan Knoope
  */
 public class StringBehaviorTest {
-
     StringBehavior[] stringBehaviors;
     Number[] numberValues;
     String[] stringValues;
     boolean[] booleanValues;
 
     public StringBehaviorTest(){
-        numberValues = new Number[]{NaN, NaN, 0, 0D, NaN, NaN};
-        stringValues = new String[]{"test string", "", "0", "0.0", "null", "NaN"};
-        booleanValues = new boolean[]{true, false, false, true, false, true};
+        numberValues = new Number[]{NaN, NaN, 0, 0D, NaN, NaN, NaN};
+        stringValues = new String[]{"test string", "", "0", "0.0", "null", "NaN", "false"};
+        booleanValues = new boolean[]{true, false, false, true, false, true, false};
 
         stringBehaviors = new StringBehavior[3];
-        for(int i = 0; i < stringBehaviors.length; i++)
+        for (int i = 0; i < stringBehaviors.length; i++)
             stringBehaviors[i] = new StringBehavior(stringValues[i]);
     }
 
     @Test
     public void testGetNumberValue() throws Exception {
-        for(int i = 0; i < stringBehaviors.length; i++)
+        for (int i = 0; i < stringBehaviors.length; i++) {
             assertEquals(stringBehaviors[i].getNumberValue(), numberValues[i]);
+        }
     }
 
     @Test
     public void testGetStringValue() throws Exception {
-       for(int i = 0; i < stringBehaviors.length; i++)
-           assertEquals(stringBehaviors[i].getStringValue(), stringValues[i]);
+        for (int i = 0; i < stringBehaviors.length; i++) {
+            assertEquals(stringBehaviors[i].getStringValue(), stringValues[i]);
+        }
     }
 
     @Test
     public void testGetBooleanValue() throws Exception {
-        for(int i = 0; i < stringBehaviors.length; i++)
+        for (int i = 0; i < stringBehaviors.length; i++) {
             assertEquals(stringBehaviors[i].getBooleanValue(), booleanValues[i]);
+        }
     }
 
     @Test
     public void testCopy() throws Exception {
-        for(int i = 0; i < stringBehaviors.length; i++) {
+        for (int i = 0; i < stringBehaviors.length; i++) {
             StringBehavior copy = stringBehaviors[i].copy();
             assertEquals(stringBehaviors[i].getStringValue(), copy.getStringValue()); // same value
             assertTrue(stringBehaviors[i] != copy); // different objects
         }
-
     }
-
 }
