@@ -15,7 +15,9 @@
  */
 package nl.xillio.xill.plugins.mongodb.data;
 
+import nl.xillio.xill.api.components.CopyableMetadataExpression;
 import nl.xillio.xill.api.data.MetadataExpression;
+import org.apache.commons.lang3.ObjectUtils;
 import org.bson.types.ObjectId;
 
 /**
@@ -23,7 +25,7 @@ import org.bson.types.ObjectId;
  *
  * @author Titus Nachbauer
  */
-public class MongoObjectId implements MetadataExpression {
+public class MongoObjectId implements CopyableMetadataExpression {
     private final ObjectId objectId;
 
     /**
@@ -42,6 +44,14 @@ public class MongoObjectId implements MetadataExpression {
         objectId = new ObjectId(objectIdHex);
     }
 
+    /**
+     * Copy constructor
+     * @param objectId The object ID
+     */
+    private MongoObjectId(ObjectId objectId) {
+        this.objectId = objectId;
+    }
+
     @Override
     public String toString() {
         return objectId.toString();
@@ -49,5 +59,11 @@ public class MongoObjectId implements MetadataExpression {
 
     public ObjectId getObjectId() {
         return objectId;
+    }
+
+    @Override
+    public CopyableMetadataExpression copy() {
+        // ObjectID is immutable, so we can use the same instance
+        return new MongoObjectId(objectId);
     }
 }

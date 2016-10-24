@@ -19,7 +19,7 @@ import nl.xillio.xill.api.data.MetadataExpression;
 
 /**
  * Represents an metadata in a {@link MetaExpression} that can be copied. Only metadata in an expression
- * implementing this interface will be copied when the expression is copied.3
+ * implementing this interface will be copied when the expression is copied.
  *
  * @author Geert Konijnendijk
  */
