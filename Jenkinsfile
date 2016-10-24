@@ -1,4 +1,4 @@
-if ('master'.equals(env.BRANCH_NAME) || env.BRANCH_NAME ==~ /d+\.d+\.d+/) {
+if ('master'.equals(env.BRANCH_NAME) || env.BRANCH_NAME ==~ /d+\.d+\.d+/ || true) {
     println 'This commit is on the master or a release branch. A full test and deployment will be executed...'
 
     def nativeProfile = '-P build-native'
