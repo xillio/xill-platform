@@ -65,7 +65,17 @@ public class MetaExpressionTest {
             @Override
             protected void configure() {
                 bind(DateFactory.class).toInstance(
-                        instant -> () -> ZonedDateTime.ofInstant(instant, ZoneId.systemDefault())
+                        instant -> new nl.xillio.xill.api.data.Date() {
+                            @Override
+                            public ZonedDateTime getZoned() {
+                                return ZonedDateTime.ofInstant(instant, ZoneId.systemDefault());
+                            }
+
+                            @Override
+                            public nl.xillio.xill.api.data.Date copy() {
+                                return null;
+                            }
+                        }
                 );
             }
         });

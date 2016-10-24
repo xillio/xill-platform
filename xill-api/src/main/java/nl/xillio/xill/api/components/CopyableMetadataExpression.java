@@ -13,27 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.api.data;
+package nl.xillio.xill.api.components;
 
-
-import nl.xillio.xill.api.components.CopyableMetadataExpression;
-
-import java.time.ZonedDateTime;
+import nl.xillio.xill.api.data.MetadataExpression;
 
 /**
- * This interface represents a date object in the Xill language.
+ * Represents an metadata in a {@link MetaExpression} that can be copied. Only metadata in an expression
+ * implementing this interface will be copied when the expression is copied.3
  *
- * @author Thomas Biesaart
- * @author Sander Visser
  * @author Geert Konijnendijk
- * @since 3.0.0
  */
-public interface Date extends CopyableMetadataExpression<Date> {
+public interface CopyableMetadataExpression<T extends CopyableMetadataExpression<T>> extends MetadataExpression {
 
-	/**
-	 * Returns a ZonedDateTime that represents the date stored in this object.
-	 *
-	 * @return the date
-	 */
-	ZonedDateTime getZoned();
+    /**
+     * @return A deep copy of this object
+     */
+    T copy();
+
 }

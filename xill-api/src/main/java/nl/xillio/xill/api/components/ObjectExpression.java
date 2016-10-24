@@ -57,7 +57,7 @@ class ObjectExpression extends CollectionExpression {
     }
 
     @Override
-    public ObjectExpression copy() {
+    public ObjectExpression copyExpression() {
         assertOpen();
         LinkedHashMap<String, MetaExpression> copy = new LinkedHashMap<>();
         value.forEach((x,y) -> copy.put(x, y.copy()));

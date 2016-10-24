@@ -62,14 +62,14 @@ public class ObjectExpressionTest {
 
     @Test
     public void testCopy() throws Exception {
-        ObjectExpression copy = objectExpression.copy();
+        MetaExpression copy = objectExpression.copy();
         assertTrue(copy != objectExpression);
         assertEquals(objectExpression.getSize(), copy.getSize());
     }
 
     @Test (expectedExceptions = IllegalStateException.class)
     public void testCopyClosed() throws Exception{
-        ObjectExpression copy = objectExpression.copy();
+        MetaExpression copy = objectExpression.copy();
         copy.close();
         copy.copy();
     }
