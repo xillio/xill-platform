@@ -55,7 +55,7 @@ def buildOn(Map args) {
     def deploy = args.deploy ?: false
     def mavenArgs = args.mavenArgs ?: ''
 
-    node("xill-platform ${platform}") {
+    node("xill-platform && ${platform}") {
 
         // Gather all required tools
         // Note the escaped quotes to make this work with spaces
