@@ -22,7 +22,7 @@ To build Xill IDE you:
 1. Check out the repository
 2. Run `mvn package -P build-native` to build a native package
 
-You can now find your native application at `xill-ide-launcher/target/jfx/native`.
+You can now find your native application at `xill-ide-native/target/jfx/native`.
 
 Updating the Project Version
 ----------------------------
