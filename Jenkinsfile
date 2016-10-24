@@ -60,9 +60,11 @@ def buildOn(Map args) {
         // Note the escaped quotes to make this work with spaces
         def m2Tool = tool 'mvn-3'
         def javaTool = tool 'java-1.8'
-        def jfxrt = platform == 'mac' ? "$javaTool/Contents/Home/jre" : javaTool
+        if('mac'.equals(platform)) {
+            javaTool = "$javaTool/Contents/Home"
+        }
 
-        withEnv(["JAVA_HOME=$javaTool", "M2_HOME=$m2Tool", "JFXRT_HOME=$jfxrt"]) {
+        withEnv(["JAVA_HOME=$javaTool", "M2_HOME=$m2Tool"]) {
 
             // Inject maven settings file
             configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
@@ -76,23 +78,23 @@ def buildOn(Map args) {
                 def mvn = "\"${m2Tool}/bin/mvn\" ${mvnOptions.join(' ')} ${mavenArgs}"
 
                 // Check out scm
-                stage("$platform: Checkout") {
+                stage("Checkout") {
                     checkout scm
                 }
 
                 // Clean the repository
-                stage("$platform: Clean") {
+                stage("Clean") {
                     cli "${mvn} clean"
                 }
 
                 // Run all tests
-                stage("$platform: Tests") {
+                stage("Tests") {
                     cli "${mvn} verify"
                 }
 
                 if (runSonar) {
                     // Run the sonar analysis
-                    stage("$platform: Sonar") {
+                    stage("Sonar") {
                         cli "${mvn} sonar:sonar -Dsonar.branch=${env.BRANCH_NAME}"
                     }
                 }
@@ -100,7 +102,7 @@ def buildOn(Map args) {
                 if (deploy) {
                     // Deploy to repository
                     // No need for tests as we already passed verify
-                    stage("$platform: Deploy") {
+                    stage("Deploy") {
                         cli "${mvn} deploy -DskipTests"
                     }
                 }
