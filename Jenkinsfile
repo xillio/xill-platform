@@ -1,4 +1,4 @@
-if ('master'.equals(env.BRANCH_NAME) || env.BRANCH_NAME ==~ /d+\.d+\.d+/) {
+if ('master'.equals(env.BRANCH_NAME) || env.BRANCH_NAME ==~ /d+\.d+\.d+/ || true) {
     println 'This commit is on the master or a release branch. A full test and deployment will be executed...'
 
     def nativeProfile = '-P build-native'
@@ -59,10 +59,9 @@ def buildOn(Map args) {
         // Gather all required tools
         // Note the escaped quotes to make this work with spaces
         def m2Tool = tool 'mvn-3'
-        env.M2_HOME = m2Tool
         def javaTool = tool 'java-1.8'
 
-        withEnv(["JAVA_HOME=$javaTool"]) {
+        withEnv(["JAVA_HOME=$javaTool", "M2_HOME=$m2Tool"]) {
 
             // Inject maven settings file
             configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
