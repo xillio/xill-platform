@@ -112,15 +112,11 @@ def buildOn(Map args) {
 
 def buildEnvironmentalVariableList(m2Tool, javaTool, platform) {
     def javaHome = javaTool
-    def result = ["M2_HOME=$m2Tool"]
+    def result = ["M2_HOME=$m2Tool", "JAVA_HOME=${javaHome}"]
 
     if ("mac".equals(platform)) {
-        javaHome = "${javaHome}"
         result.add("PATH=${javaHome}:${env.PATH}")
-        result.add("JFXRT_HOME=${javaHome}/jre")
     }
-
-    result.add("JAVA_HOME=${javaHome}")
 
     return result
 }
