@@ -76,6 +76,11 @@ def buildOn(Map args) {
 
                 def mvn = "\"${m2Tool}/bin/mvn\" ${mvnOptions.join(' ')} ${mavenArgs}"
 
+                if('mac'.equals(platform)) {
+                    sh 'rm -rf Contents && mkdir Contents && ln -s $JAVA_HOME Contents/Home'
+                    sh 'export JAVA_HOME=`pwd`/Contents/Home'
+                }
+
                 // Check out scm
                 stage("Checkout on $platform") {
                     checkout scm
@@ -108,17 +113,6 @@ def buildOn(Map args) {
             }
         }
     }
-}
-
-def buildEnvironmentalVariableList(m2Tool, javaTool, platform) {
-    def javaHome = javaTool
-    def result = ["M2_HOME=$m2Tool", "JAVA_HOME=${javaHome}"]
-
-    if ("mac".equals(platform)) {
-        result.add("PATH=${javaHome}:${env.PATH}")
-    }
-
-    return result
 }
 
 /**
