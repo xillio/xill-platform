@@ -4,21 +4,21 @@ if ('master'.equals(env.BRANCH_NAME) || env.BRANCH_NAME ==~ /d+\.d+\.d+/ || true
     def nativeProfile = '-P build-native'
 
     parallel(
-            "Windows": {
-                buildOn(
-                        platform: "windows",
-                        mavenArgs: nativeProfile,
-                        deploy: true
-                )
-            },
-
-            "Linux": {
-                buildOn(
-                        platform: "linux",
-                        mavenArgs: nativeProfile,
-                        deploy: true
-                )
-            },
+//            "Windows": {
+//                buildOn(
+//                        platform: "windows",
+//                        mavenArgs: nativeProfile,
+//                        deploy: true
+//                )
+//            },
+//
+//            "Linux": {
+//                buildOn(
+//                        platform: "linux",
+//                        mavenArgs: nativeProfile,
+//                        deploy: true
+//                )
+//            },
 
             "Mac OSX": {
                 buildOn(
@@ -69,29 +69,31 @@ def buildOn(Map args) {
                         // Use the provided settings.xml
                         "-s \"$MAVEN_SETTINGS\"",
                         // Run in batch mode (headless)
-                        "-B"
+                        "-B",
+                        // Uncomment this to enable verbose builds
+                        "-X"
                 ]
 
                 def mvn = "\"${m2Tool}/bin/mvn\" ${mvnOptions.join(' ')} ${mavenArgs}"
 
                 // Check out scm
-                stage("Checkout") {
+                stage("Checkout on $platform") {
                     checkout scm
                 }
 
                 // Clean the repository
-                stage("Clean") {
+                stage("Clean on $platform") {
                     cli "${mvn} clean"
                 }
 
                 // Run all tests
-                stage("Tests") {
+                stage("Tests on $platform") {
                     cli "${mvn} verify"
                 }
 
                 if (runSonar) {
                     // Run the sonar analysis
-                    stage("Sonar") {
+                    stage("Sonar on $platform") {
                         cli "${mvn} sonar:sonar -Dsonar.branch=${env.BRANCH_NAME}"
                     }
                 }
@@ -99,7 +101,7 @@ def buildOn(Map args) {
                 if (deploy) {
                     // Deploy to repository
                     // No need for tests as we already passed verify
-                    stage("Deploy") {
+                    stage("Deploy on $platform") {
                         cli "${mvn} deploy -DskipTests"
                     }
                 }
