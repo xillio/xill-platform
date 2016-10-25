@@ -426,9 +426,7 @@ public class RobotTab extends FileTab implements Initializable {
                             "Exception while processing",
                             e.getClass().getSimpleName() + ", " + e.getMessage());
                     error.initModality(Modality.APPLICATION_MODAL);
-                    error.setWidth(1080);
                     error.show();
-
                 });
             }
         });
