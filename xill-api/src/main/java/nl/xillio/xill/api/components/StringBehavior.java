@@ -67,7 +67,11 @@ class StringBehavior extends AbstractBehavior {
 
     @Override
     public boolean getBooleanValue() {
-        return !(value.isEmpty() || "0".equals(value) || "false".equals(value) || "null".equals(value));
+        if("false".equals(value) || "0".equals(value) || "null".equals(value)) {
+            return false;
+        }
+
+        return !value.isEmpty();
     }
 
     @Override
