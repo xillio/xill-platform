@@ -65,7 +65,7 @@ def buildOn(Map args) {
             // On mac we have to create a symlink because it is a hard requirement to have /Contents/Home in the
             // JAVA_HOME path.
             stage('Setup Build Environment on mac') {
-                sh "mkdir target && mkdir target/Contents && ln -s $javaTool target/Contents/Home"
+                sh "rm -rf target && mkdir target && mkdir target/Contents && ln -s $javaTool target/Contents/Home"
                 javaTool = "${pwd()}/target/Contents/Home"
             }
         }
@@ -90,11 +90,6 @@ def buildOn(Map args) {
                     checkout scm
                 }
 
-                // Clean the repository
-                stage("Clean on $platform") {
-                    cli "${mvn} clean"
-                }
-
                 // Run all tests
                 stage("Tests And Package on $platform") {
                     cli "${mvn} verify"
@@ -113,6 +108,11 @@ def buildOn(Map args) {
                     stage("Deploy on $platform") {
                         cli "${mvn} deploy -DskipTests"
                     }
+                }
+
+                // Clean the repository
+                stage("Clean on $platform") {
+                    cli "${mvn} clean"
                 }
             }
         }
