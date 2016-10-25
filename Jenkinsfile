@@ -61,6 +61,15 @@ def buildOn(Map args) {
         def m2Tool = tool 'mvn-3'
         def javaTool = tool 'java-1.8'
 
+        if('mac' == platform) {
+            // On mac we have to create a symlink because it is a hard requirement to have /Contents/Home in the
+            // JAVA_HOME path.
+            stage('Setup Build Environment on mac') {
+                sh "mkdir target && mkdir target/Contents && ln -s $javaTool target/Contents/Home"
+                javaTool = "${pwd()}/target/Contents/Home"
+            }
+        }
+
         withEnv(["M2_HOME=$m2Tool", "JAVA_HOME=${javaTool}"]) {
 
             // Inject maven settings file
@@ -86,20 +95,9 @@ def buildOn(Map args) {
                     cli "${mvn} clean"
                 }
 
-                if('mac'.equals(platform)) {
-                    // On mac we have to create a symlink because it is a hard requirement to have /Contents/Home in the
-                    // JAVA_HOME path.
-                    stage('Setup Build Environment on mac') {
-                        sh 'mkdir target && mkdir target/Contents && ln -s $JAVA_HOME target/Contents/Home'
-                        javaTool = "${pwd()}/target/Contents/Home"
-                    }
-                }
-
-                withEnv(["JAVA_HOME=${javaTool}"]) {
-                    // Run all tests
-                    stage("Tests And Package on $platform") {
-                        cli "${mvn} verify"
-                    }
+                // Run all tests
+                stage("Tests And Package on $platform") {
+                    cli "${mvn} verify"
                 }
 
                 if (runSonar) {
