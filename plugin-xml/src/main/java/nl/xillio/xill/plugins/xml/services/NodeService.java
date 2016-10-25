@@ -20,8 +20,6 @@ import nl.xillio.xill.api.data.XmlNode;
 import nl.xillio.xill.api.data.XmlNodeFactory;
 import nl.xillio.xill.plugins.xml.XMLXillPlugin;
 
-import java.nio.file.Path;
-
 /**
  * This interface represents some of the operations for the {@link XMLXillPlugin}.
  *
@@ -82,14 +80,4 @@ public interface NodeService extends XmlNodeFactory {
      * @return true if attribute existed and was removed, false if attribute did not exist
      */
     boolean removeAttribute(final XmlNode xmlNode, final String attrName);
-
-    /**
-     * Loads XML document from file, parse it and returns root node (XML document)
-     *
-     * @param xmlSource file path that contains valid XMl document
-     * @return newly created XML node representing root node of the entire document
-     */
-    XmlNode fromFilePath(final Path xmlSource);
-
-
 }

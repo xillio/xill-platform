@@ -64,6 +64,22 @@ public class AbsoluteURLConstructTest extends TestUtils {
         Assert.assertEquals(result.getStringValue(), "http://www.xillio.nl/");
     }
 
+    @Test
+    public void processDifferentProtocol(){
+        // MetaExpressions.
+        MetaExpression pageUrl = fromValue("xill://robot.io/");
+        MetaExpression relativeUrl = fromValue("run");
+
+        // Run.
+        MetaExpression result = this.process(construct, pageUrl, relativeUrl);
+
+        // Verify.
+        verify(urlUtilityService, times(1)).tryConvert(pageUrl.getStringValue(), relativeUrl.getStringValue());
+
+        // Assert.
+        Assert.assertEquals(result.getStringValue(), "xill://robot.io/run");
+    }
+
     /**
      * Tests the process when an empty relativeUrl is handed, in which case the last slash is deleted and the url is cleaned.
      */
@@ -118,7 +134,7 @@ public class AbsoluteURLConstructTest extends TestUtils {
         MetaExpression result = this.process(construct, pageUrl, relativeUrl);
 
         // Verify.
-        verify(urlUtilityService, times(1)).getProtocol(pageUrl.getStringValue());
+        verify(urlUtilityService, times(2)).getProtocol(pageUrl.getStringValue());
 
         // Assert.
         Assert.assertEquals(result.getStringValue(), "https://example.com");
@@ -157,6 +173,7 @@ public class AbsoluteURLConstructTest extends TestUtils {
         // Mock.
         UrlUtilityService url = mock(UrlUtilityService.class);
         when(url.tryConvert(pageUrl.getStringValue(), relativeUrl.getStringValue())).thenThrow(new IllegalArgumentException());
+        when(url.hasProtocol(pageUrl.getStringValue())).thenReturn(true);
 
         // Run.
         AbsoluteURLConstruct construct = new AbsoluteURLConstruct(url);
