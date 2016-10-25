@@ -60,9 +60,6 @@ def buildOn(Map args) {
         // Note the escaped quotes to make this work with spaces
         def m2Tool = tool 'mvn-3'
         def javaTool = tool 'java-1.8'
-        if('mac'.equals(platform)) {
-            javaTool = "$javaTool/Contents/Home"
-        }
 
         withEnv(["JAVA_HOME=$javaTool", "M2_HOME=$m2Tool"]) {
 
