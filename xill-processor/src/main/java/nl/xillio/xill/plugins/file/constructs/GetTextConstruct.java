@@ -30,10 +30,11 @@ import java.nio.file.Path;
 
 /**
  * Read text from a plain text file using the given encoding.
- *
+ * @deprecated use the Stream package to read/write files.
  * @author Thomas biesaart
  */
 @Singleton
+@Deprecated
 public class GetTextConstruct extends Construct {
     private final TextFileReader textFileReader;
 
