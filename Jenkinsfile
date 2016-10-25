@@ -91,13 +91,15 @@ def buildOn(Map args) {
                     // JAVA_HOME path.
                     stage('Setup Build Environment on mac') {
                         sh 'mkdir target && mkdir target/Contents && ln -s $JAVA_HOME target/Contents/Home'
-                        sh 'export JAVA_HOME=`pwd`/target/Contents/Home'
+                        javaTool = "${pwd()}/target/Contents/Home"
                     }
                 }
 
-                // Run all tests
-                stage("Tests on $platform") {
-                    cli "${mvn} verify"
+                withEnv(["JAVA_HOME=${javaTool}"]) {
+                    // Run all tests
+                    stage("Tests And Package on $platform") {
+                        cli "${mvn} verify"
+                    }
                 }
 
                 if (runSonar) {
