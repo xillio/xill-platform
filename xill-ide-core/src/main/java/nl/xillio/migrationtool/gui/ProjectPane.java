@@ -1013,7 +1013,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         final Runnable showDialog = () -> {
             // Create and show an alert dialog saying the content has been changed.
             AlertDialog alert = new AlertDialog(Alert.AlertType.WARNING, "File content change",
-                    "The file has been modified outside the editor.", "Do you want reload the file?",
+                    "The file \"" + tab.documentPath + "\" has been modified outside the editor.", "Do you want reload the file?",
                     ButtonType.YES, ButtonType.NO);
 
             alert.showAndWait();
