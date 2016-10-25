@@ -33,10 +33,7 @@ import nl.xillio.events.EventHost;
 import nl.xillio.migrationtool.ApplicationKillThread;
 import nl.xillio.migrationtool.EulaUtils;
 import nl.xillio.migrationtool.Loader;
-import nl.xillio.migrationtool.dialogs.AlertDialog;
-import nl.xillio.migrationtool.dialogs.ChangeLogDialog;
-import nl.xillio.migrationtool.dialogs.MissingLicensePluginsDialog;
-import nl.xillio.migrationtool.dialogs.SettingsDialog;
+import nl.xillio.migrationtool.dialogs.*;
 import nl.xillio.migrationtool.elasticconsole.ESConsoleClient;
 import nl.xillio.plugins.PluginLoadFailure;
 import nl.xillio.plugins.XillPlugin;
@@ -69,6 +66,8 @@ public class FXController implements Initializable, EventHandler<Event> {
      */
     public static final SettingsHandler settings = SettingsHandler.getSettingsHandler();
     public static final EventHost<String> OPEN_ROBOT_EVENT = new EventHost<>();
+    public static final EventHost<StatusBar> ON_PROGRESS_ADD = new EventHost<>();
+    public static final EventHost<StatusBar> ON_PROGRESS_REMOVE = new EventHost<>();
 
     /**
      * Instance of hotkeys handler
@@ -348,7 +347,10 @@ public class FXController implements Initializable, EventHandler<Event> {
                                 "The editing of non-text-files is ill advised and may corrupt the file." + System.lineSeparator() +
                         "Do you want to continue?",
                         ButtonType.YES, ButtonType.NO);
-                final Optional<ButtonType> result = dialog.showAndWait();
+
+                dialog.showAndWait();
+                final Optional<ButtonType> result = dialog.getResult();
+
                 if (!result.isPresent() || result.get() == ButtonType.NO) {
                     return null;
                 }
@@ -521,6 +523,13 @@ public class FXController implements Initializable, EventHandler<Event> {
     }*/
 
     @FXML
+    private void buttonRobotsProgress() {
+        RobotsProgressDialog dialog = new RobotsProgressDialog(tpnBots.getTabs());
+        dialog.setAlwaysOnTop(true);
+        dialog.show();
+    }
+
+    @FXML
     private void buttonSettings() {
         if (!btnSettings.isDisabled()) {
             createSettingsWindow();
@@ -608,7 +617,10 @@ public class FXController implements Initializable, EventHandler<Event> {
                 "You are about to quit the application but " + running + " robot(s) are still running." +
                         "All running robots will be stopped when you quit. Do you want to quit the application?",
                 new ButtonType("Quit", ButtonBar.ButtonData.YES), ButtonType.CANCEL);
-        return dialog.showAndWait().get().getButtonData() == ButtonBar.ButtonData.YES;
+
+        dialog.showAndWait();
+        final Optional<ButtonType> result = dialog.getResult();
+        return result.get().getButtonData() == ButtonBar.ButtonData.YES;
     }
 
     private String formatEditorOptionJSRaw(final String optionJS, final String keyValue) {

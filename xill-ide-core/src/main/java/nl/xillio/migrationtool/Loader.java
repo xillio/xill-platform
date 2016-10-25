@@ -178,33 +178,33 @@ public class Loader implements ContenttoolsPlugin {
         AlertDialog dialog = new AlertDialog(AlertType.ERROR, "Recover settings",
                 "The settings file could not be read", "Do you want to recover the last working settings file?",
                 ButtonType.YES, ButtonType.NO);
-        dialog.resultProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == ButtonType.YES) {
-                try {
-                    // Recover from backup settings
-                    SettingsHandler.recoverSettings();
-                    // Reload the settings after recovery
-                    SettingsHandler.loadSettings();
-                } catch (IOException e) {
-                    LOGGER.error("Could not recover settings, writing defaults", e);
-                    try {
-                        // Try to write the default settings when the backup settings cannot be loaded
-                        SettingsHandler.forceDefaultSettings();
-                    } catch (IOException e1) {
-                        LOGGER.error("Could not write default settings, exiting", e);
-                        // System.exit is appropriate here since there is a fatal error.
-                        System.exit(1);
-                    }
-                }
-            } else {
-                // Simply exit when the user chooses not to recover the settings
-                Platform.exit();
-            }
 
-            // When recovery succeeds, continue starting the IDE
-            startIDE(primaryStage);
-        });
-        dialog.show();
+        dialog.showAndWait();
+
+        if (dialog.getResult().get() == ButtonType.YES) {
+            try {
+                // Recover from backup settings
+                SettingsHandler.recoverSettings();
+                // Reload the settings after recovery
+                SettingsHandler.loadSettings();
+            } catch (IOException e) {
+                LOGGER.error("Could not recover settings, writing defaults", e);
+                try {
+                    // Try to write the default settings when the backup settings cannot be loaded
+                    SettingsHandler.forceDefaultSettings();
+                } catch (IOException e1) {
+                    LOGGER.error("Could not write default settings, exiting", e);
+                    // System.exit is appropriate here since there is a fatal error.
+                    System.exit(1);
+                }
+            }
+        } else {
+            // Simply exit when the user chooses not to recover the settings
+            Platform.exit();
+        }
+
+        // When recovery succeeds, continue starting the IDE
+        startIDE(primaryStage);
     }
 
     /**
@@ -272,10 +272,6 @@ public class Loader implements ContenttoolsPlugin {
     }
 
     private void alert(String message) {
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.initModality(Modality.APPLICATION_MODAL);
-        alert.setTitle("Warning");
-        alert.setContentText(message);
-        alert.show();
+        new AlertDialog(AlertType.ERROR, "Warning", "", message).showAndWait();
     }
 }

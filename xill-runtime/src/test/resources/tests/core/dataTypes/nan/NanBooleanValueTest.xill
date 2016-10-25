@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 /*
-* Specification: The boolean value of NaN MUST be true.
+* Specification: The boolean value of NaN MUST be false.
 * Input: NaN
 * Expected: The code is executed
 */
 
 use Assert, System;
 
-var executed = false;
-
-if (NaN) {
-	executed = true;
-}
-
-Assert.isTrue(executed);
+Assert.isFalse(NaN);

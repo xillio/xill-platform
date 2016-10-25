@@ -40,7 +40,12 @@ function getDataset(){
         [-2147483647, 0.5, -4294967294],    // MIN_INT - 1
         ["174461.625", "0.5", 348923.25],   // String-float numbers
         ["25", 0.5, 50],                    // String-number and number
-        [1/0, 1, 1/0],                      // INFINITY
+        [1/0, 1, 1/0],                      // POSITIVE INFINITY
+        [4294967296/0, 1, 1/0],             // POSITIVE INFINITY
+        [18446744073709551616/0, 1, 1/0],   // POSITIVE INFINITY
+        [-1/0, 1, -1/0],                    // NEGATIVE INFINITY
+        [-4294967296/0, 1, -1/0],           // NEGATIVE INFINITY
+        [-18446744073709551616/0, 1, -1/0], // NEGATIVE INFINITY
         [0, 0.0, NaN],                      // Zero-values
         [0,1241.4123, 0],                   // Zero dividing by any
         [true, true, 1],                    // True value -1
