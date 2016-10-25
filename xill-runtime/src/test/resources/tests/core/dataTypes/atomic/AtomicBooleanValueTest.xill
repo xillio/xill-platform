@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 /*
-* Specification: The boolean value of NaN MUST be false.
-* Input: NaN
-* Expected: The code is executed
-*/
+ * Specification: An ATOMIC MUST equal its boolean representation
+ * Input: 3, "foo", null, true, false
+ * Expected: true, true, false, true, false
+ */
 
-use Assert, System;
+use Assert, Collection;
 
-Assert.isFalse(NaN);
+var items = [3, "foo", true, false];
+var boolValues = [true, true, true, false];
+
+var i = Collection.length(items);
+while (i--) {
+    var item = items[i];
+    var booleanValue = boolValues[i];
+    Assert.isTrue((true&&item)==booleanValue, item :: " did not have the right boolean value " :: booleanValue);
+}
