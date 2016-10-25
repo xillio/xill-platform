@@ -50,7 +50,7 @@ The return value is an object with the following fields:
 | millis | The whole amount of millis in the difference after subtraction of `seconds` |
 
 Result fields prefixed with _total_ contain the difference for that specific time unit only.
-The other fields contain the whole amount (floored) of remaining difference after subtraction of its bigger time units.
+The other fields contain the whole amount (floored) of the remaining difference after subtraction of its bigger time units.
     </description>
     <examples>
         <example title="Usage">
