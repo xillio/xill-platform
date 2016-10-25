@@ -1007,7 +1007,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         }
 
         tab.requestFocus();
-        
+
         // Create and show an alert dialog saying the content has been changed.
         AlertDialog alert = new AlertDialog(Alert.AlertType.WARNING, "File content change",
                 "The file \"" + tab.documentPath + "\" has been modified outside the editor.", "Do you want reload the file?",
@@ -1015,7 +1015,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         alert.showAndWait();
         final Optional<ButtonType> result = alert.getResult();
-        if (result.get() == ButtonType.YES) {
+        if (result.isPresent() && result.get() == ButtonType.YES) {
             tab.reload();
         }
     }
