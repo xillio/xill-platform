@@ -6,25 +6,27 @@ if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+\.d+\.d+/ || true) {
     parallel(
             "Windows": {
                 buildOn(
-                        platform: "windows",
+                        platform: 'windows',
                         mavenArgs: nativeProfile,
-                        deploy: true
+                        buildPhase: 'deploy'
                 )
             },
 
             "Linux": {
                 buildOn(
-                        platform: "linux",
+                        platform: 'linux',
                         mavenArgs: nativeProfile,
-                        deploy: true
+                        // We only run sonar on a single node
+                        runSonar: true,
+                        buildPhase: 'deploy'
                 )
             },
+            
             "Mac OSX": {
                 buildOn(
-                        platform: "mac",
+                        platform: 'mac',
                         mavenArgs: nativeProfile,
-                        runSonar: true,
-                        deploy: true
+                        buildPhase: 'deploy'
                 )
             }
     )
@@ -34,7 +36,8 @@ if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+\.d+\.d+/ || true) {
 
     buildOn(
             platform: 'slave',
-            runSonar: true
+            runSonar: true,
+            buildPhase: 'verify'
     )
 
 }
@@ -43,15 +46,19 @@ if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+\.d+\.d+/ || true) {
  * This function will configure a node to run a build.
  * @param platform the os to run on (node label)
  * @param runSonar set to true to run a sonar analysis
- * @param deploy set to true to deploy to maven repository
+ * @param buildPhase the main phase that should run for this job
  * @param mavenArgs additional arguments to pass to maven
  * @return void
  */
 def buildOn(Map args) {
     def platform = args.platform ?: 'linux'
     def runSonar = args.runSonar ?: false
-    def deploy = args.deploy ?: false
     def mavenArgs = args.mavenArgs ?: ''
+    def buildPhase = args.buildPhase ?: 'verify'
+
+    if(runSonar) {
+        buildPhase = "$buildPhase sonar:sonar"
+    }
 
     node("xill-platform && ${platform}") {
 
@@ -64,12 +71,12 @@ def buildOn(Map args) {
             // On mac we have to create a symlink because it is a hard requirement to have /Contents/Home in the
             // JAVA_HOME path.
             stage('Setup Build Environment on mac') {
-                sh "rm -rf target && mkdir target && mkdir target/Contents && cp -R ${javaTool} target/Contents/Home"
+                sh "rm -rf target && mkdir target && mkdir target/Contents && cp -R $javaTool target/Contents/Home"
                 javaTool = "${pwd()}/target/Contents/Home"
             }
         }
 
-        withEnv(["M2_HOME=$m2Tool", "JAVA_HOME=${javaTool}"]) {
+        withEnv(["M2_HOME=$m2Tool", "JAVA_HOME=$javaTool"]) {
 
             // Inject maven settings file
             configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
@@ -82,7 +89,7 @@ def buildOn(Map args) {
                         //"-X"
                 ]
 
-                def mvn = "\"${m2Tool}/bin/mvn\" ${mvnOptions.join(' ')} ${mavenArgs}"
+                def mvn = "\"$m2Tool/bin/mvn\" ${mvnOptions.join(' ')} $mavenArgs"
 
                 // Check out scm
                 stage("Checkout on $platform") {
@@ -90,28 +97,13 @@ def buildOn(Map args) {
                 }
 
                 // Run all tests
-                stage("Tests And Package on $platform") {
-                    cli "${mvn} verify"
-                }
-
-                if (runSonar) {
-                    // Run the sonar analysis
-                    stage("Sonar on $platform") {
-                        cli "${mvn} sonar:sonar -Dsonar.branch=${env.BRANCH_NAME}"
-                    }
-                }
-
-                if (deploy) {
-                    // Deploy to repository
-                    // No need for tests as we already passed verify
-                    stage("Deploy on $platform") {
-                        cli "${mvn} deploy -DskipTests"
-                    }
+                stage("Run $buildPhase on $platform") {
+                    cli "$mvn $buildPhase sonar:sonar"
                 }
 
                 // Clean the repository
                 stage("Clean on $platform") {
-                    cli "${mvn} clean"
+                    cli "$mvn clean"
                 }
             }
         }
