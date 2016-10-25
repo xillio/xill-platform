@@ -22,12 +22,11 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 
 import static org.testng.Assert.assertEquals;
 
@@ -70,10 +69,14 @@ public class SimpleTextFileReaderTest extends TestUtils {
         // Create test file.
         String content = "Byte order mark\uFEFF";
         String contentBom = "\uFEFF\uFEFF" + content;
-        Files.copy(IOUtils.toInputStream(contentBom), tempFile, StandardCopyOption.REPLACE_EXISTING);
+
+        // Create a reader and force UTF-8 (otherwise it fails on Windows :( ).
+        try (BufferedWriter writer = Files.newBufferedWriter(tempFile, Charset.forName("UTF-8"), StandardOpenOption.WRITE)) {
+            writer.write(contentBom);
+        }
 
         // Run.
-        String result = reader.getText(tempFile, null);
+        String result = reader.getText(tempFile, Charset.forName("UTF-8"));
 
         // Assert.
         assertEquals(result, content);
