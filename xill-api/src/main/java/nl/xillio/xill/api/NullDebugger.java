@@ -205,5 +205,4 @@ public class NullDebugger implements Debugger {
     public void endFunction(Processable functionDeclaration) {
         // No Op
     }
-
 }
