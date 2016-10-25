@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 * Make `System.print` automatically pretty print LISTs and OBJECTs [CTC-1675]
 * `Math.HungarianAlgorithm()` now returns an object [CTC-1732]
 * Correct typing inconsistencies for booleans: now the strings "false" and "0" evaluate to `false` [CTC-1733]
+* Make StringBehavior conform to type conversion specification: a non-empty string will now evaluate to `true`, unless it contains any of the values "false", "0" or "null" [CTC-1865]
 
 ### Fix
 * On server threads are not closed when tasks finishes [XSVR-139]
