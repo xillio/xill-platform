@@ -115,8 +115,9 @@ def buildEnvironmentalVariableList(m2Tool, javaTool, platform) {
     def result = ["M2_HOME=$m2Tool"]
 
     if ("mac".equals(platform)) {
-        javaHome = "${javaHome}/Contents/Home"
+        javaHome = "${javaHome}"
         result.add("PATH=${javaHome}:${env.PATH}")
+        result.add("JFXRT_HOME=${javaHome}/jre")
     }
 
     result.add("JAVA_HOME=${javaHome}")
