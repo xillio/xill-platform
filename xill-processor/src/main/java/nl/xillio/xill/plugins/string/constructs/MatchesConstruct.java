@@ -34,6 +34,7 @@ import java.util.regex.PatternSyntaxException;
  * @author Sander
  */
 public class MatchesConstruct extends Construct {
+
     private final RegexService regexService;
 
     @Inject

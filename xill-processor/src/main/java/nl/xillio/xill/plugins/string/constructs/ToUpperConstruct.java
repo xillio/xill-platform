@@ -30,7 +30,7 @@ import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
  */
 public class ToUpperConstruct extends Construct {
 
-    public final StringUtilityService stringService;
+    private final StringUtilityService stringService;
 
     @Inject
     public ToUpperConstruct(StringUtilityService stringService) {

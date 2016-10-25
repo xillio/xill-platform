@@ -29,6 +29,7 @@ import nl.xillio.xill.plugins.string.services.string.UrlUtilityService;
  * Converts a relative URL string to an absolute URL using a string, pageUrl, as base URL.
  */
 public class AbsoluteURLConstruct extends Construct {
+
     private final UrlUtilityService urlUtilityService;
 
     @Inject

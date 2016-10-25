@@ -42,7 +42,7 @@ import java.util.List;
  */
 public class TrimConstruct extends Construct {
 
-    public final StringUtilityService stringService;
+    private final StringUtilityService stringService;
 
     @Inject
     public TrimConstruct(StringUtilityService stringService) {

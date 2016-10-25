@@ -39,8 +39,8 @@ import java.util.regex.PatternSyntaxException;
  */
 public class ReplaceConstruct extends Construct {
 
-    public final RegexService regexService;
-    public final StringUtilityService stringService;
+    private final RegexService regexService;
+    private final StringUtilityService stringService;
 
     @Inject
     public ReplaceConstruct(RegexService regexService, StringUtilityService stringService) {

@@ -39,7 +39,7 @@ import java.util.List;
  */
 public class SplitConstruct extends Construct {
 
-    public final StringUtilityService stringService;
+    private final StringUtilityService stringService;
 
     @Inject
     public SplitConstruct(StringUtilityService stringService) {

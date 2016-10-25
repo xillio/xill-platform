@@ -28,6 +28,7 @@ import java.nio.charset.Charset;
  * Get the byte length of a string.
  */
 public class ByteLengthConstruct extends Construct {
+
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(

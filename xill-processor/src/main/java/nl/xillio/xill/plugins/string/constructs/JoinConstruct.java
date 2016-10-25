@@ -31,6 +31,7 @@ import java.util.Map;
  * Concatenates a list of elements using a delimiter
  */
 public class JoinConstruct extends Construct {
+
     private final StringUtilityService stringService;
 
     @Inject
