@@ -33,10 +33,7 @@ import nl.xillio.events.EventHost;
 import nl.xillio.migrationtool.ApplicationKillThread;
 import nl.xillio.migrationtool.EulaUtils;
 import nl.xillio.migrationtool.Loader;
-import nl.xillio.migrationtool.dialogs.AlertDialog;
-import nl.xillio.migrationtool.dialogs.ChangeLogDialog;
-import nl.xillio.migrationtool.dialogs.MissingLicensePluginsDialog;
-import nl.xillio.migrationtool.dialogs.SettingsDialog;
+import nl.xillio.migrationtool.dialogs.*;
 import nl.xillio.migrationtool.elasticconsole.ESConsoleClient;
 import nl.xillio.plugins.PluginLoadFailure;
 import nl.xillio.plugins.XillPlugin;
@@ -69,6 +66,8 @@ public class FXController implements Initializable, EventHandler<Event> {
      */
     public static final SettingsHandler settings = SettingsHandler.getSettingsHandler();
     public static final EventHost<String> OPEN_ROBOT_EVENT = new EventHost<>();
+    public static final EventHost<StatusBar> ON_PROGRESS_ADD = new EventHost<>();
+    public static final EventHost<StatusBar> ON_PROGRESS_REMOVE = new EventHost<>();
 
     /**
      * Instance of hotkeys handler
@@ -522,6 +521,13 @@ public class FXController implements Initializable, EventHandler<Event> {
             ((FileTab) tab).getEditorPane().print();
         }
     }*/
+
+    @FXML
+    private void buttonRobotsProgress() {
+        RobotsProgressDialog dialog = new RobotsProgressDialog(tpnBots.getTabs());
+        dialog.setAlwaysOnTop(true);
+        dialog.show();
+    }
 
     @FXML
     private void buttonSettings() {
