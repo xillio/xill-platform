@@ -19,11 +19,173 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.math.BigInteger;
+
+import static org.testng.Assert.assertEquals;
+
 /**
  * @author titusn
  */
 
 public class MathUtilsTest {
+
+    /**
+     * @return An array in the form {@code {{leftOperand, rightOperand, expectedResult}}}
+     */
+    @DataProvider(name = "addition")
+    Object[][] additionNumbers() {
+        return new Object[][] {
+                {10, 5, 15},
+                {10.0, 5.0, 15.0},
+                {Integer.MAX_VALUE, 1, Integer.MAX_VALUE + 1L},
+                {Long.MAX_VALUE, 1,  BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.ONE)},
+                {2147483648L, 10, 2147483658L},
+                {new BigInteger("18446744073709551616"), BigInteger.TEN, new BigInteger("18446744073709551626")}
+        };
+    }
+
+    @Test(dataProvider="addition")
+    public void testAdd(Number a, Number b, Number expected) {
+        assertEquals(MathUtils.add(a, b), expected);
+    }
+
+    /**
+     * @return An array in the form {@code {{leftOperand, rightOperand, expectedResult}}}
+     */
+    @DataProvider(name = "subtraction")
+    Object[][] subtractionNumbers() {
+        return new Object[][] {
+                {10, 5, 5},
+                {10.0, 5.0, 5.0},
+                {Integer.MIN_VALUE, 1, Integer.MIN_VALUE - 1L},
+                {Long.MIN_VALUE, 1,  BigInteger.valueOf(Long.MIN_VALUE).subtract(BigInteger.ONE)},
+                {2147483648L, 10, 2147483638L},
+                {new BigInteger("18446744073709551616"), BigInteger.TEN, new BigInteger("18446744073709551606")}
+        };
+    }
+
+    @Test(dataProvider="subtraction")
+    public void testSubtract(Number a, Number b, Number expected) {
+        assertEquals(MathUtils.subtract(a, b), expected);
+    }
+
+    /**
+     * @return An array in the form {@code {{leftOperand, rightOperand, expectedResult}}}
+     */
+    @DataProvider(name = "division")
+    Object[][] divisionNumbers() {
+        return new Object[][] {
+                {10, 5, 2},
+                {10.0, 5.0, 2.0},
+                {5, 2, 2.5},
+                {4294967296L, 2L, 2147483648L},
+                {4294967296L, 10L, 429496729.6},
+                {new BigInteger("18446744073709551616"), BigInteger.valueOf(2), new BigInteger("9223372036854775808")},
+                {new BigInteger("18446744073709551616"), BigInteger.TEN, 1844674407370955160.6},
+                {0, 0, Double.NaN},
+                {1, 0, Double.POSITIVE_INFINITY},
+                {-1, 0, Double.NEGATIVE_INFINITY},
+                {0L, 0L, Double.NaN},
+                {1L, 0L, Double.POSITIVE_INFINITY},
+                {-1L, 0L, Double.NEGATIVE_INFINITY},
+                {BigInteger.ZERO, BigInteger.ZERO, Double.NaN},
+                {BigInteger.ONE, BigInteger.ZERO, Double.POSITIVE_INFINITY},
+                {BigInteger.valueOf(-1), BigInteger.ZERO, Double.NEGATIVE_INFINITY}
+        };
+    }
+
+    @Test(dataProvider="division")
+    public void testDivision(Number a, Number b, Number expected) {
+        assertEquals(MathUtils.divide(a, b), expected);
+    }
+
+    /**
+     * @return An array in the form {@code {{leftOperand, rightOperand, expectedResult}}}
+     */
+    @DataProvider(name = "multiplication")
+    Object[][] multiplicationNumbers() {
+        return new Object[][] {
+                {10, 5, 50},
+                {10.0, 5.0, 50.0},
+                {2147483648L, 2L, 4294967296L},
+                {Integer.MAX_VALUE, 2, 4294967294L},
+                {Long.MAX_VALUE, 2L, new BigInteger("18446744073709551614")},
+                {new BigInteger("18446744073709551616"), BigInteger.valueOf(2), new BigInteger("36893488147419103232")},
+        };
+    }
+
+    @Test(dataProvider="multiplication")
+    public void testMultiplication(Number a, Number b, Number expected) {
+        assertEquals(MathUtils.multiply(a, b), expected);
+    }
+
+    /**
+     * @return An array in the form {@code {{leftOperand, rightOperand, expectedResult}}}
+     */
+    @DataProvider(name = "modulo")
+    Object[][] moduloNumbers() {
+        return new Object[][] {
+                {10, 3, 1},
+                {10.0, 3.0, 1.0},
+                {2147483649L, 2L, 1L},
+                {new BigInteger("18446744073709551617"), BigInteger.valueOf(2), BigInteger.ONE},
+                {10, 0, Double.NaN},
+                {10.0, 0.0, Double.NaN},
+                {2147483649L, 0L, Double.NaN},
+                {new BigInteger("18446744073709551617"), BigInteger.ZERO, Double.NaN},
+        };
+    }
+
+    @Test(dataProvider="modulo")
+    public void testModulo(Number a, Number b, Number expected) {
+        assertEquals(MathUtils.modulo(a, b), expected);
+    }
+
+    /**
+     * @return An array in the form {@code {{leftOperand, rightOperand, expectedResult}}}
+     */
+    @DataProvider(name = "power")
+    Object[][] powerNumbers() {
+        return new Object[][] {
+                // Integer powers return a double
+                {10, 3, 1000.0},
+                {10.0, 3.0, 1000.0},
+                // Long powers return a double
+                {2147483649L, 2L, 4611686022722355201.0},
+                {new BigInteger("2147483649"), BigInteger.valueOf(2), new BigInteger("4611686022722355201")},
+        };
+    }
+
+    @Test(dataProvider="power")
+    public void testPower(Number a, Number b, Number expected) {
+        assertEquals(MathUtils.power(a, b), expected);
+    }
+
+    /**
+     * @return An array in the form {@code {{leftOperand, rightOperand, expectedResult}}}
+     */
+    @DataProvider(name = "compare")
+    Object[][] compareNumbers() {
+        return new Object[][] {
+                {10, 3, 1},
+                {3, 10, -1},
+                {3, 3, 0},
+                {10.0, 3.0, 1},
+                {3.0, 10.0, -1},
+                {3.0, 3.0, 0},
+                {10L, 3L, 1},
+                {3L, 10L, -1},
+                {3L, 3L, 0},
+                {BigInteger.valueOf(10), BigInteger.valueOf(3), 1},
+                {BigInteger.valueOf(3), BigInteger.valueOf(10), -1},
+                {BigInteger.valueOf(3), BigInteger.valueOf(3), 0}
+        };
+    }
+
+    @Test(dataProvider="compare")
+    public void testCompare(Number a, Number b, Number expected) {
+        assertEquals(MathUtils.compare(a, b), expected);
+    }
 
     @DataProvider(name = "integers")
     Object[][] edgeCaseIntegers() {
@@ -74,7 +236,7 @@ public class MathUtilsTest {
         Integer actual = MathUtils.addExactWithoutException(x, y);
         try {
             int expected = Math.addExact(x, y);
-            Assert.assertEquals((int) actual, expected);
+            assertEquals((int) actual, expected);
         } catch (ArithmeticException ignore) {
             Assert.assertNull(actual);
         }
@@ -85,7 +247,7 @@ public class MathUtilsTest {
         Long actual = MathUtils.addExactWithoutException(x, y);
         try {
             long expected = Math.addExact(x, y);
-            Assert.assertEquals((long) actual, expected);
+            assertEquals((long) actual, expected);
         } catch (ArithmeticException ignore) {
             Assert.assertNull(actual);
         }
@@ -96,7 +258,7 @@ public class MathUtilsTest {
         Integer actual = MathUtils.subtractExactWithoutException(x, y);
         try {
             int expected = Math.subtractExact(x, y);
-            Assert.assertEquals((int) actual, expected);
+            assertEquals((int) actual, expected);
         } catch (ArithmeticException ignore) {
             Assert.assertNull(actual);
         }
@@ -107,7 +269,7 @@ public class MathUtilsTest {
         Long actual = MathUtils.subtractExactWithoutException(x, y);
         try {
             long expected = Math.subtractExact(x, y);
-            Assert.assertEquals((long) actual, expected);
+            assertEquals((long) actual, expected);
         } catch (ArithmeticException ignore) {
             Assert.assertNull(actual);
         }
@@ -118,7 +280,7 @@ public class MathUtilsTest {
         Integer actual = MathUtils.multiplyExactWithoutException(x, y);
         try {
             int expected = Math.multiplyExact(x, y);
-            Assert.assertEquals((int) actual, expected);
+            assertEquals((int) actual, expected);
         } catch (ArithmeticException ignore) {
             Assert.assertNull(actual);
         }
@@ -129,7 +291,7 @@ public class MathUtilsTest {
         Long actual = MathUtils.multiplyExactWithoutException(x, y);
         try {
             long expected = Math.multiplyExact(x, y);
-            Assert.assertEquals((long) actual, expected);
+            assertEquals((long) actual, expected);
         } catch (ArithmeticException ignore) {
             Assert.assertNull(actual);
         }
