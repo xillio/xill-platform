@@ -20,7 +20,7 @@
     <description>
 Returns the difference between `date` and `other`.
 
-Returns the absolute value of said difference by default. Set `absolute` to `false` to get a negative or positive difference.
+The return value of said difference is absolute by default. Set `absolute` to `false` to get a negative or positive difference.
 
 The return value is an object with the following fields:
 
