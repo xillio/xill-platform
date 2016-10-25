@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 /*
-* Specification: The boolean value of NaN MUST be false.
-* Input: NaN
-* Expected: The code is executed
-*/
+ * Specification: The number value of null MUST be NaN.
+ * Input: null
+ * Expected: null + 1 = NaN
+ */
 
 use Assert, System;
 
-Assert.isFalse(NaN);
+Assert.equal(null + 1, NaN);

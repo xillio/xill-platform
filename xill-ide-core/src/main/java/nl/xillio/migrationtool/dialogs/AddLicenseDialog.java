@@ -67,8 +67,7 @@ public class AddLicenseDialog extends FXMLDialog {
     }
 
     private void showError(String message, String title) {
-        Alert alert = new Alert(Alert.AlertType.ERROR, message);
-        alert.setTitle(title);
+        AlertDialog alert = new AlertDialog(Alert.AlertType.ERROR, title, "", message);
         alert.initOwner(this.getScene().getWindow());
         alert.showAndWait();
     }
