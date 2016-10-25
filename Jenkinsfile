@@ -1,25 +1,24 @@
-if ('master'.equals(env.BRANCH_NAME) || env.BRANCH_NAME ==~ /d+\.d+\.d+/ || true) {
+if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+\.d+\.d+/ || true) {
     println 'This commit is on the master or a release branch. A full test and deployment will be executed...'
 
     def nativeProfile = '-P build-native'
 
     parallel(
-//            "Windows": {
-//                buildOn(
-//                        platform: "windows",
-//                        mavenArgs: nativeProfile,
-//                        deploy: true
-//                )
-//            },
-//
-//            "Linux": {
-//                buildOn(
-//                        platform: "linux",
-//                        mavenArgs: nativeProfile,
-//                        deploy: true
-//                )
-//            },
+            "Windows": {
+                buildOn(
+                        platform: "windows",
+                        mavenArgs: nativeProfile,
+                        deploy: true
+                )
+            },
 
+            "Linux": {
+                buildOn(
+                        platform: "linux",
+                        mavenArgs: nativeProfile,
+                        deploy: true
+                )
+            },
             "Mac OSX": {
                 buildOn(
                         platform: "mac",
