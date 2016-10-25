@@ -223,9 +223,10 @@ public class UploadToServerDialog extends FXMLDialog {
         final File projectFolder = projectPane.getProject(item).getValue().getKey();
         final String projectName = xillServerUploader.getProjectName(projectFolder);
 
-        String projectId = xillServerUploader.findProject(projectName);
+        String projectId;
 
-        if (!noUpload) {
+        if (noUpload) {
+            projectId = xillServerUploader.findProject(projectName);
             // Check for project existence on the server
             if (existCheck && projectId != null) {
                 AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Uploading project",
@@ -237,6 +238,7 @@ public class UploadToServerDialog extends FXMLDialog {
                 // Yes, the existing project will be overwritten
                 xillServerUploader.deleteProject(projectId); // Delete the project on the server
             }
+        } else {
             projectId = xillServerUploader.ensureProjectExist(projectName);
         }
 
@@ -291,7 +293,7 @@ public class UploadToServerDialog extends FXMLDialog {
 
         String projectId = xillServerUploader.findProject(projectName);
 
-        if (!noUpload) {
+        if (noUpload) {
             // Check for project existence on the server
             if (existCheck && projectId != null) {
                 AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Uploading folder",
@@ -302,6 +304,7 @@ public class UploadToServerDialog extends FXMLDialog {
                 }
             }
             projectId = xillServerUploader.ensureProjectExist(projectName);
+            return true;
         }
 
         // Upload all items from within the folder
@@ -356,18 +359,17 @@ public class UploadToServerDialog extends FXMLDialog {
         }
 
         if (noUpload) {
-            return true;
-        }
-
-        // Check for robot existence on the server
-        if (existCheck && xillServerUploader.existRobot(projectId, robotFqn)) {
-            AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Uploading robot",
-                    String.format("The robot %1$s already exists on the server", robotFile.getName()), "Do you want to overwrite it?",
-                    ButtonType.YES, ButtonType.NO);
-            if (dialog.showAndWait().get().getButtonData() == ButtonBar.ButtonData.NO) {
-                return false;
+            // Check for robot existence on the server
+            if (existCheck && xillServerUploader.existRobot(projectId, robotFqn)) {
+                AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Uploading robot",
+                        String.format("The robot %1$s already exists on the server", robotFile.getName()), "Do you want to overwrite it?",
+                        ButtonType.YES, ButtonType.NO);
+                if (dialog.showAndWait().get().getButtonData() == ButtonBar.ButtonData.NO) {
+                    return false;
+                }
+                // Yes, the existing robot will be overwritten
             }
-            // Yes, the existing robot will be overwritten
+            return true;
         }
 
         // Upload the robot
@@ -396,18 +398,17 @@ public class UploadToServerDialog extends FXMLDialog {
         }
 
         if (noUpload) {
-            return true;
-        }
-
-        // Check for resource existence on the server
-        if (existCheck && xillServerUploader.existResource(projectId, resourceName)) {
-            AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Uploading resource",
-                    String.format("The resource %1$s already exists on the server", resourceName), "Do you want to overwrite it?",
-                    ButtonType.YES, ButtonType.NO);
-            if (dialog.showAndWait().get().getButtonData() == ButtonBar.ButtonData.NO) {
-                return false;
+            // Check for resource existence on the server
+            if (existCheck && xillServerUploader.existResource(projectId, resourceName)) {
+                AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Uploading resource",
+                        String.format("The resource %1$s already exists on the server", resourceName), "Do you want to overwrite it?",
+                        ButtonType.YES, ButtonType.NO);
+                if (dialog.showAndWait().get().getButtonData() == ButtonBar.ButtonData.NO) {
+                    return false;
+                }
+                // Yes, the existing resource will be overwritten
             }
-            // Yes, the existing resource will be overwritten
+            return true;
         }
 
         // Upload the resource

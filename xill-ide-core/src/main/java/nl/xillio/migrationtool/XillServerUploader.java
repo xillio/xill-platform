@@ -168,7 +168,7 @@ public class XillServerUploader implements AutoCloseable {
      */
     public boolean existRobot(final String projectId, final String robotFqn) throws IOException {
         try {
-            String response = doGet(String.format("projects/%1$s/robot/%2$s", projectId, urlEncode(robotFqn)));
+            String response = doGet(String.format("projects/%1$s/robots/%2$s", projectId, urlEncode(robotFqn)));
             if (response.isEmpty()) {
                 return false;
             }
