@@ -27,28 +27,28 @@ import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.string.services.string.RegexService;
 import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
 
-import java.util.ArrayList;
-import java.util.IllegalFormatException;
-import java.util.List;
-import java.util.MissingFormatArgumentException;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * <p>
  * Formats the string with the provided values.
- * </p>
- * <p>
  * Does not support Time/Date.
- * </p>
  *
  * @author Sander
  */
 public class FormatConstruct extends Construct {
 
     private static final String EXPLANATION = "use String;\nString.format(\"%3$2s %1$2s %1$2s %2$2s\" , [\"a\", \"b\", \"c\"] );";
+    private static final Set<Character> INT_CHARACTERS = new HashSet<>();
+    private static final Set<Character> FLOAT_CHARACTERS = new HashSet<>();
     private final RegexService regexService;
     private final StringUtilityService stringService;
+
+    static {
+        INT_CHARACTERS.addAll(Arrays.asList('d', 'o', 'x', 'X', 'h', 'H'));
+        FLOAT_CHARACTERS.addAll(Arrays.asList('e', 'E', 'f', 'g', 'G', 'a', 'A'));
+    }
 
     /**
      * Create a new {@link FormatConstruct}
@@ -70,9 +70,7 @@ public class FormatConstruct extends Construct {
     private MetaExpression process(final MetaExpression textVar, final MetaExpression valueVar) {
         assertNotNull(textVar, "text");
 
-
         List<MetaExpression> formatList = formatText(textVar);
-
         List<Object> castedList = castMetaExpressions(formatList, valueVar);
 
         try {
@@ -104,7 +102,7 @@ public class FormatConstruct extends Construct {
 
     private List<Object> castMetaExpressions(List<MetaExpression> formatList, final MetaExpression valueVar) {
         @SuppressWarnings("unchecked")
-        List<MetaExpression> numberList = (List<MetaExpression>) valueVar.getValue();
+        List<MetaExpression> numberList = valueVar.getValue();
         List<Object> list = new ArrayList<>();
         int count = 0;
         String typeString;
@@ -113,46 +111,34 @@ public class FormatConstruct extends Construct {
                 break;
             }
             typeString = formatList.get(j).getStringValue();
-            switch (typeString.charAt(typeString.length() - 1)) {
-                case 'd':
-                case 'o':
-                case 'x':
-                case 'X':
-                case 'h':
-                case 'H':
-                    list.add(numberList.get(j + count).getNumberValue().intValue());
-                    break;
-                case 'e':
-                case 'E':
-                case 'f':
-                case 'g':
-                case 'G':
-                case 'a':
-                case 'A':
-                    list.add(numberList.get(j + count).getNumberValue().floatValue());
-                    break;
-                case 'c':
-                case 'C':
-                    list.add(numberList.get(j + count).getStringValue().charAt(0));
-                    break;
-                case 's':
-                case 'S':
-                    list.add(numberList.get(j + count).getStringValue());
-                    break;
-                case 'b':
-                case 'B':
-                    list.add(numberList.get(j + count).getBooleanValue());
-                    break;
-                case '%':
-                    count--;
-                    break;
-                case 't':
-                case 'T':
-                    throw new OperationFailedException("format a date/time", "Date/Time conversions are not supported.", "Use Date package for formatting the date/time.");
-                default:
-                    throw new InvalidUserInputException("Unexpected conversion type.", typeString, "A supported conversion type.", EXPLANATION);
-            }
+            char current = typeString.charAt(typeString.length() - 1);
+
+            Object newObject = parseCharacter(current, numberList.get(j + count));
+            if (newObject != null) {
+                list.add(newObject);
+            } else if ("%".equals(String.valueOf(current))) {
+                count--;
+            } else
+                throw new InvalidUserInputException("Unexpected conversion type.", typeString, "A supported conversion type.", EXPLANATION);
         }
         return list;
+    }
+
+    private Object parseCharacter(char current, MetaExpression expression) {
+        Object returnValue = null;
+        if (INT_CHARACTERS.contains(current)) {
+            returnValue = expression.getNumberValue().intValue();
+        } else if (FLOAT_CHARACTERS.contains(current)) {
+            returnValue = expression.getNumberValue().floatValue();
+        } else if ("c".equalsIgnoreCase(String.valueOf(current))) {
+            returnValue = expression.getStringValue().charAt(0);
+        } else if ("s".equalsIgnoreCase(String.valueOf(current))) {
+            returnValue = expression.getStringValue();
+        } else if ("b".equalsIgnoreCase((String.valueOf(current)))) {
+            returnValue = expression.getBooleanValue();
+        } else if ("t".equalsIgnoreCase(String.valueOf(current))) {
+            throw new OperationFailedException("format a date/time", "Date/Time conversions are not supported.", "Use Date package for formatting the date/time.");
+        }
+        return returnValue;
     }
 }

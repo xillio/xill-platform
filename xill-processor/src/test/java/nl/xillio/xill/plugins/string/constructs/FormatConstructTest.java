@@ -21,12 +21,15 @@ import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.string.services.string.RegexService;
+import nl.xillio.xill.plugins.string.services.string.RegexServiceImpl;
 import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.PatternSyntaxException;
 
 import static org.mockito.Matchers.any;
@@ -46,15 +49,33 @@ public class FormatConstructTest extends TestUtils {
      * @throws IOException
      * @throws FileNotFoundException
      */
-    // @Test
+    @Test
     public void processNormalUsage() throws IOException {
-        // TODO
+        // Mock
+        String stringValue = "decimal %d and %.2f %s %c which is absolutely %b";
+        MetaExpression fileName = fromValue(stringValue);
+
+        List<Object> values = Arrays.asList(5, 0.15f, "hello", 'w', true);
+        List<MetaExpression> listValue = Arrays.asList(fromValue(5), fromValue(0.15), fromValue("hello"), fromValue("world"), fromValue(true));
+        MetaExpression list = fromValue(listValue);
+
+        String returnValue = "decimal 5 and 0.15 hello w which is absolutely true";
+        StringUtilityService stringService = mock(StringUtilityService.class);
+        when(stringService.format(stringValue, values)).thenReturn(returnValue);
+        RegexService regexService = mock(RegexService.class);
+        when(regexService.getMatcher(anyString(), anyString(), anyInt())).thenReturn(null);
+        when(regexService.tryMatch(any())).thenReturn(Arrays.asList("d", "f", "s", "c", "b"));
+
+        FormatConstruct construct = new FormatConstruct(regexService, stringService);
+        // Run
+        MetaExpression result = process(construct, fileName, list);
+
+        // Assert
+        Assert.assertEquals(result.getStringValue(), returnValue);
     }
 
     /**
-     * <p>
      * Tests wheter the process can handle a syntax error in the pattern given to the matcher
-     * </p>
      *
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
@@ -87,9 +108,7 @@ public class FormatConstructTest extends TestUtils {
     }
 
     /**
-     * <p>
      * Tests wheter the process can handle an illegal argument given to the matcher.
-     * </p>
      *
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
@@ -122,9 +141,7 @@ public class FormatConstructTest extends TestUtils {
     }
 
     /**
-     * <p>
      * Tests wheter the process can handle an illegal argument given to the matcher.
-     * </p>
      *
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
@@ -160,9 +177,7 @@ public class FormatConstructTest extends TestUtils {
     }
 
     /**
-     * <p>
      * Tests wheter the process can handle an illegal argument given to the matcher.
-     * </p>
      *
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
@@ -198,9 +213,7 @@ public class FormatConstructTest extends TestUtils {
     }
 
     /**
-     * <p>
      * Tests wheter the process can handle an illegal argument given to the matcher.
-     * </p>
      *
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
@@ -236,9 +249,7 @@ public class FormatConstructTest extends TestUtils {
     }
 
     /**
-     * <p>
      * Tests wheter the process can handle an illegal argument given to the matcher.
-     * </p>
      *
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
