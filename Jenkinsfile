@@ -76,13 +76,6 @@ def buildOn(Map args) {
 
                 def mvn = "\"${m2Tool}/bin/mvn\" ${mvnOptions.join(' ')} ${mavenArgs}"
 
-                if('mac'.equals(platform)) {
-                    stage('Setup Environment on mac') {
-                        sh 'rm -rf Contents && mkdir Contents && ln -s $JAVA_HOME Contents/Home'
-                        sh 'export JAVA_HOME=`pwd`/Contents/Home'
-                    }
-                }
-
                 // Check out scm
                 stage("Checkout on $platform") {
                     checkout scm
@@ -91,6 +84,15 @@ def buildOn(Map args) {
                 // Clean the repository
                 stage("Clean on $platform") {
                     cli "${mvn} clean"
+                }
+
+                if('mac'.equals(platform)) {
+                    // On mac we have to create a symlink because it is a hard requirement to have /Contents/Home in the
+                    // JAVA_HOME path.
+                    stage('Setup Build Environment on mac') {
+                        sh 'mkdir target && mkdir target/Contents && ln -s $JAVA_HOME target/Contents/Home'
+                        sh 'export JAVA_HOME=`pwd`target/Contents/Home'
+                    }
                 }
 
                 // Run all tests
