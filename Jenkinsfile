@@ -71,7 +71,7 @@ def buildOn(Map args) {
                         // Run in batch mode (headless)
                         "-B",
                         // Uncomment this to enable verbose builds
-                        "-X"
+                        //"-X"
                 ]
 
                 def mvn = "\"${m2Tool}/bin/mvn\" ${mvnOptions.join(' ')} ${mavenArgs}"
