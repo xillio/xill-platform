@@ -557,8 +557,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                     folderCount > 0 ? "Selected files, including all files in selected folders, will be deleted." : "");
 
             alert.showAndWait();
-            if(alert.getResult().get() == ButtonType.OK)
-            {
+            if (alert.getResult().get() == ButtonType.OK) {
                 deleteItems(selectedItems, true);
             }
         }
@@ -1008,21 +1007,17 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         }
 
         tab.requestFocus();
+        
+        // Create and show an alert dialog saying the content has been changed.
+        AlertDialog alert = new AlertDialog(Alert.AlertType.WARNING, "File content change",
+                "The file \"" + tab.documentPath + "\" has been modified outside the editor.", "Do you want reload the file?",
+                ButtonType.YES, ButtonType.NO);
 
-        // This must be done in the FX application thread.
-        final Runnable showDialog = () -> {
-            // Create and show an alert dialog saying the content has been changed.
-            AlertDialog alert = new AlertDialog(Alert.AlertType.WARNING, "File content change",
-                    "The file \"" + tab.documentPath + "\" has been modified outside the editor.", "Do you want reload the file?",
-                    ButtonType.YES, ButtonType.NO);
-
-            alert.showAndWait();
-            final Optional<ButtonType> result = alert.getResult();
-            if (result.get() == ButtonType.YES) {
-                tab.reload();
-            }
-        };
-        Platform.runLater(showDialog);
+        alert.showAndWait();
+        final Optional<ButtonType> result = alert.getResult();
+        if (result.get() == ButtonType.YES) {
+            tab.reload();
+        }
     }
 
     @Override
