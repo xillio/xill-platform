@@ -61,7 +61,7 @@ def buildOn(Map args) {
         def m2Tool = tool 'mvn-3'
         def javaTool = tool 'java-1.8'
 
-        withEnv(["JAVA_HOME=$javaTool", "M2_HOME=$m2Tool"]) {
+        withEnv(buildEnvironmentalVariableList(m2Tool, javaTool, platform)) {
 
             // Inject maven settings file
             configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
@@ -108,6 +108,20 @@ def buildOn(Map args) {
             }
         }
     }
+}
+
+def buildEnvironmentalVariableList(m2Tool, javaTool, platform) {
+    def javaHome = javaTool
+    def result = ["M2_HOME=$m2Tool"]
+
+    if ("mac".equals(platform)) {
+        javaHome = "${javaHome}/Contents/Home"
+        result.add("PATH=${javaHome}:${env.PATH}")
+    }
+
+    result.add("JAVA_HOME=${javaHome}")
+
+    return result
 }
 
 /**
