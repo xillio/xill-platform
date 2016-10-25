@@ -281,7 +281,7 @@ public class SettingsDialog extends FXMLDialog {
 
     private void openEULAAlertWindow() {
 
-        Alert alert = new AlertDialog(AlertType.ERROR, "Compatibility", "", "Unfortunately your system is not able to open this link." +
+        AlertDialog alert = new AlertDialog(AlertType.ERROR, "Compatibility", "", "Unfortunately your system is not able to open this link." +
                 "\n\nPlease enter the following URL into a browser:\n" + EulaUtils.EULA_LOCATION + "\n");
         alert.initOwner(this.getScene().getWindow());
         alert.show();
@@ -304,8 +304,8 @@ public class SettingsDialog extends FXMLDialog {
             validate();
         } catch (ValidationException e) {
             LOGGER.error(e.getMessage(), e);
-            Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
-            alert.initModality(Modality.APPLICATION_MODAL);
+            AlertDialog alert = new AlertDialog(Alert.AlertType.ERROR, "Error", "", e.getMessage());
+            alert.initOwner(this.getScene().getWindow());
             alert.showAndWait();
             return false;
         }

@@ -24,6 +24,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -32,6 +33,7 @@ import javafx.stage.Modality;
 import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.Loader;
 import nl.xillio.migrationtool.dialogs.AlertDialog;
+import nl.xillio.migrationtool.dialogs.ContentAlertDialog;
 import nl.xillio.migrationtool.dialogs.SaveBeforeClosingDialog;
 import nl.xillio.migrationtool.elasticconsole.ESConsoleClient;
 import nl.xillio.migrationtool.gui.EditorPane.DocumentState;
@@ -322,7 +324,8 @@ public class RobotTab extends FileTab implements Initializable {
         AlertDialog dialog = new AlertDialog(AlertType.WARNING, getName() + " is still running.", "",
                 "Closing the tab will stop the robot. Do you want to close the tab?",
                 new ButtonType("Close", ButtonBar.ButtonData.YES), ButtonType.CANCEL);
-        return dialog.showAndWait().get().getButtonData() == ButtonBar.ButtonData.YES;
+        dialog.showAndWait();
+        return dialog.getResult().get().getButtonData() == ButtonBar.ButtonData.YES;
     }
 
     /**
@@ -340,35 +343,36 @@ public class RobotTab extends FileTab implements Initializable {
         if (autoSaveBotBeforeRun) {
             // Check if the content is unsaved, show the confirmation dialog.
             if (editorPane.getDocumentState().getValue() == DocumentState.CHANGED) {
-                Alert confirmationDialog = new Alert(AlertType.CONFIRMATION);
-                confirmationDialog.setTitle("Do you want to save and run the robot?");
+                GridPane gridPane = new GridPane();
+
+                ContentAlertDialog confirmationDialog = new ContentAlertDialog(AlertType.CONFIRMATION,
+                        "Do you want to save and run the robot?",
+                        "",
+                        "The robot " + currentRobot.getPath().getName() + " needs to be saved before running. Do you want to continue?",
+                        gridPane);
                 // This enables Xillio icon to be displayed in the upper left corner
                 confirmationDialog.initOwner(editorPane.getScene().getWindow());
 
                 // Compose the dialog pane
-                DialogPane dp = new DialogPane();
                 VBox checkBoxContainer = new VBox();
 
-                Label l = new Label("The robot " + currentRobot.getPath().getName() + " needs to be saved before running. Do you want to continue?");
                 CheckBox cb = new CheckBox("Don't ask me again.");
-                cb.addEventHandler(ActionEvent.ACTION, event -> {
-                    boolean currentSettingValue = Boolean.parseBoolean(settings.simple().get(Settings.SETTINGS_GENERAL, Settings.AUTO_SAVE_BOT_BEFORE_RUN));
-                    settings.simple().save(Settings.SETTINGS_GENERAL, Settings.AUTO_SAVE_BOT_BEFORE_RUN, !currentSettingValue);
-                });
-                checkBoxContainer.getChildren().addAll(l, cb);
+                checkBoxContainer.getChildren().add(cb);
 
-                dp.setContent(checkBoxContainer);
-                // Add the dialog pane to the Alert/dialog
-                confirmationDialog.setDialogPane(dp);
+                gridPane.getChildren().add(checkBoxContainer);
                 // Make the dialog close by clicking the close button, inherit styling
                 confirmationDialog.initModality(Modality.APPLICATION_MODAL);
-                confirmationDialog.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
                 // Get the result from the confirmation dialog
-                Optional<ButtonType> result = confirmationDialog.showAndWait();
+                confirmationDialog.showAndWait();
+                Optional<ButtonType> result = confirmationDialog.getResult();
 
                 // Process the result
-                if (result.get() == ButtonType.OK) {
+                if (result.isPresent() && result.get() == ButtonType.OK) {
+                    if(cb.isSelected()) {
+                        settings.simple().save(Settings.SETTINGS_GENERAL, Settings.AUTO_SAVE_BOT_BEFORE_RUN, false);
+                    }
+
                     autoSaveAndRunRobot();
                 } else {
                     return;
@@ -417,13 +421,11 @@ public class RobotTab extends FileTab implements Initializable {
             } catch (Exception e) {
                 LOGGER.error("Exception while processing", e);
                 Platform.runLater(() -> {
-                    Alert error = new Alert(AlertType.ERROR);
+                    AlertDialog error = new AlertDialog(Alert.AlertType.ERROR,
+                            "Error",
+                            "Exception while processing",
+                            e.getClass().getSimpleName() + ", " + e.getMessage());
                     error.initModality(Modality.APPLICATION_MODAL);
-                    error.setTitle(e.getClass().getSimpleName());
-                    error.setContentText(e.getMessage() + "\n" + ExceptionUtils.getStackTrace(e));
-                    error.setHeaderText("Exception while processing");
-                    error.setResizable(true);
-                    error.getDialogPane().setPrefWidth(1080);
                     error.show();
                 });
             }

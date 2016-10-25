@@ -26,6 +26,7 @@ All notable changes to this project will be documented in this file.
 * `Sring.regexEscape()` can result in invalid regular expressions [CTC-1807]
 * Calling `Excel.setCellValue()` on a formula cell only sets cached value [CTC-1814]
 * String.absoluteUrl does not allow protocols other than http(s) [CTC-1806]
+* Dialogs do not render on (very) fast machines [CTC-1850]
 
 ## [3.4.0] - 2016-10-07
 
