@@ -134,7 +134,7 @@ public class FormatConstruct extends Construct {
             returnValue = expression.getStringValue().charAt(0);
         } else if ("s".equalsIgnoreCase(String.valueOf(current))) {
             returnValue = expression.getStringValue();
-        } else if ("b".equalsIgnoreCase((String.valueOf(current)))) {
+        } else if ("b".equalsIgnoreCase(String.valueOf(current))) {
             returnValue = expression.getBooleanValue();
         } else if ("t".equalsIgnoreCase(String.valueOf(current))) {
             throw new OperationFailedException("format a date/time", "Date/Time conversions are not supported.", "Use Date package for formatting the date/time.");
