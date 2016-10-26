@@ -69,10 +69,8 @@ def buildOn(Map args) {
         if ('mac' == platform) {
             // On mac we have to create a symlink because it is a hard requirement to have Contents/Home in the
             // JAVA_HOME path.
-            stage('Setup Build Environment on mac') {
-                sh "rm -rf target && mkdir target && mkdir target/Contents && cp -R $javaTool target/Contents/Home"
-                javaTool = "${pwd()}/target/Contents/Home"
-            }
+            sh "rm -rf target && mkdir target && mkdir target/Contents && cp -R $javaTool target/Contents/Home"
+            javaTool = "${pwd()}/target/Contents/Home"
         }
 
         withEnv(["M2_HOME=$m2Tool", "JAVA_HOME=$javaTool"]) {
