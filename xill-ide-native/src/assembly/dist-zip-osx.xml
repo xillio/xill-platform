@@ -44,10 +44,7 @@
     </files>
     <fileSets>
         <fileSet>
-            <directory>${project.basedir}/deploy/resources/</directory>
-            <includes>
-                <include>**/*</include>
-            </includes>
+            <directory>${project.basedir}/../xill-ide/src/deploy/resources/</directory>
             <outputDirectory></outputDirectory>
         </fileSet>
     </fileSets>
