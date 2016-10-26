@@ -97,7 +97,7 @@ public class MetaExpressionTest {
         MetadataExpression notCopyable = mock(MetadataExpression.class);
         test.storeMeta(notCopyable);
         CopyableMetadataExpression copyable = mock(CopyableMetadataExpression.class);
-        CopyableMetadataExpression copied =mock(CopyableMetadataExpression.class);
+        CopyableMetadataExpression copied = mock(CopyableMetadataExpression.class);
         when(copyable.copy()).thenReturn(copied);
         test.storeMeta(copyable);
 
