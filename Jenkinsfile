@@ -21,7 +21,7 @@ if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+(\.(d+|x))+/) {
                         buildPhase: 'deploy'
                 )
             },
-            
+
             "Mac OSX": {
                 buildOn(
                         platform: 'mac',
@@ -39,7 +39,6 @@ if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+(\.(d+|x))+/) {
             runSonar: true,
             buildPhase: 'verify'
     )
-
 }
 
 /**
@@ -56,7 +55,7 @@ def buildOn(Map args) {
     def mavenArgs = args.mavenArgs ?: ''
     def buildPhase = args.buildPhase ?: 'verify'
 
-    if(runSonar) {
+    if (runSonar) {
         buildPhase = "$buildPhase sonar:sonar"
     }
 
@@ -67,8 +66,8 @@ def buildOn(Map args) {
         def m2Tool = tool 'mvn-3'
         def javaTool = tool 'java-1.8'
 
-        if('mac' == platform) {
-            // On mac we have to create a symlink because it is a hard requirement to have /Contents/Home in the
+        if ('mac' == platform) {
+            // On mac we have to create a symlink because it is a hard requirement to have Contents/Home in the
             // JAVA_HOME path.
             stage('Setup Build Environment on mac') {
                 sh "rm -rf target && mkdir target && mkdir target/Contents && cp -R $javaTool target/Contents/Home"
@@ -98,7 +97,7 @@ def buildOn(Map args) {
 
                 // Run all tests
                 stage("Run $buildPhase on $platform") {
-                    cli "$mvn $buildPhase sonar:sonar"
+                    cli "$mvn $buildPhase"
                 }
 
                 // Clean the repository
