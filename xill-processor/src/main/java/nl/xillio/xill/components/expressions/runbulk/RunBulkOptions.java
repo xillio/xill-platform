@@ -20,7 +20,6 @@ import nl.xillio.xill.api.components.ExpressionDataType;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.Processable;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
-import nl.xillio.xill.api.errors.RobotRuntimeException;
 
 import java.util.Map;
 
