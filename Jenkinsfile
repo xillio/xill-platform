@@ -91,7 +91,7 @@ def buildOn(Map args) {
                 // Run the build and clean
                 stage("Run 'mvn $buildPhase' on $platform") {
                     checkout scm
-                    cli "$mvn $buildPhase clean"
+                    cli "$mvn $buildPhase clean -Dsonar.branch=${env.BRANCH_NAME}"
                 }
             }
         }
