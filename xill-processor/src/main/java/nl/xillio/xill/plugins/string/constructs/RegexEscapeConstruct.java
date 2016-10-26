@@ -30,17 +30,21 @@ import nl.xillio.xill.plugins.string.services.string.RegexService;
  */
 public class RegexEscapeConstruct extends Construct {
 
+    private final RegexService regexService;
+
     @Inject
-    RegexService regexService;
+    public RegexEscapeConstruct(RegexService regexService) {
+        this.regexService = regexService;
+    }
 
     @Override
     public ConstructProcessor prepareProcess(ConstructContext context) {
-        return new ConstructProcessor(toEscape -> process(toEscape, regexService),
+        return new ConstructProcessor(this::process,
                 new Argument("toEscape", ATOMIC));
     }
 
-    static MetaExpression process(MetaExpression toEscape, RegexService service) {
-        String escaped = service.escapeRegex(toEscape.getStringValue());
+    private MetaExpression process(MetaExpression toEscape) {
+        String escaped = regexService.escapeRegex(toEscape.getStringValue());
         return fromValue(escaped);
     }
 }

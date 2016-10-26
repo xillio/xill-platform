@@ -38,18 +38,23 @@ public class ByteLengthConstructTest extends TestUtils {
      */
     @Test
     public void processNormalUsage() {
-        MetaExpression string = fromValue("foo");
 
-        // Testing pairs of encoding & byte length.
-        List<Pair<MetaExpression, Integer>> testPairs = new ArrayList<>();
-        testPairs.add(Pair.create(NULL, 3)); // Should be the same as UTF-8.
-        testPairs.add(Pair.create(fromValue("ASCII"), 3));
-        testPairs.add(Pair.create(fromValue("UTF-8"), 3));
-        testPairs.add(Pair.create(fromValue("UTF-16"), 8));
-        testPairs.add(Pair.create(fromValue("UTF-32"), 12));
+        int result = process(new ByteLengthConstruct(), fromValue("foo"), NULL).getNumberValue().intValue();
+        Assert.assertEquals(result, 3);
 
-        // Test each pair.
-        testPairs.forEach(p -> Assert.assertEquals(ByteLengthConstruct.process(string, p.first()).getNumberValue().intValue(), (int)p.second()));
+        result = process(new ByteLengthConstruct(), fromValue("foo"), fromValue("ASCII")).getNumberValue().intValue();
+        Assert.assertEquals(result, 3);
+
+        result = process(new ByteLengthConstruct(), fromValue("foo"), fromValue("UTF-8")).getNumberValue().intValue();
+        Assert.assertEquals(result, 3);
+
+        result = process(new ByteLengthConstruct(), fromValue("foo"), fromValue("UTF-16")).getNumberValue().intValue();
+        Assert.assertEquals(result, 8);
+
+        result = process(new ByteLengthConstruct(), fromValue("foo"), fromValue("UTF-32")).getNumberValue().intValue();
+        Assert.assertEquals(result, 12);
+
+
     }
 
     /**
@@ -57,7 +62,8 @@ public class ByteLengthConstructTest extends TestUtils {
      */
     @Test(expectedExceptions = RobotRuntimeException.class)
     public void processNullValue() {
-        ByteLengthConstruct.process(NULL, NULL);
+        ByteLengthConstruct construct = new ByteLengthConstruct();
+        process(construct, NULL, NULL);
     }
 
     /**
@@ -65,6 +71,7 @@ public class ByteLengthConstructTest extends TestUtils {
      */
     @Test(expectedExceptions = RobotRuntimeException.class)
     public void processInvalidEncoding() {
-        ByteLengthConstruct.process(fromValue("foo"), fromValue("invalid encoding"));
+        ByteLengthConstruct construct = new ByteLengthConstruct();
+        process(construct, fromValue("foo"), fromValue("invalid encoding"));
     }
 }

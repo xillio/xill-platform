@@ -38,20 +38,25 @@ import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
  * @author Sander
  */
 public class SubstringConstruct extends Construct {
+
+    private final StringUtilityService stringService;
+
     @Inject
-    private StringUtilityService stringService;
+    public SubstringConstruct(StringUtilityService stringService) {
+        this.stringService = stringService;
+    }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (string, start, end) -> process(string, start, end, stringService),
+                this::process,
                 new Argument("string", ATOMIC),
                 new Argument("start", ATOMIC),
                 new Argument("end", fromValue(0), ATOMIC));
     }
 
     @SuppressWarnings("squid:S1166")
-    static MetaExpression process(final MetaExpression string, final MetaExpression startVar, final MetaExpression endVar, final StringUtilityService stringService) {
+    private MetaExpression process(final MetaExpression string, final MetaExpression startVar, final MetaExpression endVar) {
         assertNotNull(string, "string");
         assertNotNull(startVar, "start");
         assertNotNull(endVar, "end");
