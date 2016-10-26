@@ -24,9 +24,9 @@ import org.testng.annotations.Test;
 import static org.mockito.Mockito.*;
 
 /**
- * Test the {@link WrapConstruct}.
+ * Test the {@link RepeatConstruct}.
  */
-public class WrapConstructTest extends TestUtils {
+public class LengthConstructTest extends TestUtils {
 
     /**
      * Test the process method under normal circumstances.
@@ -34,30 +34,33 @@ public class WrapConstructTest extends TestUtils {
     @Test
     public void processNormalUsage() {
         // Mock
-        String stringValue = "testing";
+        String stringValue = "Incomprehensibilities";
         MetaExpression string = mockExpression(ATOMIC);
         when(string.getStringValue()).thenReturn(stringValue);
 
-        int wrapValue = 5;
-        MetaExpression wrap = mockExpression(ATOMIC);
-        when(wrap.getNumberValue()).thenReturn(wrapValue);
+        int returnValue = 21;
 
-        boolean wrapLongWordsValue = true;
-        MetaExpression wrapLongWords = mockExpression(ATOMIC);
-        when(wrapLongWords.getBooleanValue()).thenReturn(wrapLongWordsValue);
-
-        String returnValue = "testi \n ng";
-        StringUtilityService stringService = mock(StringUtilityService.class);
-        when(stringService.wrap(stringValue, wrapValue, wrapLongWordsValue)).thenReturn(returnValue);
-
-        WrapConstruct construct = new WrapConstruct(stringService);
-        // Run
-        MetaExpression result = process(construct, string, wrap, wrapLongWords);
-
-        // Verify
-        verify(stringService, times(1)).wrap(stringValue, wrapValue, wrapLongWordsValue);
+        //Run
+        LengthConstruct construct = new LengthConstruct();
+        MetaExpression result = process(construct, string);
 
         // Assert
-        Assert.assertEquals(result.getStringValue(), returnValue);
+        Assert.assertEquals(result.getNumberValue().intValue(), returnValue);
+    }
+
+    /**
+     * Test the process method when null is used.
+     */
+    @Test
+    public void processNullUsage() {
+
+        int returnValue = 0;
+
+        //Run
+        LengthConstruct construct = new LengthConstruct();
+        MetaExpression result = process(construct, NULL);
+
+        // Assert
+        Assert.assertEquals(result.getNumberValue().intValue(), returnValue);
     }
 }
