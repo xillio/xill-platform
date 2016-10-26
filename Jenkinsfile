@@ -16,8 +16,6 @@ if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+(\.(d+|x))+/ || true) 
                 buildOn(
                         platform: 'linux',
                         mavenArgs: nativeProfile,
-                        // We only run sonar on a single node
-                        runSonar: true,
                         buildPhase: 'deploy'
                 )
             },
@@ -26,6 +24,8 @@ if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+(\.(d+|x))+/ || true) 
                 buildOn(
                         platform: 'mac',
                         mavenArgs: nativeProfile,
+                        // We only run sonar on a single node
+                        runSonar: true,
                         buildPhase: 'deploy'
                 )
             }
