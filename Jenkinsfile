@@ -90,19 +90,10 @@ def buildOn(Map args) {
 
                 def mvn = "\"$m2Tool/bin/mvn\" ${mvnOptions.join(' ')} $mavenArgs"
 
-                // Check out scm
-                stage("Checkout on $platform") {
+                // Run the build and clean
+                stage("Run 'mvn $buildPhase' on $platform") {
                     checkout scm
-                }
-
-                // Run all tests
-                stage("Run $buildPhase on $platform") {
-                    cli "$mvn $buildPhase"
-                }
-
-                // Clean the repository
-                stage("Clean on $platform") {
-                    cli "$mvn clean"
+                    cli "$mvn $buildPhase clean"
                 }
             }
         }
