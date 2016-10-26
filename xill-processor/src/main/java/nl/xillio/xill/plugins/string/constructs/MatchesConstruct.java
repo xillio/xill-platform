@@ -23,7 +23,6 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
-import nl.xillio.xill.plugins.string.exceptions.FailedToGetMatcherException;
 import nl.xillio.xill.plugins.string.services.string.RegexService;
 
 import java.util.regex.Matcher;
@@ -35,26 +34,25 @@ import java.util.regex.PatternSyntaxException;
  * @author Sander
  */
 public class MatchesConstruct extends Construct {
-    @Inject
-    private RegexService regexService;
 
-    /**
-     * Create a new {@link MatchesConstruct}
-     */
-    public MatchesConstruct() {
+    private final RegexService regexService;
+
+    @Inject
+    public MatchesConstruct(RegexService regexService) {
+        this.regexService = regexService;
     }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (valueVar, regexVar, timeoutVar) -> process(valueVar, regexVar, timeoutVar, regexService),
+                this::process,
                 new Argument("value", ATOMIC),
                 new Argument("regex", ATOMIC),
-                new Argument("timeout", fromValue(RegexConstruct.REGEX_TIMEOUT), ATOMIC));
+                new Argument("timeout", fromValue(regexService.getRegexTimeout()), ATOMIC));
     }
 
     @SuppressWarnings("squid:S1166")
-    static MetaExpression process(final MetaExpression valueVar, final MetaExpression regexVar, final MetaExpression timeoutVar, final RegexService regexService) {
+    private MetaExpression process(final MetaExpression valueVar, final MetaExpression regexVar, final MetaExpression timeoutVar) {
         String value = valueVar.getStringValue();
         String regex = regexVar.getStringValue();
 
@@ -65,7 +63,7 @@ public class MatchesConstruct extends Construct {
             return fromValue(regexService.matches(matcher));
         } catch (PatternSyntaxException p) {
             throw new InvalidUserInputException("Invalid pattern in regex().", regex, "A valid regular expression.", "use String;\nString.matches(\"I need help!\", \".*help.*\");", p);
-        } catch (IllegalArgumentException | FailedToGetMatcherException e) {
+        } catch (IllegalArgumentException e) {
             throw new RobotRuntimeException("Illegal argument given.", e);
         }
 

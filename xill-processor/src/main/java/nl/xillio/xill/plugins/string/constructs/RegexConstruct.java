@@ -24,7 +24,6 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
-import nl.xillio.xill.plugins.string.exceptions.FailedToGetMatcherException;
 import nl.xillio.xill.plugins.string.services.string.RegexService;
 
 import java.util.ArrayList;
@@ -42,32 +41,25 @@ import java.util.regex.PatternSyntaxException;
 @Singleton
 public class RegexConstruct extends Construct {
 
+    private final RegexService regexService;
+
     @Inject
-    private RegexService regexService;
-
-    /**
-     * The default timeout for regular expressions.
-     */
-    public static final int REGEX_TIMEOUT = 5000;
-
-    /**
-     * Create a new {@link RegexConstruct} and start the regexTimer {@link Thread}
-     */
-    public RegexConstruct() {
-
+    public RegexConstruct(RegexService regexService) {
+        this.regexService = regexService;
     }
+
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (string, regex, timeout) -> process(string, regex, timeout, regexService),
+                this::process,
                 new Argument("string", ATOMIC),
                 new Argument("regex", ATOMIC),
-                new Argument("timeout", fromValue(REGEX_TIMEOUT), ATOMIC));
+                new Argument("timeout", fromValue(regexService.getRegexTimeout()), ATOMIC));
     }
 
     @SuppressWarnings("squid:S1166")
-    static MetaExpression process(final MetaExpression valueVar, final MetaExpression regexVar, final MetaExpression timeoutVar, final RegexService regexService) {
+    private MetaExpression process(final MetaExpression valueVar, final MetaExpression regexVar, final MetaExpression timeoutVar) {
 
         String regex = regexVar.getStringValue();
         int timeout = (int) timeoutVar.getNumberValue().doubleValue();
@@ -76,24 +68,28 @@ public class RegexConstruct extends Construct {
             Matcher matcher = regexService.getMatcher(regex, valueVar.getStringValue(), timeout);
 
             if (regexService.matches(matcher)) {
-                List<MetaExpression> list = new ArrayList<>();
-                List<String> listAsStrings = regexService.tryMatchElseNull(matcher);
-                for (String s : listAsStrings) {
-                    if (s != null) {
-                        list.add(fromValue(s));
-                    } else {
-                        list.add(NULL);
-                    }
-                }
-                return fromValue(list);
+                return fromValue(makeList(matcher));
             }
             return NULL;
         } catch (PatternSyntaxException e) {
             throw new InvalidUserInputException("Invalid pattern in regex().", regex, "A valid regular expression.", "use String;\nvar url = \"http://www.xillio.com/wp-content/uploads/screenshot-ns-website.png\";\n" +
                     "String.regex(url, \"http.*/(.*?)\\\\.(.*?)\");", e);
-        } catch (IllegalArgumentException | FailedToGetMatcherException e) {
+        } catch (IllegalArgumentException e) {
             throw new RobotRuntimeException("Error while executing the regex", e);
         }
+    }
+
+    private List<MetaExpression> makeList(Matcher matcher) {
+        List<MetaExpression> list = new ArrayList<>();
+        List<String> listAsStrings = regexService.tryMatchElseNull(matcher);
+        for (String s : listAsStrings) {
+            if (s != null) {
+                list.add(fromValue(s));
+            } else {
+                list.add(NULL);
+            }
+        }
+        return list;
     }
 
 }

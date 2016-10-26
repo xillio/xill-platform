@@ -22,7 +22,6 @@ import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
-import nl.xillio.xill.plugins.string.exceptions.FailedToGetMatcherException;
 import nl.xillio.xill.plugins.string.services.string.RegexService;
 
 import java.util.ArrayList;
@@ -39,20 +38,23 @@ import java.util.regex.PatternSyntaxException;
  */
 public class AllMatchesConstruct extends Construct {
 
+    private final RegexService regexService;
+
     @Inject
-    private RegexService regexService;
+    public AllMatchesConstruct(RegexService regexService) {
+        this.regexService = regexService;
+    }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (valueVar, regexVar, timeout) -> process(valueVar, regexVar, timeout, regexService),
+                (valueVar, regexVar, timeout) -> process(valueVar, regexVar, timeout),
                 new Argument("value", ATOMIC),
                 new Argument("regex", ATOMIC),
-                new Argument("timeout", fromValue(RegexConstruct.REGEX_TIMEOUT), ATOMIC));
+                new Argument("timeout", fromValue(regexService.getRegexTimeout()), ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression textVar, final MetaExpression regexVar, final MetaExpression timeoutVar,
-                                  final RegexService regexService) {
+    private MetaExpression process(final MetaExpression textVar, final MetaExpression regexVar, final MetaExpression timeoutVar) {
 
         List<MetaExpression> list = new ArrayList<>();
 
@@ -70,7 +72,7 @@ public class AllMatchesConstruct extends Construct {
             throw new InvalidUserInputException("Invalid pattern: " + e.getMessage(), regex, "A valid regular expression.", "use String;\n" +
                     "var s = \"abc def ghi jkl. Mno\";\n" +
                     "String.allMatches(s, \"\\\\w+\");", e);
-        } catch (IllegalArgumentException | FailedToGetMatcherException e) {
+        } catch (IllegalArgumentException e) {
             throw new InvalidUserInputException("Illegal argument: " + e.getMessage(), text, "A valid text value.", "use String;\n" +
                     "var s = \"abc def ghi jkl. Mno\";\n" +
                     "String.allMatches(s, \"\\\\w+\");", e);

@@ -16,17 +16,23 @@
 /*
 * Specification: Reading a cell from an Excel workbook containing an integer MUST result in an integer variable
 * Input: integer sheet of testresources/excel/getCellWorkbook.xlsx
-* Expected: 1
+* Expected: 1, 1000, -1 , -1000, 12345678910, -12345678910
 */
 
 use Assert, Excel, Math, String;
 
 var wb = Excel.loadWorkbook("testresources/excel/getCellWorkbook.xlsx");
 var sheet = Excel.loadSheet(wb, "integer");
-var cell = Excel.getCell(sheet, 1, 1);
+var output = [0,0, 1,1000,-1,-1000,12345678910,-12345678910];
 
-Assert.notNull(cell, "Cell contains null or could not be read.");
-Assert.isTrue(Math.isNumber(cell), "Cell does not contain a number.");
+var i = 2;
+while(i < 8){
+    var cell = Excel.getCell(sheet, 1, i);
+    Assert.notNull(cell, "Cell contains null or could not be read.");
+    Assert.isTrue(Math.isNumber(cell), "Cell does not contain a number.");
+    // Test that the result is not a double by checking if the string value contains a dot
+    Assert.isFalse(String.contains(cell, ".") || String.contains(cell, ","), "String value contains a dot or comma, so this is a floating point value: " :: cell);
+    Assert.equal(cell,output[i], cell :: " is not equal to the expected value: " :: output[i - 1]);
+    i++;
+}
 
-// Test that the result is not a double by checking if the string value contains a dot
-Assert.isFalse(String.contains(cell, ".") || String.contains(cell, ","), "String value contains a dot or comma, so this is a floating point value: " :: cell);

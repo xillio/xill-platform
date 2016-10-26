@@ -29,6 +29,7 @@ import nl.xillio.xill.plugins.string.services.string.UrlUtilityService;
  * Converts a relative URL string to an absolute URL using a string, pageUrl, as base URL.
  */
 public class AbsoluteURLConstruct extends Construct {
+
     private final UrlUtilityService urlUtilityService;
 
     @Inject
@@ -49,7 +50,7 @@ public class AbsoluteURLConstruct extends Construct {
         String relativeUrl = relativeUrlVar.getStringValue().trim();
 
         // Check if the protocol is specified in the page url.
-        if (!pageUrl.startsWith("http://") && !pageUrl.startsWith("https://")) {
+        if(!urlUtilityService.hasProtocol(pageUrl)){
             pageUrl = "http://" + pageUrl;
         }
 

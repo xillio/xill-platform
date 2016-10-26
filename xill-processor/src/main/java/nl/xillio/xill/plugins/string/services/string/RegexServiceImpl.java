@@ -20,7 +20,6 @@ import com.google.inject.Singleton;
 import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.string.constructs.RegexConstruct;
-import nl.xillio.xill.plugins.string.exceptions.FailedToGetMatcherException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,9 @@ import java.util.stream.IntStream;
 public class RegexServiceImpl implements RegexService {
 
     // Regex for escaping a string so it can be included inside a regex
-    public static final Pattern REGEX_ESCAPE_PATTERN = Pattern.compile("\\\\[a-zA-Z0-9]|\\[|\\]|\\^|\\$|\\-|\\.|\\{|\\}|\\?|\\*|\\+|\\||\\(|\\)");
+    public static final Pattern REGEX_ESCAPE_PATTERN = Pattern.compile("\\\\[a-zA-Z0-9_]|\\W");
+    // The default timeout for regular expressions.
+    private final int REGEX_TIMEOUT = 5000;
 
     private final CachedTimer cachedTimer;
 
@@ -52,12 +53,12 @@ public class RegexServiceImpl implements RegexService {
 
 
     @Override
-    public Matcher getMatcher(final String regex, final String value, int timeout) throws FailedToGetMatcherException, IllegalArgumentException {
+    public Matcher getMatcher(final String regex, final String value, int timeout) throws IllegalArgumentException {
         long targetTime;
 
         if (timeout < 0) {
             // If no (valid) timeout is given, use the default timeout
-            targetTime = RegexConstruct.REGEX_TIMEOUT + cachedTimer.getCachedTime();
+            targetTime = REGEX_TIMEOUT + cachedTimer.getCachedTime();
         } else if (timeout == 0) {
             // Use no time out
             targetTime = Long.MAX_VALUE;
@@ -66,6 +67,11 @@ public class RegexServiceImpl implements RegexService {
         }
 
         return Pattern.compile(regex, Pattern.DOTALL).matcher(new TimeoutCharSequence(value, targetTime));
+    }
+
+    @Override
+    public int getRegexTimeout() {
+        return REGEX_TIMEOUT;
     }
 
     @Override
