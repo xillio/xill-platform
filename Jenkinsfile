@@ -16,7 +16,7 @@
 if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+(\.(d+|x))+/) {
     println 'This commit is on the master or a release branch. A full test and deployment will be executed...'
 
-    def nativeProfile = '-P build-native'
+    String nativeProfile = '-P build-native'
 
     currentBuild.displayName = "${env.BRANCH_NAME}: ${currentBuild.number}"
 
@@ -51,7 +51,7 @@ if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+(\.(d+|x))+/) {
 } else {
     println 'This commit is not on a release branch. Skipping deployment.'
 
-    def issueNumber = getIssueNumberFromBranchName()
+    String issueNumber = getIssueNumberFromBranchName()
 
     if(issueNumber != null) {
         currentBuild.displayName = "${issueNumber}: ${currentBuild.number}"
@@ -72,11 +72,11 @@ if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+(\.(d+|x))+/) {
  * @param mavenArgs additional arguments to pass to maven
  * @return void
  */
-def buildOn(Map args) {
-    def platform = args.platform ?: 'linux'
-    def runSonar = args.runSonar ?: false
-    def mavenArgs = args.mavenArgs ?: ''
-    def buildPhase = args.buildPhase ?: 'verify'
+void buildOn(Map args) {
+    String platform = args.platform ?: 'linux'
+    boolean runSonar = args.runSonar ?: false
+    String mavenArgs = args.mavenArgs ?: ''
+    String buildPhase = args.buildPhase ?: 'verify'
 
     if (runSonar) {
         buildPhase = "$buildPhase sonar:sonar"
@@ -86,8 +86,8 @@ def buildOn(Map args) {
 
         // Gather all required tools
         // Note the escaped quotes to make this work with spaces
-        def m2Tool = tool 'mvn-3'
-        def javaTool = tool 'java-1.8'
+        String m2Tool = tool 'mvn-3'
+        String javaTool = tool 'java-1.8'
 
         if ('mac' == platform) {
             // On mac we have to create a symlink because it is a hard requirement to have Contents/Home in the
@@ -100,7 +100,7 @@ def buildOn(Map args) {
 
             // Inject maven settings file
             configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-                def mvnOptions = [
+                String[] mvnOptions = [
                         // Use the provided settings.xml
                         "-s \"$MAVEN_SETTINGS\"",
                         // Run in batch mode (headless)
@@ -109,7 +109,7 @@ def buildOn(Map args) {
                         //"-X"
                 ]
 
-                def mvn = "\"$m2Tool/bin/mvn\" ${mvnOptions.join(' ')} $mavenArgs"
+                String mvn = "\"$m2Tool/bin/mvn\" ${mvnOptions.join(' ')} $mavenArgs"
 
                 // Run the build and clean
                 stage("Run 'mvn $buildPhase' on $platform") {
@@ -127,9 +127,9 @@ def buildOn(Map args) {
  * return null.
  * @return the issue id or null
  */
-def getIssueNumberFromBranchName() {
-    def branchName = env.BRANCH_NAME
-    def parts = branchName.split('-')
+String getIssueNumberFromBranchName() {
+    String branchName = env.BRANCH_NAME
+    String[] parts = branchName.split('-')
 
     if(parts.length < 3) {
         // This does not have the format: XXXX-1234-name
@@ -149,7 +149,7 @@ def getIssueNumberFromBranchName() {
  * @param args
  * @return void
  */
-def cli(String args) {
+void cli(String args) {
     if (isUnix()) {
         sh args
     } else {
