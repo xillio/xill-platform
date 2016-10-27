@@ -97,9 +97,8 @@ public class WordDistanceConstruct extends Construct {
 
                 // Transposition
                 if (sIndex > 0 && tIndex > 0 && source.charAt(sIndex) == target.charAt(tIndex - 1) &&
-                        source.charAt(sIndex - 1) == target.charAt(tIndex) &&
-                        distanceLog[dlIndex - 2 * lenS1 - 2] + cost < min) {
-                    min = distanceLog[dlIndex - 2 * lenS1 - 2] + cost;
+                        source.charAt(sIndex - 1) == target.charAt(tIndex)) {
+                    min = Math.min(distanceLog[dlIndex - 2 * lenS1 - 2] + cost, min);
                 }
 
                 distanceLog[dlIndex] = min;
