@@ -41,18 +41,23 @@ import java.util.List;
  * @author Sander
  */
 public class TrimConstruct extends Construct {
+
+    private final StringUtilityService stringService;
+
     @Inject
-    StringUtilityService stringService;
+    public TrimConstruct(StringUtilityService stringService) {
+        this.stringService = stringService;
+    }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (string, internal) -> process(string, internal, stringService),
+                this::process,
                 new Argument("string", ATOMIC, LIST),
                 new Argument("internal", FALSE, ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression string, final MetaExpression internal, final StringUtilityService stringService) {
+    private MetaExpression process(final MetaExpression string, final MetaExpression internal) {
         assertNotNull(string, "string");
 
         if (string.getType() == ExpressionDataType.LIST) {
@@ -74,7 +79,7 @@ public class TrimConstruct extends Construct {
         return fromValue(doTrimming(string, internal, stringService).getStringValue());
     }
 
-    private static MetaExpression doTrimming(final MetaExpression string, final MetaExpression internal, final StringUtilityService stringService) {
+    private MetaExpression doTrimming(final MetaExpression string, final MetaExpression internal, final StringUtilityService stringService) {
         final String text = string.getStringValue();
         final String trimmedText = internal.getBooleanValue() ? stringService.trimInternal(text) : stringService.trim(text);
         return fromValue(trimmedText);
