@@ -18,6 +18,8 @@ if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+(\.(d+|x))+/) {
 
     def nativeProfile = '-P build-native'
 
+    currentBuild.displayName = "${env.BRANCH_NAME}: ${currentBuild.number}"
+
     parallel(
             "Windows": {
                 buildOn(
@@ -48,6 +50,12 @@ if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+(\.(d+|x))+/) {
 
 } else {
     println 'This commit is not on a release branch. Skipping deployment.'
+
+    def issueNumber = getIssueNumberFromBranchName()
+
+    if(issueNumber != null) {
+        currentBuild.displayName = "${issueNumber}: ${currentBuild.number}"
+    }
 
     buildOn(
             platform: 'slave',
@@ -112,6 +120,28 @@ def buildOn(Map args) {
             }
         }
     }
+}
+
+/**
+ * This function will extract the issue number from the current branch name. If it cannot be extracted it will
+ * return null.
+ * @return the issue id or null
+ */
+def getIssueNumberFromBranchName() {
+    def branchName = env.BRANCH_NAME
+    def parts = branchName.split('-')
+
+    if(parts.size < 3) {
+        // This does not have the format: XXXX-1234-name
+        return null;
+    }
+
+    if(!parts[1].isInteger()) {
+        // The second part is not an issue number
+        return null;
+    }
+
+    return "${parts[0]}-${parts[1]}"
 }
 
 /**
