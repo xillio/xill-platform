@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link SplitConstruct}.
  */
-public class SplitConstructTest extends ExpressionBuilderHelper {
+public class SplitConstructTest extends TestUtils {
 
     /**
      * Test the process method under normal circumstances.
@@ -38,37 +39,39 @@ public class SplitConstructTest extends ExpressionBuilderHelper {
     public void processNormalUsage() {
         // Mock
         String stringValue = "Eeny meeny miny mo";
-        MetaExpression string = mock(MetaExpression.class);
+        MetaExpression string = mockExpression(ATOMIC);
         when(string.getStringValue()).thenReturn(stringValue);
         when(string.isNull()).thenReturn(false);
 
         String delimiterValue = " ";
-        MetaExpression delimiter = mock(MetaExpression.class);
+        MetaExpression delimiter = mockExpression(ATOMIC);
         when(delimiter.getStringValue()).thenReturn(delimiterValue);
         when(delimiter.isNull()).thenReturn(false);
 
         boolean keepEmptyValue = false;
-        MetaExpression keepEmpty = mock(MetaExpression.class);
+        MetaExpression keepEmpty = mockExpression(ATOMIC);
         when(keepEmpty.getBooleanValue()).thenReturn(keepEmptyValue);
 
         String firstValue = "Eeny";
-        MetaExpression first = mock(MetaExpression.class);
+        MetaExpression first = mockExpression(ATOMIC);
         when(first.getStringValue()).thenReturn(firstValue);
         String secondValue = "meeny";
-        MetaExpression second = mock(MetaExpression.class);
+        MetaExpression second = mockExpression(ATOMIC);
         when(second.getStringValue()).thenReturn(secondValue);
         String thirdValue = "miny";
-        MetaExpression third = mock(MetaExpression.class);
+        MetaExpression third = mockExpression(ATOMIC);
         when(third.getStringValue()).thenReturn(thirdValue);
         String fourthValue = "mo";
-        MetaExpression fourth = mock(MetaExpression.class);
+        MetaExpression fourth = mockExpression(ATOMIC);
         when(fourth.getStringValue()).thenReturn(fourthValue);
 
         String returnValue[] = {firstValue, secondValue, thirdValue, fourthValue, ""};
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(stringService.split(stringValue, delimiterValue)).thenReturn(returnValue);
+
+        SplitConstruct construct = new SplitConstruct(stringService);
         // Run
-        MetaExpression result = SplitConstruct.process(string, delimiter, keepEmpty, stringService);
+        MetaExpression result = process(construct, string, delimiter, keepEmpty);
 
         // Verify
         verify(stringService, times(1)).split(stringValue, delimiterValue);
@@ -91,37 +94,39 @@ public class SplitConstructTest extends ExpressionBuilderHelper {
     public void processKeepEmpty() {
         // Mock
         String stringValue = "Eeny meeny miny mo";
-        MetaExpression string = mock(MetaExpression.class);
+        MetaExpression string = mockExpression(ATOMIC);
         when(string.getStringValue()).thenReturn(stringValue);
         when(string.isNull()).thenReturn(false);
 
         String delimiterValue = " ";
-        MetaExpression delimiter = mock(MetaExpression.class);
+        MetaExpression delimiter = mockExpression(ATOMIC);
         when(delimiter.getStringValue()).thenReturn(delimiterValue);
         when(delimiter.isNull()).thenReturn(false);
 
         boolean keepEmptyValue = true;
-        MetaExpression keepEmpty = mock(MetaExpression.class);
+        MetaExpression keepEmpty = mockExpression(ATOMIC);
         when(keepEmpty.getBooleanValue()).thenReturn(keepEmptyValue);
 
         String firstValue = "Eeny";
-        MetaExpression first = mock(MetaExpression.class);
+        MetaExpression first = mockExpression(ATOMIC);
         when(first.getStringValue()).thenReturn(firstValue);
         String secondValue = "meeny";
-        MetaExpression second = mock(MetaExpression.class);
+        MetaExpression second = mockExpression(ATOMIC);
         when(second.getStringValue()).thenReturn(secondValue);
         String thirdValue = "miny";
-        MetaExpression third = mock(MetaExpression.class);
+        MetaExpression third = mockExpression(ATOMIC);
         when(third.getStringValue()).thenReturn(thirdValue);
         String fourthValue = "mo";
-        MetaExpression fourth = mock(MetaExpression.class);
+        MetaExpression fourth = mockExpression(ATOMIC);
         when(fourth.getStringValue()).thenReturn(fourthValue);
 
         String returnValue[] = {firstValue, secondValue, thirdValue, fourthValue, ""};
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(stringService.split(stringValue, delimiterValue)).thenReturn(returnValue);
+
+        SplitConstruct construct = new SplitConstruct(stringService);
         // Run
-        MetaExpression result = SplitConstruct.process(string, delimiter, keepEmpty, stringService);
+        MetaExpression result = process(construct, string, delimiter, keepEmpty);
 
         // Verify
         verify(stringService, times(1)).split(stringValue, delimiterValue);
@@ -144,20 +149,23 @@ public class SplitConstructTest extends ExpressionBuilderHelper {
     public void processNullValueGiven() {
         // Mock
         String stringValue = "Eeny meeny miny mo";
-        MetaExpression string = mock(MetaExpression.class);
+        MetaExpression string = mockExpression(ATOMIC);
         when(string.getStringValue()).thenReturn(stringValue);
         when(string.isNull()).thenReturn(true);
 
         String delimiterValue = " ";
-        MetaExpression delimiter = mock(MetaExpression.class);
+        MetaExpression delimiter = mockExpression(ATOMIC);
         when(delimiter.getStringValue()).thenReturn(delimiterValue);
         when(delimiter.isNull()).thenReturn(true);
 
         boolean keepEmptyValue = true;
-        MetaExpression keepEmpty = mock(MetaExpression.class);
+        MetaExpression keepEmpty = mockExpression(ATOMIC);
         when(keepEmpty.getBooleanValue()).thenReturn(keepEmptyValue);
 
         StringUtilityService stringService = mock(StringUtilityService.class);
-        SplitConstruct.process(string, delimiter, keepEmpty, stringService);
+
+        SplitConstruct construct = new SplitConstruct(stringService);
+        // Run
+        process(construct, string, delimiter, keepEmpty);
     }
 }

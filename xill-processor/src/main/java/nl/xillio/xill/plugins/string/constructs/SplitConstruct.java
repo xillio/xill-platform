@@ -38,19 +38,24 @@ import java.util.List;
  * @author Sander
  */
 public class SplitConstruct extends Construct {
+
+    private final StringUtilityService stringService;
+
     @Inject
-    private StringUtilityService stringService;
+    public SplitConstruct(StringUtilityService stringService) {
+        this.stringService = stringService;
+    }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (string, delimiter, keepEmpty) -> process(string, delimiter, keepEmpty, stringService),
+                this::process,
                 new Argument("string", ATOMIC),
                 new Argument("delimiter", ATOMIC),
                 new Argument("keepEmpty", FALSE, ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression string, final MetaExpression delimiter, final MetaExpression keepempty, final StringUtilityService stringService) {
+    private MetaExpression process(final MetaExpression string, final MetaExpression delimiter, final MetaExpression keepempty) {
         assertNotNull(string, "string");
         assertNotNull(delimiter, "delimiter");
 
