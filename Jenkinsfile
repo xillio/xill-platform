@@ -131,7 +131,7 @@ def getIssueNumberFromBranchName() {
     def branchName = env.BRANCH_NAME
     def parts = branchName.split('-')
 
-    if(parts.size < 3) {
+    if(parts.length < 3) {
         // This does not have the format: XXXX-1234-name
         return null;
     }
