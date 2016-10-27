@@ -51,7 +51,6 @@ public interface StringUtilityService {
      * @param text The text we format.
      * @param args The arguments we give.
      * @return Returns the formatted text.
-     * @throws IllegalFormatException Is thrown when the string formatting fails.
      */
     String format(String text, List<Object> args);
 

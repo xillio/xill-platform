@@ -52,7 +52,7 @@ public class RegexServiceImpl implements RegexService {
 
 
     @Override
-    public Matcher getMatcher(final String regex, final String value, int timeout) throws IllegalArgumentException {
+    public Matcher getMatcher(final String regex, final String value, int timeout) {
         long targetTime;
 
         if (timeout < 0) {

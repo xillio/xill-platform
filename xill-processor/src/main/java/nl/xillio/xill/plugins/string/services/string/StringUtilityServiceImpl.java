@@ -19,7 +19,6 @@ import com.google.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 
-import java.util.IllegalFormatException;
 import java.util.List;
 
 /**
@@ -39,7 +38,7 @@ public class StringUtilityServiceImpl implements StringUtilityService {
     }
 
     @Override
-    public String format(final String text, final List<Object> args) throws IllegalFormatException {
+    public String format(final String text, final List<Object> args) {
         return String.format(text, args.toArray());
     }
 
