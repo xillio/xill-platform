@@ -50,7 +50,6 @@ public class WordDistanceConstructTest extends TestUtils {
         int distanceValue = 6;
         int maxLength = 11;
         StringUtilityService stringService = mock(StringUtilityService.class);
-        when(stringService.damlev(sourceValue, targetValue)).thenReturn(distanceValue);
 
         //Run
         WordDistanceConstruct construct = new WordDistanceConstruct(stringService);
@@ -81,7 +80,6 @@ public class WordDistanceConstructTest extends TestUtils {
 
         int returnValue = 6;
         StringUtilityService stringService = mock(StringUtilityService.class);
-        when(stringService.damlev(sourceValue, targetValue)).thenReturn(returnValue);
 
         //Run
         WordDistanceConstruct construct = new WordDistanceConstruct(stringService);

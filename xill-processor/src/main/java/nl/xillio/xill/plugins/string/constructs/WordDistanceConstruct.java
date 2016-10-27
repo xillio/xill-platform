@@ -24,12 +24,10 @@ import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
 
 /**
- * <p>
+ *
  * Returns a number between 0 (no likeness) and 1 (identical), indicating how much the two strings are alike.
- * </p>
- * <p>
+ *
  * If the option 'relative' is set to false, then the absolute editdistance will be returned rather than a relative distance.
- * </p>
  *
  * @author Sander
  */
@@ -56,15 +54,78 @@ public class WordDistanceConstruct extends Construct {
         assertNotNull(source, "source");
         assertNotNull(target, "target");
 
-        int edits = stringService.damlev(source.getStringValue(), target.getStringValue());
+        int edits = damlev(source.getStringValue(), target.getStringValue());
 
         if (!relative.getBooleanValue()) {
             return fromValue(edits);
         }
 
-        int maxlength = Math.max(source.getStringValue().length(), target.getStringValue().length());
-        double similarity = 1 - (double) edits / maxlength;
+        int maxLength = Math.max(source.getStringValue().length(), target.getStringValue().length());
+        double similarity = 1 - (double) edits / maxLength;
         return fromValue(similarity);
+    }
+
+    /**
+     * Returns a number between 0 (no likeness) and 1 (identical), indicating how much the two strings are alike.
+     * @param source one of the two words
+     * @param target the other word
+     * @return likeness of the two strings (between 0 and 1)
+     */
+    private int damlev(final String source, final String target) {
+        int[] distanceLog = new int[(source.length() + 1) * (target.length() + 1)];
+
+        int lenS1 = source.length() + 1;
+        int lenT1 = target.length() + 1;
+
+        if (lenT1 == 1) {
+            return lenS1 - 1;
+        }
+        if (lenS1 == 1) {
+            return lenT1 - 1;
+        }
+
+        int dlIndex = 0;
+        int rowBefore, min, cost;
+        int tri = lenS1 + 2;
+
+        // start row with constant
+        for (int tmp = 0; tmp < lenT1; tmp++) {
+            distanceLog[dlIndex] = tmp;
+            dlIndex += lenS1;
+        }
+        for (int sIndex = 0; sIndex < lenS1-1; sIndex++) {
+            dlIndex = sIndex + 1;
+            distanceLog[dlIndex] = dlIndex; // start column with constant
+            for (int tIndex = 0; tIndex < lenT1-1; tIndex++) {
+                rowBefore = dlIndex;
+                dlIndex += lenS1;
+                // deletion
+                min = distanceLog[rowBefore] + 1;
+
+                // insertion
+                if (distanceLog[dlIndex - 1] + 1 < min) {
+                    min = distanceLog[dlIndex - 1] + 1;
+                }
+                cost = 1;
+                if (source.charAt(sIndex) == target.charAt(tIndex)) {
+                    cost = 0;
+                }
+                if (sIndex > 0 && tIndex > 0) {
+                    if (source.charAt(sIndex) == target.charAt(tIndex-1) && source.charAt(sIndex-1) == target.charAt(tIndex)) {
+                        // transposition
+                        if (distanceLog[rowBefore - tri] + cost < min) {
+                            min = distanceLog[rowBefore - tri] + cost;
+                        }
+                    }
+                }
+                // substitution
+                if (distanceLog[rowBefore - 1] + cost < min) {
+                    min = distanceLog[rowBefore - 1] + cost;
+                }
+                distanceLog[dlIndex] = min;
+            }
+        }
+        return distanceLog[dlIndex];
     }
 
 }

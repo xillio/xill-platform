@@ -29,14 +29,6 @@ import java.util.List;
 public interface StringUtilityService {
 
     /**
-     * Returns a number  indicating how much the two strings are alike.
-     * @param source First string to compare
-     * @param target Second string to compare
-     * @return Likeness
-     */
-    int damlev(final String source, final String target);
-
-    /**
      * Checks whether the child string is contained in the parent string.
      *
      * @param parent The parent string.
