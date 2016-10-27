@@ -18,7 +18,6 @@ package nl.xillio.xill.plugins.string.services.string;
 import com.google.inject.ImplementedBy;
 import nl.xillio.xill.plugins.string.StringXillPlugin;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.IllegalFormatException;
 import java.util.List;
 

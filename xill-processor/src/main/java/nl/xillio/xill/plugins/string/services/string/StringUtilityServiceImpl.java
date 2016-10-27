@@ -22,7 +22,6 @@ import org.apache.commons.lang3.text.WordUtils;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.IllegalFormatException;
 import java.util.List;
 

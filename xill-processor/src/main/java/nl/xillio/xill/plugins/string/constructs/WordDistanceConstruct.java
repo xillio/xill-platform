@@ -15,13 +15,11 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
-import com.google.inject.Inject;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
-import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
 
 /**
  *
@@ -32,13 +30,6 @@ import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
  * @author Sander
  */
 public class WordDistanceConstruct extends Construct {
-
-    private final StringUtilityService stringService;
-
-    @Inject
-    public WordDistanceConstruct(StringUtilityService stringService) {
-        this.stringService = stringService;
-    }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
@@ -54,7 +45,7 @@ public class WordDistanceConstruct extends Construct {
         assertNotNull(source, "source");
         assertNotNull(target, "target");
 
-        int edits = damlev(source.getStringValue(), target.getStringValue());
+        int edits = damerauLevenshteinDistance(source.getStringValue(), target.getStringValue());
 
         if (!relative.getBooleanValue()) {
             return fromValue(edits);
@@ -71,7 +62,7 @@ public class WordDistanceConstruct extends Construct {
      * @param target the other word
      * @return likeness of the two strings (between 0 and 1)
      */
-    private int damlev(final String source, final String target) {
+    private int damerauLevenshteinDistance(final String source, final String target) {
         int[] distanceLog = new int[(source.length() + 1) * (target.length() + 1)];
 
         int lenS1 = source.length() + 1;
@@ -85,47 +76,35 @@ public class WordDistanceConstruct extends Construct {
         }
 
         int dlIndex = 0;
-        int rowBefore, min, cost;
-        int tri = lenS1 + 2;
+        int min;
+        int cost;
 
         // start row with constant
         for (int tmp = 0; tmp < lenT1; tmp++) {
             distanceLog[dlIndex] = tmp;
             dlIndex += lenS1;
         }
-        for (int sIndex = 0; sIndex < lenS1-1; sIndex++) {
+        for (int sIndex = 0; sIndex < lenS1 - 1; sIndex++) {
             dlIndex = sIndex + 1;
             distanceLog[dlIndex] = dlIndex; // start column with constant
-            for (int tIndex = 0; tIndex < lenT1-1; tIndex++) {
-                rowBefore = dlIndex;
+            for (int tIndex = 0; tIndex < lenT1 - 1; tIndex++) {
                 dlIndex += lenS1;
-                // deletion
-                min = distanceLog[rowBefore] + 1;
 
-                // insertion
-                if (distanceLog[dlIndex - 1] + 1 < min) {
-                    min = distanceLog[dlIndex - 1] + 1;
+                cost = (source.charAt(sIndex) == target.charAt(tIndex)) ? 0 : 1;
+
+                // Insertion, Deletion and Substitution
+                min = Math.min(distanceLog[dlIndex - 1] + 1, Math.min(distanceLog[dlIndex - lenS1] + 1, distanceLog[dlIndex - lenS1 - 1] + cost));
+
+                // Transposition
+                if (sIndex > 0 && tIndex > 0 && source.charAt(sIndex) == target.charAt(tIndex - 1) &&
+                        source.charAt(sIndex - 1) == target.charAt(tIndex) &&
+                        distanceLog[dlIndex - 2 * lenS1 - 2] + cost < min) {
+                    min = distanceLog[dlIndex - 2 * lenS1 - 2] + cost;
                 }
-                cost = 1;
-                if (source.charAt(sIndex) == target.charAt(tIndex)) {
-                    cost = 0;
-                }
-                if (sIndex > 0 && tIndex > 0) {
-                    if (source.charAt(sIndex) == target.charAt(tIndex-1) && source.charAt(sIndex-1) == target.charAt(tIndex)) {
-                        // transposition
-                        if (distanceLog[rowBefore - tri] + cost < min) {
-                            min = distanceLog[rowBefore - tri] + cost;
-                        }
-                    }
-                }
-                // substitution
-                if (distanceLog[rowBefore - 1] + cost < min) {
-                    min = distanceLog[rowBefore - 1] + cost;
-                }
+
                 distanceLog[dlIndex] = min;
             }
         }
         return distanceLog[dlIndex];
     }
-
 }
