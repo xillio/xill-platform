@@ -53,18 +53,13 @@ class ListExpression extends CollectionExpression {
     }
 
     @Override
-    public Number getNumberValue() {
-        return Double.NaN;
-    }
-
-    @Override
     public ListExpression copy() {
         assertOpen();
         return new ListExpression(value.stream().map(MetaExpression::copy).collect(Collectors.toList()));
     }
 
     @Override
-    public Number getSize(){
+    public Number getSize() {
         return value.size();
     }
 }
