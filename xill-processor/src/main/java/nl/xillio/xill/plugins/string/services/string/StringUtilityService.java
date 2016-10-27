@@ -53,7 +53,7 @@ public interface StringUtilityService {
      * @return Returns the formatted text.
      * @throws IllegalFormatException Is thrown when the string formatting fails.
      */
-    String format(String text, List<Object> args) throws IllegalFormatException;
+    String format(String text, List<Object> args);
 
     /**
      * Returns the index of the first occurrance of the needle in the haystack, starting from an index.

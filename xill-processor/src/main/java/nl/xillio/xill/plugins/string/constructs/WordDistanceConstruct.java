@@ -76,8 +76,6 @@ public class WordDistanceConstruct extends Construct {
         }
 
         int dlIndex = 0;
-        int min;
-        int cost;
 
         // start row with constant
         for (int tmp = 0; tmp < lenT1; tmp++) {
@@ -90,20 +88,27 @@ public class WordDistanceConstruct extends Construct {
             for (int tIndex = 0; tIndex < lenT1 - 1; tIndex++) {
                 dlIndex += lenS1;
 
-                cost = (source.charAt(sIndex) == target.charAt(tIndex)) ? 0 : 1;
-
-                // Insertion, Deletion and Substitution
-                min = Math.min(distanceLog[dlIndex - 1] + 1, Math.min(distanceLog[dlIndex - lenS1] + 1, distanceLog[dlIndex - lenS1 - 1] + cost));
-
-                // Transposition
-                if (sIndex > 0 && tIndex > 0 && source.charAt(sIndex) == target.charAt(tIndex - 1) &&
-                        source.charAt(sIndex - 1) == target.charAt(tIndex)) {
-                    min = Math.min(distanceLog[dlIndex - 2 * lenS1 - 2] + cost, min);
-                }
-
-                distanceLog[dlIndex] = min;
+                distanceLog[dlIndex] = calculateDistance(source, target, sIndex, tIndex, distanceLog, dlIndex, lenS1);
             }
         }
         return distanceLog[dlIndex];
+    }
+
+    private int calculateDistance(final String source, final String target, final int sIndex, final int tIndex,
+                                  final int[] distanceLog, final int dlIndex, final int lenS1) {
+
+        int cost = (source.charAt(sIndex) == target.charAt(tIndex)) ? 0 : 1;
+
+        // Insertion, Deletion and Substitution
+        int min = Math.min(distanceLog[dlIndex - 1] + 1, Math.min(distanceLog[dlIndex - lenS1] + 1,
+                distanceLog[dlIndex - lenS1 - 1] + cost));
+
+        // Transposition
+        if (sIndex > 0 && tIndex > 0 && source.charAt(sIndex) == target.charAt(tIndex - 1) &&
+                source.charAt(sIndex - 1) == target.charAt(tIndex)) {
+            min = Math.min(distanceLog[dlIndex - 2 * lenS1 - 2] + cost, min);
+        }
+
+        return min;
     }
 }
