@@ -1,10 +1,10 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
-## [3.5.0] - unreleased
+## [3.4.1] - unreleased
 
 ### Fix
-* On server threads are not closed when tasks finishes [XSVR-139]
+* Concurrency pipeline changes dates and ObjectIds to strings [CTC-1833]
 
 ## [3.4.0] - 2016-10-07
 
