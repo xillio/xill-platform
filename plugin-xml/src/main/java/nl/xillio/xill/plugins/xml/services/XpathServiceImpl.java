@@ -19,6 +19,7 @@ import com.google.inject.Singleton;
 import me.biesaart.utils.Log;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.type.ItemType;
+import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.xpath.XPathExpressionImpl;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 import nl.xillio.xill.api.data.XmlNode;
@@ -72,8 +73,7 @@ public class XpathServiceImpl implements XpathService {
             Document document = node.getDocument();
             namespaceContext.setDocument(document);
 
-            Object result = this.xPath(xpath, node.getNode(), query);
-
+            Object result = this.evaluateExpression(this.compileXpath(xpath,query),node.getNode());
             if (result instanceof NodeList) {
                 NodeList results = (NodeList) result;
 
@@ -91,32 +91,57 @@ public class XpathServiceImpl implements XpathService {
         return output;
     }
 
-    private Object xPath(final XPath xpath, final Object node, final String expression) throws XPathExpressionException {
-        XPathExpression expr;
+
+    public Object xpath2(final XmlNode node, final String xpathQuery, final Map<String, String> namespaces) {
+        HTMLNamespaceContext namespaceContext = new HTMLNamespaceContext(namespaces);
+        XPath xpath = xpf.newXPath();
+        xpath.setNamespaceContext(namespaceContext);
+        Object result;
+        XPathExpression compiledExpression;
+
         try {
-            expr = xpath.compile(expression);
+            Document document = node.getDocument();
+            namespaceContext.setDocument(document);
+            compiledExpression = compileXpath(xpath, xpathQuery);
+
+            result = compiledExpression.evaluate(node.getNode(), computeExpressionResultType(compiledExpression));
+        } catch (XPathExpressionException e) {
+            throw new RobotRuntimeException("Invalid XPath", e);
+        }
+
+        return result;
+    }
+
+    private XPathExpression compileXpath(final XPath xpath, final String expression) throws XPathExpressionException {
+        try {
+            return xpath.compile(expression);
         } catch (Exception e) { // Sometimes, an unexpected net.sf.saxon.trans.XPathException can be thrown...
             LOGGER.error("Failed to run xpath expression", e);
             throw new XPathExpressionException(e.getMessage());
         }
+    }
 
+    private Object evaluateExpression(XPathExpression expr, final Object node) throws XPathExpressionException {
         try {
             return expr.evaluate(node, computeExpressionResultType(expr));
         } catch (Exception e) {
             LOGGER.warn("Exception while evaluating xpath expression", e);
         }
 
-        return expr.evaluate(node, XPathConstants.STRING);
+        return null;
     }
 
     private QName computeExpressionResultType(XPathExpression expr) {
         Expression innerExpr = ((XPathExpressionImpl) expr).getInternalExpression();
         ItemType resultType = innerExpr.getItemType();
+        boolean allowsMany = Cardinality.allowsMany(innerExpr.getCardinality());
 
-        if(resultType.isAtomicType()) {
+        if(resultType.isAtomicType()/* && !allowsMany*/) {
+            LOGGER.warn("ATOMIC, " + Cardinality.allowsMany(innerExpr.getCardinality()) + ", " + resultType.isPlainType());
             return XPathConstants.STRING;
         }
         else {
+            LOGGER.warn("NODESET, " + Cardinality.allowsMany(innerExpr.getCardinality()) + ", " + resultType.isPlainType());
             return XPathConstants.NODESET;
         }
     }
