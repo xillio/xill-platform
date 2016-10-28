@@ -21,7 +21,7 @@ if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+(\.(d+|x))+/ || true) 
     currentBuild.displayName = "${env.BRANCH_NAME}: ${currentBuild.number}"
 
     parallel(
-            /*"Windows": {
+            "Windows": {
                 buildOn(
                         platform: 'windows',
                         mavenArgs: nativeProfile,
@@ -35,7 +35,7 @@ if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+(\.(d+|x))+/ || true) 
                         mavenArgs: nativeProfile,
                         buildPhase: 'deploy'
                 )
-            },*/
+            },
 
             "Mac OSX": {
                 buildOn(
