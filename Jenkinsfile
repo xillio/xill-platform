@@ -115,7 +115,7 @@ void buildOn(Map args) {
                 stage("Run 'mvn $buildPhase' on $platform") {
                     checkout scm
                     cli "$mvn $buildPhase -Dsonar.branch=${env.BRANCH_NAME}"
-                    //cli "$mvn clean"
+                    cli "$mvn clean"
                 }
             }
         }

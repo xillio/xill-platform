@@ -108,7 +108,9 @@
                         <goals>
                             <goal>single</goal>
                         </goals>
+                        <phase>package</phase>
                         <configuration>
+                            <descriptor>${project.basedir}/src/assembly/dist-zip-${os.classifier}.xml</descriptor>
                             <finalName>xill-ide-${project.version}</finalName>
                         </configuration>
                     </execution>
@@ -140,22 +142,6 @@
             <properties>
                 <os.classifier>win</os.classifier>
             </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>build-native-distribution</id>
-                                <phase>package</phase>
-                                <configuration>
-                                    <descriptor>${project.basedir}/src/assembly/dist-zip-win.xml</descriptor>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
         <profile>
             <id>mac</id>
@@ -167,17 +153,6 @@
             <properties>
                 <os.classifier>osx</os.classifier>
             </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.zenjava</groupId>
-                        <artifactId>javafx-maven-plugin</artifactId>
-                        <configuration>
-                            <nativeOutputDir>${project.build.directory}</nativeOutputDir>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
         <profile>
             <id>unix</id>
@@ -190,22 +165,6 @@
             <properties>
                 <os.classifier>unix</os.classifier>
             </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>build-native-distribution</id>
-                                <phase>package</phase>
-                                <configuration>
-                                    <descriptor>${project.basedir}/src/assembly/dist-zip-unix.xml</descriptor>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
     </profiles>
 
