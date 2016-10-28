@@ -202,7 +202,6 @@ public class XillInitializer extends Thread {
         xill = Loader.getXill();
 
         try {
-            Files.createDirectories(PLUGIN_FOLDER);
             xill.addFolder(PLUGIN_FOLDER);
             xill.buildProcessor(Paths.get("."), Paths.get("."));
         } catch (IOException e) {
@@ -229,7 +228,7 @@ public class XillInitializer extends Thread {
         return new ArrayList<>(xill.getPlugins());
     }
 
-   /**
+    /**
      * List the plugins with missing licenses.
      *
      * @return a list of erroneous plugins
