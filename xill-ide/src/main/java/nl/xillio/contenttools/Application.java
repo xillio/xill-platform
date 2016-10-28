@@ -48,7 +48,6 @@ public class Application extends javafx.application.Application {
      */
     public static void main(final String... args) throws IOException {
         LOGGER.info("Starting host application");
-        Files.createDirectories(PLUGIN_FOLDER);
         environment = new XillEnvironmentImpl();
         environment.addFolder(PLUGIN_FOLDER);
         environment.setLoadHomeFolder(true);
