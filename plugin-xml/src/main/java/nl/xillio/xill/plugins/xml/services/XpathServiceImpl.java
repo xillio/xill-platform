@@ -23,6 +23,8 @@ import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.xpath.XPathExpressionImpl;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 import nl.xillio.xill.api.data.XmlNode;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
+import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.xml.data.XmlNodeVar;
 import org.slf4j.Logger;
@@ -93,23 +95,35 @@ public class XpathServiceImpl implements XpathService {
 
 
     public Object xpath2(final XmlNode node, final String xpathQuery, final Map<String, String> namespaces) {
-        HTMLNamespaceContext namespaceContext = new HTMLNamespaceContext(namespaces);
-        XPath xpath = xpf.newXPath();
-        xpath.setNamespaceContext(namespaceContext);
+        XPath xpath = makeXpathWithNamespaces(node, namespaces);
         Object result;
         XPathExpression compiledExpression;
 
+        // Compile
         try {
-            Document document = node.getDocument();
-            namespaceContext.setDocument(document);
             compiledExpression = compileXpath(xpath, xpathQuery);
-
-            result = compiledExpression.evaluate(node.getNode(), computeExpressionResultType(compiledExpression));
         } catch (XPathExpressionException e) {
-            throw new RobotRuntimeException("Invalid XPath", e);
+            throw new InvalidUserInputException("xpath is not valid", xpathQuery, "a valid xpath", e);
+        }
+
+        // Execute
+        try {
+            result = compiledExpression.evaluate(node.getNode(), computeExpressionResultType(compiledExpression));
+        } catch(XPathExpressionException e) {
+            throw new OperationFailedException("processing xpath " + xpathQuery, "processing terminated prematurely", e);
         }
 
         return result;
+    }
+
+    private XPath makeXpathWithNamespaces(final XmlNode node, final Map<String, String> namespaces) {
+        HTMLNamespaceContext namespaceContext = new HTMLNamespaceContext(namespaces);
+        XPath xpath = xpf.newXPath();
+        xpath.setNamespaceContext(namespaceContext);
+        Document document = node.getDocument();
+        namespaceContext.setDocument(document);
+
+        return xpath;
     }
 
     private XPathExpression compileXpath(final XPath xpath, final String expression) throws XPathExpressionException {
@@ -134,13 +148,14 @@ public class XpathServiceImpl implements XpathService {
     private QName computeExpressionResultType(XPathExpression expr) {
         Expression innerExpr = ((XPathExpressionImpl) expr).getInternalExpression();
         ItemType resultType = innerExpr.getItemType();
-        boolean allowsMany = Cardinality.allowsMany(innerExpr.getCardinality());
 
-        if(resultType.isAtomicType()/* && !allowsMany*/) {
+        if(resultType.isAtomicType()) {
+            //TODO
             LOGGER.warn("ATOMIC, " + Cardinality.allowsMany(innerExpr.getCardinality()) + ", " + resultType.isPlainType());
             return XPathConstants.STRING;
         }
         else {
+            //TODO
             LOGGER.warn("NODESET, " + Cardinality.allowsMany(innerExpr.getCardinality()) + ", " + resultType.isPlainType());
             return XPathConstants.NODESET;
         }
