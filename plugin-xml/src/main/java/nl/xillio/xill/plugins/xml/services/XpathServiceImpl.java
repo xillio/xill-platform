@@ -17,6 +17,9 @@ package nl.xillio.xill.plugins.xml.services;
 
 import com.google.inject.Singleton;
 import me.biesaart.utils.Log;
+import net.sf.saxon.expr.Expression;
+import net.sf.saxon.type.ItemType;
+import net.sf.saxon.xpath.XPathExpressionImpl;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 import nl.xillio.xill.api.data.XmlNode;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
@@ -28,6 +31,7 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.namespace.QName;
 import javax.xml.xpath.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -97,12 +101,24 @@ public class XpathServiceImpl implements XpathService {
         }
 
         try {
-            return expr.evaluate(node, XPathConstants.NODESET);
+            return expr.evaluate(node, computeExpressionResultType(expr));
         } catch (Exception e) {
             LOGGER.warn("Exception while evaluating xpath expression", e);
         }
 
         return expr.evaluate(node, XPathConstants.STRING);
+    }
+
+    private QName computeExpressionResultType(XPathExpression expr) {
+        Expression innerExpr = ((XPathExpressionImpl) expr).getInternalExpression();
+        ItemType resultType = innerExpr.getItemType();
+
+        if(resultType.isAtomicType()) {
+            return XPathConstants.STRING;
+        }
+        else {
+            return XPathConstants.NODESET;
+        }
     }
 
     private String xPathText(final XPath xpath, final Object node, final String expression) throws XPathExpressionException {
