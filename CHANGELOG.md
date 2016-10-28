@@ -13,6 +13,8 @@ All notable changes to this project will be documented in this file.
 * Make `System.print` automatically pretty print LISTs and OBJECTs [CTC-1675]
 * `Math.HungarianAlgorithm()` now returns an object [CTC-1732]
 * Correct typing inconsistencies for booleans: now the strings "false" and "0" evaluate to `false` [CTC-1733]
+* Make StringBehavior conform to type conversion specification: a non-empty string will now evaluate to `true`, unless it contains any of the values "false", "0" or "null" [CTC-1865]
+* Deprecate `File.getText()` [CTC-1860]
 
 ### Fix
 * On server threads are not closed when tasks finishes [XSVR-139]
@@ -25,6 +27,7 @@ All notable changes to this project will be documented in this file.
 * `Sring.regexEscape()` can result in invalid regular expressions [CTC-1807]
 * Calling `Excel.setCellValue()` on a formula cell only sets cached value [CTC-1814]
 * String.absoluteUrl does not allow protocols other than http(s) [CTC-1806]
+* Dialogs do not render on (very) fast machines [CTC-1850]
 
 ## [3.4.0] - 2016-10-07
 

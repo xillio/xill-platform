@@ -51,7 +51,14 @@ class NumberBehavior extends AbstractBehavior {
 
     @Override
     public boolean getBooleanValue() {
-        return Double.doubleToRawLongBits(value.doubleValue()) != 0;
+        // NumberBehavior cannot be NULL or null by design, but might in the future
+        if (value == null || isNull()) {
+            return false;
+        }
+
+        Double doubleValue = value.doubleValue();
+
+        return !(Double.isNaN(doubleValue) || doubleValue.equals(0.0d));
     }
 
     @Override

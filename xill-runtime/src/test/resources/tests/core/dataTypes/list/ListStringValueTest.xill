@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 /*
-* Specification: The boolean value of NaN MUST be false.
-* Input: NaN
-* Expected: The code is executed
-*/
+ * Specification: A list's string value MUST be its JSON representation
+ * Input: A list, nested list and empty list
+ * Expected: JSON representations of the input
+ */
 
-use Assert, System;
+use Assert;
 
-Assert.isFalse(NaN);
+var stringValues = {["value", 1, true]:"[\"value\",1,true]", [["value"]]:"[[\"value\"]]", []:"[]"};
+
+foreach (list,string in stringValues) {
+    Assert.equal(@list, string);
+}

@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 /*
-* Specification: The boolean value of NaN MUST be false.
-* Input: NaN
-* Expected: The code is executed
-*/
+ * Specification: A object's string value MUST be its JSON representation
+ * Input: An object, nested object and empty object
+ * Expected: JSON representations of the input
+ */
 
-use Assert, System;
+use Assert;
 
-Assert.isFalse(NaN);
+var stringValues = {{"string":"value", 2:1, false:true}:"{\"string\":\"value\",\"2\":1,\"false\":true}",
+                    {"object":{"string":"value"}}:"{\"object\":{\"string\":\"value\"}}", {}:"{}"};
+
+foreach (object,string in stringValues) {
+    Assert.equal(@object, string);
+}

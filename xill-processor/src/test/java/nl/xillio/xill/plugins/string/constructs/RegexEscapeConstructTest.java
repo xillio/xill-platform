@@ -43,8 +43,9 @@ public class RegexEscapeConstructTest extends TestUtils {
 
         MetaExpression toEscape = mockExpression(ATOMIC, true, Double.NaN, UNESCAPED);
 
+        RegexEscapeConstruct construct = new RegexEscapeConstruct(regexService);
         //run
-        MetaExpression result = RegexEscapeConstruct.process(toEscape, regexService);
+        MetaExpression result = process(construct, toEscape);
 
         //verify
         verify(regexService).escapeRegex(eq(UNESCAPED));
