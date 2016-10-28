@@ -25,20 +25,16 @@ import net.sf.saxon.xpath.XPathFactoryImpl;
 import nl.xillio.xill.api.data.XmlNode;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.OperationFailedException;
-import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.xml.data.XmlNodeVar;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.xpath.*;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,46 +51,7 @@ public class XpathServiceImpl implements XpathService {
     private static final Logger LOGGER = Log.get();
 
     @Override
-    public List<Object> xpath(final XmlNode node, final String xpathQuery, final Map<String, String> namespaces) {
-        HTMLNamespaceContext namespaceContext = new HTMLNamespaceContext(namespaces);
-
-        XPath xpath = xpf.newXPath();
-        xpath.setNamespaceContext(namespaceContext);
-        ArrayList<Object> output = new ArrayList<>();
-
-        boolean fetchText = xpathQuery.endsWith("/text()");
-
-        // More hacking... the java implementation bugs out on selecting a CDATA textnode.
-        // We will need to first query the node, then do another query to fetch the textual content.
-        String query = xpathQuery;
-        if (fetchText) {
-            query = xpathQuery.substring(0, xpathQuery.length() - "/text()".length());
-        }
-
-        try {
-            Document document = node.getDocument();
-            namespaceContext.setDocument(document);
-
-            Object result = this.evaluateExpression(this.compileXpath(xpath,query),node.getNode());
-            if (result instanceof NodeList) {
-                NodeList results = (NodeList) result;
-
-                for (int i = 0; i < results.getLength(); i++) {
-                    Node n = results.item(i);
-                    output.add(fetchText ? xPathText(xpath, n, "./text()") : parseVariable(n));
-                }
-            } else {
-                output.add(result.toString());
-            }
-        } catch (XPathExpressionException e) {
-            throw new RobotRuntimeException("Invalid XPath", e);
-        }
-
-        return output;
-    }
-
-
-    public Object xpath2(final XmlNode node, final String xpathQuery, final Map<String, String> namespaces) {
+    public Object xpath(final XmlNode node, final String xpathQuery, final Map<String, String> namespaces) {
         XPath xpath = makeXpathWithNamespaces(node, namespaces);
         Object result;
         XPathExpression compiledExpression;
