@@ -1,7 +1,7 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
-## [3.4.1] - unreleased
+## [3.4.1] - 2016-10-28
 
 ### Fix
 * Concurrency pipeline changes dates and ObjectIds to strings [CTC-1833]
