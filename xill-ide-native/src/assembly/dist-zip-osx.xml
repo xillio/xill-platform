@@ -38,10 +38,6 @@
             <outputDirectory></outputDirectory>
         </file>
         <file>
-            <source>${project.basedir}/target/jfx/native/Xill IDE.app</source>
-            <outputDirectory></outputDirectory>
-        </file>
-        <file>
             <source>${project.basedir}/src/main/deploy/macosx/Applications</source>
             <outputDirectory></outputDirectory>
         </file>
@@ -49,6 +45,10 @@
     <fileSets>
         <fileSet>
             <directory>${project.basedir}/../xill-ide/src/deploy/resources/</directory>
+            <outputDirectory></outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/target/jfx/native/Xill IDE.app</directory>
             <outputDirectory></outputDirectory>
         </fileSet>
     </fileSets>
