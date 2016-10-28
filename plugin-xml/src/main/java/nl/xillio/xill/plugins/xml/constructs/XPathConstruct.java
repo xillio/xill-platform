@@ -24,13 +24,17 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.data.XmlNode;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
+import nl.xillio.xill.plugins.xml.data.XmlNodeVar;
 import nl.xillio.xill.plugins.xml.services.XpathService;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * Returns selected XML node(s) from XML document using XPath locator
@@ -67,24 +71,35 @@ public class XPathConstruct extends Construct {
 
         List<MetaExpression> output = new ArrayList<>();
 
-        List<Object> result = service.xpath(node, xpathVar.getStringValue(), namespaces);
-        if (result.isEmpty()) {
-            return NULL;
-        } else if (result.size() == 1) {
-            return getOutput(result.get(0));
+
+        Object result = service.xpath(node, xpathVar.getStringValue(), namespaces);
+        // determine the kind of return: NULL, ATOMIC or LIST
+        if(result instanceof NodeList) {
+            NodeList resultNodeList = (NodeList) result;
+            int resultCardinality = resultNodeList.getLength();
+
+            if(resultCardinality == 0) {
+                return NULL;
+            }
+            else if(resultCardinality == 1) {
+                return getOutput(resultNodeList.item(0));
+            }
+            else {
+                return fromValue(service.asStream(resultNodeList).map(XPathConstruct::getOutput).collect(Collectors.toList()));
+            }
         } else {
-            result.forEach(v -> output.add(getOutput(v)));
-            return fromValue(output);
+            // String
+            return getOutput(result);
         }
     }
 
     static private MetaExpression getOutput(Object value) {
         if (value instanceof String) {
             return fromValue((String) value);
-        } else if (value instanceof XmlNode) {
-            XmlNode outputNode = (XmlNode) value;
+        } else if (value instanceof Node) {
+            Node outputNode = (Node) value;
             MetaExpression output = fromValue(outputNode.toString());
-            output.storeMeta(outputNode);
+            output.storeMeta(new XmlNodeVar(outputNode));
             return output;
         } else {
             throw new RobotRuntimeException("Invalid XPath type!");

@@ -18,17 +18,20 @@ package nl.xillio.xill.plugins.xml.services;
 import com.google.inject.ImplementedBy;
 import nl.xillio.xill.api.data.XmlNode;
 import nl.xillio.xill.plugins.xml.XMLXillPlugin;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * This interface represents some of the operations for the {@link XMLXillPlugin}.
  *
  * @author Zbynek Hochmann
  */
-
 @ImplementedBy(XpathServiceImpl.class)
+@FunctionalInterface // not meant to be a functional interface, but sonar wants it this way
 public interface XpathService {
     /**
      * Selects node(s) from XML document using XPath locator
@@ -36,7 +39,11 @@ public interface XpathService {
      * @param node       XML node
      * @param xpathQuery XPath locator specification
      * @param namespaces optional associative array containing namespace definitions
-     * @return list of selected XML nodes
+     * @return result of the query, can be a String or {@link NodeList}
      */
-    List<Object> xpath(final XmlNode node, final String xpathQuery, final Map<String, String> namespaces);
+    Object xpath(final XmlNode node, final String xpathQuery, final Map<String, String> namespaces);
+
+    default Stream<Node> asStream(NodeList nodeList) {
+        return IntStream.range(0, nodeList.getLength()).mapToObj(nodeList::item);
+    }
 }
