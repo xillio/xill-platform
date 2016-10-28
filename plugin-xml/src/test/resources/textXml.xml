@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idc:row xmlns:idc="http://www.namespaces.null/test">
+	<idc:field name="field1">1</idc:field>
+	<idc:field name="field2">1</idc:field>
+	<elementWithAttributes attribute1='1' attribute2='2'></elementWithAttributes>
+	<elementWithOnlyCDATA>
+<![CDATA[
+	cdata
+]]>
+	</elementWithOnlyCDATA>
+	<elementWithManyText>text1
+<![CDATA[text2]]>
+text3
+	</elementWithManyText>
+</idc:row>
