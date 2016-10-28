@@ -81,7 +81,6 @@
                     <bundleArguments>
                         <licenseFile>LICENSE</licenseFile>
                     </bundleArguments>
-                    <bundler>bundle image</bundler>
                     <additionalAppResources>${project.basedir}/src/deploy</additionalAppResources>
                 </configuration>
                 <executions>
