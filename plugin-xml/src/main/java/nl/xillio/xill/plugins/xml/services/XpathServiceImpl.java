@@ -19,6 +19,7 @@ import com.google.inject.Singleton;
 import me.biesaart.utils.Log;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.type.ItemType;
+import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.xpath.XPathExpressionImpl;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 import nl.xillio.xill.api.data.XmlNode;
@@ -90,6 +91,27 @@ public class XpathServiceImpl implements XpathService {
         return output;
     }
 
+
+    public Object xpath2(final XmlNode node, final String xpathQuery, final Map<String, String> namespaces) {
+        HTMLNamespaceContext namespaceContext = new HTMLNamespaceContext(namespaces);
+        XPath xpath = xpf.newXPath();
+        xpath.setNamespaceContext(namespaceContext);
+        Object result;
+        XPathExpression compiledExpression;
+
+        try {
+            Document document = node.getDocument();
+            namespaceContext.setDocument(document);
+            compiledExpression = compileXpath(xpath, xpathQuery);
+
+            result = compiledExpression.evaluate(node.getNode(), computeExpressionResultType(compiledExpression));
+        } catch (XPathExpressionException e) {
+            throw new RobotRuntimeException("Invalid XPath", e);
+        }
+
+        return result;
+    }
+
     private XPathExpression compileXpath(final XPath xpath, final String expression) throws XPathExpressionException {
         try {
             return xpath.compile(expression);
@@ -106,17 +128,20 @@ public class XpathServiceImpl implements XpathService {
             LOGGER.warn("Exception while evaluating xpath expression", e);
         }
 
-        return expr.evaluate(node, XPathConstants.STRING);
+        return null;
     }
 
     private QName computeExpressionResultType(XPathExpression expr) {
         Expression innerExpr = ((XPathExpressionImpl) expr).getInternalExpression();
         ItemType resultType = innerExpr.getItemType();
+        boolean allowsMany = Cardinality.allowsMany(innerExpr.getCardinality());
 
-        if(resultType.isAtomicType()) {
+        if(resultType.isAtomicType()/* && !allowsMany*/) {
+            LOGGER.warn("ATOMIC, " + Cardinality.allowsMany(innerExpr.getCardinality()) + ", " + resultType.isPlainType());
             return XPathConstants.STRING;
         }
         else {
+            LOGGER.warn("NODESET, " + Cardinality.allowsMany(innerExpr.getCardinality()) + ", " + resultType.isPlainType());
             return XPathConstants.NODESET;
         }
     }

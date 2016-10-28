@@ -1,17 +1,34 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package nl.xillio.xill.plugins.xml.services;
 
-import com.google.common.collect.Iterables;
 import nl.xillio.xill.plugins.xml.data.XmlNodeVar;
 import nl.xillio.xill.plugins.xml.exceptions.XmlParseException;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Tests to verify the compliancy of the Service with the XPath features, and the underlying SAX library.
@@ -29,82 +46,83 @@ public class XpathServiceTest {
     }
 
     @Test
-    public void testEmptyResult() {
-        List<Object> result  = xpathService.xpath(xmlDocumentMeta, "/a/b/c", namespaces);
+    public void testEmptyResultNodeList() {
+        Object result  = xpathService.xpath2(xmlDocumentMeta, "//a", namespaces);
 
-        Assert.assertTrue(result.size() == 0);
+        Assert.assertTrue(result instanceof NodeList);
+        NodeList resultList = (NodeList) result;
+        Assert.assertEquals(resultList.getLength(), 0);
+    }
+
+    @Test
+    public void testEmptyResultString() {
+        Object result  = xpathService.xpath2(xmlDocumentMeta, "count(/a/b/c/text())", namespaces);
+
+        Assert.assertTrue(result instanceof String);
+        Assert.assertEquals(result, "0");
     }
 
     @Test
     public void testGetNodeList() {
-        List<Object> result = xpathService.xpath(xmlDocumentMeta, "//idc:field", namespaces);
+        Object result = xpathService.xpath2(xmlDocumentMeta, "//idc:field", namespaces);
 
-        Assert.assertEquals(result.size(), 2);
+        Assert.assertTrue(result instanceof NodeList);
+        NodeList resultNodeList = (NodeList) result;
+        Assert.assertEquals(resultNodeList.getLength(), 2);
     }
 
     @Test
     public void testGetNode() {
-        List<Object> result = xpathService.xpath(xmlDocumentMeta, "//idc:field[@name='field1']", namespaces);
+        Object result = xpathService.xpath2(xmlDocumentMeta, "//idc:field[@name='field1']", namespaces);
 
-        Assert.assertEquals(result.size(), 1);
+        Assert.assertTrue(result instanceof NodeList);
+        NodeList resultNodeList = (NodeList) result;
+        Assert.assertEquals(resultNodeList.getLength(), 1);
     }
 
     @Test
     public void testGetString() {
-        List<Object> result = xpathService.xpath(xmlDocumentMeta, "//idc:field[@name='field1']/name(@*[1])", namespaces);
+        Object result = xpathService.xpath2(xmlDocumentMeta, "//idc:field[@name='field1']/name(@*[1])", namespaces);
 
-        Assert.assertEquals(result.size(), 1);
-        Assert.assertTrue(result.get(0) instanceof String);
-        Assert.assertEquals(result.get(0), "name");
+        Assert.assertTrue(result instanceof String);
+        String resultString = (String) result;
+        Assert.assertEquals(resultString, "name");
     }
 
     @Test
-    // normal text node content
     public void testGetText() {
-        List<Object> result = xpathService.xpath(xmlDocumentMeta, "//idc:field[@name='field1']/text()", namespaces);
+        Object result;
+        // normal text node content
+        result = xpathService.xpath2(xmlDocumentMeta, "//idc:field[@name='field1']/text()", namespaces);
+        assertStringUnaryList(result, "1");
 
-        Assert.assertEquals(result.size(), 1);
-        Assert.assertTrue(result.get(0) instanceof String);
-        Assert.assertEquals(result.get(0), "1");
+        // text from CDATA
+        result = xpathService.xpath2(xmlDocumentMeta, "/idc:row/elementWithOnlyCDATA/text()", namespaces);
+        assertStringUnaryList(result, "cdata");
+
+        // text from CDATA and multiple text nodes
+        result = xpathService.xpath2(xmlDocumentMeta, "/idc:row/elementWithManyText/text()", namespaces);
+        assertStringUnaryList(result, "text1\n"); // sort of bug in the xpath processor with multiple text nodes and CDATA: text() retrieves only the first. Workaround: extract the node and then get the text()
+
     }
 
-    @Test
-    // function producing text
-    public void testGetText2() {
-        List<Object> result = xpathService.xpath(xmlDocumentMeta, "//idc:field[@name='field1']/concat(text(), 'x')", namespaces);
-
-        Assert.assertEquals(result.size(), 1);
-        Assert.assertTrue(result.get(0) instanceof String);
-        Assert.assertEquals(result.get(0), "1x");
+    private void assertStringUnaryList(Object xpathResult, String expectedValue) {
+        Assert.assertTrue(xpathResult instanceof NodeList);
+        NodeList resultNodeList = (NodeList) xpathResult;
+        Assert.assertEquals(resultNodeList.getLength(), 1);
+        Assert.assertTrue(resultNodeList.item(0).getNodeType() == Node.TEXT_NODE || resultNodeList.item(0).getNodeType() == Node.CDATA_SECTION_NODE);
+        Assert.assertEquals(resultNodeList.item(0).getTextContent(), expectedValue);
     }
 
-    @Test
-    // text from CDATA
-    public void testGetText3() {
-        List<Object> result = xpathService.xpath(xmlDocumentMeta, "/idc:row/elementWithOnlyCDATA/text()", namespaces);
-
-        Assert.assertEquals(result.size(), 1);
-        Assert.assertTrue(result.get(0) instanceof String);
-        Assert.assertEquals(result.get(0), "cdata");
-    }
-
-    @Test
-    // text from CDATA and multiple text nodes
-    public void testGetText4() {
-        List<Object> result = xpathService.xpath(xmlDocumentMeta, "/idc:row/elementWithManyText/text()", namespaces);
-
-        Assert.assertEquals(result.size(), 1);
-        Assert.assertTrue(result.get(0) instanceof String);
-        Assert.assertEquals(result.get(0), "text1\ntext2\ntext3");
-    }
 
     @Test
     // string list
     public void testGetStringList() {
-        List<Object> result = xpathService.xpath(xmlDocumentMeta, "/idc:row/elementWithAttributes/@*", namespaces);
-        List<Object> expected = Arrays.asList(new String[] {"1", "2"});
-
-        Assert.assertEquals(result.size(), 2);
-        Assert.assertTrue(Iterables.elementsEqual(result, expected));
+        Object result = xpathService.xpath2(xmlDocumentMeta, "/idc:row/elementWithAttributes/@*", namespaces);
+        Assert.assertTrue(result instanceof NodeList);
+        NodeList resultNodeList = (NodeList)result;
+        Assert.assertEquals(resultNodeList.getLength(), 2);
+        Assert.assertEquals(resultNodeList.item(0).getNodeValue(), "1");
+        Assert.assertEquals(resultNodeList.item(1).getNodeValue(), "2");
     }
 }
