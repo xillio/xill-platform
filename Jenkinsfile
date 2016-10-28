@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+(\.(d+|x))+/) {
+if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+(\.(d+|x))+/ || true) {
     println 'This commit is on the master or a release branch. A full test and deployment will be executed...'
 
     String nativeProfile = '-P build-native'
@@ -21,7 +21,7 @@ if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+(\.(d+|x))+/) {
     currentBuild.displayName = "${env.BRANCH_NAME}: ${currentBuild.number}"
 
     parallel(
-            /*"Windows": {
+            "Windows": {
                 buildOn(
                         platform: 'windows',
                         mavenArgs: nativeProfile,
@@ -35,7 +35,7 @@ if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+(\.(d+|x))+/) {
                         mavenArgs: nativeProfile,
                         buildPhase: 'deploy'
                 )
-            },*/
+            },
 
             "Mac OSX": {
                 buildOn(
