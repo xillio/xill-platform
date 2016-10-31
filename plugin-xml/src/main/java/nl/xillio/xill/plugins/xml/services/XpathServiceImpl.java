@@ -19,16 +19,13 @@ import com.google.inject.Singleton;
 import me.biesaart.utils.Log;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.type.ItemType;
-import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.xpath.XPathExpressionImpl;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 import nl.xillio.xill.api.data.XmlNode;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.OperationFailedException;
-import nl.xillio.xill.plugins.xml.data.XmlNodeVar;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
@@ -41,14 +38,14 @@ import java.util.Map;
  * This class is the main implementation of the {@link XpathService}
  *
  * @author Zbynek Hochmann
+ * @author andrea.parrilli
  */
 
 @Singleton
 public class XpathServiceImpl implements XpathService {
-
     private static final XPathFactory xpf = new XPathFactoryImpl();
-
     private static final Logger LOGGER = Log.get();
+
 
     @Override
     public Object xpath(final XmlNode node, final String xpathQuery, final Map<String, String> namespaces) {
@@ -72,6 +69,7 @@ public class XpathServiceImpl implements XpathService {
 
         return result;
     }
+
 
     // sets the namespaces for this xpath compilation
     private XPath makeXpathWithNamespaces(final XmlNode node, final Map<String, String> namespaces) {
@@ -99,35 +97,16 @@ public class XpathServiceImpl implements XpathService {
         ItemType resultType = innerExpr.getItemType();
 
         if(resultType.isAtomicType()) {
-            //TODO
-            LOGGER.warn("ATOMIC, " + Cardinality.allowsMany(innerExpr.getCardinality()) + ", " + resultType.isPlainType());
             return XPathConstants.STRING;
         }
         else {
-            //TODO
-            LOGGER.warn("NODESET, " + Cardinality.allowsMany(innerExpr.getCardinality()) + ", " + resultType.isPlainType());
             return XPathConstants.NODESET;
         }
     }
 
-    private String xPathText(final XPath xpath, final Object node, final String expression) throws XPathExpressionException {
-        return xpath.compile(expression).evaluate(node).trim();
-    }
-
-    private static Object parseVariable(final Node node) {
-        switch (node.getNodeType()) {
-            case Node.COMMENT_NODE:
-            case Node.ATTRIBUTE_NODE:
-            case Node.CDATA_SECTION_NODE:
-            case Node.TEXT_NODE:
-                return node.getNodeValue();
-            default:
-                return new XmlNodeVar(node);
-        }
-    }
 
     /**
-     * Innerclass for handling XML namespaces
+     * Inner class for handling XML namespaces.
      */
     private class HTMLNamespaceContext implements NamespaceContext {
         private Document document;
