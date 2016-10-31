@@ -35,7 +35,7 @@ import static org.testng.Assert.assertSame;
 public class XpathConstructTest {
 
     /**
-     * Test the process method under normal circumstances
+     * Test the process method under normal circumstances.
      */
     @Test
     public void testProcess() {

@@ -20,8 +20,7 @@
 	<idc:field name="field1">1</idc:field>
 	<idc:field name="field2">1</idc:field>
 	<elementWithAttributes attribute1='1' attribute2='2'></elementWithAttributes>
-	<elementWithOnlyCDATA>
-<![CDATA[cdata]]>
+	<elementWithOnlyCDATA><![CDATA[cdata]]>
 	</elementWithOnlyCDATA>
 	<elementWithManyText>text1
 <![CDATA[text2]]>
