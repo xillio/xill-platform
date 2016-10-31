@@ -73,6 +73,7 @@ public class XpathServiceImpl implements XpathService {
         return result;
     }
 
+    // sets the namespaces for this xpath compilation
     private XPath makeXpathWithNamespaces(final XmlNode node, final Map<String, String> namespaces) {
         HTMLNamespaceContext namespaceContext = new HTMLNamespaceContext(namespaces);
         XPath xpath = xpf.newXPath();
@@ -83,6 +84,7 @@ public class XpathServiceImpl implements XpathService {
         return xpath;
     }
 
+
     private XPathExpression compileXpath(final XPath xpath, final String expression) throws XPathExpressionException {
         try {
             return xpath.compile(expression);
@@ -90,16 +92,6 @@ public class XpathServiceImpl implements XpathService {
             LOGGER.error("Failed to run xpath expression", e);
             throw new XPathExpressionException(e.getMessage());
         }
-    }
-
-    private Object evaluateExpression(XPathExpression expr, final Object node) throws XPathExpressionException {
-        try {
-            return expr.evaluate(node, computeExpressionResultType(expr));
-        } catch (Exception e) {
-            LOGGER.warn("Exception while evaluating xpath expression", e);
-        }
-
-        return null;
     }
 
     private QName computeExpressionResultType(XPathExpression expr) {

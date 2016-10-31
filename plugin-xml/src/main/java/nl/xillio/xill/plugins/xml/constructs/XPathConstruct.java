@@ -23,23 +23,25 @@ import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.data.XmlNode;
-import nl.xillio.xill.api.errors.RobotRuntimeException;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
+import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.xml.data.XmlNodeVar;
 import nl.xillio.xill.plugins.xml.services.XpathService;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 /**
- * Returns selected XML node(s) from XML document using XPath locator
+ * Returns selected XML node(s) from XML document using XPath locator.
+ * Converts the output to facilitate interaction with Xill: single valued lists are converted to ATOMIC,
+ * attributes are converted to OBJECT, text nodes af all kinds are converted to strings.
  *
  * @author Zbynek Hochmann
+ * @author andrea.parrilli
  */
 public class XPathConstruct extends Construct {
     @Inject
@@ -57,53 +59,79 @@ public class XPathConstruct extends Construct {
 
     @SuppressWarnings("unchecked")
     static MetaExpression process(MetaExpression elementVar, MetaExpression xpathVar, MetaExpression namespacesVar, XpathService service) {
+        // Validate
         XmlNode node = assertMeta(elementVar, "node", XmlNode.class, "XML node");
 
         Map<String, String> namespaces = new LinkedHashMap<>();
         if (!namespacesVar.isNull()) {
             if (namespacesVar.getType() != ExpressionDataType.OBJECT) {
-                throw new RobotRuntimeException("Invalid namespace data");
+                throw new InvalidUserInputException("invalid namespace info: should be a map, got " + namespacesVar.getType().toString(),
+                        namespacesVar.getStringValue(),
+                        "a xill map containing as keys the namespaces shorthands");
             }
             for (Entry<String, MetaExpression> pair : ((Map<String, MetaExpression>) namespacesVar.getValue()).entrySet()) {
                 namespaces.put(pair.getKey(), pair.getValue().getStringValue());
             }
         }
 
-        List<MetaExpression> output = new ArrayList<>();
-
-
         Object result = service.xpath(node, xpathVar.getStringValue(), namespaces);
-        // determine the kind of return: NULL, ATOMIC or LIST
-        if(result instanceof NodeList) {
-            NodeList resultNodeList = (NodeList) result;
-            int resultCardinality = resultNodeList.getLength();
+        return xpathResultToMetaExpression(result, service);
+    }
 
-            if(resultCardinality == 0) {
-                return NULL;
-            }
-            else if(resultCardinality == 1) {
-                return getOutput(resultNodeList.item(0));
-            }
-            else {
-                return fromValue(service.asStream(resultNodeList).map(XPathConstruct::getOutput).collect(Collectors.toList()));
-            }
-        } else {
-            // String
-            return getOutput(result);
+
+    protected static MetaExpression xpathResultToMetaExpression(Object result, XpathService service) {
+        if(result instanceof String) {
+            return fromValue((String) result);
+        }
+        else if(result instanceof NodeList) {
+            return xpathResultToMetaExpression((NodeList) result, service);
+        }
+        else if(result instanceof Node) {
+            return xpathResultToMetaExpression((Node) result);
+        }
+        else {
+            throw new OperationFailedException("extract information from XML node list", "unexpected result type: " + result.getClass().getSimpleName());
         }
     }
 
-    static private MetaExpression getOutput(Object value) {
-        if (value instanceof String) {
-            return fromValue((String) value);
-        } else if (value instanceof Node) {
-            Node outputNode = (Node) value;
-            MetaExpression output = fromValue(outputNode.toString());
-            output.storeMeta(new XmlNodeVar(outputNode));
-            return output;
-        } else {
-            throw new RobotRuntimeException("Invalid XPath type!");
+
+    protected static MetaExpression xpathResultToMetaExpression(final NodeList result, XpathService service) {
+        int resultCardinality = result.getLength();
+
+        if(resultCardinality == 0) {
+            return NULL;
+        }
+        else if(resultCardinality == 1) {
+            return xpathResultToMetaExpression(result.item(0));
+        }
+        else {
+            return fromValue(service.asStream(result).map(XPathConstruct::xpathResultToMetaExpression).collect(Collectors.toList()));
         }
     }
 
+
+    protected static MetaExpression xpathResultToMetaExpression(final Node node) {
+        short nodeType = node.getNodeType();
+        if (nodeType == Node.CDATA_SECTION_NODE ||
+                nodeType == Node.ENTITY_NODE ||
+                nodeType == Node.TEXT_NODE) {
+            return fromValue(node.getTextContent());
+        }
+        else if (nodeType == Node.ATTRIBUTE_NODE) {
+            LinkedHashMap<String, MetaExpression> attributeMap = new LinkedHashMap<>();
+            attributeMap.put(node.getNodeName(), fromValue(node.getNodeValue()));
+            return fromValue(attributeMap);
+        }
+        else {
+            // XML nodes that cannot be converted to something xill, attach metadata expression
+            return makeXmlNodeMetaExpression(node);
+        }
+    }
+
+
+    protected static MetaExpression makeXmlNodeMetaExpression(final Node node) {
+        MetaExpression output = fromValue(node.toString());
+        output.storeMeta(new XmlNodeVar(node));
+        return output;
+    }
 }
