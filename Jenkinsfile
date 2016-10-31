@@ -58,7 +58,7 @@ if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+(\.(d+|x))+/) {
     }
 
     buildOn(
-            platform: 'windows',
+            platform: 'slave',
             runSonar: true,
             buildPhase: 'verify'
     )
