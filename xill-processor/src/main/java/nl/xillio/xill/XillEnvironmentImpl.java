@@ -63,7 +63,9 @@ public class XillEnvironmentImpl implements XillEnvironment {
 
     @Override
     public XillEnvironment addFolder(Path path) throws IOException {
-        folders.add(path);
+        if (Files.exists(path)) {
+            folders.add(path);
+        }
         return this;
     }
 
