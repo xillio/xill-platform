@@ -106,7 +106,7 @@ void buildOn(Map args) {
                         // Run in batch mode (headless)
                         "-B",
                         // Pass the sonar url
-                        "-Dsonar.url=https://sonaross.xillio.com",
+                        "-Dsonar.host.url=https://sonaross.xillio.com",
                         // Uncomment this to enable verbose builds
                         //"-X"
                 ]
