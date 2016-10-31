@@ -54,11 +54,10 @@ public class StringUtilityServiceImpl implements StringUtilityService {
 
         int[] dl = workspace;
         int dlIndex = 0;
-        int sPrevIndex = 0, tPrevIndex = 0, rowBefore = 0, min = 0, cost = 0, tmp = 0;
+        int sPrevIndex = 0, tPrevIndex = 0, rowBefore, min, cost, tmp;
         int tri = lenS1 + 2;
 
         // start row with constant
-        dlIndex = 0;
         for (tmp = 0; tmp < lenT1; tmp++) {
             dl[dlIndex] = tmp;
             dlIndex += lenS1;
