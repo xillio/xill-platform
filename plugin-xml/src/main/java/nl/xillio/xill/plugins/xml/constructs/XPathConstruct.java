@@ -123,7 +123,7 @@ public class XPathConstruct extends Construct {
             return fromValue(attributeMap);
         }
         else {
-            // XML nodes that cannot be converted to something xill, attach metadata expression
+            // XML nodes that cannot be converted to something xill: attach metadata expression
             return makeXmlNodeMetaExpression(node);
         }
     }
