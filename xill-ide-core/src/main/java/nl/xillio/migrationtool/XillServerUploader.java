@@ -216,7 +216,8 @@ public class XillServerUploader implements AutoCloseable {
         if (resources == null) {
             return false;
         }
-        return resources.stream().filter(r -> ((Map) r).get("projectPath").equals(resourceName)).findAny().isPresent();
+
+        return resources.stream().filter(r -> ((Map) r).get("projectPath").equals(resourceName.replace(':', '/'))).findAny().isPresent();
     }
 
     /**
@@ -290,7 +291,7 @@ public class XillServerUploader implements AutoCloseable {
     }
 
     private void doDelete(final String uri) throws IOException {
-        executor.execute(Request.Delete(baseUrl + uri));
+        executor.execute(Request.Delete(baseUrl + uri).addHeader(authorizationHeader));
     }
 
     private String doPost(final String uri, final HttpEntity entity) throws IOException {
