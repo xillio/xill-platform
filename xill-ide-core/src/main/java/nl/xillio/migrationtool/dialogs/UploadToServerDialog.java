@@ -60,7 +60,6 @@ public class UploadToServerDialog extends FXMLDialog {
     private final XillServerUploader xillServerUploader = new XillServerUploader();
     private List<String> uploadedRobots = new LinkedList<>();
     private String uploadedProjectId = "";
-    private List<String> invalidRobots = new LinkedList<>();
     private boolean overwriteAll = false;
 
     private static final String MAX_FILE_SIZE_SETTINGS_KEY = "spring.http.multipart.max-file-size";
@@ -111,7 +110,6 @@ public class UploadToServerDialog extends FXMLDialog {
 
             // Clean up
             uploadedRobots.clear();
-            invalidRobots.clear();
             overwriteAll = false;
 
             // Get current server settings
@@ -126,11 +124,6 @@ public class UploadToServerDialog extends FXMLDialog {
             // Process items (do selected robots and resources upload)
             if (!processItems(treeItems, projectId)) {
                 return; // Process has been user interrupted - so no success dialog is shown
-            }
-
-            if (!invalidRobots.isEmpty()) { // Some robots have invalid name
-                InvalidRobotNamesDialog dialog = new InvalidRobotNamesDialog(StringUtils.join(invalidRobots.toArray(), '\n'));
-                dialog.showAndWait();
             }
 
             // Validate uploaded robots (in a one bulk server request - because of every Xill environment start is very time consuming)
@@ -304,11 +297,6 @@ public class UploadToServerDialog extends FXMLDialog {
     }
 
     private void uploadRobot(final File robotFile, final File projectFolder, String projectId) throws IOException  {
-        // Do test for invalid robot name
-        if (isInvalidRobotFile(robotFile)) {
-            invalidRobots.add(xillServerUploader.getFqn(robotFile, projectFolder));
-        }
-
         // Check if robot does not exceed the multipart file size limit
         if (robotFile.length() > maxFileSize) {
             final String robotFqn = xillServerUploader.getFqn(robotFile, projectFolder);
@@ -417,12 +405,6 @@ public class UploadToServerDialog extends FXMLDialog {
             throw new IOException("Invalid response from the server.");
         }
         maxFileSize = Long.valueOf(settings.get(MAX_FILE_SIZE_SETTINGS_KEY));
-    }
-
-    private boolean isInvalidRobotFile(final File itemFile) {
-        final boolean isXill = itemFile.getName().matches("^.*\\.xill$"); //it is a robot
-        final boolean validName = itemFile.getName().matches("^[_a-zA-Z][a-zA-Z0-9_]*\\.xill$"); //name is valid
-        return (isXill && !validName);
     }
 
     /**
