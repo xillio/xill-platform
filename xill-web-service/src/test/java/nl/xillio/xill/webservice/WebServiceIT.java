@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,6 +37,7 @@ import static nl.xillio.xill.webservice.IsValidUrlMatcher.isValidUrl;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -79,7 +80,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         // With a valid robot name
                         .content(jsonBody(
-                                "robot", "example.unittest.RunRobot"
+                                "robot", "project.ScrapeFiles"
                         ))
         )
                 // The response must be 201-CREATED
@@ -133,7 +134,30 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                                 "robot", "unittest.pool.WorkerError"
                         ))
         )
-                .andExpect(status().isServiceUnavailable());
+                .andExpect(status().isServiceUnavailable())
+                .andDo(document("create-worker-pool-full"));
+    }
+
+    @Test
+    public void testDeleteWorker() throws Exception {
+        // Deleting a worker by id
+        this.mockMvc.perform(
+                delete("/workers/{id}").param("id", "3")
+        )
+                // Should return 204-No Content
+                .andExpect(status().isNoContent())
+                .andDo(document("delete-worker"));
+    }
+
+    @Test
+    public void testDeleteNonExistingWorker() throws Exception {
+        // Deleting a non-existing worker
+        this.mockMvc.perform(
+                delete("/workers/{id}").param("id", "000400")
+        )
+                // Should return 404-Not Found
+                .andExpect(status().isNotFound())
+                .andDo(document("delete-worker-not-exist"));
     }
 
 
