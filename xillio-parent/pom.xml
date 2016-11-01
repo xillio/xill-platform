@@ -53,8 +53,8 @@
 
     <properties>
         <xill.version>${project.version}</xill.version>
-        <!-- Dependencies -->
         <java.version>1.8</java.version>
+        <!-- Dependencies -->
         <testng.version>6.9.10</testng.version>
         <mockito.version>1.10.19</mockito.version>
         <reflections.version>0.9.10</reflections.version>
@@ -75,7 +75,6 @@
         <sqlite.verion>3.8.11.2</sqlite.verion>
         <oracle.version>12.1.0.1.0</oracle.version>
         <jtds.version>1.3.1</jtds.version>
-        <mariadb.version>1.4.5</mariadb.version>
         <freemarker.version>2.3.23</freemarker.version>
         <pegdown.version>1.6.0</pegdown.version>
         <elasticsearch.version>1.6.0</elasticsearch.version>
@@ -84,10 +83,10 @@
         <phantomjs.binary.version>2.1.1</phantomjs.binary.version>
         <httpclient.version>4.5.1</httpclient.version>
         <jsoup.version>1.8.3</jsoup.version>
-        <mongo.java.driver.version>3.2.2</mongo.java.driver.version>
-        <mysql.driver.version>6.0.2</mysql.driver.version>
+        <mysql.version>6.0.2</mysql.version>
         <flapdoodle.version>1.50.5</flapdoodle.version>
         <asm.version>5.0.1</asm.version>
+        <springboot.version>1.4.1.RELEASE</springboot.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -132,6 +131,19 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <!-- Import dependency management from Spring Boot -->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>1.4.1.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
             <dependency>
                 <groupId>de.flapdoodle.embed</groupId>
                 <artifactId>de.flapdoodle.embed.mongo</artifactId>
@@ -181,11 +193,6 @@
                 <groupId>org.freemarker</groupId>
                 <artifactId>freemarker</artifactId>
                 <version>${freemarker.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mariadb.jdbc</groupId>
-                <artifactId>mariadb-java-client</artifactId>
-                <version>${mariadb.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.sourceforge.jtds</groupId>
@@ -293,11 +300,6 @@
                 <version>${log4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql.driver.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
                 <version>${log4j.version}</version>
@@ -331,11 +333,6 @@
                 <groupId>org.jasypt</groupId>
                 <artifactId>jasypt</artifactId>
                 <version>${jasypt.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mongodb</groupId>
-                <artifactId>mongo-java-driver</artifactId>
-                <version>${mongo.java.driver.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.ow2.asm</groupId>
@@ -454,7 +451,11 @@
     <build>
         <pluginManagement>
             <plugins>
-
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${springboot.version}</version>
+                </plugin>
                 <plugin>
                     <groupId>com.zenjava</groupId>
                     <artifactId>javafx-maven-plugin</artifactId>
