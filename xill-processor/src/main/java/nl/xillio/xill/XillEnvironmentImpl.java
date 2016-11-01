@@ -25,9 +25,10 @@ import nl.xillio.util.XillioHomeFolder;
 import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.api.XillProcessor;
+import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.debugging.XillDebugger;
+import nl.xillio.xill.services.ProgressTracker;
 import nl.xillio.xill.services.inject.DefaultInjectorModule;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -51,6 +52,8 @@ public class XillEnvironmentImpl implements XillEnvironment {
     private Map<String, XillPlugin> loadedPlugins = new HashMap<>();
     private List<PluginLoadFailure> invalidPlugins = new ArrayList<>();
     private boolean needLoad = true;
+    private XillThreadFactory xillThreadFactory;
+    private ProgressTracker progressTracker;
 
     @Override
     public XillEnvironment setLoadHomeFolder(boolean value) {
@@ -60,13 +63,20 @@ public class XillEnvironmentImpl implements XillEnvironment {
 
     @Override
     public XillEnvironment addFolder(Path path) throws IOException {
-        folders.add(path);
+        if (Files.exists(path)) {
+            folders.add(path);
+        }
         return this;
     }
 
     @Override
     public XillEnvironment setRootInjector(Injector injector) {
         rootInjector = injector;
+        return this;
+    }
+
+    public XillEnvironment setXillThreadFactory(XillThreadFactory xillThreadFactory) {
+        this.xillThreadFactory = xillThreadFactory;
         return this;
     }
 
@@ -84,8 +94,12 @@ public class XillEnvironmentImpl implements XillEnvironment {
         loadPlugins(folders);
         needLoad = false;
 
+        // Create the default thread factory when one has not been set
+        if (xillThreadFactory == null)
+            xillThreadFactory = new XillThreadFactoryImpl();
+
         List<Module> modules = new ArrayList<>(loadedPlugins.values());
-        modules.add(new DefaultInjectorModule(this));
+        modules.add(new DefaultInjectorModule(this, xillThreadFactory));
         Injector configuredInjector = rootInjector.createChildInjector(modules);
 
         LOGGER.info("Injecting plugin members");
@@ -95,6 +109,8 @@ public class XillEnvironmentImpl implements XillEnvironment {
         LOGGER.info("Loading constructs");
         // Load constructs
         loadedPlugins.values().forEach(XillPlugin::initialize);
+
+        progressTracker = configuredInjector.getInstance(ProgressTracker.class);
 
         return this;
     }
@@ -121,6 +137,11 @@ public class XillEnvironmentImpl implements XillEnvironment {
     @Override
     public List<PluginLoadFailure> getMissingLicensePlugins() {
         return Collections.unmodifiableList(invalidPlugins);
+    }
+
+    @Override
+    public void close() {
+        getPlugins().forEach(XillPlugin::close);
     }
 
     private void loadClasspathPlugins() {
@@ -190,4 +211,12 @@ public class XillEnvironmentImpl implements XillEnvironment {
         }
     }
 
+    /**
+     * Gets a {@link ProgressTracker} object.
+     *
+     * @return ProgressTracker object
+     */
+    public ProgressTracker getProgressTracker() {
+        return progressTracker;
+    }
 }

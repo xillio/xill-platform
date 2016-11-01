@@ -26,9 +26,15 @@
 
     <groupId>nl.xillio.xill</groupId>
     <artifactId>xill-build</artifactId>
-    <version>3.4.1</version>
     <packaging>pom</packaging>
     <inceptionYear>2014</inceptionYear>
+
+    <parent>
+        <groupId>nl.xillio</groupId>
+        <artifactId>xillio-parent</artifactId>
+        <version>3.5.0-SNAPSHOT</version>
+        <relativePath>xillio-parent</relativePath>
+    </parent>
 
     <organization>
         <name>Xillio</name>
@@ -60,56 +66,58 @@
         <maven>3.3.9</maven>
     </prerequisites>
 
+    <distributionManagement>
+        <repository>
+            <id>xillio-releases</id>
+            <url>https://maven.xillio.com/artifactory/oss-libs-release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>xillio-snapshots</id>
+            <url>https://maven.xillio.com/artifactory/oss-libs-snapshot/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <properties>
         <sonar.jacoco.itReportPath>${project.build.directory}/jacoco-it.exec</sonar.jacoco.itReportPath>
         <sonar.jacoco.reportPath>${project.build.directory}/jacoco-ut.exec</sonar.jacoco.reportPath>
         <sonar.exclusions>**/src/main/java/nl/xillio/migrationtool/**/*</sonar.exclusions>
         <sonar.language>java</sonar.language>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
+
     <modules>
-        <module>xill-plugin-archetype</module>
+        <module>plugin-database</module>
+        <module>plugin-document</module>
+        <module>plugin-excel</module>
+        <module>plugin-exiftool</module>
+        <module>plugin-jdbc</module>
+        <module>plugin-mariadb</module>
+        <module>plugin-mssql</module>
+        <module>plugin-mysql</module>
+        <module>plugin-oracle</module>
+        <module>plugin-properties</module>
+        <module>plugin-rest</module>
+        <module>plugin-sqlite</module>
+        <module>plugin-web</module>
+        <module>plugin-xml</module>
+        <module>plugin-xurl</module>
         <module>xill-api</module>
         <module>xill-assemblies</module>
+        <module>xill-cli</module>
+        <module>xill-ide</module>
         <module>xill-parent</module>
+        <module>xill-plugin-archetype</module>
         <module>xill-plugins-parent</module>
+        <module>xill-processor</module>
         <module>xill-testutils</module>
+        <module>xillio-parent</module>
     </modules>
-
-    <profiles>
-        <profile>
-            <id>enable-xill-runtime</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>xill-runtime</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>enable-xill-ide</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>xill-ide-core</module>
-                <module>xill-ide-launcher</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>enable-xill-cli</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>xill-cli</module>
-            </modules>
-        </profile>
-    </profiles>
 
     <build>
         <plugins>
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>3.0.1</version>
             </plugin>
             <plugin>
                 <groupId>com.mycila</groupId>
@@ -140,10 +148,15 @@
                         <exclude>LICENSE</exclude>
                         <exclude>plugin-web/**/LICENSE.BSD</exclude>
                         <exclude>xill-plugin-archetype/src/main/**/archetype-resources/**</exclude>
+                        <exclude>**/*.icns</exclude>
+                        <exclude>**/*.unknown</exclude>
+                        <exclude>**/*.dat</exclude>
+                        <exclude>**/LICENSE</exclude>
                     </excludes>
                     <mapping>
                         <fxml>XML_STYLE</fxml>
                         <xill>JAVADOC_STYLE</xill>
+                        <Jenkinsfile>JAVADOC_STYLE</Jenkinsfile>
                     </mapping>
                 </configuration>
                 <executions>
@@ -165,4 +178,13 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>build-native</id>
+            <modules>
+                <module>xill-ide-native</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>

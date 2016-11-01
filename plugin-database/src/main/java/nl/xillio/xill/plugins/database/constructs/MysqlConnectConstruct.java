@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.plugins.database.constructs;
 
+import com.google.inject.Inject;
+import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.plugins.database.util.Database;
 
 /**
@@ -26,8 +28,9 @@ public class MysqlConnectConstruct extends SimplesqlConnectConstruct {
     /**
      * The constructor for the {@link MysqlConnectConstruct}.
      */
-    public MysqlConnectConstruct() {
-        super(Database.MYSQL.getName(), 3306);
+    @Inject
+    public MysqlConnectConstruct(XillThreadFactory xillThreadFactory) {
+        super(xillThreadFactory, Database.MYSQL.getName(), 3306);
     }
 
 }

@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.plugins.database.constructs;
 
+import com.google.inject.Inject;
+import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.construct.Argument;
@@ -41,7 +43,13 @@ import java.util.Map;
 @Deprecated
 public class ConnectConstruct extends BaseDatabaseConstruct {
 
+    @Inject
+    public ConnectConstruct(XillThreadFactory xillThreadFactory) {
+        super(xillThreadFactory);
+    }
+
     @Override
+    @SuppressWarnings("squid:S2095")  // Suppress "Resources should be closed": Arguments do not need to be closed here, because ConstructProcessor closes them
     public ConstructProcessor doPrepareProcess(final ConstructContext context) {
         Argument[] args =
                 {new Argument("database", ATOMIC),

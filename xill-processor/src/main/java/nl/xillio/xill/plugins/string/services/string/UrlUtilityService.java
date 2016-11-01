@@ -75,4 +75,11 @@ public interface UrlUtilityService {
      * @return The protocol that is used.
      */
     String getProtocol(final String url);
+
+    /**
+     * Checks if the URL contains a protocol.
+     * @param url The URL to check.
+     * @return A boolean describing if the URL has a protocol.
+     */
+    boolean hasProtocol(final String url);
 }

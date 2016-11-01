@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.string.services.string;
 
 import com.google.inject.ImplementedBy;
-import nl.xillio.xill.plugins.string.exceptions.FailedToGetMatcherException;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -33,11 +32,18 @@ public interface RegexService {
      * @param value   the haystack
      * @param timeout in milliseconds
      * @return the matcher
-     * @throws FailedToGetMatcherException Is thrown when the matcher fails.
      * @throws IllegalArgumentException    Is thrown when an illegal argument is passed to the regular expression.
      * @throws PatternSyntaxException      Is thrown when the regular expression has a syntax error.
      */
-    Matcher getMatcher(String regex, String value, int timeout) throws FailedToGetMatcherException, IllegalArgumentException;
+    Matcher getMatcher(String regex, String value, int timeout) throws IllegalArgumentException;
+
+
+    /**
+     * Returns the default Timeout time.
+     *
+     * @return default Timeout time.
+     */
+    int getRegexTimeout();
 
     /**
      * Attempts to match an entire region to a pattern.

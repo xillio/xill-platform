@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
 import org.testng.Assert;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link ToLowerConstruct}.
  */
-public class ToLowerConstructTest {
+public class ToLowerConstructTest extends TestUtils {
 
     /**
      * Test the process method under normal circumstances.
@@ -34,20 +35,39 @@ public class ToLowerConstructTest {
     public void processNormalUsage() {
         // Mock
         String stringValue = "testing";
-        MetaExpression string = mock(MetaExpression.class);
+        MetaExpression string = mockExpression(ATOMIC);
         when(string.getStringValue()).thenReturn(stringValue);
         when(string.isNull()).thenReturn(false);
 
         String returnValue = "testing";
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(stringService.toLowerCase(stringValue)).thenReturn(returnValue);
+
+        ToLowerConstruct construct = new ToLowerConstruct(stringService);
         // Run
-        MetaExpression result = ToLowerConstruct.process(string, stringService);
+        MetaExpression result = process(construct, string);
 
         // Verify
         verify(stringService, times(1)).toLowerCase(stringValue);
 
         // Assert
         Assert.assertEquals(result.getStringValue(), returnValue);
+    }
+
+    /**
+     * Test the process method when null is used.
+     */
+    @Test
+    public void processNullUsage() {
+
+        //Mock
+        StringUtilityService stringService = mock(StringUtilityService.class);
+
+        ToLowerConstruct construct = new ToLowerConstruct(stringService);
+        //Run
+        MetaExpression result = process(construct, NULL);
+
+        // Assert
+        Assert.assertEquals(result, NULL);
     }
 }

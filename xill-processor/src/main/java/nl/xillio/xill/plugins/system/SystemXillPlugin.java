@@ -15,10 +15,19 @@
  */
 package nl.xillio.xill.plugins.system;
 
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import nl.xillio.plugins.XillPlugin;
+import nl.xillio.xill.plugins.system.services.info.ProgressTrackerService;
+import nl.xillio.xill.services.ProgressTracker;
 
 /**
  * This package includes all system constructs.
  */
 public class SystemXillPlugin extends XillPlugin {
+    @Provides
+    @Singleton
+    ProgressTracker progressTracker() {
+        return new ProgressTrackerService();
+    }
 }

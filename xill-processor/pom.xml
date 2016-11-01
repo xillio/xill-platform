@@ -27,7 +27,7 @@
     <parent>
         <groupId>nl.xillio.xill</groupId>
         <artifactId>xill-parent</artifactId>
-        <version>3.4.1</version>
+        <version>3.5.0-SNAPSHOT</version>
         <relativePath>../xill-parent</relativePath>
     </parent>
 
@@ -45,14 +45,110 @@
         <dependency>
             <groupId>nl.xillio.xill</groupId>
             <artifactId>xill.lang.Xill</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
         </dependency>
+        <!-- Xill Plugins -->
+        <dependency>
+            <groupId>nl.xillio.xill</groupId>
+            <artifactId>plugin-database</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>nl.xillio.xill</groupId>
+            <artifactId>plugin-document</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>nl.xillio.xill</groupId>
+            <artifactId>plugin-excel</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>nl.xillio.xill</groupId>
+            <artifactId>plugin-exiftool</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>nl.xillio.xill</groupId>
+            <artifactId>plugin-mariadb</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>nl.xillio.xill</groupId>
+            <artifactId>plugin-mssql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>nl.xillio.xill</groupId>
+            <artifactId>plugin-mysql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>nl.xillio.xill</groupId>
+            <artifactId>plugin-oracle</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>nl.xillio.xill</groupId>
+            <artifactId>plugin-properties</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>nl.xillio.xill</groupId>
+            <artifactId>plugin-rest</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>nl.xillio.xill</groupId>
+            <artifactId>plugin-sqlite</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>nl.xillio.xill</groupId>
+            <artifactId>plugin-web</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>nl.xillio.xill</groupId>
+            <artifactId>plugin-xml</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>nl.xillio.xill</groupId>
+            <artifactId>plugin-xurl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>nl.xillio.xill</groupId>
             <artifactId>xill-testutils</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.flapdoodle.embed</groupId>
+            <artifactId>de.flapdoodle.embed.mongo</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -64,11 +160,17 @@
                 <artifactId>serviceloader-maven-plugin</artifactId>
             </plugin>
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>build-zip</id>
-                        <phase>package</phase>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

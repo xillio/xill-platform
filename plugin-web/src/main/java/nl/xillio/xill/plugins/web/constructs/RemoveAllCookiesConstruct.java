@@ -19,9 +19,7 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
-import nl.xillio.xill.plugins.web.PhantomJSConstruct;
 import nl.xillio.xill.plugins.web.data.WebVariable;
-import nl.xillio.xill.plugins.web.services.web.WebService;
 
 /**
  * Removes all cookies from a currently loaded page context.
@@ -31,7 +29,7 @@ public class RemoveAllCookiesConstruct extends PhantomJSConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                page -> process(page, webService),
+                this::process,
                 new Argument("page", ATOMIC));
     }
 
@@ -39,10 +37,9 @@ public class RemoveAllCookiesConstruct extends PhantomJSConstruct {
      * Tries to delete all cookies from a page in a {@link MetaExpression}.
      *
      * @param page       The {@link MetaExpression} containing the page.
-     * @param webService The service we're using.
      * @return Returns NULL.
      */
-    public static MetaExpression process(final MetaExpression page, final WebService webService) {
+    private MetaExpression process(final MetaExpression page) {
 
         if (page.isNull()) {
             return NULL;
@@ -51,7 +48,7 @@ public class RemoveAllCookiesConstruct extends PhantomJSConstruct {
         checkPageType(page);
 
         WebVariable driver = getPage(page);
-        webService.deleteCookies(driver);
+        getWebService().deleteCookies(driver);
         return NULL;
     }
 

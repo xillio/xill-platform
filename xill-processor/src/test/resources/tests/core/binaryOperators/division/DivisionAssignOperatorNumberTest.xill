@@ -1,0 +1,54 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+* Specification: number /= number MUST return division(number, number)
+* Expected: See dataset
+* Input: See dataset
+*/
+
+use Assert;
+
+foreach(data in getDataset()){
+    Execute(data[0],data[1],data[2]);
+}
+
+function Execute(input1, input2, expected){
+    input1 /= input2;
+    Assert.equal(input1, expected);
+}
+
+// Returns a list of operands and expected results in the format (operand 1, operand 2, expected result)
+function getDataset(){
+    return [
+        [723168,124,5832],                  // Random numbers
+        [-104, -52, 2],                     // Negative values
+        [-9000, 0.20,-45000],               // Negative and postive number
+        [2147483647,0.1,21474836470],       // MAX_INT + 10
+        [-2147483647, 0.5, -4294967294],    // MIN_INT - 1
+        ["174461.625", "0.5", 348923.25],   // String-float numbers
+        ["25", 0.5, 50],                    // String-number and number
+        [1/0, 1, 1/0],                      // POSITIVE INFINITY
+        [4294967296/0, 1, 1/0],             // POSITIVE INFINITY
+        [18446744073709551616/0, 1, 1/0],   // POSITIVE INFINITY
+        [-1/0, 1, -1/0],                    // NEGATIVE INFINITY
+        [-4294967296/0, 1, -1/0],           // NEGATIVE INFINITY
+        [-18446744073709551616/0, 1, -1/0], // NEGATIVE INFINITY
+        [0, 0.0, NaN],                      // Zero-values
+        [0,1241.4123, 0],                   // Zero dividing by any
+        [true, true, 1],                    // True value -1
+        [1, false, 1/0]                     // False value 0
+    ];
+}

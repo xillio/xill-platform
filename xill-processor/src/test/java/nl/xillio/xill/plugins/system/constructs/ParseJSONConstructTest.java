@@ -17,6 +17,7 @@ package nl.xillio.xill.plugins.system.constructs;
 
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.services.json.JsonException;
@@ -41,13 +42,18 @@ public class ParseJSONConstructTest extends TestUtils {
      */
     @Test
     public void testProcess() throws JsonException {
-        // Mock context
+        // Initialize
         String json = "[\"this\", \"is\", \"valid\", \"json\"]";
-        ArrayList<?> expectedResult = new ArrayList<>();
-        MetaExpression expression = mockExpression(ATOMIC);
-        when(expression.getStringValue()).thenReturn(json);
+        ArrayList<String> expectedOutput = new ArrayList<>();
+        expectedOutput.add("this");
+        expectedOutput.add("is");
+        expectedOutput.add("valid");
+        expectedOutput.add("json");
+        MetaExpression expression = fromValue(json);
+
+        // Mock context
         JsonParser parser = mock(JsonParser.class);
-        when(parser.fromJson(eq(json), any())).thenReturn(expectedResult);
+        when(parser.fromJson(eq(json), any())).thenReturn(expectedOutput);
 
         // Run method
         MetaExpression result = ParseJSONConstruct.process(expression, parser);
@@ -56,8 +62,64 @@ public class ParseJSONConstructTest extends TestUtils {
         verify(parser).fromJson(eq(json), any());
 
         // Assertions
-        Assert.assertEquals(result.getValue(), expectedResult);
+        Assert.assertEquals((ArrayList) result.getValue(), parseObject(expectedOutput).getValue());
+        Assert.assertTrue(result.getValue() instanceof ArrayList);
+    }
 
+    /**
+     * Test the process method under normal circumstances with a LIST as argument
+     */
+    @Test
+    public void testListProcess() throws JsonException {
+        // Initialize
+        ArrayList<MetaExpression> json = new ArrayList<>();
+        json.add(fromValue("[\"this\", \"is\"]"));
+        json.add(fromValue("[\"valid\", \"json\"]"));
+
+        ArrayList<ArrayList<String>> expectedOutput = new ArrayList<>();
+        ArrayList<String> outputList1 = new ArrayList<>();
+        outputList1.add("this");
+        outputList1.add("is");
+        ArrayList<String> outputList2 = new ArrayList<>();
+        outputList2.add("valid");
+        outputList2.add("json");
+        expectedOutput.add(outputList1);
+        expectedOutput.add(outputList2);
+        MetaExpression expression = fromValue(json);
+
+        // Mock context
+        JsonParser parser = mock(JsonParser.class);
+        when(parser.fromJson(eq("[\"this\", \"is\"]"), any())).thenReturn(outputList1);
+        when(parser.fromJson(eq("[\"valid\", \"json\"]"), any())).thenReturn(outputList2);
+
+        // Run method
+        MetaExpression result = ParseJSONConstruct.process(expression, parser);
+
+        // Verify calls to service
+        verify(parser, times(2)).fromJson(any(), any());
+
+        // Assertions
+        Assert.assertEquals((ArrayList) result.getValue(), parseObject(expectedOutput).getValue());
+        Assert.assertTrue(result.getValue() instanceof ArrayList);
+    }
+
+    /**
+     * Test the process method when a nested list is given
+     */
+    @Test(expectedExceptions = InvalidUserInputException.class)
+    public void testNestedListException() throws JsonException {
+        // Initialize
+        ArrayList<MetaExpression> list = new ArrayList<>();
+        ArrayList<MetaExpression> nestedList = new ArrayList<>();
+        nestedList.add(fromValue(true));
+        list.add(fromValue("test"));
+        list.add(fromValue(nestedList));
+
+        // Mock context
+        JsonParser parser = mock(JsonParser.class);
+
+        // Run method
+        ParseJSONConstruct.process(fromValue(list), parser);
     }
 
     /**
@@ -67,6 +129,27 @@ public class ParseJSONConstructTest extends TestUtils {
     public void testProcessNullInput() {
         // Run method
         ParseJSONConstruct.process(NULL, null);
+    }
+
+    /**
+     * Test the process method with empty list as input
+     */
+    @Test(expectedExceptions = RobotRuntimeException.class)
+    public void testProcessNullListInput() {
+        ArrayList<MetaExpression> list = new ArrayList<>();
+        list.add(NULL);
+
+        // Run method
+        ParseJSONConstruct.process(fromValue(list), null);
+    }
+
+    /**
+     * Test the process method with empty list as input
+     */
+    @Test(expectedExceptions = InvalidUserInputException.class)
+    public void testProcessEmptyListInput() {
+        // Run method
+        ParseJSONConstruct.process(fromValue(new ArrayList<>()), null);
     }
 
     /**

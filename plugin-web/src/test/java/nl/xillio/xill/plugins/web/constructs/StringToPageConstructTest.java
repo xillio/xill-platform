@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.web.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.web.data.OptionsFactory;
@@ -32,9 +33,9 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 /**
- * test the {@link FromString}.
+ * test the {@link FromStringConstruct}.
  */
-public class StringToPageConstructTest {
+public class StringToPageConstructTest extends TestUtils {
 
     /**
      * Test the process under normal circumstances.
@@ -44,13 +45,21 @@ public class StringToPageConstructTest {
     @Test
     public void testProcessNormalUsage() throws IOException {
         // mock
+        LoadPageConstruct loadpageConstruct = mock(LoadPageConstruct.class);
+
+        FromStringConstruct construct = new FromStringConstruct(loadpageConstruct);
+
         WebService webService = mock(WebService.class);
         FileService fileService = mock(FileService.class);
         OptionsFactory optionsFactory = mock(OptionsFactory.class);
 
+        construct.setWebService(webService);
+        construct.setFileService(fileService);
+        construct.setOptionsFactory(optionsFactory);
+        loadpageConstruct.setWebService(webService);
         // the content variable
         String contentValue = "This is the content";
-        MetaExpression content = mock(MetaExpression.class);
+        MetaExpression content = mockExpression(ATOMIC);
         when(content.getStringValue()).thenReturn(contentValue);
 
         // the file variable
@@ -65,12 +74,11 @@ public class StringToPageConstructTest {
         when(entity.getPage()).thenReturn(pageVariable);
 
         // run
-        FromString.process(content, optionsFactory, fileService, webService);
+        process(construct, content);
 
         // verify
         verify(fileService, times(1)).createTempFile(anyString(), anyString());
         verify(fileService, times(1)).getAbsolutePath(file);
-        verify(webService, times(1)).getEntityFromPool(any(), any());
     }
 
     /**
@@ -81,20 +89,26 @@ public class StringToPageConstructTest {
     @Test(expectedExceptions = RobotRuntimeException.class)
     public void testProcessIOException() throws IOException {
         // mock
+        LoadPageConstruct loadpageConstruct = mock(LoadPageConstruct.class);
+        FromStringConstruct construct = new FromStringConstruct(loadpageConstruct);
         WebService webService = mock(WebService.class);
         FileService fileService = mock(FileService.class);
         OptionsFactory optionsFactory = mock(OptionsFactory.class);
 
+        construct.setWebService(webService);
+        construct.setFileService(fileService);
+        construct.setOptionsFactory(optionsFactory);
+
         // the content variable
         String contentValue = "This is the content";
-        MetaExpression content = mock(MetaExpression.class);
+        MetaExpression content = mockExpression(ATOMIC);
         when(content.getStringValue()).thenReturn(contentValue);
 
         // the process
         when(fileService.createTempFile(anyString(), anyString())).thenThrow(new IOException());
 
         // run
-        FromString.process(content, optionsFactory, fileService, webService);
+        process(construct, content);
     }
 
     /**
@@ -105,19 +119,26 @@ public class StringToPageConstructTest {
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "error")
     public void testProcessExceptionThrown() throws Exception {
         // mock
+        LoadPageConstruct loadpageConstruct = mock(LoadPageConstruct.class);
+        FromStringConstruct construct = new FromStringConstruct(loadpageConstruct);
+
         WebService webService = mock(WebService.class);
         FileService fileService = mock(FileService.class);
         OptionsFactory optionsFactory = mock(OptionsFactory.class);
 
+        construct.setWebService(webService);
+        construct.setFileService(fileService);
+        construct.setOptionsFactory(optionsFactory);
+
         // the content variable
         String contentValue = "This is the content";
-        MetaExpression content = mock(MetaExpression.class);
+        MetaExpression content = mockExpression(ATOMIC);
         when(content.getStringValue()).thenReturn(contentValue);
 
         // the process
         when(fileService.createTempFile(anyString(), anyString())).thenThrow(new RobotRuntimeException("error"));
 
         // run
-        FromString.process(content, optionsFactory, fileService, webService);
+        process(construct, content);
     }
 }

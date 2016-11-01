@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.api.components;
 
+import nl.xillio.xill.services.json.JacksonParser;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -31,8 +32,10 @@ import static org.testng.Assert.assertTrue;
  */
 public class ListExpressionTest {
 
-    ListExpression expression;
-    List<MetaExpression> metas;
+    private ListExpression expression;
+    private List<MetaExpression> metas;
+
+    private ListExpression empty;
 
     public ListExpressionTest(){
         metas = new ArrayList<>();
@@ -42,20 +45,29 @@ public class ListExpressionTest {
         single.add(new AtomicExpression(new StringBehavior("test")));
         metas.add(new ListExpression(single));
         expression = new ListExpression(metas);
+        empty = new ListExpression(new ArrayList<>());
     }
 
     @Test
-    public void testGetChildren() throws Exception {
+    public void testGetChildren() {
         assertTrue(expression.getChildren().size() == 3);
+        assertTrue(empty.getChildren().isEmpty());
     }
 
     @Test
-    public void testGetNumberValue() throws Exception {
+    public void testGetBooleanValue() {
+        assertTrue(expression.getBooleanValue());
+        assertTrue(empty.getBooleanValue());
+    }
+
+    @Test
+    public void testGetNumberValue() {
         assertEquals(expression.getNumberValue(), Double.NaN);
+        assertEquals(empty.getNumberValue(), Double.NaN);
     }
 
     @Test
-    public void testCopy() throws Exception {
+    public void testCopy() {
         MetaExpression copy = expression.copy();
 
         assertEquals(copy.getSize(), expression.getSize());
@@ -68,14 +80,14 @@ public class ListExpressionTest {
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
-    public void testCopyClosed() throws Exception{
+    public void testCopyClosed() {
         MetaExpression copy = expression.copy();
         copy.close();
         copy.copy();
     }
 
     @Test
-    public void testGetSize() throws Exception {
+    public void testGetSize() {
         assertEquals(expression.getSize(), 3);
     }
 

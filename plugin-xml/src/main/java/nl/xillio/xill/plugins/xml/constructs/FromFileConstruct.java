@@ -23,6 +23,7 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.data.XmlNode;
 import nl.xillio.xill.plugins.xml.services.NodeService;
+import nl.xillio.xill.services.files.TextFileReader;
 
 import java.nio.file.Path;
 
@@ -32,20 +33,31 @@ import java.nio.file.Path;
  * @author Zbynek Hochmann
  */
 public class FromFileConstruct extends Construct {
+    private final NodeService nodeService;
+    private final TextFileReader textFileReader;
+
     @Inject
-    private NodeService nodeService;
+    FromFileConstruct(NodeService nodeService, TextFileReader textFileReader) {
+        this.nodeService = nodeService;
+        this.textFileReader = textFileReader;
+    }
 
     @Override
     public ConstructProcessor prepareProcess(ConstructContext context) {
         return new ConstructProcessor(
-                filename -> process(context, filename, nodeService),
+                filename -> process(context, filename),
                 new Argument("uri", ATOMIC)
         );
     }
 
-    static MetaExpression process(final ConstructContext context, MetaExpression fileName, NodeService service) {
+    private MetaExpression process(final ConstructContext context, MetaExpression fileName) {
         Path xmlSource = getPath(context, fileName);
-        XmlNode xmlNode = service.fromFilePath(xmlSource);
+
+        // Get the source text, build the XmlNode.
+        String text = textFileReader.getText(xmlSource, null);
+        XmlNode xmlNode = nodeService.fromString(text);
+
+        // Build the MetaExpression.
         MetaExpression result = fromValue(xmlNode.toString());
         result.storeMeta(xmlNode);
         return result;

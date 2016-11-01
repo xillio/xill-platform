@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
 import org.testng.Assert;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link ToUpperConstruct}.
  */
-public class ToUpperConstructTest {
+public class ToUpperConstructTest extends TestUtils {
 
     /**
      * Test the process method under normal circumstances.
@@ -34,20 +35,39 @@ public class ToUpperConstructTest {
     public void processNormalUsage() {
         // Mock
         String stringValue = "testing";
-        MetaExpression string = mock(MetaExpression.class);
+        MetaExpression string = mockExpression(ATOMIC);
         when(string.getStringValue()).thenReturn(stringValue);
         when(string.isNull()).thenReturn(false);
 
         String returnValue = "TESTING";
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(stringService.toUpperCase(stringValue)).thenReturn(returnValue);
+
+        ToUpperConstruct construct = new ToUpperConstruct(stringService);
         // Run
-        MetaExpression result = ToUpperConstruct.process(string, stringService);
+        MetaExpression result = process(construct, string);
 
         // Verify
         verify(stringService, times(1)).toUpperCase(stringValue);
 
         // Assert
         Assert.assertEquals(result.getStringValue(), returnValue);
+    }
+
+    /**
+     * Test the process method when null is used.
+     */
+    @Test
+    public void processNullUsage() {
+
+        //Mock
+        StringUtilityService stringService = mock(StringUtilityService.class);
+
+        ToUpperConstruct construct = new ToUpperConstruct(stringService);
+        //Run
+        MetaExpression result = process(construct, NULL);
+
+        // Assert
+        Assert.assertEquals(result, NULL);
     }
 }

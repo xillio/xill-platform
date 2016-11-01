@@ -15,10 +15,10 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
-import nl.xillio.xill.plugins.string.exceptions.FailedToGetMatcherException;
 import nl.xillio.xill.plugins.string.services.string.RegexService;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -31,35 +31,36 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link MatchesConstruct}.
  */
-public class MatchesConstructTest {
+public class MatchesConstructTest extends TestUtils {
     private int timeoutValue = 10000;
 
     /**
      * Test the process method with an ATOMIC value given.
      *
-     * @throws FailedToGetMatcherException
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
      */
     @Test
-    public void processStandardInput() throws IllegalArgumentException, FailedToGetMatcherException {
+    public void processStandardInput() throws IllegalArgumentException {
         // Mock
         String valueValue = "I need a doctor";
-        MetaExpression value = mock(MetaExpression.class);
+        MetaExpression value = mockExpression(ATOMIC);
         when(value.getStringValue()).thenReturn(valueValue);
 
         String regexValue = ".*doctor*.";
-        MetaExpression regex = mock(MetaExpression.class);
+        MetaExpression regex = mockExpression(ATOMIC);
         when(regex.getStringValue()).thenReturn(regexValue);
 
-        MetaExpression timeout = mock(MetaExpression.class);
+        MetaExpression timeout = mockExpression(ATOMIC);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         boolean returnValue = true;
         RegexService regexService = mock(RegexService.class);
         when(regexService.matches(any())).thenReturn(returnValue);
+
+        MatchesConstruct construct = new MatchesConstruct(regexService);
         // Run
-        MetaExpression result = MatchesConstruct.process(value, regex, timeout, regexService);
+        MetaExpression result = process(construct, value, regex, timeout);
 
         // Verify
         verify(regexService, times(1)).matches(any());
@@ -72,28 +73,30 @@ public class MatchesConstructTest {
     /**
      * Test the process method for when it throws an error.
      *
-     * @throws FailedToGetMatcherException
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
      */
     @Test(expectedExceptions = InvalidUserInputException.class, expectedExceptionsMessageRegExp = "Invalid pattern in regex\\(\\)..*")
-    public void processInvalidPattern() throws IllegalArgumentException, FailedToGetMatcherException {
+    public void processInvalidPattern() throws IllegalArgumentException {
         // Mock
         String valueValue = "I need a doctor";
-        MetaExpression value = mock(MetaExpression.class);
+        MetaExpression value = mockExpression(ATOMIC);
         when(value.getStringValue()).thenReturn(valueValue);
 
         String regexValue = ".*doctor*.";
-        MetaExpression regex = mock(MetaExpression.class);
+        MetaExpression regex = mockExpression(ATOMIC);
         when(regex.getStringValue()).thenReturn(regexValue);
 
-        MetaExpression timeout = mock(MetaExpression.class);
+        MetaExpression timeout = mockExpression(ATOMIC);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         Exception returnValue = new PatternSyntaxException(regexValue, regexValue, timeoutValue);
         RegexService regexService = mock(RegexService.class);
         when(regexService.getMatcher(regexValue, valueValue, timeoutValue)).thenThrow(returnValue);
-        MatchesConstruct.process(value, regex, timeout, regexService);
+
+        MatchesConstruct construct = new MatchesConstruct(regexService);
+        //Run
+        process(construct, value, regex, timeout);
 
         // Verify
         verify(regexService, times(1)).matches(any());
@@ -103,28 +106,30 @@ public class MatchesConstructTest {
     /**
      * Test the process method for when it throws an error.
      *
-     * @throws FailedToGetMatcherException
      * @throws IllegalArgumentException
      * @throws PatternSyntaxException
      */
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Illegal argument given.")
-    public void processIllegalArgument() throws IllegalArgumentException, FailedToGetMatcherException {
+    public void processIllegalArgument() throws IllegalArgumentException {
         // Mock
         String valueValue = "I need a doctor";
-        MetaExpression value = mock(MetaExpression.class);
+        MetaExpression value = mockExpression(ATOMIC);
         when(value.getStringValue()).thenReturn(valueValue);
 
         String regexValue = ".*doctor*.";
-        MetaExpression regex = mock(MetaExpression.class);
+        MetaExpression regex = mockExpression(ATOMIC);
         when(regex.getStringValue()).thenReturn(regexValue);
 
-        MetaExpression timeout = mock(MetaExpression.class);
+        MetaExpression timeout = mockExpression(ATOMIC);
         when(timeout.getNumberValue()).thenReturn(timeoutValue);
 
         Exception returnValue = new IllegalArgumentException();
         RegexService regexService = mock(RegexService.class);
         when(regexService.getMatcher(regexValue, valueValue, timeoutValue)).thenThrow(returnValue);
-        MatchesConstruct.process(value, regex, timeout, regexService);
+
+        MatchesConstruct construct = new MatchesConstruct(regexService);
+        //Run
+        process(construct, value, regex, timeout);
 
         // Verify
         verify(regexService, times(1)).matches(any());

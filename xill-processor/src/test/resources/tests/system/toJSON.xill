@@ -15,6 +15,8 @@
  */
 use System, Assert;
 
+var SYS_LF = System.properties("line.separator");
+
 // Simple single values
 Assert.equal(System.toJSON(5), "5");
 Assert.equal(System.toJSON("Hello"), '"Hello"');
@@ -24,7 +26,7 @@ Assert.equal(System.toJSON(false), "false");
 // Lists
 Assert.equal(System.toJSON([]), "[]");
 Assert.equal(System.toJSON([1,2,3]), "[1,2,3]");
-Assert.equal(System.toJSON([1,2,3], true), "[ 1, 2, 3 ]");
+Assert.equal(System.toJSON([1,2,3], true), "["::SYS_LF::"  1,"::SYS_LF::"  2,"::SYS_LF::"  3"::SYS_LF::"]");
 
 // Objects
 Assert.equal(System.toJSON({}), "{}");

@@ -23,7 +23,6 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
-import nl.xillio.xill.plugins.string.exceptions.FailedToGetMatcherException;
 import nl.xillio.xill.plugins.string.services.string.RegexService;
 import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
 
@@ -39,33 +38,34 @@ import java.util.regex.PatternSyntaxException;
  * @author Sander
  */
 public class ReplaceConstruct extends Construct {
-    @Inject
-    private RegexService regexService;
-    @Inject
-    private StringUtilityService stringService;
 
-    /**
-     * Create a new {@link ReplaceConstruct}.
-     */
-    public ReplaceConstruct() {
+    private final RegexService regexService;
+    private final StringUtilityService stringService;
+
+    @Inject
+    public ReplaceConstruct(RegexService regexService, StringUtilityService stringService) {
+        this.regexService = regexService;
+        this.stringService = stringService;
     }
 
     @Override
+    @SuppressWarnings("squid:S2095")
+    // Suppress "Resources should be closed": Arguments do not need to be closed here, because ConstructProcessor closes them
     public ConstructProcessor prepareProcess(final ConstructContext context) {
-        Argument args[] = {
+        Argument[] args = {
                 new Argument("text", ATOMIC),
                 new Argument("needle", ATOMIC),
                 new Argument("replacement", ATOMIC),
                 new Argument("useRegex", TRUE, ATOMIC),
                 new Argument("replaceAll", TRUE, ATOMIC),
-                new Argument("timeout", fromValue(RegexConstruct.REGEX_TIMEOUT), ATOMIC)};
+                new Argument("timeout", fromValue(regexService.getRegexTimeout()), ATOMIC)};
 
-        return new ConstructProcessor(a -> process(a, regexService, stringService), args);
+        return new ConstructProcessor(this::process, args);
 
     }
 
     @SuppressWarnings("squid:S1166")
-    static MetaExpression process(final MetaExpression[] input, final RegexService regexService, final StringUtilityService stringService) {
+    private MetaExpression process(final MetaExpression[] input) {
 
         for (int i = 0; i < 5; i++) {
             assertNotNull(input[i], "input");
@@ -87,7 +87,7 @@ public class ReplaceConstruct extends Construct {
                 return fromValue(regexService.replaceFirst(m, replacement));
             } catch (PatternSyntaxException e) {
                 throw new InvalidUserInputException("Invalid pattern in regex().", needle, "A valid regular expression.", "use String;\nString.replace(\"The quick brown fox.\", \"fox\", \"dog\");", e);
-            } catch (IllegalArgumentException | FailedToGetMatcherException e) {
+            } catch (IllegalArgumentException e) {
                 throw new RobotRuntimeException("Error while executing the regex", e);
             }
         }

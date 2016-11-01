@@ -20,8 +20,8 @@ import nl.xillio.plugins.XillPlugin;
 import nl.xillio.xill.Xill;
 import nl.xillio.xill.XillProcessor;
 import nl.xillio.xill.api.Debugger;
-import nl.xillio.xill.api.LogUtil;
 import nl.xillio.xill.api.NullDebugger;
+import nl.xillio.xill.api.OutputHandler;
 import nl.xillio.xill.api.StoppableDebugger;
 import nl.xillio.xill.api.components.*;
 import nl.xillio.xill.api.construct.ConstructContext;
@@ -44,7 +44,6 @@ import java.util.concurrent.TimeUnit;
 public class RunBulkExpression implements Processable {
 
     private static final Logger LOGGER = Log.get();
-    private final Logger robotLogger;
     private final Processable path;
     private final RobotID robotID;
     private final List<XillPlugin> plugins;
@@ -53,6 +52,7 @@ public class RunBulkExpression implements Processable {
     private Processable options;
     private int maxThreadsVal = 0;
     private boolean stopOnError = false;
+    private final OutputHandler outputHandler;
 
     private class Control {
         private int runCount = 0;
@@ -166,7 +166,7 @@ public class RunBulkExpression implements Processable {
                 childDebugger.setStopOnError(stopOnError);
 
                 XillProcessor processor = new XillProcessor(robotID.getProjectPath(), calledRobotFile, plugins, childDebugger);
-
+                processor.setOutputHandler(outputHandler);
                 processor.compileAsSubRobot(robotID);
 
                 try {
@@ -203,16 +203,16 @@ public class RunBulkExpression implements Processable {
 
     /**
      * Create a new {@link RunBulkExpression}
-     *
-     * @param path    the path of the called bot
+     *  @param path    the path of the called bot
      * @param robotID the root robot of this tree
      * @param plugins the current plugin loader
+     * @param outputHandler
      */
-    public RunBulkExpression(final Processable path, final RobotID robotID, final List<XillPlugin> plugins) {
+    public RunBulkExpression(final Processable path, final RobotID robotID, final List<XillPlugin> plugins, OutputHandler outputHandler) {
         this.path = path;
         this.robotID = robotID;
         this.plugins = plugins;
-        robotLogger = LogUtil.getLogger(robotID);
+        this.outputHandler = outputHandler;
         resolver = new FileResolverImpl();
         maxThreadsVal = 0;
     }
@@ -331,13 +331,6 @@ public class RunBulkExpression implements Processable {
     @Override
     public Collection<Processable> getChildren() {
         return Collections.singletonList(path);
-    }
-
-    /**
-     * @return the robotLogger
-     */
-    public Logger getRobotLogger() {
-        return robotLogger;
     }
 
     /**
