@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -158,6 +158,46 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 // Should return 404-Not Found
                 .andExpect(status().isNotFound())
                 .andDo(document("delete-worker-not-exist"));
+    }
+
+    @Test
+    public void testRunLoadedRobotWithReturnValue() throws Exception {
+
+    }
+
+    @Test
+    public void testRunLoadedRobotWithoutReturnValue() throws Exception {
+
+    }
+
+    @Test
+    public void testRunNotLoadedRobot() throws Exception {
+
+    }
+
+    @Test
+    public void testRunRobotWithError() throws Exception {
+
+    }
+
+    @Test
+    public void testRunNonExistingRobot() throws Exception {
+
+    }
+
+    @Test
+    public void testTerminateRunningWorker() throws Exception {
+
+    }
+
+    @Test
+    public void testTerminateNotRunningWorker() throws Exception {
+
+    }
+
+    @Test
+    public void testTerminateNonExistingWorker() throws Exception {
+
     }
 
 
