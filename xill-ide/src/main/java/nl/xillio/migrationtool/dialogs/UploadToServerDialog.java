@@ -118,12 +118,16 @@ public class UploadToServerDialog extends FXMLDialog {
             // Assign projectId
             String projectId = null;
             if(treeItems.size() > 0) {
-                projectId = ensureProjectExists(treeItems.get(0));
-            }
+                final TreeItem<Pair<File, String>> item = treeItems.get(0);
+                final File projectFolder = projectPane.getProject(item).getValue().getKey();
+                final String projectName = xillServerUploader.getProjectName(projectFolder);
+                boolean projectAlreadyExists = xillServerUploader.findProject(projectName) != null;
+                projectId = ensureProjectExists(item);
 
-            // Process items (do selected robots and resources upload)
-            if (!processItems(treeItems, projectId)) {
-                return; // Process has been user interrupted - so no success dialog is shown
+                // Process items (do selected robots and resources upload)
+                if (!processItems(treeItems, projectId, projectAlreadyExists)) {
+                    return; // Process has been user interrupted - so no success dialog is shown
+                }
             }
 
             // Validate uploaded robots (in a one bulk server request - because of every Xill environment start is very time consuming)
@@ -202,11 +206,11 @@ public class UploadToServerDialog extends FXMLDialog {
         return ExistsResult.NO;
     }
 
-    private ExistsResult projectExists(final TreeItem<Pair<File, String>> item) throws IOException {
+    private ExistsResult projectExists(final TreeItem<Pair<File, String>> item, boolean projectAlreadyExists) throws IOException {
         final File projectFolder = projectPane.getProject(item).getValue().getKey();
         final String projectName = xillServerUploader.getProjectName(projectFolder);
 
-        if (xillServerUploader.findProject(projectName) != null) {
+        if (projectAlreadyExists) {
             // Set up dialog content
             CheckBox checkBox = new CheckBox("Overwrite all");
             GridPane gridPane = new GridPane();
@@ -337,8 +341,8 @@ public class UploadToServerDialog extends FXMLDialog {
         xillServerUploader.uploadResource(projectId, resourceName, resourceFile);
     }
 
-    private boolean handleProjectUploading(TreeItem<Pair<File, String>> item, String projectId) throws IOException {
-        ExistsResult existsResult = projectExists(item);
+    private boolean handleProjectUploading(TreeItem<Pair<File, String>> item, String projectId, boolean projectAlreadyExists) throws IOException {
+        ExistsResult existsResult = projectExists(item, projectAlreadyExists);
 
         if (existsResult == ExistsResult.YES_CANCEL) {
             return false;
@@ -379,10 +383,10 @@ public class UploadToServerDialog extends FXMLDialog {
         return true;
     }
 
-    private boolean processItems(final List<TreeItem<Pair<File, String>>> items, String projectId) throws IOException {
+    private boolean processItems(final List<TreeItem<Pair<File, String>>> items, String projectId, boolean projectAlreadyExists) throws IOException {
         for (TreeItem<Pair<File, String>> item : items) {
             if (isProject(item)) {
-                if(!handleProjectUploading(item, projectId)) {
+                if(!handleProjectUploading(item, projectId, projectAlreadyExists)) {
                     return false;
                 }
             } else if (isFolder(item)) {// Directory
