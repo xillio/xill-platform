@@ -22,6 +22,7 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 
 public class IsEmptyConstruct extends Construct {
+
     @Override
     public ConstructProcessor prepareProcess(ConstructContext context) {
         return new ConstructProcessor(this::process, new Argument("string", ATOMIC));

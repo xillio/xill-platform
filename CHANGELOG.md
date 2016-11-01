@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 * `Math.HungarianAlgorithm()` now returns an object [CTC-1732]
 * Correct typing inconsistencies for booleans: now the strings "false" and "0" evaluate to `false` [CTC-1733]
 * Make StringBehavior conform to type conversion specification: a non-empty string will now evaluate to `true`, unless it contains any of the values "false", "0" or "null" [CTC-1865]
+* Deprecate `File.getText()` [CTC-1860]
 
 ### Fix
 * On server threads are not closed when tasks finishes [XSVR-139]
@@ -23,10 +24,16 @@ All notable changes to this project will be documented in this file.
 * Excel plugin has an integer limit [CTC-1590]
 * Under Linux reassigning key bindings to Ctrl + letter does not work [CTC-1758]
 * Exiftool plugin does not check if process was started [CTC-1587]
-* `Sring.regexEscape()` can result in invalid regular expressions [CTC-1807]
+* `String.regexEscape()` can result in invalid regular expressions [CTC-1807]
 * Calling `Excel.setCellValue()` on a formula cell only sets cached value [CTC-1814]
 * String.absoluteUrl does not allow protocols other than http(s) [CTC-1806]
 * Dialogs do not render on (very) fast machines [CTC-1850]
+* Concurrency pipeline changes dates and ObjectIds to strings [CTC-1833]
+
+## [3.4.1] - 2016-10-28
+
+### Fix
+* Concurrency pipeline changes dates and ObjectIds 
 
 ## [3.4.0] - 2016-10-07
 

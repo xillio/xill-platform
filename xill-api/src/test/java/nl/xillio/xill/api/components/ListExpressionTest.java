@@ -68,7 +68,7 @@ public class ListExpressionTest {
 
     @Test
     public void testCopy() {
-        ListExpression copy = expression.copy();
+        MetaExpression copy = expression.copy();
 
         assertEquals(copy.getSize(), expression.getSize());
         assertTrue(copy != expression);
@@ -81,7 +81,7 @@ public class ListExpressionTest {
 
     @Test(expectedExceptions = IllegalStateException.class)
     public void testCopyClosed() {
-        ListExpression copy = expression.copy();
+        MetaExpression copy = expression.copy();
         copy.close();
         copy.copy();
     }

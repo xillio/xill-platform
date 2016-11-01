@@ -43,4 +43,9 @@ public abstract class CollectionExpression extends MetaExpression {
     public IOStream getBinaryValue() {
         return new EmptyIOStream();
     }
+
+    @Override
+    public Number getNumberValue() {
+        return Double.NaN;
+    }
 }
