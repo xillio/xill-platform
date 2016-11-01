@@ -47,6 +47,11 @@ public class Date implements nl.xillio.xill.api.data.Date {
     }
 
     @Override
+    public nl.xillio.xill.api.data.Date copy() {
+        return new Date(ZonedDateTime.from(date));
+    }
+
+    @Override
     public String toString() {
         return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(getZoned());
     }

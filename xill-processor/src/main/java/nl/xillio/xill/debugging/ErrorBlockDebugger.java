@@ -48,7 +48,7 @@ public class ErrorBlockDebugger extends DelegateDebugger {
         } else {
             this.error.addSuppressed(e);
         }
-        LOGGER.error("Caught exception in error handler", e);
+        LOGGER.debug("Caught exception in error handler", e);
     }
 
     @Override
