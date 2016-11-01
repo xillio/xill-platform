@@ -78,7 +78,7 @@ class ImmutableLiteral extends MetaExpression {
     }
 
     @Override
-    public MetaExpression copy() {
+    public MetaExpression copyExpression() {
         // Because immutable literals cannot be closed, and to preserve the ability to
         // check for equality, the literal itself is returned instead of a copy.
         return this;

@@ -16,6 +16,8 @@
 package nl.xillio.xill.api.data;
 
 
+import nl.xillio.xill.api.components.CopyableMetadataExpression;
+
 import java.time.ZonedDateTime;
 
 /**
@@ -26,7 +28,7 @@ import java.time.ZonedDateTime;
  * @author Geert Konijnendijk
  * @since 3.0.0
  */
-public interface Date extends MetadataExpression {
+public interface Date extends CopyableMetadataExpression<Date> {
 
 	/**
 	 * Returns a ZonedDateTime that represents the date stored in this object.

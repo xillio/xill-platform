@@ -28,14 +28,14 @@ import static org.testng.Assert.assertTrue;
  */
 public class StringBehaviorTest {
     StringBehavior[] stringBehaviors;
-    Double[] numberValues;
+    Number[] numberValues;
     String[] stringValues;
     boolean[] booleanValues;
 
-    public StringBehaviorTest() {
-        stringValues = new String[] {"test string", "", "0.0", "0", "null", "false"};
-        numberValues = new Double[] {NaN, NaN, 0D, 0D, NaN, NaN};
-        booleanValues = new boolean[] {true, false, true, false, false, false};
+    public StringBehaviorTest(){
+        numberValues = new Number[]{NaN, NaN, 0, 0D, NaN, NaN, NaN};
+        stringValues = new String[]{"test string", "", "0", "0.0", "null", "NaN", "false"};
+        booleanValues = new boolean[]{true, false, false, true, false, true, false};
 
         stringBehaviors = new StringBehavior[3];
         for (int i = 0; i < stringBehaviors.length; i++)

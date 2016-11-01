@@ -29,13 +29,12 @@ import java.util.List;
 public interface StringUtilityService {
 
     /**
-     * Hashes the input with the MD5 hash.
-     *
-     * @param input The string to be hashed.
-     * @return A hashed string.
-     * @throws NoSuchAlgorithmException Is thrown when the provided MD5 algorithm could not be found.
+     * Returns a number  indicating how much the two strings are alike.
+     * @param source First string to compare
+     * @param target Second string to compare
+     * @return Likeness
      */
-    String createMD5Construct(String input) throws NoSuchAlgorithmException;
+    int damlev(final String source, final String target);
 
     /**
      * Checks whether the child string is contained in the parent string.

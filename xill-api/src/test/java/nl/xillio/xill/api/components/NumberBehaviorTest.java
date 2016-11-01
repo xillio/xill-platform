@@ -28,37 +28,51 @@ public class NumberBehaviorTest {
 
     NumberBehavior number = new NumberBehavior(3);
     NumberBehavior zero = new NumberBehavior(0);
+    NumberBehavior doubleNan = new NumberBehavior(Double.NaN);
+    NumberBehavior floatNan = new NumberBehavior(Float.NaN);
 
     @Test
     public void testGetNumberValue() throws Exception {
         assertEquals(number.getNumberValue(), 3);
         assertEquals(zero.getNumberValue(), 0);
+        assertTrue(Double.isNaN(doubleNan.getNumberValue().doubleValue()));
+        assertTrue(Double.isNaN(floatNan.getNumberValue().doubleValue()));
     }
 
     @Test
     public void testGetStringValue() throws Exception {
         assertEquals(number.getStringValue(), "3");
         assertEquals(zero.getStringValue(), "0");
+        assertEquals(doubleNan.getStringValue(), "NaN");
+        assertEquals(floatNan.getStringValue(), "NaN");
     }
 
     @Test
     public void testGetBooleanValue() throws Exception {
         assertTrue(number.getBooleanValue());
         assertFalse(zero.getBooleanValue());
+        assertFalse(doubleNan.getBooleanValue());
+        assertFalse(floatNan.getBooleanValue());
     }
 
     @Test
     public void testCopy() throws Exception {
         NumberBehavior numberCopy = number.copy();
         NumberBehavior zeroCopy = zero.copy();
+        NumberBehavior doubleNanCopy = doubleNan.copy();
+        NumberBehavior floatNanCopy = floatNan.copy();
 
         // Copied the correct values
         assertEquals(numberCopy.getNumberValue(), 3);
         assertEquals(zeroCopy.getNumberValue(), 0);
+        assertTrue(Double.isNaN(doubleNan.getNumberValue().doubleValue()));
+        assertTrue(Double.isNaN(floatNan.getNumberValue().doubleValue()));
 
         // Created new object
-        assertTrue(number != numberCopy);
-        assertTrue(zero != zeroCopy);
+        assertNotSame(numberCopy, number);
+        assertNotSame(zeroCopy, zero);
+        assertNotSame(doubleNanCopy, doubleNan);
+        assertNotSame(floatNanCopy, floatNan);
     }
 
 }

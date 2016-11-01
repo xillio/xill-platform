@@ -33,7 +33,6 @@ import java.util.LinkedHashMap;
  * <li><b>{@link Boolean}: </b> false if the object is null else true</li>
  * <li><b>{@link Number}: </b> {@link Double#NaN}</li>
  * </ul>
- *
  */
 class ObjectExpression extends CollectionExpression {
 
@@ -57,10 +56,10 @@ class ObjectExpression extends CollectionExpression {
     }
 
     @Override
-    public ObjectExpression copy() {
+    public ObjectExpression copyExpression() {
         assertOpen();
         LinkedHashMap<String, MetaExpression> copy = new LinkedHashMap<>();
-        value.forEach((x,y) -> copy.put(x, y.copy()));
+        value.forEach((x, y) -> copy.put(x, y.copy()));
         return new ObjectExpression(copy);
     }
 
@@ -69,13 +68,9 @@ class ObjectExpression extends CollectionExpression {
         return new ArrayList<>(value.values());
     }
 
-    @Override
-    public Number getNumberValue() {
-        return Double.NaN;
-    }
 
     @Override
-    public Number getSize(){
+    public Number getSize() {
         return value.size();
     }
 
