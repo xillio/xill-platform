@@ -483,6 +483,21 @@ public abstract class MetaExpression implements Expression, Processable {
 
     }
 
+    public final MetaExpression copy() {
+        // Get a copy of the expression with the data specific to the implemented class.
+        MetaExpression copied = copyExpression();
+        // Copy all metadata that is copyable
+        if (metadataPool!=null) {
+            for (MetadataExpression metadataExpression : metadataPool) {
+                if (metadataExpression instanceof CopyableMetadataExpression) {
+                    CopyableMetadataExpression copyable = (CopyableMetadataExpression) metadataExpression;
+                    copied.storeMeta(copyable.copy());
+                }
+            }
+        }
+        return copied;
+    }
+
     /**
      * @return whether this expression has been closed using {@link #close()}
      */
@@ -652,5 +667,12 @@ public abstract class MetaExpression implements Expression, Processable {
         throw new IllegalArgumentException("Unable to deserialize " + root.getClass().getName());
     }
 
-    public abstract MetaExpression copy();
+    /**
+     * Make a deep copy of the expression.
+     *
+     * The returned copy should <b>NOT</b> contain any {@link MetadataExpression metadata}.
+     *
+     * @return A deep copy of the expression
+     */
+    protected abstract MetaExpression copyExpression();
 }

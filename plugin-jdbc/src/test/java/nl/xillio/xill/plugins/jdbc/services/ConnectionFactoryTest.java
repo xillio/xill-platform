@@ -15,11 +15,14 @@
  */
 package nl.xillio.xill.plugins.jdbc.services;
 
+import nl.xillio.events.EventHost;
 import nl.xillio.xill.TestUtils;
+import nl.xillio.xill.api.Debugger;
+import nl.xillio.xill.api.NullDebugger;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
-import nl.xillio.xill.debugging.XillDebugger;
+import nl.xillio.xill.api.events.RobotStoppedAction;
 import nl.xillio.xill.plugins.jdbc.data.ConnectionWrapper;
 import org.testng.annotations.Test;
 
@@ -43,7 +46,7 @@ public class ConnectionFactoryTest extends TestUtils {
                         null,
                         null,
                         null,
-                        new XillDebugger(),
+                        new NullDebugger(),
                         UUID.randomUUID(),
                         null,
                         null
@@ -57,7 +60,9 @@ public class ConnectionFactoryTest extends TestUtils {
         Connection connection = mock(Connection.class);
         MetaExpression override = fromValue("OVERRIDE");
         override.storeMeta(new ConnectionWrapper(connection));
-        XillDebugger debugger = new XillDebugger();
+        Debugger debugger = new NullDebugger();
+        EventHost<RobotStoppedAction> robotStoppedEvent = new EventHost<>();
+
         ConstructContext context = new ConstructContext(
                 null,
                 null,
@@ -65,7 +70,7 @@ public class ConnectionFactoryTest extends TestUtils {
                 debugger,
                 UUID.randomUUID(),
                 null,
-                null
+                robotStoppedEvent
         );
 
         ConnectionFactory connectionFactory = new MockFactory();
@@ -77,7 +82,7 @@ public class ConnectionFactoryTest extends TestUtils {
         assertSame(connectionResult, connection);
 
         // Close connection on robot stop
-        debugger.stop();
+        robotStoppedEvent.invoke(new RobotStoppedAction(null, null));
         verify(connectionFactory.getOrError(context, null)).close();
     }
 

@@ -18,6 +18,7 @@ package nl.xillio.xill.api.components;
 import org.testng.annotations.Test;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -55,6 +56,23 @@ public class MetadataExpressionPoolTest {
         assertEquals(pool.size(), 0);
 
         verify(obj).close();
+    }
+
+    @Test
+    public void testGetIterator() {
+        MetadataExpressionPool<Object> pool = new MetadataExpressionPool<>();
+        Double d = 5.0;
+        pool.put(d);
+        Integer i = 7;
+        pool.put(i);
+
+        // Run
+        Iterator<Object> iterator = pool.iterator();
+
+        // Assert
+        assertSame(iterator.next(), d);
+        assertEquals(iterator.next(), i);
+        assertFalse(iterator.hasNext());
     }
 
     class TestObject implements Serializable, AutoCloseable {
