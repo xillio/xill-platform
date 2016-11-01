@@ -13,27 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.api.data;
+package nl.xillio.xill.plugins.mongodb.data;
 
+import org.testng.annotations.Test;
 
-import nl.xillio.xill.api.components.CopyableMetadataExpression;
-
-import java.time.ZonedDateTime;
+import static org.testng.Assert.assertSame;
 
 /**
- * This interface represents a date object in the Xill language.
+ * Tests for {@link MongoObjectId}
  *
- * @author Thomas Biesaart
- * @author Sander Visser
  * @author Geert Konijnendijk
- * @since 3.0.0
  */
-public interface Date extends CopyableMetadataExpression<Date> {
+public class MongoObjectIdTest {
 
-	/**
-	 * Returns a ZonedDateTime that represents the date stored in this object.
-	 *
-	 * @return the date
-	 */
-	ZonedDateTime getZoned();
+    /**
+     * Test {@link MongoObjectId#copy()}
+     */
+    @Test
+    public void testCopy() {
+        MongoObjectId mongoObjectId = new MongoObjectId();
+
+        // Run
+        MongoObjectId copy = mongoObjectId.copy();
+
+        // Assert
+
+        // An ObjectID is immutable, so should not be cloned
+        assertSame(mongoObjectId.getObjectId(), copy.getObjectId());
+    }
+
 }
