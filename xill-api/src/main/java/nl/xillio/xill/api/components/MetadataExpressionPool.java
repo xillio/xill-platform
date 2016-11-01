@@ -19,6 +19,7 @@ import me.biesaart.utils.Log;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -27,7 +28,7 @@ import java.util.NoSuchElementException;
  *
  * @param <T> The base type of the stored objects
  */
-public class MetadataExpressionPool<T> implements AutoCloseable {
+public class MetadataExpressionPool<T> implements AutoCloseable, Iterable<T> {
     private static final Logger LOGGER = Log.get();
     private final List<T> data = new ArrayList<>();
 
@@ -73,6 +74,14 @@ public class MetadataExpressionPool<T> implements AutoCloseable {
      */
     public int size() {
         return data.size();
+    }
+
+    /**
+     * @return An iterator over all metadata
+     */
+    @Override
+    public Iterator<T> iterator() {
+        return data.iterator();
     }
 
     /**
