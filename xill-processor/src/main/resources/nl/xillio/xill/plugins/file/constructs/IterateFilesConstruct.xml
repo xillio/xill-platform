@@ -20,7 +20,7 @@
     <description>
 Iterates over all files in a folder.  
 
-If recursive is set to true all files in sub folders will also be iterated
+If recursive is set to `true` all files in sub folders will also be iterated
     </description>
     <examples>
         <example title="Usage">

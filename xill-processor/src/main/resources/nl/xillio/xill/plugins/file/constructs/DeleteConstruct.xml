@@ -18,9 +18,7 @@
 -->
 <function>
     <description>
-Delete a file or folder.  
-
-Returns the absolute path to the file or folder
+Deletes `uri` if it points to a valid file or folder and returns the absolute path this file or folder used to be located at
     </description>
     <examples>
         <example title="Usage">

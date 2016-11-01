@@ -18,7 +18,7 @@
 -->
 <function>
     <description>
-Determines if the specified file/folder is hidden or not. The test returns `true` if `uri` is a hidden file or folder.
+Determines if the specified file/folder is hidden or not returning `true` if `uri` is a hidden file or folder or `false` otherwise.
     </description>
     <examples>
         <example title="Usage">

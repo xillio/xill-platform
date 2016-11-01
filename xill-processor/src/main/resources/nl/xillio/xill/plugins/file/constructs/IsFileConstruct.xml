@@ -15,10 +15,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
--->
+-->r
 <function>
     <description>
-Tests whether the file identified by uri is a File. The test returns `true` if `uri` is a normal file.
+Tests whether the file identified by `uri` is a File returning `true` if `uri` is a normal file or `false` otherwise
     </description>
     <examples>
         <example title="Usage">

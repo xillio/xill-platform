@@ -18,7 +18,7 @@
 -->
 <function>
     <description>
-Tests whether the file identified by uri is a folder. The test returns `true` if `uri` is a folder.
+Tests whether the file identified by `uri` is a folder. The test returns `true` if `uri` is a folder or `false` otherwise.
     </description>
     <examples>
         <example title="Usage">

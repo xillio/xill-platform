@@ -19,7 +19,7 @@
 <function>
     <description>
 Read text from a stream.
-If you provide a value for the limit parameter the amount of bytes read from the stream will be limited to that value.
+If you provide a value for the `limit` parameter the amount of bytes read from the stream will be limited to that value.
     </description>
     <examples>
         <example title="Usage">

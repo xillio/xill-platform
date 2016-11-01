@@ -20,7 +20,7 @@
     <description>
 Returns the size of a file or folder in bytes.  
 
-The uri can be relative or absolute.  
+The `uri` can be relative or absolute.
 When using a relative uri, its starting point is the containing folder of the robot.
 	</description>
     <examples>

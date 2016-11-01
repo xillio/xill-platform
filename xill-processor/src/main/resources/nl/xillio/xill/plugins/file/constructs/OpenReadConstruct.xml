@@ -18,7 +18,7 @@
 -->
 <function>
     <description>
-Returns a stream with read access to a file. This construct will throw an error if the file is not found or it is a directory.
+Returns a stream with read access to a file at a given `path`. This construct will throw an error if the file is not found or it is a directory.
     </description>
     <examples>
         <example title="Usage">

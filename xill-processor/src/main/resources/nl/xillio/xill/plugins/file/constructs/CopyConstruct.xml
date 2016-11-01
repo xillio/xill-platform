@@ -18,9 +18,7 @@
 -->
 <function>
     <description>
-Copy a file or folder to a target destination, overwriting it if it exists.  
-
-Returns an object containing the source destination [from] and the target destination [into].
+Copy a file or folder from a `source` path to a `target` path, overwriting it if it exists and returns an object containing the source destination [from] and the target destination [into]
 </description>
     <examples>
         <example title="Usage">

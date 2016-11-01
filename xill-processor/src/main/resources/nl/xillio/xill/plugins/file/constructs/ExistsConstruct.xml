@@ -18,9 +18,7 @@
 -->
 <function>
     <description>
-Check if a file or folder exists.  
-
-Returns true if the file or folder exists otherwise false
+Check if a file or folder exists on the given `uri` and returns `true` if the file or folder exists or otherwise `false`
     </description>
     <examples>
         <example title="Usage">

@@ -18,9 +18,8 @@
 -->
 <function>
     <description>
-Wrap an iterator around a stream.
-You can provide a regex pattern that will split the input stream in parts, if no delimiter is provided the stream will
-be split on new lines.
+Wrap an iterator around a `stream`.
+You can provide a regex pattern as `delimiter` that will split the input `stream` in parts, if none is provided the stream will be split on new lines.
     </description>
     <examples>
         <example title="Usage">

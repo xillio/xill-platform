@@ -18,7 +18,7 @@
 -->
 <function>
     <description>
-Tests whether the file identified by uri is a symbolic link. The test returns `true` if `uri` is a (symbolic) link.
+Tests whether the file identified by uri is a symbolic link returning `true` if `uri` is a (symbolic) link or otherwise `false`
     </description>
     <examples>
         <example title="Usage">
