@@ -15,7 +15,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
--->r
+-->
 <function>
     <description>
 Tests whether the file identified by `uri` is a File returning `true` if `uri` is a normal file or `false` otherwise
