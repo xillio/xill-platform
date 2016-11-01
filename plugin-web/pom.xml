@@ -53,38 +53,77 @@
     </dependencies>
 
     <build>
-        <plugins>
-            <!-- Install the phantomjs binary on windows -->
-            <plugin>
-                <groupId>com.github.klieber</groupId>
-                <artifactId>phantomjs-maven-plugin</artifactId>
-                <version>0.7</version>
-                <executions>
-                    <execution>
-                        <id>fetch-phantomjs</id>
-                        <goals>
-                            <goal>install</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                    </execution>
-                </executions>
-                <configuration>
-                    <version>2.1.1</version>
-                    <outputDirectory>${project.build.directory}</outputDirectory>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-            </plugin>
-        </plugins>
         <resources>
-            <resource>
-                <directory>${project.build.directory}/phantomjs-2.1.1-windows/bin</directory>
-                <targetPath>phantomjs</targetPath>
-            </resource>
             <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
             </resource>
+            <resource>
+                <directory>${project.build.directory}/downloads/phantomjs-${phantomjs.binary.version}-linux-x86_64/bin
+                </directory>
+                <targetPath>phantomjs/linux</targetPath>
+            </resource>
+            <resource>
+                <directory>${project.build.directory}/downloads/phantomjs-${phantomjs.binary.version}-macosx/bin</directory>
+                <targetPath>phantomjs/mac</targetPath>
+            </resource>
+            <resource>
+                <directory>${project.build.directory}/downloads/phantomjs-${phantomjs.binary.version}-windows/bin
+                </directory>
+                <targetPath>phantomjs/windows</targetPath>
+            </resource>
         </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.3.0</version>
+                <configuration>
+                    <unpack>true</unpack>
+                    <outputDirectory>${project.build.directory}/downloads</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install-phantomjs-windows</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>
+                                https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${phantomjs.binary.version}-windows.zip
+                            </url>
+                            <md5>4104470d43ddf2a195e8869deef0aa69</md5>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-phantomjs-linux</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>
+                                https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${phantomjs.binary.version}-linux-x86_64.tar.bz2
+                            </url>
+                            <md5>1c947d57fce2f21ce0b43fe2ed7cd361</md5>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-phantomjs-mac</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>
+                                https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${phantomjs.binary.version}-macosx.zip
+                            </url>
+                            <md5>b0c038bd139b9ecaad8fd321070c1651</md5>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>

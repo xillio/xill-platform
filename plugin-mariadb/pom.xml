@@ -33,7 +33,6 @@
 
     <artifactId>plugin-mariadb</artifactId>
 
-
     <dependencies>
         <dependency>
             <groupId>nl.xillio.xill</groupId>
@@ -45,11 +44,4 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>

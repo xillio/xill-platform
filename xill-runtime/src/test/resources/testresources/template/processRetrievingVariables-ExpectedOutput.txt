@@ -1,5 +1,0 @@
-1null500
-true
-true is true!
-Double: 1.2
-The date is: Dec 31, 2015

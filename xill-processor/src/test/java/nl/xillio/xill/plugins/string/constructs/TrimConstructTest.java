@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
@@ -33,9 +34,11 @@ import static org.mockito.Mockito.verify;
 /**
  * Test the {@link TrimConstruct}.
  */
-public class TrimConstructTest extends ExpressionBuilderHelper {
+public class TrimConstructTest extends TestUtils {
 
     private static final StringUtilityService stringService = new StringUtilityServiceImpl();
+
+    private TrimConstruct construct = new TrimConstruct(stringService);
 
     /**
      * Test the process method with a string given and internal set to false.
@@ -44,7 +47,7 @@ public class TrimConstructTest extends ExpressionBuilderHelper {
     public void processAtomicNoInternal() {
 
         // Run
-        MetaExpression result = TrimConstruct.process(fromValue("  test  ing   "), fromValue(false), stringService);
+        MetaExpression result = process(construct, fromValue("  test  ing   "), fromValue(false));
 
         // Assert
         Assert.assertEquals(result.getStringValue(), "test  ing");
@@ -56,7 +59,7 @@ public class TrimConstructTest extends ExpressionBuilderHelper {
     @Test
     public void processAtomicInternal() {
         // Run
-        MetaExpression result = TrimConstruct.process(fromValue("  Test    test  \u00A0"), fromValue(true), stringService);
+        MetaExpression result = process(construct, fromValue("  Test    test  \u00A0"), fromValue(true));
 
         // Assert
         Assert.assertEquals(result.getStringValue(), "Test test");
@@ -69,7 +72,7 @@ public class TrimConstructTest extends ExpressionBuilderHelper {
     public void processListNoInternal() {
 
         // Run
-        MetaExpression result = TrimConstruct.process(createTestList(), fromValue(false), stringService);
+        MetaExpression result = process(construct, createTestList(), fromValue(false));
 
         // Assert
         Assert.assertEquals(result.getType(), LIST);
@@ -88,7 +91,7 @@ public class TrimConstructTest extends ExpressionBuilderHelper {
     public void processListInternal() {
 
         // Run
-        MetaExpression result = TrimConstruct.process(createTestList(), fromValue(true), stringService);
+        MetaExpression result = process(construct, createTestList(), fromValue(true));
 
         // Assert
         Assert.assertEquals(result.getType(), LIST);
@@ -108,7 +111,7 @@ public class TrimConstructTest extends ExpressionBuilderHelper {
     public void processNullValue() {
 
         // Run
-        TrimConstruct.process(ExpressionBuilderHelper.NULL, fromValue(true), stringService);
+        process(construct, ExpressionBuilderHelper.NULL, fromValue(true));
 
         // Verify
         verify(stringService, times(0)).trim(anyString());

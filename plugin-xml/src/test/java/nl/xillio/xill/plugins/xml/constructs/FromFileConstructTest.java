@@ -17,15 +17,15 @@ package nl.xillio.xill.plugins.xml.constructs;
 
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
-import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.data.XmlNode;
 import nl.xillio.xill.plugins.xml.services.NodeService;
+import nl.xillio.xill.services.files.TextFileReader;
 import org.testng.annotations.Test;
 
-import java.nio.file.Path;
+import java.io.IOException;
 
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tests for the {@link FromFileConstructTest}
@@ -33,36 +33,28 @@ import static org.testng.Assert.assertSame;
  * @author Zbynek Hochmann
  */
 public class FromFileConstructTest extends TestUtils {
+    private NodeService nodeService = mock(NodeService.class);
+    private TextFileReader textFileReader = mock(TextFileReader.class);
+    private FromFileConstruct construct = new FromFileConstruct(nodeService, textFileReader);
 
     /**
-     * Test the process method under normal circumstances
+     * Test the construct under normal circumstances.
      */
     @Test
-    public void testProcess() {
+    public void testProcess() throws IOException {
+        String source = "<parent><child>inner</child></parent>";
 
-        // Mock
-        Path path = mock(Path.class);
-        setFileResolverReturnValue(path);
+        // Mock.
+        when(textFileReader.getText(any(), any())).thenReturn(source);
+        when(nodeService.fromString(anyString())).thenReturn(mock(XmlNode.class));
 
-        MetaExpression filenameVar = mock(MetaExpression.class);
-        when(filenameVar.getStringValue()).thenReturn(".");
+        // Run.
+        MetaExpression result = this.process(construct, fromValue(""));
 
-        ConstructContext context = mock(ConstructContext.class);
+        // Verify.
+        verify(nodeService).fromString(source);
 
-        XmlNode xmlNode = mock(XmlNode.class);
-        String text = "test";
-        when(xmlNode.toString()).thenReturn(text);
-
-        NodeService nodeService = mock(NodeService.class);
-        when(nodeService.fromFilePath(any())).thenReturn(xmlNode);
-
-        // Run
-        MetaExpression result = FromFileConstruct.process(context, filenameVar, nodeService);
-
-        // Verify
-        verify(nodeService).fromFilePath(any());
-
-        // Assert
-        assertSame(result.getMeta(XmlNode.class), xmlNode);
+        // Assert.
+        assertTrue(result.hasMeta(XmlNode.class));
     }
 }

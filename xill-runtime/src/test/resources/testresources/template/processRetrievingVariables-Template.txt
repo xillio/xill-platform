@@ -1,5 +1,0 @@
-<#list list as i>${i}</#list>
-<#if object.key == "value">true<#else>false</#if>
-${bool?c} is true!
-Double: ${double}
-The date is: ${date?date}

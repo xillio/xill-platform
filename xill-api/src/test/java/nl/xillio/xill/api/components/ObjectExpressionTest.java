@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.api.components;
 
+import nl.xillio.xill.services.json.JacksonParser;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -30,8 +31,10 @@ import static org.testng.Assert.*;
  */
 public class ObjectExpressionTest {
 
-    ObjectExpression objectExpression;
-    LinkedHashMap<String, MetaExpression> value;
+    private ObjectExpression objectExpression;
+    private LinkedHashMap<String, MetaExpression> value;
+
+    private ObjectExpression empty;
 
     // Fill objectExpression with interesting content
     public ObjectExpressionTest(){
@@ -52,30 +55,26 @@ public class ObjectExpressionTest {
         value.put("expr5", new ObjectExpression(expr5));
 
         objectExpression = new ObjectExpression(value);
-        int i = 0;
+
+        empty = new ObjectExpression(new LinkedHashMap<>());
     }
 
     @Test
-    public void testProcess() throws Exception {
-
-    }
-
-    @Test
-    public void testCopy() throws Exception {
-        ObjectExpression copy = objectExpression.copy();
+    public void testCopy() {
+        MetaExpression copy = objectExpression.copy();
         assertTrue(copy != objectExpression);
         assertEquals(objectExpression.getSize(), copy.getSize());
     }
 
     @Test (expectedExceptions = IllegalStateException.class)
     public void testCopyClosed() throws Exception{
-        ObjectExpression copy = objectExpression.copy();
+        MetaExpression copy = objectExpression.copy();
         copy.close();
         copy.copy();
     }
 
     @Test
-    public void testGetChildren() throws Exception {
+    public void testGetChildren() {
         List<Processable> children = (List<Processable>) objectExpression.getChildren();
         assertSame(children.get(0), value.get("expr1"));
         assertSame(children.get(1), value.get("expr2"));
@@ -85,12 +84,19 @@ public class ObjectExpressionTest {
     }
 
     @Test
-    public void testGetNumberValue() throws Exception {
+    public void testGetNumberValue() {
         assertEquals(objectExpression.getNumberValue(), Double.NaN);
+        assertEquals(empty.getNumberValue(), Double.NaN);
     }
 
     @Test
-    public void testGetSize() throws Exception {
+    public void testGetBooleanValue() {
+        assertTrue(objectExpression.getBooleanValue());
+        assertTrue(empty.getBooleanValue());
+    }
+
+    @Test
+    public void testGetSize() {
         assertEquals(objectExpression.getSize(), value.size());
     }
 

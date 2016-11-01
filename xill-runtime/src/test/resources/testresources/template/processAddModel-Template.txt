@@ -1,1 +1,0 @@
-Hello <#if company.name == "Xillio">${company.owner}<#else>"Error"</#if>!

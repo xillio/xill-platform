@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<?import javafx.scene.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import nl.xillio.migrationtool.gui.*?>
+
+<AnchorPane fx:id="apnRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1600.0" styleClass="root" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.xillio.migrationtool.gui.FXController">
+	<children>
+		<VBox fx:id="vbxContainer" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+			<children>
+				<HBox fx:id="hbxToolbar" alignment="CENTER" fillHeight="false" VBox.vgrow="NEVER">
+					<children>
+						<ImageView fx:id="imgLogo" fitHeight="24.0" fitWidth="81.0" pickOnBounds="true" preserveRatio="true">
+							<image>
+								<Image url="@images/logo.png" />
+							</image>
+						</ImageView>
+						<ToolBar fx:id="tlbLeft" focusTraversable="false" HBox.hgrow="ALWAYS">
+							<items>
+								<Button fx:id="btnNewFile" mnemonicParsing="false" onAction="#buttonNewFile" styleClass="iconButton" text="New file">
+									<graphic>
+										<Pane styleClass="icon" />
+									</graphic>
+									<tooltip>
+										<Tooltip text="New file" />
+									</tooltip>
+								</Button>
+								<Button fx:id="btnOpenFile" mnemonicParsing="false" onAction="#buttonOpenFile" styleClass="iconButton" text="Open file">
+									<graphic>
+										<Pane styleClass="icon" />
+									</graphic>
+									<tooltip>
+										<Tooltip text="Open file" />
+									</tooltip>
+								</Button>
+								<Button fx:id="btnSave" mnemonicParsing="false" onAction="#buttonSave" styleClass="iconButton" text="Save">
+									<graphic>
+										<Pane styleClass="icon" />
+									</graphic>
+									<tooltip>
+										<Tooltip text="Save" />
+									</tooltip>
+								</Button>
+								<Button fx:id="btnSaveAs" mnemonicParsing="false" onAction="#buttonSaveAs" styleClass="iconButton" text="Save as">
+									<graphic>
+										<Pane styleClass="icon" />
+									</graphic>
+									<tooltip>
+										<Tooltip text="Save as" />
+									</tooltip>
+								</Button>
+								<Button fx:id="btnSaveAll" mnemonicParsing="false" onAction="#buttonSaveAll" styleClass="iconButton" text="Save all">
+									<graphic>
+										<Pane styleClass="icon" />
+									</graphic>
+									<tooltip>
+										<Tooltip text="Save all" />
+									</tooltip>
+								</Button>
+								<!-- Temporarily disabled until print function is complete, see: https://xillio.atlassian.net/browse/CTC-1752
+
+									<Button fx:id="btnPrint" mnemonicParsing="false" onAction="#buttonPrint" styleClass="iconButton" text="Print">
+									<graphic>
+										<Pane styleClass="icon" />
+									</graphic>
+									<tooltip>
+										<Tooltip text="Print" />
+									</tooltip>
+								</Button>-->
+								<Button fx:id="btnRobotsProgress" mnemonicParsing="false" onAction="#buttonRobotsProgress" styleClass="iconButton" text="Robots progress">
+									<graphic>
+										<Pane styleClass="icon" />
+									</graphic>
+									<tooltip>
+										<Tooltip text="Robots progress" />
+									</tooltip>
+								</Button>
+							</items>
+						</ToolBar>
+						<ToolBar fx:id="tlbRight" focusTraversable="false" HBox.hgrow="NEVER">
+							<items>
+								<Button fx:id="btnSettings" mnemonicParsing="false" onAction="#buttonSettings" styleClass="iconButton" text="Settings">
+									<graphic>
+										<Pane styleClass="icon" />
+									</graphic>
+									<tooltip>
+										<Tooltip text="Settings" />
+									</tooltip>
+								</Button>
+							</items>
+						</ToolBar>
+					</children>
+				</HBox>
+				<HBox fx:id="hbxMain" VBox.vgrow="ALWAYS">
+					<children>
+						<VBox fx:id="vbxLeftHidden" alignment="BOTTOM_CENTER" minHeight="0.0" minWidth="0.0" styleClass="hiddenPaneBar" HBox.hgrow="NEVER">
+							<children>
+								<Group fx:id="grpLeftHiddenHelp">
+									<children>
+										<Label fx:id="lblLeftHiddenHelp" focusTraversable="false" rotate="-90.0" text="Help" />
+									</children>
+								</Group>
+								<Group fx:id="grpLeftHiddenProjects">
+									<children>
+										<Label fx:id="lblLeftHiddenProjects" focusTraversable="false" rotate="-90.0" text="Projects" />
+									</children>
+								</Group>
+								<Button fx:id="btnShowLeftPane" mnemonicParsing="false" onAction="#btnShowLeftPane" text="Hide panel">
+									<graphic>
+										<Pane styleClass="icon" />
+									</graphic>
+									<tooltip>
+										<Tooltip text="Hide panel" />
+									</tooltip>
+									<styleClass>
+										<String fx:value="iconButton" />
+										<String fx:value="toggleVisibilityRight" />
+									</styleClass>
+								</Button>
+							</children>
+						</VBox>
+						<SplitPane fx:id="spnMain" dividerPositions="0.2" focusTraversable="false" HBox.hgrow="ALWAYS">
+							<items>
+								<AnchorPane fx:id="apnLeft">
+									<children>
+										<VBox fx:id="vbxLeft" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+											<children>
+												<SplitPane fx:id="spnLeft" focusTraversable="false" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+													<items>
+														<ProjectPane fx:id="projectpane" />
+														<HelpPane fx:id="helppane" />
+													</items>
+												</SplitPane>
+												<HBox fx:id="hbxLeftBottom" alignment="CENTER_RIGHT" VBox.vgrow="NEVER">
+													<children>
+														<Button fx:id="btnHideLeftPane" mnemonicParsing="false" onAction="#btnHideLeftPane" text="Hide panel">
+															<graphic>
+																<Pane styleClass="icon" />
+															</graphic>
+															<tooltip>
+																<Tooltip text="Hide panel" />
+															</tooltip>
+															<styleClass>
+																<String fx:value="iconButton" />
+																<String fx:value="toggleVisibilityLeft" />
+															</styleClass>
+														</Button>
+													</children>
+												</HBox>
+											</children>
+										</VBox>
+									</children>
+								</AnchorPane>
+								<AnchorPane fx:id="apnBots">
+									<children>
+										<TabPane fx:id="tpnBots" tabClosingPolicy="ALL_TABS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+											<tabs>
+											</tabs>
+										</TabPane>
+									</children>
+								</AnchorPane>
+							</items>
+						</SplitPane>
+					</children>
+				</HBox>
+			</children>
+		</VBox>
+	</children>
+	<stylesheets>
+		<URL value="@styles.css" />
+	</stylesheets>
+</AnchorPane>

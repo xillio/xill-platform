@@ -1,3 +1,0 @@
-<#list input as i>
-${i}
-</#list>
