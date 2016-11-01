@@ -31,7 +31,9 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertEqualsNoOrder;
 
 /**
- * Created by andrea.parrilli on 2016-05-19.
+ * Tests for {@link FieldType}
+ *
+ * @author Andrea Parrilli
  */
 public class FieldTypeTest extends TestUtils {
     @Test
@@ -41,7 +43,17 @@ public class FieldTypeTest extends TestUtils {
         List<MetaExpression> listSpecimen = new LinkedList<>();
         listSpecimen.add(fromValue("V1"));
         listSpecimen.add(fromValue(33));
-        Date dateSpecimen = () -> ZonedDateTime.of(2000, 1, 1, 1, 1, 1, 1, ZoneId.of("CET"));
+        Date dateSpecimen = new Date() {
+            @Override
+            public ZonedDateTime getZoned() {
+                return ZonedDateTime.of(2000, 1, 1, 1, 1, 1, 1, ZoneId.of("CET"));
+            }
+
+            @Override
+            public Date copy() {
+                return null;
+            }
+        };
         MetaExpression dateSpecimenME = fromValue("a date");
         dateSpecimenME.storeMeta(dateSpecimen);
 

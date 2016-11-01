@@ -52,11 +52,21 @@ public class ConnectionInfo {
         Require.notEmpty(identity);
 
         this.host = DEFAULT_HOST;
-        this.port = DEFAULT_PORT;
+        this.port = getDefaultPort();
         this.database = composeDbNameFromIdentity(identity);
         this.username = null;
         this.password = null;
         this.identity = identity;
+    }
+
+    public static int getDefaultPort() {
+        String sysPort = System.getProperty("udm.port");
+
+        if (sysPort == null) {
+            return DEFAULT_PORT;
+        }
+
+        return Integer.parseInt(sysPort);
     }
 
     public ConnectionInfo(String host, int port, String database) {

@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
 import org.testng.Assert;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link ContainsConstruct}.
  */
-public class ContainsConstructTest {
+public class ContainsConstructTest extends TestUtils {
 
     /**
      * Test the process method under normal circumstances.
@@ -34,23 +35,47 @@ public class ContainsConstructTest {
     public void processNormalUsage() {
         // Mock
         String parentValue = "testing";
-        MetaExpression parent = mock(MetaExpression.class);
+        MetaExpression parent = mockExpression(ATOMIC);
         when(parent.getStringValue()).thenReturn(parentValue);
 
         String childValue = "ing";
-        MetaExpression child = mock(MetaExpression.class);
+        MetaExpression child = mockExpression(ATOMIC);
         when(child.getStringValue()).thenReturn(childValue);
 
         boolean returnValue = true;
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(stringService.contains(parentValue, childValue)).thenReturn(returnValue);
+
+        ContainsConstruct construct = new ContainsConstruct(stringService);
         // Run
-        MetaExpression result = ContainsConstruct.process(parent, child, stringService);
+        MetaExpression result = process(construct, parent, child);
 
         // Verify
         verify(stringService, times(1)).contains(parentValue, childValue);
 
         // Assert
         Assert.assertEquals(result.getBooleanValue(), returnValue);
+    }
+
+    /**
+     * Test the process method when NULL is given.
+     */
+    @Test
+    public void processNULLUsage() {
+        // Mock
+        String parentValue = "testing";
+        MetaExpression parent = mockExpression(ATOMIC);
+        when(parent.getStringValue()).thenReturn(parentValue);
+
+        MetaExpression child = NULL;
+
+        boolean returnValue = false;
+        StringUtilityService stringService = mock(StringUtilityService.class);
+        when(stringService.contains(parentValue, null)).thenReturn(returnValue);
+
+        ContainsConstruct construct = new ContainsConstruct(stringService);
+        // Run
+        MetaExpression result = process(construct, parent, child);
+
     }
 }

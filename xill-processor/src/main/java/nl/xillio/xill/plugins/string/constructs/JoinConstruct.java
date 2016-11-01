@@ -31,19 +31,24 @@ import java.util.Map;
  * Concatenates a list of elements using a delimiter
  */
 public class JoinConstruct extends Construct {
+
+    private final StringUtilityService stringService;
+
     @Inject
-    private StringUtilityService stringService;
+    public JoinConstruct(StringUtilityService stringService) {
+        this.stringService = stringService;
+    }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (list, delimiter) -> process(list, delimiter, stringService),
+                this::process,
                 new Argument("list"),
                 new Argument("delimiter", fromValue(""), ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression list, final MetaExpression delimiter, final StringUtilityService stringService) {
-        String output = "";
+    private MetaExpression process(final MetaExpression list, final MetaExpression delimiter) {
+        String output;
 
         switch (list.getType()) {
             case ATOMIC:
