@@ -48,7 +48,7 @@ public class ConnectConstruct extends Construct {
                         process(database, host, port, username, password, context),
                 new Argument("database", ATOMIC),
                 new Argument("host", fromValue("localhost"), ATOMIC),
-                new Argument("port", fromValue(27017), ATOMIC),
+                new Argument("port", fromValue(ConnectionInfo.getDefaultPort()), ATOMIC),
                 new Argument("username", NULL, ATOMIC),
                 new Argument("password", NULL, ATOMIC)
         );

@@ -95,7 +95,7 @@ public class AtomicExpressionTest {
          * @param atomicExpression {@link AtomicExpression} that has to be tested.
          */
         public static void testClosing(AtomicExpression atomicExpression){
-            AtomicExpression copy = atomicExpression.copy();
+            MetaExpression copy = atomicExpression.copy();
             copy.close();
             assertFalse(copy.isOpen());
         }
@@ -106,7 +106,7 @@ public class AtomicExpressionTest {
          * @param atomicExpression the {@link AtomicExpression} that has to be tested.
          */
         public static void testCopied(AtomicExpression atomicExpression){
-            AtomicExpression copy = atomicExpression.copy();
+            MetaExpression copy = atomicExpression.copy();
             assertEquals(copy, atomicExpression);  // same value
             assertFalse(copy == atomicExpression); // new object in memory
         }

@@ -1,6 +1,5 @@
 Xill
 ====
-[![Join the chat at https://gitter.im/thomasbiesaart/anyscribble](https://badges.gitter.im/thomasbiesaart/anyscribble.svg)](https://gitter.im/xillio/xill?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Xill makes it easy to perform content related operations like extraction,
 manipulation or generation using a domain specific scripting language.
@@ -16,7 +15,6 @@ Contributing
 Xill is an open source project, this means that any contributions are
 more then welcome! Check out the [contribution guidelines](CONTRIBUTING.md)
 to see how you can help us make this platform better.
-
 
 FAQ
 ---

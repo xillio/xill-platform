@@ -38,4 +38,9 @@ public class DateImpl implements Date {
     public ZonedDateTime getZoned() {
         return ZonedDateTime.ofInstant(this.date.toInstant(), ZoneId.systemDefault());
     }
+
+    @Override
+    public Date copy() {
+        return new DateImpl(java.util.Date.from(date.toInstant()));
+    }
 }
