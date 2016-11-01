@@ -27,7 +27,7 @@
     <parent>
         <groupId>nl.xillio.xill</groupId>
         <artifactId>xill-plugins-parent</artifactId>
-        <version>3.4.0-SNAPSHOT</version>
+        <version>3.5.0-SNAPSHOT</version>
         <relativePath>../xill-plugins-parent</relativePath>
     </parent>
 
@@ -38,11 +38,6 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>1.4.192</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>nl.xillio.xill</groupId>
-            <artifactId>xill-processor</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -15,11 +15,15 @@
  */
 package nl.xillio.xill.plugins.system.constructs;
 
+import com.google.inject.Inject;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
+import nl.xillio.xill.api.errors.RobotRuntimeException;
+import nl.xillio.xill.services.json.JsonException;
+import nl.xillio.xill.services.json.PrettyJsonParser;
 import org.slf4j.Logger;
 
 /**
@@ -27,6 +31,13 @@ import org.slf4j.Logger;
  * debug, info (default), warning, error.
  */
 public class PrintConstruct extends Construct {
+
+    private static PrettyJsonParser prettyJsonParser;
+
+    @Inject
+    PrintConstruct(PrettyJsonParser prettyJsonParser) {
+        PrintConstruct.prettyJsonParser = prettyJsonParser;
+    }
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
@@ -39,7 +50,16 @@ public class PrintConstruct extends Construct {
     static MetaExpression process(final MetaExpression textVar, final MetaExpression logLevel, final Logger robotLog) {
         String level = logLevel.getStringValue();
 
-        String text = textVar.getStringValue();
+        String text;
+        if (textVar.getType() == ATOMIC) {
+            text = textVar.getStringValue();
+        } else {
+            try {
+                text = textVar.toString(prettyJsonParser);
+            } catch (JsonException e) {
+                throw new RobotRuntimeException("Could not get text.", e);
+            }
+        }
 
         if ("debug".equalsIgnoreCase(level)) {
             robotLog.debug(text);

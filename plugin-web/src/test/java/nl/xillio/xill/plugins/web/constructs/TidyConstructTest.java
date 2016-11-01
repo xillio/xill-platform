@@ -41,16 +41,18 @@ public class TidyConstructTest extends TestUtils {
             SYNTAX_HTML = mockExpression(ATOMIC, false, Double.NaN, "html");
 
     /**
-     * Test {@link TidyConstruct#process(MetaExpression, MetaExpression, MetaExpression, MetaExpression, HTMLService)} to output a full HTML document
+     * Test {@link TidyConstruct to output a full HTML document
      */
     @Test
     public void testProcessFullHTML() {
         // mock
+        TidyConstruct construct = new TidyConstruct();
         HTMLService service = mock(HTMLService.class);
+        construct.setHtmlService(service);
         when(service.tidyHTML(any(), anyBoolean())).thenReturn(TIDIED_HTML);
 
         // run
-        MetaExpression result = TidyConstruct.process(DEFAULT_HTML, TRUE, SYNTAX_HTML, TRUE, service);
+        MetaExpression result = process(construct, DEFAULT_HTML, TRUE, SYNTAX_HTML, TRUE);
 
         // verify
         verify(service).tidyHTML(INPUT_HTML, true);
@@ -60,16 +62,19 @@ public class TidyConstructTest extends TestUtils {
     }
 
     /**
-     * Test {@link TidyConstruct#process(MetaExpression, MetaExpression, MetaExpression, MetaExpression, HTMLService)} to output a full XHTML document
+     * Test {@link TidyConstruct to output a full XHTML document
      */
     @Test
     public void testProcessFullXHTML() {
         // mock
+        TidyConstruct construct = new TidyConstruct();
         HTMLService service = mock(HTMLService.class);
+        construct.setHtmlService(service);
         when(service.tidyXHTML(any(), anyBoolean())).thenReturn(TIDIED_HTML);
 
+
         // run
-        MetaExpression result = TidyConstruct.process(DEFAULT_HTML, TRUE, SYNTAX_XHTML, TRUE, service);
+        MetaExpression result = process(construct, DEFAULT_HTML, TRUE, SYNTAX_XHTML, TRUE);
 
         // verify
         verify(service).tidyXHTML(INPUT_HTML, true);
@@ -79,16 +84,18 @@ public class TidyConstructTest extends TestUtils {
     }
 
     /**
-     * Test {@link TidyConstruct#process(MetaExpression, MetaExpression, MetaExpression, MetaExpression, HTMLService)} to output a fragment HTML document
+     * Test {@link TidyConstruct to output a fragment HTML document
      */
     @Test
     public void testProcessFragmentHTML() {
         // mock
+        TidyConstruct construct = new TidyConstruct();
         HTMLService service = mock(HTMLService.class);
+        construct.setHtmlService(service);
         when(service.tidyHTMLBodyFragment(any(), anyBoolean())).thenReturn(TIDIED_HTML);
 
         // run
-        MetaExpression result = TidyConstruct.process(DEFAULT_HTML, FALSE, SYNTAX_HTML, TRUE, service);
+        MetaExpression result = process(construct, DEFAULT_HTML, FALSE, SYNTAX_HTML, TRUE);
 
         // verify
         verify(service).tidyHTMLBodyFragment(INPUT_HTML, true);
@@ -98,16 +105,18 @@ public class TidyConstructTest extends TestUtils {
     }
 
     /**
-     * Test {@link TidyConstruct#process(MetaExpression, MetaExpression, MetaExpression, MetaExpression, HTMLService)} to output a fragment XHTML document
+     * Test {@link TidyConstruct to output a fragment XHTML document
      */
     @Test
     public void testProcessFragmentXHTML() {
         // mock
+        TidyConstruct construct = new TidyConstruct();
         HTMLService service = mock(HTMLService.class);
+        construct.setHtmlService(service);
         when(service.tidyXHTMLBodyFragment(any(), anyBoolean())).thenReturn(TIDIED_HTML);
 
         // run
-        MetaExpression result = TidyConstruct.process(DEFAULT_HTML, FALSE, SYNTAX_XHTML, TRUE, service);
+        MetaExpression result = process(construct, DEFAULT_HTML, FALSE, SYNTAX_XHTML, TRUE);
 
         // verify
         verify(service).tidyXHTMLBodyFragment(INPUT_HTML, true);
@@ -117,15 +126,16 @@ public class TidyConstructTest extends TestUtils {
     }
 
     /**
-     * Test {@link TidyConstruct#process(MetaExpression, MetaExpression, MetaExpression, MetaExpression, HTMLService)} with an incorrect syntax parameter.
+     * Test {@link TidyConstruct with an incorrect syntax parameter.
      */
     @Test(expectedExceptions = RobotRuntimeException.class)
     public void testProcessIncorrectSyntax() {
         // mock
-        MetaExpression syntax = mockExpression(ATOMIC, false, Double.NaN, "wrong");
+        TidyConstruct construct = new TidyConstruct();
         HTMLService service = mock(HTMLService.class);
-
+        construct.setHtmlService(service);
+        MetaExpression syntax = mockExpression(ATOMIC, false, Double.NaN, "wrong");
         // run
-        TidyConstruct.process(DEFAULT_HTML, TRUE, syntax, TRUE, service);
+        process(construct, DEFAULT_HTML, TRUE, syntax, TRUE);
     }
 }

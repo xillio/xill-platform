@@ -18,6 +18,7 @@ package nl.xillio.xill.api;
 import com.google.inject.Injector;
 import nl.xillio.plugins.PluginLoadFailure;
 import nl.xillio.plugins.XillPlugin;
+import nl.xillio.xill.services.ProgressTracker;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -29,17 +30,17 @@ import java.util.List;
  *
  * @author Thomas Biesaart
  */
-public interface XillEnvironment {
+public interface XillEnvironment extends AutoCloseable {
 
     /**
      * The default file extension for robot files.
      */
-    public static final String ROBOT_EXTENSION = ".xill";
+    String ROBOT_EXTENSION = ".xill";
 
     /**
      * The default file extension for robot templates.
      */
-    public static final String ROBOT_TEMPLATE_EXTENSION = ".xilt";
+    String ROBOT_TEMPLATE_EXTENSION = ".xilt";
 
     /**
      * Enables or disables loading plugins from the user's home folder.
@@ -65,6 +66,16 @@ public interface XillEnvironment {
      * @return self
      */
     XillEnvironment setRootInjector(Injector injector);
+
+    /**
+     * Sets the {@link XillThreadFactory} used to create threads in plugins.
+     *
+     * Needs to be called before {@link #loadPlugins()}.
+     *
+     * @param xillThreadFactory the factory
+     * @return self
+     */
+    XillEnvironment setXillThreadFactory(XillThreadFactory xillThreadFactory);
 
     /**
      * Loads plugins from the added folders.
@@ -112,4 +123,17 @@ public interface XillEnvironment {
     default List<PluginLoadFailure> getMissingLicensePlugins() {
         return Collections.emptyList();
     }
+
+    /**
+     * Gets a {@link ProgressTracker} object.
+     *
+     * @return ProgressTracker object
+     */
+    ProgressTracker getProgressTracker();
+
+    /**
+     * Close all loaded plugins.
+     */
+    @Override
+    void close();
 }

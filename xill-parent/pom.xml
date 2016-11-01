@@ -26,24 +26,17 @@
 
     <groupId>nl.xillio.xill</groupId>
     <artifactId>xill-parent</artifactId>
-    <version>3.4.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <inceptionYear>2014</inceptionYear>
 
-    <organization>
-        <name>Xillio</name>
-        <url>https://www.xillio.com</url>
-    </organization>
+    <parent>
+        <groupId>nl.xillio</groupId>
+        <artifactId>xillio-parent</artifactId>
+        <version>3.5.0-SNAPSHOT</version>
+        <relativePath>../xillio-parent</relativePath>
+    </parent>
 
     <url>http://xill.io/</url>
-
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
 
     <issueManagement>
         <system>Jira</system>
@@ -61,376 +54,13 @@
     </prerequisites>
 
     <properties>
-        <xill.version>3.4.0-SNAPSHOT</xill.version>
-        <!-- Dependencies -->
-        <java.version>1.8</java.version>
-        <testng.version>6.9.10</testng.version>
-        <mockito.version>1.10.19</mockito.version>
-        <reflections.version>0.9.10</reflections.version>
-        <gson.version>2.6.2</gson.version>
-        <xill.lang.version>3.1.4</xill.lang.version>
-        <codec.version>1.10</codec.version>
-        <commons.version>1.5.0</commons.version>
-        <guice.version>4.0</guice.version>
-        <jackson.version>2.6.3</jackson.version>
-        <guava.version>18.0</guava.version>
-        <poi.version>3.13</poi.version>
-        <log4j.version>2.6</log4j.version>
-        <docgen.version>3.1.3</docgen.version>
-        <jasypt.version>1.9.1</jasypt.version>
-        <slf4j.version>1.7.21</slf4j.version>
-        <saxon.version>9.6.0-5</saxon.version>
-        <wield.version>1.1.1</wield.version>
-        <sqlite.verion>3.8.11.2</sqlite.verion>
-        <oracle.version>12.1.0.1.0</oracle.version>
-        <jtds.version>1.3.1</jtds.version>
-        <mariadb.version>1.4.5</mariadb.version>
-        <freemarker.version>2.3.23</freemarker.version>
-        <pegdown.version>1.6.0</pegdown.version>
-        <elasticsearch.version>1.6.0</elasticsearch.version>
-        <selenium.version>2.45.0</selenium.version>
-        <phantomjs.version>1.2.1</phantomjs.version>
-        <httpclient.version>4.5.1</httpclient.version>
-        <jsoup.version>1.8.3</jsoup.version>
-        <mongo.java.driver.version>3.2.2</mongo.java.driver.version>
-
         <!-- Build Info -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
         <sonar.jacoco.itReportPath>${project.basedir}/../target/jacoco-it.exec</sonar.jacoco.itReportPath>
         <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco-ut.exec</sonar.jacoco.reportPath>
-        <sonar.language>java</sonar.language>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>jcenter</id>
-            <url>https://jcenter.bintray.com</url>
-        </repository>
-        <repository>
-            <id>xillio-releases</id>
-            <url>https://maven.xillio.com/artifactory/libs-release</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>xillio-snapshots</id>
-            <url>https://maven.xillio.com/artifactory/libs-snapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>xillio-third-party</id>
-            <url>https://maven.xillio.com/artifactory/libs-third-party</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
-    <dependencyManagement>
-        <dependencies>
-            <!-- Internal Project Dependencies -->
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>xill-assemblies</artifactId>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>xill-api</artifactId>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>xill-processor</artifactId>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>xill-processor</artifactId>
-                <type>zip</type>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>xill-testutils</artifactId>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-jdbc</artifactId>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>xill-ide-launcher</artifactId>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>xill-ide-core</artifactId>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>xill-ide-launcher</artifactId>
-                <type>zip</type>
-                <classifier>jfx</classifier>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>xill-ide-core</artifactId>
-                <type>zip</type>
-                <version>${xill.version}</version>
-            </dependency>
-            <!-- Plugin Zips -->
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>xill-runtime</artifactId>
-                <type>zip</type>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-xml</artifactId>
-                <type>zip</type>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-mariadb</artifactId>
-                <type>zip</type>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-mssql</artifactId>
-                <type>zip</type>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-oracle</artifactId>
-                <type>zip</type>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-sqlite</artifactId>
-                <type>zip</type>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-document</artifactId>
-                <type>zip</type>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-database</artifactId>
-                <type>zip</type>
-                <version>${xill.version}</version>
-            </dependency>
-            <!-- External Dependencies -->
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-server</artifactId>
-                <version>${selenium.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.codeborne</groupId>
-                <artifactId>phantomjsdriver</artifactId>
-                <version>${phantomjs.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>${httpclient.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpmime</artifactId>
-                <version>${httpclient.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>fluent-hc</artifactId>
-                <version>${httpclient.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jsoup</groupId>
-                <artifactId>jsoup</artifactId>
-                <version>${jsoup.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.elasticsearch</groupId>
-                <artifactId>elasticsearch</artifactId>
-                <version>${elasticsearch.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.pegdown</groupId>
-                <artifactId>pegdown</artifactId>
-                <version>${pegdown.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.freemarker</groupId>
-                <artifactId>freemarker</artifactId>
-                <version>${freemarker.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mariadb.jdbc</groupId>
-                <artifactId>mariadb-java-client</artifactId>
-                <version>${mariadb.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sourceforge.jtds</groupId>
-                <artifactId>jtds</artifactId>
-                <version>${jtds.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.xerial</groupId>
-                <artifactId>sqlite-jdbc</artifactId>
-                <version>${sqlite.verion}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.oracle</groupId>
-                <artifactId>ojdbc7</artifactId>
-                <version>${oracle.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>me.biesaart</groupId>
-                <artifactId>wield</artifactId>
-                <version>${wield.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.saxon</groupId>
-                <artifactId>Saxon-HE</artifactId>
-                <version>${saxon.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.testng</groupId>
-                <artifactId>testng</artifactId>
-                <version>${testng.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>${mockito.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.reflections</groupId>
-                <artifactId>reflections</artifactId>
-                <version>${reflections.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.code.gson</groupId>
-                <artifactId>gson</artifactId>
-                <version>${gson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
-                <artifactId>xill.lang.Xill</artifactId>
-                <version>${xill.lang.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>${codec.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>me.biesaart</groupId>
-                <artifactId>commons</artifactId>
-                <version>${commons.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.inject</groupId>
-                <artifactId>guice</artifactId>
-                <version>${guice.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi</artifactId>
-                <version>${poi.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-ooxml</artifactId>
-                <version>${poi.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j-impl</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio</groupId>
-                <artifactId>docgen</artifactId>
-                <version>${docgen.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>nl.xillio.xill</groupId>
-                        <artifactId>api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.jasypt</groupId>
-                <artifactId>jasypt</artifactId>
-                <version>${jasypt.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mongodb</groupId>
-                <artifactId>mongo-java-driver</artifactId>
-                <version>${mongo.java.driver.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <dependencies>
         <!-- Add Test Dependencies -->
         <dependency>
@@ -459,20 +89,7 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.19.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.0.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.0.0</version>
-                </plugin>
-                <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.6</version>
                     <dependencies>
                         <dependency>
                             <groupId>nl.xillio.xill</groupId>
@@ -496,17 +113,7 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.5.1</version>
-                    <configuration>
-                        <source>${java.version}</source>
-                        <target>${java.version}</target>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.0.0</version>
                     <executions>
                         <execution>
                             <goals>
@@ -516,14 +123,8 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.7.6.201602180812</version>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.0.0</version>
                     <configuration>
                         <archive>
                             <manifest>
@@ -598,41 +199,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>windows</id>
-            <activation>
-                <os>
-                    <family>Windows</family>
-                </os>
-            </activation>
-            <properties>
-                <os.classifier>win</os.classifier>
-            </properties>
-        </profile>
-        <profile>
-            <id>mac</id>
-            <activation>
-                <os>
-                    <family>mac</family>
-                </os>
-            </activation>
-            <properties>
-                <os.classifier>osx</os.classifier>
-            </properties>
-        </profile>
-        <profile>
-            <id>unix</id>
-            <activation>
-                <os>
-                    <name>!mac os x</name>
-                    <family>unix</family>
-                </os>
-            </activation>
-            <properties>
-                <os.classifier>unix</os.classifier>
-            </properties>
-        </profile>
-    </profiles>
 </project>

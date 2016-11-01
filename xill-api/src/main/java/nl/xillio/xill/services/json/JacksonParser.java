@@ -16,12 +16,18 @@
 package nl.xillio.xill.services.json;
 
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.io.IOContext;
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import nl.xillio.xill.api.components.MetaExpression;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 
 /**
@@ -30,11 +36,30 @@ import java.text.SimpleDateFormat;
  * @author Thomas Biesaart
  */
 public class JacksonParser implements PrettyJsonParser {
-    private final ObjectMapper mapper = new ObjectMapper();
+
+    private static class PrettyPrinter extends DefaultPrettyPrinter {
+        public static final PrettyPrinter instance = new PrettyPrinter();
+
+        public PrettyPrinter() {
+            _arrayIndenter = new DefaultIndenter();
+        }
+    }
+
+    private static class Factory extends JsonFactory {
+        @Override
+        protected JsonGenerator _createGenerator(Writer out, IOContext ioContext) throws IOException {
+            return super._createGenerator(out, ioContext).setPrettyPrinter(PrettyPrinter.instance);
+        }
+    }
+
+    private final ObjectMapper mapper;
 
     public JacksonParser(boolean pretty) {
         if (pretty) {
+            mapper = new ObjectMapper(new Factory());
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        } else {
+            mapper = new ObjectMapper();
         }
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));

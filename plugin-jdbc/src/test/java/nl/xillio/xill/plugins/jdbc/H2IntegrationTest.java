@@ -17,6 +17,8 @@ package nl.xillio.xill.plugins.jdbc;
 
 import nl.xillio.events.EventHost;
 import nl.xillio.xill.TestUtils;
+import nl.xillio.xill.api.Debugger;
+import nl.xillio.xill.api.NullDebugger;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.MetaExpressionIterator;
 import nl.xillio.xill.api.components.RobotID;
@@ -25,7 +27,6 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.api.io.SimpleIOStream;
-import nl.xillio.xill.debugging.XillDebugger;
 import nl.xillio.xill.plugins.jdbc.constructs.ConnectConstruct;
 import nl.xillio.xill.plugins.jdbc.constructs.GetObjectConstruct;
 import nl.xillio.xill.plugins.jdbc.constructs.QueryConstruct;
@@ -63,7 +64,7 @@ public class H2IntegrationTest extends TestUtils {
     private final GetObjectConstruct getObjectConstruct = new GetObjectConstruct(connectionFactory, statementSyntaxFactory, queryingService, expressionConverter, null);
     private final StoreObjectConstruct storeObjectConstruct = new StoreObjectConstruct(connectionFactory, expressionConverter, statementSyntaxFactory, queryingService, null);
     private final UUID executionId = UUID.randomUUID();
-    private final XillDebugger debugger = new XillDebugger();
+    private final Debugger debugger = new NullDebugger();
 
     @BeforeClass
     public void connectToDatabase() {
@@ -84,6 +85,7 @@ public class H2IntegrationTest extends TestUtils {
         MetaExpression result = run(queryConstruct, fromValue("INSERT INTO test (num) VALUES (?)"), fromValue(Collections.singletonList(fromValue(1337))));
         assertEquals(result.getNumberValue().intValue(), 1);
     }
+
     /**
      * This will use storeObject to insert a row
      */

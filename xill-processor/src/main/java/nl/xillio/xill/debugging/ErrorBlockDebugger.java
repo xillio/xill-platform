@@ -38,11 +38,17 @@ public class ErrorBlockDebugger extends DelegateDebugger {
 
     @Override
     public void handle(Throwable e) {
-        this.error = e;
-        LOGGER.error("Caught exception in error handler", e);
-        if (!getStackTrace().isEmpty()) {
-            erroredInstruction = getStackTrace().get(getStackTrace().size() - 1);
+        // Multiple exceptions can occur on one line of code, the do block is exited after the line is completed
+        // The first exception probably caused the following exceptions, they should be suppressed
+        if (this.error == null) {
+            this.error = e;
+            if (!getStackTrace().isEmpty()) {
+                erroredInstruction = getStackTrace().get(getStackTrace().size() - 1);
+            }
+        } else {
+            this.error.addSuppressed(e);
         }
+        LOGGER.debug("Caught exception in error handler", e);
     }
 
     @Override

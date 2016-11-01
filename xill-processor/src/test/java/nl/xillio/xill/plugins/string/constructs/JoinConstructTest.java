@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
@@ -32,7 +33,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test the {@link JoinConstruct}.
  */
-public class JoinConstructTest extends ExpressionBuilderHelper {
+public class JoinConstructTest extends TestUtils {
 
     /**
      * Test the process method with an ATOMIC value given.
@@ -41,18 +42,20 @@ public class JoinConstructTest extends ExpressionBuilderHelper {
     public void processAtomicInput() {
         // Mock
         String valueValue = "CORRECT";
-        MetaExpression value = mock(MetaExpression.class);
+        MetaExpression value = mockExpression(ATOMIC);
         when(value.getStringValue()).thenReturn(valueValue);
         when(value.getType()).thenReturn(ATOMIC);
 
         String delimiterValue = "a";
-        MetaExpression delimiter = mock(MetaExpression.class);
+        MetaExpression delimiter = mockExpression(ATOMIC);
         when(delimiter.getStringValue()).thenReturn(delimiterValue);
 
         String returnValue = "CORRECT";
         StringUtilityService stringService = mock(StringUtilityService.class);
+
+        JoinConstruct construct = new JoinConstruct(stringService);
         // Run
-        MetaExpression result = JoinConstruct.process(value, delimiter, stringService);
+        MetaExpression result = process(construct, value, delimiter);
 
         // Verify
         verify(stringService, times(0)).join(any(), any());
@@ -68,28 +71,30 @@ public class JoinConstructTest extends ExpressionBuilderHelper {
     public void processListInput() {
         // Mock
         String firstValue = "CORRECT";
-        MetaExpression first = mock(MetaExpression.class);
+        MetaExpression first = mockExpression(ATOMIC);
         when(first.getStringValue()).thenReturn(firstValue);
 
         String secondValue = "MONSIEUR";
-        MetaExpression second = mock(MetaExpression.class);
+        MetaExpression second = mockExpression(ATOMIC);
         when(second.getStringValue()).thenReturn(secondValue);
 
         List<MetaExpression> listValue = Arrays.asList(first, second);
         String[] listValueAsStrings = new String[]{firstValue, secondValue};
-        MetaExpression list = mock(MetaExpression.class);
+        MetaExpression list = mockExpression(LIST);
         when(list.getValue()).thenReturn(listValue);
         when(list.getType()).thenReturn(LIST);
 
         String delimiterValue = "";
-        MetaExpression delimiter = mock(MetaExpression.class);
+        MetaExpression delimiter = mockExpression(ATOMIC);
         when(delimiter.getStringValue()).thenReturn(delimiterValue);
 
         String returnValue = "CORRECTMONSIEUR";
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(stringService.join(listValueAsStrings, delimiterValue)).thenReturn(returnValue);
+
+        JoinConstruct construct = new JoinConstruct(stringService);
         // Run
-        MetaExpression result = JoinConstruct.process(list, delimiter, stringService);
+        MetaExpression result = process(construct, list, delimiter);
 
         // Verify
         verify(stringService, times(1)).join(listValueAsStrings, delimiterValue);
@@ -105,31 +110,33 @@ public class JoinConstructTest extends ExpressionBuilderHelper {
     public void processObjectInput() {
         // Mock
         String firstValue = "CORRECT";
-        MetaExpression first = mock(MetaExpression.class);
+        MetaExpression first = mockExpression(ATOMIC);
         when(first.getStringValue()).thenReturn(firstValue);
 
         String secondValue = "MONSIEUR";
-        MetaExpression second = mock(MetaExpression.class);
+        MetaExpression second = mockExpression(ATOMIC);
         when(second.getStringValue()).thenReturn(secondValue);
 
         Map<String, MetaExpression> objectValue = new LinkedHashMap<String, MetaExpression>();
         objectValue.put("first", first);
         objectValue.put("second", second);
-        MetaExpression object = mock(MetaExpression.class);
+        MetaExpression object = mockExpression(OBJECT);
         when(object.getValue()).thenReturn(objectValue);
         when(object.getType()).thenReturn(OBJECT);
 
         String[] listValueAsStrings = new String[]{firstValue, secondValue};
 
         String delimiterValue = "";
-        MetaExpression delimiter = mock(MetaExpression.class);
+        MetaExpression delimiter = mockExpression(ATOMIC);
         when(delimiter.getStringValue()).thenReturn(delimiterValue);
 
         String returnValue = "CORRECTMONSIEUR";
         StringUtilityService stringService = mock(StringUtilityService.class);
         when(stringService.join(listValueAsStrings, delimiterValue)).thenReturn(returnValue);
+
+        JoinConstruct construct = new JoinConstruct(stringService);
         // Run
-        MetaExpression result = JoinConstruct.process(object, delimiter, stringService);
+        MetaExpression result = process(construct, object, delimiter);
 
         // Verify
         verify(stringService, times(1)).join(listValueAsStrings, delimiterValue);

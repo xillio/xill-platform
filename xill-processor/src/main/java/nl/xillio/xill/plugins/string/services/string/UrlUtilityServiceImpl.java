@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,13 +32,13 @@ import java.util.regex.Pattern;
 @Singleton
 public class UrlUtilityServiceImpl implements UrlUtilityService {
 
-    private static String getParentUrl(final String pageurl, String relativeurl) {
+    static String getParentUrl(final String pageurl, String relativeurl) {
         if ("..".equals(relativeurl)) {
             relativeurl = "../";
         }
 
         if (relativeurl.startsWith("../")) {
-            Matcher m = Pattern.compile("(http(s)?://.*)(/[^/]*/[^/]*)").matcher(pageurl);
+            Matcher m = Pattern.compile("(.+:(//).*)(/[^/]*/[^/]*)").matcher(pageurl);
             if (m.matches()) {
                 String parenturl = m.group(1);
                 return getParentUrl(parenturl + "/", relativeurl.substring(3));
@@ -61,8 +60,8 @@ public class UrlUtilityServiceImpl implements UrlUtilityService {
     }
 
     @Override
-    public String tryConvert(final String pageUrl, final String relativeUrl) throws IllegalArgumentException {
-        if (relativeUrl.startsWith("http://") || relativeUrl.startsWith("https://")) {
+    public String tryConvert(final String pageUrl, final String relativeUrl) {
+        if(relativeUrl.matches(".+:(//).*")){
             return cleanupUrl(relativeUrl);
         } else if (relativeUrl.matches("//w+.*")) {
             Matcher m = Pattern.compile("(https?:).*").matcher(pageUrl);
@@ -74,7 +73,7 @@ public class UrlUtilityServiceImpl implements UrlUtilityService {
         } else if (relativeUrl.matches("www(\\.\\w+){2,}.*")) {
             return cleanupUrl("http://" + relativeUrl);
         } else if (relativeUrl.startsWith("/")) {
-            Matcher m = Pattern.compile("(http(s)?://[^/]*)(/.*)?").matcher(pageUrl);
+            Matcher m = Pattern.compile("(.+://[^/]*)(/.*)?").matcher(pageUrl);
             if (m.matches()) {
                 String baseurl = m.group(1);
                 return cleanupUrl(baseurl + relativeUrl);
@@ -86,7 +85,7 @@ public class UrlUtilityServiceImpl implements UrlUtilityService {
                 return cleanupUrl(parentUrl);
             }
         } else {
-            Matcher m = Pattern.compile("(http(s)?://.*)(/[^/]*\\.(htm|html|jsp|php|asp|aspx|shtml|py|cgi|pl|cfm|jspx|php4|php3|rb|rhtml|dll|xml|xhtml|asx|do)[?/]?.*)").matcher(pageUrl);
+            Matcher m = Pattern.compile("(.+:(//).*)(/[^/]*\\.(htm|html|jsp|php|asp|aspx|shtml|py|cgi|pl|cfm|jspx|php4|php3|rb|rhtml|dll|xml|xhtml|asx|do)[?/]?.*)").matcher(pageUrl);
             if (m.matches()) {
                 // Reference to a page
                 String parenturl = m.group(1);
@@ -107,5 +106,16 @@ public class UrlUtilityServiceImpl implements UrlUtilityService {
         OutputStream out = new FileOutputStream(file);
         out.write(output);
         out.close();
+    }
+
+    @Override
+    public String getProtocol(String url) {
+        int afterProtocol = url.indexOf("://");
+        return afterProtocol == -1 ? "" : url.substring(0, afterProtocol);
+    }
+
+    @Override
+    public boolean hasProtocol(String url) {
+        return !"".equals(getProtocol(url));
     }
 }
