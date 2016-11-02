@@ -17,6 +17,7 @@ package nl.xillio.xill.webservice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.xillio.xill.webservice.model.Worker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -41,6 +42,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.testng.Assert.assertFalse;
 
 /**
  * This class will run tests on the web api. It will also generate snippets that can be included
@@ -56,6 +58,8 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     private ObjectMapper objectMapper;
     @Autowired
     private WebApplicationContext context;
+    @Autowired
+    private XillWorkerWebServiceController xillWorkerWebServiceController;
 
     private MockMvc mockMvc;
 
@@ -70,7 +74,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     public void tearDown() {
         this.restDocumentation.afterTest();
 
-        // TODO Wipe worker pool state
+        xillWorkerWebServiceController.releaseAllWorkers();
     }
 
     @Test
@@ -92,7 +96,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     }
 
     @Test
-    public void testCreateWorkerWithoutRobot() throws Exception {
+    public void testCreateWorkerWithInvalidRobot() throws Exception {
         // When creating a worker
         this.mockMvc.perform(
                 post("/workers")
@@ -103,14 +107,25 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                         ))
         )
                 // The response must be 400-BAD Request
-                .andExpect(status().isBadRequest())
-                .andDo(document("create-worker-invalid-robot"));
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testCreateWorkerWithoutRobot() throws Exception {
+        // When creating a worker
+        this.mockMvc.perform(
+                post("/workers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        // With an invalid robot name
+                        .content(jsonBody(
+                        ))
+        )
+                // The response must be 400-BAD Request
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     public void testCreateWorkerWithFullQueue() throws Exception {
-        // TODO This test assumes a worker pool size of 3
-
         // Fill the worker pool with 3
         for (int i = 0; i < 3; i++) {
             this.mockMvc.perform(
@@ -135,16 +150,16 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                                 "robot", "unittest.pool.WorkerError"
                         ))
         )
-                .andExpect(status().isServiceUnavailable())
-                .andDo(document("create-worker-pool-full"));
+                .andExpect(status().isServiceUnavailable());
     }
 
     @Test
     public void testDeleteWorker() throws Exception {
+        int id = xillWorkerWebServiceController.registerWorker(new Worker("test.worker"));
 
         // Deleting a worker by id
         this.mockMvc.perform(
-                delete("/workers/{id}").param("id", "3")
+                delete("/workers/{id}").param("id", Integer.toString(id))
         )
                 // Should return 204-No Content
                 .andExpect(status().isNoContent())
@@ -164,9 +179,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testRunLoadedRobotWithJsonReturnValue() throws Exception {
+        int id = xillWorkerWebServiceController.registerWorker(new Worker("test.JsonReturnTest"));
+
         // Run a robot
         this.mockMvc.perform(
-                post("/workers/{id}/activate").param("id", "2")
+                post("/workers/{id}/activate").param("id", Integer.toString(id))
         )
                 // Should return 200 - OK
                 .andExpect(status().isOk())
@@ -177,9 +194,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testRunLoadedRobotWithStreamReturnValue() throws Exception {
+        int id = xillWorkerWebServiceController.registerWorker(new Worker("test.StreamReturnTest"));
+
         // Run a robot
         this.mockMvc.perform(
-                post("/workers/{id}/activate").param("id", "1")
+                post("/workers/{id}/activate").param("id", Integer.toString(id))
         )
                 // Should return 200 - OK
                 .andExpect(status().isOk())
@@ -190,9 +209,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testRunLoadedRobotWithoutReturnValue() throws Exception {
+        int id = xillWorkerWebServiceController.registerWorker(new Worker("test.NullReturnTest"));
+
         // Run a robot
         this.mockMvc.perform(
-                post("/workers/{id}/activate").param("id", "3")
+                post("/workers/{id}/activate").param("id", Integer.toString(id))
         )
                 // Should return 204 - NO CONTENT
                 .andExpect(status().isNoContent());
@@ -210,9 +231,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testRunRobotWithError() throws Exception {
-        // Run a non existing robot/worker
+        int id = xillWorkerWebServiceController.registerWorker(new Worker("test.ErrorThrowingRobot"));
+
+        // Run a robot that throws an error
         this.mockMvc.perform(
-                post("/workers/{id}/activate").param("id", "000404")
+                post("/workers/{id}/activate").param("id", Integer.toString(id))
         )
                 // Should return 500 - INTERNAL SERVER ERROR
                 .andExpect(status().isInternalServerError())
@@ -223,20 +246,32 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testTerminateRunningWorker() throws Exception {
+        int id = xillWorkerWebServiceController.registerWorker(new Worker("test.TerminateTest"));
+
+        // Start running
+        Thread running = new Thread(() -> xillWorkerWebServiceController.runWorker(id));
+        running.setDaemon(true);
+        running.start();
+
         // Terminate a running worker
         this.mockMvc.perform(
-                post("/workers/{id}/terminate").param("id", "5")
+                post("/workers/{id}/terminate").param("id", Integer.toString(id))
         )
                 // Should return 204 - NO CONTENT
                 .andExpect(status().isNoContent())
                 .andDo(document("terminate-worker"));
+
+        // Expect the worker to have finished
+        assertFalse(running.isAlive());
     }
 
     @Test
     public void testTerminateNotRunningWorker() throws Exception {
+        int id = xillWorkerWebServiceController.registerWorker(new Worker("test.NotRunningTerminateTest"));
+
         // Terminate a non-running worker
         this.mockMvc.perform(
-                post("/workers/{id}/terminate").param("id", "5")
+                post("/workers/{id}/terminate").param("id", Integer.toString(id))
         )
                 // Should return 400 - BAD REQUEST
                 .andExpect(status().isBadRequest());
@@ -253,6 +288,17 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     }
 
 
+    /**
+     * Build a json string for a collection of key-values.
+     * <code>
+     *     jsonBody(
+     *          "message", "Hello World",
+     *          "Key", "Value"
+     *     )
+     * </code>
+     * @param params the key/values
+     * @return the json string
+     */
     private String jsonBody(Object... params) {
         Map<String, Object> data = new LinkedHashMap<>();
 
