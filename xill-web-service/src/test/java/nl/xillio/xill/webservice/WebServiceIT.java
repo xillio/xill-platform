@@ -178,6 +178,27 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     }
 
     @Test
+    public void testDeleteRunningWorker() throws Exception {
+        // Deleting a running worker should interrupt it
+        int id = xillWorkerWebServiceController.registerWorker(new Worker("test.TerminateTest"));
+
+        // Start running
+        Thread running = new Thread(() -> xillWorkerWebServiceController.runWorker(id));
+        running.setDaemon(true);
+        running.start();
+
+        // Terminate a running worker
+        this.mockMvc.perform(
+                delete("/workers/{id}").param("id", Integer.toString(id))
+        )
+                // Should return 204 - NO CONTENT
+                .andExpect(status().isNoContent());
+
+        // Expect the worker to have finished
+        assertFalse(running.isAlive());
+    }
+
+    @Test
     public void testRunLoadedRobotWithJsonReturnValue() throws Exception {
         int id = xillWorkerWebServiceController.registerWorker(new Worker("test.JsonReturnTest"));
 
