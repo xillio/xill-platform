@@ -34,12 +34,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static nl.xillio.xill.webservice.IsValidUrlMatcher.isValidUrl;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.text.IsEmptyString.isEmptyString;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This class will run tests on the web api. It will also generate snippets that can be included
@@ -140,6 +141,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testDeleteWorker() throws Exception {
+
         // Deleting a worker by id
         this.mockMvc.perform(
                 delete("/workers/{id}").param("id", "3")
@@ -161,43 +163,93 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     }
 
     @Test
-    public void testRunLoadedRobotWithReturnValue() throws Exception {
+    public void testRunLoadedRobotWithJsonReturnValue() throws Exception {
+        // Run a robot
+        this.mockMvc.perform(
+                post("/workers/{id}/activate").param("id", "2")
+        )
+                // Should return 200 - OK
+                .andExpect(status().isOk())
+                // And contain a json body
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string(not(isEmptyString())));
+    }
 
+    @Test
+    public void testRunLoadedRobotWithStreamReturnValue() throws Exception {
+        // Run a robot
+        this.mockMvc.perform(
+                post("/workers/{id}/activate").param("id", "1")
+        )
+                // Should return 200 - OK
+                .andExpect(status().isOk())
+                // And contain a steam body
+                .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM))
+                .andExpect(content().string(not(isEmptyString())));
     }
 
     @Test
     public void testRunLoadedRobotWithoutReturnValue() throws Exception {
-
+        // Run a robot
+        this.mockMvc.perform(
+                post("/workers/{id}/activate").param("id", "3")
+        )
+                // Should return 204 - NO CONTENT
+                .andExpect(status().isNoContent());
     }
 
     @Test
     public void testRunNotLoadedRobot() throws Exception {
-
+        // Run a non existing robot/worker
+        this.mockMvc.perform(
+                post("/workers/{id}/activate").param("id", "000404")
+        )
+                // Should return 404 - NOT FOUND
+                .andExpect(status().isNotFound());
     }
 
     @Test
     public void testRunRobotWithError() throws Exception {
-
-    }
-
-    @Test
-    public void testRunNonExistingRobot() throws Exception {
-
+        // Run a non existing robot/worker
+        this.mockMvc.perform(
+                post("/workers/{id}/activate").param("id", "000404")
+        )
+                // Should return 500 - INTERNAL SERVER ERROR
+                .andExpect(status().isInternalServerError())
+                // And it should contain a body explaining the error
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string(not(isEmptyString())));
     }
 
     @Test
     public void testTerminateRunningWorker() throws Exception {
-
+        // Terminate a running worker
+        this.mockMvc.perform(
+                post("/workers/{id}/terminate").param("id", "5")
+        )
+                // Should return 204 - NO CONTENT
+                .andExpect(status().isNoContent())
+                .andDo(document("terminate-worker"));
     }
 
     @Test
     public void testTerminateNotRunningWorker() throws Exception {
-
+        // Terminate a non-running worker
+        this.mockMvc.perform(
+                post("/workers/{id}/terminate").param("id", "5")
+        )
+                // Should return 400 - BAD REQUEST
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     public void testTerminateNonExistingWorker() throws Exception {
-
+        // Terminate a non-existing worker
+        this.mockMvc.perform(
+                post("/workers/{id}/terminate").param("id", "000404")
+        )
+                // Should return 404 - NOT FOUND
+                .andExpect(status().isNotFound());
     }
 
 
