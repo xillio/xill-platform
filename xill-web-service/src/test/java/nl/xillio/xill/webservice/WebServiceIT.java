@@ -158,7 +158,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
             )
                     // The response must be 201-CREATED
-                    .andExpect(status().isNotFound());
+                    .andExpect(status().isCreated());
         }
 
         // Adding the fourth worker should error
