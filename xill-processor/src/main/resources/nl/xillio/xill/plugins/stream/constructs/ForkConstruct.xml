@@ -18,9 +18,9 @@
 -->
 <function>
     <description>
-Create a single output stream that will forward all output to other streams.
+Creates and returns a single output stream that will forward all output to other streams.
 You can use this construct to read and stream data once to multiple targets.
-The `outputs` parameter must be a list of at least two stream.
+The `outputs` parameter must be a list of at least two streams.
     </description>
     <examples>
         <example title="Usage">

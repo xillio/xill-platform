@@ -41,13 +41,13 @@ public class DeleteConstruct extends Construct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                uri -> process(context, fileUtils, uri),
-                new Argument("uri", ATOMIC));
+                path -> process(context, fileUtils, path),
+                new Argument("path", ATOMIC));
     }
 
-    static MetaExpression process(final ConstructContext context, final FileUtilities fileUtils, final MetaExpression uri) {
+    static MetaExpression process(final ConstructContext context, final FileUtilities fileUtils, final MetaExpression path) {
 
-        Path file = getPath(context, uri);
+        Path file = getPath(context, path);
         try {
             fileUtils.delete(file);
         } catch (AccessDeniedException e) {

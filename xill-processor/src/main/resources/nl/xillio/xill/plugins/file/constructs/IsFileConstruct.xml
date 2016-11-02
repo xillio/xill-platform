@@ -18,11 +18,11 @@
 -->
 <function>
     <description>
-Tests whether the file identified by `uri` is a File returning `true` if `uri` is a normal file or `false` otherwise
+Tests whether the `path` points to file returning `true` if it is a file, or `false` otherwise.
     </description>
     <examples>
         <example title="Usage">
-            <header>Determine if the specified uri is a normal file or not.</header>
+            <header>Determine if the path points to a normal file or not.</header>
             <code>
                 use File, System, Stream;
 

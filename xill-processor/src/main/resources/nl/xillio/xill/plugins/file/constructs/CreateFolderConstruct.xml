@@ -18,7 +18,10 @@
 -->
 <function>
     <description>
-Creates an empty folder at the target `uri` if it doesn't exist and returns the absolute path to that folder
+Creates an empty folder at the target `path` if it doesn't exist and returns the absolute path to that folder.
+
+Any necessary folders will be created in order to create this empty folder.
+For example "some/longer/pathName" will create the folder "some" and "longer", if these didn't exist yet, in order to make the "pathName" empty folder.
     </description>
     <examples>
         <example title="Usage">

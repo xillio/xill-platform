@@ -18,7 +18,7 @@
 -->
 <function>
     <description>
-Wrap an iterator around a `stream`.
+Wraps an iterator around a `stream` and returns this.
 You can provide a regex pattern as `delimiter` that will split the input `stream` in parts, if none is provided the stream will be split on new lines.
     </description>
     <examples>

@@ -18,7 +18,8 @@
 -->
 <function>
     <description>
-Copy a file or folder from a `source` path to a `target` path, overwriting it if it exists and returns an object containing the source destination [from] and the target destination [into]
+Copy a file or folder from a `source` path to a `target` path, these can be relative or absolute.
+This will overwrite it if it exists and return an object containing the source destination at ["from"] and the target destination at ["into"]
 </description>
     <examples>
         <example title="Usage">
@@ -35,6 +36,12 @@ Copy a file or folder from a `source` path to a `target` path, overwriting it if
 
                 // Prints {"from": "absolute/path/to/TestFile.txt", "into": "absolute/path/to/file_copy.txt"}
                 System.print(result);
+
+                // Prints "absolute/path/to/TestFile.txt"
+                System.print(result["from"]);
+
+                // Prints "absolute/path/to/file_copy.txt"
+                System.print(result["into"]);
             </code>
         </example>
     </examples>

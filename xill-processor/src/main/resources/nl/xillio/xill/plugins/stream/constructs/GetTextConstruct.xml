@@ -18,7 +18,8 @@
 -->
 <function>
     <description>
-Read text from a stream.
+Read text from a `stream`.
+By default "UTF-8" will be used as encoding, but this can be changed by editing the `encoding` parameter.
 If you provide a value for the `limit` parameter the amount of bytes read from the stream will be limited to that value.
     </description>
     <examples>
