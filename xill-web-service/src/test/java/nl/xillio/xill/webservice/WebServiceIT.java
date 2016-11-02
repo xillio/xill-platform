@@ -77,6 +77,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
         xillWorkerWebServiceController.releaseAllWorkers();
     }
 
+    /**
+     * Posting to /workers should allocate a new available worker.
+     *
+     * @throws Exception
+     */
     @Test
     public void testCreateWorker() throws Exception {
         // When creating a worker
@@ -95,6 +100,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 .andDo(document("create-worker"));
     }
 
+    /**
+     * Workers MUST be created by fully qualified name. No paths.
+     *
+     * @throws Exception
+     */
     @Test
     public void testCreateWorkerWithInvalidRobot() throws Exception {
         // When creating a worker
@@ -110,6 +120,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 .andExpect(status().isBadRequest());
     }
 
+    /**
+     * A robot field must be present when allocating a worker.
+     *
+     * @throws Exception
+     */
     @Test
     public void testCreateWorkerWithoutRobot() throws Exception {
         // When creating a worker
@@ -124,6 +139,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 .andExpect(status().isBadRequest());
     }
 
+    /**
+     * When no more workers can be allocated, the response should be service unavailable.
+     *
+     * @throws Exception
+     */
     @Test
     public void testCreateWorkerWithFullQueue() throws Exception {
         // Fill the worker pool with 3
@@ -153,6 +173,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 .andExpect(status().isServiceUnavailable());
     }
 
+    /**
+     * Releasing a worker can be done by calling DELETE /worker/{id}
+     *
+     * @throws Exception
+     */
     @Test
     public void testDeleteWorker() throws Exception {
         int id = xillWorkerWebServiceController.registerWorker(new Worker("test.worker"));
@@ -166,6 +191,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 .andDo(document("delete-worker"));
     }
 
+    /**
+     * If a non-valid or non-allocated worker id is used a 404 response will occur.
+     *
+     * @throws Exception
+     */
     @Test
     public void testDeleteNonExistingWorker() throws Exception {
         // Deleting a non-existing worker
@@ -177,6 +207,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 .andDo(document("delete-worker-not-exist"));
     }
 
+    /**
+     * If a running worker is released, it should be terminated
+     *
+     * @throws Exception
+     */
     @Test
     public void testDeleteRunningWorker() throws Exception {
         // Deleting a running worker should interrupt it
@@ -198,6 +233,12 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
         assertFalse(running.isAlive());
     }
 
+    /**
+     * Running a worker that is attached to a robot with a non-stream, non-null result should result in an
+     * application/json response
+     *
+     * @throws Exception
+     */
     @Test
     public void testRunLoadedRobotWithJsonReturnValue() throws Exception {
         int id = xillWorkerWebServiceController.registerWorker(new Worker("test.JsonReturnTest"));
@@ -213,6 +254,12 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 .andExpect(content().string(not(isEmptyString())));
     }
 
+    /**
+     * Running a worker that is attached to a robot with a stream result should result in an application/octet-stream
+     * response.
+     *
+     * @throws Exception
+     */
     @Test
     public void testRunLoadedRobotWithStreamReturnValue() throws Exception {
         int id = xillWorkerWebServiceController.registerWorker(new Worker("test.StreamReturnTest"));
@@ -228,6 +275,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 .andExpect(content().string(not(isEmptyString())));
     }
 
+    /**
+     * Running a worker that is attached to a robot with a null result should result in a 204 - NO CONTENT response.
+     *
+     * @throws Exception
+     */
     @Test
     public void testRunLoadedRobotWithoutReturnValue() throws Exception {
         int id = xillWorkerWebServiceController.registerWorker(new Worker("test.NullReturnTest"));
@@ -240,6 +292,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 .andExpect(status().isNoContent());
     }
 
+    /**
+     * Running a worker that is not allocated or does not exist should result in a 404 - NOT FOUNT response.
+     *
+     * @throws Exception
+     */
     @Test
     public void testRunNotLoadedRobot() throws Exception {
         // Run a non existing robot/worker
@@ -250,6 +307,12 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 .andExpect(status().isNotFound());
     }
 
+    /**
+     * Running a worker that result in a fatal error should result in a 500 - INTERNAL SERVER ERROR result with a
+     * clear description as the response body.
+     *
+     * @throws Exception
+     */
     @Test
     public void testRunRobotWithError() throws Exception {
         int id = xillWorkerWebServiceController.registerWorker(new Worker("test.ErrorThrowingRobot"));
@@ -265,6 +328,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 .andExpect(content().string(not(isEmptyString())));
     }
 
+    /**
+     * A running worker can be terminated by calling POST /worker/{id}/terminate.
+     *
+     * @throws Exception
+     */
     @Test
     public void testTerminateRunningWorker() throws Exception {
         int id = xillWorkerWebServiceController.registerWorker(new Worker("test.TerminateTest"));
@@ -286,6 +354,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
         assertFalse(running.isAlive());
     }
 
+    /**
+     * If a worker is not running the result of the terminate call should be 400 - BAD REQUEST.
+     *
+     * @throws Exception
+     */
     @Test
     public void testTerminateNotRunningWorker() throws Exception {
         int id = xillWorkerWebServiceController.registerWorker(new Worker("test.NotRunningTerminateTest"));
@@ -298,6 +371,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 .andExpect(status().isBadRequest());
     }
 
+    /**
+     * If the id is either invalid or does not exist the response should be 404 - NOT FOUND
+     *
+     * @throws Exception
+     */
     @Test
     public void testTerminateNonExistingWorker() throws Exception {
         // Terminate a non-existing worker
