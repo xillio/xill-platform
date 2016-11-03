@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 /**
  * Returns selected XML node(s) from XML document using XPath locator.
  * Converts the output to facilitate interaction with Xill: single valued lists are converted to ATOMIC,
- * attributes are converted to OBJECT, text nodes af all kinds are converted to strings.
+ * attributes are converted to OBJECT, text nodes of all kinds are converted to strings.
  *
  * @author Zbynek Hochmann
  * @author andrea.parrilli
