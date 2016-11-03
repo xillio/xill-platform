@@ -65,9 +65,9 @@ public class XPathConstruct extends Construct {
         Map<String, String> namespaces = new LinkedHashMap<>();
         if (!namespacesVar.isNull()) {
             if (namespacesVar.getType() != ExpressionDataType.OBJECT) {
-                throw new InvalidUserInputException("invalid namespace info: should be a map, got " + namespacesVar.getType().toString(),
+                throw new InvalidUserInputException("invalid namespace info: should be an OBJECT, got " + namespacesVar.getType().toString(),
                         namespacesVar.getStringValue(),
-                        "a xill map containing as keys the namespaces shorthands");
+                        "an OBJECT containing the as keys the namespaces prefixes and as values the namespaces URIs");
             }
             for (Entry<String, MetaExpression> pair : ((Map<String, MetaExpression>) namespacesVar.getValue()).entrySet()) {
                 namespaces.put(pair.getKey(), pair.getValue().getStringValue());
