@@ -19,10 +19,15 @@
 <function>
     <description>
 Delete a single document by id.
-
-The identity parameter determines which document cache and database will be used.
-For example, when identity is `default`, the `udm_default` database will be used.
     </description>
+    <parameterDescriptions>
+        <parameterDescription parameterName="id">
+The id of the document that needs to be deleted.
+        </parameterDescription>
+        <parameterDescription parameterName="identity">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
     <examples>
         <example title="Usage">
 

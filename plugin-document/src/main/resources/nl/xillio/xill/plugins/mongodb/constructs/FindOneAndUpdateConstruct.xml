@@ -19,6 +19,25 @@
 <function>
     <description>
 Finds a single document using the specified `query` and `options` and updates it with `update`. Also returns the document that was updated.
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="collectionName">
+The name of the collection that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="query">
+The Query that will be applied.
+        </parameterDescription>
+		<parameterDescription parameterName="update">
+The update that will be applied.
+        </parameterDescription>
+		<parameterDescription parameterName="options">
+Several options can be set here.
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
 If multiple documents match the query, the first document in the result will be updated.
 If no documents match the `query` it will return `null`.
 
@@ -31,7 +50,9 @@ The `options` parameter may contain the following options:
 | `upsert`     | If set to `true`, creates a new document if no document matches the query, or if documents match the query, performs an update. To avoid multiple upserts, ensure that the query fields are uniquely indexed. The default is `false`. |
 | `returnNew`  | If set to `true`, returns the modified document rather than the original. The default is `false`. |
 | `maxTime`    | The maximum execution time in milliseconds for this operation. |
-    </description>
+
+More information about MongoDB findOneAndUpdate can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.findOneAndUpdate/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Update the oldest document in the `documents` collection</header>

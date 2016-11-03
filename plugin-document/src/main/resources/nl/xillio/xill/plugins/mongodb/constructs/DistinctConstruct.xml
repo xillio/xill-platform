@@ -19,8 +19,26 @@
 <function>
     <description>
 Finds the distinct values for a specified field across a single collection.
-If `query` is `null` or not specified it will match all documents, otherwise it will only retrieve the distinct values from documents which match `query`.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="collectionName">
+The name of the collection that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="field">
+The field that will be looked at.
+        </parameterDescription>
+		<parameterDescription parameterName="query">
+The Query that will be applied.
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+If `query` is `null` or not specified it will match all documents, otherwise it will only retrieve the distinct values from documents which match `query`.
+
+More information about MongoDB distinct can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.distinct/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Get all used values of a certain field</header>

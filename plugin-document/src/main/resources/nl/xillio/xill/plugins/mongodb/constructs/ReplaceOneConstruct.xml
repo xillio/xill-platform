@@ -19,14 +19,33 @@
 <function>
     <description>
 Replaces a document.
-
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="collectionName">
+The name of the collection that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="query">
+The Query that will be applied.
+        </parameterDescription>
+		<parameterDescription parameterName="replacement">
+The document that will replace the found document.
+        </parameterDescription>
+		<parameterDescription parameterName="options">
+Several options can be set here.
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
 The `options` parameter may contain the following options:
 
 | Option   | Description |
 | -------- | ----------- |
 | `upsert` | If set to `true`, creates a new document if no document matches the query, or if a document matches the query, performs an update. The default is `false`. |
-
-    </description>
+	
+More information about MongoDB replaceOne can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.replaceOne/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Replace first document found with author John</header>

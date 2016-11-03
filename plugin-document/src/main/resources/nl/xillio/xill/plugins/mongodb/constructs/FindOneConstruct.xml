@@ -19,9 +19,33 @@
 <function>
     <description>
 Finds a single document that matches the specified `query`.
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="collectionName">
+The name of the collection that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="query">
+The Query that will be applied.
+        </parameterDescription>
+		<parameterDescription parameterName="projection">
+The field that will be included/excluded.
+        </parameterDescription>
+		<parameterDescription parameterName="sort">
+How the results will be sorted.
+        </parameterDescription>
+		<parameterDescription parameterName="options">
+Several options can be set here.
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
 If multiple documents match the query, the first document in the result will be returned.
 If no documents match the `query` it will return `null`.
-    </description>
+
+More information about MongoDB findOne can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.findOne/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Get the first document in the documents collection</header>

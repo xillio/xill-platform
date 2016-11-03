@@ -19,7 +19,19 @@
 <function>
     <description>
 Define a new content type and persist it in the database.
-
+    </description>
+    <parameterDescriptions>
+        <parameterDescription parameterName="contentTypeName">
+The name given to this contentType.
+        </parameterDescription>
+        <parameterDescription parameterName="decorators">
+The list of decorators to save.
+        </parameterDescription>
+        <parameterDescription parameterName="identity">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+    <longDescription>
 A content type is defined as a set of decorators. A decorator defines a set of fields, their types and whether
 they are mandatory or not. Any document stored in the Universal Data Model, must specify a content type, which is then
 used to check if all decorator constraints are met.
@@ -28,8 +40,8 @@ To define a content type you need to provide 2 parameters: The name of the conte
 names. These decorators must have been defined first, using `ContentType.decorator()`.
 
 The identity parameter determines which decorator cache will be used and to which database the content type and decorators
-will be saved. For example, when identity is `default`, the `udm_default` database will be used.
-    </description>
+will be saved. For example, when identity is `default`, the `udm_default` database will be used.   
+    </longDescription>
     <examples>
         <example title="Usage">
             <header>Define a Content Type</header>

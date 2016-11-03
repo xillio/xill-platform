@@ -19,9 +19,33 @@
 <function>
     <description>
 Selects all documents in a collection and returns an iterator with the selected documents.
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="collectionName">
+The name of the collection that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="query">
+The Query that will be applied.
+        </parameterDescription>
+		<parameterDescription parameterName="projection">
+The field that will be included/excluded.
+        </parameterDescription>
+		<parameterDescription parameterName="sort">
+How the results will be sorted.
+        </parameterDescription>
+		<parameterDescription parameterName="options">
+Several options can be set here.
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
 If `query` is not empty it will only select documents that match the query.
 Using the `projection` parameter you can select fields to include or exclude. By default all fields are included.
-    </description>
+
+More information about MongoDB find can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.find/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Iterate over all documents which have the contentType "page".</header>

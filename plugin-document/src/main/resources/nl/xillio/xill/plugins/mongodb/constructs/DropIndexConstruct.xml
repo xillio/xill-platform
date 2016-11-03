@@ -18,8 +18,24 @@
 -->
 <function>
     <description>
-Removes the specified index from a collection. For the `index` you can either use the name of the index or the index specification.
+Removes the specified index from a collection.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="collectionName">
+The name of the collection that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="index">
+The index that will be droped.
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+For the `index` you can either use the name of the index or the index specification.
+
+More information about MongoDB dropIndex can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.dropIndex/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Drop the index old from the assets collection</header>

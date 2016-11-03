@@ -19,6 +19,25 @@
 <function>
     <description>
 Modifies existing documents in a collection.
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="collectionName">
+The name of the collection that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="query">
+The Query that will be applied.
+        </parameterDescription>
+		<parameterDescription parameterName="update">
+The update that will be applied.
+        </parameterDescription>
+		<parameterDescription parameterName="options">
+Several options can be set here.
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
 The method can modify specific fields of an existing document or documents or replace an existing document entirely, depending on the update parameter.
 Returns the amount of modified documents. Will return 0 when no documents were modified or a Mongo server prior to version 2.6 is used.
 
@@ -27,7 +46,9 @@ The `options` parameter may contain the following option:
 | Option   | Description |
 | -------- | ----------- |
 | `upsert` | If set to `true`, creates a new document if no document matches the query, or if documents match the query, performs an update. To avoid multiple upserts, ensure that the query fields are uniquely indexed. The default is `false`. |
-    </description>
+
+More information about MongoDB update can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.update/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Update all documents in the assets collection</header>

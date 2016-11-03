@@ -19,12 +19,19 @@
 <function>
     <description>
 Fetch a document by id.  
-
-If the provided id was not found this construct will return null and throw an error.
-
-The identity parameter determines which database will be used.
-For example, when identity is `default`, the `udm_default` database will be used.
     </description>
+    <parameterDescriptions>
+        <parameterDescription parameterName="documentId">
+The id of the document that needs to be fetched.
+        </parameterDescription>
+        <parameterDescription parameterName="identity">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+This construct will try to get a document with the given id from the given database.
+If the provided id was not found this construct will return null and throw an error.	
+	</longDescription>
     <examples>
         <example title="Usage">
 

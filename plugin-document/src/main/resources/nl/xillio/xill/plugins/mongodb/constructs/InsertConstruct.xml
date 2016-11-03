@@ -18,12 +18,30 @@
 -->
 <function>
     <description>
-Inserts documents into a collection. A robot exception will be generated if the update failed.
-
-The `ordered` parameter indicates whether to perform an ordered insert of the documents.
-If an error occurs with a document during an ordered insert, the remaining documents will not be inserted.
-If an error occurs during an unordered insert it will continue processing the remaining documents.
+Inserts documents into a collection.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="collectionName">
+The name of the collection that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="documents">
+The documents that will be inserted.
+        </parameterDescription>
+		<parameterDescription parameterName="ordered">
+perform an ordered insert of the documents?
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+A robot exception will be generated if the update failed.
+ 
+If an error occurs with a document during an ordered insert, the remaining documents will not be inserted.
+If an error occurs during an unordered insert it will continue processing the remaining documents.	
+	
+More information about MongoDB insert can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.insert/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Insert a list of documents into a collection</header>

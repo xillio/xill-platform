@@ -19,7 +19,19 @@
 <function>
     <description>
 Temporarily store a decorator definition in cache.
-
+    </description>
+    <parameterDescriptions>
+        <parameterDescription parameterName="decoratorName">
+The name of the decorator that needs to be stored.
+        </parameterDescription>
+        <parameterDescription parameterName="definition">
+The body of the decorator that needs to be stored.
+        </parameterDescription>
+        <parameterDescription parameterName="identity">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+    <longDescription>
 A decorator defines a set of fields, their types and whether they are mandatory or not. A content type is defined as
 a set of these decorators. Any document stored in the Universal Data Model, must specify a content type, which is then
 used to check if all decorator constraints are met.
@@ -32,7 +44,7 @@ The identity parameter determines which decorator cache will be used and to whic
 when `ContentType.save()` is called. For example, when identity is `default`, the `udm_default` database will be used.
 
 Supported decorator types: BOOLEAN, STRING, NUMBER, DATE, LIST
-    </description>
+    </longDescription>
     <examples>
         <example title="Usage">
             <header>Define a decorator</header>

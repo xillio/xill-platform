@@ -19,8 +19,17 @@
 <function>
     <description>
 Returns an iterator containing the names of the collections defined in a MongoDB database.
-The optional ``database`` parameter can be used to address this request to a specific connection, otherwise the currently open one, if any, will be used.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+The optional ``database`` parameter can be used to address this request to a specific connection, otherwise the currently open one, if any, will be used.
+	
+More information about MongoDB getCollectionNames can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.getCollectionNames/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Get collections in the default database</header>

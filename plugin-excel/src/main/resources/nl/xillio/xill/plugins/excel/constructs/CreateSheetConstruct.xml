@@ -19,9 +19,18 @@
 <function>
     <description>
 Creates a new Excel sheet in the given workbook with a user-defined name.
-
-Note that sheets are not thread-safe. Handling different document-objects in different threads will work. Accessing the same document in multiple threads will not work.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="workbook">
+The workbook the new sheet will be a part of.
+        </parameterDescription>
+		<parameterDescription parameterName="name">
+The name that will be given to the new sheet
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+Note that sheets are not thread-safe. Handling different document-objects in different threads will work. Accessing the same document in multiple threads will not work.
+	</longDescription>
     <examples>
         <example title="Creation">
             <header>Creating a new sheet</header>
