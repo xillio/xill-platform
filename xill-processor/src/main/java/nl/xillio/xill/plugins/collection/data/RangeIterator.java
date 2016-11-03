@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
+ * This class is the implementation of the range iterator using Numbers
+ *
  * @author Pieter Soels
  */
 public class RangeIterator implements Iterator<Number> {
@@ -54,7 +56,7 @@ public class RangeIterator implements Iterator<Number> {
     private void verifyInput(Number start, Number end, Number step) {
         if (MathUtils.compare(start, end) == 0) {
             throw new IllegalArgumentException(
-                    "The start-value and end-value must not be equal to eachother.");
+                    "The start-value and end-value must not be equal to each other.");
         }
 
         if (MathUtils.compare(Math.ulp(step.doubleValue()), Double.MIN_VALUE) == 0) {
