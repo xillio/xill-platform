@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Returns a iterator from the given `start` (inclusive) to the given `end` (exclusive) with a possible `step`.
+    </description>
+    <examples>
+        <example title="Default Usage">
+            <header>This will give an iterator that goes from 0 to 10</header>
+            <code>
+                use Collection, System;
+
+                var iterator = Collection.range(0, 10);
+                var result = "";
+                foreach(value in iterator) {
+                    result = result :: value :: " ";
+                }
+                System.print(result); // Prints "0 1 2 3 4 5 6 7 8 9"
+            </code>
+        </example>
+        <example title="Define a step">
+            <header>This example provides a step variable that defines the difference for each next value in the iterator.</header>
+            <code>
+                use Collection, System;
+
+                var iterator = Collection.range(0.0, 10.0, 1.5);
+                var result = "";
+                foreach(value in iterator) {
+                    result = result :: value :: " ";
+                }
+                System.print(result); // Prints "0.0 1.5 3.0 4.5 6.0 7.5 9.0"
+            </code>
+        </example>
+        <example title="Descending range">
+            <header>This example shows that the range could also be descending</header>
+            <code>
+                use Collection, System;
+
+                var iterator = Collection.range(5, -5);
+                var result = "";
+                foreach(value in iterator) {
+                    result = result :: value :: " ";
+                }
+                System.print(result); // Prints "5 4 3 2 1 0 -1 -2 -3 -4"
+            </code>
+        </example>
+    </examples>
+    <searchTags>
+        iterator, range
+    </searchTags>
+</function>

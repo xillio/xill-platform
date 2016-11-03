@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.plugins.collection.data;
 
+import nl.xillio.util.MathUtils;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -33,21 +35,21 @@ public class RangeIterator implements Iterator<Number> {
     public RangeIterator(Number start, Number end, Number step) {
         this.end = end;
 
-        if (start.doubleValue() == end.doubleValue()){
+        if (MathUtils.compare(start, end) == 0) {
             throw new IllegalArgumentException();
         }
 
-        if(step == null) {
-            if(start.doubleValue() < end.doubleValue()) {
+        if (step == null) {
+            if (MathUtils.compare(start, end) < 0) {
                 step = 1;
-            } else if (end.doubleValue() < start.doubleValue()) {
+            } else if (MathUtils.compare(end, start) < 0) {
                 step = -1;
             }
-        } else if (step.doubleValue() == 0) {
+        } else if (MathUtils.compare(Math.ulp(step.doubleValue()), Double.MIN_VALUE) == 0) {
             throw new IllegalArgumentException();
-        } else if(start.doubleValue() < end.doubleValue() && step.doubleValue() < 0) {
+        } else if (MathUtils.compare(start, end) < 0 && MathUtils.compare(step, 0) < 0) {
             throw new IllegalArgumentException();
-        } else if (end.doubleValue() < start.doubleValue() && step.doubleValue() > 0) {
+        } else if (MathUtils.compare(end, start) < 0 && MathUtils.compare(step, 0) > 0) {
             throw new IllegalArgumentException();
         }
 
@@ -57,16 +59,21 @@ public class RangeIterator implements Iterator<Number> {
 
     @Override
     public boolean hasNext() {
-        return Math.signum(end.doubleValue() - nextValue.doubleValue()) == Math.signum(step.doubleValue());
+        // If the step is negative, its signum will return -1
+        // If the step is positive, its signum will return 1
+        // Respectively:
+        // end - next will return -1 if end < next (there is a next value if step is negative)
+        // end - next will return 1 if end > next (there is a next value if step is positive)
+        return Math.signum(MathUtils.subtract(end, nextValue).doubleValue()) == Math.signum(step.doubleValue());
     }
 
     @Override
     public synchronized Number next() {
-        if(!hasNext()) {
+        if (!hasNext()) {
             throw new NoSuchElementException();
         }
         Number value = nextValue;
-        nextValue = nextValue.doubleValue() + step.doubleValue();
+        nextValue = MathUtils.add(nextValue, step);
         return value;
     }
 }
