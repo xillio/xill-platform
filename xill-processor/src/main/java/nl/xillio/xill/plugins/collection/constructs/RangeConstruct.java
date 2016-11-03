@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.collection.constructs;
 
+import com.google.inject.Inject;
 import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.MetaExpressionIterator;
@@ -23,7 +24,8 @@ import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
-import nl.xillio.xill.plugins.collection.data.RangeIterator;
+import nl.xillio.xill.plugins.collection.data.range.RangeIterator;
+import nl.xillio.xill.plugins.collection.data.range.RangeIteratorFactory;
 
 /**
  * This construct will return an iterator of the given range and step
@@ -31,6 +33,13 @@ import nl.xillio.xill.plugins.collection.data.RangeIterator;
  * @author Pieter Soels
  */
 public class RangeConstruct extends Construct {
+    private final RangeIteratorFactory rangeIteratorFactory;
+
+    @Inject
+    public RangeConstruct(RangeIteratorFactory rangeIteratorFactory) {
+        this.rangeIteratorFactory = rangeIteratorFactory;
+    }
+
     @Override
     public ConstructProcessor prepareProcess(ConstructContext context) {
         return new ConstructProcessor(
@@ -44,11 +53,10 @@ public class RangeConstruct extends Construct {
     private MetaExpression process(MetaExpression start, MetaExpression end, MetaExpression step) {
         RangeIterator iterator;
         try {
-            if (step.isNull()) {
-                iterator = new RangeIterator(start.getNumberValue(), end.getNumberValue());
-            } else {
-                iterator = new RangeIterator(start.getNumberValue(), end.getNumberValue(), step.getNumberValue());
-            }
+            iterator = rangeIteratorFactory.createIterator(
+                    start.getNumberValue(),
+                    end.getNumberValue(),
+                    step.isNull() ? null : step.getNumberValue());
         } catch (IllegalArgumentException e) {
             throw new InvalidUserInputException(
                     e.getMessage(),

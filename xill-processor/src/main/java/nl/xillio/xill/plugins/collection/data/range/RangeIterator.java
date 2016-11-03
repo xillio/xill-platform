@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.plugins.collection.data;
+package nl.xillio.xill.plugins.collection.data.range;
 
 import nl.xillio.util.MathUtils;
 
@@ -36,38 +36,8 @@ public class RangeIterator implements Iterator<Number> {
 
     public RangeIterator(Number start, Number end, Number step) {
         this.end = end;
-        this.step = retrieveStep(start, end, step);
-        verifyInput(start, end, this.step);
+        this.step = step;
         nextValue = start;
-    }
-
-    private Number retrieveStep(Number start, Number end, Number step) {
-        if (step == null) {
-            if (MathUtils.compare(start, end) < 0) {
-                return 1;
-            } else if (MathUtils.compare(end, start) < 0) {
-                return -1;
-            }
-        }
-
-        return step;
-    }
-
-    private void verifyInput(Number start, Number end, Number step) {
-        if (MathUtils.compare(start, end) == 0) {
-            throw new IllegalArgumentException(
-                    "The start-value and end-value must not be equal to each other.");
-        }
-
-        if (MathUtils.compare(Math.ulp(step.doubleValue()), Double.MIN_VALUE) == 0) {
-            throw new IllegalArgumentException("The step-value must not be equal to zero.");
-        } else if (MathUtils.compare(start, end) < 0 && MathUtils.compare(step, 0) < 0) {
-            throw new IllegalArgumentException(
-                    "The step-value must not be negative when the start-value is lower than the end-value.");
-        } else if (MathUtils.compare(end, start) < 0 && MathUtils.compare(step, 0) > 0) {
-            throw new IllegalArgumentException(
-                    "The step-value must not be positive when the start-value is greater than the end-value.");
-        }
     }
 
     @Override
