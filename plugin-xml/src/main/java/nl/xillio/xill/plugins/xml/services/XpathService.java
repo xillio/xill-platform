@@ -31,8 +31,8 @@ import java.util.stream.Stream;
  * @author Zbynek Hochmann
  * @author andrea.parrilli
  */
-
 @ImplementedBy(XpathServiceImpl.class)
+@FunctionalInterface // not meant to be a functional interface, but sonar wants it this way
 public interface XpathService {
     /**
      * Selects node(s) from XML document using the given XPath locator.
