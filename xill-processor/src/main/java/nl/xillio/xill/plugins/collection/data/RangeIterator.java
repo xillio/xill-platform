@@ -34,27 +34,38 @@ public class RangeIterator implements Iterator<Number> {
 
     public RangeIterator(Number start, Number end, Number step) {
         this.end = end;
+        this.step = retrieveStep(start, end, step);
+        verifyInput(start, end, this.step);
+        nextValue = start;
+    }
 
-        if (MathUtils.compare(start, end) == 0) {
-            throw new IllegalArgumentException();
-        }
-
+    private Number retrieveStep(Number start, Number end, Number step) {
         if (step == null) {
             if (MathUtils.compare(start, end) < 0) {
-                step = 1;
+                return 1;
             } else if (MathUtils.compare(end, start) < 0) {
-                step = -1;
+                return -1;
             }
-        } else if (MathUtils.compare(Math.ulp(step.doubleValue()), Double.MIN_VALUE) == 0) {
-            throw new IllegalArgumentException();
-        } else if (MathUtils.compare(start, end) < 0 && MathUtils.compare(step, 0) < 0) {
-            throw new IllegalArgumentException();
-        } else if (MathUtils.compare(end, start) < 0 && MathUtils.compare(step, 0) > 0) {
-            throw new IllegalArgumentException();
         }
 
-        this.step = step;
-        nextValue = start;
+        return step;
+    }
+
+    private void verifyInput(Number start, Number end, Number step) {
+        if (MathUtils.compare(start, end) == 0) {
+            throw new IllegalArgumentException(
+                    "The start-value and end-value must not be equal to eachother.");
+        }
+
+        if (MathUtils.compare(Math.ulp(step.doubleValue()), Double.MIN_VALUE) == 0) {
+            throw new IllegalArgumentException("The step-value must not be equal to zero.");
+        } else if (MathUtils.compare(start, end) < 0 && MathUtils.compare(step, 0) < 0) {
+            throw new IllegalArgumentException(
+                    "The step-value must not be negative when the start-value is lower than the end-value.");
+        } else if (MathUtils.compare(end, start) < 0 && MathUtils.compare(step, 0) > 0) {
+            throw new IllegalArgumentException(
+                    "The step-value must not be positive when the start-value is greater than the end-value.");
+        }
     }
 
     @Override
@@ -70,7 +81,7 @@ public class RangeIterator implements Iterator<Number> {
     @Override
     public synchronized Number next() {
         if (!hasNext()) {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("There are no elements in the iterator left.");
         }
         Number value = nextValue;
         nextValue = MathUtils.add(nextValue, step);

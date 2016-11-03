@@ -43,48 +43,25 @@ public class RangeConstruct extends Construct {
 
     private MetaExpression process(MetaExpression start, MetaExpression end, MetaExpression step) {
         RangeIterator iterator;
-        if(step.isNull()){
-            iterator = new RangeIterator(start.getNumberValue(), end.getNumberValue());
-        } else {
-            iterator = new RangeIterator(start.getNumberValue(), end.getNumberValue(), step.getNumberValue());
+        try {
+            if (step.isNull()) {
+                iterator = new RangeIterator(start.getNumberValue(), end.getNumberValue());
+            } else {
+                iterator = new RangeIterator(start.getNumberValue(), end.getNumberValue(), step.getNumberValue());
+            }
+        } catch (IllegalArgumentException e) {
+            throw new InvalidUserInputException(
+                    e.getMessage(),
+                    "Start: " + start.getStringValue() +
+                            ", end: " + end.getStringValue() +
+                            ", step: " + step.getStringValue(),
+                    "Correct numbers values for start, end and step.",
+                    "Start: 0, End: 10, Step: 1",
+                    e);
         }
 
         MetaExpression result = fromValue("[Ranged iterator]");
         result.storeMeta(new MetaExpressionIterator<>(iterator, ExpressionBuilderHelper::fromValue));
         return result;
-    }
-
-    private MetaExpression validateInput(MetaExpression start, MetaExpression end, MetaExpression step) {
-        if (start.getNumberValue().intValue() < end.getNumberValue().intValue()) {
-            if (step.isNull()) {
-                step = fromValue(1);
-            } else if (step.getNumberValue().intValue() > 0) {
-                throw new InvalidUserInputException(
-                        "The given step should be positive (or null) when the start-value is smaller than the end-value",
-                        start.getStringValue(),
-                        "A step-value greater than 0 when start-value is lesser than end-value",
-                        "var step = 1;"
-                );
-            }
-        } else if (end.getNumberValue().intValue() < start.getNumberValue().intValue()) {
-            if (step.isNull()) {
-                return fromValue(-1.0);
-            } else if (step.getNumberValue().intValue() < 0) {
-                throw new InvalidUserInputException(
-                        "The given step should be negative (or null) when the end-value is smaller than the start-value",
-                        start.getStringValue(),
-                        "A step-value lesser than 0 when start-value is lesser than end-value",
-                        "var step = -1;"
-                );
-            }
-        } else {
-            throw new InvalidUserInputException(
-                    "The given start-value and end-value must not be the same",
-                    "start: " + start.getStringValue() + " , end: " + end.getStringValue(),
-                    "A start-value and an end-value that are not the same",
-                    "var start = 0; var end = 10;"
-            );
-        }
-        return step;
     }
 }
