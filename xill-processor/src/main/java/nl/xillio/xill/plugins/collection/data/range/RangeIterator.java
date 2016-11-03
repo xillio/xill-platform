@@ -30,10 +30,6 @@ public class RangeIterator implements Iterator<Number> {
     private Number step;
     private Number nextValue;
 
-    public RangeIterator(Number start, Number end) {
-        this(start, end, null);
-    }
-
     public RangeIterator(Number start, Number end, Number step) {
         this.end = end;
         this.step = step;

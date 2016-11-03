@@ -18,6 +18,8 @@ package nl.xillio.xill.plugins.collection.data.range;
 import nl.xillio.util.MathUtils;
 
 /**
+ * This class is responsible for validating the input and initializing the iterator (Factory).
+ *
  * @author Pieter Soels
  */
 public class RangeIteratorFactory {

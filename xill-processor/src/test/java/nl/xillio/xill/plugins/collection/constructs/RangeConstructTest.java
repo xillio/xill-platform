@@ -30,6 +30,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 /**
+ * The test class for {@link RangeConstruct}.
+ *
  * @author Pieter Soels
  */
 public class RangeConstructTest extends TestUtils {

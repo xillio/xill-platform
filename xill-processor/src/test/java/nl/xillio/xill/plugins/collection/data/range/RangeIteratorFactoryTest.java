@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.plugins.collection.data;
-
-import nl.xillio.xill.TestUtils;
+package nl.xillio.xill.plugins.collection.data.range;
 
 /**
+ * The test class for {@link RangeIteratorFactory}.
+ *
  * @author Pieter Soels
  */
-public class RangeIteratorTest extends TestUtils {
+public class RangeIteratorFactoryTest {
 
 }
