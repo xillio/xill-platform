@@ -66,6 +66,7 @@
         <sonar.exclusions>**/src/main/java/nl/xillio/migrationtool/**/*</sonar.exclusions>
         <sonar.language>java</sonar.language>
     </properties>
+
     <modules>
         <module>xill-plugin-archetype</module>
         <module>xill-api</module>
