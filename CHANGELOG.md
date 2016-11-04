@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 * Deprecate `File.getText()` [CTC-1860]
 
 ### Fix
+* Multiple changed robots dialogs and robot tab selection issue [CTC-1441]
 * On server threads are not closed when tasks finishes [XSVR-139]
 * Renaming of robot does not work properly on Linux [CTC-1787]
 * `Web.xPath()` result in variable preview is incorrect [CTC-1802]
