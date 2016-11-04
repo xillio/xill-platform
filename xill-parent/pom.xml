@@ -26,7 +26,7 @@
 
     <groupId>nl.xillio.xill</groupId>
     <artifactId>xill-parent</artifactId>
-    <version>3.4.2-SNAPSHOT</version>
+    <version>3.4.2</version>
     <packaging>pom</packaging>
     <inceptionYear>2014</inceptionYear>
 
@@ -62,7 +62,7 @@
 
     <properties>
         <xill.release.version>3.4.0</xill.release.version>
-        <xill.version>3.4.2-SNAPSHOT</xill.version>
+        <xill.version>3.4.2</xill.version>
         <!-- Dependencies -->
         <java.version>1.8</java.version>
         <testng.version>6.9.10</testng.version>
