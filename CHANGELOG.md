@@ -1,6 +1,11 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.4.2] - 2016-11-04
+
+### Fix
+* Parsing String list results from xpath query floods log and is slow [CTC-1885]
+
 ## [3.4.1] - 2016-10-28
 
 ### Fix
