@@ -26,26 +26,28 @@ import org.w3c.dom.Node;
  */
 public interface XmlNode extends MetadataExpression {
 	/**
-	 * Returns XML document of this node
+	 * Returns XML document of this node.
 	 *
 	 * @return {@link org.w3c.dom.Document} of this node
 	 */
 	Document getDocument();
 
 	/**
-	 * @return {@link org.w3c.dom.Node} data specifying this node
+	 * @return {@link org.w3c.dom.Node} data specifying this node.
 	 */
 	Node getNode();
 
 	/**
-	 * Returns XML content of this node in string format
+	 * Returns XML content of this node in string format.
 	 *
 	 * @return XML content in string format
 	 */
 	String getXmlContent();
 
 	/**
-	 * @return a string containing all text extracted from XML node or XML document
+	 * Extracts text from this node.
+	 *
+	 * @return a string containing all text extracted from XML node or XML document.
 	 */
 	String getText();
 }

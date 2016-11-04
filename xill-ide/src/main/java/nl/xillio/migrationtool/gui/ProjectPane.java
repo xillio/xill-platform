@@ -65,6 +65,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+import static javafx.scene.control.ButtonType.NO;
+import static javafx.scene.control.ButtonType.YES;
 
 public class ProjectPane extends AnchorPane implements FolderListener, ListChangeListener<TreeItem<Pair<File, String>>>, EventHandler<Event> {
     // Icons.
@@ -395,14 +397,14 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                     AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Modified document",
                             "The document " + tab.getDocument().getName() + " is modified.",
                             "Do you want to save the changes?",
-                            ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+                            YES, NO, ButtonType.CANCEL);
                     dialog.showAndWait();
                     final Optional<ButtonType> result = dialog.getResult();
                     if (result.isPresent()) {
                         if (result.get() == ButtonType.CANCEL) {
                             return false;
                         }
-                        if (result.get() == ButtonType.YES) {
+                        if (result.get() == YES) {
                             tab.save();
                         }
                     }
@@ -475,12 +477,12 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                     "Rename running robot",
                     "You are trying to rename a running robot or a folder containing running robots.",
                     "Do you want to stop the robot so you can rename it?",
-                    ButtonType.YES, ButtonType.NO
+                    YES, NO
             );
 
             dialog.showAndWait();
             final Optional<ButtonType> result = dialog.getResult();
-            if (!result.isPresent() || result.get() != ButtonType.YES) {
+            if (!result.isPresent() || result.get() != YES) {
                 return;
             }
         }
@@ -557,8 +559,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                     folderCount > 0 ? "Selected files, including all files in selected folders, will be deleted." : "");
 
             alert.showAndWait();
-            if(alert.getResult().get() == ButtonType.OK)
-            {
+            if (alert.getResult().get() == ButtonType.OK) {
                 deleteItems(selectedItems, true);
             }
         }
@@ -1009,20 +1010,15 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         tab.requestFocus();
 
-        // This must be done in the FX application thread.
-        final Runnable showDialog = () -> {
-            // Create and show an alert dialog saying the content has been changed.
-            AlertDialog alert = new AlertDialog(Alert.AlertType.WARNING, "File content change",
-                    "The file has been modified outside the editor.", "Do you want reload the file?",
-                    ButtonType.YES, ButtonType.NO);
+        // Create and show an alert dialog saying the content has been changed.
+        AlertDialog alert = new AlertDialog(Alert.AlertType.WARNING, "File content change",
+                "The file \"" + tab.documentPath + "\" has been modified outside the editor.", "Do you want reload the file?",
+                YES, NO);
 
-            alert.showAndWait();
-            final Optional<ButtonType> result = alert.getResult();
-            if (result.get() == ButtonType.YES) {
-                tab.reload();
-            }
-        };
-        Platform.runLater(showDialog);
+        alert.showAndWait();
+        alert.getResult()
+                .filter(result -> result == YES)
+                .ifPresent(result -> tab.reload());
     }
 
     @Override
