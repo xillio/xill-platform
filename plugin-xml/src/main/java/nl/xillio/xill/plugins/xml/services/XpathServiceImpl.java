@@ -17,74 +17,71 @@ package nl.xillio.xill.plugins.xml.services;
 
 import com.google.inject.Singleton;
 import me.biesaart.utils.Log;
+import net.sf.saxon.expr.Expression;
+import net.sf.saxon.type.ItemType;
+import net.sf.saxon.xpath.XPathExpressionImpl;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 import nl.xillio.xill.api.data.XmlNode;
-import nl.xillio.xill.api.errors.RobotRuntimeException;
-import nl.xillio.xill.plugins.xml.data.XmlNodeVar;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
+import nl.xillio.xill.api.errors.OperationFailedException;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.namespace.QName;
 import javax.xml.xpath.*;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
  * This class is the main implementation of the {@link XpathService}
  *
  * @author Zbynek Hochmann
+ * @author andrea.parrilli
  */
 
 @Singleton
 public class XpathServiceImpl implements XpathService {
-
     private static final XPathFactory xpf = new XPathFactoryImpl();
-
     private static final Logger LOGGER = Log.get();
 
-    @Override
-    public List<Object> xpath(final XmlNode node, final String xpathQuery, final Map<String, String> namespaces) {
-        HTMLNamespaceContext namespaceContext = new HTMLNamespaceContext(namespaces);
 
+    @Override
+    public Object xpath(final XmlNode node, final String xpathQuery, final Map<String, String> namespaces) {
+        XPath xpath = makeXpathWithNamespaces(node, namespaces);
+        Object result;
+        XPathExpression compiledExpression;
+
+        // Compile
+        try {
+            compiledExpression = compileXpath(xpath, xpathQuery);
+        } catch (XPathExpressionException e) {
+            throw new InvalidUserInputException("xpath is not valid", xpathQuery, "a valid xpath", e);
+        }
+
+        // Execute
+        try {
+            result = compiledExpression.evaluate(node.getNode(), computeExpressionResultType(compiledExpression));
+        } catch(XPathExpressionException e) {
+            throw new OperationFailedException("processing xpath " + xpathQuery, "processing terminated prematurely", e);
+        }
+
+        return result;
+    }
+
+
+    // sets the namespaces for this xpath compilation
+    private XPath makeXpathWithNamespaces(final XmlNode node, final Map<String, String> namespaces) {
+        HTMLNamespaceContext namespaceContext = new HTMLNamespaceContext(namespaces);
         XPath xpath = xpf.newXPath();
         xpath.setNamespaceContext(namespaceContext);
-        ArrayList<Object> output = new ArrayList<>();
+        Document document = node.getDocument();
+        namespaceContext.setDocument(document);
 
-        boolean fetchText = xpathQuery.endsWith("/text()");
-
-        // More hacking... the java implementation bugs out on selecting a CDATA textnode.
-        // We will need to first query the node, then do another query to fetch the textual content.
-        String query = xpathQuery;
-        if (fetchText) {
-            query = xpathQuery.substring(0, xpathQuery.length() - "/text()".length());
-        }
-
-        try {
-            Document document = node.getDocument();
-            namespaceContext.setDocument(document);
-
-            Object result = this.evaluateExpression(this.compileXpath(xpath,query),node.getNode());
-            if (result instanceof NodeList) {
-                NodeList results = (NodeList) result;
-
-                for (int i = 0; i < results.getLength(); i++) {
-                    Node n = results.item(i);
-                    output.add(fetchText ? xPathText(xpath, n, "./text()") : parseVariable(n));
-                }
-            } else {
-                output.add(result.toString());
-            }
-        } catch (XPathExpressionException e) {
-            throw new RobotRuntimeException("Invalid XPath", e);
-        }
-
-        return output;
+        return xpath;
     }
+
 
     private XPathExpression compileXpath(final XPath xpath, final String expression) throws XPathExpressionException {
         try {
@@ -95,34 +92,21 @@ public class XpathServiceImpl implements XpathService {
         }
     }
 
-    private Object evaluateExpression(XPathExpression expr, final Object node) throws XPathExpressionException {
-        try {
-            return expr.evaluate(node, XPathConstants.NODESET);
-        } catch (Exception e) {
-            LOGGER.warn("Exception while evaluating xpath expression", e);
+    private QName computeExpressionResultType(XPathExpression expr) {
+        Expression innerExpr = ((XPathExpressionImpl) expr).getInternalExpression();
+        ItemType resultType = innerExpr.getItemType();
+
+        if(resultType.isAtomicType()) {
+            return XPathConstants.STRING;
         }
-
-        return expr.evaluate(node, XPathConstants.STRING);
-    }
-
-    private String xPathText(final XPath xpath, final Object node, final String expression) throws XPathExpressionException {
-        return xpath.compile(expression).evaluate(node).trim();
-    }
-
-    private static Object parseVariable(final Node node) {
-        switch (node.getNodeType()) {
-            case Node.COMMENT_NODE:
-            case Node.ATTRIBUTE_NODE:
-            case Node.CDATA_SECTION_NODE:
-            case Node.TEXT_NODE:
-                return node.getNodeValue();
-            default:
-                return new XmlNodeVar(node);
+        else {
+            return XPathConstants.NODESET;
         }
     }
+
 
     /**
-     * Innerclass for handling XML namespaces
+     * Inner class for handling XML namespaces.
      */
     private class HTMLNamespaceContext implements NamespaceContext {
         private Document document;
