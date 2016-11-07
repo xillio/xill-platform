@@ -16,7 +16,7 @@
 package nl.xillio.migrationtool.gui;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
+import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
@@ -44,7 +44,7 @@ import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.util.settings.Settings;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.MarkerFactory;
 
@@ -369,7 +369,7 @@ public class RobotTab extends FileTab implements Initializable {
 
                 // Process the result
                 if (result.isPresent() && result.get() == ButtonType.OK) {
-                    if(cb.isSelected()) {
+                    if (cb.isSelected()) {
                         settings.simple().save(Settings.SETTINGS_GENERAL, Settings.AUTO_SAVE_BOT_BEFORE_RUN, false);
                     }
 
@@ -562,6 +562,20 @@ public class RobotTab extends FileTab implements Initializable {
                 editorPane.getEditor().highlightLine(line, "highlight");
             });
         }
+    }
+
+    @Override
+    public void changed(ObservableValue<? extends DocumentState> source, DocumentState oldValue, DocumentState newValue) {
+        super.changed(source, oldValue, newValue);
+
+        Platform.runLater(() -> {
+            if (currentRobot != getProcessor().getRobotID()) {
+                String name = getName();
+                String filename = currentRobot.getPath().getName();
+                name += " > " + FilenameUtils.getBaseName(filename);
+                setText(name);
+            }
+        });
     }
 
     /**
