@@ -21,8 +21,8 @@ import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.xml.services.XpathService;
 import nl.xillio.xill.plugins.xml.utils.MockUtils;
 import org.testng.annotations.Test;
-
-import java.util.ArrayList;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertSame;
@@ -35,20 +35,18 @@ import static org.testng.Assert.assertSame;
 public class XpathConstructTest {
 
     /**
-     * Test the process method under normal circumstances
+     * Test the process method under normal circumstances.
      */
     @Test
     public void testProcess() {
         // Mock
-        XmlNode returnXmlNode = mock(XmlNode.class);
-
-        @SuppressWarnings("unchecked")
-        ArrayList<Object> returnList = mock(ArrayList.class);
-        when(returnList.size()).thenReturn(1);
-        when(returnList.get(0)).thenReturn(returnXmlNode);
+        NodeList returnXmlNodeList = mock(NodeList.class);
+        Node resultNode = mock(Node.class);
+        when(returnXmlNodeList.getLength()).thenReturn(1);
+        when(returnXmlNodeList.item(0)).thenReturn(resultNode);
 
         XpathService xpathService = mock(XpathService.class);
-        when(xpathService.xpath(any(), anyString(), any())).thenReturn(returnList);
+        when(xpathService.xpath(any(), anyString(), any())).thenReturn(returnXmlNodeList);
 
         XmlNode xmlNode = mock(XmlNode.class);
         MetaExpression xmlNodeVar = mock(MetaExpression.class);
@@ -64,7 +62,7 @@ public class XpathConstructTest {
         verify(xpathService).xpath(any(), anyString(), any());
 
         // Assert
-        assertSame(result.getMeta(XmlNode.class), returnXmlNode);
+        assertSame(result.getMeta(XmlNode.class).getNode(), resultNode);
     }
 
     /**

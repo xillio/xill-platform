@@ -25,11 +25,12 @@ import nl.xillio.xill.api.data.XmlNode;
 import nl.xillio.xill.plugins.xml.services.NodeService;
 
 /**
- * Moves existing node into different position in existing XML document
+ * Moves existing node into different position in existing XML document.
  *
  * @author Zbynek Hochmann
  */
 public class MoveNodeConstruct extends Construct {
+    public static final String XML_NODE = "XML node";
     @Inject
     private NodeService nodeService;
 
@@ -44,9 +45,9 @@ public class MoveNodeConstruct extends Construct {
     }
 
     static MetaExpression process(MetaExpression parentNodeVar, MetaExpression subnodeVar, MetaExpression beforeNodeVar, NodeService service) {
-        XmlNode parentXmlNode = assertMeta(parentNodeVar, "node", XmlNode.class, "XML node");
-        XmlNode subXmlNode = assertMeta(subnodeVar, "node", XmlNode.class, "XML node");
-        XmlNode beforeXmlNode = beforeNodeVar.isNull() ? null : assertMeta(beforeNodeVar, "node", XmlNode.class, "XML node");
+        XmlNode parentXmlNode = assertMeta(parentNodeVar, "node", XmlNode.class, XML_NODE);
+        XmlNode subXmlNode = assertMeta(subnodeVar, "node", XmlNode.class, XML_NODE);
+        XmlNode beforeXmlNode = beforeNodeVar.isNull() ? null : assertMeta(beforeNodeVar, "node", XmlNode.class, XML_NODE);
 
         service.moveNode(parentXmlNode, subXmlNode, beforeXmlNode);
         return NULL;
