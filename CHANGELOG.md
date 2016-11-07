@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 * Deprecate `File.getText()` [CTC-1860]
 
 ### Fix
+* Upload project throws 'already exists' after 'invalid names' popup [CTC-1871]
 * Name of included robot not shown during debugging [CTC-1885]
 * Multiple changed robots dialogs and robot tab selection issue [CTC-1441]
 * On server threads are not closed when tasks finishes [XSVR-139]
