@@ -44,8 +44,7 @@
 				</AnchorPane>
 				<HBox prefHeight="108.0" prefWidth="598.0" styleClass="buttonsWrapper" VBox.vgrow="NEVER">
 					<children>
-						<Button fx:id="skipBtn" mnemonicParsing="false" onAction="#skipBtnPressed" prefHeight="29.0" prefWidth="96.0" text="Skip invalid" />
-						<Button fx:id="cancelBtn" cancelButton="true" defaultButton="true" mnemonicParsing="false" onAction="#cancelBtnPressed" text="Cancel" />
+						<Button fx:id="skipBtn" mnemonicParsing="false" onAction="#okBtnPressed" prefHeight="29.0" prefWidth="96.0" text="Ok" />
 					</children>
 				</HBox>
 			</children>
