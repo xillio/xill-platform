@@ -108,7 +108,7 @@ void buildOn(Map args) {
                         // Pass the sonar url
                         "-Dsonar.host.url=https://sonaross.xillio.com",
                         // Uncomment this to enable verbose builds
-                        "-X"
+                        // "-X"
                 ]
 
                 String mvn = "\"$m2Tool/bin/mvn\" ${mvnOptions.join(' ')} $mavenArgs"
