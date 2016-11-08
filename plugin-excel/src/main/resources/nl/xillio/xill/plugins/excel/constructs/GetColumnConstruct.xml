@@ -18,8 +18,19 @@
 -->
 <function>
     <description>
-Gets an iterator over a column of an Excel sheet. The column can be referenced by number or alpha-numeric reference.
+Gets an iterator over a column of an Excel sheet.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="sheet">
+The sheet that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="column">
+The column that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+The column can be referenced by number or alpha-numeric reference.
+	</longDescription>
     <examples>
         <example title="Printing the content of a row">
             <header>Numeric notation</header>

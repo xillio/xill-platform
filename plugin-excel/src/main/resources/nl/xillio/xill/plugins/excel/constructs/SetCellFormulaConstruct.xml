@@ -18,14 +18,31 @@
 -->
 <function>
     <description>
-Changes the value of a given cell to the provided formula. The `column` parameter can be either given as numbers or letters (e.g. "A", "AB"), the `row` have to be given as numbers.
+Changes the value of a given cell to the provided formula.
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="sheet">
+The sheet that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="column">
+The column of the cell that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="row">
+The row of the cell that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="value">
+The formula that will be given to the cell.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+The `column` parameter can be either given as numbers or letters (e.g. "A", "AB"), the `row` have to be given as numbers.
 
 Formulas can be given in the following form:
 
         SUM(C4:E4)
 
 Formulas are evaluated when the sheet is opened in a spreadsheet program.
-    </description>
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Changing a cell formula</header>

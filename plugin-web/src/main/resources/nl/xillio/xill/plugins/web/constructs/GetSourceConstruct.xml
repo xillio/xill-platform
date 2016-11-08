@@ -20,6 +20,11 @@
     <description>
 Returns a `string` containing the source (X)HTML of the web `page` in argument.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="page">
+The web page that will be used
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Get web page source</header>

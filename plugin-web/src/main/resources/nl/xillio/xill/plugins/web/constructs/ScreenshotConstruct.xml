@@ -18,10 +18,19 @@
 -->
 <function>
     <description>
-Takes a screenshot of the `page` in argument, storing it in the `file` as a PNG image.  
-
-Optionally the `resolution` of the screenshot can be provided (see example below). If no parameter is passed then the screenshot resolution will be equal to the resolution used when calling `loadPage` construct.
+Takes a screenshot storing it as a PNG image.  
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="page">
+The web page who's cookie will be removed.
+        </parameterDescription>
+		<parameterDescription parameterName="filename">
+The fileName (path) that the screenshot will be saved to.
+        </parameterDescription>
+		<parameterDescription parameterName="options">
+Optionally the `resolution` of the screenshot can be provided (see example below). If no parameter is passed then the screenshot resolution will be equal to the resolution used when calling `loadPage` construct.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Take a screenshot of a web page</header>

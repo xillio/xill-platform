@@ -19,6 +19,13 @@
 <function>
     <description>
 Connect to a Microsoft SQL Server
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="connectionString">
+The string that will be used to connect to the database.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
 To connect to MSSQL you need to provide a connection string that contains all the required information.
 The simple format of the connection string is:
 
@@ -29,7 +36,7 @@ Example:
         jdbc:jtds:sqlserver://localhost/Finance;instance=sqlexpress;user=MyUserName;password=MyPassword
 
 Read more at: [What is the URL format used by jTDS?](http://jtds.sourceforge.net/faq.html#urlFormat)
-    </description>
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Connect to a local database</header>

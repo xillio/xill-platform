@@ -19,13 +19,17 @@
 <function>
     <description>
 Extract exif tags from a single file and returns an *OBJECT* containing the tags and their values.
-
-## Projection
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="filePath">
+The path to the file that will be scanned.
+        </parameterDescription>
+		<parameterDescription parameterName="projection">
 The projection parameter accepts an *OBJECT* containing exif tag names as keys and a boolean flag as a value.
 This value
 denotes whether or not the tag should be included in the result or not.
 Whenever you specify a tag that should be included in the projection all other tags will default to false.
-### Examples
+#### Examples
 To get only the MIME Type tag:
 
     {
@@ -45,20 +49,22 @@ To get multiple tags:
     "megapixels": true,
     "bitsPerSample": true
     }
-
-## Options
+        </parameterDescription>
+		<parameterDescription parameterName="options">
 To set options for this construct you can provide an *OBJECT* that contains the options as a key and values as
 the setting.
 
 | Option | Description | Value |
 | ---------- | ----------- | ----- |
 | nameConvention | The naming convention that should be applied to the tags | Default: *lowerCamelCase (lcc)*, upperCamelCase (ucc) or capitalWord (cw) |
-
-## Usage on a non-windows machine
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+### Usage on a non-windows machine
 To use the Exiftool plugin on a non-windows machine some setup is required. Below you can find
 the steps to install the required files.
 
-### Linux
+#### Linux
 Install the package through your system's package manager and restart Xill or follow the instructions below.
 
 * Download the exiftool perl sources from *sno.phy.queensu.ca/~phil/exiftool/* (top link)
@@ -69,20 +75,21 @@ add the directory containing exiftool to your PATH environmental variable
 (Defaults to */usr/bin/perl*)
 * Restart Xill IDE
 me
-### Mac OSX
 
-#### Using Homebrew
+#### Mac OSX
+
+##### Using Homebrew
 If you have the homebrew package manager installed (see http://brew.sh ) you can simply enter the following in a terminal window:
 ```brew install exiftool```
 
-#### Manual install
+##### Manual install
 * Download the exiftool osx executables from *sno.phy.queensu.ca/~phil/exiftool/* (bottom link)
 * Install the applications
 * (Optional) Set your system's environmental variable *exiftool_bin* to the absolute path of the
 exiftool file or add the directory containing exiftool to your PATH environmental variable
 (Defaults to */usr/local/bin/exiftool*)
 * Restart Xill IDE
-    </description>
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Get all available tags on a file</header>

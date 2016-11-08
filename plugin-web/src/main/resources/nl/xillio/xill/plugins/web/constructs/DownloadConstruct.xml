@@ -18,18 +18,27 @@
 -->
 <function>
     <description>
-Downloads the file identified by `url` to local file `filename`. Any missing folders are created automatically. To download from an existing web context, provide the optional `webcontext` parameter, a Page variable, to reuse its (authentication)-headers and cookies for the download. The default `timeout` if not provided is 5000 ms.
+Downloads the file identified by `url` to local file `filename` and returns the HTTP response code. 
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="url">
+The URL of the source
+        </parameterDescription>
+		<parameterDescription parameterName="fileName">
+Filename where the source content will be saved
+        </parameterDescription>
+		<parameterDescription parameterName="webContext">
+Optional `PAGE variable` holding the page context
+        </parameterDescription>
+		<parameterDescription parameterName="timeout">
+Download timeout in milliseconds (default 5000 ms)
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Any missing folders are created automatically. To download from an existing web context, provide the optional `webcontext` parameter, a Page variable, to reuse its (authentication)-headers and cookies for the download.
 
 It supports the HTTP and HTTPS protocols and automatically bypasses all invalid or not trusted SSL certificates in case of HTTPS.
-
-| Parameter            | Description |
-|----------------------|-------------|
-|url                   | The URL of the source |
-|fileName              | Filename where the source content will be saved |
-|webContext            | Optional `PAGE variable` holding the page context |
-|timeout               | Download timeout in milliseconds |
-|`return`              | HTTP response code |
-    </description>
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Download a pdf document</header>

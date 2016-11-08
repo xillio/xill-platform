@@ -19,9 +19,18 @@
 <function>
     <description>
 Load an Excel sheet from a workbook.
-
-Note that sheets are not thread-safe. Handling different document-objects in different threads will work. Accessing the same document in multiple threads will not work.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="workbook">
+The workbook that will be used.
+        </parameterDescription>
+        <parameterDescription parameterName="sheet">
+The sheet that will be loaded.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Note that sheets are not thread-safe. Handling different document-objects in different threads will work. Accessing the same document in multiple threads will not work.
+	</longDescription>
     <examples>
         <example title="Loading a sheet">
             <header>Getting a sheet by name from a workbook</header>

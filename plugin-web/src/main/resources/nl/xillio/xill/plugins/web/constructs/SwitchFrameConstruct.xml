@@ -19,9 +19,18 @@
 <function>
     <description>
 Switches the context of the page to a given iframe.
-
-Useful for working with an iframe or normal content frame.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="page">
+The web page that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="frame">
+The iframe that will be switched to.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Useful for working with an iframe or normal content frame.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Switch to a different iframe</header>

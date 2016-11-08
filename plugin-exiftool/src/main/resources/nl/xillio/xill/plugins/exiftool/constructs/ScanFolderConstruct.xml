@@ -21,11 +21,18 @@
 Extract exif tags from multiple files inside a folder. This will return an iterator that you can iterate to get
 results.
 
-## Projection
+
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="folderPath">
+The path to the folder that will be scanned.
+        </parameterDescription>
+		<parameterDescription parameterName="projection">
+The tags that will be gotten.
 The projection parameter accepts an *OBJECT* containing exif tag names as keys and a boolean flag as a value.
 For examples check out [ExifTool.scanFile](./scanFile.html).
-
-## Options
+        </parameterDescription>
+		<parameterDescription parameterName="options">
 To set options for this construct you can provide an *OBJECT* that contains the options as a key and values as
 the setting.
 
@@ -34,12 +41,14 @@ the setting.
 | nameConvention | The naming convention that should be applied to the tags | Default: *lowerCamelCase (lcc)*, upperCamelCase (ucc) or capitalWord (cw) |
 | recursive | Scan the folder recursively | true / false. Default: *true* |
 | extensions | A filter that selects which extensions to scan or skip | A [projection](./scanFile.html) with file extensions as keys |
-
-## Usage on a non-windows machine
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+### Usage on a non-windows machine
 To use the Exiftool plugin on a non-windows machine some setup is required. Below you can find
 the steps to install the required files.
 
-### Linux
+#### Linux
 Install the package through your system's package manager and restart Xill or follow the instructions below.
 * Download the exiftool perl source from *sno.phy.queensu.ca/~phil/exiftool/* (top link)
 * Extract the archive to your hard drive
@@ -49,14 +58,14 @@ add the directory containing exiftool to your PATH environmental variable
 (Defaults to */usr/bin/perl*)
 * Restart Xill IDE
 
-### Mac OSX
+#### Mac OSX
 * Download the exiftool osx executable from *sno.phy.queensu.ca/~phil/exiftool/* (bottom link)
 * Install the application
 * (Optional) Set your system's environmental variable *exiftool_bin* to the absolute path of the exiftool file
 or add the directory containing exiftool to your PATH environmental variable
 (Defaults to */usr/local/bin/exiftool*)
 * Restart Xill IDE
-    </description>
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Get all available tags on all files in a folder</header>

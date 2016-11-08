@@ -20,6 +20,17 @@
     <description>
 Saves a workbook to the file system.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="workbook">
+The workbood that will be saved.
+        </parameterDescription>
+		<parameterDescription parameterName="path">
+The path at which the workbook will be saved.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+If no path is given the workbook will be saved to the same file it was read from.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Saving the current workbook to the same file</header>

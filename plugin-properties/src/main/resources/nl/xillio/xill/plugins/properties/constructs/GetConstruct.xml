@@ -19,10 +19,19 @@
 <function>
     <description>
 Fetch a property from the project configuration.
-
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="name">
+The name of the property.
+        </parameterDescription>
+		<parameterDescription parameterName="defaultValue">
+Read more on this below.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
 ## Properties Configuration
-The configuration file should exist in the root of the project and is called *xill.properties*. In here you
-can specify key-value properties using the following syntax: `[PROPERTY-KEY]=[PROPERTY-VALUE]`.
+The configuration file should exist in the root of the project and is called *xill.properties*.
+In here you can specify key-value properties using the following syntax: `[PROPERTY-KEY]=[PROPERTY-VALUE]`.
 
 An example of a file that contains 3 properties:
 
@@ -67,8 +76,7 @@ In the values of your properties you can use an expression syntax to substitute 
 
     download.file=${xill.projectPath}/avatar.jpg
 
-
-    </description>
+	</longDescription>
     <examples>
         <example title="Project Example">
             <header>defaults.properties</header>

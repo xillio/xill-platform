@@ -20,6 +20,11 @@
     <description>
 Removes all cookies associated with the loaded page.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="page">
+The web page who's cookies will be removed.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Remove all cookies from a web page</header>

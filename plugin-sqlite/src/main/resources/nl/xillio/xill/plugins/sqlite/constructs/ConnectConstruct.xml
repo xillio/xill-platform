@@ -19,6 +19,13 @@
 <function>
     <description>
 Connect to a SQLite database.
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="connectionString">
+The string that will be used to connect to the database.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
 To connect to SQLite you need to provide a connection string that contains all the required information.
 The simple format of the connection string is:
 
@@ -39,7 +46,7 @@ You can also access your database from an external resource using a url.
 
     jdbc:sqlite:resource:http://example.com/sqlite.db
 
-    </description>
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Create an in-memory database</header>
