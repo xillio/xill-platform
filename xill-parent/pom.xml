@@ -54,6 +54,7 @@
     </prerequisites>
 
     <properties>
+        <saxon.version>9.7.0-10</saxon.version>
         <!-- Build Info -->
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
