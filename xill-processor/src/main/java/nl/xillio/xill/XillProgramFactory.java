@@ -36,7 +36,7 @@ import nl.xillio.xill.components.expressions.FunctionCall;
 import nl.xillio.xill.components.expressions.FunctionParameterExpression;
 import nl.xillio.xill.components.expressions.pipeline.MapExpression;
 import nl.xillio.xill.components.expressions.pipeline.PeekExpression;
-import nl.xillio.xill.components.expressions.RunBulkExpression;
+import nl.xillio.xill.components.expressions.runbulk.RunBulkExpression;
 import nl.xillio.xill.components.expressions.*;
 import nl.xillio.xill.components.expressions.pipeline.CollectTerminalExpression;
 import nl.xillio.xill.components.expressions.pipeline.ConsumeTerminalExpression;

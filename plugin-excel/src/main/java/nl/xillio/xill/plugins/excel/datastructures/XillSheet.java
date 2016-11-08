@@ -236,4 +236,11 @@ public class XillSheet implements MetadataExpression {
         return readonly;
     }
 
+    /**
+     * Force all formulas to be recalculated when a sheet is opened.
+     */
+    public void forceFormulaRecalculation() {
+        sheet.setForceFormulaRecalculation(true);
+    }
+
 }
