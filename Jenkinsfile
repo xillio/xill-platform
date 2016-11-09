@@ -79,7 +79,7 @@ void buildOn(Map args) {
     String buildPhase = args.buildPhase ?: 'verify'
 
     if (runSonar) {
-        buildPhase = "$buildPhase sonar:sonar"
+        buildPhase = "$buildPhase -T 1 sonar:sonar"
     }
 
     node("xill-platform && ${platform}") {
