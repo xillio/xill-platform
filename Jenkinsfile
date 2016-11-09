@@ -79,7 +79,7 @@ void buildOn(Map args) {
     String buildPhase = args.buildPhase ?: 'verify'
 
     if (runSonar) {
-        buildPhase = "$buildPhase -T 1 sonar:sonar"
+        buildPhase = "$buildPhase sonar:sonar"
     }
 
     node("xill-platform && ${platform}") {
@@ -108,7 +108,7 @@ void buildOn(Map args) {
                         // Pass the sonar url
                         "-Dsonar.host.url=https://sonaross.xillio.com",
                         // Uncomment this to enable verbose builds
-                        "-X"
+                        // "-X"
                 ]
 
                 String mvn = "\"$m2Tool/bin/mvn\" ${mvnOptions.join(' ')} $mavenArgs"
@@ -117,7 +117,7 @@ void buildOn(Map args) {
                 stage("Run 'mvn $buildPhase' on $platform") {
                     checkout scm
                     cli "$mvn $buildPhase -Dsonar.branch=${env.BRANCH_NAME}"
-                    cli "$mvn clean"
+                    // cli "$mvn clean"
                 }
             }
         }
