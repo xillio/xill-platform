@@ -18,9 +18,17 @@
 -->
 <function>
 	<description>
-Duplicates the given list. Duplicate makes a copy from the original list.
-This means that after copying, changes to the first list will not change the duplicated list.
+Duplicates the given list.
 	</description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="collection">
+The collection that will be duplicated.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Duplicate makes a copy from the original list.
+This means that after copying, changes to the first list will not change the duplicated list.
+	</longDescription>
 	<examples>
 		<example title="Usage">
 			<header>Duplicating a list</header>

@@ -19,7 +19,12 @@
 <function>
     <description>
 Converts a given date to a value with the provided `format`.
-
+    </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="date">
+The date that will be formated.
+        </parameterDescription>
+		<parameterDescription parameterName="format">
 The `format` parameter can be composed using various symbols. The most commonly used symbols are listed in the table below. The default format is: "yyyy-MM-dd HH:mm:ss".
 
 | Symbol | Meaning                  | Presentation  | Example                |
@@ -40,9 +45,8 @@ The Symbol column in the table lists the symbols that may directly be used in th
 
 The `format` parameter can also include other characters that are not used for representing date values (except for: ',[,],#,{,}). For example: using "HH.mm" results in "16.14".
 Text can be shown by putting single quotation marks around it. For example: "'Current Year: 'YYYY" results in "Current Year: 2016".
-
-
-    </description>
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Printing the formatted current datetime.</header>

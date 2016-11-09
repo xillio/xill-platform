@@ -20,6 +20,11 @@
     <description>
 Returns the absolute value of the provided value.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="value">
+The value that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <code>

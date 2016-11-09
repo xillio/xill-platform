@@ -18,10 +18,19 @@
 -->
 <function>
     <description>
-Joins the elements of `list`, optionally separated by `delimiter`. Returns the result as one string.
-
-If `list` only contains one string, `join` returns that string. If an element contains an OBJECT, its string representation is used.
+Joins the elements of `list`. Returns the result as one string.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="list">
+The list that will be made into 1 string.
+        </parameterDescription>
+		<parameterDescription parameterName="delimiter">
+The delimiter that will be used to seperate the items. (default is "")
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+If `list` only contains one string, `join` returns that string. If an element contains an OBJECT, its string representation is used.
+	</longDescription>
     <examples>
         <example title="Usage">
             <code>

@@ -20,6 +20,11 @@
     <description>
 Returns `true` if `string` is `null` or empty (""), or `false` otherwise.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="string">
+The string that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <code>

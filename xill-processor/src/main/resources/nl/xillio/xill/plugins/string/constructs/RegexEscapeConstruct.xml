@@ -20,6 +20,11 @@
     <description>
 Escape `string` so it can be used as a literal within a regex.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="toEscape">
+The string that will be escaped.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <code>

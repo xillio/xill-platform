@@ -18,12 +18,15 @@
 -->
 <function>
     <description>
-Returns a randomized value based on the optional parameter value.  
-
-If an integer argument N is provided the return value is a random integer between 0 (inclusive) and N (exclusive).
+Returns a randomized value based on the optional parameter value.
+    </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="value">
+The value that will lock the the return value between 0 (inclusive) and 'value' (exclusive).
 If a list argument is provided, the result is a random entry from the list.
 If no parameter or a negative number is provided, a random floating point number between 0 and 1 will be generated.
-    </description>
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Get a number between 1 and 6 (inclusive)">
             <code>

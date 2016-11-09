@@ -20,6 +20,11 @@
     <description>
 Returns the length of `string` in characters.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="value">
+The string that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <code>

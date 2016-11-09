@@ -28,16 +28,6 @@ The name of the collection that will be used.
 The object that contains the key and value pairs.
         </parameterDescription>
 		<parameterDescription parameterName="options">
-Several options can be set here.
-        </parameterDescription>
-		<parameterDescription parameterName="database">
-The database that will be used.
-        </parameterDescription>
-    </parameterDescriptions>
-	<longDescription>
-The `keys` is an object which contains pairs where the key is the index key, and the value describes the type of index for that field.
-For an ascending index on a field specify a value of 1, for a descending index specify -1.
-
 The options are all optional. The options that can be specified are:
 
 | Option name          | Description |
@@ -49,6 +39,15 @@ The options are all optional. The options that can be specified are:
 | `expireAfterSeconds` | Specifies a value, in seconds, as a time-to-live to control how long documents are retained in the collection. This applies only to TTL indexes. |
 | `v`                  | The index version number. A different index version should only be specified in unusual situations. |
 | `storageEngine`      | Specifies a configuration to the storage engine for this index. This should be an object in the following form: { storage-engine-name: options }. |
+
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+The `keys` is an object which contains pairs where the key is the index key, and the value describes the type of index for that field.
+For an ascending index on a field specify a value of 1, for a descending index specify -1.
 
 More information about MongoDB createIndex can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.createIndex/).
 	</longDescription>

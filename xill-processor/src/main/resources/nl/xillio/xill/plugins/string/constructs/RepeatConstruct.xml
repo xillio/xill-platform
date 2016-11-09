@@ -20,6 +20,14 @@
     <description>
 Repeats `string` for `count` times and concatenates the result.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="string">
+The string that will be repeated.
+        </parameterDescription>
+		<parameterDescription parameterName="count">
+The amount of times the 'string' will be repeated.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <code>

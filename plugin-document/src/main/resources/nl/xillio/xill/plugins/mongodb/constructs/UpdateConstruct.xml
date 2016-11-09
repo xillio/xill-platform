@@ -31,7 +31,12 @@ The Query that will be applied.
 The update that will be applied.
         </parameterDescription>
 		<parameterDescription parameterName="options">
-Several options can be set here.
+The `options` parameter may contain the following option:
+
+| Option   | Description |
+| -------- | ----------- |
+| `upsert` | If set to `true`, creates a new document if no document matches the query, or if documents match the query, performs an update. To avoid multiple upserts, ensure that the query fields are uniquely indexed. The default is `false`. |
+
         </parameterDescription>
 		<parameterDescription parameterName="database">
 The database that will be used.
@@ -40,12 +45,6 @@ The database that will be used.
 	<longDescription>
 The method can modify specific fields of an existing document or documents or replace an existing document entirely, depending on the update parameter.
 Returns the amount of modified documents. Will return 0 when no documents were modified or a Mongo server prior to version 2.6 is used.
-
-The `options` parameter may contain the following option:
-
-| Option   | Description |
-| -------- | ----------- |
-| `upsert` | If set to `true`, creates a new document if no document matches the query, or if documents match the query, performs an update. To avoid multiple upserts, ensure that the query fields are uniquely indexed. The default is `false`. |
 
 More information about MongoDB update can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.update/).
 	</longDescription>

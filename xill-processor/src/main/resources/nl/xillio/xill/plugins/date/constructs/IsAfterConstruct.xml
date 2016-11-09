@@ -20,6 +20,14 @@
     <description>
 Determines if the date is after another date.   
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="date">
+The date that will be checked.
+        </parameterDescription>
+		<parameterDescription parameterName="other">
+The date that will be checked against.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Comparsion of two dates.</header>

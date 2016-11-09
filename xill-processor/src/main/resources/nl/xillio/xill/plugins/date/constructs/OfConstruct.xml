@@ -19,9 +19,34 @@
 <function>
     <description>
 Creates a date variable from provided date and time inputs. Returns new date variable.   
-
-The timezone field will default to your system's timezone.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="year">
+The year of the date that will be made.
+        </parameterDescription>
+		<parameterDescription parameterName="month">
+The month of the date that will be made.
+        </parameterDescription>
+		<parameterDescription parameterName="day">
+The day of the date that will be made.
+        </parameterDescription>
+		<parameterDescription parameterName="hour">
+The hour of the date that will be made.
+        </parameterDescription>
+		<parameterDescription parameterName="minute">
+The minute of the date that will be made.
+        </parameterDescription>
+		<parameterDescription parameterName="second">
+The second of the date that will be made.
+        </parameterDescription>
+		<parameterDescription parameterName="nano">
+The nanosecond of the date that will be made.
+        </parameterDescription>
+		<parameterDescription parameterName="zone">
+The tiemzone for the date that will be made.
+This will default to your system's timezone.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Getting date and time from provided values.</header>

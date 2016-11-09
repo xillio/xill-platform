@@ -19,13 +19,12 @@
 <function>
     <description>
 Performs a delete request to `url` with the given `options` and returns the response from the server.
-
-The format of the `options` parameter is described in the _Request_ section. The return value is
-described in the _Response_ section.
-
-## Request
-
-### Options
+    </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="url">
+The URL that the request will be sent to.
+        </parameterDescription>
+		<parameterDescription parameterName="options">
 To set various options for the request you can use the options parameter. The passed value should be an object containing
 option names as keys and their respective values as values.
 Check out the code examples for more information about the options.
@@ -41,6 +40,9 @@ Check out the code examples for more information about the options.
 | responseContentType | An ATOMIC describing a content type                                                                     | Set this option to override the response type auto detector                       |
 | logging             | An ATOMIC (debug, info, warn or error) *default: null*                                                  | Set this option to enable logging of requests and responses                       |
 
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
 ## Response
 If the request is performed without errors the return value will be an object that describes the response.
 
@@ -114,7 +116,7 @@ header which can be overridden using the `responseContentType` option.
         "body": "[Stream application/octet-stream]",
         ...
     }
-    </description>
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Make a minimal delete request</header>

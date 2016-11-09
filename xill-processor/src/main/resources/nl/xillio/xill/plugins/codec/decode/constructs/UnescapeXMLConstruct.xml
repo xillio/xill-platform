@@ -19,10 +19,18 @@
 <function>
     <description>
 Decodes all xml-escaped (ampersand) characters in the provided string.
-
-Mainly used to decode XML characters to their original characters.  
-Optionally you can provide the number of passes the decoder should run (defaults to 1).
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="string">
+The string that will be decoded.
+        </parameterDescription>
+		<parameterDescription parameterName="passes">
+The number of passes the decoder should run (defaults to 1).
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Mainly used to decode XML characters to their original characters.  
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Single pass</header>

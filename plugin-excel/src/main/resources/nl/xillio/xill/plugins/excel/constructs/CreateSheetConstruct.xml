@@ -29,7 +29,7 @@ The name that will be given to the new sheet
         </parameterDescription>
     </parameterDescriptions>
 	<longDescription>
-Note that sheets are not thread-safe. Handling different document-objects in different threads will work. Accessing the same document in multiple threads will not work.
+The sheets are not thread-safe. Handling different document-objects in different threads will work. Accessing the same document in multiple threads will not work.
 	</longDescription>
     <examples>
         <example title="Creation">

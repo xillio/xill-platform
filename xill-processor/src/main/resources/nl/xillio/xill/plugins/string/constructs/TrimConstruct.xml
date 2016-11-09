@@ -19,9 +19,15 @@
 <function>
     <description>
 Returns the trimmed version of `string`.
-
-If the optional boolean parameter `internal` is set to `true`, `String.trim()` will also replace slack white spaces - including tabs, non-breakable spaces and line feeds - inside `string` with a single space.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="string">
+The string that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="internal">
+If set to `true`, `String.trim()` will also replace slack white spaces - including tabs, non-breakable spaces and line feeds - inside `string` with a single space.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <code>

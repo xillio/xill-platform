@@ -20,6 +20,14 @@
     <description>
 Returns true if the value is contained in the given list or object. Otherwise false.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="collection">
+The collection that will be checked.
+        </parameterDescription>
+		<parameterDescription parameterName="value">
+The value that will be checked for.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <code>

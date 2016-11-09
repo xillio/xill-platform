@@ -20,6 +20,11 @@
     <description>
 Returns the length of the given list or object.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="collection">
+The collection which's length will be checked.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <code>

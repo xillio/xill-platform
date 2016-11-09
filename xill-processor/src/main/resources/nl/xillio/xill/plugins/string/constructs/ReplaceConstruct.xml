@@ -19,17 +19,36 @@
 <function>
     <description>
 Returns a new string based on `text` in which occurrences of the string `needle` have been replaced by the string `replacement`.
-
-If the optional parameter `replaceall` is set to `false`, the routine will only replace the first occurrence of `needle` (defaults to `true`).
-Note that `needle` is by default interpreted as a regex pattern, so all special regex characters have to be escaped when used as a literal.
+    </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="text">
+The string that will be searched.
+        </parameterDescription>
+		<parameterDescription parameterName="needle">
+The string that will be searched for.
+        </parameterDescription>
+		<parameterDescription parameterName="replacement">
+The string that will replace the found needle(s).
+        </parameterDescription>
+		<parameterDescription parameterName="useRegex">
+If set to `false` the function will treat `needle` and `replacement` as regular text. (default is 'true')
+        </parameterDescription>
+		<parameterDescription parameterName="replaceAll">
+If set to `false` the routine will only replace the first occurrence of `needle`. (default is `true`)
+        </parameterDescription>
+		<parameterDescription parameterName="timeout">
+The amount of time in milliseconds the construct is allowed to run. (default is 5000)
+Set timeout to zero to let the function run without timeout.
+This should only be altered when dealing with large source documents, the timeout is there to protect the system from hanging on invalid expressions.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+The `needle` is by default interpreted as a regex pattern, so all special regex characters have to be escaped when used as a literal.
 Also in `replacement` you can use the capture groups from `needle` as "$1", "$2", etc.
 To use a literal "$" in `replacement`, you need to escape it like this: "\$".
-Set `useregex` to `false` to have the function treat `needle` and `replacement` as regular text.
 
-Optionally a timeout can be provided in milliseconds, the default value is 5000 milliseconds.
-Set `timeout` to zero to let the function run without timeout. This should only be altered when dealing with large source documents.
-See the Regular Expressions page for more about Regular Expression support in Xill IDE.
-    </description>
+See the regular expressions page for more about regular expression support in Xill IDE.
+	</longDescription>
     <examples>
         <example title="Usage">
             <code>

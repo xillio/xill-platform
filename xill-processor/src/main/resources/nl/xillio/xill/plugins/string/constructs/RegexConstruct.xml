@@ -19,16 +19,28 @@
 <function>
     <description>
 Returns a list of regular expression matches of `regex` on `string`.
-
-Note that the result will be a LIST. The first item contains the entire string value. All other elements are matching groups.
+    </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="string">
+The string that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="regex">
+The regular expression that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="timeout">
+The amount of time in milliseconds the construct is allowed to run. (default is 5000)
+Set timeout to zero to let the function run without timeout.
+This should only be altered when dealing with large source documents, the timeout is there to protect the system from hanging on invalid expressions.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+The result will be a LIST. The first item contains the entire string value. All other elements are matching groups.
 `regex` must always match the entire string value.
 
-Note that the escape character "\" needs to be escaped.
-
-Optionally `timeout` can be provided in milliseconds, the default value is 5000 milliseconds. Set `timeout` to zero to let the function run without timeout. This should only be altered when dealing with large source documents. The `timeout` is there to protect the system from hanging on invalid expressions.
+The escape character "\" needs to be escaped.
 
 See the regular expressions page for more about regular expression support in Xill IDE.
-    </description>
+	</longDescription>
     <examples>
         <example title="Usage">
             <code>

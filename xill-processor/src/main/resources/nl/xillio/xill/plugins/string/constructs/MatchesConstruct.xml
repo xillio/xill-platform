@@ -19,12 +19,23 @@
 <function>
     <description>
 Returns `true` if `text` matches the pattern specified by `regex`.
-
-Optionally a timeout can be provided in milliseconds, the default value is 5000 milliseconds.
-Set `timeout` to zero to let the function run without timeout. This should only be altered when dealing with large source documents.
-The timeout is there to protect the system from hanging on invalid expressions.  
-See the Regular Expressions page for more about Regular Expression support in Xill IDE.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="value">
+The string that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="regex">
+The regular expression that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="timeout">
+The amount of time in milliseconds the construct is allowed to run. (default is 5000)
+Set timeout to zero to let the function run without timeout.
+This should only be altered when dealing with large source documents, the timeout is there to protect the system from hanging on invalid expressions.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+See the regular expressions page for more about regular expression support in Xill IDE.
+	</longDescription>
     <examples>
         <example title="Usage">
             <code><![CDATA[

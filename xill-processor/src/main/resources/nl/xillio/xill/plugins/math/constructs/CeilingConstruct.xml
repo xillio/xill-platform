@@ -20,6 +20,11 @@
     <description>
 Returns the smallest number greater than or equal to the given value.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="value">
+The value that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <code>

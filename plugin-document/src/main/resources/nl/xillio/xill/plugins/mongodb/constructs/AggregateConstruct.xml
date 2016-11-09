@@ -28,7 +28,13 @@ The name of the collection that will be used.
 The pipeline that will be used on the collection
         </parameterDescription>
 		<parameterDescription parameterName="options">
-Several options can be set here.
+The `options` parameter may contain the following options:
+
+| Option           | Description |
+| ---------------- | ----------- |
+| `allowDiskUsage` | Setting to `true` enables writing to temporary files, which allows for the handling of large datasets. |
+| `maxTime`        | The maximum execution time in milliseconds for this operation. |
+| `batchSize`      | Number of documents to return per batch. |
         </parameterDescription>
         <parameterDescription parameterName="database">
 The database that will be used.
@@ -39,14 +45,6 @@ MongoDB allows the definition of a pipeline, a sequence of filters and computati
 This pipeline is input as a list of objects with the stage name as key and its parameters as value.
 
 More information about MongoDB aggregation can be found in the [MongoDB manual](https://docs.mongodb.com/manual/core/aggregation-pipeline/).
-
-The `options` parameter may contain the following options:
-
-| Option           | Description |
-| ---------------- | ----------- |
-| `allowDiskUsage` | Setting to `true` enables writing to temporary files, which allows for the handling of large datasets. |
-| `maxTime`        | The maximum execution time in milliseconds for this operation. |
-| `batchSize`      | Number of documents to return per batch. |
 
 The database parameter determines which database will be used.
 For example, when database is `default`, the `udm_default` database will be used.

@@ -20,6 +20,14 @@
     <description>
 Returns `true` if `haystack` contains `needle` or `false` if it does not.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="haystack">
+The string or list that will be searched.
+        </parameterDescription>
+		<parameterDescription parameterName="needle">
+The string that will be searched for.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="String Usage">
             <code>

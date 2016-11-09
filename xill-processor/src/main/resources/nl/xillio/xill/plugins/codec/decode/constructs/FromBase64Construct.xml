@@ -19,12 +19,20 @@
 <function>
     <description>
 Decode a base64 stream or string.
+    </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="input">
+The string or stream that will be docoded
+        </parameterDescription>
+		<parameterDescription parameterName="charset">
+Only relevant when a string is provided and determines what character set should be used
+for the output string.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
 If the input is a base64 string then the output is the decoded string.
 If the input is a base64 stream then the output is a base64 decoded stream.
-
-The charset parameter is only relevant when a string is provided and determines what character set should be used
-for the output string.
-    </description>
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Assuming we have a file 'C:/tmp/note.xml' containing 'SGVsbG8gV29ybGQ='</header>

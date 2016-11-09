@@ -18,10 +18,19 @@
 -->
 <function>
     <description>
-Converts the relative URL `relativeUrl` to an absolute URL using the `pageUrl` as base URL.
-
-Returns the resulting URL as a string.
+Converts the relative URL to an absolute URL using the `pageUrl` as base URL.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="pageUrl">
+The base URL that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="relativeUrl">
+The relative URL that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Returns the resulting URL as a string.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Child page</header>

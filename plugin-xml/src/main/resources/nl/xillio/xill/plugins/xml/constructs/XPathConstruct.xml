@@ -19,9 +19,21 @@
 <function>
     <description>
 Returns a string, XML node or a list of XML nodes from the specified XML node as indicated by the string XPath locator.
-
-For more information about the XPath syntax and available xPath functions look here: [http://www.w3schools.com/xsl/xpath_intro.asp](http://www.w3schools.com/xsl/xpath_intro.asp)
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="element">
+The XML-node that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="xPath">
+The location of the object.
+        </parameterDescription>
+		<parameterDescription parameterName="namespaces">
+The optional namespace that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+For more information about the XPath syntax and available xPath functions look here: [http://www.w3schools.com/xsl/xpath_intro.asp](http://www.w3schools.com/xsl/xpath_intro.asp)
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Assuming we have an XML file note.xml which contains the following:</header>

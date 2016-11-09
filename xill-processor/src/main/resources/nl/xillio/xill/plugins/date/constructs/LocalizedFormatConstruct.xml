@@ -18,11 +18,30 @@
 -->
 <function>
     <description>
-Converts the date to a date value corresponding to the provided `languageTag` parameter. The `languageTag` parameter can be described using the [language]-[region] format. Examples are: "nl-nl", "nl-be", "en-gb", "en-us". If no `languageTag` parameter is provided, the general "yyyy-MM-dd HH:mm:ss" format is used.
-
-Both the date and the time can be separately styled in five different ways using the `dateStyle` and `timeStyle` parameters. The possible values are: null (default), 'full', 'long', 'medium' and 'short'. If the `timeStyle` is null, only the date will be returned. If the `dateStyle` is null, only the time will be returned. If both are null, both will be returned in their default format.
-
+Converts the date to a date value corresponding to the provided `languageTag` parameter.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="date">
+The date that will be changed.
+        </parameterDescription>
+		<parameterDescription parameterName="languageTag">
+This can be described using the [language]-[region] format. Examples are: "nl-nl", "nl-be", "en-gb", "en-us". If no `languageTag` parameter is provided, the general "yyyy-MM-dd HH:mm:ss" format is used.
+        </parameterDescription>
+		<parameterDescription parameterName="dateStyle">
+The style of the date section.
+Possible values are: null (default), 'full', 'long', 'medium' and 'short'.
+        </parameterDescription>
+		<parameterDescription parameterName="timeStyle">
+The style of the time section.
+Possible values are: null (default), 'full', 'long', 'medium' and 'short'.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Both the date and the time can be separately styled in five different ways using the `dateStyle` and `timeStyle` parameters.
+If the `timeStyle` is null, only the date will be returned.
+If the `dateStyle` is null, only the time will be returned. 
+If both are null, both will be returned in their default format.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Showing localized formated current datetime.</header>

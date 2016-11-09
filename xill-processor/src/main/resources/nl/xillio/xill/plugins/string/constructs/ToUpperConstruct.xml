@@ -20,6 +20,11 @@
     <description>
 Returns `string` uppercased.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="string">
+The string that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <code>

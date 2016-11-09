@@ -19,10 +19,21 @@
 <function>
     <description>
 Returns a floating point number between 0 (no likeness) and 1 (identical), indicating how similar the `source` and `target` are.
-
-This routine uses the Damereau Levenshtein distance to calculate the similarity.
-If `relative` is set to `false`, then the absolute distance will be returned rather than a relative distance.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="source">
+The first string that will be compared.
+        </parameterDescription>
+		<parameterDescription parameterName="target">
+The second string that will be compared.
+        </parameterDescription>
+		<parameterDescription parameterName="relative">
+If set to `false` the absolute distance will be returned rather than a relative distance.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+This routine uses the Damereau Levenshtein distance to calculate the similarity.
+	</longDescription>
     <examples>
         <example title="Usage">
             <code>

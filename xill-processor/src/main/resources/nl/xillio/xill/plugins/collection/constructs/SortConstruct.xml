@@ -19,14 +19,25 @@
 <function>
     <description>
 Returns the sorted list or object by lowest first.
-
-If recursive is true it will also sort the lists and object inside the given list or object.
-If onKeys is true it will sort the object by key instead of by value.
-If reverse is true it will sort highest first.
-
+    </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="collection">
+The list or object that will be sorted.
+        </parameterDescription>
+		<parameterDescription parameterName="recursive">
+If set to true the lists and object inside the given list or object will also be sorted.
+        </parameterDescription>
+		<parameterDescription parameterName="onKeys">
+If set to true the object will be sorted by key instead of by value.
+        </parameterDescription>
+		<parameterDescription parameterName="reverse">
+If set to true the list or object will sort highest first.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
 Input will be sorted in order of: Lists -> Objects -> Numbers -> Strings
 The given parameters will sort each of those segments.
-    </description>
+	</longDescription>
     <examples>
         <example title="Sorting Lists">
             <header>

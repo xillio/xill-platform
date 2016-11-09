@@ -28,7 +28,13 @@ The name of the collection that will be used.
 The Query that will be applied.
         </parameterDescription>
 		<parameterDescription parameterName="options">
-Several options can be set here.
+The `options` parameter may contain the following options:
+
+| Option       | Description |
+| ------------ | ----------- |
+| `projection` | A document describing the fields to return for the matching document. |
+| `sort`       | A document with sort criteria to apply to the query. The default is `null`, which means that the documents will be returned in an undefined order. |
+| `maxTime`    | The maximum execution time in milliseconds for this operation. |
         </parameterDescription>
 		<parameterDescription parameterName="database">
 The database that will be used.
@@ -37,14 +43,6 @@ The database that will be used.
 	<longDescription>
 If multiple documents match the query, the first document in the result will be deleted.
 If no documents match the `query` it will return `null`.
-
-The `options` parameter may contain the following options:
-
-| Option       | Description |
-| ------------ | ----------- |
-| `projection` | A document describing the fields to return for the matching document. |
-| `sort`       | A document with sort criteria to apply to the query. The default is `null`, which means that the documents will be returned in an undefined order. |
-| `maxTime`    | The maximum execution time in milliseconds for this operation. |
 	
 More information about MongoDB findOneAndDelete can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.findOneAndDelete/).
 	</longDescription>

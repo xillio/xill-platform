@@ -20,6 +20,14 @@
     <description>
 Returns the number of bytes in `string`.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="string">
+The string that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="encoding">
+The encoding that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Get the byte length.</header>
