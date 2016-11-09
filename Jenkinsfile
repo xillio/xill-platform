@@ -102,7 +102,7 @@ void buildOn(Map args) {
                         // Use the provided settings.xml
                         "-s \"$MAVEN_SETTINGS\"",
                         // Run in batch mode (headless)
-                        "-B",
+                        // "-B",
                         // Pass the sonar url
                         // "-Dsonar.host.url=https://sonaross.xillio.com",
                         // Uncomment this to enable verbose builds
@@ -114,11 +114,11 @@ void buildOn(Map args) {
                 // Run the build and clean
                 stage("Run 'mvn $buildPhase' on $platform") {
                     checkout scm
-                    cli "$mvn $buildPhase"
+                    cli "$mvn -B $buildPhase"
                     if (runSonar) {
                         cli "$mvn sonar:sonar -Dsonar.branch=${env.BRANCH_NAME} -Dsonar.host.url=https://sonaross.xillio.com"
                     }
-                    cli "$mvn clean"
+                    cli "$mvn -B clean"
                 }
             }
         }
