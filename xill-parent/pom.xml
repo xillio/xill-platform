@@ -170,8 +170,17 @@
                 <artifactId>maven-source-plugin</artifactId>
             </plugin>
             <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>${surefireArgLine}</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+                <configuration>
+                    <append>true</append>
+                </configuration>
                 <executions>
                     <execution>
                         <id>agent-for-ut</id>
@@ -180,6 +189,7 @@
                         </goals>
                         <configuration>
                             <destFile>${sonar.jacoco.reportPath}</destFile>
+                            <propertyName>surefireArgLine</propertyName>
                         </configuration>
                         <phase>test-compile</phase>
                     </execution>
