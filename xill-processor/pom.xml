@@ -114,6 +114,11 @@
         </dependency>
         <dependency>
             <groupId>nl.xillio.xill</groupId>
+            <artifactId>plugin-template</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>nl.xillio.xill</groupId>
             <artifactId>plugin-web</artifactId>
             <scope>runtime</scope>
         </dependency>
@@ -158,21 +163,6 @@
             <plugin>
                 <groupId>eu.somatik.serviceloader-maven-plugin</groupId>
                 <artifactId>serviceloader-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

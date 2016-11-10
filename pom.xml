@@ -78,8 +78,6 @@
     </distributionManagement>
 
     <properties>
-        <sonar.jacoco.itReportPath>${project.build.directory}/jacoco-it.exec</sonar.jacoco.itReportPath>
-        <sonar.jacoco.reportPath>${project.build.directory}/jacoco-ut.exec</sonar.jacoco.reportPath>
         <sonar.exclusions>**/src/main/java/nl/xillio/migrationtool/**/*</sonar.exclusions>
         <sonar.language>java</sonar.language>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -98,6 +96,7 @@
         <module>plugin-properties</module>
         <module>plugin-rest</module>
         <module>plugin-sqlite</module>
+        <module>plugin-template</module>
         <module>plugin-web</module>
         <module>plugin-xml</module>
         <module>plugin-xurl</module>
@@ -152,6 +151,7 @@
                         <exclude>**/*.unknown</exclude>
                         <exclude>**/*.dat</exclude>
                         <exclude>**/LICENSE</exclude>
+                        <exclude>jdk/**</exclude>
                     </excludes>
                     <mapping>
                         <fxml>XML_STYLE</fxml>

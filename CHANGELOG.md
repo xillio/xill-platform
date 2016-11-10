@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [3.5.0] - unreleased
 
 ### Add
+* Create template plugin [CTC-1799]
 * `System.parseJSON()` now parses LIST [CTC-1769]
 * Warn users about invalid asset names [CTC-1798]
 * Support external logging by adding logging handler that exposes all logging events and exceptions [XSVR-50]
@@ -17,6 +18,9 @@ All notable changes to this project will be documented in this file.
 * Deprecate `File.getText()` [CTC-1860]
 
 ### Fix
+* Settings file not found for paths with whitespaces [CTC-1887]
+* Upload project throws 'already exists' after 'invalid names' popup [CTC-1871]
+* Name of included robot not shown during debugging [CTC-1885]
 * Multiple changed robots dialogs and robot tab selection issue [CTC-1441]
 * On server threads are not closed when tasks finishes [XSVR-139]
 * Renaming of robot does not work properly on Linux [CTC-1787]
@@ -30,6 +34,13 @@ All notable changes to this project will be documented in this file.
 * String.absoluteUrl does not allow protocols other than http(s) [CTC-1806]
 * Dialogs do not render on (very) fast machines [CTC-1850]
 * Concurrency pipeline changes dates and ObjectIds to strings [CTC-1833]
+* Parsing String list results from xpath query floods log and is slow [CTC-1885] 
+* Excel.setCellFormula() throws caught error: "Cannot get a numeric value from a text formula cell [CTC-1528]
+
+## [3.4.2] - 2016-11-04
+
+### Fix
+* Parsing String list results from xpath query floods log and is slow [CTC-1885] 
 
 ## [3.4.1] - 2016-10-28
 

@@ -18,8 +18,6 @@ package nl.xillio.xill.plugins.string.services.string;
 import com.google.inject.ImplementedBy;
 import nl.xillio.xill.plugins.string.StringXillPlugin;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.IllegalFormatException;
 import java.util.List;
 
 /**
@@ -27,14 +25,6 @@ import java.util.List;
  */
 @ImplementedBy(StringUtilityServiceImpl.class)
 public interface StringUtilityService {
-
-    /**
-     * Returns a number  indicating how much the two strings are alike.
-     * @param source First string to compare
-     * @param target Second string to compare
-     * @return Likeness
-     */
-    int damlev(final String source, final String target);
 
     /**
      * Checks whether the child string is contained in the parent string.
@@ -60,9 +50,8 @@ public interface StringUtilityService {
      * @param text The text we format.
      * @param args The arguments we give.
      * @return Returns the formatted text.
-     * @throws IllegalFormatException Is thrown when the string formatting fails.
      */
-    String format(String text, List<Object> args) throws IllegalFormatException;
+    String format(String text, List<Object> args);
 
     /**
      * Returns the index of the first occurrance of the needle in the haystack, starting from an index.
