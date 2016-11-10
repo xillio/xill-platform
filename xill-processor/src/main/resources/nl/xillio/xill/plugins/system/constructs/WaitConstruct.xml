@@ -18,8 +18,13 @@
 -->
 <function>
     <description>
-This construct makes the robot wait for the provided amount of time (in milliseconds).
+Makes the robot wait.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="delay">
+The provided amount of time that the robot will be delayed in milliseconds. (default is 100)
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Wait five seconds</header>

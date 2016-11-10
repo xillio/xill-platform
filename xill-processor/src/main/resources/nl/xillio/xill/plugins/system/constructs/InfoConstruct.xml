@@ -18,7 +18,10 @@
 -->
 <function>
     <description>
-Returns an OBJECT with information about the current system, robot and runtime.
+Gets information about the current system, robot and runtime.
+    </description>
+	<longDescription>
+Returns an OBJECT variable containing:
 
 |Field|Description|
 |-----|-----------|
@@ -28,7 +31,7 @@ Returns an OBJECT with information about the current system, robot and runtime.
 |`fileSystem`|An OBJECT with information about the current file system|
 |`rootRobotPath`|The path to the robot that is run first|
 |`robotPath`|The path to the robot that executes this function|
-    </description>
+	</longDescription>
     <examples>
         <example title="Usage">
             <code>

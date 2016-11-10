@@ -19,7 +19,13 @@
 <function>
     <description>
 Takes one or more `JSON` strings and converts it to one or more `ATOMIC`, `LIST` or `OBJECT` variables.
-
+    </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="json">
+The json string that will be converted.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
 When provided an `ATOMIC`, this construct will parse that single `JSON` string to a variable. When provided
 a `LIST`, all the top-level elements of that list will be parsed as single `JSON` strings to a variable.
 These variables will then be combined in a `LIST`.
@@ -27,7 +33,7 @@ These variables will then be combined in a `LIST`.
 The given `ATOMIC` or `LIST`, and the elements of that `LIST`, may not be `null` or empty.
 
 For more information about and syntax of `JSON`, see [http://www.json.org/](http://www.json.org/).
-    </description>
+	</longDescription>
     <examples>
         <example title="Default usage">
             <header>
