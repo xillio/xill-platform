@@ -92,7 +92,7 @@ void buildOn(Map args) {
         if ('mac' == platform) {
             // On mac we have to create a symlink because it is a hard requirement to have Contents/Home in the
             // JAVA_HOME path.
-            sh "rm -rf jdk && mkdir target && mkdir jdk/Contents && cp -R $javaTool jdk/Contents/Home"
+            sh "rm -rf jdk && mkdir -p target && mkdir -p jdk/Contents && cp -R $javaTool jdk/Contents/Home"
             javaTool = "${pwd()}/jdk/Contents/Home"
         }
 
