@@ -151,6 +151,7 @@
                         <exclude>**/*.unknown</exclude>
                         <exclude>**/*.dat</exclude>
                         <exclude>**/LICENSE</exclude>
+                        <exclude>jdk/**</exclude>
                     </excludes>
                     <mapping>
                         <fxml>XML_STYLE</fxml>
