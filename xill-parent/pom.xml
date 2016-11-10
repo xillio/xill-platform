@@ -59,7 +59,7 @@
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
         <sonar.jacoco.itReportPath>${project.basedir}/../target/jacoco-it.exec</sonar.jacoco.itReportPath>
-        <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco-ut.exec</sonar.jacoco.reportPath>
+        <sonar.jacoco.reportPath>${project.basedir}/target/jacoco-ut.exec</sonar.jacoco.reportPath>
     </properties>
 
     <dependencies>
@@ -170,6 +170,27 @@
                 <artifactId>maven-source-plugin</artifactId>
             </plugin>
             <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>${surefireArgLine}</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <argLine>-Dfile.encoding=${project.build.sourceEncoding} ${failsafeArgLine}</argLine>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <configuration>
@@ -182,14 +203,16 @@
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
-                            <destFile>${project.basedir}/../target/jacoco-ut.exec</destFile>
+                            <destFile>${sonar.jacoco.reportPath}</destFile>
+                            <propertyName>surefireArgLine</propertyName>
                         </configuration>
                         <phase>test-compile</phase>
                     </execution>
                     <execution>
                         <id>agent-for-it</id>
                         <configuration>
-                            <destFile>${project.basedir}/../target/jacoco-it.exec</destFile>
+                            <destFile>${sonar.jacoco.itReportPath}</destFile>
+                            <propertyName>failsafeArgLine</propertyName>
                         </configuration>
                         <goals>
                             <goal>prepare-agent-integration</goal>

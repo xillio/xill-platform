@@ -92,8 +92,8 @@ void buildOn(Map args) {
         if ('mac' == platform) {
             // On mac we have to create a symlink because it is a hard requirement to have Contents/Home in the
             // JAVA_HOME path.
-            sh "rm -rf target && mkdir target && mkdir target/Contents && cp -R $javaTool target/Contents/Home"
-            javaTool = "${pwd()}/target/Contents/Home"
+            sh "rm -rf jdk && mkdir target && mkdir jdk/Contents && cp -R $javaTool jdk/Contents/Home"
+            javaTool = "${pwd()}/jdk/Contents/Home"
         }
 
         withEnv(["M2_HOME=$m2Tool", "JAVA_HOME=$javaTool"]) {
@@ -107,6 +107,8 @@ void buildOn(Map args) {
                         "-B",
                         // Pass the sonar url
                         "-Dsonar.host.url=https://sonaross.xillio.com",
+                        // And the sonar branch
+                        "-Dsonar.branch=${env.BRANCH_NAME}",
                         // Uncomment this to enable verbose builds
                         //"-X"
                 ]
@@ -116,8 +118,8 @@ void buildOn(Map args) {
                 // Run the build and clean
                 stage("Run 'mvn $buildPhase' on $platform") {
                     checkout scm
-                    cli "$mvn $buildPhase -Dsonar.branch=${env.BRANCH_NAME}"
                     cli "$mvn clean"
+                    cli "$mvn $buildPhase"
                 }
             }
         }

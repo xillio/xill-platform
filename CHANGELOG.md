@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [3.5.0] - unreleased
 
 ### Add
+* Create template plugin [CTC-1799]
 * `System.parseJSON()` now parses LIST [CTC-1769]
 * Warn users about invalid asset names [CTC-1798]
 * Support external logging by adding logging handler that exposes all logging events and exceptions [XSVR-50]
