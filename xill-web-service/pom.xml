@@ -51,6 +51,11 @@
             <groupId>org.springframework.restdocs</groupId>
             <artifactId>spring-restdocs-mockmvc</artifactId>
         </dependency>
+        <dependency>
+            <groupId>nl.xillio.xill</groupId>
+            <artifactId>xill-testutils</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
