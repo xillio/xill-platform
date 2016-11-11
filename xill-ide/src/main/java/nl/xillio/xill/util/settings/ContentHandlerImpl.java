@@ -36,9 +36,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -92,7 +90,7 @@ public class ContentHandlerImpl implements ContentHandler {
     public void init() throws IOException {
         // Open existing XML file with settings
         // If file does not exist it will create new one with the basic structure (i.e. just root node)
-        FileInputStream settingsStream=null;
+        FileInputStream settingsStream = null;
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -107,9 +105,8 @@ public class ContentHandlerImpl implements ContentHandler {
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new IOException("Cannot open or parse file.", e);
-        }
-        finally {
-            if (settingsStream!=null){
+        } finally {
+            if (settingsStream != null) {
                 settingsStream.close();
             }
         }
@@ -131,16 +128,21 @@ public class ContentHandlerImpl implements ContentHandler {
             return;
         }
         synchronized (lock) {
-            try {
+            try (OutputStream storageStream = touchAndStreamStorage()) {
                 FileUtils.touch(storage);
                 Transformer transformer = this.transformerFactory.newTransformer();
                 DOMSource source = new DOMSource(this.document);
-                StreamResult result = new StreamResult(this.storage);
+                StreamResult result = new StreamResult(storageStream);
                 transformer.transform(source, result);
             } catch (IOException | TransformerException e) {
                 LOGGER.error("Error saving file.", e);
             }
         }
+    }
+
+    private FileOutputStream touchAndStreamStorage() throws IOException {
+        FileUtils.touch(this.storage);
+        return new FileOutputStream(this.storage);
     }
 
     @Override

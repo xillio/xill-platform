@@ -83,7 +83,7 @@ public class XsdServiceImpl implements XsdService, ErrorHandler {
 
         boolean result = messages.isEmpty();
         if (!result) {
-            final String text[] = {"XSD check failed\n"};
+            final String[] text = {"XSD check failed\n"};
             messages.forEach(v -> {
                 text[0] += v;
                 text[0] += "\n";

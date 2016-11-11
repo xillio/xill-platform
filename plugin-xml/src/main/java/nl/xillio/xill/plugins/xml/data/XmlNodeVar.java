@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * This class represents a XML node MetadataExpression
+ * This class represents an XML node MetadataExpression.
  *
  * @author Zbynek Hochmann
  */
@@ -55,7 +55,7 @@ public class XmlNodeVar implements nl.xillio.xill.api.data.XmlNode, TextPreview 
     TransformerFactory tf = TransformerFactory.newInstance();
 
     /**
-     * Creates XmlNode from XML string
+     * Creates XmlNode from XML string.
      *
      * @param xmlString       XML document
      * @param treatAsDocument true if parsing XML document, false if this meant to be just XML node
@@ -82,7 +82,7 @@ public class XmlNodeVar implements nl.xillio.xill.api.data.XmlNode, TextPreview 
     }
 
     /**
-     * Creates XmlNode from org.w3c.dom.Node
+     * Creates XmlNode from org.w3c.dom.Node.
      *
      * @param node input node
      */
@@ -90,23 +90,18 @@ public class XmlNodeVar implements nl.xillio.xill.api.data.XmlNode, TextPreview 
         this.node = node;
     }
 
-    /**
-     * Returns XML document of this node
-     *
-     * @return org.w3c.dom.Document of this node
-     */
+
     @Override
     public Document getDocument() {
         return this.node.getOwnerDocument();
     }
 
-    /**
-     * @return org.w3c.dom.Node data specifying this node
-     */
+
     @Override
     public Node getNode() {
         return this.node;
     }
+
 
     @Override
     public String toString() {
@@ -120,9 +115,7 @@ public class XmlNodeVar implements nl.xillio.xill.api.data.XmlNode, TextPreview 
         }
     }
 
-    /**
-     * @return a string containing all text extracted from XML node or XML document
-     */
+
     @Override
     public String getText() {
         NodeList list = this.getNode().getChildNodes();
@@ -134,11 +127,7 @@ public class XmlNodeVar implements nl.xillio.xill.api.data.XmlNode, TextPreview 
                 .collect(Collectors.joining("\n"));
     }
 
-    /**
-     * Returns XML content of this node in string format
-     *
-     * @return XML content in string format
-     */
+
     @Override
     public String getXmlContent() {
         if (this.node == null) {
@@ -160,7 +149,7 @@ public class XmlNodeVar implements nl.xillio.xill.api.data.XmlNode, TextPreview 
     }
 
     /**
-     * Returns XML content of this node in string format
+     * Returns XML content of this node in string format, limiting the length of the result to the provided size.
      *
      * @param maxSize The maximum text size of returned content
      * @return XML content in string format
@@ -189,15 +178,21 @@ public class XmlNodeVar implements nl.xillio.xill.api.data.XmlNode, TextPreview 
         return null;
     }
 
+
     private void removeEmptyTextNodes(final Node parent) {
-        for (int i = 0; i < parent.getChildNodes().getLength(); i++) {
-            Node child = parent.getChildNodes().item(i);
+
+        int childrenCount = parent.getChildNodes().getLength();
+        int currentChildIdx = 0;
+
+        while(currentChildIdx < childrenCount) {
+            Node child = parent.getChildNodes().item(currentChildIdx);
             if (child.hasChildNodes()) {
                 removeEmptyTextNodes(child);
             } else if (child.getNodeType() == Node.TEXT_NODE && child.getNodeValue().trim().isEmpty()) {
                 parent.removeChild(child);
-                i--;
+                childrenCount--;
             }
+            currentChildIdx++;
         }
     }
 
