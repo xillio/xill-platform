@@ -43,18 +43,22 @@ public class RangeIteratorFactory {
 
     private void verifyInput(Number start, Number end, Number step) {
         if (MathUtils.compare(start, end) == 0) {
-            throw new IllegalArgumentException(
+            throwIllegalArgumentException(
                     "The start-value and end-value must not be equal to each other.");
         }
 
         if (MathUtils.compare(Math.ulp(step.doubleValue()), Double.MIN_VALUE) == 0) {
-            throw new IllegalArgumentException("The step-value must not be equal to zero.");
+            throwIllegalArgumentException("The step-value must not be equal to zero.");
         } else if (MathUtils.compare(start, end) < 0 && MathUtils.compare(step, 0) < 0) {
-            throw new IllegalArgumentException(
+            throwIllegalArgumentException(
                     "The step-value must not be negative when the start-value is lower than the end-value.");
         } else if (MathUtils.compare(end, start) < 0 && MathUtils.compare(step, 0) > 0) {
-            throw new IllegalArgumentException(
+            throwIllegalArgumentException(
                     "The step-value must not be positive when the start-value is greater than the end-value.");
         }
+    }
+
+    private void throwIllegalArgumentException(String message) {
+        throw new IllegalArgumentException(message);
     }
 }
