@@ -78,10 +78,6 @@ void buildOn(Map args) {
     String mavenArgs = args.mavenArgs ?: ''
     String buildPhase = args.buildPhase ?: 'verify'
 
-    if (runSonar) {
-        buildPhase = "$buildPhase sonar:sonar"
-    }
-
     node("xill-platform && ${platform}") {
 
         // Gather all required tools
@@ -120,6 +116,9 @@ void buildOn(Map args) {
                     checkout scm
                     cli "$mvn clean"
                     cli "$mvn $buildPhase"
+                    if (runSonar) {
+                        cli "$mvn sonar:sonar"
+                    }
                 }
             }
         }
