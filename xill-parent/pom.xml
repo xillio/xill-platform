@@ -190,6 +190,7 @@
                             <goal>integration-test</goal>
                             <goal>verify</goal>
                         </goals>
+                        <phase>verify</phase>
                     </execution>
                 </executions>
             </plugin>
