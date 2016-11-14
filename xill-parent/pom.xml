@@ -229,7 +229,7 @@
             <id>sonar-tests</id>
             <activation>
                 <file>
-                    <exists>${project.build.directory}/test-classes</exists>
+                    <exists>${baseDir}/target/test-classes</exists>
                 </file>
             </activation>
             <properties>
