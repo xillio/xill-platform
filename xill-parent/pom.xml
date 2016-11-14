@@ -58,7 +58,7 @@
         <!-- Build Info -->
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
-        <sonar.jacoco.itReportPath>${project.basedir}/../target/jacoco-it.exec</sonar.jacoco.itReportPath>
+        <sonar.jacoco.itReportPath>${project.build.directory}/jacoco-it.exec</sonar.jacoco.itReportPath>
         <sonar.jacoco.reportPath>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPath>
     </properties>
 
@@ -223,18 +223,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>sonar-tests</id>
-            <activation>
-                <file>
-                    <exists>${baseDir}/target/test-classes</exists>
-                </file>
-            </activation>
-            <properties>
-                <sonar.tests>${project.build.directory}/test-classes</sonar.tests>
-            </properties>
-        </profile>
-    </profiles>
 </project>
