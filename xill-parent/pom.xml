@@ -196,9 +196,6 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <configuration>
-                    <append>true</append>
-                </configuration>
                 <executions>
                     <execution>
                         <id>agent-for-ut</id>
@@ -216,6 +213,7 @@
                         <configuration>
                             <destFile>${sonar.jacoco.itReportPath}</destFile>
                             <propertyName>failsafeArgLine</propertyName>
+                            <append>true</append>
                         </configuration>
                         <goals>
                             <goal>prepare-agent-integration</goal>
