@@ -60,7 +60,6 @@
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
         <sonar.jacoco.itReportPath>${project.basedir}/../target/jacoco-it.exec</sonar.jacoco.itReportPath>
         <sonar.jacoco.reportPath>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPath>
-        <sonar.tests>${project.build.directory}/test-classes</sonar.tests>
     </properties>
 
     <dependencies>
@@ -216,6 +215,7 @@
                             <propertyName>failsafeArgLine</propertyName>
                         </configuration>
                         <goals>
+                            <goal>report</goal>
                             <goal>prepare-agent-integration</goal>
                         </goals>
                         <phase>pre-integration-test</phase>
@@ -224,4 +224,18 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>sonar-tests</id>
+            <activation>
+                <file>
+                    <exists>${project.build.directory}/test-classes</exists>
+                </file>
+            </activation>
+            <properties>
+                <sonar.tests>${project.build.directory}/test-classes</sonar.tests>
+            </properties>
+        </profile>
+    </profiles>
 </project>
