@@ -43,7 +43,9 @@ public class RangeIterator implements Iterator<Number> {
         // Respectively:
         // end - next will return -1 if end < next (there is a next value if step is negative)
         // end - next will return 1 if end > next (there is a next value if step is positive)
-        return Math.signum(MathUtils.subtract(end, nextValue).doubleValue()) == Math.signum(step.doubleValue());
+        double signumNextValue = Math.signum(MathUtils.subtract(end, nextValue).doubleValue());
+        double signumStep = Math.signum(step.doubleValue());
+        return MathUtils.compare(signumNextValue, signumStep) == 0;
     }
 
     @Override
