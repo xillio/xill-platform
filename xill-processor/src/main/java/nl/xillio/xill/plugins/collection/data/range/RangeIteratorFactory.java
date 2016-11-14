@@ -42,23 +42,27 @@ public class RangeIteratorFactory {
     }
 
     private void verifyInput(Number start, Number end, Number step) {
-        if (MathUtils.compare(start, end) == 0) {
-            throwIllegalArgumentException(
-                    "The start-value and end-value must not be equal to each other.");
-        }
+        assertCondition(
+                MathUtils.compare(start, end) != 0,
+                "The start-value and end-value must not be equal to each other.");
 
-        if (MathUtils.compare(Math.ulp(step.doubleValue()), Double.MIN_VALUE) == 0) {
-            throwIllegalArgumentException("The step-value must not be equal to zero.");
-        } else if (MathUtils.compare(start, end) < 0 && MathUtils.compare(step, 0) < 0) {
-            throwIllegalArgumentException(
-                    "The step-value must not be negative when the start-value is lower than the end-value.");
-        } else if (MathUtils.compare(end, start) < 0 && MathUtils.compare(step, 0) > 0) {
-            throwIllegalArgumentException(
-                    "The step-value must not be positive when the start-value is greater than the end-value.");
-        }
+        assertCondition(
+                MathUtils.compare(Math.ulp(step.doubleValue()), Double.MIN_VALUE) != 0,
+                "The step-value must not be equal to zero.");
+
+        assertCondition(
+                MathUtils.compare(start, end) > 0 || MathUtils.compare(step, 0) > 0,
+                "The step-value must not be negative when the start-value is lower than the end-value.");
+
+        assertCondition(
+                MathUtils.compare(start, end) < 0 || MathUtils.compare(step, 0) < 0,
+                "The step-value must not be positive when the start-value is greater than the end-value."
+        );
     }
 
-    private void throwIllegalArgumentException(String message) {
-        throw new IllegalArgumentException(message);
+    private void assertCondition(boolean condition,String message) {
+        if(!condition) {
+            throw new IllegalArgumentException(message);
+        }
     }
 }
