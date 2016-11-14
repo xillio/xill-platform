@@ -24,9 +24,9 @@ import nl.xillio.util.MathUtils;
  */
 public class RangeIteratorFactory {
     public RangeIterator createIterator(Number start, Number end, Number step) {
-        Number stepp = retrieveStep(start, end, step);
-        verifyInput(start, end, stepp);
-        return new RangeIterator(start, end, stepp);
+        Number sanitizedStep = retrieveStep(start, end, step);
+        verifyInput(start, end, sanitizedStep);
+        return new RangeIterator(start, end, sanitizedStep);
     }
 
     private Number retrieveStep(Number start, Number end, Number step) {
