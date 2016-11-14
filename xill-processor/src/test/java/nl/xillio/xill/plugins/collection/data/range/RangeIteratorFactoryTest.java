@@ -133,4 +133,31 @@ public class RangeIteratorFactoryTest extends TestUtils {
         // Run
         rangeIteratorFactory.createIterator(10, 0, Double.MIN_VALUE);
     }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testStartSameAsEndException() throws Exception {
+        // Initialize
+        RangeIteratorFactory rangeIteratorFactory = new RangeIteratorFactory();
+
+        // Run
+        rangeIteratorFactory.createIterator(0, 0, 1);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testPositiveStepDecreasingRangeException() throws Exception {
+        // Initialize
+        RangeIteratorFactory rangeIteratorFactory = new RangeIteratorFactory();
+
+        // Run
+        rangeIteratorFactory.createIterator(0, 10, -1.5);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testNegativeStepIncreasingRangeException() throws Exception {
+        // Initialize
+        RangeIteratorFactory rangeIteratorFactory = new RangeIteratorFactory();
+
+        // Run
+        rangeIteratorFactory.createIterator(0, -10.0, 1);
+    }
 }
