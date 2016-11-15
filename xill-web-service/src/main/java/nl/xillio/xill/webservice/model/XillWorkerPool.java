@@ -8,11 +8,11 @@ import org.apache.commons.lang3.NotImplementedException;
  *
  */
 public class XillWorkerPool {
-    private final String workDirectory;
+    private final String projectId;
     private int maxExecutors = 10;
 
-    public XillWorkerPool(final String workDirectory) {
-        this.workDirectory = workDirectory;
+    public XillWorkerPool(final String projectId) {
+        this.projectId = projectId;
     }
 
     /**

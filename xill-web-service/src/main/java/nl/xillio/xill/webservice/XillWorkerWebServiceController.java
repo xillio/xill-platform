@@ -47,9 +47,9 @@ public class XillWorkerWebServiceController {
      *
      * @param id the identifier of the worker
      */
-    public void releaseWorker(final String workDirectory, int id) {
+    public void releaseWorker(final String projectId, int id) {
         try {
-            workerPoolManagerService.findWorkerPool(workDirectory).releaseWorker(id);
+            workerPoolManagerService.findWorkerPool(projectId).releaseWorker(id);
         } catch (XillNotFoundException e) {
             e.printStackTrace();
         }
@@ -63,9 +63,9 @@ public class XillWorkerWebServiceController {
         throw new NotImplementedException("The 'runWorker' method has not been implemented yet");
     }
 
-    public void abortWorker(final String workDirectory, int id) {
+    public void abortWorker(final String projectId, int id) {
         try {
-            workerPoolManagerService.findWorkerPool(workDirectory).findWorker(id).abort();
+            workerPoolManagerService.findWorkerPool(projectId).findWorker(id).abort();
         } catch (XillNotFoundException e) {
             e.printStackTrace();
         }

@@ -12,23 +12,23 @@ import org.apache.commons.lang3.NotImplementedException;
 public class XillWorkerPoolManagerService {
 
     /**
-     * Create new or return existing XillWorkerPool for given workDirectory.
+     * Create new or return existing XillWorkerPool for given projectId.
      *
-     * @param workDirectory
+     * @param projectId
      * @return
      */
-    public XillWorkerPool getWorkerPool(final String workDirectory) {
+    public XillWorkerPool getWorkerPool(final String projectId) {
         throw new NotImplementedException("The 'getWorkerPool' method has not been implemented yet");
     }
 
     /**
-     * Return existing XillWorkerPool for given workDirectory.
+     * Return existing XillWorkerPool for given projectId.
      *
-     * @param workDirectory
-     * @return The existing XillWorkerPool for given workDirectory.
-     * @throws XillNotFoundException if XillWorkerPool for given workDirectory does not exist.
+     * @param projectId
+     * @return The existing XillWorkerPool for given projectId.
+     * @throws XillNotFoundException if XillWorkerPool for given projectId does not exist.
      */
-    public XillWorkerPool findWorkerPool(final String workDirectory) throws XillNotFoundException {
+    public XillWorkerPool findWorkerPool(final String projectId) throws XillNotFoundException {
         throw new NotImplementedException("The 'findWorkerPool' method has not been implemented yet");
     }
 }
