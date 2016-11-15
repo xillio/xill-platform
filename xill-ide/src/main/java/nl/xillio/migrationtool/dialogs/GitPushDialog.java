@@ -26,6 +26,9 @@ public class GitPushDialog extends FXMLDialog{
     @FXML
     private ListView fileList;
 
+    @FXML
+    private Button okBtn;
+
     private final JGitRepository repo;
     private final ProjectPane projectPane;
 
@@ -48,6 +51,7 @@ public class GitPushDialog extends FXMLDialog{
             fileList.setItems(FXCollections.observableArrayList(changedFiles));
         } else {
             fileList.setItems(FXCollections.observableArrayList("No changes were found"));
+            okBtn.setDisable(true);
         }
     }
 
