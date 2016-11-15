@@ -60,7 +60,14 @@ public class GitPushDialog extends FXMLDialog{
 
     @FXML
     private void pushBtnPressed(final ActionEvent event) {
-        repo.commit(message.getText());
+        try {
+            repo.commit(message.getText());
+        }
+        catch (GitAPIException e) {
+            AlertDialog aDlg = new AlertDialog(Alert.AlertType.ERROR, "Error pushing git", "Pushing has failed", e.getMessage(), ButtonType.OK);
+            aDlg.show();
+            close();
+        }
         try {
             repo.push();
             AlertDialog aDlg = new AlertDialog(Alert.AlertType.INFORMATION, "Succesfull pull", "Pushing has succeeded", "Pushing has succeeded", ButtonType.OK);

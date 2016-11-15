@@ -54,15 +54,10 @@ public class JGitRepository implements Repository {
     }
 
     @Override
-    public boolean commit(String commitMessage) {
-        try {
-            repository.add().addFilepattern(".").call();
-            repository.commit().setMessage(commitMessage).call();
-        } catch (GitAPIException e) {
-            LOGGER.error("Exception while committing files.", e);
-            return false;
-        }
-        return true;
+    public void commit(String commitMessage) throws GitAPIException {
+        repository.add().addFilepattern(".").call();
+        repository.commit().setMessage(commitMessage).call();
+
     }
 
     @Override
