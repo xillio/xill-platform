@@ -18,6 +18,7 @@ package nl.xillio.migrationtool.dialogs;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import nl.xillio.xill.versioncontrol.JGitRepository;
@@ -29,6 +30,8 @@ public class GitPushDialog extends FXMLDialog {
     private TextField message;
     @FXML
     private ListView<String> fileList;
+    @FXML
+    private Button okBtn;
 
     private final JGitRepository repo;
 
@@ -47,6 +50,7 @@ public class GitPushDialog extends FXMLDialog {
             fileList.setItems(FXCollections.observableArrayList(changedFiles));
         } else {
             fileList.setItems(FXCollections.observableArrayList("No changes were found"));
+            okBtn.setDisable(true);
         }
     }
 

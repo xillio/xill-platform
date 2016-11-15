@@ -57,15 +57,13 @@ public class JGitRepository implements Repository {
     }
 
     @Override
-    public boolean commit(String commitMessage) {
+    public void commit(String commitMessage) {
         try {
             repository.add().addFilepattern(".").call();
             repository.commit().setMessage(commitMessage).call();
         } catch (GitAPIException e) {
-            LOGGER.error("Exception while committing files.", e);
-            return false;
+            showError("pushing", e.getMessage());
         }
-        return true;
     }
 
     @Override
@@ -126,7 +124,11 @@ public class JGitRepository implements Repository {
         try {
             cmd.call();
         } catch (GitAPIException e) {
-            new AlertDialog(Alert.AlertType.ERROR, "Error while " + action, "An error occurred while " + action, e.getMessage()).showAndWait();
+            showError(action, e.getMessage());
         }
+    }
+
+    private void showError(String action, String message) {
+        new AlertDialog(Alert.AlertType.ERROR, "Error while " + action, "An error occurred while " + action + ".", message).showAndWait();
     }
 }

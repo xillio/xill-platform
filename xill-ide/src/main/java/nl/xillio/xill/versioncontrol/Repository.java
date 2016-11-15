@@ -15,8 +15,6 @@
  */
 package nl.xillio.xill.versioncontrol;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
-
 import java.util.Set;
 
 /**
@@ -31,17 +29,17 @@ public interface Repository {
      * @param commitMessage The message for the commit.
      * @return {@code true} if commit succeeded, {@code false} otherwise.
      */
-    boolean commit(String commitMessage);
+    void commit(String commitMessage);
 
     /**
      * Pushes all changes to the remote repository.
      */
-    void push() throws GitAPIException;
+    void push();
 
     /**
      * Pulls all changes from the remote repository.
      */
-    void pull() throws GitAPIException;
+    void pull();
 
     /**
      * Returns if this object exists as initialized repository on the disk.
