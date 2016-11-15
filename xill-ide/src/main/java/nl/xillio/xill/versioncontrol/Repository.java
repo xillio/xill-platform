@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.versioncontrol;
 
+import java.util.Set;
+
 /**
  * Representation of a version control repository.
  *
@@ -49,6 +51,13 @@ public interface Repository {
      * @return {@code true} if this object is initialized on the disk, {@code false} otherwise.
      */
     boolean isInitialized();
+
+    /**
+     * Returns a set of files that have been changed in this working copy
+     *
+     * @return A set of file names
+     */
+    Set<String> getChangedFiles();
 
     /**
      * Set the credentials for the repository.

@@ -1,11 +1,9 @@
 package nl.xillio.migrationtool.dialogs;
 
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
+import javafx.scene.control.*;
 import javafx.util.Pair;
 import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.gui.ProjectPane;
@@ -15,6 +13,7 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * Created by Dwight.Peters on 15-Nov-16.
@@ -23,6 +22,9 @@ public class GitPushDialog extends FXMLDialog{
 
     @FXML
     private TextField message;
+
+    @FXML
+    private ListView fileList;
 
     private final JGitRepository repo;
     private final ProjectPane projectPane;
@@ -40,6 +42,13 @@ public class GitPushDialog extends FXMLDialog{
         this.setTitle("Push Changes");
         this.projectPane = projectPane;
         this.repo = repo;
+
+        Set<String> changedFiles = repo.getChangedFiles();
+        if (changedFiles != null && changedFiles.size() > 0) {
+            fileList.setItems(FXCollections.observableArrayList(changedFiles));
+        } else {
+            fileList.setItems(FXCollections.observableArrayList("No changes were found"));
+        }
     }
 
     @FXML
