@@ -91,8 +91,8 @@ public class JGitRepository implements Repository {
     @Override
     public List<String> getBranches() {
         try {
-            List<Ref> refs = repository.branchList().call();
-            return refs.stream().map(Ref::getName).collect(Collectors.toList());
+            List<Ref> refs = repository.branchList().setListMode(ListBranchCommand.ListMode.ALL).call();
+            return refs.stream().map(Ref::getName).map(s -> s.substring(s.lastIndexOf("/") + 1)).collect(Collectors.toList());
         } catch (GitAPIException e) {
             LOGGER.error("Exception while getting branches.", e);
             return Collections.emptyList();
