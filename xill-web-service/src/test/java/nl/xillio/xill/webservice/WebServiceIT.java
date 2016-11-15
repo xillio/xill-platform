@@ -17,7 +17,8 @@ package nl.xillio.xill.webservice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.xillio.xill.webservice.model.Worker;
+import nl.xillio.xill.webservice.model.XillWorker;
+import nl.xillio.xill.webservice.types.XWID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -153,7 +154,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                             .contentType(MediaType.APPLICATION_JSON)
                             // With a valid robot name
                             .content(jsonBody(
-                                    "robot", "unittest.pool.Worker" + i
+                                    "robot", "unittest.pool.XillWorker" + i
                             ))
 
             )
@@ -180,11 +181,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testDeleteWorker() throws Exception {
-        int id = xillWorkerWebServiceController.registerWorker(new Worker("test.worker"));
+        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker("test.worker"));
 
         // Deleting a worker by id
         this.mockMvc.perform(
-                delete("/workers/{id}").param("id", Integer.toString(id))
+                delete("/workers/{id}").param("id", Integer.toString(id.getId()))
         )
                 // Should return 204-No Content
                 .andExpect(status().isNoContent())
@@ -215,7 +216,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     @Test
     public void testDeleteRunningWorker() throws Exception {
         // Deleting a running worker should interrupt it
-        int id = xillWorkerWebServiceController.registerWorker(new Worker("test.TerminateTest"));
+        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker("test.TerminateTest"));
 
         // Start running
         Thread running = new Thread(() -> xillWorkerWebServiceController.runWorker(id));
@@ -224,7 +225,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Terminate a running worker
         this.mockMvc.perform(
-                delete("/workers/{id}").param("id", Integer.toString(id))
+                delete("/workers/{id}").param("id", Integer.toString(id.getId()))
         )
                 // Should return 204 - NO CONTENT
                 .andExpect(status().isNoContent());
@@ -241,11 +242,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testRunLoadedRobotWithJsonReturnValue() throws Exception {
-        int id = xillWorkerWebServiceController.registerWorker(new Worker("test.JsonReturnTest"));
+        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker("test.JsonReturnTest"));
 
         // Run a robot
         this.mockMvc.perform(
-                post("/workers/{id}/activate").param("id", Integer.toString(id))
+                post("/workers/{id}/activate").param("id", Integer.toString(id.getId()))
         )
                 // Should return 200 - OK
                 .andExpect(status().isOk())
@@ -262,11 +263,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testRunLoadedRobotWithStreamReturnValue() throws Exception {
-        int id = xillWorkerWebServiceController.registerWorker(new Worker("test.StreamReturnTest"));
+        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker("test.StreamReturnTest"));
 
         // Run a robot
         this.mockMvc.perform(
-                post("/workers/{id}/activate").param("id", Integer.toString(id))
+                post("/workers/{id}/activate").param("id", Integer.toString(id.getId()))
         )
                 // Should return 200 - OK
                 .andExpect(status().isOk())
@@ -282,11 +283,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testRunLoadedRobotWithoutReturnValue() throws Exception {
-        int id = xillWorkerWebServiceController.registerWorker(new Worker("test.NullReturnTest"));
+        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker("test.NullReturnTest"));
 
         // Run a robot
         this.mockMvc.perform(
-                post("/workers/{id}/activate").param("id", Integer.toString(id))
+                post("/workers/{id}/activate").param("id", Integer.toString(id.getId()))
         )
                 // Should return 204 - NO CONTENT
                 .andExpect(status().isNoContent());
@@ -315,11 +316,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testRunRobotWithError() throws Exception {
-        int id = xillWorkerWebServiceController.registerWorker(new Worker("test.ErrorThrowingRobot"));
+        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker("test.ErrorThrowingRobot"));
 
         // Run a robot that throws an error
         this.mockMvc.perform(
-                post("/workers/{id}/activate").param("id", Integer.toString(id))
+                post("/workers/{id}/activate").param("id", Integer.toString(id.getId()))
         )
                 // Should return 500 - INTERNAL SERVER ERROR
                 .andExpect(status().isInternalServerError())
@@ -335,7 +336,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testTerminateRunningWorker() throws Exception {
-        int id = xillWorkerWebServiceController.registerWorker(new Worker("test.TerminateTest"));
+        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker("test.TerminateTest"));
 
         // Start running
         Thread running = new Thread(() -> xillWorkerWebServiceController.runWorker(id));
@@ -344,7 +345,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Terminate a running worker
         this.mockMvc.perform(
-                post("/workers/{id}/terminate").param("id", Integer.toString(id))
+                post("/workers/{id}/terminate").param("id", Integer.toString(id.getId()))
         )
                 // Should return 204 - NO CONTENT
                 .andExpect(status().isNoContent())
@@ -361,11 +362,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testTerminateNotRunningWorker() throws Exception {
-        int id = xillWorkerWebServiceController.registerWorker(new Worker("test.NotRunningTerminateTest"));
+        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker("test.NotRunningTerminateTest"));
 
         // Terminate a non-running worker
         this.mockMvc.perform(
-                post("/workers/{id}/terminate").param("id", Integer.toString(id))
+                post("/workers/{id}/terminate").param("id", Integer.toString(id.getId()))
         )
                 // Should return 400 - BAD REQUEST
                 .andExpect(status().isBadRequest());
