@@ -5,16 +5,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
-import javafx.util.Pair;
 import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.gui.ProjectPane;
 import nl.xillio.xill.versioncontrol.JGitRepository;
-import org.apache.commons.io.FileUtils;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by Dwight.Peters on 15-Nov-16.
@@ -22,23 +17,20 @@ import java.io.IOException;
 public class GitPushDialog extends FXMLDialog{
 
     @FXML
-    private TextField message;
+    public TextField message;
 
     private final JGitRepository repo;
-    private final ProjectPane projectPane;
 
     private static final Logger LOGGER = Log.get();
 
     /**
      * Default constructor.
      *
-     * @param projectPane the projectPane to which this dialog is attached to.
      * @param repo    the JGitRepository that will be pushed to.
      */
-    public GitPushDialog(final ProjectPane projectPane, final JGitRepository repo) {
+    public GitPushDialog(final JGitRepository repo) {
         super("/fxml/dialogs/GitPush.fxml");
         this.setTitle("Push Changes");
-        this.projectPane = projectPane;
         this.repo = repo;
     }
 
@@ -49,8 +41,22 @@ public class GitPushDialog extends FXMLDialog{
 
     @FXML
     private void pushBtnPressed(final ActionEvent event) {
-        repo.commit(message.getText());
-        repo.push();
+        try {
+            repo.commit(message.getText());
+            repo.push();
+            close();
+        }
+        catch (GitAPIException e) {}
+        GitAuthenticateDialog dlg = new GitAuthenticateDialog(repo);
+        dlg.showAndWait();
+        try{
+            repo.commit(message.getText());
+            repo.push();
+        }
+        catch (GitAPIException e) {
+            AlertDialog aDlg = new AlertDialog(Alert.AlertType.ERROR, "Error pushing git", "Pushing has failed", e.getMessage(), ButtonType.OK);
+            aDlg.show();
+        }
         close();
     }
 }

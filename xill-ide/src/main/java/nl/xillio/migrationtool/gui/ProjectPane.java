@@ -50,6 +50,7 @@ import nl.xillio.xill.util.settings.Settings;
 import nl.xillio.xill.util.settings.SettingsHandler;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import org.apache.commons.io.FilenameUtils;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 
 import javax.swing.filechooser.FileFilter;
@@ -293,12 +294,29 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     private void push() {
-        GitPushDialog dlg = new GitPushDialog(this, repo);
-        dlg.showAndWait();
+        GitPushDialog dlg = new GitPushDialog(repo);
+        Platform.runLater(() -> {
+            dlg.show();
+        });
     }
 
     private void pull() {
-        repo.pull();
+        Platform.runLater(() -> {
+            try{
+                repo.pull();
+                return;
+            }
+            catch (GitAPIException e) {}
+            GitAuthenticateDialog dlg = new GitAuthenticateDialog(repo);
+            dlg.showAndWait();
+            try{
+                repo.pull();
+            }
+            catch (GitAPIException e) {
+                AlertDialog aDlg = new AlertDialog(Alert.AlertType.ERROR, "Error pulling git", "Pulling has failed", e.getMessage(), ButtonType.OK);
+                aDlg.show();
+            }
+        });
     }
 
     private void switchBranch() {
