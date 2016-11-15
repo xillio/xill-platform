@@ -15,10 +15,9 @@
  */
 package nl.xillio.xill.webservice.model;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import nl.xillio.xill.api.OutputHandler;
-import nl.xillio.xill.api.XillEnvironment;
+import nl.xillio.xill.webservice.exceptions.XillCompileException;
+import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -39,7 +38,7 @@ public interface XillRuntime extends AutoCloseable {
      * @param workDirectory The working directory
      * @param robotPath A path to the robot, relative to {@code workDirectory}
      */
-    void compile(Path workDirectory, Path robotPath);
+    void compile(Path workDirectory, Path robotPath) throws XillCompileException;
 
     /**
      * Run the robot that was compiled by calling {@link #compile(Path, Path)}.
@@ -57,8 +56,10 @@ public interface XillRuntime extends AutoCloseable {
      *
      * This method will effectively stop a call to {@link #runRobot(Map, OutputHandler)}
      * before the robot has fully finished running.
+     *
+     * @throws XillInvalidStateException When a robot is not currently running
      */
-    void abortRobot();
+    void abortRobot() throws XillInvalidStateException;
 
     /**
      * Shut down the this Xill runtime and associated resources

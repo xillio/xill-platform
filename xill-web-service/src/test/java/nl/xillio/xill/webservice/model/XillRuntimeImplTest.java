@@ -9,6 +9,8 @@ import nl.xillio.xill.api.components.InstructionFlow;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.errors.XillParsingException;
+import nl.xillio.xill.webservice.exceptions.XillCompileException;
+import nl.xillio.xill.webservice.xill.XillRuntimeImpl;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -30,6 +32,7 @@ import static org.testng.Assert.assertSame;
 public class XillRuntimeImplTest extends TestUtils {
 
     private XillEnvironment xillEnvironment;
+    private OutputHandler outputHandler;
     private XillProcessor xillProcessor;
     private Robot robot;
     private Debugger debugger;
@@ -42,6 +45,7 @@ public class XillRuntimeImplTest extends TestUtils {
     @BeforeMethod
     public void mockEnvironment () throws IOException {
         xillEnvironment = mock(XillEnvironment.class);
+        outputHandler = mock(OutputHandler.class);
         xillProcessor = mock(XillProcessor.class);
         robot = mock(Robot.class);
         debugger = mock(Debugger.class);
@@ -49,8 +53,7 @@ public class XillRuntimeImplTest extends TestUtils {
         when(xillProcessor.getRobot()).thenReturn(robot);
         when(xillProcessor.getDebugger()).thenReturn(debugger);
 
-        xillRuntime = new XillRuntimeImpl();
-        xillRuntime.setXillEnvironmentProvider(() -> xillEnvironment);
+        xillRuntime = new XillRuntimeImpl(xillEnvironment, outputHandler);
 
         workingDir = Paths.get("/path/to/working/dir");
         robotPath = Paths.get("/path/to/robot.xill");
@@ -60,11 +63,12 @@ public class XillRuntimeImplTest extends TestUtils {
      * Test {@link XillRuntimeImpl#compile(Path, Path)} under normal circumstances.
      */
     @Test
-    public void testCompile() throws IOException, XillParsingException {
+    public void testCompile() throws IOException, XillParsingException, XillCompileException {
         // Run
         xillRuntime.compile(workingDir, robotPath);
 
         // Verify
+        verify(xillEnvironment).setXillThreadFactory(any());
         verify(xillEnvironment).buildProcessor(workingDir, robotPath);
         verify(xillProcessor).compile();
     }
@@ -75,8 +79,8 @@ public class XillRuntimeImplTest extends TestUtils {
      * All possible checked exceptions should be converted to runtime exceptions to prevent
      * having too many exceptions in the signature and too many layers handling exceptions.
      */
-    @Test(expectedExceptions = RuntimeException.class)
-    public void testCompileError() throws IOException {
+    @Test(expectedExceptions = XillCompileException.class)
+    public void testCompileError() throws IOException, XillCompileException {
         // Mock
         when(xillEnvironment.buildProcessor(workingDir, robotPath)).thenThrow(IOException.class);
 
@@ -88,7 +92,7 @@ public class XillRuntimeImplTest extends TestUtils {
      * Test {@link XillRuntimeImpl#runRobot(Map, OutputHandler)} under normal circumstances.
      */
     @Test
-    public void testRunRobot() throws IOException {
+    public void testRunRobot() throws IOException, XillCompileException {
         // Mock
         Double resultNumber = 42.0;
         MetaExpression robotResult = parseObject(resultNumber);
@@ -102,6 +106,7 @@ public class XillRuntimeImplTest extends TestUtils {
         Object result = xillRuntime.runRobot(parameters, outputHandler);
 
         // Verify
+        verify(xillEnvironment).setXillThreadFactory(any());
         verify(xillEnvironment).buildProcessor(workingDir, robotPath);
         verifyNoMoreInteractions(xillEnvironment);
         verify(robot).process(debugger);
