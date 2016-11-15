@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.versioncontrol;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
+
 import java.util.Set;
 
 /**
@@ -36,14 +38,14 @@ public interface Repository {
      *
      * @return {@code true} if push succeeded, {@code false} otherwise.
      */
-    boolean push();
+    void push() throws GitAPIException;
 
     /**
      * Pulls all changes from the remote repository.
      *
      * @return {@code true} if pull succeeded, {@code false} otherwise.
      */
-    boolean pull();
+    void pull() throws GitAPIException;
 
     /**
      * Returns if this object exists as initialized repository on the disk.

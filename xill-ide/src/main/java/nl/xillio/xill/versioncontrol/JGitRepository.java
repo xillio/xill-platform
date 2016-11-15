@@ -66,29 +66,17 @@ public class JGitRepository implements Repository {
     }
 
     @Override
-    public boolean push() {
-        try {
-            PushCommand cmd = repository.push();
-            setCredentialsProvider(cmd);
-            cmd.call();
-        } catch (GitAPIException e) {
-            LOGGER.error("Exception while pushing.", e);
-            return false;
-        }
-        return true;
+    public void push() throws GitAPIException{
+        PushCommand cmd = repository.push();
+        setCredentialsProvider(cmd);
+        cmd.call();
     }
 
     @Override
-    public boolean pull() {
-        try {
-            PullCommand cmd = repository.pull();
-            setCredentialsProvider(cmd);
-            cmd.call();
-        } catch (GitAPIException e) {
-            LOGGER.error("Exception while pulling.", e);
-            return false;
-        }
-        return true;
+    public void pull() throws GitAPIException{
+        PullCommand cmd = repository.pull();
+        setCredentialsProvider(cmd);
+        cmd.call();
     }
 
     @Override
@@ -120,5 +108,9 @@ public class JGitRepository implements Repository {
         if (credentials != null) {
             command.setCredentialsProvider(credentials);
         }
+    }
+
+    public boolean isAuthenticated() {
+        return true;
     }
 }
