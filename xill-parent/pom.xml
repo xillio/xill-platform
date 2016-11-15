@@ -58,7 +58,7 @@
         <!-- Build Info -->
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
-        <sonar.jacoco.itReportPath>${project.build.directory}/jacoco-it.exec</sonar.jacoco.itReportPath>
+        <sonar.jacoco.itReportPath>${project.build.directory}/../jacoco-it.exec</sonar.jacoco.itReportPath>
         <sonar.jacoco.reportPath>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPath>
     </properties>
 
@@ -179,7 +179,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
-                    <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                    <argLine>-Dfile.encoding=${project.build.sourceEncoding} ${failsafeArgLine}</argLine>
                 </configuration>
                 <executions>
                     <execution>
@@ -207,6 +207,17 @@
                             <propertyName>surefireArgLine</propertyName>
                         </configuration>
                         <phase>test-compile</phase>
+                    </execution>
+                    <execution>
+                        <id>agent-for-it</id>
+                        <configuration>
+                            <destFile>${sonar.jacoco.itReportPath}</destFile>
+                            <propertyName>failsafeArgLine</propertyName>
+                        </configuration>
+                        <goals>
+                            <goal>prepare-agent-integration</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
                     </execution>
                 </executions>
             </plugin>
