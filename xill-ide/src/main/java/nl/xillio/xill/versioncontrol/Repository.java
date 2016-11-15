@@ -50,7 +50,14 @@ public interface Repository {
      *
      * @return The list of branches.
      */
-    List<String> getBranches();
+    List<String> getBranchNames();
+
+    /**
+     * Get the current branch name.
+     *
+     * @return The current branch name.
+     */
+    String getCurrentBranchName();
 
     /**
      * Returns if this object exists as initialized repository on the disk.
