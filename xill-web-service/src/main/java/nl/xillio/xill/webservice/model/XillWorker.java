@@ -15,20 +15,42 @@
  */
 package nl.xillio.xill.webservice.model;
 
+import org.apache.commons.lang3.NotImplementedException;
+
+import java.util.Map;
+
 /**
  * This class represents a worker entity in the domain model.
  * A worker can be started which will run a robot. This execution can be interrupted on a different thread.
  *
  * @author Thomas Biesaart
  */
-public class Worker {
+public class XillWorker {
     private final String robot;
 
-    public Worker(String robot) {
+    public XillWorker(String robot) {
         this.robot = robot;
     }
 
     public String getRobot() {
         return robot;
+    }
+
+    /**
+     * Return the id of the allocated worker.
+     * The id must be unique across the XillWorkerPool.
+     *
+     * @return
+     */
+    public int getId() {
+        throw new NotImplementedException("The 'getId' method has not been implemented yet");
+    }
+
+    public Object run(final Map<String, Object> arguments) {
+        throw new NotImplementedException("The 'run' method has not been implemented yet");
+    }
+
+    public void abort() {
+        throw new NotImplementedException("The 'abort' method has not been implemented yet");
     }
 }

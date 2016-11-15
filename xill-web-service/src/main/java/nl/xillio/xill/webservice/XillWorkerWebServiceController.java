@@ -15,8 +15,11 @@
  */
 package nl.xillio.xill.webservice;
 
-import nl.xillio.xill.webservice.model.Worker;
+import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
+import nl.xillio.xill.webservice.model.XillWorker;
+import nl.xillio.xill.webservice.services.XillWorkerPoolManagerService;
 import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This class represents the main API controller. It is responsible for interacting with the actor that
@@ -26,13 +29,16 @@ import org.apache.commons.lang3.NotImplementedException;
  */
 public class XillWorkerWebServiceController {
 
+    @Autowired
+    private XillWorkerPoolManagerService workerPoolManagerService;
+
     /**
      * Register a worker for a specific robot if a space is available.
      *
      * @param worker the worker that should be registered
      * @return the identifier for the worker
      */
-    public int registerWorker(Worker worker) {
+    public int registerWorker(XillWorker worker) {
         throw new NotImplementedException("The 'registerWorker' method has not been implemented yet");
     }
 
@@ -41,8 +47,12 @@ public class XillWorkerWebServiceController {
      *
      * @param id the identifier of the worker
      */
-    public void releaseWorker(int id) {
-        throw new NotImplementedException("The 'registerWorker' method has not been implemented yet");
+    public void releaseWorker(final String workDirectory, int id) {
+        try {
+            workerPoolManagerService.findWorkerPool(workDirectory).releaseWorker(id);
+        } catch (XillNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public void releaseAllWorkers() {
@@ -53,7 +63,11 @@ public class XillWorkerWebServiceController {
         throw new NotImplementedException("The 'runWorker' method has not been implemented yet");
     }
 
-    public void interruptWorker(int id) {
-        throw new NotImplementedException("The 'registerWorker' method has not been implemented yet");
+    public void abortWorker(final String workDirectory, int id) {
+        try {
+            workerPoolManagerService.findWorkerPool(workDirectory).findWorker(id).abort();
+        } catch (XillNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
