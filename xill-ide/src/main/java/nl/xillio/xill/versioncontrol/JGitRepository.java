@@ -56,7 +56,7 @@ public class JGitRepository implements Repository {
     @Override
     public boolean commit(String commitMessage) {
         try {
-            repository.add().addFilepattern("--all").call(); // This or repository.add().addFilepattern(".").call();?
+            repository.add().addFilepattern(".").call();
             repository.commit().setMessage(commitMessage).call();
         } catch (GitAPIException e) {
             LOGGER.error("Exception while committing files.", e);
@@ -103,7 +103,6 @@ public class JGitRepository implements Repository {
             Status status = repository.status().call();
             changedFiles.addAll(status.getUncommittedChanges()); // Add changes
             changedFiles.addAll(status.getUntracked()); // Add untracked files
-            changedFiles.addAll(status.getUntrackedFolders()); // Add untracked folders
         } catch (GitAPIException e) {
             LOGGER.error("Error retrieving changed files", e);
         } catch (NoWorkTreeException e) {
