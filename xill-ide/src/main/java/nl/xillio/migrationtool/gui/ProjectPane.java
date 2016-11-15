@@ -304,6 +304,8 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         Platform.runLater(() -> {
             try{
                 repo.pull();
+                AlertDialog aDlg = new AlertDialog(Alert.AlertType.INFORMATION, "Succesfull pull", "Pulling has succeeded", "Pulling has succeeded", ButtonType.OK);
+                aDlg.show();
                 return;
             }
             catch (GitAPIException e) {}
@@ -311,6 +313,8 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             dlg.showAndWait();
             try{
                 repo.pull();
+                AlertDialog aDlg = new AlertDialog(Alert.AlertType.INFORMATION, "Succesfull pull", "Pulling has succeeded", "Pulling has succeeded", ButtonType.OK);
+                aDlg.show();
             }
             catch (GitAPIException e) {
                 AlertDialog aDlg = new AlertDialog(Alert.AlertType.ERROR, "Error pulling git", "Pulling has failed", e.getMessage(), ButtonType.OK);

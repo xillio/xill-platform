@@ -18,6 +18,7 @@ package nl.xillio.xill.versioncontrol;
 import me.biesaart.utils.Log;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.errors.NoWorkTreeException;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
@@ -25,6 +26,9 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Implementation of {@link Repository} which uses the jGit library for interacting with Git repositories.
@@ -36,6 +40,7 @@ public class JGitRepository implements Repository {
     private Git repository;
     private CredentialsProvider credentials;
 
+
     public JGitRepository(File path) {
         FileRepositoryBuilder builder = new FileRepositoryBuilder().addCeilingDirectory(path).findGitDir(path);
 
@@ -43,13 +48,15 @@ public class JGitRepository implements Repository {
             repository = new Git(builder.build());
         } catch (IOException e) {
             LOGGER.error("An exception occurred while loading the repository.", e);
+        } catch (IllegalArgumentException e) {
+            //?
         }
     }
 
     @Override
     public boolean commit(String commitMessage) {
         try {
-            repository.add().addFilepattern("--all").call();
+            repository.add().addFilepattern(".").call();
             repository.commit().setMessage(commitMessage).call();
         } catch (GitAPIException e) {
             LOGGER.error("Exception while committing files.", e);
@@ -75,6 +82,21 @@ public class JGitRepository implements Repository {
     @Override
     public boolean isInitialized() {
         return repository != null;
+    }
+
+    @Override
+    public Set<String> getChangedFiles() {
+        Set<String> changedFiles = new HashSet<String>();
+        try {
+            Status status = repository.status().call();
+            changedFiles.addAll(status.getUncommittedChanges()); // Add changes
+            changedFiles.addAll(status.getUntracked()); // Add untracked files
+        } catch (GitAPIException e) {
+            LOGGER.error("Error retrieving changed files", e);
+        } catch (NoWorkTreeException e) {
+            LOGGER.error("Error retrieving changed files", e);
+        }
+        return changedFiles;
     }
 
     @Override
