@@ -18,6 +18,7 @@ package nl.xillio.xill.versioncontrol;
 import me.biesaart.utils.Log;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
@@ -25,6 +26,9 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of {@link Repository} which uses the jGit library for interacting with Git repositories.
@@ -82,6 +86,17 @@ public class JGitRepository implements Repository {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public List<String> getBranches() {
+        try {
+            List<Ref> refs = repository.branchList().call();
+            return refs.stream().map(Ref::getName).collect(Collectors.toList());
+        } catch (GitAPIException e) {
+            LOGGER.error("Exception while getting branches.", e);
+            return Collections.emptyList();
+        }
     }
 
     @Override

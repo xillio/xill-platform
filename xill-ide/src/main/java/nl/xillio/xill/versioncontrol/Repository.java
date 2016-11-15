@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.versioncontrol;
 
+import java.util.List;
+
 /**
  * Representation of a version control repository.
  *
@@ -42,6 +44,13 @@ public interface Repository {
      * @return {@code true} if pull succeeded, {@code false} otherwise.
      */
     boolean pull();
+
+    /**
+     * Get the branches on this repo.
+     *
+     * @return The list of branches.
+     */
+    List<String> getBranches();
 
     /**
      * Returns if this object exists as initialized repository on the disk.
