@@ -47,10 +47,19 @@ public class XillWorker implements AutoCloseable {
         throw new NotImplementedException("The 'getId' method has not been implemented yet");
     }
 
+    /**
+     * Run the robot associated with the worker.
+     *
+     * @param arguments The robot run arguments.
+     * @return The result of the robot run.
+     */
     public Object run(final Map<String, Object> arguments) {
         throw new NotImplementedException("The 'run' method has not been implemented yet");
     }
 
+    /**
+     * Abort the running worker (i.e. abort the robot associated with the worker).
+     */
     public void abort() {
         throw new NotImplementedException("The 'abort' method has not been implemented yet");
     }

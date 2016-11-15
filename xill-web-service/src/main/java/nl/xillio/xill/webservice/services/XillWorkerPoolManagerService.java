@@ -6,7 +6,7 @@ import nl.xillio.xill.webservice.model.XillWorkerPool;
 import org.apache.commons.lang3.NotImplementedException;
 
 /**
- *
+ * This class represents an implementation of the worker pools manager.
  */
 @Singleton
 public class XillWorkerPoolManagerService {

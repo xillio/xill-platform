@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- *
+ * This class represents a configuration handler.
  */
 @Component
 @ConfigurationProperties(prefix = "xill")

@@ -8,7 +8,7 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- *
+ * This class represents the pool of the workers.
  */
 public class XillWorkerPool {
     private final String workDirectory;
@@ -33,16 +33,31 @@ public class XillWorkerPool {
         throw new NotImplementedException("The 'allocateWorker' method has not been implemented yet");
     }
 
+    /**
+     * Find the worker in the worker pool.
+     *
+     * @param workerId The identifier of the worker.
+     * @return Found XillWorker.
+     * @throws XillNotFoundException if the worker was not found.
+     */
     public XillWorker findWorker(XWID workerId) throws XillNotFoundException {
         throw new NotImplementedException("The 'findWorker' method has not been implemented yet");
     }
 
+    /**
+     * Release the worker in the worker pool.
+     *
+     * @param workerId The identifier of the worker.
+     * @throws XillNotFoundException if the worker was not found.
+     */
     public void releaseWorker(XWID workerId) throws XillNotFoundException {
         throw new NotImplementedException("The 'releaseWorker' method has not been implemented yet");
     }
 
+    /**
+     * Release all workers in the worker pool.
+     */
     public void releaseAllWorkers() {
         throw new NotImplementedException("The 'releaseAllWorkers' method has not been implemented yet");
     }
-
 }

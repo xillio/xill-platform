@@ -1,7 +1,7 @@
 package nl.xillio.xill.webservice.types;
 
 /**
- * XillWorker ID
+ * XillWorker ID - unique identificator of the XillWorker in the XillWorkerPool.
  */
 public class XWID {
     private final int id;
