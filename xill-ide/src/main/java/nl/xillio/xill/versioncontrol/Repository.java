@@ -35,15 +35,11 @@ public interface Repository {
 
     /**
      * Pushes all changes to the remote repository.
-     *
-     * @return {@code true} if push succeeded, {@code false} otherwise.
      */
     void push() throws GitAPIException;
 
     /**
      * Pulls all changes from the remote repository.
-     *
-     * @return {@code true} if pull succeeded, {@code false} otherwise.
      */
     void pull() throws GitAPIException;
 

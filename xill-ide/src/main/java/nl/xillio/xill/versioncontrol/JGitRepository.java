@@ -15,8 +15,13 @@
  */
 package nl.xillio.xill.versioncontrol;
 
+import javafx.scene.control.Alert;
 import me.biesaart.utils.Log;
-import org.eclipse.jgit.api.*;
+import nl.xillio.migrationtool.dialogs.AlertDialog;
+import nl.xillio.migrationtool.dialogs.GitAuthenticateDialog;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.TransportCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.NoWorkTreeException;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -27,7 +32,6 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -39,7 +43,6 @@ public class JGitRepository implements Repository {
 
     private Git repository;
     private CredentialsProvider credentials;
-
 
     public JGitRepository(File path) {
         FileRepositoryBuilder builder = new FileRepositoryBuilder().addCeilingDirectory(path).findGitDir(path);
@@ -66,17 +69,13 @@ public class JGitRepository implements Repository {
     }
 
     @Override
-    public void push() throws GitAPIException{
-        PushCommand cmd = repository.push();
-        setCredentialsProvider(cmd);
-        cmd.call();
+    public void push() {
+        tryCommand(repository.push(), "pushing");
     }
 
     @Override
-    public void pull() throws GitAPIException{
-        PullCommand cmd = repository.pull();
-        setCredentialsProvider(cmd);
-        cmd.call();
+    public void pull() {
+        tryCommand(repository.pull(), "pulling");
     }
 
     @Override
@@ -110,7 +109,26 @@ public class JGitRepository implements Repository {
         }
     }
 
-    public boolean isAuthenticated() {
-        return true;
+    private void tryCommand(TransportCommand cmd, String action) {
+        setCredentialsProvider(cmd);
+
+        // Try without authenticating.
+        try {
+            cmd.call();
+            return;
+        } catch (GitAPIException e) {
+            // Ignore silently.
+        }
+
+        // Authenticate.
+        new GitAuthenticateDialog(this).showAndWait();
+        setCredentialsProvider(cmd);
+
+        // Try again.
+        try {
+            cmd.call();
+        } catch (GitAPIException e) {
+            new AlertDialog(Alert.AlertType.ERROR, "Error while " + action, "An error occurred while " + action, e.getMessage()).showAndWait();
+        }
     }
 }

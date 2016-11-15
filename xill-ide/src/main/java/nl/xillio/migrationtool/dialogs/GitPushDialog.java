@@ -1,31 +1,32 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package nl.xillio.migrationtool.dialogs;
 
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.util.Pair;
-import me.biesaart.utils.Log;
-import nl.xillio.migrationtool.gui.ProjectPane;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import nl.xillio.xill.versioncontrol.JGitRepository;
-import org.apache.commons.io.FileUtils;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.slf4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Set;
 
-/**
- * Created by Dwight.Peters on 15-Nov-16.
- */
-public class GitPushDialog extends FXMLDialog{
-
-    private static final Logger LOGGER = Log.get();
-
+public class GitPushDialog extends FXMLDialog {
     @FXML
     private TextField message;
-
     @FXML
     private ListView fileList;
 
@@ -34,11 +35,11 @@ public class GitPushDialog extends FXMLDialog{
     /**
      * Default constructor.
      *
-     * @param repo    the JGitRepository that will be pushed to.
+     * @param repo the JGitRepository that will be pushed to.
      */
     public GitPushDialog(final JGitRepository repo) {
         super("/fxml/dialogs/GitPush.fxml");
-        this.setTitle("Push Changes");
+        this.setTitle("Push changes");
         this.repo = repo;
 
         Set<String> changedFiles = repo.getChangedFiles();
@@ -57,24 +58,7 @@ public class GitPushDialog extends FXMLDialog{
     @FXML
     private void pushBtnPressed(final ActionEvent event) {
         repo.commit(message.getText());
-        try {
-            repo.push();
-            AlertDialog aDlg = new AlertDialog(Alert.AlertType.INFORMATION, "Succesfull pull", "Pushing has succeeded", "Pushing has succeeded", ButtonType.OK);
-            aDlg.show();
-            close();
-        }
-        catch (GitAPIException e) {}
-        GitAuthenticateDialog dlg = new GitAuthenticateDialog(repo);
-        dlg.showAndWait();
-        try{
-            repo.push();
-            AlertDialog aDlg = new AlertDialog(Alert.AlertType.INFORMATION, "Succesfull push", "PUshing has succeeded", "Pushing has succeeded", ButtonType.OK);
-            aDlg.show();
-        }
-        catch (GitAPIException e) {
-            AlertDialog aDlg = new AlertDialog(Alert.AlertType.ERROR, "Error pushing git", "Pushing has failed", e.getMessage(), ButtonType.OK);
-            aDlg.show();
-        }
+        repo.push();
         close();
     }
 }
