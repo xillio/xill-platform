@@ -88,6 +88,7 @@
         <mysql.driver.version>6.0.2</mysql.driver.version>
         <flapdoodle.version>1.50.5</flapdoodle.version>
         <asm.version>5.0.1</asm.version>
+        <jgit.version>4.5.0.201609210915-r</jgit.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -346,6 +347,11 @@
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm-commons</artifactId>
                 <version>${asm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jgit</groupId>
+                <artifactId>org.eclipse.jgit</artifactId>
+                <version>${jgit.version}</version>
             </dependency>
             <!-- Internal Project Dependencies -->
             <dependency>
