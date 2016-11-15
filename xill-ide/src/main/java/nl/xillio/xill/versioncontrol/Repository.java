@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.versioncontrol;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
+
 import java.util.List;
 
 /**
@@ -58,6 +60,13 @@ public interface Repository {
      * @return The current branch name.
      */
     String getCurrentBranchName();
+
+    /**
+     * Check out a branch.
+     *
+     * @param branch The branch to check out.
+     */
+    void checkout(String branch) throws GitAPIException;
 
     /**
      * Returns if this object exists as initialized repository on the disk.

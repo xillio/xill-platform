@@ -16,21 +16,35 @@
 package nl.xillio.migrationtool.dialogs;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
-
-import java.util.List;
+import nl.xillio.xill.versioncontrol.Repository;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 public class BranchListDialog extends FXMLDialog {
     @FXML
     private ListView<String> lvBranches;
 
-    public BranchListDialog(List<String> branches, String currentBranch) {
+    private Repository repo;
+
+    public BranchListDialog(final Repository repo) {
         super("/fxml/dialogs/BranchList.fxml");
         setTitle("Branches");
+        this.repo = repo;
 
         // Set the branch list.
-        lvBranches.getItems().setAll(branches);
-        lvBranches.getSelectionModel().select(currentBranch);
+        lvBranches.getItems().setAll(repo.getBranchNames());
+        lvBranches.getSelectionModel().select(repo.getCurrentBranchName());
+    }
+
+    @FXML
+    private void checkoutBtnPressed() {
+        String branch = lvBranches.getSelectionModel().getSelectedItem();
+        try {
+            repo.checkout(branch);
+        } catch(GitAPIException e) {
+            new AlertDialog(Alert.AlertType.ERROR, "Error", "An error occurred while checking out " + branch + ".", e.getMessage()).showAndWait();
+        }
     }
 
     @FXML

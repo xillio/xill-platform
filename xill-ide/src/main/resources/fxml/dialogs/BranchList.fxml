@@ -35,6 +35,7 @@
                 </AnchorPane>
                 <HBox styleClass="buttonsWrapper" VBox.vgrow="NEVER">
                     <children>
+                        <Button fx:id="checkoutBtn" mnemonicParsing="false" onAction="#checkoutBtnPressed" text="Checkout" />
                         <Button fx:id="closeBtn" defaultButton="true" mnemonicParsing="false" onAction="#closeBtnPressed" text="Close" />
                     </children>
                 </HBox>

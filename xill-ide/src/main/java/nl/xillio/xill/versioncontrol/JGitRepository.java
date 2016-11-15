@@ -110,6 +110,11 @@ public class JGitRepository implements Repository {
     }
 
     @Override
+    public void checkout(String branch) throws GitAPIException {
+        repository.checkout().setName(branch).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).call();
+    }
+
+    @Override
     public boolean isInitialized() {
         return repository != null;
     }
