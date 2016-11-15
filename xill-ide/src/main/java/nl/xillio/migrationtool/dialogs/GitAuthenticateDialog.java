@@ -20,19 +20,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import me.biesaart.utils.Log;
-import nl.xillio.migrationtool.gui.ProjectPane;
 import nl.xillio.xill.versioncontrol.JGitRepository;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.slf4j.Logger;
 
-/**
- * Created by Dwight.Peters on 15-Nov-16.
- */
-public class GitAuthenticateDialog extends FXMLDialog{
-
-    private static final Logger LOGGER = Log.get();
-
+public class GitAuthenticateDialog extends FXMLDialog {
     @FXML
     private TextField username;
     @FXML
@@ -41,8 +31,6 @@ public class GitAuthenticateDialog extends FXMLDialog{
     private Label message;
 
     private final JGitRepository repo;
-
-    public boolean cancled;
 
     /**
      * Default constructor.
@@ -53,12 +41,10 @@ public class GitAuthenticateDialog extends FXMLDialog{
         super("/fxml/dialogs/GitAuthenticate.fxml");
         this.setTitle("Fill in credentials");
         this.repo = repo;
-        this.cancled = false;
     }
 
     @FXML
     private void cancelBtnPressed(final ActionEvent event) {
-        cancled = true;
         close();
     }
 
@@ -67,10 +53,6 @@ public class GitAuthenticateDialog extends FXMLDialog{
         repo.setCredentials(username.getText(), password.getText());
         password.clear();
         close();
-    }
-
-    public void badCredentials() {
-        message.setText("There may be something wrong with the given username and password.");
     }
 }
 

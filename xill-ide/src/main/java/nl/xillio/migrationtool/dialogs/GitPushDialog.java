@@ -28,7 +28,7 @@ public class GitPushDialog extends FXMLDialog {
     @FXML
     private TextField message;
     @FXML
-    private ListView fileList;
+    private ListView<String> fileList;
 
     private final JGitRepository repo;
 
@@ -43,7 +43,7 @@ public class GitPushDialog extends FXMLDialog {
         this.repo = repo;
 
         Set<String> changedFiles = repo.getChangedFiles();
-        if (changedFiles != null && changedFiles.size() > 0) {
+        if (!changedFiles.isEmpty()) {
             fileList.setItems(FXCollections.observableArrayList(changedFiles));
         } else {
             fileList.setItems(FXCollections.observableArrayList("No changes were found"));

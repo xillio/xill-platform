@@ -85,14 +85,12 @@ public class JGitRepository implements Repository {
 
     @Override
     public Set<String> getChangedFiles() {
-        Set<String> changedFiles = new HashSet<String>();
+        Set<String> changedFiles = new HashSet<>();
         try {
             Status status = repository.status().call();
             changedFiles.addAll(status.getUncommittedChanges()); // Add changes
             changedFiles.addAll(status.getUntracked()); // Add untracked files
-        } catch (GitAPIException e) {
-            LOGGER.error("Error retrieving changed files", e);
-        } catch (NoWorkTreeException e) {
+        } catch (GitAPIException | NoWorkTreeException e) {
             LOGGER.error("Error retrieving changed files", e);
         }
         return changedFiles;
