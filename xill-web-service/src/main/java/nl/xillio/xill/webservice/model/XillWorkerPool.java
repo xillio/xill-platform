@@ -1,20 +1,25 @@
 package nl.xillio.xill.webservice.model;
 
+import nl.xillio.xill.webservice.XillProperties;
 import nl.xillio.xill.webservice.exceptions.XillAllocateWorkerException;
 import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import nl.xillio.xill.webservice.types.XWID;
 import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
  */
 public class XillWorkerPool {
-    private int maxExecutors = 10;
     private final String workDirectory;
 
+    @Autowired
+    private XillProperties properties;
 
     public XillWorkerPool(final String workDirectory) {
         this.workDirectory = workDirectory;
+
+        //System.out.println(String.format("MaxExecutors: %1$d", properties.getMaxExecutors()));
     }
 
     /**
