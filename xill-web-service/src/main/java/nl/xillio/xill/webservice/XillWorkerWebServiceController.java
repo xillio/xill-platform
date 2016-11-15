@@ -18,6 +18,7 @@ package nl.xillio.xill.webservice;
 import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import nl.xillio.xill.webservice.model.XillWorker;
 import nl.xillio.xill.webservice.services.XillWorkerPoolManagerService;
+import nl.xillio.xill.webservice.types.XWID;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,7 +39,7 @@ public class XillWorkerWebServiceController {
      * @param worker the worker that should be registered
      * @return the identifier for the worker
      */
-    public int registerWorker(XillWorker worker) {
+    public XWID registerWorker(XillWorker worker) {
         throw new NotImplementedException("The 'registerWorker' method has not been implemented yet");
     }
 
@@ -47,9 +48,9 @@ public class XillWorkerWebServiceController {
      *
      * @param id the identifier of the worker
      */
-    public void releaseWorker(final String projectId, int id) {
+    public void releaseWorker(XWID id) {
         try {
-            workerPoolManagerService.findWorkerPool(projectId).releaseWorker(id);
+            workerPoolManagerService.findWorkerPool(null).releaseWorker(id);
         } catch (XillNotFoundException e) {
             e.printStackTrace();
         }
@@ -59,13 +60,13 @@ public class XillWorkerWebServiceController {
         throw new NotImplementedException("The 'releaseAllWorkers' method has not been implemented yet");
     }
 
-    public Object runWorker(int id) {
+    public Object runWorker(XWID id) {
         throw new NotImplementedException("The 'runWorker' method has not been implemented yet");
     }
 
-    public void abortWorker(final String projectId, int id) {
+    public void abortWorker(XWID id) {
         try {
-            workerPoolManagerService.findWorkerPool(projectId).findWorker(id).abort();
+            workerPoolManagerService.findWorkerPool(null).findWorker(id).abort();
         } catch (XillNotFoundException e) {
             e.printStackTrace();
         }

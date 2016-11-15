@@ -14,8 +14,8 @@ public class XillWorkerPoolManagerService {
     /**
      * Create new or return existing XillWorkerPool for given projectId.
      *
-     * @param projectId
-     * @return
+     * @param projectId The project id. For the moment, it's not used as there is no support for projects yet.
+     * @return The XillWorkerPool for given projectId that has been created or reused. For the moment, it always returns one XillWorkerPool as there is no support for projects yet.
      */
     public XillWorkerPool getWorkerPool(final String projectId) {
         throw new NotImplementedException("The 'getWorkerPool' method has not been implemented yet");
@@ -24,7 +24,7 @@ public class XillWorkerPoolManagerService {
     /**
      * Return existing XillWorkerPool for given projectId.
      *
-     * @param projectId
+     * @param projectId The project id. For the moment, it's not used as there is no support for projects yet.
      * @return The existing XillWorkerPool for given projectId.
      * @throws XillNotFoundException if XillWorkerPool for given projectId does not exist.
      */

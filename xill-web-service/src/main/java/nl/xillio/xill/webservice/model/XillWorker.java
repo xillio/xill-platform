@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.webservice.model;
 
+import nl.xillio.xill.webservice.types.XWID;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.Map;
@@ -25,7 +26,7 @@ import java.util.Map;
  *
  * @author Thomas Biesaart
  */
-public class XillWorker {
+public class XillWorker implements AutoCloseable {
     private final String robot;
 
     public XillWorker(String robot) {
@@ -42,7 +43,7 @@ public class XillWorker {
      *
      * @return
      */
-    public int getId() {
+    public XWID getId() {
         throw new NotImplementedException("The 'getId' method has not been implemented yet");
     }
 
@@ -52,5 +53,15 @@ public class XillWorker {
 
     public void abort() {
         throw new NotImplementedException("The 'abort' method has not been implemented yet");
+    }
+
+    /**
+     * This method's purpose is to return the XillRuntime to the pool.
+     *
+     * @throws Exception
+     */
+    @Override
+    public void close() throws Exception {
+        throw new NotImplementedException("The 'close' method has not been implemented yet");
     }
 }
