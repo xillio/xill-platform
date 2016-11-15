@@ -17,33 +17,44 @@ package nl.xillio.xill.versioncontrol;
 
 /**
  * Representation of a version control repository.
+ *
  * @author Daan Knoope
  */
 public interface Repository {
-
     /**
      * Commits all changes with the provi;ded commit message.
+     *
      * @param commitMessage The message for the commit.
      * @return {@code true} if commit succeeded, {@code false} otherwise.
      */
-    boolean Commit(String commitMessage);
+    boolean commit(String commitMessage);
 
     /**
      * Pushes all changes to the remote repository.
+     *
      * @return {@code true} if push succeeded, {@code false} otherwise.
      */
-    boolean Push();
+    boolean push();
 
     /**
      * Pulls all changes from the remote repository.
+     *
      * @return {@code true} if pull succeeded, {@code false} otherwise.
      */
-    boolean Pull();
+    boolean pull();
 
     /**
      * Returns if this object exists as initialized repository on the disk.
-     * @return {@code true} if this object is initialized on the disk, {@code false} otherwise
+     *
+     * @return {@code true} if this object is initialized on the disk, {@code false} otherwise.
      */
     boolean isInitialized();
 
+    /**
+     * Set the credentials for the repository.
+     *
+     * @param username The username.
+     * @param password The password.
+     */
+    void setCredentials(String username, String password);
 }

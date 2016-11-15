@@ -15,9 +15,13 @@
  */
 package nl.xillio.xill.versioncontrol;
 
-import org.eclipse.jgit.api.Git;
+import me.biesaart.utils.Log;
+import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,57 +31,54 @@ import java.io.IOException;
  * @author Daan Knoope
  */
 public class JGitRepository implements Repository {
-    private static Git repository;
+    private static final Logger LOGGER = Log.get();
 
+    private Git repository;
+    private CredentialsProvider credentials;
 
-    public JGitRepository(File path){
-        File ceilingDirectory = path.getParentFile(); // check this
-        FileRepositoryBuilder builder = new FileRepositoryBuilder()
-                .addCeilingDirectory(ceilingDirectory)
-                .findGitDir(path);
-        repository = null;
-        try{
+    public JGitRepository(File path) {
+        FileRepositoryBuilder builder = new FileRepositoryBuilder().addCeilingDirectory(path).findGitDir(path);
+
+        try {
             repository = new Git(builder.build());
         } catch (IOException e) {
-            // Do something usefull here
-        } catch(IllegalArgumentException e){
-            // Could not find repo in this directory
+            LOGGER.error("An exception occurred while loading the repository.", e);
         }
     }
 
     @Override
-    public boolean Commit(String commitMessage) {
+    public boolean commit(String commitMessage) {
         try {
             repository.add().addFilepattern("--all").call();
-        } catch (GitAPIException e) {
-            e.printStackTrace();
-            return false;
-        }
-        try {
             repository.commit().setMessage(commitMessage).call();
         } catch (GitAPIException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-
-    }
-
-    @Override
-    public boolean Push() {
-        try {
-            repository.push().call();
-        } catch (GitAPIException e) {
+            LOGGER.error("Exception while committing files.", e);
             return false;
         }
         return true;
     }
 
     @Override
-    public boolean Pull() {
+    public boolean push() {
         try {
-            repository.pull().call();
+            PushCommand cmd = repository.push();
+            setCredentialsProvider(cmd);
+            cmd.call();
         } catch (GitAPIException e) {
+            LOGGER.error("Exception while pushing.", e);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean pull() {
+        try {
+            PullCommand cmd = repository.pull();
+            setCredentialsProvider(cmd);
+            cmd.call();
+        } catch (GitAPIException e) {
+            LOGGER.error("Exception while pulling.", e);
             return false;
         }
         return true;
@@ -86,5 +87,16 @@ public class JGitRepository implements Repository {
     @Override
     public boolean isInitialized() {
         return repository != null;
+    }
+
+    @Override
+    public void setCredentials(String username, String password) {
+        credentials = new UsernamePasswordCredentialsProvider(username, password);
+    }
+
+    private void setCredentialsProvider(TransportCommand command) {
+        if (credentials != null) {
+            command.setCredentialsProvider(credentials);
+        }
     }
 }
