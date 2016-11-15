@@ -31,27 +31,38 @@ import java.util.Map;
  *
  * @author Geert Konijnendijk
  */
-public class XillRuntime implements AutoCloseable {
+public interface XillRuntime extends AutoCloseable {
 
-    public void compile(Path workingDirectory, Path robotPath)  {
+    /**
+     * Compile a robot for future execution.
+     *
+     * @param workDirectory The working directory
+     * @param robotPath A path to the robot, relative to {@code workDirectory}
+     */
+    void compile(Path workDirectory, Path robotPath);
 
-    }
+    /**
+     * Run the robot that was compiled by calling {@link #compile(Path, Path)}.
+     *
+     * This method runs a single robot with low latency in a blocking fashion.
+     *
+     * @param parameters The parameters to be passed as the robot's arguments
+     * @param outputHandler The handler for the robot's logging output
+     * @return The robot's return value
+     */
+    Object runRobot(Map<String, Object> parameters, OutputHandler outputHandler);
 
-    public Object runRobot(Map<String, Object> parameters, OutputHandler outputHandler) {
-        return null;
-    }
+    /**
+     * Abort a currently running robot.
+     *
+     * This method will effectively stop a call to {@link #runRobot(Map, OutputHandler)}
+     * before the robot has fully finished running.
+     */
+    void abortRobot();
 
-    public void abortRobot() {
-
-    }
-
+    /**
+     * Shut down the this Xill runtime and associated resources
+     */
     @Override
-    public void close() {
-
-    }
-
-    @Inject
-    public void setXillEnvironmentProvider(Provider<XillEnvironment> xillEnvironmentProvider) {
-
-    }
+    void close();
 }

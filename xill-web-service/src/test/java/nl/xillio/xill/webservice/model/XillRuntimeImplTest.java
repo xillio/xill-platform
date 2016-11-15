@@ -23,11 +23,11 @@ import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertSame;
 
 /**
- * Tests for {@link XillRuntime}.
+ * Tests for {@link XillRuntimeImpl}.
  *
  * @author Geert Konijnendijk
  */
-public class XillRuntimeTest extends TestUtils {
+public class XillRuntimeImplTest extends TestUtils {
 
     private XillEnvironment xillEnvironment;
     private XillProcessor xillProcessor;
@@ -37,7 +37,7 @@ public class XillRuntimeTest extends TestUtils {
     private Path workingDir;
     private Path robotPath;
 
-    private XillRuntime xillRuntime;
+    private XillRuntimeImpl xillRuntime;
 
     @BeforeMethod
     public void mockEnvironment () throws IOException {
@@ -49,7 +49,7 @@ public class XillRuntimeTest extends TestUtils {
         when(xillProcessor.getRobot()).thenReturn(robot);
         when(xillProcessor.getDebugger()).thenReturn(debugger);
 
-        xillRuntime = new XillRuntime();
+        xillRuntime = new XillRuntimeImpl();
         xillRuntime.setXillEnvironmentProvider(() -> xillEnvironment);
 
         workingDir = Paths.get("/path/to/working/dir");
@@ -57,7 +57,7 @@ public class XillRuntimeTest extends TestUtils {
     }
 
     /**
-     * Test {@link XillRuntime#compile(Path, Path)} under normal circumstances.
+     * Test {@link XillRuntimeImpl#compile(Path, Path)} under normal circumstances.
      */
     @Test
     public void testCompile() throws IOException, XillParsingException {
@@ -70,7 +70,7 @@ public class XillRuntimeTest extends TestUtils {
     }
 
     /**
-     * Test {@link XillRuntime#compile(Path, Path)} when compilation fails.
+     * Test {@link XillRuntimeImpl#compile(Path, Path)} when compilation fails.
      *
      * All possible checked exceptions should be converted to runtime exceptions to prevent
      * having too many exceptions in the signature and too many layers handling exceptions.
@@ -85,7 +85,7 @@ public class XillRuntimeTest extends TestUtils {
     }
 
     /**
-     * Test {@link XillRuntime#runRobot(Map, OutputHandler)} under normal circumstances.
+     * Test {@link XillRuntimeImpl#runRobot(Map, OutputHandler)} under normal circumstances.
      */
     @Test
     public void testRunRobot() throws IOException {
@@ -110,4 +110,17 @@ public class XillRuntimeTest extends TestUtils {
         assertSame(result, resultNumber);
     }
 
+    /**
+     * Test {@link XillRuntimeImpl#runRobot(Map, OutputHandler)} when {@link XillRuntimeImpl#compile(Path, Path)} has
+     * not been called yet.
+     */
+    @Test(expectedExceptions = Exception.class)
+    public void testRunRobotNoCompile() {
+        // Mock
+        Map<String, Object> parameters = new HashMap<>();
+        OutputHandler outputHandler = mock(OutputHandler.class);
+
+        // Run
+        xillRuntime.runRobot(parameters, outputHandler);
+    }
 }
