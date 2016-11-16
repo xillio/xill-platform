@@ -16,10 +16,12 @@
 package nl.xillio.xill.webservice.services;
 
 import com.google.inject.Singleton;
-import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import nl.xillio.xill.webservice.model.XillWorkerPool;
 import nl.xillio.xill.webservice.types.XWID;
 import org.apache.commons.lang3.NotImplementedException;
+
+import java.nio.file.Path;
+import java.util.Optional;
 
 /**
  * This class represents an implementation of the worker pools manager.
@@ -27,12 +29,17 @@ import org.apache.commons.lang3.NotImplementedException;
 @Singleton
 public class XillWorkerPoolManagerServiceImpl implements XillWorkerPoolManagerService {
     @Override
-    public XillWorkerPool getWorkerPool(final XWID projectId) {
+    public XillWorkerPool getWorkerPool(final Path workDirectory) {
         throw new NotImplementedException("The 'getWorkerPool' method has not been implemented yet");
     }
 
     @Override
-    public XillWorkerPool findWorkerPool(final XWID projectId) throws XillNotFoundException {
+    public XillWorkerPool getDeafultWorkerPool() {
+        throw new NotImplementedException("The 'getWorkerPool' method has not been implemented yet");
+    }
+
+    @Override
+    public Optional<XillWorkerPool> findWorkerPool(final XWID projectId) {
         throw new NotImplementedException("The 'findWorkerPool' method has not been implemented yet");
     }
 }

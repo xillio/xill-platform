@@ -1,27 +1,35 @@
 package nl.xillio.xill.webservice.services;
 
-import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import nl.xillio.xill.webservice.model.XillWorkerPool;
 import nl.xillio.xill.webservice.types.XWID;
 
+import java.nio.file.Path;
+import java.util.Optional;
+
 /**
- * Created by andrea.parrilli on 2016-11-16.
+ * Represents a service that manages {@link XillWorkerPool}: factory and reference.
  */
 public interface XillWorkerPoolManagerService {
     /**
      * Create new or return existing XillWorkerPool for given projectId.
      *
-     * @param projectId The project id. For the moment, it's not used as there is no support for projects yet.
-     * @return The XillWorkerPool for given projectId that has been created or reused. For the moment, it always returns one XillWorkerPool as there is no support for projects yet.
+     * @param workDirectory The project directory. For the moment, it's not used as there is no support for projects yet.
+     * @return The XillWorkerPool for given workDirectory that has been created or reused. For the moment, it always returns one XillWorkerPool as there is no support for projects yet.
      */
-    public XillWorkerPool getWorkerPool(final XWID projectId);
+    public XillWorkerPool getWorkerPool(final Path workDirectory);
+
+    /**
+     * Get the default {@link XillWorkerPool} based on configuration. The worker pool is instantiated if necessary.
+     *
+     * @return the default worker pool for this service
+     */
+    public XillWorkerPool getDeafultWorkerPool();
 
     /**
      * Return existing XillWorkerPool for given projectId.
      *
      * @param projectId The project id. For the moment, it's not used as there is no support for projects yet.
      * @return The existing XillWorkerPool for given projectId.
-     * @throws XillNotFoundException if XillWorkerPool for given projectId does not exist.
      */
-    public XillWorkerPool findWorkerPool(final XWID projectId) throws XillNotFoundException;
+    public Optional<XillWorkerPool> findWorkerPool(final XWID projectId);
 }
