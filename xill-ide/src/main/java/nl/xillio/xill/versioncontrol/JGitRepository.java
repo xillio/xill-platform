@@ -150,6 +150,6 @@ public class JGitRepository implements Repository {
     }
 
     private void showSucceeded(String action) {
-        new AlertDialog(Alert.AlertType.INFORMATION, action + " succeeded", action + " succesful." , action + " has been completed succesfully.").showAndWait();
+        new AlertDialog(Alert.AlertType.INFORMATION, action + " succeeded", "" , action + " has been completed succesfully.").showAndWait();
     }
 }
