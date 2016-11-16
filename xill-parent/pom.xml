@@ -195,7 +195,6 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <configuration>
                     <append>true</append>
-                    <dumpOnExit>false</dumpOnExit>
                 </configuration>
                 <executions>
                     <execution>
