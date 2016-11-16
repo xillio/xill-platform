@@ -53,7 +53,7 @@ public class JGitRepository implements Repository {
         } catch (IOException e) {
             LOGGER.error("An exception occurred while loading the repository.", e);
         } catch (IllegalArgumentException e) {
-            //?
+            LOGGER.error("An exception occurred while loading the repository.", e);
         }
     }
 
@@ -64,6 +64,7 @@ public class JGitRepository implements Repository {
             repository.commit().setMessage(commitMessage).call();
         } catch (GitAPIException e) {
             showError("pushing", e.getMessage());
+            LOGGER.error("Error committing", e);
         }
     }
 
@@ -139,6 +140,7 @@ public class JGitRepository implements Repository {
             return true;
         } catch (GitAPIException e) {
             showError(action, e.getMessage());
+            LOGGER.error("Error " + action, e);
             return false;
         }
     }
