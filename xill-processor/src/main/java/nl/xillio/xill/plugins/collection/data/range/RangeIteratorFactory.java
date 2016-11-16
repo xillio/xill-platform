@@ -56,8 +56,7 @@ public class RangeIteratorFactory {
 
         assertCondition(
                 MathUtils.compare(start, end) < 0 || MathUtils.compare(step, 0) < 0,
-                "The step-value must not be positive when the start-value is greater than the end-value."
-        );
+                "The step-value must not be positive when the start-value is greater than the end-value.");
     }
 
     private void assertCondition(boolean condition,String message) {

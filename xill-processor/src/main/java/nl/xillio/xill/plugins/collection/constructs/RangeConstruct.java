@@ -64,7 +64,7 @@ public class RangeConstruct extends Construct {
                             ", end: " + end.getStringValue() +
                             ", step: " + step.getStringValue(),
                     "Correct numbers values for start, end and step.",
-                    "Start: 0, End: 10, Step: 1",
+                    "Collection.range(0, 10, 1);",
                     e);
         }
 
