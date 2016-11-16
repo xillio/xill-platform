@@ -193,6 +193,9 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+                <configuration>
+                    <append>true</append>
+                </configuration>
                 <executions>
                     <execution>
                         <id>agent-for-ut</id>
@@ -200,8 +203,8 @@
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
-                            <propertyName>surefireArgLine</propertyName>
                             <destFile>${sonar.jacoco.reportPath}</destFile>
+                            <propertyName>surefireArgLine</propertyName>
                         </configuration>
                         <phase>test-compile</phase>
                     </execution>

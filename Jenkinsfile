@@ -60,7 +60,7 @@ if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /d+(\.(d+|x))+/) {
     buildOn(
             platform: 'slave',
             runSonar: true,
-            buildPhase: 'verify'
+            buildPhase: 'install'
     )
 }
 
@@ -76,7 +76,7 @@ void buildOn(Map args) {
     String platform = args.platform ?: 'linux'
     boolean runSonar = args.runSonar ?: false
     String mavenArgs = args.mavenArgs ?: ''
-    String buildPhase = args.buildPhase ?: 'verify'
+    String buildPhase = args.buildPhase ?: 'install'
 
     node("xill-platform && ${platform}") {
 
