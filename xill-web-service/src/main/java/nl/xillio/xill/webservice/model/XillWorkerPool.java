@@ -27,12 +27,14 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class XillWorkerPool {
     private final String workDirectory;
+    private final XWID workerPoolId;
 
     @Autowired
     private XillProperties properties;
 
     public XillWorkerPool(final String workDirectory) {
         this.workDirectory = workDirectory;
+        this.workerPoolId = new XWID();
 
         //System.out.println(String.format("MaxExecutors: %1$d", properties.getMaxExecutors()));
     }
