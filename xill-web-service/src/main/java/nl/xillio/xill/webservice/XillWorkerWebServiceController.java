@@ -15,8 +15,12 @@
  */
 package nl.xillio.xill.webservice;
 
-import nl.xillio.xill.webservice.model.Worker;
+import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
+import nl.xillio.xill.webservice.model.XillWorker;
+import nl.xillio.xill.webservice.services.XillWorkerPoolManagerServiceImpl;
+import nl.xillio.xill.webservice.types.XWID;
 import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This class represents the main API controller. It is responsible for interacting with the actor that
@@ -26,13 +30,16 @@ import org.apache.commons.lang3.NotImplementedException;
  */
 public class XillWorkerWebServiceController {
 
+    @Autowired
+    private XillWorkerPoolManagerServiceImpl workerPoolManagerService;
+
     /**
      * Register a worker for a specific robot if a space is available.
      *
      * @param worker the worker that should be registered
      * @return the identifier for the worker
      */
-    public int registerWorker(Worker worker) {
+    public XWID registerWorker(XillWorker worker) {
         throw new NotImplementedException("The 'registerWorker' method has not been implemented yet");
     }
 
@@ -41,19 +48,27 @@ public class XillWorkerWebServiceController {
      *
      * @param id the identifier of the worker
      */
-    public void releaseWorker(int id) {
-        throw new NotImplementedException("The 'registerWorker' method has not been implemented yet");
+    public void releaseWorker(XWID id) {
+        try {
+            workerPoolManagerService.getDeafultWorkerPool().releaseWorker(id);
+        } catch (XillNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public void releaseAllWorkers() {
         throw new NotImplementedException("The 'releaseAllWorkers' method has not been implemented yet");
     }
 
-    public Object runWorker(int id) {
+    public Object runWorker(XWID id) {
         throw new NotImplementedException("The 'runWorker' method has not been implemented yet");
     }
 
-    public void interruptWorker(int id) {
-        throw new NotImplementedException("The 'registerWorker' method has not been implemented yet");
+    public void abortWorker(XWID id) {
+        try {
+            workerPoolManagerService.getDeafultWorkerPool().findWorker(id).abort();
+        } catch (XillNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

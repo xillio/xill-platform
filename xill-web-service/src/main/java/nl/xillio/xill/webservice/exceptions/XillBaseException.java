@@ -13,22 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.webservice.model;
+package nl.xillio.xill.webservice.exceptions;
 
 /**
- * This class represents a worker entity in the domain model.
- * A worker can be started which will run a robot. This execution can be interrupted on a different thread.
- *
- * @author Thomas Biesaart
+ * The base exception class.
  */
-public class Worker {
-    private final String robot;
-
-    public Worker(String robot) {
-        this.robot = robot;
-    }
-
-    public String getRobot() {
-        return robot;
-    }
+public class XillBaseException extends Exception {
 }
