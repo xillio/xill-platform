@@ -20,6 +20,7 @@ import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.dialogs.AlertDialog;
 import nl.xillio.migrationtool.dialogs.GitAuthenticateDialog;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.TransportCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -68,7 +69,9 @@ public class JGitRepository implements Repository {
 
     @Override
     public void push() {
-        tryCommand(repository.push(), "pushing");
+        if (!tryCommand(repository.push(), "pushing")) {
+            resetCommit();
+        }
     }
 
     @Override
@@ -105,13 +108,22 @@ public class JGitRepository implements Repository {
         }
     }
 
-    private void tryCommand(TransportCommand cmd, String action) {
+    private void resetCommit() {
+        try{
+            repository.reset().setMode(ResetCommand.ResetType.SOFT).setRef("head^").call();
+        } catch (GitAPIException e) {
+            LOGGER.error("Error resetting commit", e);
+        }
+    }
+
+    private boolean tryCommand(TransportCommand cmd, String action) {
         setCredentialsProvider(cmd);
 
         // Try without authenticating.
         try {
             cmd.call();
-            return;
+            showSucceeded(action);
+            return true;
         } catch (GitAPIException e) {
             // Ignore silently.
         }
@@ -123,12 +135,19 @@ public class JGitRepository implements Repository {
         // Try again.
         try {
             cmd.call();
+            showSucceeded(action);
+            return true;
         } catch (GitAPIException e) {
             showError(action, e.getMessage());
+            return false;
         }
     }
 
     private void showError(String action, String message) {
-        new AlertDialog(Alert.AlertType.ERROR, "Error while " + action, "An error occurred while " + action + ".", message).showAndWait();
+        new AlertDialog(Alert.AlertType.ERROR, "Error while " + action, "An error occurred while " + action + ".\n Please use a git client to fix the issue." , message).showAndWait();
+    }
+
+    private void showSucceeded(String action) {
+        new AlertDialog(Alert.AlertType.INFORMATION, action + " succeeded", action + " succesful." , action + " has been completed succesfully.").showAndWait();
     }
 }
