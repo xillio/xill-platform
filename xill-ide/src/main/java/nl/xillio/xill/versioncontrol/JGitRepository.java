@@ -128,6 +128,11 @@ public class JGitRepository implements Repository {
     }
 
     @Override
+    public void createBranch(String name) throws GitAPIException {
+        repository.branchCreate().setName(name).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
+    }
+
+    @Override
     public boolean isInitialized() {
         return repository != null;
     }

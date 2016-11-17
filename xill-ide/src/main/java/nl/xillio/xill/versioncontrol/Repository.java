@@ -69,6 +69,13 @@ public interface Repository {
     void checkout(String branch) throws GitAPIException;
 
     /**
+     * Create a new branch.
+     *
+     * @param name The name of the branch to create.
+     */
+    void createBranch(String name) throws GitAPIException;
+
+    /**
      * Returns if this object exists as initialized repository on the disk.
      *
      * @return {@code true} if this object is initialized on the disk, {@code false} otherwise.
