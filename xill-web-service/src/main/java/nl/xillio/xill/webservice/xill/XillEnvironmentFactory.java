@@ -2,9 +2,9 @@ package nl.xillio.xill.webservice.xill;
 
 import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.api.XillLoader;
-import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.webservice.exceptions.XillEnvironmentLoadException;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -14,20 +14,16 @@ import java.nio.file.Path;
 /**
  * This class is responsible for loading installations of Xill.
  *
- * Xill environments created by this class have all plugins loaded and use
- * a {@link CleaningXillThreadFactory}.
+ * Xill environments created by this class have all plugins loaded.
  *
  * @author Thomas Biesaart
  * @author Geert Konijnendijk
  */
 @Component
 public class XillEnvironmentFactory implements FactoryBean<XillEnvironment> {
-    private final XillProperties properties;
 
-    @Inject
-    public XillEnvironmentFactory(XillProperties properties) {
-        this.properties = properties;
-    }
+    @Autowired
+    private XillRuntimeProperties properties;
 
     /**
      * Load Xill from the default home location.

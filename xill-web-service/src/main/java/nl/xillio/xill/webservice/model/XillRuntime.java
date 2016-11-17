@@ -46,15 +46,14 @@ public interface XillRuntime extends AutoCloseable {
      * This method runs a single robot with low latency in a blocking fashion.
      *
      * @param parameters The parameters to be passed as the robot's arguments
-     * @param outputHandler The handler for the robot's logging output
      * @return The robot's return value
      */
-    Object runRobot(Map<String, Object> parameters, OutputHandler outputHandler);
+    Object runRobot(Map<String, Object> parameters);
 
     /**
      * Abort a currently running robot.
      *
-     * This method will effectively stop a call to {@link #runRobot(Map, OutputHandler)}
+     * This method will effectively stop a call to {@link #runRobot(Map)}
      * before the robot has fully finished running.
      *
      * @throws XillInvalidStateException When a robot is not currently running

@@ -50,7 +50,7 @@ public class XillWorkerWebServiceController {
      */
     public void releaseWorker(XWID id) {
         try {
-            workerPoolManagerService.getDeafultWorkerPool().releaseWorker(id);
+            workerPoolManagerService.getDefaultWorkerPool().releaseWorker(id);
         } catch (XillNotFoundException e) {
             e.printStackTrace();
         }
@@ -66,7 +66,7 @@ public class XillWorkerWebServiceController {
 
     public void abortWorker(XWID id) {
         try {
-            workerPoolManagerService.getDeafultWorkerPool().findWorker(id).abort();
+            workerPoolManagerService.getDefaultWorkerPool().findWorker(id).abort();
         } catch (XillNotFoundException e) {
             e.printStackTrace();
         }

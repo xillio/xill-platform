@@ -34,7 +34,7 @@ public class XillWorkerPoolManagerServiceImpl implements XillWorkerPoolManagerSe
     }
 
     @Override
-    public XillWorkerPool getDeafultWorkerPool() {
+    public XillWorkerPool getDefaultWorkerPool() {
         throw new NotImplementedException("The 'getWorkerPool' method has not been implemented yet");
     }
 

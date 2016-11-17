@@ -23,7 +23,7 @@ public interface XillWorkerPoolManagerService {
      *
      * @return the default worker pool for this service
      */
-    public XillWorkerPool getDeafultWorkerPool();
+    public XillWorkerPool getDefaultWorkerPool();
 
     /**
      * Return existing XillWorkerPool for given projectId.
