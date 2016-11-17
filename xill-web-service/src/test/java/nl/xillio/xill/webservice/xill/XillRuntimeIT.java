@@ -58,6 +58,7 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
 
     /**
      * Test running a single robot returning a result.
+     *
      * @throws XillCompileException When compilation fails
      */
     @Test
@@ -74,7 +75,8 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
     }
 
     /**
-     * Test running a single robot multiple times with different parameters
+     * Test running a single robot multiple times with different parameters.
+     *
      * @throws XillCompileException When compilation fails
      */
     @Test
