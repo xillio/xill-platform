@@ -13,6 +13,7 @@ import nl.xillio.xill.webservice.exceptions.XillCompileException;
 import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import nl.xillio.xill.webservice.model.XillRuntime;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +33,7 @@ import static nl.xillio.xill.api.components.MetaExpression.extractValue;
  */
 @Component("xillRuntimeImpl")
 @Scope("prototype")
-public class XillRuntimeImpl implements XillRuntime {
+public class XillRuntimeImpl implements XillRuntime, DisposableBean {
     private static final Logger LOGGER = me.biesaart.utils.Log.get();
 
     private XillEnvironment xillEnvironment;
@@ -62,6 +63,8 @@ public class XillRuntimeImpl implements XillRuntime {
             xillProcessor.setOutputHandler(outputHandler);
             // Ignore all errors since they will be picked up by the output handler
             xillProcessor.getDebugger().setErrorHandler(e -> { });
+
+            // Compile to check for errors in the robot
             xillProcessor.compile();
         } catch (IOException | XillParsingException e) {
             throw new XillCompileException("Failed to compile robot", e);
@@ -71,6 +74,16 @@ public class XillRuntimeImpl implements XillRuntime {
     @Override
     public Object runRobot(Map<String, Object> parameters) {
         isRunning = true;
+
+        try {
+            // We need to compile here to allow the runtime to run a single robot multiple times
+            xillProcessor.compile();
+        } catch (IOException | XillParsingException e) {
+            // We do not throw the exception since the robot has already successfully compiled during the call to compile()
+            LOGGER.error("Error compiling robot, if this robot has changed, a new worker should be allocated", e);
+            isRunning = false;
+            return null;
+        }
 
         Robot processableRobot = xillProcessor.getRobot();
 
@@ -85,6 +98,11 @@ public class XillRuntimeImpl implements XillRuntime {
         }
     }
 
+    /**
+     * Create a MetaExpression containing a stream from an object
+     * @param input The object to wrap in a MetaExpression
+     * @return A MetaExpression if {@code input} is an {@link InputStream}, null otherwise
+     */
     private MetaExpression getStream(Object input) {
         if (input instanceof InputStream) {
             return fromValue(new SimpleIOStream((InputStream) input, "Http File Stream"));
@@ -125,5 +143,10 @@ public class XillRuntimeImpl implements XillRuntime {
         } catch (Exception e) {
             LOGGER.error("Could not close Xill threads", e);
         }
+    }
+
+    @Override
+    public void destroy() {
+        close();
     }
 }
