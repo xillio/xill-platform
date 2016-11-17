@@ -13,6 +13,8 @@ import nl.xillio.xill.webservice.exceptions.XillCompileException;
 import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import nl.xillio.xill.webservice.model.XillRuntime;
 import org.slf4j.Logger;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -28,6 +30,8 @@ import static nl.xillio.xill.api.components.MetaExpression.extractValue;
  *
  * @author Geert Konijnendijk
  */
+@Component("xillRuntime")
+@Scope("prototype")
 public class XillRuntimeImpl implements XillRuntime {
     private static final Logger LOGGER = me.biesaart.utils.Log.get();
 

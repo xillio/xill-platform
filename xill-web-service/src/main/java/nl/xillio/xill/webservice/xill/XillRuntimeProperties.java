@@ -7,9 +7,15 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.nio.file.Path;
 
+/**
+ * Properties for locating anf loading the Xill environment.
+ *
+ * @author Thomas Biesaart
+ * @author Geert Konijnendijk
+ */
 @Component
-@ConfigurationProperties(prefix = "xill")
-public class XillProperties {
+@ConfigurationProperties(prefix = "xillRuntime")
+public class XillRuntimeProperties {
     private Path home = new File(XillioHomeFolder.forXillServer(), "xill").toPath();
     private Path pluginDir = null;
     private Path licenseDir = null;
