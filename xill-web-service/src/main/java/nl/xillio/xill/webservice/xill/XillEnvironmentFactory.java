@@ -4,6 +4,7 @@ import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.api.XillLoader;
 import nl.xillio.xill.webservice.exceptions.XillEnvironmentLoadException;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -20,12 +21,9 @@ import java.nio.file.Path;
  */
 @Component
 public class XillEnvironmentFactory implements FactoryBean<XillEnvironment> {
-    private final XillRuntimeProperties properties;
 
-    @Inject
-    public XillEnvironmentFactory(XillRuntimeProperties properties) {
-        this.properties = properties;
-    }
+    @Autowired
+    private XillRuntimeProperties properties;
 
     /**
      * Load Xill from the default home location.

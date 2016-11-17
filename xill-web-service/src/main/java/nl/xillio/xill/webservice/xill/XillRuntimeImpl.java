@@ -30,7 +30,7 @@ import static nl.xillio.xill.api.components.MetaExpression.extractValue;
  *
  * @author Geert Konijnendijk
  */
-@Component("xillRuntime")
+@Component("xillRuntimeImpl")
 @Scope("prototype")
 public class XillRuntimeImpl implements XillRuntime {
     private static final Logger LOGGER = me.biesaart.utils.Log.get();
