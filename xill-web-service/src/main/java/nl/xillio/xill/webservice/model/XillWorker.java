@@ -18,28 +18,29 @@ package nl.xillio.xill.webservice.model;
 import nl.xillio.xill.webservice.types.XWID;
 import org.apache.commons.lang3.NotImplementedException;
 
+import java.nio.file.Path;
 import java.util.Map;
 
 /**
  * This class represents a worker entity in the domain model.
- * A worker can be started which will run a robot. This execution can be interrupted on a different thread.
+ * A worker can be started which will run a robotPath. This execution can be interrupted on a different thread.
  *
  * @author Thomas Biesaart
  */
 public class XillWorker implements AutoCloseable {
-    private final String robot;
+    protected final Path robotPath;
 
-    public XillWorker(String robot) {
-        this.robot = robot;
+    public XillWorker(Path robotPath) {
+        this.robotPath = robotPath;
     }
 
-    public String getRobot() {
-        return robot;
+    public Path getRobotPath() {
+        return robotPath;
     }
 
     /**
      * Return the id of the allocated worker.
-     * The id must be unique across the XillWorkerPool.
+     * The id must be unique across the XillWorkerPools.
      *
      * @return
      */
@@ -48,10 +49,10 @@ public class XillWorker implements AutoCloseable {
     }
 
     /**
-     * Run the robot associated with the worker.
+     * Run the robotPath associated with the worker.
      *
-     * @param arguments The robot run arguments.
-     * @return The result of the robot run.
+     * @param arguments The robotPath run arguments.
+     * @return The result of the robotPath run.
      */
     public Object run(final Map<String, Object> arguments) {
         throw new NotImplementedException("The 'run' method has not been implemented yet");
