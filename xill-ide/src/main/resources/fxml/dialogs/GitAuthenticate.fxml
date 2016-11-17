@@ -30,17 +30,8 @@
                             <children>
                                 <Label text="Username" />
                                 <TextField fx:id="username" promptText="username" />
-                                <VBox alignment="CENTER_LEFT" disable="false" focusTraversable="false" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" snapToPixel="true" spacing="4.0" visible="true" VBox.vgrow="NEVER">
-                                    <children>
-                                        <Label text="Password" />
-                                        <PasswordField fx:id="password" depthTest="INHERIT" promptText="password" HBox.hgrow="ALWAYS" />
-                                        <VBox alignment="CENTER_LEFT" disable="false" focusTraversable="false" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" snapToPixel="true" spacing="4.0" visible="true" VBox.vgrow="NEVER">
-                                            <children>
-                                                <Label fx:id="message" text="" />
-                                            </children>
-                                        </VBox>
-                                    </children>
-                                </VBox>
+                                <Label text="Password" />
+                                <PasswordField fx:id="password" promptText="password" HBox.hgrow="ALWAYS" />
                             </children>
                         </VBox>
                     </children>

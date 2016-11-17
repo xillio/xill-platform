@@ -29,7 +29,7 @@
                         <VBox alignment="CENTER_LEFT" styleClass="dialogFormWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
                                 <Label text="Changed files" />
-                                <ListView fx:id="fileList" minHeight="205.0"></ListView>
+                                <ListView fx:id="fileList" minHeight="205.0" />
                                 <Label text="Enter a message for the commit" />
                                 <TextField fx:id="message" promptText="Commit message" />
                             </children>

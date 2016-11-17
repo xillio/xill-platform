@@ -31,7 +31,7 @@ public class GitAuthenticateDialog extends FXMLDialog {
     private Label message;
 
     private final Repository repo;
-    private boolean canceled;
+    private boolean canceled = true;
 
     /**
      * Default constructor.
@@ -46,12 +46,12 @@ public class GitAuthenticateDialog extends FXMLDialog {
 
     @FXML
     private void cancelBtnPressed(final ActionEvent event) {
-        canceled = true;
         close();
     }
 
     @FXML
     private void okBtnPressed(final ActionEvent event) {
+        canceled = false;
         repo.setCredentials(username.getText(), password.getText());
         password.clear();
         close();
