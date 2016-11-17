@@ -25,15 +25,15 @@ public class BranchListDialog extends FXMLDialog {
     @FXML
     private ListView<String> lvBranches;
 
-    private Repository repo;
+    private final Repository repo;
 
     public BranchListDialog(final Repository repo) {
         super("/fxml/dialogs/BranchList.fxml");
         setTitle("Branches");
         this.repo = repo;
 
-        // Set the branch list.
-        lvBranches.getItems().setAll(repo.getBranchNames());
+        // Set the branches.
+        lvBranches.getItems().addAll(repo.getBranches());
         lvBranches.getSelectionModel().select(repo.getCurrentBranchName());
     }
 
@@ -42,7 +42,7 @@ public class BranchListDialog extends FXMLDialog {
         String branch = lvBranches.getSelectionModel().getSelectedItem();
         try {
             repo.checkout(branch);
-        } catch(GitAPIException e) {
+        } catch (GitAPIException e) {
             new AlertDialog(Alert.AlertType.ERROR, "Error", "An error occurred while checking out " + branch + ".", e.getMessage()).showAndWait();
         }
     }

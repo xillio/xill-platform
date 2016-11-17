@@ -28,10 +28,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * Implementation of {@link Repository} which uses the jGit library for interacting with Git repositories.
+ *
  * @author Daan Knoope
  */
 public class JGitRepository implements Repository {
@@ -89,14 +91,19 @@ public class JGitRepository implements Repository {
     }
 
     @Override
-    public List<String> getBranchNames() {
+    public List<String> getBranches() {
         try {
-            List<Ref> refs = repository.branchList().setListMode(ListBranchCommand.ListMode.REMOTE).call();
-            return refs.stream().map(Ref::getName).map(repository.getRepository()::shortenRemoteBranchName).collect(Collectors.toList());
+            // Get all remote branches.
+            List<Ref> remotes = repository.branchList().setListMode(ListBranchCommand.ListMode.REMOTE).call();
+            return remotes.stream().map(Ref::getName).map(this::friendlyBranchName).collect(Collectors.toList());
         } catch (GitAPIException e) {
             LOGGER.error("Exception while getting branches.", e);
             return Collections.emptyList();
         }
+    }
+
+    private String friendlyBranchName(String name) {
+        return name.substring(name.lastIndexOf('/') + 1);
     }
 
     @Override
@@ -111,7 +118,13 @@ public class JGitRepository implements Repository {
 
     @Override
     public void checkout(String branch) throws GitAPIException {
-        repository.checkout().setName(branch).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).call();
+        // If there is already a local branch, the branch should not be created.
+        Set<String> localBranches = repository.branchList().call().stream().map(Ref::getName).map(this::friendlyBranchName).collect(Collectors.toSet());
+        boolean exists = localBranches.contains(branch);
+
+        // Checkout the branch, creating and tracking the remote if it does not exist yet.
+        repository.checkout().setCreateBranch(!exists).setName(branch).setStartPoint("origin/" + branch)
+                .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
     }
 
     @Override

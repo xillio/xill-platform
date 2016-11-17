@@ -52,7 +52,7 @@ public interface Repository {
      *
      * @return The list of branches.
      */
-    List<String> getBranchNames();
+    List<String> getBranches();
 
     /**
      * Get the current branch name.
