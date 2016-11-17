@@ -20,7 +20,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import nl.xillio.xill.versioncontrol.JGitRepository;
+import nl.xillio.xill.versioncontrol.Repository;
 
 public class GitAuthenticateDialog extends FXMLDialog {
     @FXML
@@ -30,14 +30,15 @@ public class GitAuthenticateDialog extends FXMLDialog {
     @FXML
     private Label message;
 
-    private final JGitRepository repo;
+    private final Repository repo;
+    private boolean canceled;
 
     /**
      * Default constructor.
      *
-     * @param repo    the JGitRepository that will be pushed to.
+     * @param repo The JGitRepository that will be pushed to.
      */
-    public GitAuthenticateDialog(final JGitRepository repo) {
+    public GitAuthenticateDialog(final Repository repo) {
         super("/fxml/dialogs/GitAuthenticate.fxml");
         this.setTitle("Fill in credentials");
         this.repo = repo;
@@ -45,6 +46,7 @@ public class GitAuthenticateDialog extends FXMLDialog {
 
     @FXML
     private void cancelBtnPressed(final ActionEvent event) {
+        canceled = true;
         close();
     }
 
@@ -53,6 +55,15 @@ public class GitAuthenticateDialog extends FXMLDialog {
         repo.setCredentials(username.getText(), password.getText());
         password.clear();
         close();
+    }
+
+    /**
+     * Whether the cancel button was pressed on this dialog.
+     *
+     * @return true if cancel was pressed, false otherwise.
+     */
+    public boolean isCanceled() {
+        return canceled;
     }
 }
 

@@ -16,6 +16,7 @@
 package nl.xillio.xill.versioncontrol;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.dialogs.AlertDialog;
 import nl.xillio.migrationtool.dialogs.GitAuthenticateDialog;
@@ -61,8 +62,7 @@ public class JGitRepository implements Repository {
             repository.add().addFilepattern(".").call();
             repository.commit().setMessage(commitMessage).call();
         } catch (GitAPIException e) {
-            showError("pushing", e.getMessage());
-            LOGGER.error("Error committing.", e);
+            showError("committing", e);
         }
     }
 
@@ -91,7 +91,7 @@ public class JGitRepository implements Repository {
             changedFiles.addAll(status.getUncommittedChanges()); // Add changes
             changedFiles.addAll(status.getUntracked()); // Add untracked files
         } catch (GitAPIException | NoWorkTreeException e) {
-            LOGGER.error("Error retrieving changed files", e);
+            LOGGER.error("Error retrieving changed files.", e);
         }
         return changedFiles;
     }
@@ -108,8 +108,8 @@ public class JGitRepository implements Repository {
     }
 
     private void resetCommit() {
-        try{
-            repository.reset().setMode(ResetCommand.ResetType.SOFT).setRef("head^").call();
+        try {
+            repository.reset().setMode(ResetCommand.ResetType.SOFT).setRef("HEAD^").call();
         } catch (GitAPIException e) {
             LOGGER.error("Error resetting commit.", e);
         }
@@ -117,37 +117,46 @@ public class JGitRepository implements Repository {
 
     private boolean tryCommand(TransportCommand cmd, String action) {
         setCredentialsProvider(cmd);
+        boolean showAuthError = false;
 
-        // Try without authenticating.
-        try {
-            cmd.call();
-            showSucceeded(action);
-            return true;
-        } catch (GitAPIException e) {
-            // Ignore silently.
-        }
+        while (true) {
+            // Try to execute the command.
+            try {
+                cmd.call();
+                showSucceeded(action);
+                return true;
+            } catch (GitAPIException e) {
+                // Ignore authorization exceptions the first time. Always show an error for other exceptions.
+                if (!isAuthorizationException(e)) {
+                    showError(action, e);
+                    return false;
+                } else if (showAuthError) {
+                    new AlertDialog(Alert.AlertType.WARNING, "Invalid credentials", "",
+                            "The credentials you entered are invalid, please try again.", ButtonType.OK).showAndWait();
+                }
+            }
 
-        // Authenticate.
-        new GitAuthenticateDialog(this).showAndWait();
-        setCredentialsProvider(cmd);
-
-        // Try again.
-        try {
-            cmd.call();
-            showSucceeded(action);
-            return true;
-        } catch (GitAPIException e) {
-            showError(action, e.getMessage());
-            LOGGER.error("Error " + action, e);
-            return false;
+            // Show the authentication dialog.
+            showAuthError = true;
+            GitAuthenticateDialog dlg = new GitAuthenticateDialog(this);
+            dlg.showAndWait();
+            if (dlg.isCanceled()) {
+                return false;
+            }
+            setCredentialsProvider(cmd);
         }
     }
 
-    private void showError(String action, String message) {
-        new AlertDialog(Alert.AlertType.ERROR, "Error while " + action, "An error occurred while " + action + "." , message).showAndWait();
+    private void showError(String action, Throwable cause) {
+        LOGGER.error("Error while " + action, cause);
+        new AlertDialog(Alert.AlertType.ERROR, "Error while " + action, "An error occurred while " + action + ".", cause.getMessage()).showAndWait();
     }
 
     private void showSucceeded(String action) {
-        new AlertDialog(Alert.AlertType.INFORMATION, action + " succeeded", "" , action + " has been completed successfully.").showAndWait();
+        new AlertDialog(Alert.AlertType.INFORMATION, action + " succeeded", "", action + " was successful.").showAndWait();
+    }
+
+    private boolean isAuthorizationException(GitAPIException e) {
+        return e.getMessage().endsWith("not authorized") || e.getMessage().endsWith("Authentication is required but no CredentialsProvider has been registered");
     }
 }

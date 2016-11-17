@@ -197,7 +197,6 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         menuDelete.setOnAction(e -> deleteButtonPressed());
 
         // Version Control.
-        menuVersionControl = new Menu("Version control");
         versionControlMenu();
 
         // Upload.
@@ -283,7 +282,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         MenuItem pull = new MenuItem("Pull");
         pull.setOnAction(e -> pull());
 
-        menuVersionControl.getItems().addAll(push, pull);
+        menuVersionControl = new Menu("Version control", null, push, pull);
     }
 
     private void push() {
