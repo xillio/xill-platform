@@ -1,0 +1,4 @@
+
+argument args;
+
+return args.input;

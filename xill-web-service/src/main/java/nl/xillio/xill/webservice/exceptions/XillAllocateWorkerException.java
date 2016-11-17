@@ -19,5 +19,11 @@ package nl.xillio.xill.webservice.exceptions;
  * The exception class - fired when worker cannot be allocated.
  */
 public class XillAllocateWorkerException extends XillBaseException {
+    public XillAllocateWorkerException(String message) {
+        super(message);
+    }
 
+    public XillAllocateWorkerException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
