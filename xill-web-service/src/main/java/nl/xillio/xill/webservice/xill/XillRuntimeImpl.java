@@ -58,7 +58,7 @@ public class XillRuntimeImpl implements XillRuntime {
     @Override
     public void compile(Path workDirectory, Path robotPath) throws XillCompileException {
         try {
-            xillProcessor = xillEnvironment.buildProcessor(workDirectory, robotPath);
+            xillProcessor = xillEnvironment.buildProcessor(workDirectory, workDirectory.resolve(robotPath));
             xillProcessor.setOutputHandler(outputHandler);
             // Ignore all errors since they will be picked up by the output handler
             xillProcessor.getDebugger().setErrorHandler(e -> { });
