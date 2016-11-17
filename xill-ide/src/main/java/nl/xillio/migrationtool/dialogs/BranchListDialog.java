@@ -21,6 +21,8 @@ import javafx.scene.control.ListView;
 import nl.xillio.xill.versioncontrol.Repository;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+import java.util.List;
+
 public class BranchListDialog extends FXMLDialog {
     @FXML
     private ListView<String> lvBranches;
@@ -31,10 +33,18 @@ public class BranchListDialog extends FXMLDialog {
         super("/fxml/dialogs/BranchList.fxml");
         setTitle("Branches");
         this.repo = repo;
+        getBranchList();
+    }
 
-        // Set the branches.
-        lvBranches.getItems().addAll(repo.getBranches());
-        lvBranches.getSelectionModel().select(repo.getCurrentBranchName());
+    private void getBranchList() {
+        List<String> branches = repo.getBranches();
+        String current = repo.getCurrentBranchName();
+
+        // Move the current branch to the top and prefix it with an asterisk.
+        branches.remove(current);
+        branches.add(0, "* " + current);
+
+        lvBranches.getItems().setAll(branches);
     }
 
     @FXML
@@ -45,6 +55,13 @@ public class BranchListDialog extends FXMLDialog {
         } catch (GitAPIException e) {
             new AlertDialog(Alert.AlertType.ERROR, "Error", "An error occurred while checking out " + branch + ".", e.getMessage()).showAndWait();
         }
+        close();
+    }
+
+    @FXML
+    private void createBtnPressed() {
+        new CreateBranchDialog(repo).showAndWait();
+        close();
     }
 
     @FXML

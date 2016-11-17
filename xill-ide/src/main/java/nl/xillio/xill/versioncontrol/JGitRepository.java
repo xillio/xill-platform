@@ -94,8 +94,8 @@ public class JGitRepository implements Repository {
     public List<String> getBranches() {
         try {
             // Get all remote branches.
-            List<Ref> remotes = repository.branchList().setListMode(ListBranchCommand.ListMode.REMOTE).call();
-            return remotes.stream().map(Ref::getName).map(this::friendlyBranchName).collect(Collectors.toList());
+            List<Ref> remotes = repository.branchList().setListMode(ListBranchCommand.ListMode.ALL).call();
+            return remotes.stream().map(Ref::getName).map(this::friendlyBranchName).distinct().collect(Collectors.toList());
         } catch (GitAPIException e) {
             LOGGER.error("Exception while getting branches.", e);
             return Collections.emptyList();
