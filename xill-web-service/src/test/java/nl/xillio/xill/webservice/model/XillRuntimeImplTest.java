@@ -89,7 +89,7 @@ public class XillRuntimeImplTest extends TestUtils {
     }
 
     /**
-     * Test {@link XillRuntimeImpl#runRobot(Map, OutputHandler)} under normal circumstances.
+     * Test {@link XillRuntimeImpl#runRobot(Map)} under normal circumstances.
      */
     @Test
     public void testRunRobot() throws IOException, XillCompileException {
@@ -99,11 +99,10 @@ public class XillRuntimeImplTest extends TestUtils {
         when(robot.process(debugger)).thenReturn(InstructionFlow.doReturn(robotResult));
 
         Map<String, Object> parameters = new HashMap<>();
-        OutputHandler outputHandler = mock(OutputHandler.class);
 
         // Run
         xillRuntime.compile(workingDir, robotPath);
-        Object result = xillRuntime.runRobot(parameters, outputHandler);
+        Object result = xillRuntime.runRobot(parameters);
 
         // Verify
         verify(xillEnvironment).setXillThreadFactory(any());
@@ -116,16 +115,15 @@ public class XillRuntimeImplTest extends TestUtils {
     }
 
     /**
-     * Test {@link XillRuntimeImpl#runRobot(Map, OutputHandler)} when {@link XillRuntimeImpl#compile(Path, Path)} has
+     * Test {@link XillRuntimeImpl#runRobot(Map)} when {@link XillRuntimeImpl#compile(Path, Path)} has
      * not been called yet.
      */
     @Test(expectedExceptions = Exception.class)
     public void testRunRobotNoCompile() {
         // Mock
         Map<String, Object> parameters = new HashMap<>();
-        OutputHandler outputHandler = mock(OutputHandler.class);
 
         // Run
-        xillRuntime.runRobot(parameters, outputHandler);
+        xillRuntime.runRobot(parameters);
     }
 }

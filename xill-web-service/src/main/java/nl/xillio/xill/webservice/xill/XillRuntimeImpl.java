@@ -69,7 +69,7 @@ public class XillRuntimeImpl implements XillRuntime {
     }
 
     @Override
-    public Object runRobot(Map<String, Object> parameters, OutputHandler outputHandler) {
+    public Object runRobot(Map<String, Object> parameters) {
         isRunning = true;
 
         Robot processableRobot = xillProcessor.getRobot();
