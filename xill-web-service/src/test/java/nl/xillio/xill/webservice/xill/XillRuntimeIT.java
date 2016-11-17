@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,12 +31,15 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
     private Path workingDirectory;
     private Path robotPath;
 
+    @Autowired
+    private XillRuntime xillRuntime;
+
     /**
      * Deploy a robot to be run during tests to a temporary directory.
      *
      * @throws IOException When deploying fails
      */
-    @BeforeTest
+    @BeforeClass
     public void deployRobot() throws IOException {
         workingDirectory = Files.createTempDirectory("xillRuntimeIT");
         robotPath = Paths.get("return.xill");
@@ -50,20 +51,18 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
      *
      * @throws IOException When deleting fails
      */
-    @AfterTest
+    @AfterClass
     public void removeRobot() throws IOException {
        FileUtils.forceDelete(workingDirectory.toFile());
     }
 
     /**
      * Test running a single robot returning a result.
-     * @param xillRuntime The runtime, will be injected
      * @throws XillCompileException When compilation fails
      */
     @Test
     @DirtiesContext
-    @Autowired
-    public void testRunRobot(XillRuntime xillRuntime) throws XillCompileException {
+    public void testRunRobot() throws XillCompileException {
         xillRuntime.compile(workingDirectory, robotPath);
 
         Map<String, Object> parameters = new HashMap<>();
@@ -76,13 +75,11 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
 
     /**
      * Test running a single robot multiple times with different parameters
-     * @param xillRuntime The runtime, will be injected
      * @throws XillCompileException When compilation fails
      */
     @Test
     @DirtiesContext
-    @Autowired
-    public void testRunRobotMultiple(XillRuntime xillRuntime) throws XillCompileException {
+    public void testRunRobotMultiple() throws XillCompileException {
         xillRuntime.compile(workingDirectory, robotPath);
 
         for (int i=0; i<4; i++) {
