@@ -19,5 +19,11 @@ package nl.xillio.xill.webservice.exceptions;
  * The exception class - fired when something is not found.
  */
 public class XillNotFoundException extends XillBaseException {
+    public XillNotFoundException(String message) {
+        super(message);
+    }
 
+    public XillNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

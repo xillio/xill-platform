@@ -19,4 +19,11 @@ package nl.xillio.xill.webservice.exceptions;
  * The base exception class.
  */
 public class XillBaseException extends Exception {
+    public XillBaseException(String message) {
+        super(message);
+    }
+
+    public XillBaseException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
