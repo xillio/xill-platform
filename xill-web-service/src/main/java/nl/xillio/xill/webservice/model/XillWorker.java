@@ -15,8 +15,9 @@
  */
 package nl.xillio.xill.webservice.model;
 
+import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import nl.xillio.xill.webservice.types.XWID;
-import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -24,54 +25,66 @@ import java.util.Map;
 /**
  * This class represents a worker entity in the domain model.
  * A worker can be started which will run a robotPath. This execution can be interrupted on a different thread.
- *
- * @author Thomas Biesaart
  */
-public class XillWorker implements AutoCloseable {
+public class XillWorker {
+
+    protected XillRuntime runtime;
+
     protected final Path robotPath;
+    protected XillWorkerState state;
+    protected final XWID id;
 
     public XillWorker(Path robotPath) {
+        id = new XWID();
         this.robotPath = robotPath;
+        state = XillWorkerState.IDLE;
     }
 
     public Path getRobotPath() {
         return robotPath;
     }
 
+    @Autowired
+    public void setRuntime(XillRuntime runtime) {
+        this.runtime = runtime;
+    }
+
     /**
-     * Return the id of the allocated worker.
-     * The id must be unique across the XillWorkerPools.
+     * Returns the id of the allocated worker, unique across the instances of {@link XillWorkerPool}.
      *
-     * @return
+     * @return the id of the allocated worker
      */
     public XWID getId() {
-        throw new NotImplementedException("The 'getId' method has not been implemented yet");
+        return id;
+    }
+
+    public XillWorkerState getState() {
+        return state;
     }
 
     /**
-     * Run the robotPath associated with the worker.
+     * Runs the robotPath associated with the worker.
      *
-     * @param arguments The robotPath run arguments.
-     * @return The result of the robotPath run.
+     * @param arguments the robotPath run arguments
+     * @return the result of the robotPath run
      */
     public Object run(final Map<String, Object> arguments) {
-        throw new NotImplementedException("The 'run' method has not been implemented yet");
+        state = XillWorkerState.RUNNING;
+        Object returnValue = runtime.runRobot(arguments);
+        state = XillWorkerState.IDLE;
+        return returnValue;
     }
 
     /**
-     * Abort the running worker (i.e. abort the robot associated with the worker).
+     * Aborts the running worker (i.e. abort the robot associated with the worker).
      */
-    public void abort() {
-        throw new NotImplementedException("The 'abort' method has not been implemented yet");
-    }
-
-    /**
-     * This method's purpose is to return the XillRuntime to the pool.
-     *
-     * @throws Exception
-     */
-    @Override
-    public void close() throws Exception {
-        throw new NotImplementedException("The 'close' method has not been implemented yet");
+    public void abort() throws XillInvalidStateException {
+        try {
+            state = XillWorkerState.ABORTING;
+            runtime.abortRobot();
+        } catch (XillInvalidStateException e) {
+            throw e;
+        }
+        state = XillWorkerState.IDLE;
     }
 }
