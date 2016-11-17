@@ -197,7 +197,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         menuDelete.setOnAction(e -> deleteButtonPressed());
 
         // Version Control.
-        menuVersionControl = new Menu("Version Control");
+        menuVersionControl = new Menu("Version control");
         versionControlMenu();
 
         // Upload.
@@ -224,9 +224,11 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         }
 
         trvProjects.setContextMenu(menu);
-        // Only paste when there is just 1 item selected (the paste location) and there are files to paste.
         trvProjects.setOnContextMenuRequested(e -> {
+            // Only paste when there is just 1 item selected (the paste location) and there are files to paste.
             menuPaste.setDisable(getAllCurrentItems().size() != 1 || bulkFiles.isEmpty());
+
+            // Check the project repository status.
             repo = new JGitRepository(getCurrentProject().getValue().getKey());
             menuVersionControl.setDisable(!repo.isInitialized());
         });
@@ -255,7 +257,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         });
     }
 
-    public void generateTemplateMenu() {
+    private void generateTemplateMenu() {
         menuNewBotFromTemplate.getItems().clear();
         try {
             templater.getTemplateNames().stream().map(MenuItem::new).forEach(menuNewBotFromTemplate.getItems()::add);
@@ -274,22 +276,14 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         menuNewBotFromTemplate.getItems().add(0, emptyBot);
     }
 
-    public void versionControlMenu() {
-        menuVersionControl.getItems().clear();
-
+    private void versionControlMenu() {
         MenuItem push = new MenuItem("Push...");
-        menuVersionControl.getItems().add(push);
         push.setOnAction(e -> push());
 
         MenuItem pull = new MenuItem("Pull");
-        menuVersionControl.getItems().add(pull);
         pull.setOnAction(e -> pull());
 
-        // add default empty bot template
-        menuVersionControl.getItems().add(new SeparatorMenuItem());
-        MenuItem switchBranch = new MenuItem("Switch Branch...");
-        switchBranch.setOnAction(e -> switchBranch());
-        menuVersionControl.getItems().add(switchBranch);
+        menuVersionControl.getItems().addAll(push, pull);
     }
 
     private void push() {
@@ -299,10 +293,6 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
     private void pull() {
         Platform.runLater(repo::pull);
-    }
-
-    private void switchBranch() {
-        // TODO
     }
 
     private static Group createIcon(final String shape) {

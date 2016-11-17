@@ -50,9 +50,7 @@ public class JGitRepository implements Repository {
 
         try {
             repository = new Git(builder.build());
-        } catch (IOException e) {
-            LOGGER.error("An exception occurred while loading the repository.", e);
-        } catch (IllegalArgumentException e) {
+        } catch (IOException | IllegalArgumentException e) {
             LOGGER.error("An exception occurred while loading the repository.", e);
         }
     }
@@ -64,7 +62,7 @@ public class JGitRepository implements Repository {
             repository.commit().setMessage(commitMessage).call();
         } catch (GitAPIException e) {
             showError("pushing", e.getMessage());
-            LOGGER.error("Error committing", e);
+            LOGGER.error("Error committing.", e);
         }
     }
 
@@ -113,7 +111,7 @@ public class JGitRepository implements Repository {
         try{
             repository.reset().setMode(ResetCommand.ResetType.SOFT).setRef("head^").call();
         } catch (GitAPIException e) {
-            LOGGER.error("Error resetting commit", e);
+            LOGGER.error("Error resetting commit.", e);
         }
     }
 
@@ -146,10 +144,10 @@ public class JGitRepository implements Repository {
     }
 
     private void showError(String action, String message) {
-        new AlertDialog(Alert.AlertType.ERROR, "Error while " + action, "An error occurred while " + action + ".\n Please use a git client to fix the issue." , message).showAndWait();
+        new AlertDialog(Alert.AlertType.ERROR, "Error while " + action, "An error occurred while " + action + "." , message).showAndWait();
     }
 
     private void showSucceeded(String action) {
-        new AlertDialog(Alert.AlertType.INFORMATION, action + " succeeded", "" , action + " has been completed succesfully.").showAndWait();
+        new AlertDialog(Alert.AlertType.INFORMATION, action + " succeeded", "" , action + " has been completed successfully.").showAndWait();
     }
 }
