@@ -1,2 +1,4 @@
 
-return 42;
+argument args;
+
+return args.input;

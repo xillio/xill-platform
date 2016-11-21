@@ -32,6 +32,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
+import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -181,7 +182,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testDeleteWorker() throws Exception {
-        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker("test.worker"));
+        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker(Paths.get("test.worker")));
 
         // Deleting a worker by id
         this.mockMvc.perform(
@@ -216,7 +217,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     @Test
     public void testDeleteRunningWorker() throws Exception {
         // Deleting a running worker should interrupt it
-        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker("test.TerminateTest"));
+        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker(Paths.get("test.TerminateTest")));
 
         // Start running
         Thread running = new Thread(() -> xillWorkerWebServiceController.runWorker(id));
@@ -242,7 +243,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testRunLoadedRobotWithJsonReturnValue() throws Exception {
-        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker("test.JsonReturnTest"));
+        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker(Paths.get("test.JsonReturnTest")));
 
         // Run a robot
         this.mockMvc.perform(
@@ -263,7 +264,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testRunLoadedRobotWithStreamReturnValue() throws Exception {
-        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker("test.StreamReturnTest"));
+        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker(Paths.get("test.StreamReturnTest")));
 
         // Run a robot
         this.mockMvc.perform(
@@ -283,7 +284,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testRunLoadedRobotWithoutReturnValue() throws Exception {
-        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker("test.NullReturnTest"));
+        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker(Paths.get("test.NullReturnTest")));
 
         // Run a robot
         this.mockMvc.perform(
@@ -316,7 +317,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testRunRobotWithError() throws Exception {
-        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker("test.ErrorThrowingRobot"));
+        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker(Paths.get("test.ErrorThrowingRobot")));
 
         // Run a robot that throws an error
         this.mockMvc.perform(
@@ -336,7 +337,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testTerminateRunningWorker() throws Exception {
-        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker("test.TerminateTest"));
+        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker(Paths.get("test.TerminateTest")));
 
         // Start running
         Thread running = new Thread(() -> xillWorkerWebServiceController.runWorker(id));
@@ -362,7 +363,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testTerminateNotRunningWorker() throws Exception {
-        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker("test.NotRunningTerminateTest"));
+        XWID id = xillWorkerWebServiceController.registerWorker(new XillWorker(Paths.get("test.NotRunningTerminateTest")));
 
         // Terminate a non-running worker
         this.mockMvc.perform(

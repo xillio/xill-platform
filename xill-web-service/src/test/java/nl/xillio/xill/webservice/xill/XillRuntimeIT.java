@@ -1,20 +1,23 @@
 package nl.xillio.xill.webservice.xill;
 
 import me.biesaart.utils.FileUtils;
-import nl.xillio.xill.api.OutputHandler;
 import nl.xillio.xill.webservice.XillRuntimeConfiguration;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
 import nl.xillio.xill.webservice.model.XillRuntime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.testng.Assert;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
@@ -53,17 +56,41 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
     }
 
     /**
-     *
-     * @param xillRuntime
-     * @throws XillCompileException
+     * Test running a single robot returning a result.
+     * @param xillRuntime The runtime, will be injected
+     * @throws XillCompileException When compilation fails
      */
     @Test
+    @DirtiesContext
     @Autowired
     public void testRunRobot(XillRuntime xillRuntime) throws XillCompileException {
         xillRuntime.compile(workingDirectory, robotPath);
-        Object result = xillRuntime.runRobot(null);
 
-        assertEquals(result, 42);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("input", 42);
+
+        Object result = xillRuntime.runRobot(parameters);
+
+        assertEquals(result, 42, "Value returned by the robot did not match expected");
     }
 
+    /**
+     * Test running a single robot multiple times with different parameters
+     * @param xillRuntime The runtime, will be injected
+     * @throws XillCompileException When compilation fails
+     */
+    @Test
+    @DirtiesContext
+    @Autowired
+    public void testRunRobotMultiple(XillRuntime xillRuntime) throws XillCompileException {
+        xillRuntime.compile(workingDirectory, robotPath);
+
+        for (int i=0; i<4; i++) {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("input", i);
+            Object result = xillRuntime.runRobot(parameters);
+
+            assertEquals(result, i, "Value returned by the robot did not match expected");
+        }
+    }
 }
