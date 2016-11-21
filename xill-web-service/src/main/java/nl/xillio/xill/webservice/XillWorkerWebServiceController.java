@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.webservice;
 
+import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import nl.xillio.xill.webservice.model.XillWorker;
 import nl.xillio.xill.webservice.services.XillWorkerPoolManagerServiceImpl;
@@ -67,7 +68,7 @@ public class XillWorkerWebServiceController {
     public void abortWorker(XWID id) {
         try {
             workerPoolManagerService.getDefaultWorkerPool().findWorker(id).abort();
-        } catch (XillNotFoundException e) {
+        } catch (XillNotFoundException | XillInvalidStateException e) {
             e.printStackTrace();
         }
     }

@@ -4,6 +4,12 @@ package nl.xillio.xill.webservice.model;
  * State model for a xill worker.
  */
 public enum XillWorkerState {
+
+    /**
+     * The worker has been created, but the robot hasn't been compiled yet.
+     */
+    NEW,
+
     /**
      * The worker has been instantiated and the related robot compiled successfully.
      * Ready to accept a payload and run.

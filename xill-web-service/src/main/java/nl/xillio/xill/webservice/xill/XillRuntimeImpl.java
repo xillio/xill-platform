@@ -1,9 +1,6 @@
 package nl.xillio.xill.webservice.xill;
 
-import nl.xillio.xill.api.OutputHandler;
-import nl.xillio.xill.api.XillEnvironment;
-import nl.xillio.xill.api.XillProcessor;
-import nl.xillio.xill.api.XillThreadFactory;
+import nl.xillio.xill.api.*;
 import nl.xillio.xill.api.components.InstructionFlow;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.Robot;
@@ -21,6 +18,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
@@ -65,7 +63,10 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
             xillProcessor.getDebugger().setErrorHandler(e -> { });
 
             // Compile to check for errors in the robot
-            xillProcessor.compile();
+            List<Issue> issues = xillProcessor.compile();
+            if (!issues.isEmpty()) {
+                throw new XillCompileException("Compilation issues found", issues);
+            }
         } catch (IOException | XillParsingException e) {
             throw new XillCompileException("Failed to compile robot", e);
         }

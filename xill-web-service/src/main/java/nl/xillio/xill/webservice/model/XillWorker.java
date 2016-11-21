@@ -15,11 +15,13 @@
  */
 package nl.xillio.xill.webservice.model;
 
+import nl.xillio.xill.webservice.exceptions.XillCompileException;
 import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import nl.xillio.xill.webservice.types.XWID;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -28,20 +30,40 @@ import java.util.Map;
  */
 public class XillWorker {
 
-    protected XillRuntime runtime;
-
-    protected final Path robotPath;
-    protected XillWorkerState state;
+    protected final String robotName;
     protected final XWID id;
+    private final Path workDirectory;
+    protected XillRuntime runtime;
+    protected XillWorkerState state;
 
-    public XillWorker(Path robotPath) {
+    /**
+     * Creates a worker for a specific robot.
+     *
+     * @param robotName the fully qualified robot name
+     */
+    public XillWorker(Path workDirectory, String robotName) {
+        this.workDirectory = workDirectory;
         id = new XWID();
-        this.robotPath = robotPath;
-        state = XillWorkerState.IDLE;
+        this.robotName = robotName;
+        state = XillWorkerState.NEW;
     }
 
-    public Path getRobotPath() {
-        return robotPath;
+    public void compile() throws XillCompileException {
+        try {
+            state = XillWorkerState.COMPILING;
+            runtime.compile(workDirectory, Paths.get(robotName));
+        } catch (XillCompileException e) {
+            state = XillWorkerState.COMPILATION_ERROR;
+            throw e;
+        }
+    }
+
+    public String getRobotName() {
+        return robotName;
+    }
+
+    public Path getWorkDirectory() {
+        return workDirectory;
     }
 
     @Autowired
@@ -82,9 +104,8 @@ public class XillWorker {
         try {
             state = XillWorkerState.ABORTING;
             runtime.abortRobot();
-        } catch (XillInvalidStateException e) {
-            throw e;
+        } finally {
+            state = XillWorkerState.IDLE;
         }
-        state = XillWorkerState.IDLE;
     }
 }
