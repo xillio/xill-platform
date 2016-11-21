@@ -112,12 +112,17 @@ void buildOn(Map args) {
                 String mvn = "\"$m2Tool/bin/mvn\" ${mvnOptions.join(' ')} $mavenArgs"
 
                 // Run the build and clean
-                stage("Run 'mvn $buildPhase' on $platform") {
+                stage("Run 'mvn clean' on $platform") {
                     checkout scm
                     cli "$mvn clean"
+                }
+                stage("Run 'mvn $buildPhase' on $platform") {
                     cli "$mvn $buildPhase"
-                    if (runSonar) {
+                }
+                if (runSonar) {
+                    stage("Run 'mvn sonar' on $platform") {
                         cli "$mvn sonar:sonar"
+                        sleep 5
                     }
                 }
             }
