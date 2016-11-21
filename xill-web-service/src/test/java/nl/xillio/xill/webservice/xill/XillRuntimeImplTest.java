@@ -1,4 +1,4 @@
-package nl.xillio.xill.webservice.model;
+package nl.xillio.xill.webservice.xill;
 
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.Debugger;
@@ -10,6 +10,7 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
+import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import nl.xillio.xill.webservice.xill.XillRuntimeImpl;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -56,7 +57,7 @@ public class XillRuntimeImplTest extends TestUtils {
         xillRuntime = new XillRuntimeImpl(xillEnvironment, outputHandler);
 
         workingDir = Paths.get("/path/to/working/dir");
-        robotPath = Paths.get("/path/to/robot.xill");
+        robotPath = Paths.get("robot.xill");
     }
 
     /**
@@ -69,7 +70,7 @@ public class XillRuntimeImplTest extends TestUtils {
 
         // Verify
         verify(xillEnvironment).setXillThreadFactory(any());
-        verify(xillEnvironment).buildProcessor(workingDir, robotPath);
+        verify(xillEnvironment).buildProcessor(workingDir, workingDir.resolve(robotPath));
         verify(xillProcessor).compile();
     }
 
@@ -82,7 +83,7 @@ public class XillRuntimeImplTest extends TestUtils {
     @Test(expectedExceptions = XillCompileException.class)
     public void testCompileError() throws IOException, XillCompileException {
         // Mock
-        when(xillEnvironment.buildProcessor(workingDir, robotPath)).thenThrow(IOException.class);
+        when(xillEnvironment.buildProcessor(any(), any())).thenThrow(IOException.class);
 
         // Run
         xillRuntime.compile(workingDir, robotPath);
@@ -106,7 +107,7 @@ public class XillRuntimeImplTest extends TestUtils {
 
         // Verify
         verify(xillEnvironment).setXillThreadFactory(any());
-        verify(xillEnvironment).buildProcessor(workingDir, robotPath);
+        verify(xillEnvironment).buildProcessor(workingDir, workingDir.resolve(robotPath));
         verifyNoMoreInteractions(xillEnvironment);
         verify(robot).process(debugger);
 
@@ -126,4 +127,15 @@ public class XillRuntimeImplTest extends TestUtils {
         // Run
         xillRuntime.runRobot(parameters);
     }
+
+    /**
+     * Test {@link XillRuntimeImpl#abortRobot()} when a robot is not running
+     */
+    @Test(expectedExceptions = XillInvalidStateException.class)
+    public void testAbortRobotNotRunning() throws XillInvalidStateException {
+        // Run
+        xillRuntime.abortRobot();
+    }
+
+
 }
