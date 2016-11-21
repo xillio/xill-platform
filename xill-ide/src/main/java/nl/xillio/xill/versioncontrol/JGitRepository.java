@@ -18,6 +18,7 @@ package nl.xillio.xill.versioncontrol;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import me.biesaart.utils.Log;
+import me.biesaart.utils.StringUtils;
 import nl.xillio.migrationtool.dialogs.AlertDialog;
 import nl.xillio.migrationtool.dialogs.GitAuthenticateDialog;
 import org.eclipse.jgit.api.Git;
@@ -25,7 +26,9 @@ import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.TransportCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.errors.NoWorkTreeException;
+import org.eclipse.jgit.internal.JGitText;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
@@ -117,46 +120,45 @@ public class JGitRepository implements Repository {
 
     private boolean tryCommand(TransportCommand cmd, String action) {
         setCredentialsProvider(cmd);
-        boolean showAuthError = false;
 
-        while (true) {
-            // Try to execute the command.
-            try {
-                cmd.call();
-                showSucceeded(action);
-                return true;
-            } catch (GitAPIException e) {
-                // Ignore authorization exceptions the first time. Always show an error for other exceptions.
-                if (!isAuthorizationException(e)) {
-                    showError(action, e);
-                    return false;
-                } else if (showAuthError) {
-                    new AlertDialog(Alert.AlertType.WARNING, "Invalid credentials", "",
-                            "The credentials you entered are invalid, please try again.", ButtonType.OK).showAndWait();
-                }
-            }
-
-            // Show the authentication dialog.
-            showAuthError = true;
-            GitAuthenticateDialog dlg = new GitAuthenticateDialog(this);
-            dlg.showAndWait();
-            if (dlg.isCanceled()) {
+        try{
+            cmd.call();
+            showSucceeded(action);
+            return true;
+        } catch (GitAPIException e){
+            if(e instanceof TransportException && isAuthorizationException(e)){
+                if(credentials != null)
+                    new CredentialsAlertDialog().showAndWait();
+                return getAuthentication() ? tryCommand(cmd, action) : false;
+            } else{
+                showError(action, e);
                 return false;
             }
-            setCredentialsProvider(cmd);
         }
     }
 
+    private boolean getAuthentication(){
+        GitAuthenticateDialog dlg = new GitAuthenticateDialog(this);
+        dlg.showAndWait();
+        return !dlg.isCanceled();
+    }
+
     private void showError(String action, Throwable cause) {
-        LOGGER.error("Error while " + action, cause);
         new AlertDialog(Alert.AlertType.ERROR, "Error while " + action, "An error occurred while " + action + ".", cause.getMessage()).showAndWait();
     }
 
     private void showSucceeded(String action) {
-        new AlertDialog(Alert.AlertType.INFORMATION, action + " succeeded", "", action + " was successful.").showAndWait();
+        new AlertDialog(Alert.AlertType.INFORMATION, StringUtils.capitalize(action)+ " succeeded", "", StringUtils.capitalize(action) + " was successful.").showAndWait();
     }
 
     private boolean isAuthorizationException(GitAPIException e) {
-        return e.getMessage().endsWith("not authorized") || e.getMessage().endsWith("Authentication is required but no CredentialsProvider has been registered");
+        return e.getMessage().contains(JGitText.get().notAuthorized) || e.getMessage().contains(JGitText.get().noCredentialsProvider);
+    }
+
+    class CredentialsAlertDialog extends AlertDialog{
+        public CredentialsAlertDialog(){
+            super(Alert.AlertType.WARNING, "Invalid credentials", "",
+                    "The credentials you entered are invalid, please try again.", ButtonType.OK);
+        }
     }
 }
