@@ -21,4 +21,4 @@ use System, Web, Assert;
 
 var page = Web.loadPage("http://www.xillio.com");
 var title = Web.xPath(page,"//h1/text()");
-Assert.equal(title, "Content ETL Platform");
+Assert.equal(title, "Easiest way to integrate content repositories");
