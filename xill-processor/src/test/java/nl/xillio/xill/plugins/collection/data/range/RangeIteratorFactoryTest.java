@@ -21,6 +21,7 @@ import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * The test class for {@link RangeIteratorFactory}.
@@ -34,7 +35,7 @@ public class RangeIteratorFactoryTest extends TestUtils {
         RangeIteratorFactory rangeIteratorFactory = new RangeIteratorFactory();
 
         // Run
-        RangeIterator iterator = rangeIteratorFactory.createIterator(0, 10, null);
+        Iterator<Number> iterator = rangeIteratorFactory.createIterator(0, 10, null);
 
         // Verify
         ArrayList<Number> output = new ArrayList<>();
@@ -56,7 +57,7 @@ public class RangeIteratorFactoryTest extends TestUtils {
         RangeIteratorFactory rangeIteratorFactory = new RangeIteratorFactory();
 
         // Run
-        RangeIterator iterator = rangeIteratorFactory.createIterator(10, 0, null);
+        Iterator<Number> iterator = rangeIteratorFactory.createIterator(10, 0, null);
 
         // Verify
         ArrayList<Number> output = new ArrayList<>();
@@ -78,7 +79,7 @@ public class RangeIteratorFactoryTest extends TestUtils {
         RangeIteratorFactory rangeIteratorFactory = new RangeIteratorFactory();
 
         // Run
-        RangeIterator iterator = rangeIteratorFactory.createIterator(0, 10, 2);
+        Iterator<Number> iterator = rangeIteratorFactory.createIterator(0, 10, 2);
 
         // Verify
         ArrayList<Number> output = new ArrayList<>();
@@ -100,11 +101,11 @@ public class RangeIteratorFactoryTest extends TestUtils {
         RangeIteratorFactory rangeIteratorFactory = new RangeIteratorFactory();
 
         // Run
-        RangeIterator iterator = rangeIteratorFactory.createIterator(10, -10, -1.5);
+        Iterator<Number> iterator = rangeIteratorFactory.createIterator(10, -10, -1.5);
 
         // Verify
         ArrayList<Number> output = new ArrayList<>();
-        Number[] expectedOutputArray = {10, 8.5, 7.0, 5.5, 4.0, 2.5, 1.0, -0.5, -2.0, -3.5, -5.0, -6.5, -8.0, -9.5};
+        Number[] expectedOutputArray = {10.0, 8.5, 7.0, 5.5, 4.0, 2.5, 1.0, -0.5, -2.0, -3.5, -5.0, -6.5, -8.0, -9.5};
         ArrayList<Number> expectedOutput = new ArrayList<>(Arrays.asList(expectedOutputArray));
 
         Assert.assertTrue(iterator.hasNext());
@@ -122,7 +123,7 @@ public class RangeIteratorFactoryTest extends TestUtils {
         RangeIteratorFactory rangeIteratorFactory = new RangeIteratorFactory();
 
         // Run
-        RangeIterator iterator = rangeIteratorFactory.createIterator(10, 0, 0);
+        rangeIteratorFactory.createIterator(10, 0, 0);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)

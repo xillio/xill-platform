@@ -24,8 +24,9 @@ import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
-import nl.xillio.xill.plugins.collection.data.range.RangeIterator;
 import nl.xillio.xill.plugins.collection.data.range.RangeIteratorFactory;
+
+import java.util.Iterator;
 
 /**
  * This construct will return an iterator of the given range and step
@@ -51,7 +52,7 @@ public class RangeConstruct extends Construct {
     }
 
     private MetaExpression process(MetaExpression start, MetaExpression end, MetaExpression step) {
-        RangeIterator iterator;
+        Iterator<Number> iterator;
         try {
             iterator = rangeIteratorFactory.createIterator(
                     start.getNumberValue(),

@@ -17,13 +17,15 @@ package nl.xillio.xill.plugins.collection.data.range;
 
 import nl.xillio.util.MathUtils;
 
+import java.util.Iterator;
+
 /**
  * This class is responsible for validating the input and initializing the iterator (Factory).
  *
  * @author Pieter Soels
  */
 public class RangeIteratorFactory {
-    public RangeIterator createIterator(Number start, Number end, Number step) {
+    public Iterator<Number> createIterator(Number start, Number end, Number step) {
         Number sanitizedStep = retrieveStep(start, end, step);
         verifyInput(start, end, sanitizedStep);
         return new RangeIterator(start, end, sanitizedStep);
@@ -59,8 +61,8 @@ public class RangeIteratorFactory {
                 "The step-value must not be positive when the start-value is greater than the end-value.");
     }
 
-    private void assertCondition(boolean condition,String message) {
-        if(!condition) {
+    private void assertCondition(boolean condition, String message) {
+        if (!condition) {
             throw new IllegalArgumentException(message);
         }
     }

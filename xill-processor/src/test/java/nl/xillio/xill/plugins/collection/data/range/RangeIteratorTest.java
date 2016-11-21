@@ -104,15 +104,4 @@ public class RangeIteratorTest extends TestUtils {
         // Verify
         Assert.assertFalse(rangeIterator.hasNext());
     }
-
-    @Test
-    public void testHasNextWithStepInWrongDirection() throws Exception {
-        // Initialize
-        RangeIterator rangeIterator = new RangeIterator(56, -10, 1.5);
-        RangeIterator rangeIterator2 = new RangeIterator(11, 20.5, -1);
-
-        // Verify
-        Assert.assertFalse(rangeIterator.hasNext());
-        Assert.assertFalse(rangeIterator2.hasNext());
-    }
 }

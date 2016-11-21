@@ -25,27 +25,24 @@ import java.util.NoSuchElementException;
  *
  * @author Pieter Soels
  */
-public class RangeIterator implements Iterator<Number> {
+class RangeIterator implements Iterator<Number> {
     private final Number end;
     private Number step;
-    private Number nextValue;
+    private Number start;
+    private Number counter;
 
-    public RangeIterator(Number start, Number end, Number step) {
+    RangeIterator(Number start, Number end, Number step) {
         this.end = end;
         this.step = step;
-        nextValue = start;
+        this.start = start;
+        counter = 0;
     }
 
     @Override
     public boolean hasNext() {
-        // If the step is negative, its signum will return -1
-        // If the step is positive, its signum will return 1
-        // Respectively:
-        // end - next will return -1 if end < next (there is a next value if step is negative)
-        // end - next will return 1 if end > next (there is a next value if step is positive)
-        double signumNextValue = Math.signum(MathUtils.subtract(end, nextValue).doubleValue());
-        double signumStep = Math.signum(step.doubleValue());
-        return MathUtils.compare(signumNextValue, signumStep) == 0;
+        Number absoluteDiff = MathUtils.abs(MathUtils.subtract(end, start));
+        Number size = MathUtils.divide(absoluteDiff, MathUtils.abs(step));
+        return MathUtils.compare(counter, size) < 0;
     }
 
     @Override
@@ -53,8 +50,9 @@ public class RangeIterator implements Iterator<Number> {
         if (!hasNext()) {
             throw new NoSuchElementException("There are no elements in the iterator left.");
         }
-        Number value = nextValue;
-        nextValue = MathUtils.add(nextValue, step);
-        return value;
+
+        Number output = MathUtils.add(start, MathUtils.multiply(counter, step));
+        counter = MathUtils.add(counter, 1);
+        return output;
     }
 }

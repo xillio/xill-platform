@@ -19,9 +19,10 @@ import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.MetaExpressionIterator;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
-import nl.xillio.xill.plugins.collection.data.range.RangeIterator;
 import nl.xillio.xill.plugins.collection.data.range.RangeIteratorFactory;
 import org.testng.annotations.Test;
+
+import java.util.Iterator;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -39,7 +40,7 @@ public class RangeConstructTest extends TestUtils {
     public void testProcessWithoutStep() throws Exception {
         // Mock
         RangeIteratorFactory rangeIteratorFactory = mock(RangeIteratorFactory.class);
-        RangeIterator rangeIterator = mock(RangeIterator.class);
+        Iterator<Number> rangeIterator = mock(Iterator.class);
         when(rangeIteratorFactory.createIterator(any(), any(), any())).thenReturn(rangeIterator);
 
         // Initialize
@@ -57,7 +58,7 @@ public class RangeConstructTest extends TestUtils {
     public void testProcessWithStep() throws Exception {
         // Mock
         RangeIteratorFactory rangeIteratorFactory = mock(RangeIteratorFactory.class);
-        RangeIterator rangeIterator = mock(RangeIterator.class);
+        Iterator<Number> rangeIterator = mock(Iterator.class);
         when(rangeIteratorFactory.createIterator(any(), any(), any())).thenReturn(rangeIterator);
 
         // Initialize
