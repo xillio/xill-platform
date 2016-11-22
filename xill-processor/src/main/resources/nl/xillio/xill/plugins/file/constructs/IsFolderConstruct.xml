@@ -18,11 +18,11 @@
 -->
 <function>
     <description>
-Tests whether the file identified by uri is a folder. The test returns `true` if `uri` is a folder.
+Tests whether the `path` points to a folder returning `true` if it is a folder, or `false` otherwise.
     </description>
     <examples>
         <example title="Usage">
-            <header>Determine if the specified uri is a folder or not.</header>
+            <header>Determine if the path points to a folder or not.</header>
             <code>
                 use File, System, Stream;
 

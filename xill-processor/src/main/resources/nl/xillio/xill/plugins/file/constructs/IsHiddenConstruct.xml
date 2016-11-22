@@ -18,11 +18,11 @@
 -->
 <function>
     <description>
-Determines if the specified file/folder is hidden or not. The test returns `true` if `uri` is a hidden file or folder.
+Determines if the file or folder at the given `path` is hidden or not returning `true` if the path or folder is hidden or `false` otherwise.
     </description>
     <examples>
         <example title="Usage">
-            <header>Determine if the specified file/folder is hidden or not.</header>
+            <header>Determine if the specified file or folder is hidden or not.</header>
             <code>
                 use File, System, Stream;
 
