@@ -17,7 +17,7 @@
  * Input: See input variable
  * Expected: See output variable
  */
- use Assert, Collection;
+ use Assert, Collection, Math;
  
  var input = [
      [10, 0, -1],
@@ -36,6 +36,7 @@
     [10], 
     [20]
  ];
+ var allowedDiff = 0.000000000000001; // Abitrary small number to allow offset in double inconsistincies
  
  var count = Collection.length(output) - 1;
  
@@ -49,6 +50,13 @@
  function testInput(start, end, step, output) {
     var iterator = Collection.range(start, end, step);    
     var result = collect(iterator);
-    Assert.equal(result, output);
+    var count = 0;
+    
+    while(count < Collection.length(result)) {
+        // Logic to check whether double values do not have a too high of an offset.
+        var absDiff = Math.abs(result[count] - output[count]);
+        Assert.isTrue(absDiff < allowedDiff);
+        count++;
+    }
     Assert.equal(Collection.length(output), Collection.length(result));
  }

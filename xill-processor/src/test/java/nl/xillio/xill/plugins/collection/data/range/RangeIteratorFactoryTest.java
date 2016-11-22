@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.collection.data.range;
 
+import nl.xillio.util.MathUtils;
 import nl.xillio.xill.TestUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -109,12 +110,14 @@ public class RangeIteratorFactoryTest extends TestUtils {
         ArrayList<Number> expectedOutput = new ArrayList<>(Arrays.asList(expectedOutputArray));
 
         Assert.assertTrue(iterator.hasNext());
-        while (iterator.hasNext()) {
-            output.add(iterator.next());
+        for (int i = 0; i < expectedOutput.size(); i++) {
+            Number next = iterator.next();
+            Number absDiff = MathUtils.abs(MathUtils.subtract(next, expectedOutput.get(i)));
+            double ulp = Math.ulp(next.doubleValue());
+
+            Assert.assertTrue(MathUtils.compare(absDiff, ulp) < 0);
         }
         Assert.assertFalse(iterator.hasNext());
-
-        Assert.assertEquals(output, expectedOutput);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
