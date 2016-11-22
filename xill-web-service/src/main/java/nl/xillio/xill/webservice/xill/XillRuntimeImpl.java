@@ -69,7 +69,7 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
     }
 
     @Override
-    public synchronized void compile(Path workDirectory, Path robotPath) throws XillCompileException {
+    public void compile(Path workDirectory, Path robotPath) throws XillCompileException {
         try {
             xillProcessor = xillEnvironment.buildProcessor(workDirectory, workDirectory.resolve(robotPath));
             xillProcessor.setOutputHandler(outputHandler);
@@ -87,7 +87,7 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
     }
 
     @Override
-    public synchronized Object runRobot(Map<String, Object> parameters) {
+    public Object runRobot(Map<String, Object> parameters) {
         // Do nothing when no robot has been compiled yet
         if (compileSuccess == null) {
             return null;
@@ -149,7 +149,7 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
     }
 
     @Override
-    public synchronized void abortRobot() {
+    public void abortRobot() {
         xillProcessor.getDebugger().stop();
     }
 
