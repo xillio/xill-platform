@@ -24,14 +24,16 @@ public enum XillWorkerState {
     RUNNING,
 
     /**
-     * The worker received the abort signal but has not aborted yet.
-     * When the runtime stops -> IDLE
+     * The worker was running and received the abort signal.
+     * When the runtime stops -> IDLE, or previous state if the robot
+     * was not running.
      */
     ABORTING,
 
     /**
      * The robot related to this worker is being compiled.
-     * When compilation ends -> IDLE
+     * When compilation ends -> IDLE or COMPILATION_ERROR
+     * depending on the outcome of the compilation
      */
     COMPILING,
 
