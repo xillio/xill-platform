@@ -26,7 +26,7 @@
             <children>
                 <AnchorPane styleClass="dialogContent" VBox.vgrow="ALWAYS">
                     <children>
-                        <VBox fx:id="gitInfoBox" alignment="CENTER_LEFT" styleClass="dialogFormWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <VBox alignment="CENTER_LEFT" styleClass="dialogFormWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
                                 <Label text="Are sure you want to pull from the following repository?"></Label>
                                 <Label fx:id="repositoryName"></Label>
@@ -34,15 +34,15 @@
                         </VBox>
                     </children>
                 </AnchorPane>
-                <HBox styleClass="gitPushWrapper" prefHeight="40.0">
+                <HBox styleClass="gitWrapper" prefHeight="40.0">
                     <children>
-                        <HBox styleClass="buttonsWrapperInformation" HBox.hgrow="ALWAYS" visible="false" fx:id="progress">
+                        <HBox styleClass="gitProgress" HBox.hgrow="ALWAYS" visible="false" fx:id="progress">
                             <children>
                                 <ProgressIndicator fx:id="progressIndicator"></ProgressIndicator>
                                 <Label text="Pulling from Git repository..." fx:id="messageStatus" />
                             </children>
                         </HBox>
-                        <HBox VBox.vgrow="NEVER" styleClass="gitPushButtons" HBox.hgrow="ALWAYS">
+                        <HBox VBox.vgrow="NEVER" styleClass="gitButtons" HBox.hgrow="ALWAYS">
                             <children>
                                 <Button fx:id="okBtn" defaultButton="true" mnemonicParsing="false" onAction="#pushBtnPressed" text="Pull" />
                                 <Button fx:id="cancelBtn" cancelButton="true" mnemonicParsing="false" onAction="#cancelBtnPressed" text="Cancel" />

@@ -25,7 +25,8 @@ import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 /**
- * Class responsible for credentials management.
+ * Class responsible for Git credentials management.
+ *
  * @author Edward van Egdom
  */
 public class JGitAuth {

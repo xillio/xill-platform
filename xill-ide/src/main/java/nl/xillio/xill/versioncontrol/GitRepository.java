@@ -20,7 +20,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import java.util.Set;
 
 /**
- * Representation of a version control repository.
+ * Representation of a Git version control repository.
  *
  * @author Daan Knoope
  */

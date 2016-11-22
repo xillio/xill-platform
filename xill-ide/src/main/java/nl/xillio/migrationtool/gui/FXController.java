@@ -792,7 +792,6 @@ public class FXController implements Initializable, EventHandler<Event> {
                                 {
                                     GitPushDialog dlg = new GitPushDialog(new JGitRepository(((FileTab) tab).projectPath));
                                     dlg.showAndWait();
-                                    ;
                                 }
                         );
                     default:

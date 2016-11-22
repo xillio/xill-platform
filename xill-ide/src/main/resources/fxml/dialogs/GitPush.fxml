@@ -36,15 +36,15 @@
                         </VBox>
                     </children>
                 </AnchorPane>
-                <HBox styleClass="gitPushWrapper" prefHeight="40.0">
+                <HBox styleClass="gitWrapper" prefHeight="40.0">
                     <children>
-                        <HBox styleClass="buttonsWrapperInformation" HBox.hgrow="ALWAYS" visible="false" fx:id="progress">
+                        <HBox styleClass="gitProgress" HBox.hgrow="ALWAYS" visible="false" fx:id="progress">
                             <children>
                                 <ProgressIndicator fx:id="progressIndicator"></ProgressIndicator>
                                 <Label text="Pushing to Git repository..." fx:id="messageStatus" />
                             </children>
                         </HBox>
-                        <HBox VBox.vgrow="NEVER" styleClass="gitPushButtons" HBox.hgrow="ALWAYS">
+                        <HBox VBox.vgrow="NEVER" styleClass="gitButtons" HBox.hgrow="ALWAYS">
                             <children>
                                 <Button fx:id="okBtn" defaultButton="true" mnemonicParsing="false" onAction="#pushBtnPressed" text="Push" />
                                 <Button fx:id="cancelBtn" cancelButton="true" mnemonicParsing="false" onAction="#cancelBtnPressed" text="Cancel" />

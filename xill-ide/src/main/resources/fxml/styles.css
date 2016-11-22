@@ -480,17 +480,17 @@
 		-fx-padding: 1em;
 		-fx-spacing: 0.25em;
 	}
-	.buttonsWrapperInformation
+	.gitProgress
 	{
 	    -fx-alignment: center-left;
 	}
-	.gitPushButtons {
+	.gitButtons {
 	        -fx-alignment: baseline-right;
 			-fx-column-halignment: right;
     		-fx-background-color: -fx-base;
     		-fx-spacing: 0.25em;
 	}
-	.gitPushWrapper {
+	.gitWrapper {
 	    -fx-background-color: -fx-base;
         		-fx-border-color: -fx-pane-border-color;
         		-fx-border-width: 1px 0 0 0;

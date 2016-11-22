@@ -25,9 +25,8 @@ import nl.xillio.xill.versioncontrol.operations.GitPullOperation;
 
 public class GitPullDialog extends FXMLDialog {
     @FXML
-    private TextField message;
-    @FXML
     private Label repositoryName;
+
     @FXML
     private Button okBtn;
 
@@ -36,9 +35,6 @@ public class GitPullDialog extends FXMLDialog {
 
     @FXML
     private ProgressIndicator progressIndicator;
-
-    @FXML
-    private VBox gitInfoBox;
 
     private final JGitRepository repo;
 
@@ -49,7 +45,7 @@ public class GitPullDialog extends FXMLDialog {
      */
     public GitPullDialog(final JGitRepository repo) {
         super("/fxml/dialogs/GitPull.fxml");
-        this.setTitle("Pull changes");
+        this.setTitle("Pull");
         this.repo = repo;
         repositoryName.setText(repo.getRepositoryName());
     }
@@ -63,7 +59,6 @@ public class GitPullDialog extends FXMLDialog {
     private void pushBtnPressed(final ActionEvent event) {
         progressIndicator.setVisible(true);
         progress.setVisible(true);
-        gitInfoBox.setDisable(true);
 
         GitPullOperation pull = new GitPullOperation(repo);
         new Thread(pull).start();
