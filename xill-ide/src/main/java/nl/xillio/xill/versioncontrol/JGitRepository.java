@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,23 +15,13 @@
  */
 package nl.xillio.xill.versioncontrol;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import me.biesaart.utils.Log;
-import me.biesaart.utils.StringUtils;
-import nl.xillio.migrationtool.dialogs.AlertDialog;
-import nl.xillio.migrationtool.dialogs.GitAuthenticateDialog;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.Status;
-import org.eclipse.jgit.api.TransportCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.errors.NoWorkTreeException;
-import org.eclipse.jgit.internal.JGitText;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.transport.CredentialsProvider;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -43,11 +33,12 @@ import java.util.Set;
  * Implementation of {@link Repository} which uses the jGit library for interacting with Git repositories.
  * @author Daan Knoope
  */
-public class JGitRepository implements Repository {
+public class JGitRepository {
     private static final Logger LOGGER = Log.get();
 
     private Git repository;
-    private CredentialsProvider credentials;
+
+    private JGitAuth auth;
 
     public JGitRepository(File path) {
         FileRepositoryBuilder builder = new FileRepositoryBuilder().addCeilingDirectory(path).findGitDir(path);
@@ -57,36 +48,41 @@ public class JGitRepository implements Repository {
         } catch (IOException | IllegalArgumentException e) {
             LOGGER.error("An exception occurred while loading the repository.", e);
         }
+
+        auth = new JGitAuth();
     }
 
-    @Override
-    public void commit(String commitMessage) {
-        try {
-            repository.add().addFilepattern(".").call();
-            repository.commit().setMessage(commitMessage).call();
-        } catch (GitAPIException e) {
-            showError("committing", e);
-        }
-    }
-
-    @Override
-    public void push() {
-        if (!tryCommand(repository.push(), "pushing")) {
-            resetCommit();
-        }
-    }
-
-    @Override
-    public void pull() {
-        tryCommand(repository.pull(), "pulling");
-    }
-
-    @Override
     public boolean isInitialized() {
         return repository != null;
     }
 
-    @Override
+    public JGitAuth getAuth() {
+        return auth;
+    }
+
+    /* Edward's commands */
+    public void pushCommand() throws GitAPIException {
+        repository.push().setCredentialsProvider(auth.getCredentials()).call();
+    }
+
+    public void commitCommand(String message) throws GitAPIException {
+        repository.add().addFilepattern(".").call();
+        repository.commit().setMessage(message).call();
+    }
+
+    public void pullCommand() throws GitAPIException {
+        repository.pull().setCredentialsProvider(auth.getCredentials()).call();
+    }
+    /* End */
+
+    private void resetCommit() {
+        try {
+            repository.reset().setMode(ResetCommand.ResetType.SOFT).setRef("HEAD^").call();
+        } catch (GitAPIException e) {
+            LOGGER.error("Error resetting commit.", e);
+        }
+    }
+
     public Set<String> getChangedFiles() {
         Set<String> changedFiles = new HashSet<>();
         try {
@@ -97,68 +93,5 @@ public class JGitRepository implements Repository {
             LOGGER.error("Error retrieving changed files.", e);
         }
         return changedFiles;
-    }
-
-    @Override
-    public void setCredentials(String username, String password) {
-        credentials = new UsernamePasswordCredentialsProvider(username, password);
-    }
-
-    private void setCredentialsProvider(TransportCommand command) {
-        if (credentials != null) {
-            command.setCredentialsProvider(credentials);
-        }
-    }
-
-    private void resetCommit() {
-        try {
-            repository.reset().setMode(ResetCommand.ResetType.SOFT).setRef("HEAD^").call();
-        } catch (GitAPIException e) {
-            LOGGER.error("Error resetting commit.", e);
-        }
-    }
-
-    private boolean tryCommand(TransportCommand cmd, String action) {
-        setCredentialsProvider(cmd);
-
-        try{
-            cmd.call();
-            showSucceeded(action);
-            return true;
-        } catch (GitAPIException e){
-            if(e instanceof TransportException && isAuthorizationException(e)){
-                if(credentials != null)
-                    new CredentialsAlertDialog().showAndWait();
-                return getAuthentication() ? tryCommand(cmd, action) : false;
-            } else{
-                showError(action, e);
-                return false;
-            }
-        }
-    }
-
-    private boolean getAuthentication(){
-        GitAuthenticateDialog dlg = new GitAuthenticateDialog(this);
-        dlg.showAndWait();
-        return !dlg.isCanceled();
-    }
-
-    private void showError(String action, Throwable cause) {
-        new AlertDialog(Alert.AlertType.ERROR, "Error while " + action, "An error occurred while " + action + ".", cause.getMessage()).showAndWait();
-    }
-
-    private void showSucceeded(String action) {
-        new AlertDialog(Alert.AlertType.INFORMATION, StringUtils.capitalize(action)+ " succeeded", "", StringUtils.capitalize(action) + " was successful.").showAndWait();
-    }
-
-    private boolean isAuthorizationException(GitAPIException e) {
-        return e.getMessage().contains(JGitText.get().notAuthorized) || e.getMessage().contains(JGitText.get().noCredentialsProvider);
-    }
-
-    class CredentialsAlertDialog extends AlertDialog{
-        public CredentialsAlertDialog(){
-            super(Alert.AlertType.WARNING, "Invalid credentials", "",
-                    "The credentials you entered are invalid, please try again.", ButtonType.OK);
-        }
     }
 }

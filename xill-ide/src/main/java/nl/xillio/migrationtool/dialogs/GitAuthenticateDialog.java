@@ -20,6 +20,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import nl.xillio.xill.versioncontrol.JGitAuth;
 import nl.xillio.xill.versioncontrol.Repository;
 
 public class GitAuthenticateDialog extends FXMLDialog {
@@ -30,18 +31,18 @@ public class GitAuthenticateDialog extends FXMLDialog {
     @FXML
     private Label message;
 
-    private final Repository repo;
+    private final JGitAuth auth;
     private boolean canceled = true;
 
     /**
      * Default constructor.
      *
-     * @param repo The JGitRepository that will be pushed to.
+     * @param auth The JGitAuth that will be used for authentication.
      */
-    public GitAuthenticateDialog(final Repository repo) {
+    public GitAuthenticateDialog(final JGitAuth auth) {
         super("/fxml/dialogs/GitAuthenticate.fxml");
         this.setTitle("Fill in credentials");
-        this.repo = repo;
+        this.auth = auth;
     }
 
     @FXML
@@ -52,7 +53,7 @@ public class GitAuthenticateDialog extends FXMLDialog {
     @FXML
     private void okBtnPressed(final ActionEvent event) {
         canceled = false;
-        repo.setCredentials(username.getText(), password.getText());
+        auth.setCredentials(username.getText(), password.getText());
         password.clear();
         close();
     }

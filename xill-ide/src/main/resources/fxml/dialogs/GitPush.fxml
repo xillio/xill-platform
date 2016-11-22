@@ -26,7 +26,7 @@
             <children>
                 <AnchorPane styleClass="dialogContent" VBox.vgrow="ALWAYS">
                     <children>
-                        <VBox alignment="CENTER_LEFT" styleClass="dialogFormWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <VBox fx:id="gitInfoBox" alignment="CENTER_LEFT" styleClass="dialogFormWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
                                 <Label text="Changed files" />
                                 <ListView fx:id="fileList" minHeight="205.0" />
@@ -36,10 +36,20 @@
                         </VBox>
                     </children>
                 </AnchorPane>
-                <HBox styleClass="buttonsWrapper" VBox.vgrow="NEVER">
+                <HBox styleClass="gitPushWrapper" prefHeight="40.0">
                     <children>
-                        <Button fx:id="okBtn" defaultButton="true" mnemonicParsing="false" onAction="#pushBtnPressed" text="Push" />
-                        <Button fx:id="cancelBtn" cancelButton="true" mnemonicParsing="false" onAction="#cancelBtnPressed" text="Cancel" />
+                        <HBox styleClass="buttonsWrapperInformation" HBox.hgrow="ALWAYS" visible="false" fx:id="progress">
+                            <children>
+                                <ProgressIndicator fx:id="progressIndicator"></ProgressIndicator>
+                                <Label text="Pushing to Git repository..." fx:id="messageStatus" />
+                            </children>
+                        </HBox>
+                        <HBox VBox.vgrow="NEVER" styleClass="gitPushButtons" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Button fx:id="okBtn" defaultButton="true" mnemonicParsing="false" onAction="#pushBtnPressed" text="Push" />
+                                <Button fx:id="cancelBtn" cancelButton="true" mnemonicParsing="false" onAction="#cancelBtnPressed" text="Cancel" />
+                            </children>
+                        </HBox>
                     </children>
                 </HBox>
             </children>

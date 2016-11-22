@@ -18,10 +18,11 @@ package nl.xillio.migrationtool.dialogs;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import nl.xillio.xill.versioncontrol.JGitRepository;
+import nl.xillio.xill.versioncontrol.commands.GitCommitAndPush;
 
 import java.util.Set;
 
@@ -32,6 +33,18 @@ public class GitPushDialog extends FXMLDialog {
     private ListView<String> fileList;
     @FXML
     private Button okBtn;
+
+    @FXML
+    private HBox progress;
+
+    @FXML
+    private Label messageStatus;
+
+    @FXML
+    private ProgressIndicator progressIndicator;
+
+    @FXML
+    private VBox gitInfoBox;
 
     private final JGitRepository repo;
 
@@ -61,9 +74,20 @@ public class GitPushDialog extends FXMLDialog {
 
     @FXML
     private void pushBtnPressed(final ActionEvent event) {
-        repo.commit(message.getText());
-        repo.push();
-        close();
+        progressIndicator.setVisible(true);
+        progress.setVisible(true);
+        gitInfoBox.setDisable(true);
+
+        GitCommitAndPush push = new GitCommitAndPush(repo, message.getText());
+        new Thread(push).start();
+
+        push.setOnSucceeded(e -> setStatusToFinished());
+    }
+
+    private void setStatusToFinished() {
+        System.out.println("Finished!");
+        progressIndicator.setVisible(false);
+        messageStatus.setText("Successfully pushed changes");
     }
 }
 

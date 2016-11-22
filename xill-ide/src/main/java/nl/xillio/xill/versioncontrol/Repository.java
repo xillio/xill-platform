@@ -29,7 +29,7 @@ public interface Repository {
      * @param commitMessage The message for the commit.
      * @return {@code true} if commit succeeded, {@code false} otherwise.
      */
-    void commit(String commitMessage);
+    //void commit(String commitMessage);
 
     /**
      * Pushes all changes to the remote repository.
