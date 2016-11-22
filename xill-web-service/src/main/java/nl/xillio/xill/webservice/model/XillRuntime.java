@@ -55,10 +55,8 @@ public interface XillRuntime extends AutoCloseable {
      *
      * This method will effectively stop a call to {@link #runRobot(Map)}
      * before the robot has fully finished running.
-     *
-     * @throws XillInvalidStateException When a robot is not currently running
      */
-    void abortRobot() throws XillInvalidStateException;
+    void abortRobot();
 
     /**
      * Shut down the this Xill runtime and associated resources
