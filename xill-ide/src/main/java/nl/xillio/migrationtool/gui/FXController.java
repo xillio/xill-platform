@@ -780,13 +780,19 @@ public class FXController implements Initializable, EventHandler<Event> {
                                 ((FileTab) tab).getEditorPane().requestFocus());
                         break;
                     case PULL:
-                        tpnBots.getTabs().filtered(Tab::isSelected).forEach(tab -> new JGitRepository(((FileTab) tab).projectPath).pull());
+                        tpnBots.getTabs().filtered(Tab::isSelected).forEach(tab ->
+                                {
+                                    GitPullDialog dlg = new GitPullDialog(new JGitRepository(((FileTab) tab).projectPath));
+                                    dlg.showAndWait();
+                                }
+                        );
                         break;
                     case PUSH:
-                        tpnBots.getTabs().filtered(Tab::isSelected).forEach( tab ->
+                        tpnBots.getTabs().filtered(Tab::isSelected).forEach(tab ->
                                 {
-                                        GitPushDialog dlg = new GitPushDialog(new JGitRepository(((FileTab) tab).projectPath));
-                                        Platform.runLater(dlg::showAndWait);
+                                    GitPushDialog dlg = new GitPushDialog(new JGitRepository(((FileTab) tab).projectPath));
+                                    dlg.showAndWait();
+                                    ;
                                 }
                         );
                     default:
