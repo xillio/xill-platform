@@ -4,7 +4,8 @@ import nl.xillio.xill.versioncontrol.JGitRepository;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 /**
- * Created by Edward on 22/11/2016.
+ * Git task to commit all changes and push to the repository.
+ * @author Edward van Egdom
  */
 public class GitCommitAndPush extends GitCommandTask {
     private String commitMessage;

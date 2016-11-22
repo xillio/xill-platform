@@ -4,7 +4,8 @@ import nl.xillio.xill.versioncontrol.JGitRepository;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 /**
- * Created by Edward on 22/11/2016.
+ * Git pull task
+ * @author Edward van Egdom
  */
 public class GitPull extends GitCommandTask {
     public GitPull(JGitRepository repo) {

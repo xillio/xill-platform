@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,10 +30,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Implementation of {@link Repository} which uses the jGit library for interacting with Git repositories.
+ * Implementation of {@link GitRepository} which uses the jGit library for interacting with Git repositories.
  * @author Daan Knoope
  */
-public class JGitRepository {
+public class JGitRepository implements GitRepository {
     private static final Logger LOGGER = Log.get();
 
     private Git repository;
@@ -54,14 +54,6 @@ public class JGitRepository {
 
     public boolean isInitialized() {
         return repository != null;
-    }
-
-    public JGitAuth getAuth() {
-        return auth;
-    }
-
-    public String getRepositoryName() {
-        return repository.getRepository().getDirectory().getParentFile().getName();
     }
 
     public void pushCommand() throws GitAPIException {
@@ -93,4 +85,13 @@ public class JGitRepository {
         }
         return changedFiles;
     }
+
+    public JGitAuth getAuth() {
+        return auth;
+    }
+
+    public String getRepositoryName() {
+        return repository.getRepository().getDirectory().getParentFile().getName();
+    }
+
 }

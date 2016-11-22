@@ -21,7 +21,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import nl.xillio.xill.versioncontrol.JGitAuth;
-import nl.xillio.xill.versioncontrol.Repository;
 
 public class GitAuthenticateDialog extends FXMLDialog {
     @FXML

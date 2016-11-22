@@ -1,16 +1,28 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package nl.xillio.xill.versioncontrol.commands;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import nl.xillio.migrationtool.dialogs.AlertDialog;
-import nl.xillio.migrationtool.dialogs.GitAuthenticateDialog;
 import nl.xillio.xill.versioncontrol.JGitAuth;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.TransportException;
-import org.eclipse.jgit.internal.JGitText;
 
 import java.util.concurrent.CountDownLatch;
 
