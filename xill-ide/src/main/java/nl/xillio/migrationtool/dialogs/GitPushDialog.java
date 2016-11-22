@@ -22,7 +22,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import nl.xillio.xill.versioncontrol.JGitRepository;
-import nl.xillio.xill.versioncontrol.commands.GitCommitAndPush;
+import nl.xillio.xill.versioncontrol.operations.GitCommitAndPushOperation;
 
 import java.util.Set;
 
@@ -78,7 +78,7 @@ public class GitPushDialog extends FXMLDialog {
         progress.setVisible(true);
         gitInfoBox.setDisable(true);
 
-        GitCommitAndPush push = new GitCommitAndPush(repo, message.getText());
+        GitCommitAndPushOperation push = new GitCommitAndPushOperation(repo, message.getText());
         new Thread(push).start();
 
         push.setOnSucceeded(e -> setStatusToFinished());

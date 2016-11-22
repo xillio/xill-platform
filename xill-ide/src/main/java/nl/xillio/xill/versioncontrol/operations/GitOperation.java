@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.versioncontrol.commands;
+package nl.xillio.xill.versioncontrol.operations;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -27,12 +27,12 @@ import org.eclipse.jgit.api.errors.TransportException;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * A generic task class which executes Git commands. Override the {@link #execute} method with actual Git functionality.
+ * A generic task class which executes Git operations. Override the {@link #execute} method with actual Git functionality.
  *
  * @Author Edward
  */
 
-abstract class GitCommandTask extends Task<Void> {
+abstract class GitOperation extends Task<Void> {
     JGitRepository repo;
 
     JGitAuth auth;
@@ -43,7 +43,7 @@ abstract class GitCommandTask extends Task<Void> {
     // Keep track of need for re-run of command
     boolean reRun;
 
-    public GitCommandTask(JGitRepository repo) {
+    public GitOperation(JGitRepository repo) {
         this.commandLatch = new CountDownLatch(1);
         this.repo = repo;
         this.auth = repo.getAuth();
@@ -93,13 +93,13 @@ abstract class GitCommandTask extends Task<Void> {
                     Platform.exit();
                 }
             } else {
-                showError(e); // Error handling
+                handleError(e); // Error handling
                 commandLatch.countDown();
             }
         }
     }
 
-    private void showError(Throwable cause) {
+    public void handleError(Throwable cause) {
         Platform.runLater(() -> new AlertDialog(Alert.AlertType.ERROR, "Error", "An error occurred.", cause.getMessage()).showAndWait());
     }
 }

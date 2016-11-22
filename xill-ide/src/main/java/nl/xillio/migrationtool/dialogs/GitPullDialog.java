@@ -15,17 +15,13 @@
  */
 package nl.xillio.migrationtool.dialogs;
 
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import nl.xillio.xill.versioncontrol.JGitRepository;
-import nl.xillio.xill.versioncontrol.commands.GitCommitAndPush;
-import nl.xillio.xill.versioncontrol.commands.GitPull;
-
-import java.util.Set;
+import nl.xillio.xill.versioncontrol.operations.GitPullOperation;
 
 public class GitPullDialog extends FXMLDialog {
     @FXML
@@ -69,7 +65,7 @@ public class GitPullDialog extends FXMLDialog {
         progress.setVisible(true);
         gitInfoBox.setDisable(true);
 
-        GitPull pull = new GitPull(repo);
+        GitPullOperation pull = new GitPullOperation(repo);
         new Thread(pull).start();
 
         pull.setOnSucceeded(e -> setStatusToFinished());
