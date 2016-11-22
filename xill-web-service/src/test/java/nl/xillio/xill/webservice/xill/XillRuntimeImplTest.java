@@ -127,15 +127,4 @@ public class XillRuntimeImplTest extends TestUtils {
         // Run
         xillRuntime.runRobot(parameters);
     }
-
-    /**
-     * Test {@link XillRuntimeImpl#abortRobot()} when a robot is not running
-     */
-    @Test(expectedExceptions = XillInvalidStateException.class)
-    public void testAbortRobotNotRunning() throws XillInvalidStateException {
-        // Run
-        xillRuntime.abortRobot();
-    }
-
-
 }
