@@ -76,47 +76,6 @@ public class XillWorker {
     }
 
     /**
-     * Returns the fully qualified robot name.
-     *
-     * @return the fully qualified robot name
-     */
-    public String getRobotName() {
-        return robotName;
-    }
-
-    /**
-     * Returns the work directory assigned to this worker.
-     *
-     * @return the work directory assigned to this worker
-     */
-    public Path getWorkDirectory() {
-        return workDirectory;
-    }
-
-    @Autowired
-    public synchronized void setRuntime(XillRuntime runtime) {
-        this.runtime = runtime;
-    }
-
-    /**
-     * Returns the id of the allocated worker, unique across the instances of {@link XillWorkerPool}.
-     *
-     * @return the id of the allocated worker
-     */
-    public XWID getId() {
-        return id;
-    }
-
-    /**
-     * Returns the state of the worker.
-     *
-     * @return the state of the worker
-     */
-    public synchronized XillWorkerState getState() {
-        return state;
-    }
-
-    /**
      * Runs the robotPath associated with the worker.
      *
      * @param arguments the robotPath run arguments
@@ -142,5 +101,46 @@ public class XillWorker {
         state = XillWorkerState.ABORTING;
         runtime.abortRobot();
         state = XillWorkerState.IDLE;
+    }
+
+    @Autowired
+    public synchronized void setRuntime(XillRuntime runtime) {
+        this.runtime = runtime;
+    }
+
+    /**
+     * Returns the fully qualified robot name.
+     *
+     * @return the fully qualified robot name
+     */
+    public String getRobotName() {
+        return robotName;
+    }
+
+    /**
+     * Returns the work directory assigned to this worker.
+     *
+     * @return the work directory assigned to this worker
+     */
+    public Path getWorkDirectory() {
+        return workDirectory;
+    }
+
+    /**
+     * Returns the id of the allocated worker, unique across the instances of {@link XillWorkerPool}.
+     *
+     * @return the id of the allocated worker
+     */
+    public XWID getId() {
+        return id;
+    }
+
+    /**
+     * Returns the state of the worker.
+     *
+     * @return the state of the worker
+     */
+    public synchronized XillWorkerState getState() {
+        return state;
     }
 }
