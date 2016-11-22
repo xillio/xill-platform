@@ -15,7 +15,10 @@ import nl.xillio.xill.webservice.model.XillRuntime;
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -50,10 +53,10 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
 
     // Future for asynchronous recompiling
     private Future<?> compileSuccess;
-    private ExecutorService compileExecutor;
+    private ThreadPoolTaskExecutor compileExecutor;
 
     @Inject
-    public XillRuntimeImpl(XillEnvironment xillEnvironment, OutputHandler outputHandler) {
+    public XillRuntimeImpl(XillEnvironment xillEnvironment, OutputHandler outputHandler, @Qualifier("robotCompileThreadPool") ThreadPoolTaskExecutor compileExecutor) {
         this.xillEnvironment = xillEnvironment;
         this.outputHandler = outputHandler;
 
@@ -62,7 +65,7 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
         this.xillEnvironment.setXillThreadFactory(xillThreadFactory);
 
         // Create an executor for asynchronous recompilation
-        compileExecutor = Executors.newSingleThreadExecutor();
+        this.compileExecutor = compileExecutor;
     }
 
     @Override
@@ -85,6 +88,11 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
 
     @Override
     public synchronized Object runRobot(Map<String, Object> parameters) {
+        // Do nothing when no robot has been compiled yet
+        if (compileSuccess == null) {
+            return null;
+        }
+
         // Check if the previous compilation succeeded or wait for it if it is in progress
         try {
             compileSuccess.get();
@@ -153,7 +161,6 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
         } catch (Exception e) {
             LOGGER.error("Could not close Xill threads", e);
         }
-        compileExecutor.shutdownNow();
     }
 
     @Override
