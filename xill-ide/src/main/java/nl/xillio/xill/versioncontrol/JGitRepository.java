@@ -64,7 +64,6 @@ public class JGitRepository {
         return repository.getRepository().getDirectory().getParentFile().getName();
     }
 
-    /* Edward's commands */
     public void pushCommand() throws GitAPIException {
         repository.push().setCredentialsProvider(auth.getCredentials()).call();
     }
@@ -77,14 +76,10 @@ public class JGitRepository {
     public void pullCommand() throws GitAPIException {
         repository.pull().setCredentialsProvider(auth.getCredentials()).call();
     }
-    /* End */
 
-    private void resetCommit() {
-        try {
-            repository.reset().setMode(ResetCommand.ResetType.SOFT).setRef("HEAD^").call();
-        } catch (GitAPIException e) {
-            LOGGER.error("Error resetting commit.", e);
-        }
+    // Usage of this method should be re-implemented
+    public void resetCommitCommand() throws GitAPIException {
+        repository.reset().setMode(ResetCommand.ResetType.SOFT).setRef("HEAD^").call();
     }
 
     public Set<String> getChangedFiles() {

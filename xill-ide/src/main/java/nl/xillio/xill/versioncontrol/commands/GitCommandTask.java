@@ -81,9 +81,13 @@ abstract class GitCommandTask extends Task<Void> {
                     Platform.exit();
                 }
             } else {
-                // Handle this please ? showError("Error", e);
+                showError(e); // Error handling
                 commandLatch.countDown();
             }
         }
+    }
+
+    private void showError(Throwable cause) {
+        Platform.runLater(() -> new AlertDialog(Alert.AlertType.ERROR, "Error", "An error occurred.", cause.getMessage()).showAndWait());
     }
 }
