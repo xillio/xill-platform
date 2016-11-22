@@ -68,6 +68,7 @@ public class XillWorker {
         try {
             state = XillWorkerState.COMPILING;
             runtime.compile(workDirectory, Paths.get(robotName));
+            state = XillWorkerState.IDLE;
         } catch (XillCompileException e) {
             state = XillWorkerState.COMPILATION_ERROR;
             throw e;
