@@ -60,6 +60,10 @@ public class JGitRepository {
         return auth;
     }
 
+    public String getRepositoryName() {
+        return repository.getRepository().getDirectory().getParentFile().getName();
+    }
+
     /* Edward's commands */
     public void pushCommand() throws GitAPIException {
         repository.push().setCredentialsProvider(auth.getCredentials()).call();

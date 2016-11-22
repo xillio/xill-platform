@@ -291,7 +291,8 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     private void pull() {
-        //Platform.runLater(repo::pull);
+        GitPullDialog dlg = new GitPullDialog(repo);
+        dlg.showAndWait();
     }
 
     private static Group createIcon(final String shape) {

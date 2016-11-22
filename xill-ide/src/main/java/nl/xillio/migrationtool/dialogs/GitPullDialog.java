@@ -23,22 +23,20 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import nl.xillio.xill.versioncontrol.commands.GitCommitAndPush;
+import nl.xillio.xill.versioncontrol.commands.GitPull;
 
 import java.util.Set;
 
-public class GitPushDialog extends FXMLDialog {
+public class GitPullDialog extends FXMLDialog {
     @FXML
     private TextField message;
     @FXML
-    private ListView<String> fileList;
+    private Label repositoryName;
     @FXML
     private Button okBtn;
 
     @FXML
     private HBox progress;
-
-    @FXML
-    private Label messageStatus;
 
     @FXML
     private ProgressIndicator progressIndicator;
@@ -53,18 +51,11 @@ public class GitPushDialog extends FXMLDialog {
      *
      * @param repo the JGitRepository that will be pushed to.
      */
-    public GitPushDialog(final JGitRepository repo) {
-        super("/fxml/dialogs/GitPush.fxml");
-        this.setTitle("Push changes");
+    public GitPullDialog(final JGitRepository repo) {
+        super("/fxml/dialogs/GitPull.fxml");
+        this.setTitle("Pull changes");
         this.repo = repo;
-
-        Set<String> changedFiles = repo.getChangedFiles();
-        if (!changedFiles.isEmpty()) {
-            fileList.setItems(FXCollections.observableArrayList(changedFiles));
-        } else {
-            fileList.setItems(FXCollections.observableArrayList("No changes were found"));
-            okBtn.setDisable(true);
-        }
+        repositoryName.setText(repo.getRepositoryName());
     }
 
     @FXML
@@ -78,10 +69,10 @@ public class GitPushDialog extends FXMLDialog {
         progress.setVisible(true);
         gitInfoBox.setDisable(true);
 
-        GitCommitAndPush push = new GitCommitAndPush(repo, message.getText());
-        new Thread(push).start();
+        GitPull pull = new GitPull(repo);
+        new Thread(pull).start();
 
-        push.setOnSucceeded(e -> setStatusToFinished());
+        pull.setOnSucceeded(e -> setStatusToFinished());
     }
 
     private void setStatusToFinished() {
