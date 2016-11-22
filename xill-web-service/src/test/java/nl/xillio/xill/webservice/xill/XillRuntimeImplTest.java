@@ -12,6 +12,7 @@ import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
 import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import nl.xillio.xill.webservice.xill.XillRuntimeImpl;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -34,6 +35,7 @@ public class XillRuntimeImplTest extends TestUtils {
 
     private XillEnvironment xillEnvironment;
     private OutputHandler outputHandler;
+    private ThreadPoolTaskExecutor compileExecutor;
     private XillProcessor xillProcessor;
     private Robot robot;
     private Debugger debugger;
@@ -47,6 +49,7 @@ public class XillRuntimeImplTest extends TestUtils {
     public void mockEnvironment () throws IOException {
         xillEnvironment = mock(XillEnvironment.class);
         outputHandler = mock(OutputHandler.class);
+        compileExecutor = mock(ThreadPoolTaskExecutor.class);
         xillProcessor = mock(XillProcessor.class);
         robot = mock(Robot.class);
         debugger = mock(Debugger.class);
@@ -54,7 +57,7 @@ public class XillRuntimeImplTest extends TestUtils {
         when(xillProcessor.getRobot()).thenReturn(robot);
         when(xillProcessor.getDebugger()).thenReturn(debugger);
 
-        xillRuntime = new XillRuntimeImpl(xillEnvironment, outputHandler);
+        xillRuntime = new XillRuntimeImpl(xillEnvironment, outputHandler, compileExecutor);
 
         workingDir = Paths.get("/path/to/working/dir");
         robotPath = Paths.get("robot.xill");
@@ -119,12 +122,15 @@ public class XillRuntimeImplTest extends TestUtils {
      * Test {@link XillRuntimeImpl#runRobot(Map)} when {@link XillRuntimeImpl#compile(Path, Path)} has
      * not been called yet.
      */
-    @Test(expectedExceptions = Exception.class)
+    @Test
     public void testRunRobotNoCompile() {
         // Mock
         Map<String, Object> parameters = new HashMap<>();
 
         // Run
-        xillRuntime.runRobot(parameters);
+        Object result = xillRuntime.runRobot(parameters);
+
+        // Assert
+        assertSame(result, null);
     }
 }
