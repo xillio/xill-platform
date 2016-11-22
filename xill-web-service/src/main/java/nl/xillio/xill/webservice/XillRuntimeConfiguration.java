@@ -3,6 +3,7 @@ package nl.xillio.xill.webservice;
 import nl.xillio.xill.webservice.model.XillRuntime;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.aop.target.CommonsPool2TargetSource;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -19,6 +20,7 @@ public class XillRuntimeConfiguration {
     /**
      * @return A pool for {@link nl.xillio.xill.webservice.xill.XillRuntimeImpl} instances
      */
+    @ConfigurationProperties(prefix = "runtimePool")
     @Bean
     public CommonsPool2TargetSource xillRuntimePool() {
         CommonsPool2TargetSource pool = new CommonsPool2TargetSource();
@@ -42,11 +44,10 @@ public class XillRuntimeConfiguration {
     /**
      * @return A thread pool for asynchronously compiling robots
      */
+    @ConfigurationProperties(prefix = "compilePool")
     @Bean
     public ThreadPoolTaskExecutor robotCompileThreadPool() {
-        ThreadPoolTaskExecutor compileExecutor = new ThreadPoolTaskExecutor();
-        compileExecutor.setCorePoolSize(1);
-        return compileExecutor;
+        return new ThreadPoolTaskExecutor();
     }
 
 }
