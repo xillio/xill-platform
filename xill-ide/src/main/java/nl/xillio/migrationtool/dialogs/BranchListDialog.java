@@ -37,6 +37,7 @@ public class BranchListDialog extends FXMLDialog {
     }
 
     private void getBranchList() {
+        lvBranches.getItems().clear();
         List<String> branches = repo.getBranches();
         String current = repo.getCurrentBranchName();
 
@@ -50,18 +51,24 @@ public class BranchListDialog extends FXMLDialog {
     @FXML
     private void checkoutBtnPressed() {
         String branch = lvBranches.getSelectionModel().getSelectedItem();
+
+        // Check if we are trying to check out the current branch, which is always the first item.
+        if (lvBranches.getSelectionModel().getSelectedIndex() == 0) {
+            return;
+        }
+
         try {
             repo.checkout(branch);
+            close();
         } catch (GitAPIException e) {
             new AlertDialog(Alert.AlertType.ERROR, "Error", "An error occurred while checking out " + branch + ".", e.getMessage()).showAndWait();
         }
-        close();
     }
 
     @FXML
     private void createBtnPressed() {
         new CreateBranchDialog(repo).showAndWait();
-        close();
+        getBranchList();
     }
 
     @FXML

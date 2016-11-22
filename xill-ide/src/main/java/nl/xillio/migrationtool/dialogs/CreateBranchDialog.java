@@ -38,10 +38,10 @@ public class CreateBranchDialog extends FXMLDialog {
         try {
             repo.createBranch(name.getText());
             repo.checkout(name.getText());
+            close();
         } catch (GitAPIException e) {
             new AlertDialog(Alert.AlertType.ERROR, "Error", "An error occurred while trying to create a new branch.", e.getMessage()).showAndWait();
         }
-        close();
     }
 
     @FXML
