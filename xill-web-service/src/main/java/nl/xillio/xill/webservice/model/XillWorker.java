@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,15 +19,15 @@ import nl.xillio.xill.webservice.exceptions.XillCompileException;
 import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import nl.xillio.xill.webservice.types.XWID;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * This class represents a worker entity in the domain model.
- * A worker can be started which will run a robot given a working directory. This execution can be interrupted on a different thread.
+ * A worker can be started which will run a robot given a working directory.
+ * This execution can be interrupted on a different thread.
  *
  * @author Xillio
  */
@@ -39,40 +39,27 @@ public class XillWorker {
     protected final Path workDirectory;
     protected final String robotName;
 
-    protected XillRuntime runtime;
+    protected final XillRuntime runtime;
 
     protected XillWorkerState state;
 
     /**
      * Creates a worker for a specific robot.
      *
-     * @param robotName the fully qualified robot name
+     * @param runtime       a runtime drawn from the pool
+     * @param workDirectory the working directory of the enclosed robot
+     * @param robotName     the fully qualified robot name
+     * @throws XillCompileException if the robot could not be compiled
      */
-    public XillWorker(Path workDirectory, String robotName) {
+    public XillWorker(XillRuntime runtime, Path workDirectory, String robotName) throws XillCompileException {
         id = new XWID();
+        this.runtime = runtime;
         this.workDirectory = workDirectory;
         this.robotName = robotName;
 
-        state = XillWorkerState.NEW;
-    }
+        runtime.compile(workDirectory, workDirectory.resolve(robotName));
 
-    /**
-     * Compiles the robot and readies for running.
-     *
-     * @throws XillCompileException in case a compilation error occurred
-     */
-    public synchronized void compile() throws XillCompileException, XillInvalidStateException {
-        if (state != XillWorkerState.NEW) {
-            throw new XillInvalidStateException("Robot is already compiled.");
-        }
-        try {
-            state = XillWorkerState.COMPILING;
-            runtime.compile(workDirectory, Paths.get(robotName));
-            state = XillWorkerState.IDLE;
-        } catch (XillCompileException e) {
-            state = XillWorkerState.COMPILATION_ERROR;
-            throw e;
-        }
+        state = XillWorkerState.IDLE;
     }
 
     /**
@@ -86,9 +73,14 @@ public class XillWorker {
             throw new XillInvalidStateException("Worker is not ready for running.");
         }
         state = XillWorkerState.RUNNING;
-        Object returnValue = runtime.runRobot(arguments);
-        state = XillWorkerState.IDLE;
-        return returnValue;
+        try {
+            Object returnValue = runtime.runRobot(arguments);
+            state = XillWorkerState.IDLE;
+            return returnValue;
+        } catch (ExecutionException e) {
+            state = XillWorkerState.RUNTIME_ERROR;
+            throw new XillInvalidStateException("The worker has encountered a problem and cannot continue", e);
+        }
     }
 
     /**
@@ -101,11 +93,6 @@ public class XillWorker {
         state = XillWorkerState.ABORTING;
         runtime.abortRobot();
         state = XillWorkerState.IDLE;
-    }
-
-    @Autowired
-    public synchronized void setRuntime(XillRuntime runtime) {
-        this.runtime = runtime;
     }
 
     /**

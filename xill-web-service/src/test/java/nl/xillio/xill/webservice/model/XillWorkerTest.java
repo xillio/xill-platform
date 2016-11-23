@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,6 @@
 package nl.xillio.xill.webservice.model;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.webservice.exceptions.XillCompileException;
 import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import org.apache.commons.collections.MapUtils;
 import org.testng.annotations.BeforeMethod;
@@ -41,44 +40,17 @@ public class XillWorkerTest extends TestUtils {
     @BeforeMethod
     public void setUp() throws Exception {
         runtime = mock(XillRuntime.class);
-        worker = new XillWorker(Paths.get("test/path"), "robot.name");
-        worker.setRuntime(runtime);
+        doNothing().when(runtime).compile(any(), any());
+        worker = new XillWorker(runtime, Paths.get("test/path"), "robot.name");
     }
 
     @Test
     public void testInitialState() throws Exception {
-        assertSame(worker.getState(), XillWorkerState.NEW);
-    }
-
-    @Test
-    public void testCompileStates() throws Exception {
-        doAnswer(invocation -> {
-            assertSame(worker.getState(), XillWorkerState.COMPILING);
-            return null;
-        }).when(runtime).compile(any(), any());
-        worker.compile();
         assertSame(worker.getState(), XillWorkerState.IDLE);
-    }
-
-    @Test(expectedExceptions = XillInvalidStateException.class)
-    public void testDoubleCompile() throws Exception {
-        doNothing().when(runtime).compile(any(), any());
-        worker.compile();
-        worker.compile();
-    }
-
-    @Test(expectedExceptions = XillCompileException.class)
-    public void testCompileErrorStates() throws Exception {
-        doThrow(XillCompileException.class).when(runtime).compile(any(), any());
-        worker.compile();
-        assertSame(worker.getState(), XillWorkerState.COMPILATION_ERROR);
     }
 
     @Test
     public void testAbortStates() throws Exception {
-        doNothing().when(runtime).compile(any(), any());
-        worker.compile();
-
         doAnswer(invocation -> {
             doAnswer(invocation1 -> {
                 assertSame(worker.getState(), XillWorkerState.ABORTING);
@@ -98,9 +70,6 @@ public class XillWorkerTest extends TestUtils {
      */
     @Test(expectedExceptions = XillInvalidStateException.class)
     public void testDoubleAbortStates() throws Exception {
-        doNothing().when(runtime).compile(any(), any());
-        worker.compile();
-
         doAnswer(invocation -> {
             doAnswer(invocation1 -> {
                 worker.abort();
@@ -116,15 +85,7 @@ public class XillWorkerTest extends TestUtils {
     }
 
     @Test(expectedExceptions = XillInvalidStateException.class)
-    public void testAbortNewState() throws Exception {
-        worker.abort();
-        assertSame(worker.getState(), XillWorkerState.NEW);
-    }
-
-    @Test(expectedExceptions = XillInvalidStateException.class)
     public void testAbortIdleState() throws Exception {
-        doNothing().when(runtime).compile(any(), any());
-        worker.compile();
         worker.abort();
         assertSame(worker.getState(), XillWorkerState.IDLE);
     }

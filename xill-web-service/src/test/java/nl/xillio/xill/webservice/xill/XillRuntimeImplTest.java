@@ -10,8 +10,6 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
-import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
-import nl.xillio.xill.webservice.xill.XillRuntimeImpl;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -21,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -96,7 +95,7 @@ public class XillRuntimeImplTest extends TestUtils {
      * Test {@link XillRuntimeImpl#runRobot(Map)} under normal circumstances.
      */
     @Test
-    public void testRunRobot() throws IOException, XillCompileException {
+    public void testRunRobot() throws IOException, XillCompileException, ExecutionException {
         // Mock
         Double resultNumber = 42.0;
         MetaExpression robotResult = parseObject(resultNumber);
@@ -123,7 +122,7 @@ public class XillRuntimeImplTest extends TestUtils {
      * not been called yet.
      */
     @Test
-    public void testRunRobotNoCompile() {
+    public void testRunRobotNoCompile() throws ExecutionException {
         // Mock
         Map<String, Object> parameters = new HashMap<>();
 

@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static org.testng.Assert.assertEquals;
 
@@ -65,7 +66,7 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     @DirtiesContext
-    public void testRunRobot() throws XillCompileException {
+    public void testRunRobot() throws XillCompileException, ExecutionException {
         xillRuntime.compile(workingDirectory, robotPath);
 
         Map<String, Object> parameters = new HashMap<>();
@@ -83,7 +84,7 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     @DirtiesContext
-    public void testRunRobotMultiple() throws XillCompileException {
+    public void testRunRobotMultiple() throws XillCompileException, ExecutionException {
         xillRuntime.compile(workingDirectory, robotPath);
 
         for (int i=0; i<4; i++) {

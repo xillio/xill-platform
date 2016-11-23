@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,12 +15,11 @@
  */
 package nl.xillio.xill.webservice.model;
 
-import nl.xillio.xill.api.OutputHandler;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
-import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Represents an instance of the Xill environment able to run a single robot with low latency.
@@ -37,6 +36,7 @@ public interface XillRuntime extends AutoCloseable {
      *
      * @param workDirectory The working directory
      * @param robotPath A path to the robot, relative to {@code workDirectory}
+     * @throws XillCompileException if the robot could not be (re) compiles
      */
     void compile(Path workDirectory, Path robotPath) throws XillCompileException;
 
@@ -47,8 +47,9 @@ public interface XillRuntime extends AutoCloseable {
      *
      * @param parameters The parameters to be passed as the robot's arguments
      * @return The robot's return value
+     * @throws ExecutionException if the robot cannot recompile after the initial compilation
      */
-    Object runRobot(Map<String, Object> parameters);
+    Object runRobot(Map<String, Object> parameters) throws ExecutionException;
 
     /**
      * Abort a currently running robot.

@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package nl.xillio.xill.webservice.xill;
 
 import nl.xillio.xill.api.OutputHandler;
@@ -10,14 +25,12 @@ import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.api.io.SimpleIOStream;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
-import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import nl.xillio.xill.webservice.model.XillRuntime;
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
@@ -27,8 +40,6 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
@@ -87,7 +98,7 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
     }
 
     @Override
-    public Object runRobot(Map<String, Object> parameters) {
+    public Object runRobot(Map<String, Object> parameters) throws ExecutionException {
         // Do nothing when no robot has been compiled yet
         if (compileSuccess == null) {
             return null;
@@ -99,10 +110,6 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
         } catch (InterruptedException e) {
             LOGGER.error("Waiting for robot compilation was interrupted", e);
             Thread.currentThread().interrupt();
-            return null;
-        } catch (ExecutionException e) {
-            // We do not throw the exception since the robot has already successfully compiled during the call to compile()
-            LOGGER.error("Error compiling robot, if this robot has changed, a new worker should be allocated", e);
             return null;
         }
 
@@ -121,6 +128,7 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
 
     /**
      * Create a MetaExpression containing a stream from an object
+     *
      * @param input The object to wrap in a MetaExpression
      * @return A MetaExpression if {@code input} is an {@link InputStream}, null otherwise
      */
