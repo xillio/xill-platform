@@ -131,15 +131,15 @@ public class FreeMarkerDocumentationGenerator implements DocumentationGenerator 
 
         //Gather all json files
         File[] foldersArray = getDocumentationSubFolders();
-        List<File> folders = Arrays.stream(foldersArray).filter(Objects::nonNull).sorted(File::compareTo).collect(Collectors.toList());
+        List<File> jsonFiles = Arrays.stream(foldersArray)
+                .filter(Objects::nonNull)
+                .map(this::getJsonFile)
+                .filter(Objects::nonNull)
+                .sorted(File::compareTo)
+                .collect(Collectors.toList());
 
 
-        for (File folder : folders) {
-            File jsonFile = getJsonFile(folder);
-
-            if (jsonFile == null) {
-                continue;
-            }
+        for (File jsonFile : jsonFiles) {
 
             try {
                 String json = getJsonFromFile(jsonFile);
