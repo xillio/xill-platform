@@ -17,7 +17,7 @@ package nl.xillio.xill.webservice;
 
 import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import nl.xillio.xill.webservice.model.XillWorker;
-import nl.xillio.xill.webservice.services.XillWorkerPoolManagerService;
+import nl.xillio.xill.webservice.services.XillWorkerPoolManagerServiceImpl;
 import nl.xillio.xill.webservice.types.XWID;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class XillWorkerWebServiceController {
 
     @Autowired
-    private XillWorkerPoolManagerService workerPoolManagerService;
+    private XillWorkerPoolManagerServiceImpl workerPoolManagerService;
 
     /**
      * Register a worker for a specific robot if a space is available.
@@ -50,7 +50,7 @@ public class XillWorkerWebServiceController {
      */
     public void releaseWorker(XWID id) {
         try {
-            workerPoolManagerService.findWorkerPool(null).releaseWorker(id);
+            workerPoolManagerService.getDefaultWorkerPool().releaseWorker(id);
         } catch (XillNotFoundException e) {
             e.printStackTrace();
         }
@@ -66,7 +66,7 @@ public class XillWorkerWebServiceController {
 
     public void abortWorker(XWID id) {
         try {
-            workerPoolManagerService.findWorkerPool(null).findWorker(id).abort();
+            workerPoolManagerService.getDefaultWorkerPool().findWorker(id).abort();
         } catch (XillNotFoundException e) {
             e.printStackTrace();
         }

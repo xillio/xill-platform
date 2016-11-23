@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.webservice.types;
 
+import java.util.Random;
+
 /**
  * XillWorker ID - unique identificator of the XillWorker in the XillWorkerPool.
  */
@@ -23,6 +25,10 @@ public class XWID {
 
     public XWID(int id) {
         this.id = id;
+    }
+
+    public XWID() {
+        this.id = new Random().nextInt();
     }
 
     public int getId() {
