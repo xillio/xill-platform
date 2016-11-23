@@ -37,7 +37,6 @@ public class PreviewTreeItem extends TreeItem<Pair<String, MetaExpression>> {
 
     PreviewTreeItem(String name, MetaExpression value) {
         super(new Pair<>(name, value));
-
         // Lazily expand item
         expandedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
@@ -53,7 +52,11 @@ public class PreviewTreeItem extends TreeItem<Pair<String, MetaExpression>> {
      */
     @Override
     public boolean isLeaf() {
-        return getValue().getValue().getType() == ExpressionDataType.ATOMIC;
+        if (getValue().getValue().isClosed()) {
+            return true; // It's closed so we treat it as a leaf
+        } else {
+            return getValue().getValue().getType() == ExpressionDataType.ATOMIC;
+        }
     }
 
     /**

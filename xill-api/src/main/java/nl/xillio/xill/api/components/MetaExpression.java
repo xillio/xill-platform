@@ -501,7 +501,7 @@ public abstract class MetaExpression implements Expression, Processable {
     /**
      * @return whether this expression has been closed using {@link #close()}
      */
-    private boolean isClosed() {
+    public boolean isClosed() {
         return isClosed;
     }
 

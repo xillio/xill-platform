@@ -55,6 +55,10 @@ public class ObservableVariable {
             return ExpressionBuilderHelper.NULL.toString();
         }
 
+        if (value.isClosed()) {
+            return "[closed]";
+        }
+
         switch (value.getType()) {
             case ATOMIC:
                 return value.toString();

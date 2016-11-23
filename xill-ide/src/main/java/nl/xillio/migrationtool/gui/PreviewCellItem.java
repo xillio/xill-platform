@@ -48,6 +48,8 @@ public class PreviewCellItem extends TreeTableCell<Pair<String, MetaExpression>,
         super.updateItem(item, empty);
         if (item == null) {
             setText(null);
+        } else if (item.isClosed()) {
+            setText("[closed]");
         } else {
             switch (item.getType()) {
                 case LIST:
