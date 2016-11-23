@@ -18,11 +18,13 @@
 -->
 <function>
     <description>
-Move a file to a target destination.  
+Move a file from a `source` path to a `target` path returning an object containing the source destination ["from"] and the target destination ["into"].
+`source` and `target` can be either relative or absolute paths.
 
-Returns an object containing the source destination [from] and the target destination [into].  
 This construct will rename a file if the source folder and target folder is the same.
-Parameter `replaceExisting` determines if the move operation can replace existing target file. If set to `false` and the target file already exists it will fail.  
+
+Parameter `replaceExisting` determines if the move operation can replace existing target file. If set to `false` and the target file already exists it will fail.
+`replaceExisting` is `true` by default.
 </description>
     <examples>
         <example title="Usage">

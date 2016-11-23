@@ -18,9 +18,8 @@
 -->
 <function>
     <description>
-Delete a file or folder.  
-
-Returns the absolute path to the file or folder
+Deletes the file or folder at the given `path` if it points to a valid file or folder and returns the absolute path this file or folder used to be located at.
+If this does not point to a valid file or folder, nothing will happen.
     </description>
     <examples>
         <example title="Usage">
