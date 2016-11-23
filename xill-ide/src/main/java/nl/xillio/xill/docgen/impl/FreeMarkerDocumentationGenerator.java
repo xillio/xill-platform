@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This is the FreeMarker implementation of the {@link DocumentationGenerator}
@@ -129,8 +130,9 @@ public class FreeMarkerDocumentationGenerator implements DocumentationGenerator 
         List<PackageDocumentationEntity> result = new ArrayList<>();
 
         //Gather all json files
-        File[] folders = getDocumentationSubFolders();
-        Arrays.sort(folders);
+        File[] foldersArray = getDocumentationSubFolders();
+        List<File> folders = Arrays.stream(foldersArray).filter(Objects::nonNull).sorted(File::compareTo).collect(Collectors.toList());
+
 
         for (File folder : folders) {
             File jsonFile = getJsonFile(folder);
