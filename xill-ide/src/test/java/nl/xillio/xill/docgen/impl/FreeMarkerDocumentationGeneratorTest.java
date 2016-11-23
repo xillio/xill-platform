@@ -180,14 +180,18 @@ public class FreeMarkerDocumentationGeneratorTest {
     @Test
     public void testGetPackagesFromJsonSuccess() throws Exception {
         FreeMarkerDocumentationGenerator generator = spyGenerator();
+        File existingFile = mock(File.class);
+        File nonExistingFile = mock(File.class);
 
         // Subfolder
-        File[] folders = new File[]{null, null};
+        // the null value should be filtered out by sort
+        File[] folders = new File[]{null, nonExistingFile, existingFile};
         doReturn(folders).when(generator).getDocumentationSubFolders();
 
         // getJsonFile
         File jsonFile = mock(File.class);
-        doReturn(null).doReturn(jsonFile).when(generator).getJsonFile(null);
+        doReturn(null).when(generator).getJsonFile(nonExistingFile);
+        doReturn(jsonFile).when(generator).getJsonFile(existingFile);
 
         // getJsonFromFile
         String json = "{}";
