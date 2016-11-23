@@ -16,15 +16,18 @@
 package nl.xillio.xill.webservice.model;
 
 import nl.xillio.xill.TestUtils;
+import nl.xillio.xill.webservice.exceptions.XillCompileException;
 import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import org.apache.commons.collections.MapUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.nio.file.Paths;
+import java.util.concurrent.ExecutionException;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 
 /**
@@ -44,11 +47,69 @@ public class XillWorkerTest extends TestUtils {
         worker = new XillWorker(runtime, Paths.get("test/path"), "robot.name");
     }
 
+    /**
+     * A worker cannot be created if the robot cannot compile.
+     */
+    @Test(expectedExceptions = XillCompileException.class)
+    public void testCompileError() throws Exception {
+        doThrow(XillCompileException.class).when(runtime).compile(any(), any());
+        worker = new XillWorker(runtime, Paths.get("test/path"), "robot.name");
+        assertNull(worker);
+    }
+
+    /**
+     * A new worker should be in {@link XillWorkerState#IDLE}.
+     */
     @Test
     public void testInitialState() throws Exception {
         assertSame(worker.getState(), XillWorkerState.IDLE);
     }
 
+    /**
+     * Checks that the worker is in {@link XillWorkerState#RUNNING} when run,
+     * then returns to {@link XillWorkerState#IDLE}.
+     */
+    @Test
+    public void testRunningState() throws Exception {
+        doAnswer(invocation -> {
+            assertSame(worker.getState(), XillWorkerState.RUNNING);
+            return null;
+        }).when(runtime).runRobot(any());
+        worker.run(MapUtils.EMPTY_MAP);
+        assertSame(worker.getState(), XillWorkerState.IDLE);
+    }
+
+    /**
+     * If an exception happened during recompilation of a robot, an exception should be thrown
+     * and the worker should fall in {@link XillWorkerState#RUNTIME_ERROR} state.
+     */
+    @Test(expectedExceptions = XillInvalidStateException.class)
+    public void testRunTimeError() throws Exception {
+        doThrow(ExecutionException.class).when(runtime).runRobot(MapUtils.EMPTY_MAP);
+        worker.run(MapUtils.EMPTY_MAP);
+        assertSame(worker.getState(), XillWorkerState.RUNTIME_ERROR);
+    }
+
+    /**
+     * Running a worker if it is in {@link XillWorkerState#RUNTIME_ERROR} should throw an exception,
+     * and leave it in its state.
+     */
+    @Test(expectedExceptions = XillInvalidStateException.class)
+    public void testNoRunIfErrorState() throws Exception {
+        doThrow(ExecutionException.class).when(runtime).runRobot(MapUtils.EMPTY_MAP);
+        try {
+            worker.run(MapUtils.EMPTY_MAP);
+        } catch (XillInvalidStateException e) {
+            worker.run(MapUtils.EMPTY_MAP);
+        } finally {
+            assertSame(worker.getState(), XillWorkerState.RUNTIME_ERROR);
+        }
+    }
+
+    /**
+     * Calling abort when a worker is running should set its state to {@link XillWorkerState#ABORTING},
+     * then return the state to {@link XillWorkerState#IDLE}.
+     */
     @Test
     public void testAbortStates() throws Exception {
         doAnswer(invocation -> {
@@ -66,7 +127,8 @@ public class XillWorkerTest extends TestUtils {
     }
 
     /**
-     * Calling abort when a robot is aborting should propagate the exception then return to IDLE state.
+     * Calling abort when a robot is aborting should propagate the exception,
+     * then return to {@link XillWorkerState#IDLE} state.
      */
     @Test(expectedExceptions = XillInvalidStateException.class)
     public void testDoubleAbortStates() throws Exception {
@@ -84,6 +146,9 @@ public class XillWorkerTest extends TestUtils {
         assertSame(worker.getState(), XillWorkerState.IDLE);
     }
 
+    /**
+     * A robot not running should throw an exception when aborted.
+     */
     @Test(expectedExceptions = XillInvalidStateException.class)
     public void testAbortIdleState() throws Exception {
         worker.abort();
