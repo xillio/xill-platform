@@ -18,11 +18,20 @@
 -->
 <function>
     <description>
-Get the MIME type of a file as a string value containing the MIME type of the specified file, or null if it could not identify it.
+Get the MIME type of a file.
+    </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="path">
+The path that will be looked at.
+This can be either relative or absolute.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Returns a string value containing the MIME type of the specified file, or null if it could not identify it.
+
 The MIME type is inferred from the extension. Therefore, the MIME type will be wrong if there is no (correct) extension.
 To get a more accurate result, the ExifTool can be used (although this might be slower).
-
-    </description>
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Get the MIME type</header>
