@@ -44,7 +44,9 @@ public class JGitRepository implements GitRepository {
         FileRepositoryBuilder builder = new FileRepositoryBuilder().addCeilingDirectory(path).findGitDir(path);
 
         try {
-            repository = new Git(builder.build());
+            if(builder.getGitDir() != null) {
+                repository = new Git(builder.build());
+            }
         } catch (IOException | IllegalArgumentException e) {
             LOGGER.error("An exception occurred while loading the repository.", e);
         }
