@@ -17,34 +17,54 @@ package nl.xillio.migrationtool.dialogs;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import nl.xillio.xill.versioncontrol.operations.GitPullOperation;
-import org.eclipse.jgit.api.Git;
 
-public class GitPullDialog extends GitDialog{
+/**
+ * Created by Dwight on 23-Nov-16.
+ */
+public class GitDialog extends FXMLDialog{
+    @FXML
+    protected Label repositoryName;
+
+    @FXML
+    protected Button okBtn;
+
+    @FXML
+    protected HBox progress;
+
+    @FXML
+    private ProgressIndicator progressIndicator;
+
+    protected final JGitRepository repo;
 
     /**
      * Default constructor.
      *
      * @param repo the JGitRepository that will be pushed to.
      */
-    public GitPullDialog(final JGitRepository repo) {
-        super(repo,"/fxml/dialogs/GitPull.fxml");
-        this.setTitle("Pull");
+    public GitDialog(final JGitRepository repo, final String path) {
+        super(path);
+        this.repo = repo;
         repositoryName.setText(repo.getRepositoryName());
     }
 
     @FXML
-    private void pullBtnPressed(final ActionEvent event) {
-        showProgress();
+    protected void cancelBtnPressed(final ActionEvent event) {
+        close();
+    }
 
-        GitPullOperation pull = new GitPullOperation(repo);
-        new Thread(pull).start();
+    protected void showProgress(){
+        progressIndicator.setVisible(true);
+        progress.setVisible(true);
+    }
 
-        pull.setOnSucceeded(e -> setStatusToFinished());
+    protected void setStatusToFinished() {
+        progressIndicator.setVisible(false);
+        this.close();
     }
 }
-

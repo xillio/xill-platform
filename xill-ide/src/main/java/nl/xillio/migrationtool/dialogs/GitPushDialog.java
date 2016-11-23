@@ -26,27 +26,17 @@ import nl.xillio.xill.versioncontrol.operations.GitCommitAndPushOperation;
 
 import java.util.Set;
 
-public class GitPushDialog extends FXMLDialog {
+public class GitPushDialog extends GitDialog {
     @FXML
     private TextField message;
     @FXML
     private ListView<String> fileList;
-    @FXML
-    private Button okBtn;
-
-    @FXML
-    private HBox progress;
 
     @FXML
     private Label messageStatus;
 
     @FXML
-    private ProgressIndicator progressIndicator;
-
-    @FXML
     private VBox gitInfoBox;
-
-    private final JGitRepository repo;
 
     /**
      * Default constructor.
@@ -54,39 +44,37 @@ public class GitPushDialog extends FXMLDialog {
      * @param repo the JGitRepository that will be pushed to.
      */
     public GitPushDialog(final JGitRepository repo) {
-        super("/fxml/dialogs/GitPush.fxml");
+        super(repo, "/fxml/dialogs/GitPush.fxml");
         this.setTitle("Push changes");
-        this.repo = repo;
 
+        okBtn.setDisable(true);
         Set<String> changedFiles = repo.getChangedFiles();
-        if (!changedFiles.isEmpty()) {
+        boolean changes = !changedFiles.isEmpty();
+
+        if (changes) {
             fileList.setItems(FXCollections.observableArrayList(changedFiles));
+            message.textProperty().addListener((observable, newValue, oldValue) -> {
+                if(!(newValue.toString().equals(""))){
+                    okBtn.setDisable(false);
+                }
+                else{
+                    okBtn.setDisable(true);
+                }
+            });
         } else {
             fileList.setItems(FXCollections.observableArrayList("No changes were found"));
-            okBtn.setDisable(true);
         }
     }
 
     @FXML
-    private void cancelBtnPressed(final ActionEvent event) {
-        close();
-    }
-
-    @FXML
     private void pushBtnPressed(final ActionEvent event) {
-        progressIndicator.setVisible(true);
-        progress.setVisible(true);
+        showProgress();
         gitInfoBox.setDisable(true);
 
         GitCommitAndPushOperation push = new GitCommitAndPushOperation(repo, message.getText());
         new Thread(push).start();
 
         push.setOnSucceeded(e -> setStatusToFinished());
-    }
-
-    private void setStatusToFinished() {
-        progressIndicator.setVisible(false);
-        this.close();
     }
 }
 
