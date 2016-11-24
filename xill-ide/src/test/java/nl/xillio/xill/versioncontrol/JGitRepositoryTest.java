@@ -16,20 +16,22 @@
 package nl.xillio.xill.versioncontrol;
 
 import me.biesaart.utils.Log;
-import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.*;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.transport.CredentialsProvider;
 import org.slf4j.Logger;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.mockito.Mockito.*;
+import static org.testng.Assert.*;
 
 public class JGitRepositoryTest {
     private static final Logger LOGGER = Log.get();
@@ -40,6 +42,9 @@ public class JGitRepositoryTest {
 
     private JGitRepository createJGitRepository(Git repo, JGitAuth jGitAuth) {
         JGitRepository result = new JGitRepository(null);
+
+        // Simple mock for the credentials provider.
+        when(auth.getCredentials()).thenReturn(mock(CredentialsProvider.class));
 
         // Set the fields using reflection.
         Class<?> c = result.getClass();
@@ -66,7 +71,7 @@ public class JGitRepositoryTest {
     }
 
     @Test
-    public void isInitializedTest() {
+    public void testIsInitialized() {
         assertTrue(repository.isInitialized());
 
         JGitRepository noInit = createJGitRepository(null, null);
@@ -74,7 +79,7 @@ public class JGitRepositoryTest {
     }
 
     @Test
-    public void getRepositoryNameTest() {
+    public void testGetRepositoryName() {
         String name = "repo name";
 
         // Mock.
@@ -87,5 +92,112 @@ public class JGitRepositoryTest {
         when(parent.getName()).thenReturn(name);
 
         assertEquals(repository.getRepositoryName(), name);
+    }
+
+    @Test
+    public void testPushCommand() throws GitAPIException {
+        // Mock.
+        PushCommand cmd = mock(PushCommand.class);
+        when(git.push()).thenReturn(cmd);
+        when(cmd.setCredentialsProvider(auth.getCredentials())).thenReturn(cmd);
+
+        // Run.
+        repository.pushCommand();
+
+        // Verify.
+        verify(cmd, times(1)).setCredentialsProvider(auth.getCredentials());
+        verify(cmd, times(1)).call();
+    }
+
+    @Test
+    public void testPullCommand() throws GitAPIException {
+        // Mock.
+        PullCommand cmd = mock(PullCommand.class);
+        when(git.pull()).thenReturn(cmd);
+        when(cmd.setCredentialsProvider(auth.getCredentials())).thenReturn(cmd);
+
+        // Run.
+        repository.pullCommand();
+
+        // Verify.
+        verify(cmd, times(1)).setCredentialsProvider(auth.getCredentials());
+        verify(cmd, times(1)).call();
+    }
+
+    @Test
+    public void testCommitCommand() throws GitAPIException {
+        String message = "commit message";
+
+        // Mock.
+        AddCommand add = mock(AddCommand.class);
+        when(git.add()).thenReturn(add);
+        when(add.addFilepattern(".")).thenReturn(add);
+        CommitCommand commit = mock(CommitCommand.class);
+        when(git.commit()).thenReturn(commit);
+        when(commit.setMessage(message)).thenReturn(commit);
+
+        // Run.
+        repository.commitCommand(message);
+
+        // Verify.
+        verify(add, times(1)).addFilepattern(".");
+        verify(add, times(1)).call();
+        verify(commit, times(1)).setMessage(message);
+        verify(commit, times(1)).call();
+    }
+
+    @Test
+    public void testRevertCommitCommand() throws GitAPIException {
+        // Mock.
+        ResetCommand cmd = mock(ResetCommand.class);
+        when(git.reset()).thenReturn(cmd);
+        when(cmd.setMode(ResetCommand.ResetType.MIXED)).thenReturn(cmd);
+        when(cmd.setRef("HEAD^")).thenReturn(cmd);
+
+        // Run.
+        repository.resetCommitCommand();
+
+        // Verify.
+        verify(cmd, times(1)).setMode(ResetCommand.ResetType.MIXED);
+        verify(cmd, times(1)).setRef("HEAD^");
+        verify(cmd, times(1)).call();
+    }
+
+    @Test
+    public void testGetChangedFiles() throws GitAPIException {
+        Set<String> uncommitted = new HashSet<>();
+        uncommitted.add("not committed");
+        Set<String> untracked = new HashSet<>();
+        untracked.add("not tracked");
+        Set<String> total = new HashSet<>(uncommitted);
+        total.addAll(untracked);
+
+        // Mock.
+        StatusCommand cmd = mock(StatusCommand.class);
+        when(git.status()).thenReturn(cmd);
+        Status status = mock(Status.class);
+        when(cmd.call()).thenReturn(status);
+        when(status.getUncommittedChanges()).thenReturn(uncommitted);
+        when(status.getUntracked()).thenReturn(untracked);
+
+        // Run.
+        Set<String> result = repository.getChangedFiles();
+
+        // Assert.
+        assertEquals(result, total);
+    }
+
+    @Test
+    public void testGetChangedFilesException() throws GitAPIException {
+        // Mock.
+        StatusCommand cmd = mock(StatusCommand.class);
+        when(git.status()).thenReturn(cmd);
+        when(cmd.call()).thenThrow(new GitAPIException("This exception is supposed to be thrown.") {});
+
+        // Run.
+        Set<String> result = repository.getChangedFiles();
+
+        // Assert.
+        assertEquals(result, Collections.emptySet());
     }
 }
