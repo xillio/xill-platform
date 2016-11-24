@@ -43,7 +43,7 @@ public class JGitRepository implements GitRepository {
         FileRepositoryBuilder builder = new FileRepositoryBuilder().addCeilingDirectory(path).findGitDir(path);
 
         try {
-            if(builder.getGitDir() != null) {
+            if (builder.getGitDir() != null) {
                 repository = new Git(builder.build());
             }
         } catch (IOException | IllegalArgumentException e) {
