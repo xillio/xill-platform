@@ -37,7 +37,6 @@ public class JGitRepository implements GitRepository {
     private static final Logger LOGGER = Log.get();
 
     private Git repository;
-
     private JGitAuth auth;
 
     public JGitRepository(File path) {
@@ -54,27 +53,33 @@ public class JGitRepository implements GitRepository {
         auth = new JGitAuth();
     }
 
+    @Override
     public boolean isInitialized() {
         return repository != null;
     }
 
+    @Override
     public void pushCommand() throws GitAPIException {
         repository.push().setCredentialsProvider(auth.getCredentials()).call();
     }
 
+    @Override
     public void commitCommand(String message) throws GitAPIException {
         repository.add().addFilepattern(".").call();
         repository.commit().setMessage(message).call();
     }
 
+    @Override
     public void pullCommand() throws GitAPIException {
         repository.pull().setCredentialsProvider(auth.getCredentials()).call();
     }
 
+    @Override
     public void resetCommitCommand() throws GitAPIException {
         repository.reset().setMode(ResetCommand.ResetType.MIXED).setRef("HEAD^").call();
     }
 
+    @Override
     public Set<String> getChangedFiles() {
         Set<String> changedFiles = new HashSet<>();
         try {
@@ -91,8 +96,8 @@ public class JGitRepository implements GitRepository {
         return auth;
     }
 
+    @Override
     public String getRepositoryName() {
         return repository.getRepository().getDirectory().getParentFile().getName();
     }
-
 }

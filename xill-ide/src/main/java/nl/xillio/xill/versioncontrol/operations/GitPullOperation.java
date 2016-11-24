@@ -33,6 +33,7 @@ public class GitPullOperation extends GitOperation {
         super(repo);
     }
 
+    @Override
     protected void execute() throws GitAPIException {
         repo.pullCommand();
     }

@@ -44,6 +44,11 @@ public interface GitRepository {
     void pullCommand() throws GitAPIException;
 
     /**
+     * Resets the last commit.
+     */
+    void resetCommitCommand() throws GitAPIException;
+
+    /**
      * Returns if this object exists as initialized repository on the disk.
      *
      * @return {@code true} if this object is initialized on the disk, {@code false} otherwise.
@@ -56,4 +61,11 @@ public interface GitRepository {
      * @return A set of file names
      */
     Set<String> getChangedFiles();
+
+    /**
+     * Get the name of this repository.
+     *
+     * @return This repository's name.
+     */
+    String getRepositoryName();
 }

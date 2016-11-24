@@ -78,7 +78,7 @@ abstract class GitOperation extends Task<Void> {
             commandLatch.countDown();
         } catch (GitAPIException e) {
             // Check if the exception is an authorization exception.
-            if (e instanceof TransportException && auth.isAuthorizationException(e)) {
+            if (auth.isAuthorizationException(e)) {
                 final CountDownLatch credentialsLatch = new CountDownLatch(1); // Latch on the credentials dialog
                 Platform.runLater(() -> {
                     reRun = false;
@@ -113,7 +113,7 @@ abstract class GitOperation extends Task<Void> {
     }
 
     protected void handleError(Throwable cause) {
-        Platform.runLater(() -> new AlertDialog(Alert.AlertType.ERROR, "Error", "An error occurred.", cause.getMessage()).showAndWait());
+        Platform.runLater(new AlertDialog(Alert.AlertType.ERROR, "Error", "An error occurred.", cause.getMessage())::showAndWait);
     }
 
     private boolean awaitLatch(CountDownLatch latch) {
