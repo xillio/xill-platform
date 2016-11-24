@@ -18,79 +18,66 @@ package nl.xillio.xill.versioncontrol;
 import me.biesaart.utils.Log;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.errors.NoWorkTreeException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.transport.CredentialsProvider;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Implementation of {@link Repository} which uses the jGit library for interacting with Git repositories.
+ * Implementation of {@link GitRepository} which uses the jGit library for interacting with Git repositories.
  *
  * @author Daan Knoope
  */
-public class JGitRepository implements Repository {
+public class JGitRepository implements GitRepository {
     private static final Logger LOGGER = Log.get();
 
     private Git repository;
-    private CredentialsProvider credentials;
+
+    private JGitAuth auth;
 
     public JGitRepository(File path) {
         FileRepositoryBuilder builder = new FileRepositoryBuilder().addCeilingDirectory(path).findGitDir(path);
 
         try {
-            repository = new Git(builder.build());
-        } catch (IOException e) {
+            if (builder.getGitDir() != null) {
+                repository = new Git(builder.build());
+            }
+        } catch (IOException | IllegalArgumentException e) {
             LOGGER.error("An exception occurred while loading the repository.", e);
         }
+
+        auth = new JGitAuth();
     }
 
-    @Override
-    public boolean commit(String commitMessage) {
-        try {
-            repository.add().addFilepattern("--all").call();
-            repository.commit().setMessage(commitMessage).call();
-        } catch (GitAPIException e) {
-            LOGGER.error("Exception while committing files.", e);
-            return false;
-        }
-        return true;
+    public boolean isInitialized() {
+        return repository != null;
     }
 
-    @Override
-    public boolean push() {
-        try {
-            PushCommand cmd = repository.push();
-            setCredentialsProvider(cmd);
-            cmd.call();
-        } catch (GitAPIException e) {
-            LOGGER.error("Exception while pushing.", e);
-            return false;
-        }
-        return true;
+    public void pushCommand() throws GitAPIException {
+        repository.push().setCredentialsProvider(auth.getCredentials()).call();
     }
 
-    @Override
-    public boolean pull() {
-        try {
-            PullCommand cmd = repository.pull();
-            setCredentialsProvider(cmd);
-            cmd.call();
-        } catch (GitAPIException e) {
-            LOGGER.error("Exception while pulling.", e);
-            return false;
-        }
-        return true;
+    public void commitCommand(String message) throws GitAPIException {
+        repository.add().addFilepattern(".").call();
+        repository.commit().setMessage(message).call();
     }
 
-    @Override
+    public void pullCommand() throws GitAPIException {
+        repository.pull().setCredentialsProvider(auth.getCredentials()).call();
+    }
+
+    public void resetCommitCommand() throws GitAPIException {
+        repository.reset().setMode(ResetCommand.ResetType.MIXED).setRef("HEAD^").call();
+    }
+
     public List<String> getBranches() {
         try {
             // Get all remote branches.
@@ -106,7 +93,6 @@ public class JGitRepository implements Repository {
         return name.substring(name.lastIndexOf('/') + 1);
     }
 
-    @Override
     public String getCurrentBranchName() {
         try {
             return repository.getRepository().getBranch();
@@ -116,7 +102,6 @@ public class JGitRepository implements Repository {
         return null;
     }
 
-    @Override
     public void checkout(String branch) throws GitAPIException {
         // If there is already a local branch, the branch should not be created.
         Set<String> localBranches = repository.branchList().call().stream().map(Ref::getName).map(this::friendlyBranchName).collect(Collectors.toSet());
@@ -127,24 +112,27 @@ public class JGitRepository implements Repository {
                 .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
     }
 
-    @Override
     public void createBranch(String name) throws GitAPIException {
         repository.branchCreate().setName(name).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
     }
 
-    @Override
-    public boolean isInitialized() {
-        return repository != null;
-    }
-
-    @Override
-    public void setCredentials(String username, String password) {
-        credentials = new UsernamePasswordCredentialsProvider(username, password);
-    }
-
-    private void setCredentialsProvider(TransportCommand command) {
-        if (credentials != null) {
-            command.setCredentialsProvider(credentials);
+    public Set<String> getChangedFiles() {
+        Set<String> changedFiles = new HashSet<>();
+        try {
+            Status status = repository.status().call();
+            changedFiles.addAll(status.getUncommittedChanges()); // Add changes
+            changedFiles.addAll(status.getUntracked()); // Add untracked files
+        } catch (GitAPIException | NoWorkTreeException e) {
+            LOGGER.error("Error retrieving changed files.", e);
         }
+        return changedFiles;
+    }
+
+    public JGitAuth getAuth() {
+        return auth;
+    }
+
+    public String getRepositoryName() {
+        return repository.getRepository().getDirectory().getParentFile().getName();
     }
 }

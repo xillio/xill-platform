@@ -314,6 +314,12 @@ public class Settings {
     /** */
     public static final String PRINT = "Print";
 
+    /** */
+    public static final String PULL = "Pull";
+
+    /** */
+    public static final String PUSH = "Push";
+
     // =============================================================================
 
     private Settings() {

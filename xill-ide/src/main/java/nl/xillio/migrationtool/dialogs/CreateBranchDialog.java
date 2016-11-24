@@ -18,16 +18,16 @@ package nl.xillio.migrationtool.dialogs;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
-import nl.xillio.xill.versioncontrol.Repository;
+import nl.xillio.xill.versioncontrol.GitRepository;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 public class CreateBranchDialog extends FXMLDialog {
     @FXML
     private TextField name;
 
-    private final Repository repo;
+    private final GitRepository repo;
 
-    public CreateBranchDialog(final Repository repo) {
+    public CreateBranchDialog(final GitRepository repo) {
         super("/fxml/dialogs/CreateBranch.fxml");
         setTitle("New branch");
         this.repo = repo;

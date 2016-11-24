@@ -18,7 +18,7 @@ package nl.xillio.migrationtool.dialogs;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
-import nl.xillio.xill.versioncontrol.Repository;
+import nl.xillio.xill.versioncontrol.GitRepository;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import java.util.List;
@@ -27,9 +27,9 @@ public class BranchListDialog extends FXMLDialog {
     @FXML
     private ListView<String> lvBranches;
 
-    private final Repository repo;
+    private final GitRepository repo;
 
-    public BranchListDialog(final Repository repo) {
+    public BranchListDialog(final GitRepository repo) {
         super("/fxml/dialogs/BranchList.fxml");
         setTitle("Branches");
         this.repo = repo;

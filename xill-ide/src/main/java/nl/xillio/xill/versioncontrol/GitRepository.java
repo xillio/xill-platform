@@ -18,34 +18,31 @@ package nl.xillio.xill.versioncontrol;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import java.util.List;
+import java.util.Set;
 
 /**
- * Representation of a version control repository.
+ * Representation of a Git version control repository.
  *
  * @author Daan Knoope
  */
-public interface Repository {
+public interface GitRepository {
     /**
-     * Commits all changes with the provi;ded commit message.
+     * Commits all changes with the provided commit message.
      *
      * @param commitMessage The message for the commit.
      * @return {@code true} if commit succeeded, {@code false} otherwise.
      */
-    boolean commit(String commitMessage);
+    void commitCommand(String commitMessage) throws GitAPIException;
 
     /**
      * Pushes all changes to the remote repository.
-     *
-     * @return {@code true} if push succeeded, {@code false} otherwise.
      */
-    boolean push();
+    void pushCommand() throws GitAPIException;
 
     /**
      * Pulls all changes from the remote repository.
-     *
-     * @return {@code true} if pull succeeded, {@code false} otherwise.
      */
-    boolean pull();
+    void pullCommand() throws GitAPIException;
 
     /**
      * Get the branches on this repo.
@@ -83,10 +80,9 @@ public interface Repository {
     boolean isInitialized();
 
     /**
-     * Set the credentials for the repository.
+     * Returns a set of files that have been changed in this working copy
      *
-     * @param username The username.
-     * @param password The password.
+     * @return A set of file names
      */
-    void setCredentials(String username, String password);
+    Set<String> getChangedFiles();
 }
