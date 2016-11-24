@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
+import xill.lang.xill.UseStatement;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -46,7 +47,21 @@ import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
 import static nl.xillio.xill.api.components.MetaExpression.extractValue;
 
 /**
- * Implementation of the {@link XillRuntime}
+ * Implementation of the {@link XillRuntime}.
+ *
+ * The expected usage pattern is calling {@link #compile(Path, Path)} once before being
+ * able to call {@link #runRobot(Map)} as often as required. Running robots can be aborted
+ * from a different thread by calling {@link #abortRobot()}. This class does not do any checking
+ * of state, meaning that {@link #runRobot(Map)} can be called before calling {@link #compile(Path, Path)}
+ * and {@link #abortRobot()} can be called when no robot is running, but these cases will result
+ * in undefined behaviour.
+ *
+ * Since a robot has to be compiled once for each run, this class recompiles its robots asynchronously
+ * after each run. Any errors occurring during recompilation are only logged since it is assumed that
+ * the robot does not change after {@link #compile(Path, Path)} has been called.
+ *
+ * This class is designed to be pooled, meaning that it can run different robots. {@link #compile(Path, Path)}
+ * should be called to chenge the robot this runtime is able to run.
  *
  * @author Geert Konijnendijk
  */
@@ -66,6 +81,13 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
     private Future<?> compileSuccess;
     private ThreadPoolTaskExecutor compileExecutor;
 
+    /**
+     * Create a new runtime.
+     *
+     * @param xillEnvironment The xill environment used for running robots. Is private to this runtime and will be closed when the runtime is closed.
+     * @param outputHandler The handler for robot output.
+     * @param compileExecutor The executor for asynchronously recompiling robots after a run.
+     */
     @Inject
     public XillRuntimeImpl(XillEnvironment xillEnvironment, OutputHandler outputHandler, @Qualifier("robotCompileThreadPool") ThreadPoolTaskExecutor compileExecutor) {
         this.xillEnvironment = xillEnvironment;
@@ -98,7 +120,7 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
     }
 
     @Override
-    public Object runRobot(Map<String, Object> parameters) throws ExecutionException {
+    public Object runRobot(Map<String, Object> parameters) {
         // Do nothing when no robot has been compiled yet
         if (compileSuccess == null) {
             return null;
@@ -110,6 +132,12 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
         } catch (InterruptedException e) {
             LOGGER.error("Waiting for robot compilation was interrupted", e);
             Thread.currentThread().interrupt();
+            return null;
+        } catch (ExecutionException e) {
+            // We do not throw the exception since the robot has already successfully compiled during the call to compile()
+            LOGGER.error("Error compiling robot, if this robot has changed, a new worker should be allocated", e);
+            // Rethrow the cause as a runtime exception
+            ConcurrentUtils.handleCauseUnchecked(e);
             return null;
         }
 
