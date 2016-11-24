@@ -25,6 +25,15 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "xill")
 public class XillProperties {
     private int maxExecutors = 10;
+    private String workDirectory = XWSUtils.getPresentWorkingDirectory();
+
+    public String getWorkDirectory() {
+        return workDirectory;
+    }
+
+    public void setWorkDirectory(String workDirectory) {
+        this.workDirectory = workDirectory;
+    }
 
     public int getMaxExecutors() {
         return maxExecutors;
