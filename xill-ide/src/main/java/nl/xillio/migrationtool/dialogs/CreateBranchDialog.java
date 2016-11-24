@@ -28,7 +28,7 @@ public class CreateBranchDialog extends FXMLDialog {
     private final GitRepository repo;
 
     public CreateBranchDialog(final GitRepository repo) {
-        super("/fxml/dialogs/CreateBranch.fxml");
+        super("/fxml/dialogs/GitCreateBranch.fxml");
         setTitle("New branch");
         this.repo = repo;
     }
