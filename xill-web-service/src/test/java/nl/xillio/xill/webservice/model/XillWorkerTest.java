@@ -19,11 +19,11 @@ import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
 import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.concurrent.ConcurrentRuntimeException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.nio.file.Paths;
-import java.util.concurrent.ExecutionException;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -85,7 +85,7 @@ public class XillWorkerTest extends TestUtils {
      */
     @Test(expectedExceptions = XillInvalidStateException.class)
     public void testRunTimeError() throws Exception {
-        doThrow(ExecutionException.class).when(runtime).runRobot(MapUtils.EMPTY_MAP);
+        doThrow(ConcurrentRuntimeException.class).when(runtime).runRobot(MapUtils.EMPTY_MAP);
         worker.run(MapUtils.EMPTY_MAP);
         assertSame(worker.getState(), XillWorkerState.RUNTIME_ERROR);
     }
@@ -96,7 +96,7 @@ public class XillWorkerTest extends TestUtils {
      */
     @Test(expectedExceptions = XillInvalidStateException.class)
     public void testNoRunIfErrorState() throws Exception {
-        doThrow(ExecutionException.class).when(runtime).runRobot(MapUtils.EMPTY_MAP);
+        doThrow(ConcurrentRuntimeException.class).when(runtime).runRobot(MapUtils.EMPTY_MAP);
         try {
             worker.run(MapUtils.EMPTY_MAP);
         } catch (XillInvalidStateException e) {
