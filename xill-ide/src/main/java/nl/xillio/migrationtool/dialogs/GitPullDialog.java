@@ -40,9 +40,8 @@ public class GitPullDialog extends GitDialog {
         showProgress();
 
         GitPullOperation pull = new GitPullOperation(repo);
-        pull.getThread().start();
-
         pull.setOnSucceeded(e -> setStatusToFinished());
+        pull.getThread().start();
     }
 }
 

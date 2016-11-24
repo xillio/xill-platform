@@ -63,9 +63,8 @@ public class GitPushDialog extends GitDialog {
         gitInfoBox.setDisable(true);
 
         GitCommitAndPushOperation push = new GitCommitAndPushOperation(repo, message.getText());
-        push.getThread().start();
-
         push.setOnSucceeded(e -> setStatusToFinished());
+        push.getThread().start();
     }
 }
 
