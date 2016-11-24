@@ -33,6 +33,10 @@
     <name>Xill Plugins Parent</name>
     <description>Provides a default configuration for xill plugins</description>
 
+    <properties>
+        <sonar.jacoco.itReportPath>${project.basedir}/../xill-processor/target/jacoco-it.exec</sonar.jacoco.itReportPath>
+    </properties>
+    
     <dependencies>
         <dependency>
             <groupId>nl.xillio.xill</groupId>
