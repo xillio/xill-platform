@@ -42,10 +42,12 @@ public class XillWorkerPool {
      * Allocate worker for the robot.
      * It can create new worker or reuse free existing worker or throw an exception if no worker can be created and reused.
      *
-     * @param robotPath
+     * @param robotFQN
      * @return
+     * @throws XillNotFoundException if the robot was not found.
+     * @throws XillAllocateWorkerException there are not resource available for worker allocation
      */
-    public XillWorker allocateWorker(final String robotPath) throws XillAllocateWorkerException {
+    public XillWorker allocateWorker(final String robotFQN) throws XillAllocateWorkerException, XillNotFoundException {
         throw new NotImplementedException("The 'allocateWorker' method has not been implemented yet");
     }
 
