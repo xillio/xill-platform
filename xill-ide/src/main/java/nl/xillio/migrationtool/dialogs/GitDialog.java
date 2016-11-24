@@ -15,28 +15,20 @@
  */
 package nl.xillio.migrationtool.dialogs;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.HBox;
 import nl.xillio.xill.versioncontrol.JGitRepository;
-import nl.xillio.xill.versioncontrol.operations.GitPullOperation;
 
 /**
  * Created by Dwight on 23-Nov-16.
  */
-public class GitDialog extends FXMLDialog{
-    @FXML
-    protected Label repositoryName;
-
+public class GitDialog extends FXMLDialog {
     @FXML
     protected Button okBtn;
-
     @FXML
     protected HBox progress;
-
     @FXML
     private ProgressIndicator progressIndicator;
 
@@ -50,15 +42,14 @@ public class GitDialog extends FXMLDialog{
     public GitDialog(final JGitRepository repo, final String path) {
         super(path);
         this.repo = repo;
-        repositoryName.setText(repo.getRepositoryName());
     }
 
     @FXML
-    protected void cancelBtnPressed(final ActionEvent event) {
+    protected void cancelBtnPressed() {
         close();
     }
 
-    protected void showProgress(){
+    protected void showProgress() {
         progressIndicator.setVisible(true);
         progress.setVisible(true);
     }

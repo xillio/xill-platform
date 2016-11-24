@@ -71,9 +71,8 @@ public class JGitRepository implements GitRepository {
         repository.pull().setCredentialsProvider(auth.getCredentials()).call();
     }
 
-    // Usage of this method should be re-implemented
     public void resetCommitCommand() throws GitAPIException {
-        repository.reset().setMode(ResetCommand.ResetType.SOFT).setRef("HEAD^").call();
+        repository.reset().setMode(ResetCommand.ResetType.MIXED).setRef("HEAD^").call();
     }
 
     public Set<String> getChangedFiles() {

@@ -28,8 +28,7 @@
                     <children>
                         <VBox alignment="CENTER_LEFT" styleClass="dialogFormWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
-                                <Label text="Are sure you want to pull from the following repository?"></Label>
-                                <Label fx:id="repositoryName"></Label>
+                                <Label fx:id="confirmText"></Label>
                             </children>
                         </VBox>
                     </children>
@@ -44,7 +43,7 @@
                         </HBox>
                         <HBox VBox.vgrow="NEVER" styleClass="gitButtons" HBox.hgrow="ALWAYS">
                             <children>
-                                <Button fx:id="okBtn" defaultButton="true" mnemonicParsing="false" onAction="#pushBtnPressed" text="Pull" />
+                                <Button fx:id="okBtn" defaultButton="true" mnemonicParsing="false" onAction="#pullBtnPressed" text="Pull" />
                                 <Button fx:id="cancelBtn" cancelButton="true" mnemonicParsing="false" onAction="#cancelBtnPressed" text="Cancel" />
                             </children>
                         </HBox>

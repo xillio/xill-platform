@@ -15,34 +15,32 @@
  */
 package nl.xillio.migrationtool.dialogs;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.Label;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import nl.xillio.xill.versioncontrol.operations.GitPullOperation;
-import org.eclipse.jgit.api.Git;
 
-public class GitPullDialog extends GitDialog{
+public class GitPullDialog extends GitDialog {
+    @FXML
+    protected Label confirmText;
 
     /**
      * Default constructor.
      *
-     * @param repo the JGitRepository that will be pushed to.
+     * @param repo the JGitRepository that will be pulled from.
      */
     public GitPullDialog(final JGitRepository repo) {
-        super(repo,"/fxml/dialogs/GitPull.fxml");
+        super(repo, "/fxml/dialogs/GitPull.fxml");
         this.setTitle("Pull");
-        repositoryName.setText(repo.getRepositoryName());
+        confirmText.setText("Pull from repository: " + repo.getRepositoryName() + "?");
     }
 
     @FXML
-    private void pullBtnPressed(final ActionEvent event) {
+    private void pullBtnPressed() {
         showProgress();
 
         GitPullOperation pull = new GitPullOperation(repo);
-        new Thread(pull).start();
+        pull.getThread().start();
 
         pull.setOnSucceeded(e -> setStatusToFinished());
     }

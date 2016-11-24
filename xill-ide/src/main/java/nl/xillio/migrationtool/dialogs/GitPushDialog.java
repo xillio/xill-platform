@@ -16,10 +16,10 @@
 package nl.xillio.migrationtool.dialogs;
 
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import nl.xillio.xill.versioncontrol.operations.GitCommitAndPushOperation;
@@ -31,10 +31,8 @@ public class GitPushDialog extends GitDialog {
     private TextField message;
     @FXML
     private ListView<String> fileList;
-
     @FXML
     private Label messageStatus;
-
     @FXML
     private VBox gitInfoBox;
 
@@ -53,26 +51,19 @@ public class GitPushDialog extends GitDialog {
 
         if (changes) {
             fileList.setItems(FXCollections.observableArrayList(changedFiles));
-            message.textProperty().addListener((observable, newValue, oldValue) -> {
-                if(!(newValue.toString().equals(""))){
-                    okBtn.setDisable(false);
-                }
-                else{
-                    okBtn.setDisable(true);
-                }
-            });
+            message.textProperty().addListener((obs, n, o) -> okBtn.setDisable("".equals(message.getText())));
         } else {
             fileList.setItems(FXCollections.observableArrayList("No changes were found"));
         }
     }
 
     @FXML
-    private void pushBtnPressed(final ActionEvent event) {
+    private void pushBtnPressed() {
         showProgress();
         gitInfoBox.setDisable(true);
 
         GitCommitAndPushOperation push = new GitCommitAndPushOperation(repo, message.getText());
-        new Thread(push).start();
+        push.getThread().start();
 
         push.setOnSucceeded(e -> setStatusToFinished());
     }

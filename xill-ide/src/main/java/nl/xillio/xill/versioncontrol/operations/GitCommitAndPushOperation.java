@@ -26,32 +26,44 @@ import org.slf4j.Logger;
  * @author Edward van Egdom
  */
 public class GitCommitAndPushOperation extends GitOperation {
-    private String commitMessage;
-
     private static final Logger LOGGER = Log.get();
 
+    private String commitMessage;
+    private boolean committed;
+
+    /**
+     * Create a new commit and push operation.
+     *
+     * @param repo The repo to commit and push to.
+     * @param commitMessage The commit message.
+     */
     public GitCommitAndPushOperation(JGitRepository repo, String commitMessage) {
         super(repo);
         this.commitMessage = commitMessage;
     }
 
     @Override
-    public void execute() throws GitAPIException {
-        repo.commitCommand(commitMessage);
+    protected void execute() throws GitAPIException {
+        // Check if we already committed, otherwise multiple commits can be created.
+        if (!committed) {
+            repo.commitCommand(commitMessage);
+            committed = true;
+        }
         repo.pushCommand();
     }
 
     @Override
-    public void handleError(Throwable cause) {
-        revertCommit();
+    protected void handleError(Throwable cause) {
+        cancelOperation();
         super.handleError(cause);
     }
 
-    private void revertCommit() {
+    @Override
+    protected void cancelOperation() {
         try {
             repo.resetCommitCommand();
         } catch (GitAPIException e) {
-            LOGGER.error("Failed to revert commit", e);
+            LOGGER.error("Failed to revert commit.", e);
         }
     }
 }
