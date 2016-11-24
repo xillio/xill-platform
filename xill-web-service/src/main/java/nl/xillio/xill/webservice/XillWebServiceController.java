@@ -135,7 +135,7 @@ public class XillWebServiceController {
     @ResponseBody
     public void stopRobot(@PathVariable("id") int workerId, HttpServletResponse response) {
         try {
-            xillWebService.abortWorker(new XWID(workerId));
+            xillWebService.stopWorker(new XWID(workerId));
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         } catch (XillNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);

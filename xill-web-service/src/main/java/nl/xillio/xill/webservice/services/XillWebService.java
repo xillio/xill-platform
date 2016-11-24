@@ -64,12 +64,12 @@ public class XillWebService {
     }
 
     /**
-     * Interrupt and stop the running worker (robot).
+     * Interrupt and stop the running worker (i.e. associated robot).
      *
-     * @param id he XillWorker id.
+     * @param id The XillWorker id.
      * @throws XillNotFoundException if the worker does not exist.
      */
-    public void abortWorker(XWID id) throws XillNotFoundException {
+    public void stopWorker(XWID id) throws XillNotFoundException {
         workerPoolManagerService.getDefaultWorkerPool().findWorker(id).abort();
     }
 }
