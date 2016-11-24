@@ -22,7 +22,6 @@ import org.apache.commons.lang3.concurrent.ConcurrentRuntimeException;
 
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * This class represents a worker entity in the domain model.
@@ -41,6 +40,8 @@ public class XillWorker {
 
     protected XillWorkerState state;
 
+    protected final Object lock;
+
     /**
      * Creates a worker for a specific robot.
      *
@@ -58,6 +59,8 @@ public class XillWorker {
         runtime.compile(workDirectory, workDirectory.resolve(robotName));
 
         state = XillWorkerState.IDLE;
+
+        lock = new Object();
     }
 
     /**
@@ -66,11 +69,13 @@ public class XillWorker {
      * @param arguments the robotPath run arguments
      * @return the result of the robotPath run
      */
-    public synchronized Object run(final Map<String, Object> arguments) throws XillInvalidStateException {
-        if (state != XillWorkerState.IDLE) {
-            throw new XillInvalidStateException("Worker is not ready for running.");
+    public Object run(final Map<String, Object> arguments) throws XillInvalidStateException {
+        synchronized (lock) {
+            if (state != XillWorkerState.IDLE) {
+                throw new XillInvalidStateException("Worker is not ready for running.");
+            }
+            state = XillWorkerState.RUNNING;
         }
-        state = XillWorkerState.RUNNING;
         try {
             Object returnValue = runtime.runRobot(arguments);
             state = XillWorkerState.IDLE;
@@ -84,11 +89,13 @@ public class XillWorker {
     /**
      * Aborts the running worker (i.e. abort the robot associated with the worker).
      */
-    public synchronized void abort() throws XillInvalidStateException {
-        if (state != XillWorkerState.RUNNING) {
-            throw new XillInvalidStateException("Worker is not running.");
+    public void abort() throws XillInvalidStateException {
+        synchronized (lock) {
+            if (state != XillWorkerState.RUNNING) {
+                throw new XillInvalidStateException("Worker is not running.");
+            }
+            state = XillWorkerState.ABORTING;
         }
-        state = XillWorkerState.ABORTING;
         runtime.abortRobot();
         state = XillWorkerState.IDLE;
     }
@@ -125,7 +132,7 @@ public class XillWorker {
      *
      * @return the state of the worker
      */
-    public synchronized XillWorkerState getState() {
+    public XillWorkerState getState() {
         return state;
     }
 }
