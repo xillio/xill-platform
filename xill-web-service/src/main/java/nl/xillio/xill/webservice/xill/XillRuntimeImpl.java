@@ -140,6 +140,8 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
         } catch (ExecutionException e) {
             // We do not throw the exception since the robot has already successfully compiled during the call to compile()
             LOGGER.error("Error compiling robot, if this robot has changed, a new worker should be allocated", e);
+            // Rethrow the cause as a runtime exception
+            ConcurrentUtils.handleCauseUnchecked(e);
             return null;
         }
 
