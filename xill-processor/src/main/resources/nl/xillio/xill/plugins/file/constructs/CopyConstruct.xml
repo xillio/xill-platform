@@ -18,21 +18,9 @@
 -->
 <function>
     <description>
-Copy a file/folder from a `source` path to a `target` path.
-	</description>
-	<parameterDescriptions>
-		<parameterDescription parameterName="source">
-The path to the file/folder that will be copied.
-This can be either a file or a folder, relative or absolute.
-        </parameterDescription>
-		<parameterDescription parameterName="target">
-The path that will be copied to.
-This can be either a file or a folder, relative or absolute.
-        </parameterDescription>
-	</parameterDescriptions>
-	<longDescription>
+Copy a file or folder from a `source` path to a `target` path, these can be relative or absolute.
 This will overwrite it if it exists and return an object containing the source destination at ["from"] and the target destination at ["into"]
-	</longDescription>
+</description>
     <examples>
         <example title="Usage">
             <header>Copy a file</header>

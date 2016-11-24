@@ -18,23 +18,13 @@
 -->
 <function>
     <description>
-Returns an iterator that can be used to loop over all folder in the folder at the given `path`.
+Returns an iterator used to loop over all folder in the folder at the given `path`.
 
+If recursive is set to `true` all folders in sub folders will also be iterated. When set to `false` only the folders in this folder will be iterated.
+`recursive` is set to `false` by default.
 
-    </description>
-	<parameterDescriptions>
-		<parameterDescription parameterName="path">
-The path that will be checked.
-This can be either a file or a folder, relative or absolute.
-        </parameterDescription>
-		<parameterDescription parameterName="recursive">
-If set to `true` all folders in sub folders will also be iterated. If set to `false` only the folders in this folder will be iterated.
-'false` by default.
-		</parameterDescription>
-	</parameterDescriptions>
-	<longDescription>
 The iterator returns an object containing various pieces of information about the folder access.
-	</longDescription>
+    </description>
     <examples>
         <example title="Usage">
             <header>Executing</header>

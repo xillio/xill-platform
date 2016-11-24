@@ -19,21 +19,9 @@
 <function>
     <description>
 Read text from a `stream`.
-
+By default "UTF-8" will be used as encoding, but this can be changed by editing the `encoding` parameter.
+If you provide a value for the `limit` parameter the amount of bytes read from the stream will be limited to that value.
     </description>
-	<parameterDescriptions>
-		<parameterDescription parameterName="stream">
-The stream that will be read from.
-        </parameterDescription>
-		<parameterDescription parameterName="encoding">
-The encoding that will be used.
-By default "UTF-8" will be used as encoding.
-        </parameterDescription>
-		<parameterDescription parameterName="limit">
-The amount of bytes read from the stream.
-This will not limit the amount if left empty.
-        </parameterDescription>
-	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Read text from a file</header>

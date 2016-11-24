@@ -19,16 +19,9 @@
 <function>
     <description>
 Determine the date of creation of the specified file.
-    </description>
-	<parameterDescriptions>
-		<parameterDescription parameterName="path">
-The path that will be looked at.
-This can be either relative or absolute.
-        </parameterDescription>
-	</parameterDescriptions>
-	<longDescription>
 The existence of the file or folder at the given `path` should be checked before calling this.
-	</longDescription>
+`path` can be either relative or absolute.
+    </description>
     <examples>
         <example title="Usage">
             <header>Print date of creation from files in a directory:</header>

@@ -19,31 +19,16 @@
 <function>
     <description>
 Write content to an output stream.
-    </description>
-	<parameterDescriptions>
-		<parameterDescription parameterName="source">
 If the `source` parameter contains binary data, consume that data.
 Otherwise the string value of the source parameter will be written to the `target` stream.
-        </parameterDescription>
-		<parameterDescription parameterName="target">
-The stream that will be writen to.
-        </parameterDescription>
-		<parameterDescription parameterName="limit">
-The amount of bytes written to the stream.
-If set to -1 all bytes will be written, this is the default.
-        </parameterDescription>
-		<parameterDescription parameterName="outputCharset">
-The character set that will be used to write to the stream.
-When this is null, the default character set is used. 
-        </parameterDescription>
-		<parameterDescription parameterName="inputCharset">
-The character set that will be used to read from the source.
-When this is null, the default character set is used. 
-        </parameterDescription>
-	</parameterDescriptions>
-	<longDescription>
-When the `source` parameter is a string, the inputCharset is ignored.
-	</longDescription>
+
+This construct accepts a `limit` parameter, when this parameter is provided this construct will stop writing at X
+bytes where X is the number value passed to the limit parameter. When limit is -1, all bytes will be written, this is the default.
+
+This construct accepts `outputCharset` and `inputCharset` parameters. These cause the `target` and `source` respectively
+to be read using the given character sets. When these are null, the default character set is used. When the `source`
+parameter is a string, the inputCharset is ignored.
+    </description>
     <examples>
         <example title="Usage">
             <header>Write 3 lines to a file</header>

@@ -19,16 +19,8 @@
 <function>
     <description>
 Wraps an iterator around a `stream` and returns this.
+You can provide a regex pattern as `delimiter` that will split the input `stream` in parts, if none is provided the stream will be split on new lines.
     </description>
-	<parameterDescriptions>
-		<parameterDescription parameterName="stream">
-The stream that will be wrapped around.
-        </parameterDescription>
-		<parameterDescription parameterName="delimiter">
-The regex pattern that will split the input `stream` in parts.
-If none is provided the stream will be split on new lines.
-        </parameterDescription>
-	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Read a file line by line</header>

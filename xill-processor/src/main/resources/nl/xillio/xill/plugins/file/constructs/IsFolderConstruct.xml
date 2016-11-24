@@ -18,17 +18,8 @@
 -->
 <function>
     <description>
-Tests whether the `path` points to a folder.
+Tests whether the `path` points to a folder returning `true` if it is a folder, or `false` otherwise.
     </description>
-	<parameterDescriptions>
-		<parameterDescription parameterName="path">
-The path that will be checked.
-This can be either relative or absolute.
-        </parameterDescription>
-	</parameterDescriptions>
-	<longDescription>
-Returns`true` if it is a folder, or `false` otherwise.
-	</longDescription>
     <examples>
         <example title="Usage">
             <header>Determine if the path points to a folder or not.</header>

@@ -19,20 +19,11 @@
 <function>
     <description>
 Read a single line from a `stream` and return this.
-    </description>
-	<parameterDescriptions>
-		<parameterDescription parameterName="stream">
-The stream that will be read from.
-        </parameterDescription>
-		<parameterDescription parameterName="encoding">
-The encoding that will be used.
-By default "UTF-8" will be used as encoding.
-        </parameterDescription>
-	</parameterDescriptions>
-	<longDescription>
+By default "UTF-8" will be used as encoding, but this can be changed by editing the `encoding` parameter.
+
 A line is defined as a string that ends on *\n*, *\r*, *\r\n* or end of stream.
 If the input `stream` has already reached the end an error will be thrown.
-	</longDescription>
+    </description>
     <examples>
         <example title="Usage">
             <header>Read the first three line from a file</header>

@@ -18,17 +18,8 @@
 -->
 <function>
     <description>
-Tests whether the file identified by the given `path` is a symbolic link.
+Tests whether the file identified by the given `path` is a symbolic link returning `true` if `path` is a (symbolic) link or otherwise `false`
     </description>
-	<parameterDescriptions>
-		<parameterDescription parameterName="path">
-The path that will be checked.
-This can be either a file or a folder, relative or absolute.
-        </parameterDescription>
-	</parameterDescriptions>
-	<longDescription>
-Returns `true` if `path` is a (symbolic) link or `false` otherwise.
-	</longDescription>
     <examples>
         <example title="Usage">
             <header>Determine if the file at path is a link to another file or directory.</header>

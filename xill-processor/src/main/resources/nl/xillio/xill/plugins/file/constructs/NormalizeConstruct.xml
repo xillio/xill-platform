@@ -20,12 +20,6 @@
     <description>
 Returns an absolute path that is the input `path` with redundant name elements eliminated.
     </description>
-	<parameterDescriptions>
-		<parameterDescription parameterName="path">
-The path that will be used.
-This can be either relative or absolute.
-        </parameterDescription>
-	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Clean up a complex path</header>
