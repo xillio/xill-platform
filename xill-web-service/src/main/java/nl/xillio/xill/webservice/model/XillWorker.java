@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,63 +15,124 @@
  */
 package nl.xillio.xill.webservice.model;
 
+import nl.xillio.xill.webservice.exceptions.XillCompileException;
+import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import nl.xillio.xill.webservice.types.XWID;
-import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.concurrent.ConcurrentRuntimeException;
 
 import java.nio.file.Path;
 import java.util.Map;
 
 /**
  * This class represents a worker entity in the domain model.
- * A worker can be started which will run a robotPath. This execution can be interrupted on a different thread.
+ * A worker can be started which will run a robot given a working directory.
+ * This execution can be interrupted on a different thread.
  *
- * @author Thomas Biesaart
+ * @author Xillio
  */
-public class XillWorker implements AutoCloseable {
-    protected final Path robotPath;
+public class XillWorker {
 
-    public XillWorker(Path robotPath) {
-        this.robotPath = robotPath;
-    }
+    protected final XWID id;
+    protected final Path workDirectory;
+    protected final String robotName;
 
-    public Path getRobotPath() {
-        return robotPath;
+    protected final XillRuntime runtime;
+
+    protected XillWorkerState state;
+
+    protected final Object lock;
+
+    /**
+     * Creates a worker for a specific robot.
+     *
+     * @param runtime       a runtime drawn from the pool
+     * @param workDirectory the working directory of the enclosed robot
+     * @param robotName     the fully qualified robot name
+     * @throws XillCompileException if the robot could not be compiled
+     */
+    public XillWorker(XillRuntime runtime, Path workDirectory, String robotName) throws XillCompileException {
+        id = new XWID();
+        this.runtime = runtime;
+        this.workDirectory = workDirectory;
+        this.robotName = robotName;
+
+        runtime.compile(workDirectory, workDirectory.resolve(robotName));
+
+        state = XillWorkerState.IDLE;
+
+        lock = new Object();
     }
 
     /**
-     * Return the id of the allocated worker.
-     * The id must be unique across the XillWorkerPools.
+     * Runs the robotPath associated with the worker.
      *
-     * @return
+     * @param arguments the robotPath run arguments
+     * @return the result of the robotPath run
+     */
+    public Object run(final Map<String, Object> arguments) throws XillInvalidStateException {
+        synchronized (lock) {
+            if (state != XillWorkerState.IDLE) {
+                throw new XillInvalidStateException("Worker is not ready for running.");
+            }
+            state = XillWorkerState.RUNNING;
+        }
+        try {
+            Object returnValue = runtime.runRobot(arguments);
+            state = XillWorkerState.IDLE;
+            return returnValue;
+        } catch (ConcurrentRuntimeException e) {
+            state = XillWorkerState.RUNTIME_ERROR;
+            throw new XillInvalidStateException("The worker has encountered a problem and cannot continue", e);
+        }
+    }
+
+    /**
+     * Aborts the running worker (i.e. abort the robot associated with the worker).
+     */
+    public void abort() throws XillInvalidStateException {
+        synchronized (lock) {
+            if (state != XillWorkerState.RUNNING) {
+                throw new XillInvalidStateException("Worker is not running.");
+            }
+            state = XillWorkerState.ABORTING;
+        }
+        runtime.abortRobot();
+        state = XillWorkerState.IDLE;
+    }
+
+    /**
+     * Returns the fully qualified robot name.
+     *
+     * @return the fully qualified robot name
+     */
+    public String getRobotName() {
+        return robotName;
+    }
+
+    /**
+     * Returns the work directory assigned to this worker.
+     *
+     * @return the work directory assigned to this worker
+     */
+    public Path getWorkDirectory() {
+        return workDirectory;
+    }
+
+    /**
+     * Returns the id of the allocated worker, unique across the instances of {@link XillWorkerPool}.
+     *
+     * @return the id of the allocated worker
      */
     public XWID getId() {
-        throw new NotImplementedException("The 'getId' method has not been implemented yet");
+        return id;
     }
 
     /**
-     * Run the robotPath associated with the worker.
+     * Returns the state of the worker.
      *
-     * @param arguments The robotPath run arguments.
-     * @return The result of the robotPath run.
+     * @return the state of the worker
      */
-    public Object run(final Map<String, Object> arguments) {
-        throw new NotImplementedException("The 'run' method has not been implemented yet");
-    }
-
-    /**
-     * Abort the running worker (i.e. abort the robot associated with the worker).
-     */
-    public void abort() {
-        throw new NotImplementedException("The 'abort' method has not been implemented yet");
-    }
-
-    /**
-     * This method's purpose is to return the XillRuntime to the pool.
-     *
-     * @throws Exception
-     */
-    @Override
-    public void close() throws Exception {
-        throw new NotImplementedException("The 'close' method has not been implemented yet");
+    public XillWorkerState getState() {
+        return state;
     }
 }

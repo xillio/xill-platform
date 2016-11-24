@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,8 @@ package nl.xillio.xill.webservice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.xillio.xill.webservice.exceptions.XillCompileException;
+import nl.xillio.xill.webservice.model.XillRuntime;
 import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import nl.xillio.xill.webservice.services.XillWebService;
@@ -40,6 +42,9 @@ import java.util.Map;
 import static nl.xillio.xill.webservice.IsValidUrlMatcher.isValidUrl;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.text.IsEmptyString.isEmptyString;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -65,12 +70,15 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     private XillWebService xillWebService;
 
     private MockMvc mockMvc;
+    private XillRuntime runtime;
 
     @BeforeMethod
-    public void setUp(Method method) {
+    public void setUp(Method method) throws XillCompileException {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(documentationConfiguration(this.restDocumentation)).build();
         this.restDocumentation.beforeTest(getClass(), method.getName());
+        runtime = mock(XillRuntime.class);
+        doNothing().when(runtime).compile(any(), any());
     }
 
     @AfterMethod

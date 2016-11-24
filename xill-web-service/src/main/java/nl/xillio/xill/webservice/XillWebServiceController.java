@@ -139,6 +139,8 @@ public class XillWebServiceController {
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         } catch (XillNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } catch (XillInvalidStateException e) {
+            response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
         }
     }
 }

@@ -69,7 +69,7 @@ public class XillWebService {
      * @param id The XillWorker id.
      * @throws XillNotFoundException if the worker does not exist.
      */
-    public void stopWorker(XWID id) throws XillNotFoundException {
+    public void stopWorker(XWID id) throws XillNotFoundException, XillInvalidStateException {
         workerPoolManagerService.getDefaultWorkerPool().findWorker(id).abort();
     }
 }
