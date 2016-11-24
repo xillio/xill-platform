@@ -19,7 +19,8 @@
 <function>
     <description>
 Determine the date of the last modification to the specified file.
-You have to check if the specified file does exist before calling this.
+The existence of the file or folder at the given `path` should be checked before calling this.
+`path` can be either relative or absolute.
     </description>
     <examples>
         <example title="Usage">
