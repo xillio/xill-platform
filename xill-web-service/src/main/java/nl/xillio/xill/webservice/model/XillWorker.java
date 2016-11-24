@@ -18,7 +18,6 @@ package nl.xillio.xill.webservice.model;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
 import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import nl.xillio.xill.webservice.types.XWID;
-import org.slf4j.Logger;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -32,8 +31,6 @@ import java.util.concurrent.ExecutionException;
  * @author Xillio
  */
 public class XillWorker {
-
-    private static final Logger LOGGER = me.biesaart.utils.Log.get();
 
     protected final XWID id;
     protected final Path workDirectory;
