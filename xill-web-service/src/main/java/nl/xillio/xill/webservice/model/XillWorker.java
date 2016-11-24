@@ -18,6 +18,7 @@ package nl.xillio.xill.webservice.model;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
 import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import nl.xillio.xill.webservice.types.XWID;
+import org.apache.commons.lang3.concurrent.ConcurrentRuntimeException;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -74,7 +75,7 @@ public class XillWorker {
             Object returnValue = runtime.runRobot(arguments);
             state = XillWorkerState.IDLE;
             return returnValue;
-        } catch (ExecutionException e) {
+        } catch (ConcurrentRuntimeException e) {
             state = XillWorkerState.RUNTIME_ERROR;
             throw new XillInvalidStateException("The worker has encountered a problem and cannot continue", e);
         }

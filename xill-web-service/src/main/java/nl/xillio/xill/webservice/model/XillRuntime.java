@@ -47,9 +47,8 @@ public interface XillRuntime extends AutoCloseable {
      *
      * @param parameters The parameters to be passed as the robot's arguments
      * @return The robot's return value
-     * @throws ExecutionException if the robot cannot recompile after the initial compilation
      */
-    Object runRobot(Map<String, Object> parameters) throws ExecutionException;
+    Object runRobot(Map<String, Object> parameters);
 
     /**
      * Abort a currently running robot.
