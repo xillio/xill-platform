@@ -16,6 +16,7 @@
 package nl.xillio.xill.webservice.xill;
 
 import me.biesaart.utils.FileUtils;
+import nl.xillio.xill.webservice.RobotDeployer;
 import nl.xillio.xill.webservice.XillRuntimeConfiguration;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
 import nl.xillio.xill.webservice.model.XillRuntime;
@@ -28,8 +29,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,8 +45,7 @@ import static org.testng.Assert.assertEquals;
         XillEnvironmentFactory.class, XillRuntimeProperties.class, Log4JOutputHandler.class})
 public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
 
-    private Path workingDirectory;
-    private Path robotPath;
+    private RobotDeployer deployer;
 
     @Autowired
     private XillRuntime xillRuntime;
@@ -59,9 +57,8 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
      */
     @BeforeClass
     public void deployRobot() throws IOException {
-        workingDirectory = Files.createTempDirectory("xillRuntimeIT");
-        robotPath = Paths.get("return.xill");
-        FileUtils.copyInputStreamToFile(ClassLoader.getSystemResourceAsStream("xill/return.xill"), workingDirectory.resolve(robotPath).toFile());
+        deployer = new RobotDeployer();
+        deployer.deployRobots();
     }
 
     /**
@@ -71,7 +68,7 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
      */
     @AfterClass
     public void removeRobot() throws IOException {
-       FileUtils.forceDelete(workingDirectory.toFile());
+       deployer.removeRobots();
     }
 
     /**
@@ -82,7 +79,7 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
     @Test
     @DirtiesContext
     public void testRunRobot() throws XillCompileException, ExecutionException {
-        xillRuntime.compile(workingDirectory, robotPath);
+        xillRuntime.compile(deployer.getWorkingDirectory(), Paths.get(RobotDeployer.RETURN_ROBOT));
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("input", 42);
@@ -100,7 +97,7 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
     @Test
     @DirtiesContext
     public void testRunRobotMultiple() throws XillCompileException, ExecutionException {
-        xillRuntime.compile(workingDirectory, robotPath);
+        xillRuntime.compile(deployer.getWorkingDirectory(), Paths.get(RobotDeployer.RETURN_ROBOT));
 
         for (int i=0; i<4; i++) {
             Map<String, Object> parameters = new HashMap<>();
