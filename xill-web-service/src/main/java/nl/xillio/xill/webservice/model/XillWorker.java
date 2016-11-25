@@ -17,10 +17,12 @@ package nl.xillio.xill.webservice.model;
 
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
 import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
+import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import nl.xillio.xill.webservice.types.XWID;
 import org.apache.commons.lang3.concurrent.ConcurrentRuntimeException;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -37,10 +39,8 @@ public class XillWorker {
     protected final String robotName;
 
     protected final XillRuntime runtime;
-
-    protected XillWorkerState state;
-
     protected final Object lock;
+    protected XillWorkerState state;
 
     /**
      * Creates a worker for a specific robot.
@@ -50,17 +50,18 @@ public class XillWorker {
      * @param robotName     the fully qualified robot name
      * @throws XillCompileException if the robot could not be compiled
      */
-    public XillWorker(XillRuntime runtime, Path workDirectory, String robotName) throws XillCompileException {
+    public XillWorker(XillRuntime runtime, Path workDirectory, String robotName) throws XillCompileException, XillNotFoundException {
         id = new XWID();
         this.runtime = runtime;
         this.workDirectory = workDirectory;
         this.robotName = robotName;
 
-        runtime.compile(workDirectory, workDirectory.resolve(robotName));
+        lock = new Object();
+
+        Path robotPath = Paths.get(robotName.replace('.','/') + ".xill");
+        runtime.compile(workDirectory, robotPath);
 
         state = XillWorkerState.IDLE;
-
-        lock = new Object();
     }
 
     /**

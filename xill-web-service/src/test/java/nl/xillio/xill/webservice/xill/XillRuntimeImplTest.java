@@ -28,9 +28,12 @@ import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.api.io.IOStream;
 import nl.xillio.xill.debugging.XillDebugger;
+import nl.xillio.xill.webservice.RobotDeployer;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
+import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import org.mockito.ArgumentCaptor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -68,6 +71,7 @@ public class XillRuntimeImplTest extends TestUtils {
     private Path robotPath;
 
     private XillRuntimeImpl xillRuntime;
+    private RobotDeployer deployer;
 
     @BeforeMethod
     public void mockEnvironment () throws IOException {
@@ -83,8 +87,21 @@ public class XillRuntimeImplTest extends TestUtils {
 
         xillRuntime = new XillRuntimeImpl(xillEnvironment, outputHandler, compileExecutor);
 
-        workingDir = Paths.get("/path/to/working/dir");
-        robotPath = Paths.get("robot.xill");
+        deployer = new RobotDeployer();
+        deployer.deployRobots();
+
+        workingDir = deployer.getWorkingDirectory();
+        robotPath = Paths.get(RobotDeployer.RETURN_ROBOT);
+    }
+
+    /**
+     * Delete the temporary directory containing the robot
+     *
+     * @throws IOException When deleting fails
+     */
+    @AfterClass
+    public void removeRobot() throws IOException {
+        deployer.removeRobots();
     }
 
     /**
@@ -101,7 +118,7 @@ public class XillRuntimeImplTest extends TestUtils {
      * Test {@link XillRuntimeImpl#compile(Path, Path)} under normal circumstances.
      */
     @Test
-    public void testCompile() throws IOException, XillParsingException, XillCompileException {
+    public void testCompile() throws IOException, XillParsingException, XillCompileException, XillNotFoundException {
         // Run
         xillRuntime.compile(workingDir, robotPath);
 
@@ -118,7 +135,7 @@ public class XillRuntimeImplTest extends TestUtils {
      * having too many exceptions in the signature and too many layers handling exceptions.
      */
     @Test(expectedExceptions = XillCompileException.class)
-    public void testCompileError() throws IOException, XillCompileException {
+    public void testCompileError() throws IOException, XillCompileException, XillNotFoundException {
         // Mock
         when(xillEnvironment.buildProcessor(any(), any())).thenThrow(IOException.class);
 
@@ -130,7 +147,7 @@ public class XillRuntimeImplTest extends TestUtils {
      * Test {@link XillRuntimeImpl#runRobot(Map)} under normal circumstances.
      */
     @Test
-    public void testRunRobot() throws IOException, XillCompileException, ExecutionException {
+    public void testRunRobot() throws IOException, XillCompileException, ExecutionException, XillNotFoundException {
         // Mock
         int resultNumber = 42;
         mockRobotResult(resultNumber);
@@ -283,7 +300,7 @@ public class XillRuntimeImplTest extends TestUtils {
      * Test if {@link XillDebugger#stop()} is called when aborting a robot
      */
     @Test
-    public void testAbortRobot() throws XillCompileException {
+    public void testAbortRobot() throws XillCompileException, XillNotFoundException {
         // Run
         xillRuntime.compile(workingDir, robotPath);
         xillRuntime.abortRobot();

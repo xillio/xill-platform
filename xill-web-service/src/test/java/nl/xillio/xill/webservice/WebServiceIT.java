@@ -18,6 +18,7 @@ package nl.xillio.xill.webservice;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
+import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import nl.xillio.xill.webservice.model.XillRuntime;
 import nl.xillio.xill.webservice.model.XillWorker;
 import nl.xillio.xill.webservice.types.XWID;
@@ -72,7 +73,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     private XillRuntime runtime;
 
     @BeforeMethod
-    public void setUp(Method method) throws XillCompileException {
+    public void setUp(Method method) throws XillCompileException, XillNotFoundException {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(documentationConfiguration(this.restDocumentation)).build();
         this.restDocumentation.beforeTest(getClass(), method.getName());

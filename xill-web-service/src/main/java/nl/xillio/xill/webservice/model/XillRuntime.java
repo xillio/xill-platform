@@ -16,6 +16,7 @@
 package nl.xillio.xill.webservice.model;
 
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
+import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -38,7 +39,7 @@ public interface XillRuntime extends AutoCloseable {
      * @param robotPath A path to the robot, relative to {@code workDirectory}
      * @throws XillCompileException if the robot could not be (re) compiles
      */
-    void compile(Path workDirectory, Path robotPath) throws XillCompileException;
+    void compile(Path workDirectory, Path robotPath) throws XillCompileException, XillNotFoundException;
 
     /**
      * Run the robot that was compiled by calling {@link #compile(Path, Path)}.

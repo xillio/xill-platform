@@ -15,10 +15,10 @@
  */
 package nl.xillio.xill.webservice.xill;
 
-import me.biesaart.utils.FileUtils;
 import nl.xillio.xill.webservice.RobotDeployer;
 import nl.xillio.xill.webservice.XillRuntimeConfiguration;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
+import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import nl.xillio.xill.webservice.model.XillRuntime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -78,7 +78,7 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     @DirtiesContext
-    public void testRunRobot() throws XillCompileException, ExecutionException {
+    public void testRunRobot() throws XillCompileException, ExecutionException, XillNotFoundException {
         xillRuntime.compile(deployer.getWorkingDirectory(), Paths.get(RobotDeployer.RETURN_ROBOT));
 
         Map<String, Object> parameters = new HashMap<>();
@@ -96,7 +96,7 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     @DirtiesContext
-    public void testRunRobotMultiple() throws XillCompileException, ExecutionException {
+    public void testRunRobotMultiple() throws XillCompileException, ExecutionException, XillNotFoundException {
         xillRuntime.compile(deployer.getWorkingDirectory(), Paths.get(RobotDeployer.RETURN_ROBOT));
 
         for (int i=0; i<4; i++) {

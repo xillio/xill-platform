@@ -25,6 +25,7 @@ import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.api.io.SimpleIOStream;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
+import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import nl.xillio.xill.webservice.model.XillRuntime;
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.slf4j.Logger;
@@ -33,7 +34,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
-import xill.lang.xill.UseStatement;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -102,9 +102,13 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
     }
 
     @Override
-    public void compile(Path workDirectory, Path robotPath) throws XillCompileException {
+    public void compile(Path workDirectory, Path robotPath) throws XillCompileException, XillNotFoundException {
+        Path resolvedPath = workDirectory.resolve(robotPath);
+        if (!resolvedPath.toFile().exists()) {
+            throw new XillNotFoundException("The robot does not exists: " + resolvedPath.toString());
+        }
         try {
-            xillProcessor = xillEnvironment.buildProcessor(workDirectory, workDirectory.resolve(robotPath));
+            xillProcessor = xillEnvironment.buildProcessor(workDirectory, resolvedPath);
             xillProcessor.setOutputHandler(outputHandler);
             // Ignore all errors since they will be picked up by the output handler
             xillProcessor.getDebugger().setErrorHandler(e -> { });
