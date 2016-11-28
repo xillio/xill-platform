@@ -66,6 +66,7 @@ public class JGitRepository implements GitRepository {
     @Override
     public void commitCommand(String message) throws GitAPIException {
         repository.add().addFilepattern(".").call();
+        repository.add().setUpdate(true).addFilepattern(".").call();
         repository.commit().setMessage(message).call();
     }
 
