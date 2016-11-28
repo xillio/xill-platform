@@ -16,31 +16,58 @@
 package nl.xillio.migrationtool.dialogs;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import me.biesaart.utils.Log;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import nl.xillio.xill.versioncontrol.operations.GitOperation;
+import org.slf4j.Logger;
+
+import java.io.IOException;
 
 /**
  * Created by Dwight on 23-Nov-16.
  */
-public class GitDialog extends FXMLDialog {
+public abstract class GitDialog extends FXMLDialog {
+
+    protected final JGitRepository repo;
+    protected final static String GitDialogDescription = "/fxml/dialogs/GitDialog.fxml";
+    private static final Logger LOGGER = Log.get();
+
     @FXML
     protected Button okBtn;
     @FXML
     protected HBox progress;
+    @FXML
+    protected VBox componentsContainer;
 
-    protected final JGitRepository repo;
 
     /**
      * Default constructor.
      *
      * @param repo the JGitRepository that will be pushed to.
      */
-    public GitDialog(final JGitRepository repo, final String path, final String title) {
-        super(path);
+    public GitDialog(final JGitRepository repo, final String action, String componentsDescription) {
+        super(GitDialogDescription);
         this.repo = repo;
-        this.setTitle(title);
+        this.setTitle(action);
+        okBtn.setText(action);
+        addDialogComponents(componentsDescription);
+
+    }
+
+    protected void addDialogComponents(String componentsDescription){
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(componentsDescription));
+        loader.setController(this);
+        try {
+            Parent components = loader.load();
+            componentsContainer.getChildren().add(0,components);
+        } catch (IOException e) {
+            LOGGER.error("Could not load components for Git dialog.");
+        }
     }
 
     @FXML
@@ -60,5 +87,6 @@ public class GitDialog extends FXMLDialog {
         this.close();
     }
 
-
+    @FXML
+    protected abstract void actionBtnPressed();
 }
