@@ -135,4 +135,13 @@ public class XillWorker {
     public XillWorkerState getState() {
         return state;
     }
+
+    /**
+     * Returns the worker runtime.
+     *
+     * @return the worker runtime.
+     */
+    public XillRuntime getRuntime() {
+        return runtime;
+    }
 }

@@ -1,8 +1,6 @@
 package nl.xillio.xill.webservice.services;
 
-import nl.xillio.xill.webservice.exceptions.XillAllocateWorkerException;
-import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
-import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
+import nl.xillio.xill.webservice.exceptions.*;
 import nl.xillio.xill.webservice.types.XWID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +26,7 @@ public class XillWebService {
      * @param robotFQN the robot identificator that should be connected to a worker
      * @return the identifier for the worker
      */
-    public XWID allocateWorker(String robotFQN) throws XillAllocateWorkerException, XillNotFoundException {
+    public XWID allocateWorker(String robotFQN) throws XillAllocateWorkerException, XillNotFoundException, XillCompileException {
         return workerPoolManagerService.getDefaultWorkerPool().allocateWorker(robotFQN).getId();
     }
 
@@ -36,8 +34,11 @@ public class XillWebService {
      * Release the worker with a specific identifier.
      *
      * @param id the identifier of the worker
+     * @throws XillNotFoundException if the worker does not exist.
+     * @throws XillInvalidStateException if the worker is not in the required (RUNNING) state.
+     * @throws XillOperationFailedException when the releasing operation fails.
      */
-    public void releaseWorker(XWID id) throws XillNotFoundException, XillInvalidStateException {
+    public void releaseWorker(XWID id) throws XillNotFoundException, XillInvalidStateException, XillOperationFailedException {
         workerPoolManagerService.getDefaultWorkerPool().releaseWorker(id);
     }
 
@@ -57,10 +58,10 @@ public class XillWebService {
      * @param parameters The parameters used for the associated robot run.
      * @return The result from robot run.
      * @throws XillNotFoundException if the worker does not exist.
-     * @throws XillInvalidStateException if the worker is not in the required state.
+     * @throws XillInvalidStateException if the worker is not in the required (IDLE) state.
      */
     public Object runWorker(XWID id, final Map<String, Object> parameters) throws XillNotFoundException, XillInvalidStateException {
-        return workerPoolManagerService.getDefaultWorkerPool().findWorker(id).run(parameters);
+        return workerPoolManagerService.getDefaultWorkerPool().runWorker(id, parameters);
     }
 
     /**
@@ -68,8 +69,9 @@ public class XillWebService {
      *
      * @param id The XillWorker id.
      * @throws XillNotFoundException if the worker does not exist.
+     * @throws XillInvalidStateException if the worker is not in the required (RUNNING) state.
      */
     public void stopWorker(XWID id) throws XillNotFoundException, XillInvalidStateException {
-        workerPoolManagerService.getDefaultWorkerPool().findWorker(id).abort();
+        workerPoolManagerService.getDefaultWorkerPool().stopWorker(id);
     }
 }

@@ -15,9 +15,7 @@
  */
 package nl.xillio.xill.webservice;
 
-import nl.xillio.xill.webservice.exceptions.XillAllocateWorkerException;
-import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
-import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
+import nl.xillio.xill.webservice.exceptions.*;
 import nl.xillio.xill.webservice.services.XillWebService;
 import nl.xillio.xill.webservice.types.XWID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,9 +75,11 @@ public class XillWebServiceController {
             response.setStatus(HttpServletResponse.SC_CREATED);
             response.addHeader("Location", request.getRequestURI() + xwid.toString());
         } catch (XillAllocateWorkerException e) {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
         } catch (XillNotFoundException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } catch (XillCompileException e) {
+            response.setStatus(422);
         }
         return result;
     }
@@ -100,6 +100,8 @@ public class XillWebServiceController {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } catch (XillInvalidStateException e) {
             response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+        } catch (XillOperationFailedException e) {
+            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
         }
     }
 
