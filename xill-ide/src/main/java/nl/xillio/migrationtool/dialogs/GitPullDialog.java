@@ -16,6 +16,7 @@
 package nl.xillio.migrationtool.dialogs;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import nl.xillio.xill.versioncontrol.operations.GitPullOperation;
@@ -23,6 +24,9 @@ import nl.xillio.xill.versioncontrol.operations.GitPullOperation;
 public class GitPullDialog extends GitDialog {
     @FXML
     protected Label confirmText;
+    @FXML
+    protected Button okBtn;
+
 
     /**
      * Default constructor.
@@ -38,6 +42,7 @@ public class GitPullDialog extends GitDialog {
     @FXML
     private void pullBtnPressed() {
         showProgress();
+        okBtn.setDisable(true);
 
         GitPullOperation pull = new GitPullOperation(repo);
         pull.setOnSucceeded(e -> setStatusToFinished());

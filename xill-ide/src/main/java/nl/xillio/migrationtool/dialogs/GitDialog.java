@@ -17,7 +17,6 @@ package nl.xillio.migrationtool.dialogs;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.HBox;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 
@@ -29,8 +28,6 @@ public class GitDialog extends FXMLDialog {
     protected Button okBtn;
     @FXML
     protected HBox progress;
-    @FXML
-    private ProgressIndicator progressIndicator;
 
     protected final JGitRepository repo;
 
@@ -50,12 +47,10 @@ public class GitDialog extends FXMLDialog {
     }
 
     protected void showProgress() {
-        progressIndicator.setVisible(true);
         progress.setVisible(true);
     }
 
     protected void setStatusToFinished() {
-        progressIndicator.setVisible(false);
         this.close();
     }
 }

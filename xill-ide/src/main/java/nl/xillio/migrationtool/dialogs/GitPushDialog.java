@@ -17,6 +17,7 @@ package nl.xillio.migrationtool.dialogs;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -35,6 +36,8 @@ public class GitPushDialog extends GitDialog {
     private Label messageStatus;
     @FXML
     private VBox gitInfoBox;
+    @FXML
+    protected Button okBtn;
 
     /**
      * Default constructor.
@@ -61,6 +64,7 @@ public class GitPushDialog extends GitDialog {
     private void pushBtnPressed() {
         showProgress();
         gitInfoBox.setDisable(true);
+        okBtn.setDisable(true);
 
         GitCommitAndPushOperation push = new GitCommitAndPushOperation(repo, message.getText());
         push.setOnSucceeded(e -> setStatusToFinished());

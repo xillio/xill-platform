@@ -16,9 +16,7 @@
     limitations under the License.
 
 -->
-<?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
-<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <AnchorPane prefHeight="350.0" prefWidth="500.0" styleClass="root" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <children>
@@ -40,7 +38,6 @@
                     <children>
                         <HBox styleClass="gitProgress" HBox.hgrow="ALWAYS" visible="false" fx:id="progress">
                             <children>
-                                <ProgressIndicator fx:id="progressIndicator"></ProgressIndicator>
                                 <Label text="Pushing to Git repository..." fx:id="messageStatus" />
                             </children>
                         </HBox>
