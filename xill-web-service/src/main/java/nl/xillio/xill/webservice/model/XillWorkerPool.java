@@ -65,21 +65,24 @@ public class XillWorkerPool {
         }
 
          // This operation includes compiling and can last longer time so it must be outside the synchronised block
-        XillWorker xillWorker;
-        try {
-            xillWorker = new XillWorker((XillRuntimeImpl)xillRuntimePool.getTarget(), workDirectory, robotFQN);
-        } catch (Exception e) {
-            throw new XillAllocateWorkerException(String.format("Could not allocate runtime for worker %1$d.", e));
-        }
+        XillWorker xillWorker = createWorker(robotFQN);
 
         synchronized (workerPool) {
-            checkWorkerPoolSize(); // The check must be done again to be atomic operation on the workerPool
+            checkWorkerPoolSize(); // The check must be done again to ensure atomic operation on the workerPool
             workerPool.put(xillWorker.getId().getId(), xillWorker);
             return xillWorker;
         }
     }
 
-    private void checkWorkerPoolSize() throws XillAllocateWorkerException {
+    XillWorker createWorker(final String robotFQN) throws XillAllocateWorkerException {
+        try {
+            return new XillWorker((XillRuntimeImpl)xillRuntimePool.getTarget(), workDirectory, robotFQN);
+        } catch (Exception e) {
+            throw new XillAllocateWorkerException(String.format("Could not allocate runtime for worker %1$d.", e));
+        }
+    }
+
+    void checkWorkerPoolSize() throws XillAllocateWorkerException {
         if (workerPool.size() >= poolCardinality) {
             throw new XillAllocateWorkerException("Could not allocate new worker. The worker workerPool has reached its maximum amount of workers.");
         }
@@ -126,14 +129,17 @@ public class XillWorkerPool {
      * @return The found XillWorker.
      * @throws XillNotFoundException if the worker was not found.
      */
-    private XillWorker findWorker(XWID workerId) throws XillNotFoundException {
+    XillWorker findWorker(XWID workerId) throws XillNotFoundException {
         if (!workerPool.containsKey(workerId.getId())) {
             throw new XillNotFoundException(String.format("The worker %1$d cannot be found.", workerId.getId()));
         }
         return workerPool.get(workerId.getId());
     }
 
-    private void releaseXillRuntime(XillWorker xillWorker) throws XillOperationFailedException {
+    void releaseXillRuntime(XillWorker xillWorker) throws XillOperationFailedException, XillInvalidStateException {
+        if (xillWorker.getState() != XillWorkerState.IDLE) {
+            throw new XillInvalidStateException(String.format("The worker %1$d cannot be released as it is not in the IDLE state.", xillWorker.getId().getId()));
+        }
         try {
             xillRuntimePool.releaseTarget(xillWorker.getRuntime());
         } catch (Exception e) {
@@ -152,11 +158,8 @@ public class XillWorkerPool {
     public void releaseWorker(XWID workerId) throws XillNotFoundException, XillInvalidStateException, XillOperationFailedException {
         synchronized (workerPool) {
             XillWorker xillWorker = findWorker(workerId);
-            if (xillWorker.getState() != XillWorkerState.IDLE) {
-                throw new XillInvalidStateException(String.format("The worker %1$d cannot be released as it is not in the IDLE state.", workerId.getId()));
-            }
             releaseXillRuntime(xillWorker);
-            workerPool.remove(xillWorker);
+            workerPool.remove(xillWorker.getId().getId());
         }
     }
 
@@ -167,17 +170,31 @@ public class XillWorkerPool {
         synchronized (workerPool) {
             workerPool.forEach((id, xillWorker) -> {
                 if (xillWorker.getState() == XillWorkerState.RUNNING) {
+                    // Try to stop running worker
                     try {
                         LOGGER.warn(String.format("Aborting the worker %1$d.", xillWorker.getId().getId()));
                         xillWorker.abort();
-                        releaseXillRuntime(xillWorker);
                     } catch (XillInvalidStateException e) {
-                        LOGGER.error(String.format("Could not start aborting the worker %1$d", xillWorker.getId().getId()));
-                    } catch (XillOperationFailedException e) {
-                        LOGGER.error(String.format("Could not release the worker %1$d", xillWorker.getId().getId()));
+                        LOGGER.error(String.format("Could not start aborting the worker %1$d", xillWorker.getId().getId()), e);
                     }
                 }
+
+                try {
+                    releaseXillRuntime(xillWorker);
+                } catch (XillBaseException e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
             });
+            workerPool.clear();
         }
+    }
+
+    /**
+     * This is helper method for testing.
+     *
+     * @return the number of items in the worker pool.
+     */
+    int getPoolSize() {
+        return workerPool.size();
     }
 }
