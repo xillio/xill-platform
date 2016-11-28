@@ -23,7 +23,6 @@ import nl.xillio.migrationtool.dialogs.AlertDialog;
 import nl.xillio.xill.versioncontrol.JGitAuth;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.TransportException;
 import org.slf4j.Logger;
 
 import java.util.concurrent.CountDownLatch;
@@ -33,7 +32,7 @@ import java.util.concurrent.CountDownLatch;
  *
  * @author Edward
  */
-abstract class GitOperation extends Task<Void> {
+public abstract class GitOperation extends Task<Void> {
     private static final Logger LOGGER = Log.get();
 
     protected JGitRepository repo;

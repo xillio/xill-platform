@@ -19,6 +19,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import nl.xillio.xill.versioncontrol.JGitRepository;
+import nl.xillio.xill.versioncontrol.operations.GitOperation;
 
 /**
  * Created by Dwight on 23-Nov-16.
@@ -36,9 +37,10 @@ public class GitDialog extends FXMLDialog {
      *
      * @param repo the JGitRepository that will be pushed to.
      */
-    public GitDialog(final JGitRepository repo, final String path) {
+    public GitDialog(final JGitRepository repo, final String path, final String title) {
         super(path);
         this.repo = repo;
+        this.setTitle(title);
     }
 
     @FXML
@@ -46,11 +48,17 @@ public class GitDialog extends FXMLDialog {
         close();
     }
 
-    protected void showProgress() {
+    protected void startProgress(GitOperation operation) {
         progress.setVisible(true);
+        okBtn.setDisable(true);
+
+        operation.setOnSucceeded(e -> setStatusToFinished());
+        operation.getThread().start();
     }
 
     protected void setStatusToFinished() {
         this.close();
     }
+
+
 }
