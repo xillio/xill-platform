@@ -15,7 +15,7 @@
  */
 package nl.xillio.xill.versioncontrol.operations;
 
-import javafx.embed.swing.JFXPanel;
+import com.sun.javafx.application.PlatformImpl;
 import nl.xillio.xill.versioncontrol.GitException;
 import nl.xillio.xill.versioncontrol.JGitAuth;
 import nl.xillio.xill.versioncontrol.JGitRepository;
@@ -40,7 +40,7 @@ public class GitOperationTest {
         when(repo.getAuth()).thenReturn(auth);
 
         // This initializes the JavaFX runtime, which is needed for Platform.runLater.
-        new JFXPanel();
+        PlatformImpl.startup(() -> {});
     }
 
     @Test
