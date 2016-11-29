@@ -112,7 +112,7 @@ public abstract class GitOperation extends Task<Void> {
     }
 
     protected void handleError(Throwable cause) {
-        Platform.runLater(new AlertDialog(Alert.AlertType.ERROR, "Error", "An error occurred.", cause.getMessage())::showAndWait);
+        Platform.runLater(() -> new AlertDialog(Alert.AlertType.ERROR, "Error", "An error occurred.", cause.getMessage()).showAndWait());
     }
 
     private boolean awaitLatch(CountDownLatch latch) {
