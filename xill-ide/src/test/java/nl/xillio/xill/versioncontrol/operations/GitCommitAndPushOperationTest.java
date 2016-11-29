@@ -17,7 +17,6 @@ package nl.xillio.xill.versioncontrol.operations;
 
 import nl.xillio.xill.versioncontrol.GitException;
 import nl.xillio.xill.versioncontrol.JGitRepository;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
