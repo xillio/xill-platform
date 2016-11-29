@@ -16,6 +16,7 @@
 package nl.xillio.migrationtool.dialogs;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import nl.xillio.xill.versioncontrol.operations.GitCheckoutOperation;
@@ -26,9 +27,11 @@ public class GitBranchDialog extends GitDialog {
     @FXML
     private ListView<String> lvBranches;
 
+    @FXML
+    private Label messageStatus;
+
     public GitBranchDialog(final JGitRepository repo) {
-        super(repo, "/fxml/dialogs/GitBranchList.fxml");
-        setTitle("Branches");
+        super(repo, "Checkout branch", "/fxml/dialogs/GitBranchList.fxml");
         getBranchList();
     }
 
@@ -37,6 +40,7 @@ public class GitBranchDialog extends GitDialog {
         List<String> branches = repo.getBranches();
         String current = repo.getCurrentBranchName();
 
+
         // Move the current branch to the top and prefix it with an asterisk.
         branches.remove(current);
         branches.add(0, "* " + current);
@@ -44,19 +48,18 @@ public class GitBranchDialog extends GitDialog {
         lvBranches.getItems().setAll(branches);
     }
 
+    @Override
     @FXML
-    private void checkoutBtnPressed() {
-        String branch = lvBranches.getSelectionModel().getSelectedItem();
-
+    protected void actionBtnPressed() {
         // Check if we are trying to check out the current branch, which is always the first item.
         if (lvBranches.getSelectionModel().getSelectedIndex() == 0) {
             return;
         }
 
-        showProgress();
-        GitCheckoutOperation checkout = new GitCheckoutOperation(repo, branch);
-        checkout.setOnSucceeded(e -> setStatusToFinished());
-        checkout.getThread().start();
+        String branch = lvBranches.getSelectionModel().getSelectedItem();
+
+        messageStatus.textProperty().setValue("Checking out branch...");
+        startProgress(new GitCheckoutOperation(repo, branch));
     }
 
     @FXML

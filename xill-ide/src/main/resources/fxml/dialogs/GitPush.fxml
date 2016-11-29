@@ -16,42 +16,18 @@
     limitations under the License.
 
 -->
-<?import javafx.scene.text.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="350.0" prefWidth="500.0" styleClass="root" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane styleClass="dialogContent" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <VBox styleClass="dialogWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox fx:id="gitInfoBox" alignment="CENTER_LEFT" styleClass="dialogFormWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <AnchorPane styleClass="dialogContent" VBox.vgrow="ALWAYS">
-                    <children>
-                        <VBox fx:id="gitInfoBox" alignment="CENTER_LEFT" styleClass="dialogFormWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                            <children>
-                                <Label text="Changed files" />
-                                <ListView fx:id="fileList" minHeight="205.0" />
-                                <Label text="Enter a message for the commit" />
-                                <TextField fx:id="message" promptText="Commit message" />
-                            </children>
-                        </VBox>
-                    </children>
-                </AnchorPane>
-                <HBox styleClass="gitWrapper" prefHeight="40.0">
-                    <children>
-                        <HBox styleClass="gitProgress" HBox.hgrow="ALWAYS" visible="false" fx:id="progress">
-                            <children>
-                                <ProgressIndicator fx:id="progressIndicator"></ProgressIndicator>
-                                <Label text="Pushing to Git repository..." fx:id="messageStatus" />
-                            </children>
-                        </HBox>
-                        <HBox VBox.vgrow="NEVER" styleClass="gitButtons" HBox.hgrow="ALWAYS">
-                            <children>
-                                <Button fx:id="okBtn" defaultButton="true" mnemonicParsing="false" onAction="#pushBtnPressed" text="Push" />
-                                <Button fx:id="cancelBtn" cancelButton="true" mnemonicParsing="false" onAction="#cancelBtnPressed" text="Cancel" />
-                            </children>
-                        </HBox>
-                    </children>
-                </HBox>
+                <Label text="Changed files" />
+                <ListView fx:id="fileList" prefHeight="170.0" />
+                <Label text="Enter a message for the commit" />
+                <TextField fx:id="message" promptText="Commit message" />
             </children>
         </VBox>
     </children>

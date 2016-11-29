@@ -32,17 +32,22 @@ public interface GitRepository {
      * @param commitMessage The message for the commit.
      * @return {@code true} if commit succeeded, {@code false} otherwise.
      */
-    void commitCommand(String commitMessage) throws GitAPIException;
+    void commitCommand(String commitMessage) throws GitException;
 
     /**
      * Pushes all changes to the remote repository.
      */
-    void pushCommand() throws GitAPIException;
+    void pushCommand() throws GitException;
 
     /**
      * Pulls all changes from the remote repository.
      */
-    void pullCommand() throws GitAPIException;
+    void pullCommand() throws GitException;
+
+    /**
+     * Resets the last commit.
+     */
+    void resetCommitCommand() throws GitException;
 
     /**
      * Get the branches on this repo.
@@ -63,14 +68,14 @@ public interface GitRepository {
      *
      * @param branch The branch to check out.
      */
-    void checkout(String branch) throws GitAPIException;
+    void checkout(String branch) throws GitException;
 
     /**
      * Create a new branch.
      *
      * @param name The name of the branch to create.
      */
-    void createBranch(String name) throws GitAPIException;
+    void createBranch(String name) throws GitException;
 
     /**
      * Returns if this object exists as initialized repository on the disk.
@@ -85,4 +90,11 @@ public interface GitRepository {
      * @return A set of file names
      */
     Set<String> getChangedFiles();
+
+    /**
+     * Get the name of this repository.
+     *
+     * @return This repository's name.
+     */
+    String getRepositoryName();
 }

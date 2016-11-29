@@ -18,6 +18,7 @@ package nl.xillio.migrationtool.dialogs;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
+import nl.xillio.xill.versioncontrol.GitException;
 import nl.xillio.xill.versioncontrol.GitRepository;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
@@ -39,7 +40,7 @@ public class CreateBranchDialog extends FXMLDialog {
             repo.createBranch(name.getText());
             repo.checkout(name.getText());
             close();
-        } catch (GitAPIException e) {
+        } catch (GitException e) {
             new AlertDialog(Alert.AlertType.ERROR, "Error", "An error occurred while trying to create a new branch.", e.getMessage()).showAndWait();
         }
     }

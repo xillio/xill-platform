@@ -23,25 +23,24 @@ import nl.xillio.xill.versioncontrol.operations.GitPullOperation;
 public class GitPullDialog extends GitDialog {
     @FXML
     protected Label confirmText;
+    @FXML
+    private Label messageStatus;
 
     /**
      * Default constructor.
      *
      * @param repo the JGitRepository that will be pulled from.
      */
-    public GitPullDialog(final JGitRepository repo) {
-        super(repo, "/fxml/dialogs/GitPull.fxml");
-        this.setTitle("Pull");
+    public GitPullDialog(final JGitRepository repo)  {
+        super(repo, "Pull", "/fxml/dialogs/GitPull.fxml");
         confirmText.setText("Pull from repository: " + repo.getRepositoryName() + "?");
     }
 
+    @Override
     @FXML
-    private void pullBtnPressed() {
-        showProgress();
-
-        GitPullOperation pull = new GitPullOperation(repo);
-        pull.setOnSucceeded(e -> setStatusToFinished());
-        pull.getThread().start();
+    protected void actionBtnPressed() {
+        messageStatus.textProperty().setValue("Pulling from Git repository...");
+        startProgress(new GitPullOperation(repo));
     }
 }
 

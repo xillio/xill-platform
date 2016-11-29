@@ -42,8 +42,7 @@ public class GitPushDialog extends GitDialog {
      * @param repo the JGitRepository that will be pushed to.
      */
     public GitPushDialog(final JGitRepository repo) {
-        super(repo, "/fxml/dialogs/GitPush.fxml");
-        this.setTitle("Push changes");
+        super(repo, "Push", "/fxml/dialogs/GitPush.fxml");
 
         okBtn.setDisable(true);
         Set<String> changedFiles = repo.getChangedFiles();
@@ -57,14 +56,12 @@ public class GitPushDialog extends GitDialog {
         }
     }
 
+    @Override
     @FXML
-    private void pushBtnPressed() {
-        showProgress();
+    protected void actionBtnPressed() {
+        messageStatus.textProperty().setValue("Pushing to Git repository...");
+        startProgress(new GitCommitAndPushOperation(repo, message.getText()));
         gitInfoBox.setDisable(true);
-
-        GitCommitAndPushOperation push = new GitCommitAndPushOperation(repo, message.getText());
-        push.setOnSucceeded(e -> setStatusToFinished());
-        push.getThread().start();
     }
 }
 

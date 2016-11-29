@@ -17,25 +17,19 @@ package nl.xillio.xill.versioncontrol.operations;
 
 import nl.xillio.xill.versioncontrol.GitException;
 import nl.xillio.xill.versioncontrol.JGitRepository;
-import org.eclipse.jgit.api.errors.GitAPIException;
+import org.testng.annotations.Test;
 
-/**
- * Git pull task
- *
- * @author Edward van Egdom
- */
-public class GitPullOperation extends GitOperation {
-    /**
-     * Create a new Git pull operation.
-     *
-     * @param repo The repo to pull from.
-     */
-    public GitPullOperation(JGitRepository repo) {
-        super(repo);
-    }
+import static org.mockito.Mockito.*;
 
-    @Override
-    protected void execute() throws GitException {
-        repo.pullCommand();
+public class GitPullOperationTest {
+    @Test
+    public void testNormal() throws GitException {
+        // Mock.
+        JGitRepository repo = mock(JGitRepository.class);
+        GitPullOperation operation = new GitPullOperation(repo);
+
+        // Execute, verify.
+        operation.execute();
+        verify(repo, times(1)).pullCommand();
     }
 }

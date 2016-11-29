@@ -69,7 +69,7 @@ public class JGitAuth {
      * @param e The exception to check.
      * @return Whether the exception is an authorization exception.
      */
-    public boolean isAuthorizationException(GitAPIException e) {
+    public boolean isAuthorizationException(GitException e) {
         return e.getMessage().contains(JGitText.get().notAuthorized) || e.getMessage().contains(JGitText.get().noCredentialsProvider);
     }
 

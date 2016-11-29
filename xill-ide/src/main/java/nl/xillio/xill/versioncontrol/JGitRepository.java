@@ -40,7 +40,6 @@ public class JGitRepository implements GitRepository {
     private static final Logger LOGGER = Log.get();
 
     private Git repository;
-
     private JGitAuth auth;
 
     public JGitRepository(File path) {
@@ -57,25 +56,48 @@ public class JGitRepository implements GitRepository {
         auth = new JGitAuth();
     }
 
+    @Override
     public boolean isInitialized() {
         return repository != null;
     }
 
-    public void pushCommand() throws GitAPIException {
-        repository.push().setCredentialsProvider(auth.getCredentials()).call();
+    @Override
+    public void pushCommand() throws GitException {
+        try {
+            repository.push().setCredentialsProvider(auth.getCredentials()).call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e);
+        }
+
     }
 
-    public void commitCommand(String message) throws GitAPIException {
-        repository.add().addFilepattern(".").call();
-        repository.commit().setMessage(message).call();
+    @Override
+    public void commitCommand(String message) throws GitException {
+        try {
+            repository.add().addFilepattern(".").call();
+            repository.add().setUpdate(true).addFilepattern(".").call();
+            repository.commit().setMessage(message).call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e);
+        }
     }
 
-    public void pullCommand() throws GitAPIException {
-        repository.pull().setCredentialsProvider(auth.getCredentials()).call();
+    @Override
+    public void pullCommand() throws GitException {
+        try {
+            repository.pull().setCredentialsProvider(auth.getCredentials()).call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e);
+        }
     }
 
-    public void resetCommitCommand() throws GitAPIException {
-        repository.reset().setMode(ResetCommand.ResetType.MIXED).setRef("HEAD^").call();
+    @Override
+    public void resetCommitCommand() throws GitException {
+        try {
+            repository.reset().setMode(ResetCommand.ResetType.MIXED).setRef("HEAD^").call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e);
+        }
     }
 
     public List<String> getBranches() {
@@ -102,20 +124,30 @@ public class JGitRepository implements GitRepository {
         return null;
     }
 
-    public void checkout(String branch) throws GitAPIException {
+    public void checkout(String branch) throws GitException {
         // If there is already a local branch, the branch should not be created.
-        Set<String> localBranches = repository.branchList().call().stream().map(Ref::getName).map(this::friendlyBranchName).collect(Collectors.toSet());
+        try {
+            Set<String> localBranches = repository.branchList().call().stream().map(Ref::getName).map(this::friendlyBranchName).collect(Collectors.toSet());
+
         boolean exists = localBranches.contains(branch);
 
         // Checkout the branch, creating and tracking the remote if it does not exist yet.
         repository.checkout().setCreateBranch(!exists).setName(branch).setStartPoint("origin/" + branch)
                 .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e);
+        }
     }
 
-    public void createBranch(String name) throws GitAPIException {
-        repository.branchCreate().setName(name).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
+    public void createBranch(String name) throws GitException {
+        try {
+            repository.branchCreate().setName(name).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e);
+        }
     }
 
+    @Override
     public Set<String> getChangedFiles() {
         Set<String> changedFiles = new HashSet<>();
         try {
@@ -132,6 +164,7 @@ public class JGitRepository implements GitRepository {
         return auth;
     }
 
+    @Override
     public String getRepositoryName() {
         return repository.getRepository().getDirectory().getParentFile().getName();
     }

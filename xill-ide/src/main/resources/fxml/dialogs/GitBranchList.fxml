@@ -16,41 +16,21 @@
     limitations under the License.
 
 -->
-<?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
-<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="350.0" prefWidth="550.0" styleClass="root" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-    <children>
-        <VBox styleClass="dialogWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <children>
-                <AnchorPane styleClass="dialogContent" VBox.vgrow="ALWAYS">
+
+
+                <AnchorPane styleClass="dialogContent" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
                     <children>
                         <VBox alignment="CENTER_LEFT" styleClass="dialogFormWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
-                                <ListView fx:id="lvBranches" minHeight="205.0" />
+                                <ListView fx:id="lvBranches" prefHeight="170.0" />
+                                <HBox VBox.vgrow="NEVER" HBox.hgrow="ALWAYS" alignment="CENTER_RIGHT">
+                                    <children>
+                                        <Button alignment="CENTER_RIGHT" fx:id="createBtn" mnemonicParsing="false" onAction="#createBtnPressed" text="Create branch" />
+                                    </children>
+                                </HBox>
                             </children>
                         </VBox>
                     </children>
                 </AnchorPane>
-                <HBox styleClass="gitWrapper" prefHeight="40.0">
-                    <children>
-                        <HBox styleClass="gitProgress" HBox.hgrow="ALWAYS" visible="false" fx:id="progress">
-                            <children>
-                                <ProgressIndicator fx:id="progressIndicator"></ProgressIndicator>
-                                <Label text="Checking out branch..." fx:id="messageStatus" />
-                            </children>
-                        </HBox>
-                        <HBox VBox.vgrow="NEVER" styleClass="gitButtons" HBox.hgrow="ALWAYS">
-                            <children>
-                                <Button fx:id="okBtn" mnemonicParsing="false" onAction="#checkoutBtnPressed" text="Checkout" />
-                                <Button fx:id="createBtn" mnemonicParsing="false" onAction="#createBtnPressed" text="Create branch" />
-                                <Button fx:id="cancelBtn" cancelButton="true" mnemonicParsing="false" onAction="#cancelBtnPressed" text="Close" />
-                            </children>
-                        </HBox>
-                    </children>
-                </HBox>
-            </children>
-        </VBox>
-    </children>
-</AnchorPane>

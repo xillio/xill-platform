@@ -16,40 +16,15 @@
     limitations under the License.
 
 -->
-<?import javafx.scene.text.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="150.0" prefWidth="500.0" styleClass="root" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane styleClass="dialogContent" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" >
     <children>
-        <VBox styleClass="dialogWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox alignment="CENTER_LEFT" styleClass="dialogFormWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <AnchorPane styleClass="dialogContent" VBox.vgrow="ALWAYS">
-                    <children>
-                        <VBox alignment="CENTER_LEFT" styleClass="dialogFormWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                            <children>
-                                <Label fx:id="confirmText"></Label>
-                            </children>
-                        </VBox>
-                    </children>
-                </AnchorPane>
-                <HBox styleClass="gitWrapper" prefHeight="40.0">
-                    <children>
-                        <HBox styleClass="gitProgress" HBox.hgrow="ALWAYS" visible="false" fx:id="progress">
-                            <children>
-                                <ProgressIndicator fx:id="progressIndicator"></ProgressIndicator>
-                                <Label text="Pulling from Git repository..." fx:id="messageStatus" />
-                            </children>
-                        </HBox>
-                        <HBox VBox.vgrow="NEVER" styleClass="gitButtons" HBox.hgrow="ALWAYS">
-                            <children>
-                                <Button fx:id="okBtn" defaultButton="true" mnemonicParsing="false" onAction="#pullBtnPressed" text="Pull" />
-                                <Button fx:id="cancelBtn" cancelButton="true" mnemonicParsing="false" onAction="#cancelBtnPressed" text="Cancel" />
-                            </children>
-                        </HBox>
-                    </children>
-                </HBox>
+                <Label fx:id="confirmText"></Label>
             </children>
         </VBox>
     </children>
 </AnchorPane>
+
