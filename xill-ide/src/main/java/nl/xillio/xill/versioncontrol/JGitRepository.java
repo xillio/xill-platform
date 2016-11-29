@@ -16,7 +16,6 @@
 package nl.xillio.xill.versioncontrol;
 
 import me.biesaart.utils.Log;
-import nl.xillio.xill.docgen.data.Example;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.Status;
@@ -64,7 +63,7 @@ public class JGitRepository implements GitRepository {
         try {
             repository.push().setCredentialsProvider(auth.getCredentials()).call();
         } catch (GitAPIException e) {
-            throw new GitException(e.getMessage(), e.getCause());
+            throw new GitException(e.getMessage(), e);
         }
 
     }
@@ -76,7 +75,7 @@ public class JGitRepository implements GitRepository {
             repository.add().setUpdate(true).addFilepattern(".").call();
             repository.commit().setMessage(message).call();
         } catch (GitAPIException e) {
-            throw new GitException(e.getMessage(), e.getCause());
+            throw new GitException(e.getMessage(), e);
         }
     }
 
@@ -85,7 +84,7 @@ public class JGitRepository implements GitRepository {
         try {
             repository.pull().setCredentialsProvider(auth.getCredentials()).call();
         } catch (GitAPIException e) {
-            throw new GitException(e.getMessage(), e.getCause());
+            throw new GitException(e.getMessage(), e);
         }
     }
 
@@ -94,7 +93,7 @@ public class JGitRepository implements GitRepository {
         try {
             repository.reset().setMode(ResetCommand.ResetType.MIXED).setRef("HEAD^").call();
         } catch (GitAPIException e) {
-            throw new GitException(e.getMessage(), e.getCause());
+            throw new GitException(e.getMessage(), e);
         }
     }
 
