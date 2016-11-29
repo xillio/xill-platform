@@ -649,9 +649,6 @@
 	.check-box:selected .mark {
 		-fx-background-color: -fx-accent;
 	}
-	.check-box:disabled {
-		-fx-opacity: -fx-disabled-opacity;
-	}
 	.check-box:show-mnemonics .mnemonic-underline {
 		-fx-stroke: -fx-text-fill;
 	} 
@@ -791,9 +788,6 @@
 .list-view:focused {
     -fx-background-color: -fx-control-focused-border-color, -fx-control-focused-background-color;
 }
-.list-view:disabled {
-    -fx-opacity: -fx-disabled-opacity;
-}
 	.list-view .list-cell {
 		-fx-background-color: -fx-control-input-background-color;
 		-fx-padding: 0.25em; 
@@ -821,9 +815,6 @@
 }
 .menu:focused {
 	-fx-text-fill: -fx-control-text-color;
-}
-.menu:disabled {
-    -fx-opacity: -fx-disabled-opacity;
 }
 	.menu-bar .menu .arrow-button {
 		-fx-padding: 0;
@@ -1020,9 +1011,6 @@
 		-fx-background-insets: 0, 1;
 		-fx-background-radius: 0;
 	}
-	.progress-bar:disabled {
-		-fx-opacity: -fx-disabled-opacity;
-	}
 
 
 /* PROGRESS INDICATOR */
@@ -1051,9 +1039,6 @@
 		-fx-font-size: 1em; 
 		-fx-fill: -fx-control-text-color;
 	}
-.progress-indicator:disabled {
-    -fx-opacity: -fx-disabled-opacity;
-}
 
 
 /* RADIO BUTTON */
@@ -1088,9 +1073,6 @@
 	.radio-button:selected .dot {
 		-fx-background-color: -fx-accent;
 		-fx-background-insets: 0, 0;
-	}
-	.radio-button:disabled {
-		-fx-opacity: -fx-disabled-opacity;
 	}
 	.radio-button:show-mnemonics .mnemonic-underline {
 		-fx-stroke: -fx-text-fill;
@@ -1248,9 +1230,6 @@
 		-fx-tick-label-font: 0.75em System; 
 		-fx-tick-label-fill: -fx-control-text-color;
 	}
-.slider:disabled {
-    -fx-opacity: -fx-disabled-opacity;
-}
 
 
 /* SPLIT MENU BUTTON */
@@ -1295,9 +1274,6 @@
 	}
 	.split-menu-button:openvertically .arrow {
 		-fx-rotate: 90;
-	}
-	.split-menu-button:disabled {
-		-fx-opacity: -fx-disabled-opacity;
 	}
 .split-menu-button:show-mnemonics .mnemonic-underline {
     -fx-stroke: -fx-control-text-color;
@@ -1599,9 +1575,6 @@
 }
 .toggle-button:selected:focused:hover {
 	-fx-background-color: -fx-control-selected-focused-hover-border-color, -fx-control-selected-focused-hover-background-color;
-}
-.toggle-button:disabled {
-	-fx-opacity: -fx-disabled-opacity;
 }
 .toggle-button:show-mnemonics .mnemonic-underline {
 	-fx-stroke: -fx-text-fill;
