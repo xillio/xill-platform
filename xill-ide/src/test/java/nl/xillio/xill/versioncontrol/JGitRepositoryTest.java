@@ -132,6 +132,7 @@ public class JGitRepositoryTest {
         AddCommand add = mock(AddCommand.class);
         when(git.add()).thenReturn(add);
         when(add.addFilepattern(".")).thenReturn(add);
+        when(add.setUpdate(true)).thenReturn(add);
         CommitCommand commit = mock(CommitCommand.class);
         when(git.commit()).thenReturn(commit);
         when(commit.setMessage(message)).thenReturn(commit);
@@ -140,8 +141,9 @@ public class JGitRepositoryTest {
         repository.commitCommand(message);
 
         // Verify.
-        verify(add, times(1)).addFilepattern(".");
-        verify(add, times(1)).call();
+        verify(add, times(2)).addFilepattern(".");
+        verify(add, times(1)).setUpdate(true);
+        verify(add, times(2)).call();
         verify(commit, times(1)).setMessage(message);
         verify(commit, times(1)).call();
     }
