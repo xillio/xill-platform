@@ -15,11 +15,10 @@
  */
 package nl.xillio.xill.webservice.xill;
 
-import nl.xillio.util.XillioHomeFolder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -31,50 +30,26 @@ import java.nio.file.Path;
 @Component
 @ConfigurationProperties(prefix = "xillRuntime")
 public class XillRuntimeProperties {
-    private Path home = new File(XillioHomeFolder.forXillServer(), "xill").toPath();
     private Path pluginDir = null;
     private Path licenseDir = null;
-    private Path workspacesDir = new File(XillioHomeFolder.forXillServer(), "workspaces" + File.separator + "projects").toPath();
 
     public Path getLicenseDir() {
         return licenseDir;
     }
 
-    public void setLicenseDir(File licenseDir) {
-        if (licenseDir.isFile()) {
-            this.licenseDir = licenseDir.getParentFile().toPath();
+    public void setLicenseDir(Path licenseDir) {
+        if (Files.isRegularFile(licenseDir)) {
+            this.licenseDir = licenseDir.getParent();
         } else {
-            this.licenseDir = licenseDir.toPath();
+            this.licenseDir = licenseDir;
         }
-    }
-
-    public Path getHome() {
-        return home;
-    }
-
-    public void setHome(File home) {
-        this.home = home.toPath();
     }
 
     public Path getPluginDir() {
         return pluginDir;
     }
 
-    public void setPluginDir(File pluginDir) {
-        this.pluginDir = pluginDir.toPath();
-    }
-
-    /**
-     * @return The base path for persistent workspaces
-     */
-    public Path getWorkspacesDir() {
-        return workspacesDir;
-    }
-
-    /**
-     * @param workspaceDir The base path for persistent workspaces
-     */
-    public void setWorkspacesDir(Path workspaceDir) {
-        this.workspacesDir = workspaceDir;
+    public void setPluginDir(Path pluginDir) {
+        this.pluginDir = pluginDir;
     }
 }

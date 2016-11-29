@@ -61,7 +61,7 @@ import static nl.xillio.xill.api.components.MetaExpression.extractValue;
  * the robot does not change after {@link #compile(Path, Path)} has been called.
  *
  * This class is designed to be pooled, meaning that it can run different robots. {@link #compile(Path, Path)}
- * should be called to chenge the robot this runtime is able to run.
+ * should be called to change the robot this runtime is able to run.
  *
  * @author Geert Konijnendijk
  */
