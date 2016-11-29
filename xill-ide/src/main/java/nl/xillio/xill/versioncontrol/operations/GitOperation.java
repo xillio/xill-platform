@@ -112,11 +112,7 @@ public abstract class GitOperation extends Task<Void> {
     }
 
     protected void handleError(Throwable cause) {
-        try {
-            Platform.runLater(() -> new AlertDialog(Alert.AlertType.ERROR, "Error", "An error occurred.", cause.getMessage()).showAndWait());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-        }
+        Platform.runLater(new AlertDialog(Alert.AlertType.ERROR, "Error", "An error occurred.", cause.getMessage())::showAndWait);
     }
 
     private boolean awaitLatch(CountDownLatch latch) {
@@ -125,6 +121,7 @@ public abstract class GitOperation extends Task<Void> {
             return true;
         } catch (InterruptedException e) {
             LOGGER.error("Caught interrupted exception while waiting for Git operation to complete.");
+            Thread.currentThread().interrupt();
         }
         return false;
     }
