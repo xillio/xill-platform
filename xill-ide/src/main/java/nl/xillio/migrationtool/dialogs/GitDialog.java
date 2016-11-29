@@ -40,6 +40,8 @@ public abstract class GitDialog extends FXMLDialog {
     @FXML
     protected Button okBtn;
     @FXML
+    protected Button cancleBtn;
+    @FXML
     protected HBox progress;
     @FXML
     protected VBox componentsContainer;
@@ -78,6 +80,7 @@ public abstract class GitDialog extends FXMLDialog {
     protected void startProgress(GitOperation operation) {
         progress.setVisible(true);
         okBtn.setDisable(true);
+        cancleBtn.setDisable(true);
 
         operation.setOnSucceeded(e -> setStatusToFinished());
         operation.getThread().start();
