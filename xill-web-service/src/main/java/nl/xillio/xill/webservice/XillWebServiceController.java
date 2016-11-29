@@ -84,7 +84,7 @@ public class XillWebServiceController {
      */
     @RequestMapping(value = "workers/{id}", method = RequestMethod.DELETE)
     @ResponseBody
-    public void releaseWorker(@PathVariable("id") int workerId, HttpServletResponse response) throws XillOperationFailedException, XillInvalidStateException, XillNotFoundException {
+    public void releaseWorker(@PathVariable("id") int workerId, HttpServletResponse response) throws XillInvalidStateException, XillNotFoundException {
         xillWebService.releaseWorker(new XWID(workerId));
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }

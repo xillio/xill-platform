@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.webservice.model;
 
+import com.google.inject.Inject;
 import nl.xillio.xill.webservice.exceptions.*;
 import nl.xillio.xill.webservice.types.XWID;
 import nl.xillio.xill.webservice.xill.XillRuntimeImpl;
@@ -33,19 +34,19 @@ import java.util.Map;
 public class XillWorkerPool {
     private static final Logger LOGGER = me.biesaart.utils.Log.get();
 
-    protected final Path workDirectory;
-    protected final int poolCardinality;
-    protected final XWID workerPoolId;
-    protected final CommonsPool2TargetSource xillRuntimePool;
+    private final Path workDirectory;
+    private final int poolCardinality;
+    private final XWID workerPoolId;
+
+    @Inject
+    private XillWorkerFactory xillWorkerFactory;
 
     private final Map<Integer, XillWorker> workerPool = new HashMap<>();
 
-    @Autowired
-    public XillWorkerPool(final Path workDirectory, int poolCardinality, @Qualifier("xillRuntimePool") CommonsPool2TargetSource xillRuntimePool) {
+    public XillWorkerPool(final Path workDirectory, int poolCardinality) {
         this.workDirectory = workDirectory;
         this.poolCardinality = poolCardinality;
         this.workerPoolId = new XWID();
-        this.xillRuntimePool = xillRuntimePool;
     }
 
     /**
@@ -76,8 +77,8 @@ public class XillWorkerPool {
 
     XillWorker createWorker(final String robotFQN) throws XillAllocateWorkerException {
         try {
-            return new XillWorker((XillRuntimeImpl)xillRuntimePool.getTarget(), workDirectory, robotFQN);
-        } catch (Exception e) {
+            return xillWorkerFactory.constructWorker(workDirectory, robotFQN);
+        } catch (XillBaseException e) {
             throw new XillAllocateWorkerException(String.format("Could not allocate runtime for worker %1$d.", e));
         }
     }
@@ -136,29 +137,20 @@ public class XillWorkerPool {
         return workerPool.get(workerId.getId());
     }
 
-    void releaseXillRuntime(XillWorker xillWorker) throws XillOperationFailedException, XillInvalidStateException {
-        if (xillWorker.getState() != XillWorkerState.IDLE) {
-            throw new XillInvalidStateException(String.format("The worker %1$d cannot be released as it is not in the IDLE state.", xillWorker.getId().getId()));
-        }
-        try {
-            xillRuntimePool.releaseTarget(xillWorker.getRuntime());
-        } catch (Exception e) {
-            throw new XillOperationFailedException("The releasing of the worker failed.", e);
-        }
-    }
-
     /**
      * Release the worker in the worker workerPool.
      *
      * @param workerId The identifier of the worker.
      * @throws XillNotFoundException if the worker was not found.
      * @throws XillInvalidStateException if the worker is not in IDLE state.
-     * @throws XillOperationFailedException when the releasing operation fails.
      */
-    public void releaseWorker(XWID workerId) throws XillNotFoundException, XillInvalidStateException, XillOperationFailedException {
+    public void releaseWorker(XWID workerId) throws XillNotFoundException, XillInvalidStateException {
         synchronized (workerPool) {
             XillWorker xillWorker = findWorker(workerId);
-            releaseXillRuntime(xillWorker);
+            if (xillWorker.getState() != XillWorkerState.IDLE) {
+                throw new XillInvalidStateException(String.format("The worker %1$d cannot be released as it is not in the IDLE state.", xillWorker.getId().getId()));
+            }
+            xillWorker.close();
             workerPool.remove(xillWorker.getId().getId());
         }
     }
@@ -168,23 +160,7 @@ public class XillWorkerPool {
      */
     public void releaseAllWorkers() {
         synchronized (workerPool) {
-            workerPool.forEach((id, xillWorker) -> {
-                if (xillWorker.getState() == XillWorkerState.RUNNING) {
-                    // Try to stop running worker
-                    try {
-                        LOGGER.warn(String.format("Aborting the worker %1$d.", xillWorker.getId().getId()));
-                        xillWorker.abort();
-                    } catch (XillInvalidStateException e) {
-                        LOGGER.error(String.format("Could not start aborting the worker %1$d", xillWorker.getId().getId()), e);
-                    }
-                }
-
-                try {
-                    releaseXillRuntime(xillWorker);
-                } catch (XillBaseException e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
-            });
+            workerPool.forEach((id, xillWorker) -> xillWorker.close());
             workerPool.clear();
         }
     }

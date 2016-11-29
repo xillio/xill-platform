@@ -20,6 +20,7 @@ import nl.xillio.xill.webservice.exceptions.XillCompileException;
 import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.concurrent.ConcurrentRuntimeException;
+import org.apache.commons.pool2.ObjectPool;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -40,11 +41,16 @@ public class XillWorkerTest extends TestUtils {
     private XillRuntime runtime;
     private XillWorker worker;
 
+    private ObjectPool<XillRuntime> runtimePool;
+
     @BeforeMethod
     public void setUp() throws Exception {
         runtime = mock(XillRuntime.class);
         doNothing().when(runtime).compile(any(), any());
-        worker = new XillWorker(runtime, Paths.get("test/path"), "robot.name");
+        runtimePool = mock(ObjectPool.class);
+        when(runtimePool.borrowObject()).thenReturn(runtime);
+        worker = new XillWorker(Paths.get("test/path"), "robot.name", runtimePool);
+
     }
 
     /**
@@ -53,8 +59,7 @@ public class XillWorkerTest extends TestUtils {
     @Test(expectedExceptions = XillCompileException.class)
     public void testCompileError() throws Exception {
         doThrow(XillCompileException.class).when(runtime).compile(any(), any());
-        worker = new XillWorker(runtime, Paths.get("test/path"), "robot.name");
-        assertNull(worker);
+        worker = new XillWorker(Paths.get("test/path"), "robot.name", runtimePool);
     }
 
     /**
@@ -86,8 +91,12 @@ public class XillWorkerTest extends TestUtils {
     @Test(expectedExceptions = XillInvalidStateException.class)
     public void testRunTimeError() throws Exception {
         doThrow(ConcurrentRuntimeException.class).when(runtime).runRobot(MapUtils.EMPTY_MAP);
-        worker.run(MapUtils.EMPTY_MAP);
-        assertSame(worker.getState(), XillWorkerState.RUNTIME_ERROR);
+
+        try {
+            worker.run(MapUtils.EMPTY_MAP);
+        } finally {
+            assertSame(worker.getState(), XillWorkerState.RUNTIME_ERROR);
+        }
     }
 
     /**
@@ -115,26 +124,6 @@ public class XillWorkerTest extends TestUtils {
         doAnswer(invocation -> {
             doAnswer(invocation1 -> {
                 assertSame(worker.getState(), XillWorkerState.ABORTING);
-                return null;
-            }).when(runtime).abortRobot();
-            worker.abort();
-            return null;
-        }).when(runtime).runRobot(any());
-
-        worker.run(MapUtils.EMPTY_MAP);
-
-        assertSame(worker.getState(), XillWorkerState.IDLE);
-    }
-
-    /**
-     * Calling abort when a robot is aborting should propagate the exception,
-     * then return to {@link XillWorkerState#IDLE} state.
-     */
-    @Test(expectedExceptions = XillInvalidStateException.class)
-    public void testDoubleAbortStates() throws Exception {
-        doAnswer(invocation -> {
-            doAnswer(invocation1 -> {
-                worker.abort();
                 return null;
             }).when(runtime).abortRobot();
             worker.abort();

@@ -15,12 +15,13 @@
  */
 package nl.xillio.xill.webservice.xill;
 
-import me.biesaart.utils.FileUtils;
+import nl.xillio.xill.webservice.RobotDeployer;
 import nl.xillio.xill.webservice.XillRuntimeConfiguration;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
+import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import nl.xillio.xill.webservice.model.XillRuntime;
+import org.apache.commons.pool2.ObjectPool;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.AfterClass;
@@ -28,13 +29,11 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import static nl.xillio.xill.webservice.RobotDeployer.RETURN_ROBOT_NAME;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -43,13 +42,15 @@ import static org.testng.Assert.assertEquals;
  * @author Geert Konijnendijk
  */
 @ContextConfiguration(classes = { XillRuntimeConfiguration.class, XillRuntimeImpl.class,
-        XillEnvironmentFactory.class, XillRuntimeProperties.class, Log4JOutputHandler.class})
+        XillEnvironmentFactory.class, XillRuntimeProperties.class, Log4JOutputHandler.class,
+        RuntimePooledObjectFactory.class})
 public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
 
-    private Path workingDirectory;
-    private Path robotPath;
+    private RobotDeployer deployer;
 
     @Autowired
+    private ObjectPool<XillRuntime> runtimePool;
+
     private XillRuntime xillRuntime;
 
     /**
@@ -58,10 +59,10 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
      * @throws IOException When deploying fails
      */
     @BeforeClass
-    public void deployRobot() throws IOException {
-        workingDirectory = Files.createTempDirectory("xillRuntimeIT");
-        robotPath = Paths.get("return.xill");
-        FileUtils.copyInputStreamToFile(ClassLoader.getSystemResourceAsStream("xill/return.xill"), workingDirectory.resolve(robotPath).toFile());
+    public void deployRobot() throws Exception {
+        deployer = new RobotDeployer();
+        deployer.deployRobots();
+        xillRuntime = runtimePool.borrowObject();
     }
 
     /**
@@ -71,7 +72,7 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
      */
     @AfterClass
     public void removeRobot() throws IOException {
-       FileUtils.forceDelete(workingDirectory.toFile());
+       deployer.removeRobots();
     }
 
     /**
@@ -80,9 +81,8 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
      * @throws XillCompileException When compilation fails
      */
     @Test
-    @DirtiesContext
-    public void testRunRobot() throws XillCompileException, ExecutionException {
-        xillRuntime.compile(workingDirectory, robotPath);
+    public void testRunRobot() throws XillCompileException, ExecutionException, XillNotFoundException {
+        xillRuntime.compile(deployer.getWorkingDirectory(), RETURN_ROBOT_NAME);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("input", 42);
@@ -98,9 +98,8 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
      * @throws XillCompileException When compilation fails
      */
     @Test
-    @DirtiesContext
-    public void testRunRobotMultiple() throws XillCompileException, ExecutionException {
-        xillRuntime.compile(workingDirectory, robotPath);
+    public void testRunRobotMultiple() throws XillCompileException, ExecutionException, XillNotFoundException {
+        xillRuntime.compile(deployer.getWorkingDirectory(), RETURN_ROBOT_NAME);
 
         for (int i=0; i<4; i++) {
             Map<String, Object> parameters = new HashMap<>();

@@ -17,10 +17,10 @@ package nl.xillio.xill.webservice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.xillio.xill.webservice.exceptions.XillCompileException;
+import nl.xillio.xill.webservice.exceptions.*;
 import nl.xillio.xill.webservice.model.XillRuntime;
-import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
+import nl.xillio.xill.webservice.model.XillWorkerFactory;
 import nl.xillio.xill.webservice.services.XillWebService;
 import nl.xillio.xill.webservice.types.XWID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +36,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
+import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -68,12 +69,14 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     private WebApplicationContext context;
     @Autowired
     private XillWebService xillWebService;
+    @Autowired
+    XillWorkerFactory xillWorkerFactory;
 
     private MockMvc mockMvc;
     private XillRuntime runtime;
 
     @BeforeMethod
-    public void setUp(Method method) throws XillCompileException {
+    public void setUp(Method method) throws XillCompileException, XillNotFoundException {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(documentationConfiguration(this.restDocumentation)).build();
         this.restDocumentation.beforeTest(getClass(), method.getName());
@@ -86,6 +89,10 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
         this.restDocumentation.afterTest();
 
         xillWebService.releaseAllWorkers();
+    }
+
+    private XWID allocateWorker(final String robotFQN) throws XillCompileException, XillAllocateWorkerException, XillNotFoundException {
+        return xillWebService.allocateWorker(robotFQN);
     }
 
     /**
@@ -191,7 +198,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testDeleteWorker() throws Exception {
-        XWID id = xillWebService.allocateWorker("test.worker");
+        XWID id = allocateWorker("test.worker");
 
         // Deleting a worker by id
         this.mockMvc.perform(
@@ -226,7 +233,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     @Test
     public void testDeleteRunningWorker() throws Exception {
         // Deleting a running worker should interrupt it
-        XWID id = xillWebService.allocateWorker("test.TerminateTest");
+        XWID id = allocateWorker("test.TerminateTest");
 
         // Start running
         Thread running = new Thread(() -> {
@@ -260,7 +267,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testRunLoadedRobotWithJsonReturnValue() throws Exception {
-        XWID id = xillWebService.allocateWorker("test.JsonReturnTest");
+        XWID id = allocateWorker("test.JsonReturnTest");
 
         // Run a robot
         this.mockMvc.perform(
@@ -281,7 +288,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testRunLoadedRobotWithStreamReturnValue() throws Exception {
-        XWID id = xillWebService.allocateWorker("test.StreamReturnTest");
+        XWID id = allocateWorker("test.StreamReturnTest");
 
         // Run a robot
         this.mockMvc.perform(
@@ -301,7 +308,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testRunLoadedRobotWithoutReturnValue() throws Exception {
-        XWID id = xillWebService.allocateWorker("test.NullReturnTest");
+        XWID id = allocateWorker("test.NullReturnTest");
 
         // Run a robot
         this.mockMvc.perform(
@@ -334,7 +341,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testRunRobotWithError() throws Exception {
-        XWID id = xillWebService.allocateWorker("test.ErrorThrowingRobot");
+        XWID id = allocateWorker("test.ErrorThrowingRobot");
 
         // Run a robot that throws an error
         this.mockMvc.perform(
@@ -354,7 +361,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testTerminateRunningWorker() throws Exception {
-        XWID id = xillWebService.allocateWorker("test.TerminateTest");
+        XWID id = allocateWorker("test.TerminateTest");
 
         // Start running
         Thread running = new Thread(() -> {
@@ -388,7 +395,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testTerminateNotRunningWorker() throws Exception {
-        XWID id = xillWebService.allocateWorker("test.NotRunningTerminateTest");
+        XWID id = allocateWorker("test.NotRunningTerminateTest");
 
         // Terminate a non-running worker
         this.mockMvc.perform(

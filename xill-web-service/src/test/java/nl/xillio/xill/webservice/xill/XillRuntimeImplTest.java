@@ -16,6 +16,7 @@
 package nl.xillio.xill.webservice.xill;
 
 import me.biesaart.utils.IOUtils;
+import nl.xillio.events.Event;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.OutputHandler;
@@ -28,9 +29,12 @@ import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.api.io.IOStream;
 import nl.xillio.xill.debugging.XillDebugger;
+import nl.xillio.xill.webservice.RobotDeployer;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
+import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import org.mockito.ArgumentCaptor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -44,7 +48,10 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
 
+import static nl.xillio.xill.webservice.RobotDeployer.RETURN_ROBOT;
+import static nl.xillio.xill.webservice.RobotDeployer.RETURN_ROBOT_NAME;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
@@ -68,6 +75,7 @@ public class XillRuntimeImplTest extends TestUtils {
     private Path robotPath;
 
     private XillRuntimeImpl xillRuntime;
+    private RobotDeployer deployer;
 
     @BeforeMethod
     public void mockEnvironment () throws IOException {
@@ -77,14 +85,35 @@ public class XillRuntimeImplTest extends TestUtils {
         xillProcessor = mock(XillProcessor.class);
         robot = mock(Robot.class);
         debugger = mock(Debugger.class);
+        Event stopEvent = mock(Event.class);
+
+        // Signal that the robot has stopped
+        doAnswer(a -> {((Consumer) a.getArguments()[0]).accept(null);
+                        return null;}).when(stopEvent).addListener(any());
+
+        when(debugger.getOnRobotStop()).thenReturn(stopEvent);
         when(xillEnvironment.buildProcessor(any(), any())).thenReturn(xillProcessor);
         when(xillProcessor.getRobot()).thenReturn(robot);
         when(xillProcessor.getDebugger()).thenReturn(debugger);
 
         xillRuntime = new XillRuntimeImpl(xillEnvironment, outputHandler, compileExecutor);
+        xillRuntime.setAbortTimeoutMillis(1000);
 
-        workingDir = Paths.get("/path/to/working/dir");
-        robotPath = Paths.get("robot.xill");
+        deployer = new RobotDeployer();
+        deployer.deployRobots();
+
+        workingDir = deployer.getWorkingDirectory();
+        robotPath = Paths.get(RETURN_ROBOT);
+    }
+
+    /**
+     * Delete the temporary directory containing the robot
+     *
+     * @throws IOException When deleting fails
+     */
+    @AfterClass
+    public void removeRobot() throws IOException {
+        deployer.removeRobots();
     }
 
     /**
@@ -98,12 +127,12 @@ public class XillRuntimeImplTest extends TestUtils {
     }
 
     /**
-     * Test {@link XillRuntimeImpl#compile(Path, Path)} under normal circumstances.
+     * Test {@link XillRuntimeImpl#compile(Path, String)} under normal circumstances.
      */
     @Test
-    public void testCompile() throws IOException, XillParsingException, XillCompileException {
+    public void testCompile() throws IOException, XillParsingException, XillCompileException, XillNotFoundException {
         // Run
-        xillRuntime.compile(workingDir, robotPath);
+        xillRuntime.compile(workingDir, RobotDeployer.RETURN_ROBOT_NAME);
 
         // Verify
         verify(xillEnvironment).setXillThreadFactory(any());
@@ -112,25 +141,25 @@ public class XillRuntimeImplTest extends TestUtils {
     }
 
     /**
-     * Test {@link XillRuntimeImpl#compile(Path, Path)} when compilation fails.
+     * Test {@link XillRuntimeImpl#compile(Path, String)} when compilation fails.
      *
      * All possible checked exceptions should be converted to runtime exceptions to prevent
      * having too many exceptions in the signature and too many layers handling exceptions.
      */
     @Test(expectedExceptions = XillCompileException.class)
-    public void testCompileError() throws IOException, XillCompileException {
+    public void testCompileError() throws IOException, XillCompileException, XillNotFoundException {
         // Mock
         when(xillEnvironment.buildProcessor(any(), any())).thenThrow(IOException.class);
 
         // Run
-        xillRuntime.compile(workingDir, robotPath);
+        xillRuntime.compile(workingDir, RETURN_ROBOT_NAME);
     }
 
     /**
      * Test {@link XillRuntimeImpl#runRobot(Map)} under normal circumstances.
      */
     @Test
-    public void testRunRobot() throws IOException, XillCompileException, ExecutionException {
+    public void testRunRobot() throws IOException, XillCompileException, ExecutionException, XillNotFoundException {
         // Mock
         int resultNumber = 42;
         mockRobotResult(resultNumber);
@@ -138,7 +167,7 @@ public class XillRuntimeImplTest extends TestUtils {
         Map<String, Object> parameters = new HashMap<>();
 
         // Run
-        xillRuntime.compile(workingDir, robotPath);
+        xillRuntime.compile(workingDir, RETURN_ROBOT_NAME);
         Object result = xillRuntime.runRobot(parameters);
 
         // Verify
@@ -165,7 +194,7 @@ public class XillRuntimeImplTest extends TestUtils {
         Map<String, Object> parameters = new HashMap<>();
 
         // Run
-        xillRuntime.compile(workingDir, robotPath);
+        xillRuntime.compile(workingDir, RETURN_ROBOT_NAME);
         Object result = xillRuntime.runRobot(parameters);
 
         // Verify
@@ -190,7 +219,7 @@ public class XillRuntimeImplTest extends TestUtils {
         parameters.put("stream", inputStream);
 
         // Run
-        xillRuntime.compile(workingDir, robotPath);
+        xillRuntime.compile(workingDir, RETURN_ROBOT_NAME);
         xillRuntime.runRobot(parameters);
 
         // Verify
@@ -215,7 +244,7 @@ public class XillRuntimeImplTest extends TestUtils {
     }
 
     /**
-     * Test {@link XillRuntimeImpl#runRobot(Map)} when {@link XillRuntimeImpl#compile(Path, Path)} has
+     * Test {@link XillRuntimeImpl#runRobot(Map)} when {@link XillRuntimeImpl#compile(Path, String)} has
      * not been called yet.
      */
     @Test
@@ -267,7 +296,7 @@ public class XillRuntimeImplTest extends TestUtils {
         HashMap<String, Object> parameters = new HashMap<>();
 
         // Run
-        xillRuntime.compile(workingDir, robotPath);
+        xillRuntime.compile(workingDir, RETURN_ROBOT_NAME);
         // Run once to start the asynchronous compile
         xillRuntime.runRobot(parameters);
         // Run again to get the exception
@@ -283,9 +312,9 @@ public class XillRuntimeImplTest extends TestUtils {
      * Test if {@link XillDebugger#stop()} is called when aborting a robot
      */
     @Test
-    public void testAbortRobot() throws XillCompileException {
+    public void testAbortRobot() throws XillCompileException, XillNotFoundException {
         // Run
-        xillRuntime.compile(workingDir, robotPath);
+        xillRuntime.compile(workingDir, RETURN_ROBOT_NAME);
         xillRuntime.abortRobot();
 
         // verify
