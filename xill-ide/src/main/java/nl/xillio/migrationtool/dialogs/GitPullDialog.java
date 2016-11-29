@@ -40,7 +40,7 @@ public class GitPullDialog extends GitDialog {
     @Override
     @FXML
     protected void actionBtnPressed() {
-        messageStatus.textProperty().setValue("Pushing to Git repository...");
+        messageStatus.textProperty().setValue("Pulling from Git repository...");
         startProgress(new GitPullOperation(repo));
     }
 }
