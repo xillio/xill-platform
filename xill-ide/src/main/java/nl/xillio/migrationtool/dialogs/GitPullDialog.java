@@ -24,6 +24,8 @@ public class GitPullDialog extends GitDialog {
 
     @FXML
     protected Label confirmText;
+    @FXML
+    private Label messageStatus;
 
     /**
      * Default constructor.
@@ -38,6 +40,7 @@ public class GitPullDialog extends GitDialog {
     @Override
     @FXML
     protected void actionBtnPressed() {
+        messageStatus.textProperty().setValue("Pulling from Git repository...");
         startProgress(new GitPullOperation(repo));
     }
 }

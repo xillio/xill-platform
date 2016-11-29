@@ -59,6 +59,7 @@ public class GitPushDialog extends GitDialog {
     @Override
     @FXML
     protected void actionBtnPressed() {
+        messageStatus.textProperty().setValue("Pushing to Git repository...");
         startProgress(new GitCommitAndPushOperation(repo, message.getText()));
         gitInfoBox.setDisable(true);
     }
