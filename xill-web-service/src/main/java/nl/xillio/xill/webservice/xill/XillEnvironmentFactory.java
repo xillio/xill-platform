@@ -22,7 +22,6 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -47,27 +46,13 @@ public class XillEnvironmentFactory implements FactoryBean<XillEnvironment> {
      * @throws XillEnvironmentLoadException When loading the environment fails
      */
     public XillEnvironment load() {
-        return load(properties.getHome(), properties.getPluginDir());
-    }
-
-    /**
-     * Load Xill from a specific folder.
-     *
-     * @param xillHome      the xill home folder
-     * @param pluginFolders the xill plugins folders
-     * @return a Xill runtime
-     * @throws XillEnvironmentLoadException When loading the environment fails
-     */
-    public XillEnvironment load(Path xillHome, Path... pluginFolders) {
         try {
-            XillEnvironment environment = XillLoader.getEnv(xillHome);
-            for (Path path : pluginFolders) {
-                if (path != null) {
-                    environment.addFolder(path);
-                }
-            }
+            XillEnvironment environment = XillLoader.getEnv(null);
 
-            environment.addFolder(xillHome);
+            Path pluginDir = properties.getPluginDir();
+            if (pluginDir != null) {
+                environment.addFolder(pluginDir);
+            }
             environment.loadPlugins();
 
             return environment;

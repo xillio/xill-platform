@@ -15,33 +15,32 @@
  */
 package nl.xillio.xill.webservice.xill;
 
-import nl.xillio.xill.api.OutputHandler;
-import nl.xillio.xill.api.XillEnvironment;
-import nl.xillio.xill.api.XillProcessor;
-import nl.xillio.xill.api.XillThreadFactory;
+import nl.xillio.xill.api.*;
 import nl.xillio.xill.api.components.InstructionFlow;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.api.io.SimpleIOStream;
+import nl.xillio.xill.webservice.exceptions.RobotAbortException;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
+import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import nl.xillio.xill.webservice.model.XillRuntime;
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
-import xill.lang.xill.UseStatement;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
 import static nl.xillio.xill.api.components.MetaExpression.extractValue;
@@ -49,19 +48,19 @@ import static nl.xillio.xill.api.components.MetaExpression.extractValue;
 /**
  * Implementation of the {@link XillRuntime}.
  *
- * The expected usage pattern is calling {@link #compile(Path, Path)} once before being
+ * The expected usage pattern is calling {@link #compile(Path, String)} once before being
  * able to call {@link #runRobot(Map)} as often as required. Running robots can be aborted
  * from a different thread by calling {@link #abortRobot()}. This class does not do any checking
- * of state, meaning that {@link #runRobot(Map)} can be called before calling {@link #compile(Path, Path)}
+ * of state, meaning that {@link #runRobot(Map)} can be called before calling {@link #compile(Path, String)}
  * and {@link #abortRobot()} can be called when no robot is running, but these cases will result
  * in undefined behaviour.
  *
  * Since a robot has to be compiled once for each run, this class recompiles its robots asynchronously
  * after each run. Any errors occurring during recompilation are only logged since it is assumed that
- * the robot does not change after {@link #compile(Path, Path)} has been called.
+ * the robot does not change after {@link #compile(Path, String)} has been called.
  *
- * This class is designed to be pooled, meaning that it can run different robots. {@link #compile(Path, Path)}
- * should be called to chenge the robot this runtime is able to run.
+ * This class is designed to be pooled, meaning that it can run different robots. {@link #compile(Path, String)}
+ * should be called to change the robot this runtime is able to run.
  *
  * @author Geert Konijnendijk
  */
@@ -80,6 +79,9 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
     // Future for asynchronous recompiling
     private Future<?> compileSuccess;
     private ThreadPoolTaskExecutor compileExecutor;
+
+    @Value("${xillRuntime.abortTimeoutMillis:300000}")
+    private long abortTimeoutMillis;
 
     /**
      * Create a new runtime.
@@ -102,9 +104,16 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
     }
 
     @Override
-    public void compile(Path workDirectory, Path robotPath) throws XillCompileException {
+    public void compile(Path workDirectory, String robotFQN) throws XillCompileException, XillNotFoundException {
+
+        String robotPath = robotFQN.replace('.', File.separatorChar) + XillEnvironment.ROBOT_EXTENSION;
+
+        Path resolvedPath = workDirectory.resolve(robotPath);
+        if (!resolvedPath.toFile().exists()) {
+            throw new XillNotFoundException("The robot does not exists: " + resolvedPath.toString());
+        }
         try {
-            xillProcessor = xillEnvironment.buildProcessor(workDirectory, workDirectory.resolve(robotPath));
+            xillProcessor = xillEnvironment.buildProcessor(workDirectory, resolvedPath);
             xillProcessor.setOutputHandler(outputHandler);
             // Ignore all errors since they will be picked up by the output handler
             xillProcessor.getDebugger().setErrorHandler(e -> { });
@@ -186,7 +195,23 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
 
     @Override
     public void abortRobot() {
-        xillProcessor.getDebugger().stop();
+        Debugger debugger = xillProcessor.getDebugger();
+        debugger.stop();
+
+        CompletableFuture<Void> robotStopFuture = new CompletableFuture<>();
+
+        debugger.getOnRobotStop().addListener(e -> robotStopFuture.complete(null));
+
+        try {
+            robotStopFuture.get(abortTimeoutMillis, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOGGER.info("Stopping robot was interrupted", e);
+        } catch (ExecutionException e) {
+            throw new RobotAbortException("Exception occurred while waiting for robot stop", e);
+        } catch (TimeoutException e) {
+            throw new RobotAbortException("Could not abort the robot within the configured timeout", e);
+        }
     }
 
     @Override
@@ -202,5 +227,19 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
     @Override
     public void destroy() {
         close();
+    }
+
+    /**
+     * @return The maximum time a call to abort a robot will block
+     */
+    public long getAbortTimeoutMillis() {
+        return abortTimeoutMillis;
+    }
+
+    /**
+     * @param abortTimeoutMillis The maximum time a call to abort a robot will block
+     */
+    public void setAbortTimeoutMillis(long abortTimeoutMillis) {
+        this.abortTimeoutMillis = abortTimeoutMillis;
     }
 }

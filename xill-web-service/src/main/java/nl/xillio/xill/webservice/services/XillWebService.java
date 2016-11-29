@@ -38,7 +38,7 @@ public class XillWebService {
      * @throws XillInvalidStateException if the worker is not in the required (RUNNING) state.
      * @throws XillOperationFailedException when the releasing operation fails.
      */
-    public void releaseWorker(XWID id) throws XillNotFoundException, XillInvalidStateException, XillOperationFailedException {
+    public void releaseWorker(XWID id) throws XillNotFoundException, XillInvalidStateException {
         workerPoolManagerService.getDefaultWorkerPool().releaseWorker(id);
     }
 
