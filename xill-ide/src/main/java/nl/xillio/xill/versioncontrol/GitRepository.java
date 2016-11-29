@@ -15,8 +15,6 @@
  */
 package nl.xillio.xill.versioncontrol;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
-
 import java.util.Set;
 
 /**
