@@ -25,6 +25,7 @@ import nl.xillio.xill.versioncontrol.JGitAuth;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import org.slf4j.Logger;
 
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -113,6 +114,11 @@ public abstract class GitOperation extends Task<Void> {
 
     protected void handleError(Throwable cause) {
         Platform.runLater(() -> new AlertDialog(Alert.AlertType.ERROR, "Error", "An error occurred.", cause.getMessage()).showAndWait());
+    }
+
+    protected void handleConflicts(Set<String> conflictedFiles, String mergeStatus) {
+        // TODO create an appropriate conflicts dialog which displays conflicted files
+        Platform.runLater(() -> new AlertDialog(Alert.AlertType.ERROR, "Merge conflicts", "Merge conflicts", "Merge status: " + mergeStatus).showAndWait());
     }
 
     private boolean awaitLatch(CountDownLatch latch) {

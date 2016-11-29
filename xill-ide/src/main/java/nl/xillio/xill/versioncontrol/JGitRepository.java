@@ -17,11 +17,14 @@ package nl.xillio.xill.versioncontrol;
 
 import me.biesaart.utils.Log;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.NoWorkTreeException;
+import org.eclipse.jgit.merge.MergeStrategy;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.PushResult;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -80,9 +83,9 @@ public class JGitRepository implements GitRepository {
     }
 
     @Override
-    public void pullCommand() throws GitException {
+    public PullResult pullCommand() throws GitException {
         try {
-            repository.pull().setCredentialsProvider(auth.getCredentials()).call();
+            return repository.pull().setCredentialsProvider(auth.getCredentials()).call();
         } catch (GitAPIException e) {
             throw new GitException(e.getMessage(), e);
         }

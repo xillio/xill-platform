@@ -17,6 +17,7 @@ package nl.xillio.xill.versioncontrol.operations;
 
 import nl.xillio.xill.versioncontrol.GitException;
 import nl.xillio.xill.versioncontrol.JGitRepository;
+import org.eclipse.jgit.api.PullResult;
 
 /**
  * Git pull task
@@ -35,6 +36,10 @@ public class GitPullOperation extends GitOperation {
 
     @Override
     protected void execute() throws GitException {
-        repo.pullCommand();
+        PullResult pr = repo.pullCommand();
+
+        if (pr.getMergeResult().getConflicts() != null) {
+            handleConflicts(pr.getMergeResult().getConflicts().keySet(), pr.getMergeResult().getMergeStatus().toString());
+        }
     }
 }
