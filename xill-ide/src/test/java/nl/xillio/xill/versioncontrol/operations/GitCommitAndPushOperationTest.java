@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.versioncontrol.operations;
 
+import nl.xillio.xill.versioncontrol.GitException;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.testng.annotations.BeforeMethod;
@@ -34,7 +35,7 @@ public class GitCommitAndPushOperationTest {
     }
 
     @Test
-    public void testNormal() throws GitAPIException {
+    public void testNormal() throws GitException {
         operation.execute();
 
         verify(repo, times(1)).commitCommand(commitMessage);
@@ -42,7 +43,7 @@ public class GitCommitAndPushOperationTest {
     }
 
     @Test
-    public void testCancel() throws GitAPIException {
+    public void testCancel() throws GitException {
         operation.cancelOperation();
         verify(repo, times(1)).resetCommitCommand();
     }

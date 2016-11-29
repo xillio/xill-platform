@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.versioncontrol.operations;
 
+import nl.xillio.xill.versioncontrol.GitException;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
@@ -34,7 +35,7 @@ public class GitPullOperation extends GitOperation {
     }
 
     @Override
-    protected void execute() throws GitAPIException {
+    protected void execute() throws GitException {
         repo.pullCommand();
     }
 }

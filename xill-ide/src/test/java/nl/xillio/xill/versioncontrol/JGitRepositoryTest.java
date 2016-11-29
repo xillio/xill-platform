@@ -95,7 +95,7 @@ public class JGitRepositoryTest {
     }
 
     @Test
-    public void testPushCommand() throws GitAPIException {
+    public void testPushCommand() throws GitException {
         // Mock.
         PushCommand cmd = mock(PushCommand.class);
         when(git.push()).thenReturn(cmd);
@@ -106,11 +106,15 @@ public class JGitRepositoryTest {
 
         // Verify.
         verify(cmd, times(1)).setCredentialsProvider(auth.getCredentials());
-        verify(cmd, times(1)).call();
+        try {
+            verify(cmd, times(1)).call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e.getCause());
+        }
     }
 
     @Test
-    public void testPullCommand() throws GitAPIException {
+    public void testPullCommand() throws GitException {
         // Mock.
         PullCommand cmd = mock(PullCommand.class);
         when(git.pull()).thenReturn(cmd);
@@ -121,11 +125,15 @@ public class JGitRepositoryTest {
 
         // Verify.
         verify(cmd, times(1)).setCredentialsProvider(auth.getCredentials());
-        verify(cmd, times(1)).call();
+        try {
+            verify(cmd, times(1)).call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e.getCause());
+        }
     }
 
     @Test
-    public void testCommitCommand() throws GitAPIException {
+    public void testCommitCommand() throws GitException {
         String message = "commit message";
 
         // Mock.
@@ -143,13 +151,21 @@ public class JGitRepositoryTest {
         // Verify.
         verify(add, times(2)).addFilepattern(".");
         verify(add, times(1)).setUpdate(true);
-        verify(add, times(2)).call();
+        try {
+            verify(add, times(2)).call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e.getCause());
+        }
         verify(commit, times(1)).setMessage(message);
-        verify(commit, times(1)).call();
+        try {
+            verify(commit, times(1)).call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e.getCause());
+        }
     }
 
     @Test
-    public void testRevertCommitCommand() throws GitAPIException {
+    public void testRevertCommitCommand() throws GitException {
         // Mock.
         ResetCommand cmd = mock(ResetCommand.class);
         when(git.reset()).thenReturn(cmd);
@@ -162,7 +178,11 @@ public class JGitRepositoryTest {
         // Verify.
         verify(cmd, times(1)).setMode(ResetCommand.ResetType.MIXED);
         verify(cmd, times(1)).setRef("HEAD^");
-        verify(cmd, times(1)).call();
+        try {
+            verify(cmd, times(1)).call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e.getCause());
+        }
     }
 
     @Test
@@ -194,7 +214,8 @@ public class JGitRepositoryTest {
         // Mock.
         StatusCommand cmd = mock(StatusCommand.class);
         when(git.status()).thenReturn(cmd);
-        when(cmd.call()).thenThrow(new GitAPIException("This exception is supposed to be thrown.") {});
+        when(cmd.call()).thenThrow(new GitAPIException("This exception is supposed to be thrown.") {
+        });
 
         // Run.
         Set<String> result = repository.getChangedFiles();

@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.versioncontrol.operations;
 
+import nl.xillio.xill.versioncontrol.GitException;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.testng.annotations.Test;
@@ -23,7 +24,7 @@ import static org.mockito.Mockito.*;
 
 public class GitPullOperationTest {
     @Test
-    public void testNormal() throws GitAPIException {
+    public void testNormal() throws GitException {
         // Mock.
         JGitRepository repo = mock(JGitRepository.class);
         GitPullOperation operation = new GitPullOperation(repo);

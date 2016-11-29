@@ -31,22 +31,22 @@ public interface GitRepository {
      * @param commitMessage The message for the commit.
      * @return {@code true} if commit succeeded, {@code false} otherwise.
      */
-    void commitCommand(String commitMessage) throws GitAPIException;
+    void commitCommand(String commitMessage) throws GitException;
 
     /**
      * Pushes all changes to the remote repository.
      */
-    void pushCommand() throws GitAPIException;
+    void pushCommand() throws GitException;
 
     /**
      * Pulls all changes from the remote repository.
      */
-    void pullCommand() throws GitAPIException;
+    void pullCommand() throws GitException;
 
     /**
      * Resets the last commit.
      */
-    void resetCommitCommand() throws GitAPIException;
+    void resetCommitCommand() throws GitException;
 
     /**
      * Returns if this object exists as initialized repository on the disk.

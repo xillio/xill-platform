@@ -50,8 +50,8 @@ public class JGitAuthTest {
 
     @Test
     public void testAuthorizationException() {
-        GitAPIException noAuthException = new GitAPIException("something something") {};
-        GitAPIException authException = new GitAPIException(JGitText.get().notAuthorized) {};
+        GitException noAuthException = new GitException("something something") {};
+        GitException authException = new GitException(JGitText.get().notAuthorized) {};
 
         assertFalse(auth.isAuthorizationException(noAuthException));
         assertTrue(auth.isAuthorizationException(authException));

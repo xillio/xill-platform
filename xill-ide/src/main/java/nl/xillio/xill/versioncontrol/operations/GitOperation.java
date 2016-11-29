@@ -20,6 +20,7 @@ import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.dialogs.AlertDialog;
+import nl.xillio.xill.versioncontrol.GitException;
 import nl.xillio.xill.versioncontrol.JGitAuth;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -56,7 +57,7 @@ public abstract class GitOperation extends Task<Void> {
         this.auth = repo.getAuth();
     }
 
-    protected abstract void execute() throws GitAPIException;
+    protected abstract void execute() throws GitException;
 
     @Override
     public Void call() {
@@ -75,7 +76,7 @@ public abstract class GitOperation extends Task<Void> {
         try {
             execute();
             commandLatch.countDown();
-        } catch (GitAPIException e) {
+        } catch (GitException e) {
             // Check if the exception is an authorization exception.
             if (auth.isAuthorizationException(e)) {
                 final CountDownLatch credentialsLatch = new CountDownLatch(1); // Latch on the credentials dialog

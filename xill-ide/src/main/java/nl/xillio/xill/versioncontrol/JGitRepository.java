@@ -16,6 +16,7 @@
 package nl.xillio.xill.versioncontrol;
 
 import me.biesaart.utils.Log;
+import nl.xillio.xill.docgen.data.Example;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.Status;
@@ -59,25 +60,42 @@ public class JGitRepository implements GitRepository {
     }
 
     @Override
-    public void pushCommand() throws GitAPIException {
-        repository.push().setCredentialsProvider(auth.getCredentials()).call();
+    public void pushCommand() throws GitException {
+        try {
+            repository.push().setCredentialsProvider(auth.getCredentials()).call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e.getCause());
+        }
+
     }
 
     @Override
-    public void commitCommand(String message) throws GitAPIException {
-        repository.add().addFilepattern(".").call();
-        repository.add().setUpdate(true).addFilepattern(".").call();
-        repository.commit().setMessage(message).call();
+    public void commitCommand(String message) throws GitException {
+        try {
+            repository.add().addFilepattern(".").call();
+            repository.add().setUpdate(true).addFilepattern(".").call();
+            repository.commit().setMessage(message).call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e.getCause());
+        }
     }
 
     @Override
-    public void pullCommand() throws GitAPIException {
-        repository.pull().setCredentialsProvider(auth.getCredentials()).call();
+    public void pullCommand() throws GitException {
+        try {
+            repository.pull().setCredentialsProvider(auth.getCredentials()).call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e.getCause());
+        }
     }
 
     @Override
-    public void resetCommitCommand() throws GitAPIException {
-        repository.reset().setMode(ResetCommand.ResetType.MIXED).setRef("HEAD^").call();
+    public void resetCommitCommand() throws GitException {
+        try {
+            repository.reset().setMode(ResetCommand.ResetType.MIXED).setRef("HEAD^").call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e.getCause());
+        }
     }
 
     @Override

@@ -16,6 +16,7 @@
 package nl.xillio.xill.versioncontrol.operations;
 
 import me.biesaart.utils.Log;
+import nl.xillio.xill.versioncontrol.GitException;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
@@ -43,7 +44,7 @@ public class GitCommitAndPushOperation extends GitOperation {
     }
 
     @Override
-    protected void execute() throws GitAPIException {
+    protected void execute() throws GitException {
         // Check if we already committed, otherwise multiple commits can be created.
         if (!committed) {
             repo.commitCommand(commitMessage);
@@ -62,7 +63,7 @@ public class GitCommitAndPushOperation extends GitOperation {
     protected void cancelOperation() {
         try {
             repo.resetCommitCommand();
-        } catch (GitAPIException e) {
+        } catch (GitException e) {
             LOGGER.error("Failed to revert commit.", e);
         }
     }
