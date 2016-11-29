@@ -20,7 +20,6 @@ import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Represents an instance of the Xill environment able to run a single robot with low latency.
@@ -36,13 +35,13 @@ public interface XillRuntime extends AutoCloseable {
      * Compile a robot for future execution.
      *
      * @param workDirectory The working directory
-     * @param robotPath A path to the robot, relative to {@code workDirectory}
+     * @param robotFQN The robot's fully qualified name
      * @throws XillCompileException if the robot could not be (re) compiles
      */
-    void compile(Path workDirectory, Path robotPath) throws XillCompileException, XillNotFoundException;
+    void compile(Path workDirectory, String robotFQN) throws XillCompileException, XillNotFoundException;
 
     /**
-     * Run the robot that was compiled by calling {@link #compile(Path, Path)}.
+     * Run the robot that was compiled by calling {@link #compile(Path, String)}.
      *
      * This method runs a single robot with low latency in a blocking fashion.
      *

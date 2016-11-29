@@ -29,11 +29,11 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import static nl.xillio.xill.webservice.RobotDeployer.RETURN_ROBOT_NAME;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -79,7 +79,7 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
     @Test
     @DirtiesContext
     public void testRunRobot() throws XillCompileException, ExecutionException, XillNotFoundException {
-        xillRuntime.compile(deployer.getWorkingDirectory(), Paths.get(RobotDeployer.RETURN_ROBOT));
+        xillRuntime.compile(deployer.getWorkingDirectory(), RETURN_ROBOT_NAME);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("input", 42);
@@ -97,7 +97,7 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
     @Test
     @DirtiesContext
     public void testRunRobotMultiple() throws XillCompileException, ExecutionException, XillNotFoundException {
-        xillRuntime.compile(deployer.getWorkingDirectory(), Paths.get(RobotDeployer.RETURN_ROBOT));
+        xillRuntime.compile(deployer.getWorkingDirectory(), RETURN_ROBOT_NAME);
 
         for (int i=0; i<4; i++) {
             Map<String, Object> parameters = new HashMap<>();

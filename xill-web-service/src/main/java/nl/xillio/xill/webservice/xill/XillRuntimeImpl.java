@@ -36,9 +36,11 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -49,18 +51,18 @@ import static nl.xillio.xill.api.components.MetaExpression.extractValue;
 /**
  * Implementation of the {@link XillRuntime}.
  *
- * The expected usage pattern is calling {@link #compile(Path, Path)} once before being
+ * The expected usage pattern is calling {@link #compile(Path, String)} once before being
  * able to call {@link #runRobot(Map)} as often as required. Running robots can be aborted
  * from a different thread by calling {@link #abortRobot()}. This class does not do any checking
- * of state, meaning that {@link #runRobot(Map)} can be called before calling {@link #compile(Path, Path)}
+ * of state, meaning that {@link #runRobot(Map)} can be called before calling {@link #compile(Path, String)}
  * and {@link #abortRobot()} can be called when no robot is running, but these cases will result
  * in undefined behaviour.
  *
  * Since a robot has to be compiled once for each run, this class recompiles its robots asynchronously
  * after each run. Any errors occurring during recompilation are only logged since it is assumed that
- * the robot does not change after {@link #compile(Path, Path)} has been called.
+ * the robot does not change after {@link #compile(Path, String)} has been called.
  *
- * This class is designed to be pooled, meaning that it can run different robots. {@link #compile(Path, Path)}
+ * This class is designed to be pooled, meaning that it can run different robots. {@link #compile(Path, String)}
  * should be called to change the robot this runtime is able to run.
  *
  * @author Geert Konijnendijk
@@ -102,7 +104,10 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
     }
 
     @Override
-    public void compile(Path workDirectory, Path robotPath) throws XillCompileException, XillNotFoundException {
+    public void compile(Path workDirectory, String robotFQN) throws XillCompileException, XillNotFoundException {
+
+        String robotPath = robotFQN.replace('.', File.separatorChar) + XillEnvironment.ROBOT_EXTENSION;
+
         Path resolvedPath = workDirectory.resolve(robotPath);
         if (!resolvedPath.toFile().exists()) {
             throw new XillNotFoundException("The robot does not exists: " + resolvedPath.toString());

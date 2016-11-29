@@ -52,6 +52,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
+import static nl.xillio.xill.webservice.RobotDeployer.*;
 
 /**
  * Tests for {@link XillRuntimeImpl}.
@@ -91,7 +92,7 @@ public class XillRuntimeImplTest extends TestUtils {
         deployer.deployRobots();
 
         workingDir = deployer.getWorkingDirectory();
-        robotPath = Paths.get(RobotDeployer.RETURN_ROBOT);
+        robotPath = Paths.get(RETURN_ROBOT);
     }
 
     /**
@@ -115,12 +116,12 @@ public class XillRuntimeImplTest extends TestUtils {
     }
 
     /**
-     * Test {@link XillRuntimeImpl#compile(Path, Path)} under normal circumstances.
+     * Test {@link XillRuntimeImpl#compile(Path, String)} under normal circumstances.
      */
     @Test
     public void testCompile() throws IOException, XillParsingException, XillCompileException, XillNotFoundException {
         // Run
-        xillRuntime.compile(workingDir, robotPath);
+        xillRuntime.compile(workingDir, RobotDeployer.RETURN_ROBOT_NAME);
 
         // Verify
         verify(xillEnvironment).setXillThreadFactory(any());
@@ -129,7 +130,7 @@ public class XillRuntimeImplTest extends TestUtils {
     }
 
     /**
-     * Test {@link XillRuntimeImpl#compile(Path, Path)} when compilation fails.
+     * Test {@link XillRuntimeImpl#compile(Path, String)} when compilation fails.
      *
      * All possible checked exceptions should be converted to runtime exceptions to prevent
      * having too many exceptions in the signature and too many layers handling exceptions.
@@ -140,7 +141,7 @@ public class XillRuntimeImplTest extends TestUtils {
         when(xillEnvironment.buildProcessor(any(), any())).thenThrow(IOException.class);
 
         // Run
-        xillRuntime.compile(workingDir, robotPath);
+        xillRuntime.compile(workingDir, RETURN_ROBOT_NAME);
     }
 
     /**
@@ -155,7 +156,7 @@ public class XillRuntimeImplTest extends TestUtils {
         Map<String, Object> parameters = new HashMap<>();
 
         // Run
-        xillRuntime.compile(workingDir, robotPath);
+        xillRuntime.compile(workingDir, RETURN_ROBOT_NAME);
         Object result = xillRuntime.runRobot(parameters);
 
         // Verify
@@ -182,7 +183,7 @@ public class XillRuntimeImplTest extends TestUtils {
         Map<String, Object> parameters = new HashMap<>();
 
         // Run
-        xillRuntime.compile(workingDir, robotPath);
+        xillRuntime.compile(workingDir, RETURN_ROBOT_NAME);
         Object result = xillRuntime.runRobot(parameters);
 
         // Verify
@@ -207,7 +208,7 @@ public class XillRuntimeImplTest extends TestUtils {
         parameters.put("stream", inputStream);
 
         // Run
-        xillRuntime.compile(workingDir, robotPath);
+        xillRuntime.compile(workingDir, RETURN_ROBOT_NAME);
         xillRuntime.runRobot(parameters);
 
         // Verify
@@ -232,7 +233,7 @@ public class XillRuntimeImplTest extends TestUtils {
     }
 
     /**
-     * Test {@link XillRuntimeImpl#runRobot(Map)} when {@link XillRuntimeImpl#compile(Path, Path)} has
+     * Test {@link XillRuntimeImpl#runRobot(Map)} when {@link XillRuntimeImpl#compile(Path, String)} has
      * not been called yet.
      */
     @Test
@@ -284,7 +285,7 @@ public class XillRuntimeImplTest extends TestUtils {
         HashMap<String, Object> parameters = new HashMap<>();
 
         // Run
-        xillRuntime.compile(workingDir, robotPath);
+        xillRuntime.compile(workingDir, RETURN_ROBOT_NAME);
         // Run once to start the asynchronous compile
         xillRuntime.runRobot(parameters);
         // Run again to get the exception
@@ -302,7 +303,7 @@ public class XillRuntimeImplTest extends TestUtils {
     @Test
     public void testAbortRobot() throws XillCompileException, XillNotFoundException {
         // Run
-        xillRuntime.compile(workingDir, robotPath);
+        xillRuntime.compile(workingDir, RETURN_ROBOT_NAME);
         xillRuntime.abortRobot();
 
         // verify

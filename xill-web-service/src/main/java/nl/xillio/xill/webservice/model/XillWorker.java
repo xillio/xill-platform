@@ -36,7 +36,7 @@ public class XillWorker {
 
     protected final XWID id;
     protected final Path workDirectory;
-    protected final String robotName;
+    protected final String robotFQN;
 
     protected final XillRuntime runtime;
     protected final Object lock;
@@ -47,19 +47,18 @@ public class XillWorker {
      *
      * @param runtime       a runtime drawn from the pool
      * @param workDirectory the working directory of the enclosed robot
-     * @param robotName     the fully qualified robot name
+     * @param robotFQN     the fully qualified robot name
      * @throws XillCompileException if the robot could not be compiled
      */
-    public XillWorker(XillRuntime runtime, Path workDirectory, String robotName) throws XillCompileException, XillNotFoundException {
+    public XillWorker(XillRuntime runtime, Path workDirectory, String robotFQN) throws XillCompileException, XillNotFoundException {
         id = new XWID();
         this.runtime = runtime;
         this.workDirectory = workDirectory;
-        this.robotName = robotName;
+        this.robotFQN = robotFQN;
 
         lock = new Object();
 
-        Path robotPath = Paths.get(robotName.replace('.','/') + ".xill");
-        runtime.compile(workDirectory, robotPath);
+        runtime.compile(workDirectory, robotFQN);
 
         state = XillWorkerState.IDLE;
     }
@@ -106,8 +105,8 @@ public class XillWorker {
      *
      * @return the fully qualified robot name
      */
-    public String getRobotName() {
-        return robotName;
+    public String getRobotFQN() {
+        return robotFQN;
     }
 
     /**
