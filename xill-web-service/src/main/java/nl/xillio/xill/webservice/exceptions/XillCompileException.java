@@ -24,11 +24,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  *
  * @author Geert Konijnendijk
  */
-@ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR, reason = "The robot does not compile")
+@ResponseStatus(code = HttpStatus.CONFLICT, reason = "The robot does not compile")
 public class XillCompileException extends XillBaseException {
 
     public XillCompileException(String message, Throwable cause) {
         super(message, cause);
     }
-
 }

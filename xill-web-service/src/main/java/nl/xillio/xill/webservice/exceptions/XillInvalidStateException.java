@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  *
  * @author Geert Konijnendijk
  */
-@ResponseStatus(HttpStatus.PRECONDITION_FAILED)
+@ResponseStatus(HttpStatus.CONFLICT)
 public class XillInvalidStateException extends XillBaseException {
     public XillInvalidStateException(String message) {
         super(message);

@@ -67,20 +67,12 @@ public class XillWebServiceController {
      */
     @RequestMapping(value = "workers", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String, Object> allocateWorker(@RequestParam("robotFullyQualifiedName") String robotFQN, HttpServletRequest request, HttpServletResponse response) {
+    public Map<String, Object> allocateWorker(@RequestParam("robotFullyQualifiedName") String robotFQN, HttpServletRequest request, HttpServletResponse response) throws XillCompileException, XillAllocateWorkerException, XillNotFoundException {
         final Map<String, Object> result = new HashMap<>();
-        try {
-            XWID xwid = xillWebService.allocateWorker(robotFQN);
-            result.put("workerId", xwid.toString());
-            response.setStatus(HttpServletResponse.SC_CREATED);
-            response.addHeader("Location", request.getRequestURI() + xwid.toString());
-        } catch (XillAllocateWorkerException e) {
-            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-        } catch (XillNotFoundException e) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } catch (XillCompileException e) {
-            response.setStatus(422);
-        }
+        XWID xwid = xillWebService.allocateWorker(robotFQN);
+        result.put("workerId", xwid.toString());
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        response.addHeader("Location", request.getRequestURI() + xwid.toString());
         return result;
     }
 
@@ -92,17 +84,9 @@ public class XillWebServiceController {
      */
     @RequestMapping(value = "workers/{id}", method = RequestMethod.DELETE)
     @ResponseBody
-    public void releaseWorker(@PathVariable("id") int workerId, HttpServletResponse response) {
-        try {
-            xillWebService.releaseWorker(new XWID(workerId));
-            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-        } catch (XillNotFoundException e) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } catch (XillInvalidStateException e) {
-            response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
-        } catch (XillOperationFailedException e) {
-            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-        }
+    public void releaseWorker(@PathVariable("id") int workerId, HttpServletResponse response) throws XillOperationFailedException, XillInvalidStateException, XillNotFoundException {
+        xillWebService.releaseWorker(new XWID(workerId));
+        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 
     /**
@@ -110,21 +94,12 @@ public class XillWebServiceController {
      *
      * @param workerId The worker id.
      * @param requestBody The parameters used for the associated robot run.
-     * @param response The response.
      * @return The result from robot run.
      */
     @RequestMapping(value = "workers/{id}/run", method = RequestMethod.POST)
     @ResponseBody
-    public Object runRobot(@PathVariable("id") int workerId, @RequestBody(required = false) Map<String, Object> requestBody, HttpServletResponse response) {
-        Object result = null;
-        try {
-            result = xillWebService.runWorker(new XWID(workerId), requestBody);
-        } catch (XillNotFoundException e) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } catch (XillInvalidStateException e) {
-            response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
-        }
-        return result;
+    public Object runRobot(@PathVariable("id") int workerId, @RequestBody(required = false) Map<String, Object> requestBody) throws XillInvalidStateException, XillNotFoundException {
+        return xillWebService.runWorker(new XWID(workerId), requestBody);
     }
 
     /**
@@ -135,14 +110,8 @@ public class XillWebServiceController {
      */
     @RequestMapping(value = "workers/{id}/stop", method = RequestMethod.POST)
     @ResponseBody
-    public void stopRobot(@PathVariable("id") int workerId, HttpServletResponse response) {
-        try {
-            xillWebService.stopWorker(new XWID(workerId));
-            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-        } catch (XillNotFoundException e) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } catch (XillInvalidStateException e) {
-            response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
-        }
+    public void stopRobot(@PathVariable("id") int workerId, HttpServletResponse response) throws XillInvalidStateException, XillNotFoundException {
+        xillWebService.stopWorker(new XWID(workerId));
+        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 }
