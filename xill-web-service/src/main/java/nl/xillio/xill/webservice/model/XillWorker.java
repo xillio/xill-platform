@@ -15,12 +15,17 @@
  */
 package nl.xillio.xill.webservice.model;
 
-import nl.xillio.xill.webservice.exceptions.XillCompileException;
-import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
-import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
+import me.biesaart.utils.Log;
+import nl.xillio.xill.webservice.exceptions.*;
 import nl.xillio.xill.webservice.types.XWID;
 import org.apache.commons.lang3.concurrent.ConcurrentRuntimeException;
+import org.apache.commons.pool2.ObjectPool;
+import org.slf4j.Logger;
+import org.springframework.aop.target.AbstractPoolingTargetSource;
+import org.springframework.aop.target.CommonsPool2TargetSource;
+import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.inject.Provider;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -32,27 +37,37 @@ import java.util.Map;
  *
  * @author Xillio
  */
-public class XillWorker {
+public class XillWorker implements AutoCloseable {
+
+    private static final Logger LOGGER = Log.get();
 
     protected final XWID id;
     protected final Path workDirectory;
     protected final String robotFQN;
 
     protected final XillRuntime runtime;
+    protected final ObjectPool<XillRuntime> runtimePool;
     protected final Object lock;
     protected XillWorkerState state;
 
     /**
      * Creates a worker for a specific robot.
      *
-     * @param runtime       a runtime drawn from the pool
      * @param workDirectory the working directory of the enclosed robot
-     * @param robotFQN     the fully qualified robot name
+     * @param robotFQN      the fully qualified robot name
+     * @param runtimePool   The pool holding runtime instances
      * @throws XillCompileException if the robot could not be compiled
      */
-    public XillWorker(XillRuntime runtime, Path workDirectory, String robotFQN) throws XillCompileException, XillNotFoundException {
+    public XillWorker(Path workDirectory, String robotFQN, @Qualifier("runtimePool") ObjectPool<XillRuntime> runtimePool) throws XillBaseException {
         id = new XWID();
-        this.runtime = runtime;
+        this.runtimePool = runtimePool;
+
+        try {
+            this.runtime = runtimePool.borrowObject();
+        } catch (Exception e) {
+            throw new XillAllocateWorkerException("Could not retrieve a runtime from the pool", e);
+        }
+
         this.workDirectory = workDirectory;
         this.robotFQN = robotFQN;
 
@@ -82,6 +97,8 @@ public class XillWorker {
             return returnValue;
         } catch (ConcurrentRuntimeException e) {
             state = XillWorkerState.RUNTIME_ERROR;
+            // This worker can not continue, release the runtime
+            releaseRuntime();
             throw new XillInvalidStateException("The worker has encountered a problem and cannot continue", e);
         }
     }
@@ -96,8 +113,52 @@ public class XillWorker {
             }
             state = XillWorkerState.ABORTING;
         }
-        runtime.abortRobot();
+        try {
+            runtime.abortRobot();
+        } catch (RobotAbortException e) {
+            state = XillWorkerState.RUNTIME_ERROR;
+            invalidateRuntime();
+            return;
+        }
         state = XillWorkerState.IDLE;
+    }
+
+    @Override
+    public void close() {
+        if (state == XillWorkerState.RUNNING) {
+            try {
+                abort();
+            } catch (XillInvalidStateException e) {
+                LOGGER.error("Could not abort runtime before release, invalidating the runtime", e);
+                invalidateRuntime();
+                return;
+            }
+        }
+        releaseRuntime();
+    }
+
+    /**
+     * Invalidate the runtime from the pool so it will not be used again.
+     */
+    private void invalidateRuntime() {
+        try {
+            runtimePool.invalidateObject(runtime);
+        } catch (Exception e) {
+            state = XillWorkerState.RUNTIME_ERROR;
+            throw new PoolFailureException("Pool could not invalidate the runtime", e);
+        }
+    }
+
+    /**
+     * Return the runtime to the pool
+     */
+    private void releaseRuntime() {
+        try {
+            runtimePool.returnObject(runtime);
+        } catch (Exception e) {
+            state = XillWorkerState.RUNTIME_ERROR;
+            throw new PoolFailureException("Could not return the runtime to the pool", e);
+        }
     }
 
     /**

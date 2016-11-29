@@ -15,15 +15,13 @@
  */
 package nl.xillio.xill.webservice.xill;
 
-import nl.xillio.xill.api.OutputHandler;
-import nl.xillio.xill.api.XillEnvironment;
-import nl.xillio.xill.api.XillProcessor;
-import nl.xillio.xill.api.XillThreadFactory;
+import nl.xillio.xill.api.*;
 import nl.xillio.xill.api.components.InstructionFlow;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.api.io.SimpleIOStream;
+import nl.xillio.xill.webservice.exceptions.RobotAbortException;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
 import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import nl.xillio.xill.webservice.model.XillRuntime;
@@ -31,6 +29,7 @@ import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -40,10 +39,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
 import static nl.xillio.xill.api.components.MetaExpression.extractValue;
@@ -82,6 +79,9 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
     // Future for asynchronous recompiling
     private Future<?> compileSuccess;
     private ThreadPoolTaskExecutor compileExecutor;
+
+    @Value("${xillRuntime.abortTimeoutMillis:300000}")
+    private long abortTimeoutMillis;
 
     /**
      * Create a new runtime.
@@ -195,7 +195,23 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
 
     @Override
     public void abortRobot() {
-        xillProcessor.getDebugger().stop();
+        Debugger debugger = xillProcessor.getDebugger();
+        debugger.stop();
+
+        CompletableFuture<Void> robotStopFuture = new CompletableFuture<>();
+
+        debugger.getOnRobotStop().addListener(e -> robotStopFuture.complete(null));
+
+        try {
+            robotStopFuture.get(abortTimeoutMillis, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOGGER.info("Stopping robot was interrupted", e);
+        } catch (ExecutionException e) {
+            throw new RobotAbortException("Exception occurred while waiting for robot stop", e);
+        } catch (TimeoutException e) {
+            throw new RobotAbortException("Could not abort the robot within the configured timeout", e);
+        }
     }
 
     @Override
@@ -211,5 +227,19 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
     @Override
     public void destroy() {
         close();
+    }
+
+    /**
+     * @return The maximum time a call to abort a robot will block
+     */
+    public long getAbortTimeoutMillis() {
+        return abortTimeoutMillis;
+    }
+
+    /**
+     * @param abortTimeoutMillis The maximum time a call to abort a robot will block
+     */
+    public void setAbortTimeoutMillis(long abortTimeoutMillis) {
+        this.abortTimeoutMillis = abortTimeoutMillis;
     }
 }

@@ -16,6 +16,7 @@
 package nl.xillio.xill.webservice.xill;
 
 import me.biesaart.utils.IOUtils;
+import nl.xillio.events.Event;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.OutputHandler;
@@ -47,12 +48,14 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
 
+import static nl.xillio.xill.webservice.RobotDeployer.RETURN_ROBOT;
+import static nl.xillio.xill.webservice.RobotDeployer.RETURN_ROBOT_NAME;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
-import static nl.xillio.xill.webservice.RobotDeployer.*;
 
 /**
  * Tests for {@link XillRuntimeImpl}.
@@ -82,11 +85,19 @@ public class XillRuntimeImplTest extends TestUtils {
         xillProcessor = mock(XillProcessor.class);
         robot = mock(Robot.class);
         debugger = mock(Debugger.class);
+        Event stopEvent = mock(Event.class);
+
+        // Signal that the robot has stopped
+        doAnswer(a -> {((Consumer) a.getArguments()[0]).accept(null);
+                        return null;}).when(stopEvent).addListener(any());
+
+        when(debugger.getOnRobotStop()).thenReturn(stopEvent);
         when(xillEnvironment.buildProcessor(any(), any())).thenReturn(xillProcessor);
         when(xillProcessor.getRobot()).thenReturn(robot);
         when(xillProcessor.getDebugger()).thenReturn(debugger);
 
         xillRuntime = new XillRuntimeImpl(xillEnvironment, outputHandler, compileExecutor);
+        xillRuntime.setAbortTimeoutMillis(1000);
 
         deployer = new RobotDeployer();
         deployer.deployRobots();

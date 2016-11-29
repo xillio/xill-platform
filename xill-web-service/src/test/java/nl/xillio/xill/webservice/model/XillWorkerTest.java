@@ -20,6 +20,7 @@ import nl.xillio.xill.webservice.exceptions.XillCompileException;
 import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.concurrent.ConcurrentRuntimeException;
+import org.apache.commons.pool2.ObjectPool;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -40,11 +41,16 @@ public class XillWorkerTest extends TestUtils {
     private XillRuntime runtime;
     private XillWorker worker;
 
+    private ObjectPool<XillRuntime> runtimePool;
+
     @BeforeMethod
     public void setUp() throws Exception {
         runtime = mock(XillRuntime.class);
         doNothing().when(runtime).compile(any(), any());
-        worker = new XillWorker(runtime, Paths.get("test/path"), "robot.name");
+        runtimePool = mock(ObjectPool.class);
+        when(runtimePool.borrowObject()).thenReturn(runtime);
+        worker = new XillWorker(Paths.get("test/path"), "robot.name", runtimePool);
+
     }
 
     /**
@@ -53,7 +59,7 @@ public class XillWorkerTest extends TestUtils {
     @Test(expectedExceptions = XillCompileException.class)
     public void testCompileError() throws Exception {
         doThrow(XillCompileException.class).when(runtime).compile(any(), any());
-        worker = new XillWorker(runtime, Paths.get("test/path"), "robot.name");
+        worker = new XillWorker(Paths.get("test/path"), "robot.name", runtimePool);
     }
 
     /**

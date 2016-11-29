@@ -20,8 +20,8 @@ import nl.xillio.xill.webservice.XillRuntimeConfiguration;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
 import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import nl.xillio.xill.webservice.model.XillRuntime;
+import org.apache.commons.pool2.ObjectPool;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.AfterClass;
@@ -42,12 +42,15 @@ import static org.testng.Assert.assertEquals;
  * @author Geert Konijnendijk
  */
 @ContextConfiguration(classes = { XillRuntimeConfiguration.class, XillRuntimeImpl.class,
-        XillEnvironmentFactory.class, XillRuntimeProperties.class, Log4JOutputHandler.class})
+        XillEnvironmentFactory.class, XillRuntimeProperties.class, Log4JOutputHandler.class,
+        RuntimePooledObjectFactory.class})
 public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
 
     private RobotDeployer deployer;
 
     @Autowired
+    private ObjectPool<XillRuntime> runtimePool;
+
     private XillRuntime xillRuntime;
 
     /**
@@ -56,9 +59,10 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
      * @throws IOException When deploying fails
      */
     @BeforeClass
-    public void deployRobot() throws IOException {
+    public void deployRobot() throws Exception {
         deployer = new RobotDeployer();
         deployer.deployRobots();
+        xillRuntime = runtimePool.borrowObject();
     }
 
     /**
@@ -77,7 +81,6 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
      * @throws XillCompileException When compilation fails
      */
     @Test
-    @DirtiesContext
     public void testRunRobot() throws XillCompileException, ExecutionException, XillNotFoundException {
         xillRuntime.compile(deployer.getWorkingDirectory(), RETURN_ROBOT_NAME);
 
@@ -95,7 +98,6 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
      * @throws XillCompileException When compilation fails
      */
     @Test
-    @DirtiesContext
     public void testRunRobotMultiple() throws XillCompileException, ExecutionException, XillNotFoundException {
         xillRuntime.compile(deployer.getWorkingDirectory(), RETURN_ROBOT_NAME);
 
