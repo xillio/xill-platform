@@ -1,9 +1,25 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package nl.xillio.xill.webservice.model;
 
 /**
  * State model for a xill worker.
  */
 public enum XillWorkerState {
+
     /**
      * The worker has been instantiated and the related robot compiled successfully.
      * Ready to accept a payload and run.
@@ -18,32 +34,16 @@ public enum XillWorkerState {
     RUNNING,
 
     /**
-     * The worker received the abort signal but has not aborted yet.
-     * When the runtime stops -> IDLE
+     * The worker was running and received the abort signal.
+     * When the runtime stops -> IDLE, or previous state if the robot
+     * was not running.
      */
     ABORTING,
 
-    /**
-     * The robot related to this worker is being compiled.
-     * When compilation ends -> IDLE
-     */
-    COMPILING,
-
-    /**
-     * The robot does not compile and cannot run.
-     * Terminal state.
-     */
-    COMPILATION_ERROR,
 
     /**
      * The Xill Runtime encountered an unrecoverable error and is unusable.
      * Terminal state.
      */
-    RUNTIME_ERROR,
-
-    /**
-     * The robot has completed its execution and the result is ready to be queried.
-     * When the result is retrieved -> IDLE
-     */
-    COMPLETED
+    RUNTIME_ERROR
 }

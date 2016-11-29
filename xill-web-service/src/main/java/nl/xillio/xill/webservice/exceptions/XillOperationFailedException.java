@@ -19,15 +19,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Exception thrown when {@link nl.xillio.xill.webservice.model.XillRuntime} fails
- * to compile a robot.
- *
- * @author Geert Konijnendijk
+ * The exception class - fired when the operation failed.
  */
-@ResponseStatus(code = HttpStatus.CONFLICT, reason = "The robot does not compile")
-public class XillCompileException extends XillBaseException {
+@ResponseStatus(code = HttpStatus.NOT_ACCEPTABLE, reason = "Operation failed.")
+public class XillOperationFailedException extends XillBaseException {
+    public XillOperationFailedException(String message) {
+        super(message);
+    }
 
-    public XillCompileException(String message, Throwable cause) {
+    public XillOperationFailedException(String message, Throwable cause) {
         super(message, cause);
     }
 }
