@@ -72,7 +72,7 @@ public class XillWebServiceController {
         XWID xwid = xillWebService.allocateWorker(robotFQN);
         result.put("workerId", xwid.toString());
         response.setStatus(HttpServletResponse.SC_CREATED);
-        response.addHeader("Location", request.getRequestURI() + xwid.toString());
+        response.addHeader("Location", request.getRequestURL().toString() + "/" + xwid.toString());
         return result;
     }
 
