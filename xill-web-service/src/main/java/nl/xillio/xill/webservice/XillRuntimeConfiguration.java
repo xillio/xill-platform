@@ -36,7 +36,7 @@ public class XillRuntimeConfiguration {
      * @return A pool for {@link nl.xillio.xill.webservice.xill.XillRuntimeImpl} instances
      */
     @ConfigurationProperties(prefix = "runtimePool")
-    @Bean
+    @Bean("xillRuntimePool")
     public ObjectPool<XillRuntime> xillRuntimePool(RuntimePooledObjectFactory runtimeFactory) {
         return new GenericObjectPool<>(runtimeFactory);
     }

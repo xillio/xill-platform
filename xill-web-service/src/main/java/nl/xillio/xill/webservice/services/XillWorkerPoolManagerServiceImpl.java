@@ -15,13 +15,18 @@
  */
 package nl.xillio.xill.webservice.services;
 
+import nl.xillio.xill.webservice.XillProperties;
 import nl.xillio.xill.webservice.model.XillWorkerPool;
 import nl.xillio.xill.webservice.types.XWID;
 import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -29,23 +34,38 @@ import java.util.Optional;
  */
 @Service
 public class XillWorkerPoolManagerServiceImpl implements XillWorkerPoolManagerService {
+
+    XillProperties properties;
+
+    private final Path DEFAULT_DIRECTORY;
+    private Map<Path, XillWorkerPool> pools;
+    private final XillWorkerPool DEFAULT_POOL;
+
+    @Autowired
+    public XillWorkerPoolManagerServiceImpl(XillProperties properties) {
+        this.properties = properties;
+        DEFAULT_DIRECTORY = Paths.get(properties.getWorkDirectory());
+        DEFAULT_POOL = new XillWorkerPool(DEFAULT_DIRECTORY, properties.getMaxExecutors());
+    }
+
     @Override
     public XillWorkerPool getWorkerPool(final Path workDirectory) {
-        throw new NotImplementedException("The 'getWorkerPool' method has not been implemented yet");
+        return pools.getOrDefault(workDirectory, new XillWorkerPool(workDirectory, properties.getMaxExecutors()));
     }
 
     @Override
     public XillWorkerPool getDefaultWorkerPool() {
-        throw new NotImplementedException("The 'getWorkerPool' method has not been implemented yet");
+        return DEFAULT_POOL;
     }
 
     @Override
     public Optional<XillWorkerPool> findWorkerPool(final XWID projectId) {
         throw new NotImplementedException("The 'findWorkerPool' method has not been implemented yet");
+        //pools.values().stream().filter(pool -> pool.getWorkDirectory()).findAny();
     }
 
     @Override
     public List<XillWorkerPool> getAllWorkerPools() {
-        throw new NotImplementedException("The 'findWorkerPool' method has not been implemented yet");
+        return new LinkedList<>(pools.values());
     }
 }

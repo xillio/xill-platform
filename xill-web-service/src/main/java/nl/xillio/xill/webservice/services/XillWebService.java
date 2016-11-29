@@ -16,7 +16,7 @@ public class XillWebService {
     private final XillWorkerPoolManagerService workerPoolManagerService;
 
     @Autowired
-    public XillWebService(XillWorkerPoolManagerServiceImpl workerPoolManagerService) {
+    public XillWebService(XillWorkerPoolManagerService workerPoolManagerService) {
         this.workerPoolManagerService = workerPoolManagerService;
     }
 

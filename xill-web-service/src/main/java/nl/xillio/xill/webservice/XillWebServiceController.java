@@ -15,11 +15,14 @@
  */
 package nl.xillio.xill.webservice;
 
-import nl.xillio.xill.webservice.exceptions.*;
+import nl.xillio.xill.webservice.exceptions.XillAllocateWorkerException;
+import nl.xillio.xill.webservice.exceptions.XillCompileException;
+import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
+import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import nl.xillio.xill.webservice.services.XillWebService;
 import nl.xillio.xill.webservice.types.XWID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.BasePathAwareController;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +35,8 @@ import java.util.Map;
  * This class represents the main API controller. It is responsible for interacting with the actor that
  * calls the web API.
  */
-@BasePathAwareController
+//@BasePathAwareController
+    @Controller
 public class XillWebServiceController {
 
     private final XillWebService xillWebService;
