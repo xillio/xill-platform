@@ -71,7 +71,7 @@ public class XillWebServiceController {
         final Map<String, Object> result = new HashMap<>();
         try {
             XWID xwid = xillWebService.allocateWorker(robotFQN);
-            result.put("runSpaceId", xwid.toString());
+            result.put("workerId", xwid.toString());
             response.setStatus(HttpServletResponse.SC_CREATED);
             response.addHeader("Location", request.getRequestURI() + xwid.toString());
         } catch (XillAllocateWorkerException e) {
