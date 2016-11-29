@@ -53,12 +53,6 @@ public class GitCommitAndPushOperation extends GitOperation {
     }
 
     @Override
-    protected void handleError(Throwable cause) {
-        cancelOperation();
-        super.handleError(cause);
-    }
-
-    @Override
     protected void cancelOperation() {
         try {
             repo.resetCommitCommand();
