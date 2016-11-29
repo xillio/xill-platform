@@ -93,7 +93,10 @@ public class XillWorker implements AutoCloseable {
         }
         try {
             Object returnValue = runtime.runRobot(arguments);
-            state = XillWorkerState.IDLE;
+            // Do not change the state when it is not running any more, it might have been changed while aborting a robot
+            if (state == XillWorkerState.RUNNING) {
+                state = XillWorkerState.IDLE;
+            }
             return returnValue;
         } catch (ConcurrentRuntimeException e) {
             state = XillWorkerState.RUNTIME_ERROR;
@@ -129,9 +132,7 @@ public class XillWorker implements AutoCloseable {
             try {
                 abort();
             } catch (XillInvalidStateException e) {
-                LOGGER.error("Could not abort runtime before release, invalidating the runtime", e);
-                invalidateRuntime();
-                return;
+                LOGGER.error("The robot has already been aborted", e);
             }
         }
         releaseRuntime();
