@@ -18,9 +18,9 @@
 -->
 <function>
     <description>
-Fetch read/write/execute permissions for a specific file or folder on a group and user basis.
+Fetch read/write/execute permissions for a specific file or folder at the given `path` on a group and user basis.
 The output structure of this construct will be the same on all operating systems. It will output all the declared
-permissions for the file. So __not__ the effective permissions (i.e. automatic inheritance of of the group/user tree).
+permissions for the file. So __not__ the effective permissions (i.e. automatic inheritance of the group/user tree).
     </description>
     <examples>
         <example title="Usage">
