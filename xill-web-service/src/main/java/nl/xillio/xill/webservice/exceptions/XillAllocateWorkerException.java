@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * The exception class - fired when worker cannot be allocated.
  */
-@ResponseStatus(code = HttpStatus.SERVICE_UNAVAILABLE, reason = "Cannot allocate worker: resource limit reached")
+@ResponseStatus(code = HttpStatus.NOT_ACCEPTABLE, reason = "Cannot allocate worker: resource limit reached")
 public class XillAllocateWorkerException extends XillBaseException {
     public XillAllocateWorkerException(String message) {
         super(message);
