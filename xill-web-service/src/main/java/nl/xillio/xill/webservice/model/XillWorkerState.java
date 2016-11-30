@@ -35,11 +35,9 @@ public enum XillWorkerState {
 
     /**
      * The worker was running and received the abort signal.
-     * When the runtime stops -> IDLE, or previous state if the robot
-     * was not running.
+     * When the runtime stops -> IDLE, or -> RUNTIME_ERROR if something went wrong.
      */
     ABORTING,
-
 
     /**
      * The Xill Runtime encountered an unrecoverable error and is unusable.

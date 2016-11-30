@@ -21,18 +21,14 @@ import nl.xillio.xill.webservice.types.XWID;
 import org.apache.commons.lang3.concurrent.ConcurrentRuntimeException;
 import org.apache.commons.pool2.ObjectPool;
 import org.slf4j.Logger;
-import org.springframework.aop.target.AbstractPoolingTargetSource;
-import org.springframework.aop.target.CommonsPool2TargetSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.inject.Provider;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 
 /**
  * This class represents a worker entity in the domain model.
- * A worker can be started which will run a robot given a working directory.
+ * A worker can be started which will run a robot given by fully qualified name.
  * This execution can be interrupted on a different thread.
  *
  * @author Xillio
@@ -86,23 +82,27 @@ public class XillWorker implements AutoCloseable {
      */
     public Object run(final Map<String, Object> arguments) throws XillInvalidStateException {
         synchronized (lock) {
+            // Check the worker state
             if (state != XillWorkerState.IDLE) {
-                throw new XillInvalidStateException("Worker is not ready for running.");
+                throw new XillInvalidStateException("Worker is not ready for running");
             }
             state = XillWorkerState.RUNNING;
-        }
-        try {
-            Object returnValue = runtime.runRobot(arguments);
-            // Do not change the state when it is not running any more, it might have been changed while aborting a robot
-            if (state == XillWorkerState.RUNNING) {
-                state = XillWorkerState.IDLE;
+
+            try {
+                // Run a robot
+                Object returnValue = runtime.runRobot(arguments);
+
+                // Do not change the state when it is not running any more, it might have been changed while aborting a robot
+                if (state == XillWorkerState.RUNNING) {
+                    state = XillWorkerState.IDLE;
+                }
+                return returnValue;
+            } catch (ConcurrentRuntimeException e) {
+                state = XillWorkerState.RUNTIME_ERROR;
+                // This worker can not continue, release the runtime
+                releaseRuntime();
+                throw new XillInvalidStateException("The worker has encountered a problem and cannot continue", e);
             }
-            return returnValue;
-        } catch (ConcurrentRuntimeException e) {
-            state = XillWorkerState.RUNTIME_ERROR;
-            // This worker can not continue, release the runtime
-            releaseRuntime();
-            throw new XillInvalidStateException("The worker has encountered a problem and cannot continue", e);
         }
     }
 

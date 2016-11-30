@@ -15,21 +15,16 @@
  */
 package nl.xillio.xill.webservice.model;
 
-import com.google.inject.Inject;
 import nl.xillio.xill.webservice.exceptions.*;
 import nl.xillio.xill.webservice.types.XWID;
-import nl.xillio.xill.webservice.xill.XillRuntimeImpl;
 import org.slf4j.Logger;
-import org.springframework.aop.target.CommonsPool2TargetSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class represents the workerPool of the workers for given work directory.
+ * This class represents the workerPool of the workers for the given work directory.
  */
 public class XillWorkerPool {
     private static final Logger LOGGER = me.biesaart.utils.Log.get();
@@ -37,15 +32,14 @@ public class XillWorkerPool {
     private final Path workDirectory;
     private final int poolCardinality;
     private final XWID workerPoolId;
+    private final XillWorkerFactory xillWorkerFactory;
 
-    @Inject
-    private XillWorkerFactory xillWorkerFactory;
+    private final Map<XWID, XillWorker> workerPool = new HashMap<>();
 
-    private final Map<Integer, XillWorker> workerPool = new HashMap<>();
-
-    public XillWorkerPool(final Path workDirectory, int poolCardinality) {
+    public XillWorkerPool(final Path workDirectory, int poolCardinality, XillWorkerFactory xillWorkerFactory) {
         this.workDirectory = workDirectory;
         this.poolCardinality = poolCardinality;
+        this.xillWorkerFactory = xillWorkerFactory;
         this.workerPoolId = new XWID();
     }
 
@@ -56,7 +50,7 @@ public class XillWorkerPool {
      * @param robotFQN The robot fully qualified name.
      * @return The allocated worker.
      * @throws XillNotFoundException if the robot was not found.
-     * @throws XillAllocateWorkerException there are not resource available for worker allocation.
+     * @throws XillAllocateWorkerException there are no resource available for worker allocation.
      * @throws XillNotFoundException when the robot is not found.
      * @throws XillCompileException when the compilation of the robot has failed.
      */
@@ -70,7 +64,7 @@ public class XillWorkerPool {
 
         synchronized (workerPool) {
             checkWorkerPoolSize(); // The check must be done again to ensure atomic operation on the workerPool
-            workerPool.put(xillWorker.getId().getId(), xillWorker);
+            workerPool.put(xillWorker.getId(), xillWorker);
             return xillWorker;
         }
     }
@@ -131,10 +125,10 @@ public class XillWorkerPool {
      * @throws XillNotFoundException if the worker was not found.
      */
     XillWorker findWorker(XWID workerId) throws XillNotFoundException {
-        if (!workerPool.containsKey(workerId.getId())) {
+        if (!workerPool.containsKey(workerId)) {
             throw new XillNotFoundException(String.format("The worker %1$d cannot be found.", workerId.getId()));
         }
-        return workerPool.get(workerId.getId());
+        return workerPool.get(workerId);
     }
 
     /**
@@ -151,7 +145,7 @@ public class XillWorkerPool {
                 throw new XillInvalidStateException(String.format("The worker %1$d cannot be released as it is not in the IDLE state.", xillWorker.getId().getId()));
             }
             xillWorker.close();
-            workerPool.remove(xillWorker.getId().getId());
+            workerPool.remove(xillWorker.getId());
         }
     }
 
@@ -160,7 +154,7 @@ public class XillWorkerPool {
      */
     public void releaseAllWorkers() {
         synchronized (workerPool) {
-            workerPool.forEach((id, xillWorker) -> xillWorker.close());
+            workerPool.forEach((xwid, xillWorker) -> xillWorker.close());
             workerPool.clear();
         }
     }

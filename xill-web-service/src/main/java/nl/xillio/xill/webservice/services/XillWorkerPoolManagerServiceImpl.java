@@ -16,6 +16,7 @@
 package nl.xillio.xill.webservice.services;
 
 import nl.xillio.xill.webservice.XillProperties;
+import nl.xillio.xill.webservice.model.XillWorkerFactory;
 import nl.xillio.xill.webservice.model.XillWorkerPool;
 import nl.xillio.xill.webservice.types.XWID;
 import org.apache.commons.lang3.NotImplementedException;
@@ -40,17 +41,19 @@ public class XillWorkerPoolManagerServiceImpl implements XillWorkerPoolManagerSe
     private final Path DEFAULT_DIRECTORY;
     private Map<Path, XillWorkerPool> pools;
     private final XillWorkerPool DEFAULT_POOL;
+    private final XillWorkerFactory xillWorkerFactory;
 
     @Autowired
-    public XillWorkerPoolManagerServiceImpl(XillProperties properties) {
+    public XillWorkerPoolManagerServiceImpl(XillProperties properties, XillWorkerFactory xillWorkerFactory) {
         this.properties = properties;
+        this.xillWorkerFactory = xillWorkerFactory;
         DEFAULT_DIRECTORY = Paths.get(properties.getWorkDirectory());
-        DEFAULT_POOL = new XillWorkerPool(DEFAULT_DIRECTORY, properties.getMaxExecutors());
+        DEFAULT_POOL = new XillWorkerPool(DEFAULT_DIRECTORY, properties.getMaxExecutors(), xillWorkerFactory);
     }
 
     @Override
     public XillWorkerPool getWorkerPool(final Path workDirectory) {
-        return pools.getOrDefault(workDirectory, new XillWorkerPool(workDirectory, properties.getMaxExecutors()));
+        return pools.getOrDefault(workDirectory, new XillWorkerPool(workDirectory, properties.getMaxExecutors(), xillWorkerFactory));
     }
 
     @Override

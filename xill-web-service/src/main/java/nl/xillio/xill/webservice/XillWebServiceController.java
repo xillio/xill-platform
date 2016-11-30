@@ -106,7 +106,7 @@ public class XillWebServiceController {
      * @param workerId The worker id.
      * @param response The response.
      */
-    @RequestMapping(value = "workers/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "worker/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     @ApiOperation(
             value = "Release a worker",
@@ -117,8 +117,8 @@ public class XillWebServiceController {
             @ApiResponse(code = 204, message = "Worker successfully released"),
             @ApiResponse(code = 404, message = "Worker not found"),
             @ApiResponse(code = 409, message = "The worker is not in IDLE state")})
-    public void releaseWorker(@PathVariable("id") int workerId, HttpServletResponse response) throws XillInvalidStateException, XillNotFoundException {
-        xillWebService.releaseWorker(new XWID(workerId));
+    public void releaseWorker(@PathVariable("id") String workerId, HttpServletResponse response) throws XillInvalidStateException, XillNotFoundException {
+        xillWebService.releaseWorker(new XWID(Integer.parseInt(workerId)));
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 
@@ -129,7 +129,7 @@ public class XillWebServiceController {
      * @param requestBody The parameters used for the associated robot run.
      * @return The result from robot run.
      */
-    @RequestMapping(value = "workers/{id}/run", method = RequestMethod.POST)
+    @RequestMapping(value = "worker/{id}/run", method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(
             value = "Run a worker with the given payload as argument",
@@ -139,8 +139,8 @@ public class XillWebServiceController {
     @ApiResponses({
             @ApiResponse(code = 404, message = "Worker not found"),
             @ApiResponse(code = 409, message = "The worker is not in IDLE state")})
-    public Object runRobot(@PathVariable("id") int workerId, @RequestBody(required = false) Map<String, Object> requestBody) throws XillInvalidStateException, XillNotFoundException {
-        return xillWebService.runWorker(new XWID(workerId), requestBody);
+    public Object runRobot(@PathVariable("id") String workerId, @RequestBody(required = false) Map<String, Object> requestBody) throws XillInvalidStateException, XillNotFoundException {
+        return xillWebService.runWorker(new XWID(Integer.parseInt(workerId)), requestBody);
     }
 
     /**
@@ -149,7 +149,7 @@ public class XillWebServiceController {
      * @param workerId The worker id.
      * @param response The response.
      */
-    @RequestMapping(value = "workers/{id}/stop", method = RequestMethod.POST)
+    @RequestMapping(value = "worker/{id}/stop", method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(
             value = "Abort a running worker",
@@ -159,8 +159,8 @@ public class XillWebServiceController {
     @ApiResponses({
             @ApiResponse(code = 404, message = "Worker not found"),
             @ApiResponse(code = 409, message = "The worker is not in RUNNING state")})
-    public void stopRobot(@PathVariable("id") int workerId, HttpServletResponse response) throws XillInvalidStateException, XillNotFoundException {
-        xillWebService.stopWorker(new XWID(workerId));
+    public void stopRobot(@PathVariable("id") String workerId, HttpServletResponse response) throws XillInvalidStateException, XillNotFoundException {
+        xillWebService.stopWorker(new XWID(Integer.parseInt(workerId)));
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 }
