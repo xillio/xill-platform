@@ -20,8 +20,11 @@ public class SwaggerConfiguration {
     @Value("${xws.api.base.path}")
     private String monitorBaseURL;
 
+    @Value("${xws.api.version}")
+    private String apiVersion;
+
     @Bean
-    public Docket stateApi() {
+    public Docket microserviceApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName("xill-web-service-api")
                 .apiInfo(apiInfo())
@@ -29,7 +32,8 @@ public class SwaggerConfiguration {
                     .paths(path -> !path.endsWith(monitorBaseURL) && // exclude the swagger controller
                             !path.equals("/error")) // and the error controller
                     .build()
-                .genericModelSubstitutes(ResponseEntity.class);
+                .genericModelSubstitutes(ResponseEntity.class)
+                .useDefaultResponseMessages(false);
     }
 
     private ApiInfo apiInfo() {
@@ -38,9 +42,7 @@ public class SwaggerConfiguration {
                 .description("Xill robot executor microservice")
                 .termsOfServiceUrl("https://support.xillio.com")
                 .contact(new Contact("Xillio Support","https://www.xillio.com", "support@xillio.com"))
-                .version("${xws.api.version")
+                .version(apiVersion)
                 .build();
     }
-
-
 }
