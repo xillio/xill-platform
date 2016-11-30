@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %5level %5X{pid} --- [%15.15thread{length=15}] %-40.40logger{1.} : %msg%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root>
+            <AppenderRef ref="Console"/>
+        </Root>
+        <Logger name="nl.xillio" level="debug"/>
+        <Logger name="org.springframework" level="info"/>
+        <Logger name="nl.xillio.license" level="info" />
+        <Logger name="robot" level="debug"/>
+    </Loggers>
+</Configuration>
