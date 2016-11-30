@@ -73,7 +73,7 @@ public class XillWorkerPool {
         try {
             return xillWorkerFactory.constructWorker(workDirectory, robotFQN);
         } catch (XillBaseException e) {
-            throw new XillAllocateWorkerException(String.format("Could not allocate runtime for worker %1$d.", e));
+            throw new XillAllocateWorkerException("Could not allocate runtime for worker", e);
         }
     }
 
