@@ -18,7 +18,6 @@ package nl.xillio.xill.versioncontrol.operations;
 import me.biesaart.utils.Log;
 import nl.xillio.xill.versioncontrol.GitException;
 import nl.xillio.xill.versioncontrol.JGitRepository;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 
 /**
@@ -51,12 +50,6 @@ public class GitCommitAndPushOperation extends GitOperation {
             committed = true;
         }
         repo.pushCommand();
-    }
-
-    @Override
-    protected void handleError(Throwable cause) {
-        cancelOperation();
-        super.handleError(cause);
     }
 
     @Override

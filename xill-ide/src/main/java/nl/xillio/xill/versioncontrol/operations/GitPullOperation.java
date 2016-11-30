@@ -17,7 +17,9 @@ package nl.xillio.xill.versioncontrol.operations;
 
 import nl.xillio.xill.versioncontrol.GitException;
 import nl.xillio.xill.versioncontrol.JGitRepository;
-import org.eclipse.jgit.api.errors.GitAPIException;
+
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Git pull task
@@ -36,6 +38,10 @@ public class GitPullOperation extends GitOperation {
 
     @Override
     protected void execute() throws GitException {
-        repo.pullCommand();
+        Set<String> conflicts = repo.pullCommand();
+
+        if (conflicts != null) {
+            handleConflicts(conflicts);
+        }
     }
 }

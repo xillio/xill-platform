@@ -83,9 +83,13 @@ public class JGitRepository implements GitRepository {
     }
 
     @Override
-    public void pullCommand() throws GitException {
+    public Set<String> pullCommand() throws GitException {
         try {
-            repository.pull().setCredentialsProvider(auth.getCredentials()).call();
+            MergeResult mr = repository.pull().setCredentialsProvider(auth.getCredentials()).call().getMergeResult();
+            if (mr.getConflicts() == null) {
+                return null;
+            }
+            return mr.getConflicts().keySet();
         } catch (GitAPIException e) {
             throw new GitException(e.getMessage(), e);
         }

@@ -40,6 +40,8 @@ public abstract class GitDialog extends FXMLDialog {
     @FXML
     protected Button okBtn;
     @FXML
+    protected Button cancelBtn;
+    @FXML
     protected HBox progress;
     @FXML
     protected VBox componentsContainer;
@@ -59,12 +61,12 @@ public abstract class GitDialog extends FXMLDialog {
 
     }
 
-    protected void addDialogComponents(String componentsDescription){
+    protected void addDialogComponents(String componentsDescription) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(componentsDescription));
         loader.setController(this);
         try {
             Parent components = loader.load();
-            componentsContainer.getChildren().add(0,components);
+            componentsContainer.getChildren().add(0, components);
         } catch (IOException e) {
             LOGGER.error("Could not load components for Git dialog.");
         }
@@ -78,6 +80,7 @@ public abstract class GitDialog extends FXMLDialog {
     protected void startProgress(GitOperation operation) {
         progress.setVisible(true);
         okBtn.setDisable(true);
+        cancelBtn.setDisable(true);
 
         operation.setOnSucceeded(e -> setStatusToFinished());
         operation.getThread().start();

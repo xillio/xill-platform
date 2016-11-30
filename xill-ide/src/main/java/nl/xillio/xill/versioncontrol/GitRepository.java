@@ -15,7 +15,7 @@
  */
 package nl.xillio.xill.versioncontrol;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.PullResult;
 
 import java.util.List;
 import java.util.Set;
@@ -42,7 +42,7 @@ public interface GitRepository {
     /**
      * Pulls all changes from the remote repository.
      */
-    void pullCommand() throws GitException;
+    Set<String> pullCommand() throws GitException;
 
     /**
      * Resets the last commit.

@@ -20,11 +20,13 @@ import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.dialogs.AlertDialog;
+import nl.xillio.migrationtool.dialogs.GitConflictDialog;
 import nl.xillio.xill.versioncontrol.GitException;
 import nl.xillio.xill.versioncontrol.JGitAuth;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import org.slf4j.Logger;
 
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -112,7 +114,11 @@ public abstract class GitOperation extends Task<Void> {
     }
 
     protected void handleError(Throwable cause) {
-        Platform.runLater(new AlertDialog(Alert.AlertType.ERROR, "Error", "An error occurred.", cause.getMessage())::showAndWait);
+        Platform.runLater(() -> new AlertDialog(Alert.AlertType.ERROR, "Error", "An error occurred.", cause.getMessage()).showAndWait());
+    }
+
+    protected void handleConflicts(Set<String> conflictedFiles) {
+        Platform.runLater(() -> new GitConflictDialog(conflictedFiles).showAndWait());
     }
 
     private boolean awaitLatch(CountDownLatch latch) {
