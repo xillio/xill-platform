@@ -16,9 +16,7 @@
     limitations under the License.
 
 -->
-<?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
-<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <AnchorPane prefHeight="150.0" prefWidth="400.0" styleClass="root" stylesheets="@../styles.css"
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
@@ -26,15 +24,15 @@
         <VBox styleClass="dialogWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <AnchorPane styleClass="dialogContent" VBox.vgrow="ALWAYS">
+                <AnchorPane styleClass="dialogContent" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8"
+                            xmlns:fx="http://javafx.com/fxml/1">
                     <children>
-                        <VBox alignment="CENTER_LEFT" styleClass="dialogFormWrapper" AnchorPane.bottomAnchor="0.0"
-                              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <VBox fx:id="gitInfoBox" alignment="CENTER_LEFT" styleClass="dialogFormWrapper"
+                              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                              AnchorPane.topAnchor="0.0">
                             <children>
-                                <Label text="Username"/>
-                                <TextField fx:id="username" promptText="username"/>
-                                <Label text="Password"/>
-                                <PasswordField fx:id="password" promptText="password" HBox.hgrow="ALWAYS"/>
+                                <Label text="Conflicting files"/>
+                                <ListView fx:id="fileList" prefHeight="158.0"/>
                             </children>
                         </VBox>
                     </children>
@@ -43,8 +41,6 @@
                     <children>
                         <Button fx:id="okBtn" defaultButton="true" mnemonicParsing="false" onAction="#okBtnPressed"
                                 text="Ok"/>
-                        <Button fx:id="cancelBtn" cancelButton="true" mnemonicParsing="false"
-                                onAction="#cancelBtnPressed" text="Cancel"/>
                     </children>
                 </HBox>
             </children>

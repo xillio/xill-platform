@@ -16,10 +16,7 @@
 package nl.xillio.xill.versioncontrol;
 
 import me.biesaart.utils.Log;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.PullResult;
-import org.eclipse.jgit.api.ResetCommand;
-import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.NoWorkTreeException;
 import org.eclipse.jgit.merge.MergeStrategy;
@@ -29,7 +26,9 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -83,9 +82,13 @@ public class JGitRepository implements GitRepository {
     }
 
     @Override
-    public PullResult pullCommand() throws GitException {
+    public Set<String> pullCommand() throws GitException {
         try {
-            return repository.pull().setCredentialsProvider(auth.getCredentials()).call();
+            MergeResult mr = repository.pull().setCredentialsProvider(auth.getCredentials()).call().getMergeResult();
+            if (mr.getConflicts() == null) {
+                return null;
+            }
+            return mr.getConflicts().keySet();
         } catch (GitAPIException e) {
             throw new GitException(e.getMessage(), e);
         }

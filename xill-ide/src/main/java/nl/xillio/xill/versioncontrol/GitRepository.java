@@ -41,7 +41,7 @@ public interface GitRepository {
     /**
      * Pulls all changes from the remote repository.
      */
-    PullResult pullCommand() throws GitException;
+    Set<String> pullCommand() throws GitException;
 
     /**
      * Resets the last commit.
