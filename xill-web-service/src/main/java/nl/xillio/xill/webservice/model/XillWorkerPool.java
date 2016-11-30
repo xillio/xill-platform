@@ -15,14 +15,9 @@
  */
 package nl.xillio.xill.webservice.model;
 
-import com.google.inject.Inject;
 import nl.xillio.xill.webservice.exceptions.*;
 import nl.xillio.xill.webservice.types.XWID;
-import nl.xillio.xill.webservice.xill.XillRuntimeImpl;
 import org.slf4j.Logger;
-import org.springframework.aop.target.CommonsPool2TargetSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.nio.file.Path;
 import java.util.HashMap;
