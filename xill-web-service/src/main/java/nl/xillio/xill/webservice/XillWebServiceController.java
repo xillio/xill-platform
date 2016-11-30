@@ -22,7 +22,7 @@ import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import nl.xillio.xill.webservice.services.XillWebService;
 import nl.xillio.xill.webservice.types.XWID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.BasePathAwareController;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +35,8 @@ import java.util.Map;
  * This class represents the main API controller. It is responsible for interacting with the actor that
  * calls the web API.
  */
-@BasePathAwareController
+@RestController
+@RequestMapping(path = "${xws.api.base.path}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class XillWebServiceController {
 
     private final XillWebService xillWebService;
@@ -50,7 +51,7 @@ public class XillWebServiceController {
      *
      * @return The info about this web service.
      */
-    @RequestMapping(value = "ping", method = RequestMethod.GET)
+    @RequestMapping(path = "ping", method = RequestMethod.GET)
     @ResponseBody
     public Map<String, String> ping() {
         final Map<String, String> info = new LinkedHashMap<>();
