@@ -36,6 +36,11 @@ public class XWID {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof XWID && ((XWID)obj).id == id);
+    }
+
+    @Override
     public String toString() {
         return Integer.toString(id);
     }

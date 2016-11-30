@@ -40,7 +40,6 @@ public enum XillWorkerState {
      */
     ABORTING,
 
-
     /**
      * The Xill Runtime encountered an unrecoverable error and is unusable.
      * Terminal state.

@@ -86,10 +86,10 @@ public class XillWebServiceController {
      * @param workerId The worker id.
      * @param response The response.
      */
-    @RequestMapping(value = "workers/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "worker/{id}", method = RequestMethod.DELETE)
     @ResponseBody
-    public void releaseWorker(@PathVariable("id") int workerId, HttpServletResponse response) throws XillInvalidStateException, XillNotFoundException {
-        xillWebService.releaseWorker(new XWID(workerId));
+    public void releaseWorker(@PathVariable("id") String workerId, HttpServletResponse response) throws XillInvalidStateException, XillNotFoundException {
+        xillWebService.releaseWorker(new XWID(Integer.parseInt(workerId)));
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 
@@ -100,10 +100,10 @@ public class XillWebServiceController {
      * @param requestBody The parameters used for the associated robot run.
      * @return The result from robot run.
      */
-    @RequestMapping(value = "workers/{id}/run", method = RequestMethod.POST)
+    @RequestMapping(value = "worker/{id}/run", method = RequestMethod.POST)
     @ResponseBody
-    public Object runRobot(@PathVariable("id") int workerId, @RequestBody(required = false) Map<String, Object> requestBody) throws XillInvalidStateException, XillNotFoundException {
-        return xillWebService.runWorker(new XWID(workerId), requestBody);
+    public Object runRobot(@PathVariable("id") String workerId, @RequestBody(required = false) Map<String, Object> requestBody) throws XillInvalidStateException, XillNotFoundException {
+        return xillWebService.runWorker(new XWID(Integer.parseInt(workerId)), requestBody);
     }
 
     /**
@@ -112,10 +112,10 @@ public class XillWebServiceController {
      * @param workerId The worker id.
      * @param response The response.
      */
-    @RequestMapping(value = "workers/{id}/stop", method = RequestMethod.POST)
+    @RequestMapping(value = "worker/{id}/stop", method = RequestMethod.POST)
     @ResponseBody
-    public void stopRobot(@PathVariable("id") int workerId, HttpServletResponse response) throws XillInvalidStateException, XillNotFoundException {
-        xillWebService.stopWorker(new XWID(workerId));
+    public void stopRobot(@PathVariable("id") String workerId, HttpServletResponse response) throws XillInvalidStateException, XillNotFoundException {
+        xillWebService.stopWorker(new XWID(Integer.parseInt(workerId)));
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 }
