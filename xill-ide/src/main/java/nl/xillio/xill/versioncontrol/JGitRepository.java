@@ -18,70 +18,41 @@ package nl.xillio.xill.versioncontrol;
 import me.biesaart.utils.Log;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.errors.NoWorkTreeException;
+import org.eclipse.jgit.merge.MergeStrategy;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.transport.CredentialsProvider;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.eclipse.jgit.transport.PushResult;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
- * Implementation of {@link Repository} which uses the jGit library for interacting with Git repositories.
+ * Implementation of {@link GitRepository} which uses the jGit library for interacting with Git repositories.
  * @author Daan Knoope
  */
-public class JGitRepository implements Repository {
+public class JGitRepository implements GitRepository {
     private static final Logger LOGGER = Log.get();
 
     private Git repository;
-    private CredentialsProvider credentials;
+    private JGitAuth auth;
 
     public JGitRepository(File path) {
         FileRepositoryBuilder builder = new FileRepositoryBuilder().addCeilingDirectory(path).findGitDir(path);
 
         try {
-            repository = new Git(builder.build());
-        } catch (IOException e) {
+            if (builder.getGitDir() != null) {
+                repository = new Git(builder.build());
+            }
+        } catch (IOException | IllegalArgumentException e) {
             LOGGER.error("An exception occurred while loading the repository.", e);
         }
-    }
 
-    @Override
-    public boolean commit(String commitMessage) {
-        try {
-            repository.add().addFilepattern("--all").call();
-            repository.commit().setMessage(commitMessage).call();
-        } catch (GitAPIException e) {
-            LOGGER.error("Exception while committing files.", e);
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean push() {
-        try {
-            PushCommand cmd = repository.push();
-            setCredentialsProvider(cmd);
-            cmd.call();
-        } catch (GitAPIException e) {
-            LOGGER.error("Exception while pushing.", e);
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean pull() {
-        try {
-            PullCommand cmd = repository.pull();
-            setCredentialsProvider(cmd);
-            cmd.call();
-        } catch (GitAPIException e) {
-            LOGGER.error("Exception while pulling.", e);
-            return false;
-        }
-        return true;
+        auth = new JGitAuth();
     }
 
     @Override
@@ -90,13 +61,67 @@ public class JGitRepository implements Repository {
     }
 
     @Override
-    public void setCredentials(String username, String password) {
-        credentials = new UsernamePasswordCredentialsProvider(username, password);
+    public void pushCommand() throws GitException {
+        try {
+            repository.push().setCredentialsProvider(auth.getCredentials()).call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e);
+        }
+
     }
 
-    private void setCredentialsProvider(TransportCommand command) {
-        if (credentials != null) {
-            command.setCredentialsProvider(credentials);
+    @Override
+    public void commitCommand(String message) throws GitException {
+        try {
+            repository.add().addFilepattern(".").call();
+            repository.add().setUpdate(true).addFilepattern(".").call();
+            repository.commit().setMessage(message).call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public Set<String> pullCommand() throws GitException {
+        try {
+            MergeResult mr = repository.pull().setCredentialsProvider(auth.getCredentials()).call().getMergeResult();
+            if (mr.getConflicts() == null) {
+                return null;
+            }
+            return mr.getConflicts().keySet();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void resetCommitCommand() throws GitException {
+        try {
+            repository.reset().setMode(ResetCommand.ResetType.MIXED).setRef("HEAD^").call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public Set<String> getChangedFiles() {
+        Set<String> changedFiles = new HashSet<>();
+        try {
+            Status status = repository.status().call();
+            changedFiles.addAll(status.getUncommittedChanges()); // Add changes
+            changedFiles.addAll(status.getUntracked()); // Add untracked files
+        } catch (GitAPIException | NoWorkTreeException e) {
+            LOGGER.error("Error retrieving changed files.", e);
+        }
+        return changedFiles;
+    }
+
+    public JGitAuth getAuth() {
+        return auth;
+    }
+
+    @Override
+    public String getRepositoryName() {
+        return repository.getRepository().getDirectory().getParentFile().getName();
     }
 }

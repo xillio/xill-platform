@@ -48,6 +48,7 @@ import nl.xillio.xill.util.HotkeysHandler;
 import nl.xillio.xill.util.settings.ProjectSettings;
 import nl.xillio.xill.util.settings.Settings;
 import nl.xillio.xill.util.settings.SettingsHandler;
+import nl.xillio.xill.versioncontrol.JGitRepository;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 
@@ -101,6 +102,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     private FXController controller;
 
     // Context menu items.
+    private Menu menuVersionControl;
     private MenuItem menuCut;
     private MenuItem menuCopy;
     private MenuItem menuPaste;
@@ -110,6 +112,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     private List<File> bulkFiles = new ArrayList<>(); // Files to copy or cut.
     private boolean copy = false; // True: copy, false: cut.
 
+    private JGitRepository repo;
     // "New" button context menu items.
     private Menu menuNewBotFromTemplate;
     private MenuItem menuNewFolder;
@@ -193,6 +196,9 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         menuDelete = new MenuItem("Delete...");
         menuDelete.setOnAction(e -> deleteButtonPressed());
 
+        // Version Control.
+        versionControlMenu();
+
         // Upload.
         MenuItem menuUpload = new MenuItem("Upload...");
         menuUpload.setOnAction(e -> uploadButtonPressed());
@@ -211,14 +217,20 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
 
         // Create the context menu.
-        ContextMenu menu = new ContextMenu(menuCut, menuCopy, menuPaste, menuRename, menuCreateFolder, menuNewFile, menuDelete, menuUpload);
+        ContextMenu menu = new ContextMenu(menuCut, menuCopy, menuPaste, menuRename, menuCreateFolder, menuNewFile, menuDelete, menuUpload, menuVersionControl);
         if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
             menu.getItems().add(menuOpenFolder);
         }
 
         trvProjects.setContextMenu(menu);
-        // Only paste when there is just 1 item selected (the paste location) and there are files to paste.
-        trvProjects.setOnContextMenuRequested(e -> menuPaste.setDisable(getAllCurrentItems().size() != 1 || bulkFiles.isEmpty()));
+        trvProjects.setOnContextMenuRequested(e -> {
+            // Only paste when there is just 1 item selected (the paste location) and there are files to paste.
+            menuPaste.setDisable(getAllCurrentItems().size() != 1 || bulkFiles.isEmpty());
+
+            // Check the project repository status.
+            repo = new JGitRepository(getCurrentProject().getValue().getKey());
+            menuVersionControl.setDisable(!repo.isInitialized());
+        });
     }
 
     private void addNewButtonContextMenu() {
@@ -244,7 +256,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         });
     }
 
-    public void generateTemplateMenu() {
+    private void generateTemplateMenu() {
         menuNewBotFromTemplate.getItems().clear();
         try {
             templater.getTemplateNames().stream().map(MenuItem::new).forEach(menuNewBotFromTemplate.getItems()::add);
@@ -261,6 +273,16 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         MenuItem emptyBot = new MenuItem("empty robot");
         emptyBot.setOnAction(event -> newBot(null));
         menuNewBotFromTemplate.getItems().add(0, emptyBot);
+    }
+
+    private void versionControlMenu() {
+        MenuItem push = new MenuItem("Push");
+        push.setOnAction(e -> new GitPushDialog(repo).showAndWait());
+
+        MenuItem pull = new MenuItem("Pull");
+        pull.setOnAction(e -> new GitPullDialog(repo).showAndWait());
+
+        menuVersionControl = new Menu("Version control", null, push, pull);
     }
 
     private static Group createIcon(final String shape) {

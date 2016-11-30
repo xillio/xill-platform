@@ -15,33 +15,38 @@
  */
 package nl.xillio.xill.versioncontrol;
 
+import org.eclipse.jgit.api.PullResult;
+
+import java.util.Set;
+
 /**
- * Representation of a version control repository.
+ * Representation of a Git version control repository.
  *
  * @author Daan Knoope
  */
-public interface Repository {
+public interface GitRepository {
     /**
-     * Commits all changes with the provi;ded commit message.
+     * Commits all changes with the provided commit message.
      *
      * @param commitMessage The message for the commit.
      * @return {@code true} if commit succeeded, {@code false} otherwise.
      */
-    boolean commit(String commitMessage);
+    void commitCommand(String commitMessage) throws GitException;
 
     /**
      * Pushes all changes to the remote repository.
-     *
-     * @return {@code true} if push succeeded, {@code false} otherwise.
      */
-    boolean push();
+    void pushCommand() throws GitException;
 
     /**
      * Pulls all changes from the remote repository.
-     *
-     * @return {@code true} if pull succeeded, {@code false} otherwise.
      */
-    boolean pull();
+    Set<String> pullCommand() throws GitException;
+
+    /**
+     * Resets the last commit.
+     */
+    void resetCommitCommand() throws GitException;
 
     /**
      * Returns if this object exists as initialized repository on the disk.
@@ -51,10 +56,16 @@ public interface Repository {
     boolean isInitialized();
 
     /**
-     * Set the credentials for the repository.
+     * Returns a set of files that have been changed in this working copy
      *
-     * @param username The username.
-     * @param password The password.
+     * @return A set of file names
      */
-    void setCredentials(String username, String password);
+    Set<String> getChangedFiles();
+
+    /**
+     * Get the name of this repository.
+     *
+     * @return This repository's name.
+     */
+    String getRepositoryName();
 }

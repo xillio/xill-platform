@@ -18,15 +18,11 @@
 
 -->
 
-<?import java.lang.*?>
-<?import javafx.collections.*?>
-<?import javafx.scene.control.cell.*?>
 <?import javafx.collections.FXCollections?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.*?>
-
 <AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="root" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox styleClass="dialogWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -458,6 +454,29 @@
                                                                             <children>
                                                                                 <Label prefWidth="200.0" text="Print" />
                                                                                 <TextField fx:id="tfprint" alignment="TOP_LEFT" depthTest="INHERIT" promptText="" HBox.hgrow="ALWAYS" />
+                                                                            </children>
+                                                                            <padding>
+                                                                                <Insets />
+                                                                            </padding>
+                                                                        </HBox>
+                                                                        <HBox styleClass="hbxSettingsHeader">
+                                                                            <children>
+                                                                                <Label styleClass="lblSettingsHeader" text="Version Control" />
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER_LEFT" disable="false" focusTraversable="false" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" snapToPixel="true" spacing="4.0" visible="true">
+                                                                            <children>
+                                                                                <Label prefWidth="200.0" text="Pull" />
+                                                                                <TextField fx:id="tfpull" alignment="TOP_LEFT" depthTest="INHERIT" promptText="" HBox.hgrow="ALWAYS" />
+                                                                            </children>
+                                                                            <padding>
+                                                                                <Insets />
+                                                                            </padding>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER_LEFT" disable="false" focusTraversable="false" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" snapToPixel="true" spacing="4.0" visible="true">
+                                                                            <children>
+                                                                                <Label prefWidth="200.0" text="Push" />
+                                                                                <TextField fx:id="tfpush" alignment="TOP_LEFT" depthTest="INHERIT" promptText="" HBox.hgrow="ALWAYS" />
                                                                             </children>
                                                                             <padding>
                                                                                 <Insets />
