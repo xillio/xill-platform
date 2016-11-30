@@ -19,20 +19,21 @@ import me.biesaart.utils.Log;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.NoWorkTreeException;
-import org.eclipse.jgit.merge.MergeStrategy;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.transport.PushResult;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of {@link GitRepository} which uses the jGit library for interacting with Git repositories.
+ *
  * @author Daan Knoope
  */
 public class JGitRepository implements GitRepository {
@@ -98,6 +99,53 @@ public class JGitRepository implements GitRepository {
     public void resetCommitCommand() throws GitException {
         try {
             repository.reset().setMode(ResetCommand.ResetType.MIXED).setRef("HEAD^").call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e);
+        }
+    }
+
+    public List<String> getBranches() {
+        try {
+            // Get all remote branches.
+            List<Ref> remotes = repository.branchList().setListMode(ListBranchCommand.ListMode.ALL).call();
+            return remotes.stream().map(Ref::getName).map(this::friendlyBranchName).distinct().collect(Collectors.toList());
+        } catch (GitAPIException e) {
+            LOGGER.error("Exception while getting branches.", e);
+            return Collections.emptyList();
+        }
+    }
+
+    private String friendlyBranchName(String name) {
+        return name.substring(name.lastIndexOf('/') + 1);
+    }
+
+    public String getCurrentBranchName() {
+        try {
+            return repository.getRepository().getBranch();
+        } catch (IOException e) {
+            LOGGER.error("Exception while getting the branch name.", e);
+        }
+        return null;
+    }
+
+    public void checkout(String branch) throws GitException {
+        // If there is already a local branch, the branch should not be created.
+        try {
+            Set<String> localBranches = repository.branchList().call().stream().map(Ref::getName).map(this::friendlyBranchName).collect(Collectors.toSet());
+
+        boolean exists = localBranches.contains(branch);
+
+        // Checkout the branch, creating and tracking the remote if it does not exist yet.
+        repository.checkout().setCreateBranch(!exists).setName(branch).setStartPoint("origin/" + branch)
+                .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
+        } catch (GitAPIException e) {
+            throw new GitException(e.getMessage(), e);
+        }
+    }
+
+    public void createBranch(String name) throws GitException {
+        try {
+            repository.branchCreate().setName(name).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
         } catch (GitAPIException e) {
             throw new GitException(e.getMessage(), e);
         }

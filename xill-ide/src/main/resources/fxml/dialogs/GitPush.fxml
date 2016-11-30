@@ -25,7 +25,7 @@
         <VBox fx:id="gitInfoBox" alignment="CENTER_LEFT" styleClass="dialogFormWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <Label text="Changed files" />
-                <ListView fx:id="fileList" prefHeight="158.0" />
+                <ListView fx:id="fileList" prefHeight="170.0" />
                 <Label text="Enter a message for the commit" />
                 <TextField fx:id="message" promptText="Commit message" />
             </children>

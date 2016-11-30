@@ -17,6 +17,7 @@ package nl.xillio.xill.versioncontrol;
 
 import org.eclipse.jgit.api.PullResult;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -47,6 +48,34 @@ public interface GitRepository {
      * Resets the last commit.
      */
     void resetCommitCommand() throws GitException;
+
+    /**
+     * Get the branches on this repo.
+     *
+     * @return The list of branches.
+     */
+    List<String> getBranches();
+
+    /**
+     * Get the current branch name.
+     *
+     * @return The current branch name.
+     */
+    String getCurrentBranchName();
+
+    /**
+     * Check out a branch.
+     *
+     * @param branch The branch to check out.
+     */
+    void checkout(String branch) throws GitException;
+
+    /**
+     * Create a new branch.
+     *
+     * @param name The name of the branch to create.
+     */
+    void createBranch(String name) throws GitException;
 
     /**
      * Returns if this object exists as initialized repository on the disk.

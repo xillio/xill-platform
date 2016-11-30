@@ -50,7 +50,7 @@ public class GitPushDialog extends GitDialog {
 
         if (changes) {
             fileList.setItems(FXCollections.observableArrayList(changedFiles));
-            message.textProperty().addListener((obs, n, o) -> okBtn.setDisable("".equals(message.getText())));
+            message.textProperty().addListener((obs) -> okBtn.setDisable("".equals(message.getText())));
         } else {
             fileList.setItems(FXCollections.observableArrayList("No changes were found"));
         }

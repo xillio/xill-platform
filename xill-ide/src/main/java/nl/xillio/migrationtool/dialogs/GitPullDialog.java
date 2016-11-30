@@ -21,7 +21,6 @@ import nl.xillio.xill.versioncontrol.JGitRepository;
 import nl.xillio.xill.versioncontrol.operations.GitPullOperation;
 
 public class GitPullDialog extends GitDialog {
-
     @FXML
     protected Label confirmText;
     @FXML
