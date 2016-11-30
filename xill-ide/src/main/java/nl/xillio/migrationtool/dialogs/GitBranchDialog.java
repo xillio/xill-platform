@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +16,7 @@
 package nl.xillio.migrationtool.dialogs;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import nl.xillio.xill.versioncontrol.JGitRepository;
@@ -46,6 +47,10 @@ public class GitBranchDialog extends GitDialog {
         branches.add(0, "* " + current);
 
         lvBranches.getItems().setAll(branches);
+        okBtn.setDisable(true);
+        if (lvBranches.getItems().size() > 1) {
+            lvBranches.getSelectionModel().selectedItemProperty().addListener((obs) -> okBtn.setDisable(lvBranches.getSelectionModel().getSelectedIndex() == 0));
+        }
     }
 
     @Override
