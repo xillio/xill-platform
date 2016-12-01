@@ -22,6 +22,7 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
@@ -36,8 +37,9 @@ public class XillRuntimeConfiguration {
      * @return A pool for {@link nl.xillio.xill.webservice.xill.XillRuntimeImpl} instances
      */
     @ConfigurationProperties(prefix = "runtimePool")
-    @Bean("xillRuntimePool")
-    public ObjectPool<XillRuntime> xillRuntimePool(RuntimePooledObjectFactory runtimeFactory) {
+    @Lazy(false)
+    @Bean(value = "xillRuntimePool", initMethod = "preparePool")
+    public ObjectPool<XillRuntime> xillRuntimePool(RuntimePooledObjectFactory runtimeFactory) throws Exception {
         return new GenericObjectPool<>(runtimeFactory);
     }
 
