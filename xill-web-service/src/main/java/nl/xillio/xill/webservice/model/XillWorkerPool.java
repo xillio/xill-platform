@@ -54,7 +54,7 @@ public class XillWorkerPool {
      * @throws XillNotFoundException when the robot is not found.
      * @throws XillCompileException when the compilation of the robot has failed.
      */
-    public XillWorker allocateWorker(final String robotFQN) throws XillAllocateWorkerException, XillNotFoundException, XillCompileException {
+    public XillWorker allocateWorker(final String robotFQN) throws XillBaseException {
         synchronized (workerPool) {
             checkWorkerPoolSize();
         }
@@ -69,12 +69,8 @@ public class XillWorkerPool {
         }
     }
 
-    XillWorker createWorker(final String robotFQN) throws XillAllocateWorkerException {
-        try {
-            return xillWorkerFactory.constructWorker(workDirectory, robotFQN);
-        } catch (XillBaseException e) {
-            throw new XillAllocateWorkerException("Could not allocate runtime for worker", e);
-        }
+    XillWorker createWorker(final String robotFQN) throws XillBaseException {
+        return xillWorkerFactory.constructWorker(workDirectory, robotFQN);
     }
 
     void checkWorkerPoolSize() throws XillAllocateWorkerException {

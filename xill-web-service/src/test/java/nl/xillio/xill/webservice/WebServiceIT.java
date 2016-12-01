@@ -91,7 +91,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
         xillWebService.releaseAllWorkers();
     }
 
-    private XWID allocateWorker(final String robotFQN) throws XillCompileException, XillAllocateWorkerException, XillNotFoundException {
+    private XWID allocateWorker(final String robotFQN) throws XillBaseException {
         return xillWebService.allocateWorker(robotFQN);
     }
 

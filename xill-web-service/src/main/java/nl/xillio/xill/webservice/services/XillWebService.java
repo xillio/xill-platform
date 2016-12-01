@@ -26,7 +26,7 @@ public class XillWebService {
      * @param robotFQN the robot identificator that should be connected to a worker
      * @return the identifier for the worker
      */
-    public XWID allocateWorker(String robotFQN) throws XillAllocateWorkerException, XillNotFoundException, XillCompileException {
+    public XWID allocateWorker(String robotFQN) throws XillBaseException {
         return workerPoolManagerService.getDefaultWorkerPool().allocateWorker(robotFQN).getId();
     }
 

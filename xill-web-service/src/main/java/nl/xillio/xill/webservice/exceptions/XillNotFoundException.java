@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * The exception class - fired when something is not found.
  */
-@ResponseStatus(HttpStatus.NOT_FOUND)
+@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "The robot could not be found")
 public class XillNotFoundException extends XillBaseException {
     public XillNotFoundException(String message) {
         super(message);

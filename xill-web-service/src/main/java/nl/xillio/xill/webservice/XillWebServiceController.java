@@ -18,10 +18,7 @@ package nl.xillio.xill.webservice;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.xillio.xill.webservice.exceptions.XillAllocateWorkerException;
-import nl.xillio.xill.webservice.exceptions.XillCompileException;
-import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
-import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
+import nl.xillio.xill.webservice.exceptions.*;
 import nl.xillio.xill.webservice.services.XillWebService;
 import nl.xillio.xill.webservice.types.XWID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +88,7 @@ public class XillWebServiceController {
             @ApiResponse(code = 404, message = "Robot not found"),
             @ApiResponse(code = 406, message = "Cannot allocate worker: resource limit reached"),
             @ApiResponse(code = 409, message = "The robot does not compile")})
-    public Map<String, Object> allocateWorker(@RequestParam("robotFullyQualifiedName") String robotFQN, HttpServletRequest request, HttpServletResponse response) throws XillCompileException, XillAllocateWorkerException, XillNotFoundException {
+    public Map<String, Object> allocateWorker(@RequestParam("robotFullyQualifiedName") String robotFQN, HttpServletRequest request, HttpServletResponse response) throws XillBaseException {
         final Map<String, Object> result = new HashMap<>();
         XWID xwid = xillWebService.allocateWorker(robotFQN);
         result.put("workerId", xwid.toString());
