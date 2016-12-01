@@ -17,9 +17,11 @@ package nl.xillio.xill.webservice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.xillio.xill.webservice.exceptions.*;
-import nl.xillio.xill.webservice.model.XillRuntime;
+import nl.xillio.xill.webservice.exceptions.XillBaseException;
+import nl.xillio.xill.webservice.exceptions.XillCompileException;
+import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
+import nl.xillio.xill.webservice.model.XillRuntime;
 import nl.xillio.xill.webservice.model.XillWorkerFactory;
 import nl.xillio.xill.webservice.services.XillWebService;
 import nl.xillio.xill.webservice.types.XWID;
@@ -36,7 +38,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
-import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -48,6 +49,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -74,6 +76,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     private MockMvc mockMvc;
     private XillRuntime runtime;
+    private final String basePath = "/xws/api/1.0";
 
     @BeforeMethod
     public void setUp(Method method) throws XillCompileException, XillNotFoundException {
@@ -95,6 +98,14 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
         return xillWebService.allocateWorker(robotFQN);
     }
 
+    @Test
+    public void testPing() throws Exception {
+        this.mockMvc.perform(
+                get(basePath + "/ping")
+        ).andExpect(status().isOk());
+
+    }
+
     /**
      * Posting to /workers should allocate a new available worker.
      *
@@ -104,15 +115,12 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     public void testCreateWorker() throws Exception {
         // When creating a worker
         this.mockMvc.perform(
-                post("/workers")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        // With a valid robot name
-                        .content(jsonBody(
-                                "robot", "project.ScrapeFiles"
-                        ))
+                post(basePath + "/workers")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .param("robotFullyQualifiedName", "project.ScrapeFiles")
         )
                 // The response must be 201-CREATED
-                .andExpect(status().isNotFound())
+                .andExpect(status().isCreated())
                 // And contain a Location URL as a header
                 .andExpect(header().string("Location", isValidUrl()))
                 .andDo(document("create-worker"));
@@ -127,15 +135,13 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     public void testCreateWorkerWithInvalidRobot() throws Exception {
         // When creating a worker
         this.mockMvc.perform(
-                post("/workers")
-                        .contentType(MediaType.APPLICATION_JSON)
+                post(basePath + "/workers")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         // With an invalid robot name
-                        .content(jsonBody(
-                                "robot", "Path/To/My Robot.xill"
-                        ))
+                        .param("robot", "Path/To/My Robot.xill")
         )
-                // The response must be 400-BAD Request
-                .andExpect(status().isBadRequest());
+                // The response must be 404-NOT_FOUND
+                .andExpect(status().isNotFound());
     }
 
     /**
@@ -147,14 +153,13 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     public void testCreateWorkerWithoutRobot() throws Exception {
         // When creating a worker
         this.mockMvc.perform(
-                post("/workers")
-                        .contentType(MediaType.APPLICATION_JSON)
+                post(basePath + "/workers")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         // With an invalid robot name
-                        .content(jsonBody(
-                        ))
+                        .param("","")
         )
-                // The response must be 400-BAD Request
-                .andExpect(status().isBadRequest());
+                // The response must be 404-NotFound
+                .andExpect(status().isNotFound());
     }
 
     /**
@@ -167,12 +172,10 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
         // Fill the worker pool with 3
         for (int i = 0; i < 3; i++) {
             this.mockMvc.perform(
-                    post("/workers")
-                            .contentType(MediaType.APPLICATION_JSON)
+                    post(basePath + "/workers")
+                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                             // With a valid robot name
-                            .content(jsonBody(
-                                    "robot", "unittest.pool.XillWorker" + i
-                            ))
+                            .param("robot", "unittest.pool.XillWorker" + i)
 
             )
                     // The response must be 201-CREATED
@@ -181,12 +184,10 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Adding the fourth worker should error
         this.mockMvc.perform(
-                post("/workers")
-                        .contentType(MediaType.APPLICATION_JSON)
+                post(basePath + "/workers")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         // With a valid robot name
-                        .content(jsonBody(
-                                "robot", "unittest.pool.WorkerError"
-                        ))
+                        .param("robot", "unittest.pool.WorkerError")
         )
                 .andExpect(status().isServiceUnavailable());
     }
@@ -202,7 +203,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Deleting a worker by id
         this.mockMvc.perform(
-                delete("/workers/{id}").param("id", Integer.toString(id.getId()))
+                delete(basePath + "/workers/{id}").param("id", Integer.toString(id.getId()))
         )
                 // Should return 204-No Content
                 .andExpect(status().isNoContent())
@@ -218,7 +219,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     public void testDeleteNonExistingWorker() throws Exception {
         // Deleting a non-existing worker
         this.mockMvc.perform(
-                delete("/workers/{id}").param("id", "000400")
+                delete(basePath + "/workers/{id}").param("id", "000400")
         )
                 // Should return 404-Not Found
                 .andExpect(status().isNotFound())
@@ -250,7 +251,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Terminate a running worker
         this.mockMvc.perform(
-                delete("/workers/{id}").param("id", Integer.toString(id.getId()))
+                delete(basePath + "/workers/{id}").param("id", Integer.toString(id.getId()))
         )
                 // Should return 204 - NO CONTENT
                 .andExpect(status().isNoContent());
@@ -271,7 +272,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Run a robot
         this.mockMvc.perform(
-                post("/workers/{id}/activate").param("id", Integer.toString(id.getId()))
+                post(basePath + "/workers/{id}/activate").param("id", Integer.toString(id.getId()))
         )
                 // Should return 200 - OK
                 .andExpect(status().isOk())
@@ -292,7 +293,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Run a robot
         this.mockMvc.perform(
-                post("/workers/{id}/activate").param("id", Integer.toString(id.getId()))
+                post(basePath + "/workers/{id}/activate").param("id", Integer.toString(id.getId()))
         )
                 // Should return 200 - OK
                 .andExpect(status().isOk())
@@ -312,7 +313,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Run a robot
         this.mockMvc.perform(
-                post("/workers/{id}/activate").param("id", Integer.toString(id.getId()))
+                post(basePath + "/workers/{id}/activate").param("id", Integer.toString(id.getId()))
         )
                 // Should return 204 - NO CONTENT
                 .andExpect(status().isNoContent());
@@ -327,7 +328,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     public void testRunNotLoadedRobot() throws Exception {
         // Run a non existing robot/worker
         this.mockMvc.perform(
-                post("/workers/{id}/activate").param("id", "000404")
+                post(basePath + "/workers/{id}/activate").param("id", "000404")
         )
                 // Should return 404 - NOT FOUND
                 .andExpect(status().isNotFound());
@@ -345,7 +346,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Run a robot that throws an error
         this.mockMvc.perform(
-                post("/workers/{id}/activate").param("id", Integer.toString(id.getId()))
+                post(basePath + "/workers/{id}/activate").param("id", Integer.toString(id.getId()))
         )
                 // Should return 500 - INTERNAL SERVER ERROR
                 .andExpect(status().isInternalServerError())
@@ -378,7 +379,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Terminate a running worker
         this.mockMvc.perform(
-                post("/workers/{id}/terminate").param("id", Integer.toString(id.getId()))
+                post(basePath + "/workers/{id}/terminate").param("id", Integer.toString(id.getId()))
         )
                 // Should return 204 - NO CONTENT
                 .andExpect(status().isNoContent())
@@ -399,7 +400,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Terminate a non-running worker
         this.mockMvc.perform(
-                post("/workers/{id}/terminate").param("id", Integer.toString(id.getId()))
+                post(basePath + "/workers/{id}/terminate").param("id", Integer.toString(id.getId()))
         )
                 // Should return 400 - BAD REQUEST
                 .andExpect(status().isBadRequest());
@@ -414,7 +415,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     public void testTerminateNonExistingWorker() throws Exception {
         // Terminate a non-existing worker
         this.mockMvc.perform(
-                post("/workers/{id}/terminate").param("id", "000404")
+                post(basePath + "/workers/{id}/terminate").param("id", "000404")
         )
                 // Should return 404 - NOT FOUND
                 .andExpect(status().isNotFound());
@@ -432,17 +433,17 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      * @param params the key/values
      * @return the json string
      */
-    private String jsonBody(Object... params) {
-        Map<String, Object> data = new LinkedHashMap<>();
-
-        for (int i = 0; i < params.length; i++) {
-            data.put(params[i++].toString(), params[i]);
-        }
-
-        try {
-            return objectMapper.writeValueAsString(data);
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
-        }
-    }
+//    private String jsonBody(Object... params) {
+//        Map<String, Object> data = new LinkedHashMap<>();
+//
+//        for (int i = 0; i < params.length; i++) {
+//            data.put(params[i++].toString(), params[i]);
+//        }
+//
+//        try {
+//            return objectMapper.writeValueAsString(data);
+//        } catch (JsonProcessingException e) {
+//            throw new IllegalArgumentException(e.getMessage(), e);
+//        }
+//    }
 }
