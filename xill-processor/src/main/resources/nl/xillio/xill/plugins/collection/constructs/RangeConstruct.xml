@@ -27,7 +27,7 @@ The iterator could be used for various functionality, such as: `collect`, `forea
 
 ## Parameters
 There are three parameters for this construct: `start`, `end` and `step`. The given iterator goes from `start` to `end`.
-When `start` is lesser than `end` then the iterator's range will be ascending.
+When `start` is less than `end` then the iterator's range will be ascending.
 When `start` is greater than `end` then the iterator's range will be descending.
 
 The `start`-value is an inclusive value, meaning that the resulting iterator will also output the `start` value.
