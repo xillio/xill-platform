@@ -129,7 +129,8 @@ public class XillWebServiceController {
      * @param requestBody The parameters used for the associated robot run.
      * @return The result from robot run.
      */
-    @RequestMapping(value = "worker/{id}/run", method = RequestMethod.POST)
+    @RequestMapping(value = "worker/{id}/run", method = RequestMethod.POST,
+            produces = {MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
     @ResponseBody
     @ApiOperation(
             value = "Run a worker with the given payload as argument",
