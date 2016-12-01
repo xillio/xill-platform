@@ -25,10 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * This class represents an implementation of the worker pools manager.
@@ -39,7 +36,7 @@ public class XillWorkerPoolManagerServiceImpl implements XillWorkerPoolManagerSe
     XillProperties properties;
 
     private final Path DEFAULT_DIRECTORY;
-    private Map<Path, XillWorkerPool> pools;
+    private final Map<Path, XillWorkerPool> pools = new HashMap<>();
     private final XillWorkerPool DEFAULT_POOL;
     private final XillWorkerFactory xillWorkerFactory;
 
