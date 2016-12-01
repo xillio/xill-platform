@@ -28,6 +28,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static org.mockito.Mockito.*;
@@ -95,7 +96,7 @@ public class JGitRepositoryTest {
     }
 
     @Test
-    public void testPushCommand() throws GitException {
+    public void testPushCommand() throws GitException, GitAPIException {
         // Mock.
         PushCommand cmd = mock(PushCommand.class);
         when(git.push()).thenReturn(cmd);
@@ -106,34 +107,63 @@ public class JGitRepositoryTest {
 
         // Verify.
         verify(cmd, times(1)).setCredentialsProvider(auth.getCredentials());
-        try {
-            verify(cmd, times(1)).call();
-        } catch (GitAPIException e) {
-            throw new GitException(e.getMessage(), e.getCause());
-        }
+        verify(cmd, times(1)).call();
     }
 
     @Test
-    public void testPullCommand() throws GitException {
+    public void testPullCommand() throws GitException, GitAPIException {
         // Mock.
         PullCommand cmd = mock(PullCommand.class);
         when(git.pull()).thenReturn(cmd);
         when(cmd.setCredentialsProvider(auth.getCredentials())).thenReturn(cmd);
+        PullResult pr = mock(PullResult.class);
+        when(cmd.call()).thenReturn(pr);
+        MergeResult mr = mock(MergeResult.class);
+        when(pr.getMergeResult()).thenReturn(mr);
+        when(mr.getConflicts()).thenReturn(null);
 
         // Run.
-        repository.pullCommand();
+        Set<String> result = repository.pullCommand();
+
+        // Assert.
+        assertNull(result);
 
         // Verify.
         verify(cmd, times(1)).setCredentialsProvider(auth.getCredentials());
-        try {
-            verify(cmd, times(1)).call();
-        } catch (GitAPIException e) {
-            throw new GitException(e.getMessage(), e.getCause());
-        }
+        verify(cmd, times(1)).call();
     }
 
     @Test
-    public void testCommitCommand() throws GitException {
+    public void testPullCommandConflicts() throws GitException, GitAPIException {
+        Set<String> mergeConflicts = new HashSet<>();
+        mergeConflicts.add("foo");
+        mergeConflicts.add("bar");
+
+        // Mock.
+        PullCommand cmd = mock(PullCommand.class);
+        when(git.pull()).thenReturn(cmd);
+        when(cmd.setCredentialsProvider(auth.getCredentials())).thenReturn(cmd);
+        PullResult pr = mock(PullResult.class);
+        when(cmd.call()).thenReturn(pr);
+        MergeResult mr = mock(MergeResult.class);
+        when(pr.getMergeResult()).thenReturn(mr);
+        Map<String, int[][]> mrConflictMap = mock(Map.class);
+        when(mr.getConflicts()).thenReturn(mrConflictMap);
+        when(mrConflictMap.keySet()).thenReturn(mergeConflicts);
+
+        // Run.
+        Set<String> result = repository.pullCommand();
+
+        // Assert.
+        assertEquals(result, mergeConflicts);
+
+        // Verify.
+        verify(cmd, times(1)).setCredentialsProvider(auth.getCredentials());
+        verify(cmd, times(1)).call();
+    }
+
+    @Test
+    public void testCommitCommand() throws GitException, GitAPIException {
         String message = "commit message";
 
         // Mock.
@@ -151,21 +181,13 @@ public class JGitRepositoryTest {
         // Verify.
         verify(add, times(2)).addFilepattern(".");
         verify(add, times(1)).setUpdate(true);
-        try {
-            verify(add, times(2)).call();
-        } catch (GitAPIException e) {
-            throw new GitException(e.getMessage(), e.getCause());
-        }
+        verify(add, times(2)).call();
         verify(commit, times(1)).setMessage(message);
-        try {
-            verify(commit, times(1)).call();
-        } catch (GitAPIException e) {
-            throw new GitException(e.getMessage(), e.getCause());
-        }
+        verify(commit, times(1)).call();
     }
 
     @Test
-    public void testRevertCommitCommand() throws GitException {
+    public void testRevertCommitCommand() throws GitException, GitAPIException {
         // Mock.
         ResetCommand cmd = mock(ResetCommand.class);
         when(git.reset()).thenReturn(cmd);
@@ -178,11 +200,7 @@ public class JGitRepositoryTest {
         // Verify.
         verify(cmd, times(1)).setMode(ResetCommand.ResetType.MIXED);
         verify(cmd, times(1)).setRef("HEAD^");
-        try {
-            verify(cmd, times(1)).call();
-        } catch (GitAPIException e) {
-            throw new GitException(e.getMessage(), e.getCause());
-        }
+        verify(cmd, times(1)).call();
     }
 
     @Test
