@@ -87,22 +87,24 @@ public class XillWorker implements AutoCloseable {
                 throw new XillInvalidStateException("Worker is not ready for running");
             }
             state = XillWorkerState.RUNNING;
+        }
 
-            try {
-                // Run a robot
-                Object returnValue = runtime.runRobot(arguments);
+        try {
+            // Run a robot
+            Object returnValue = runtime.runRobot(arguments);
 
-                // Do not change the state when it is not running any more, it might have been changed while aborting a robot
+            // Do not change the state when it is not running any more, it might have been changed while aborting a robot
+            synchronized (lock) {
                 if (state == XillWorkerState.RUNNING) {
                     state = XillWorkerState.IDLE;
                 }
-                return returnValue;
-            } catch (ConcurrentRuntimeException e) {
-                state = XillWorkerState.RUNTIME_ERROR;
-                // This worker can not continue, release the runtime
-                releaseRuntime();
-                throw new XillInvalidStateException("The worker has encountered a problem and cannot continue", e);
             }
+            return returnValue;
+        } catch (ConcurrentRuntimeException e) {
+            state = XillWorkerState.RUNTIME_ERROR;
+            // This worker can not continue, release the runtime
+            releaseRuntime();
+            throw new XillInvalidStateException("The worker has encountered a problem and cannot continue", e);
         }
     }
 
@@ -121,7 +123,7 @@ public class XillWorker implements AutoCloseable {
         } catch (RobotAbortException e) {
             state = XillWorkerState.RUNTIME_ERROR;
             invalidateRuntime();
-            return;
+            throw e;
         }
         state = XillWorkerState.IDLE;
     }
