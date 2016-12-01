@@ -22,12 +22,15 @@ import nl.xillio.xill.webservice.exceptions.*;
 import nl.xillio.xill.webservice.services.XillWebService;
 import nl.xillio.xill.webservice.types.XWID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -137,7 +140,25 @@ public class XillWebServiceController {
             @ApiResponse(code = 404, message = "Worker not found"),
             @ApiResponse(code = 409, message = "The worker is not in IDLE state")})
     public Object runRobot(@PathVariable("id") String workerId, @RequestBody(required = false) Map<String, Object> requestBody) throws XillInvalidStateException, XillNotFoundException {
-        return xillWebService.runWorker(new XWID(Integer.parseInt(workerId)), requestBody);
+        Object result = xillWebService.runWorker(new XWID(Integer.parseInt(workerId)), requestBody);
+        return parseRobotResult(result);
+    }
+
+    /**
+     * Handle a robot return value. Handles input streams as a special case.
+     *
+     * @param result The robot result
+     * @return An object that can be handled by Spring
+     */
+    private Object parseRobotResult(Object result) {
+        if (result instanceof InputStream) {
+            return ResponseEntity
+                    .ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(new InputStreamResource((InputStream) result));
+        }
+
+        return result;
     }
 
     /**
