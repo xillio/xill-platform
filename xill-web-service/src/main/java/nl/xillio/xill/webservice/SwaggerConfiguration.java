@@ -18,7 +18,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfiguration {
     @Value("${xws.api.base.path}")
-    private String monitorBaseURL;
+    private String serviceBaseURL;
 
     @Value("${xws.api.version}")
     private String apiVersion;
@@ -29,7 +29,7 @@ public class SwaggerConfiguration {
                 .groupName("xill-web-service-api")
                 .apiInfo(apiInfo())
                 .select()
-                    .paths(path -> !path.endsWith(monitorBaseURL) && // exclude the swagger controller
+                    .paths(path -> !path.endsWith(serviceBaseURL) && // exclude the swagger controller
                             !path.equals("/error")) // and the error controller
                     .build()
                 .genericModelSubstitutes(ResponseEntity.class)
