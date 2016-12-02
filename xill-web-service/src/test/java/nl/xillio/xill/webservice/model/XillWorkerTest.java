@@ -157,7 +157,7 @@ public class XillWorkerTest extends TestUtils {
     /**
      * Test {@link XillWorker#abort()} when aborting fails.
      */
-    @Test
+    @Test(expectedExceptions = RobotAbortException.class)
     public void testAbortFail() throws Exception {
         doThrow(RobotAbortException.class).when(runtime).abortRobot();
         doAnswer(a -> {
@@ -166,10 +166,6 @@ public class XillWorkerTest extends TestUtils {
         }).when(runtime).runRobot(anyMap());
 
         worker.run(MapUtils.EMPTY_MAP);
-
-        assertSame(worker.getState(), XillWorkerState.RUNTIME_ERROR);
-
-        verify(runtimePool).invalidateObject(runtime);
     }
 
     /**
