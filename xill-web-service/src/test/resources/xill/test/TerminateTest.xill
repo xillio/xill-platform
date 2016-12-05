@@ -1,4 +1,10 @@
 use System;
 
-System.wait(10000);
+var a = 0;
+
+while (a < 100) {
+	System.wait(100);
+	a++;
+}
+
 System.print("Done!");

@@ -15,11 +15,9 @@
  */
 package nl.xillio.xill.webservice;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.xillio.xill.webservice.exceptions.XillBaseException;
 import nl.xillio.xill.webservice.exceptions.XillCompileException;
-import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
 import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
 import nl.xillio.xill.webservice.model.XillRuntime;
 import nl.xillio.xill.webservice.model.XillWorkerFactory;
@@ -39,8 +37,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static nl.xillio.xill.webservice.IsValidUrlMatcher.isValidUrl;
 import static org.hamcrest.Matchers.not;
@@ -78,6 +74,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     private MockMvc mockMvc;
     private XillRuntime runtime;
+
     @Value("${xws.api.base.path}")
     private String basePath;
 
@@ -224,7 +221,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Deleting a worker by id
         this.mockMvc.perform(
-                //delete(basePath + "/workers/{id}").param("id", Integer.toString(id.getId()))
                 delete(basePath + "/worker/" + id.getId())
         )
                 // Should return 204-No Content
@@ -241,7 +237,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     public void testDeleteNonExistingWorker() throws Exception {
         // Deleting a non-existing worker
         this.mockMvc.perform(
-                //delete(basePath + "/workers/{id}").param("id", "000400")
                 delete(basePath + "/workers/000400")
         )
                 // Should return 404-Not Found
@@ -250,23 +245,21 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     }
 
     /**
-     * If a running worker is released, it should be terminated
+     * If a running worker is released, it should return an error
      *
      * @throws Exception
      */
     @Test
     public void testDeleteRunningWorker() throws Exception {
-        // Deleting a running worker should interrupt it
+        // Deleting a running worker should return error
         XWID id = allocateWorker("test.TerminateTest");
 
         // Start running
         Thread running = new Thread(() -> {
             try {
                 xillWebService.runWorker(id, null);
-            } catch (XillNotFoundException e) {
-                e.printStackTrace();
-            } catch (XillInvalidStateException e) {
-                e.printStackTrace();
+            } catch (XillBaseException e) {
+                System.err.println(e.getMessage());
             }
         });
         running.setDaemon(true);
@@ -274,15 +267,15 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Terminate a running worker
         this.mockMvc.perform(
-                //delete(basePath + "/workers/{id}").param("id", Integer.toString(id.getId()))
                 delete(basePath + "/worker/" + id.getId())
         )
                 // Should return 409 - CONFLICT
                 .andExpect(status().isConflict());
 
-        // Expect the worker to continue running
+        // Expect the worker to be running
         assertTrue(running.isAlive());
     }
+
 
     /**
      * Running a worker that is attached to a robot with a non-stream, non-null result should result in an
@@ -392,10 +385,8 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
         Thread running = new Thread(() -> {
             try {
                 xillWebService.runWorker(id, null);
-            } catch (XillNotFoundException e) {
-                e.printStackTrace();
-            } catch (XillInvalidStateException e) {
-                e.printStackTrace();
+            } catch (XillBaseException e) {
+                System.err.println(e.getMessage());
             }
         });
         running.setDaemon(true);
@@ -403,7 +394,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Terminate a running worker
         this.mockMvc.perform(
-                post(basePath + "/workers/{id}/terminate").param("id", Integer.toString(id.getId()))
+                post(basePath + "/worker/" + id.getId() + "/stop")
         )
                 // Should return 204 - NO CONTENT
                 .andExpect(status().isNoContent())
@@ -420,14 +411,14 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testTerminateNotRunningWorker() throws Exception {
-        XWID id = allocateWorker("test.NotRunningTerminateTest");
+        XWID id = allocateWorker("test.TerminateTest");
 
         // Terminate a non-running worker
         this.mockMvc.perform(
-                post(basePath + "/workers/{id}/terminate").param("id", Integer.toString(id.getId()))
+                post(basePath + "/worker/" + id.getId() + "/stop")
         )
-                // Should return 400 - BAD REQUEST
-                .andExpect(status().isBadRequest());
+                // Should return 409 - CONFLICT
+                .andExpect(status().isConflict());
     }
 
     /**
@@ -439,35 +430,9 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     public void testTerminateNonExistingWorker() throws Exception {
         // Terminate a non-existing worker
         this.mockMvc.perform(
-                post(basePath + "/workers/{id}/terminate").param("id", "000404")
+                post(basePath + "/worker/000404/stop")
         )
                 // Should return 404 - NOT FOUND
                 .andExpect(status().isNotFound());
     }
-
-    /**
-     * Build a json string for a collection of key-values.
-     * <code>
-     * jsonBody(
-     * "message", "Hello World",
-     * "Key", "Value"
-     * )
-     * </code>
-     *
-     * @param params the key/values
-     * @return the json string
-     */
-//    private String jsonBody(Object... params) {
-//        Map<String, Object> data = new LinkedHashMap<>();
-//
-//        for (int i = 0; i < params.length; i++) {
-//            data.put(params[i++].toString(), params[i]);
-//        }
-//
-//        try {
-//            return objectMapper.writeValueAsString(data);
-//        } catch (JsonProcessingException e) {
-//            throw new IllegalArgumentException(e.getMessage(), e);
-//        }
-//    }
 }
