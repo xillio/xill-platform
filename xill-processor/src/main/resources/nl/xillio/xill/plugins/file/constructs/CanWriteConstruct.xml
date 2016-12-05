@@ -18,12 +18,12 @@
 -->
 <function>
     <description>
-Determines if the currently authenticated user has write access to the specified file/folder. The test returns `true` if
-`uri` can be written.
+Determines if the currently authenticated user has write access to the specified file or folder at the given `path` returning `true` if this is the case or `false` otherwise.
+`path` can be either a file or a folder, relative or absolute.
     </description>
     <examples>
         <example title="Usage">
-            <header>Determine if an authenticated user has write access to the specified file/folder.</header>
+            <header>Determine if an authenticated user has write access to the specified file or folder.</header>
             <code>
                 use File, System, Stream;
 

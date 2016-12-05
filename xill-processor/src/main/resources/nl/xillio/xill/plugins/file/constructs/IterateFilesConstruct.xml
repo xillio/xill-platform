@@ -18,9 +18,10 @@
 -->
 <function>
     <description>
-Iterates over all files in a folder.  
+Returns an iterator used to loop over all files in the folder at the given `path`.
 
-If recursive is set to true all files in sub folders will also be iterated
+If `recursive` is set to `true` all files in sub folders will also be iterated. If it is set to `false` only the given folder will be iterated.
+`recursive` is set to `false` by default.
     </description>
     <examples>
         <example title="Usage">

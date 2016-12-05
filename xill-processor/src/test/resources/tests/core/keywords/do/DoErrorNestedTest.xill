@@ -24,7 +24,7 @@
 use Assert, File;
 
 var message = "Nested error";
-var wrongArgumentMessage = "Wrong type for argument `uri` in exists(<ATOMIC> uri); expected [ATOMIC] but received [OBJECT]";
+var wrongArgumentMessage = "Wrong type for argument `path` in exists(<ATOMIC> path); expected [ATOMIC] but received [OBJECT]";
 
 // Test do when two errors are thrown on one line
 do {

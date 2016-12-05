@@ -31,10 +31,8 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This is the FreeMarker implementation of the {@link DocumentationGenerator}
@@ -132,18 +130,19 @@ public class FreeMarkerDocumentationGenerator implements DocumentationGenerator 
         List<PackageDocumentationEntity> result = new ArrayList<>();
 
         //Gather all json files
-        File[] folders = getDocumentationSubFolders();
+        File[] foldersArray = getDocumentationSubFolders();
+        List<File> jsonFiles = Arrays.stream(foldersArray)
+                .filter(Objects::nonNull)
+                .map(this::getJsonFile)
+                .filter(Objects::nonNull)
+                .sorted(File::compareTo)
+                .collect(Collectors.toList());
 
-        for (File folder : folders) {
-            File jsonFile = getJsonFile(folder);
 
-            if (jsonFile == null) {
-                continue;
-            }
+        for (File jsonFile : jsonFiles) {
 
-            String json;
             try {
-                json = getJsonFromFile(jsonFile);
+                String json = getJsonFromFile(jsonFile);
                 result.add(GSON.fromJson(json, PackageDocumentationEntity.class));
             } catch (IOException e) {
                 LOGGER.error("Failed to read json from " + jsonFile.getAbsolutePath(), e);

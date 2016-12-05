@@ -48,14 +48,14 @@ abstract class AbstractIteratorConstruct extends Construct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
-                (uri, recursive) -> process(context, uri, recursive),
-                new Argument("uri", ATOMIC),
+                (path, recursive) -> process(context, path, recursive),
+                new Argument("path", ATOMIC),
                 new Argument("recursive", FALSE, ATOMIC));
     }
 
 
-    private MetaExpression process(ConstructContext context, MetaExpression uri, MetaExpression recursive) {
-        Path file = getPath(context, uri);
+    private MetaExpression process(ConstructContext context, MetaExpression path, MetaExpression recursive) {
+        Path file = getPath(context, path);
         boolean isRecursive = recursive.getBooleanValue();
 
         return tryBuildIterator(file, isRecursive);

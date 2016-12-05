@@ -18,7 +18,7 @@
 -->
 <function>
     <description>
-Returns a stream that will write to the end of a file. This will leave the file as-is or create a new file when none exists.
+Returns a stream that will write to the end of a file at the given `path`. This will leave the file as-is or create a new file when none exists.
     </description>
     <examples>
         <example title="Usage">
