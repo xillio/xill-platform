@@ -45,9 +45,7 @@ public class XillWebService {
      * Release all workers in all worker pools
      */
     public void releaseAllWorkers() {
-        workerPoolManagerService.getAllWorkerPools().forEach(wp -> {
-            wp.releaseAllWorkers();
-        });
+        workerPoolManagerService.getDefaultWorkerPool().releaseAllWorkers();
     }
 
     /**
