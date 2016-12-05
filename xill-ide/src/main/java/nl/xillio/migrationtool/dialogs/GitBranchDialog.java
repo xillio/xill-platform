@@ -50,10 +50,17 @@ public class GitBranchDialog extends GitDialog {
         String currentBranch = repo.getCurrentBranchName();
         ObservableList<Text> branchList = FXCollections.observableArrayList();
 
+        // Place current branch at the top of the list
+        Text currentBranchText = new Text(currentBranch);
+        currentBranchText.setFont(boldFont);
+        branchList.add(0, currentBranchText);
+
         for(String branch : branches){
-            Text t = new Text(branch);
-            t.setFont(branch.equals(currentBranch) ? boldFont : normalFont);
-            branchList.add(t);
+            if(!branch.equals(currentBranch)) {
+                Text t = new Text(branch);
+                t.setFont(normalFont);
+                branchList.add(t);
+            }
         }
 
         lvBranches.setItems(branchList);
