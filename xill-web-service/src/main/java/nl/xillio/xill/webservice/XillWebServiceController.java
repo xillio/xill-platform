@@ -95,7 +95,6 @@ public class XillWebServiceController {
         final Map<String, Object> result = new HashMap<>();
         XWID xwid = xillWebService.allocateWorker(robotFQN);
         result.put("workerId", xwid.toString());
-        response.setStatus(HttpServletResponse.SC_CREATED);
         response.addHeader("Location", request.getRequestURL().toString() + "/" + xwid.toString());
         return result;
     }
@@ -104,7 +103,6 @@ public class XillWebServiceController {
      * Release existing worker - i.e. detach the robot associated with the worker.
      *
      * @param workerId The worker id.
-     * @param response The response.
      */
     @RequestMapping(value = "worker/{id}", method = RequestMethod.DELETE)
     @ResponseBody
@@ -117,9 +115,8 @@ public class XillWebServiceController {
             @ApiResponse(code = 204, message = "Worker successfully released"),
             @ApiResponse(code = 404, message = "Worker not found"),
             @ApiResponse(code = 409, message = "The worker is not in IDLE state")})
-    public void releaseWorker(@PathVariable("id") String workerId, HttpServletResponse response) throws XillInvalidStateException, XillNotFoundException {
+    public void releaseWorker(@PathVariable("id") String workerId) throws XillInvalidStateException, XillNotFoundException {
         xillWebService.releaseWorker(new XWID(Integer.parseInt(workerId)));
-        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 
     /**
@@ -136,12 +133,16 @@ public class XillWebServiceController {
             value = "Run a worker with the given payload as argument",
             notes = "The robot associated with this worker is invoked similarly to a callbot() invocation with the arguments in the POST data. This call is synchronous and, upon termination of the robot, replies with the result of the robot's return. Returned file streams are materialized in the response. The worker must be in IDLE state."
     )
-    @ResponseStatus(code = HttpStatus.OK)
     @ApiResponses({
+            @ApiResponse(code = 204, message = "No return value"),
             @ApiResponse(code = 404, message = "Worker not found"),
             @ApiResponse(code = 409, message = "The worker is not in IDLE state")})
-    public Object runRobot(@PathVariable("id") String workerId, @RequestBody(required = false) Map<String, Object> requestBody) throws XillInvalidStateException, XillNotFoundException {
+    public Object runRobot(@PathVariable("id") String workerId, @RequestBody(required = false) Map<String, Object> requestBody, HttpServletResponse response) throws XillInvalidStateException, XillNotFoundException {
         Object result = xillWebService.runWorker(new XWID(Integer.parseInt(workerId)), requestBody);
+        if (result == null) {
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            return null;
+        }
         return parseRobotResult(result);
     }
 
