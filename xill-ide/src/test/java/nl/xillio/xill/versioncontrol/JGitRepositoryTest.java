@@ -20,16 +20,15 @@ import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.RemoteRefUpdate;
 import org.slf4j.Logger;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
@@ -99,8 +98,10 @@ public class JGitRepositoryTest {
     public void testPushCommand() throws GitException, GitAPIException {
         // Mock.
         PushCommand cmd = mock(PushCommand.class);
+        Iterable<PushResult> pushResults = createValidPushResult();
         when(git.push()).thenReturn(cmd);
         when(cmd.setCredentialsProvider(auth.getCredentials())).thenReturn(cmd);
+        when(cmd.call()).thenReturn(pushResults);
 
         // Run.
         repository.pushCommand();
@@ -109,6 +110,18 @@ public class JGitRepositoryTest {
         verify(cmd, times(1)).setCredentialsProvider(auth.getCredentials());
         verify(cmd, times(1)).call();
     }
+
+    private Iterable<PushResult> createValidPushResult() {
+        PushResult pushResult = mock(PushResult.class);
+
+        RemoteRefUpdate remoteRefUpdate = mock(RemoteRefUpdate.class);
+        when(remoteRefUpdate.getStatus()).thenReturn(RemoteRefUpdate.Status.OK);
+        Collection<RemoteRefUpdate> remoteRefUpdateIterator = Arrays.asList(remoteRefUpdate);
+
+        when(pushResult.getRemoteUpdates()).thenReturn(remoteRefUpdateIterator);
+
+        return Arrays.asList(pushResult);
+        }
 
     @Test
     public void testPullCommand() throws GitException, GitAPIException {

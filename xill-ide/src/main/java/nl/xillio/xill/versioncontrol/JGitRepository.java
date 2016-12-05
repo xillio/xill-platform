@@ -21,6 +21,8 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.NoWorkTreeException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.RemoteRefUpdate;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -63,12 +65,23 @@ public class JGitRepository implements GitRepository {
 
     @Override
     public void pushCommand() throws GitException {
+        Iterable<PushResult> pushResults;
         try {
-            repository.push().setCredentialsProvider(auth.getCredentials()).call();
+            pushResults = repository.push().setCredentialsProvider(auth.getCredentials()).call();
         } catch (GitAPIException e) {
             throw new GitException(e.getMessage(), e);
         }
 
+        // JGit doesn't automatically detect all issues with pushing, this manually checks if
+        // the push operation succeeded.
+        for(PushResult pushResult : pushResults) {
+            for (RemoteRefUpdate remoteRefUpdate : pushResult.getRemoteUpdates()) {
+                if (remoteRefUpdate.getStatus() != RemoteRefUpdate.Status.OK) {
+                    throw new GitException(String.format("Could not push updates to remote (error code: %s).",
+                            remoteRefUpdate.getStatus()));
+                }
+            }
+        }
     }
 
     @Override
