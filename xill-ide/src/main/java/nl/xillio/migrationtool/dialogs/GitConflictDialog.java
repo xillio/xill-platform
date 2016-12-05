@@ -37,7 +37,7 @@ public class GitConflictDialog extends FXMLDialog {
      */
     public GitConflictDialog(final Set<String> conflicts) {
         super("/fxml/dialogs/GitConflict.fxml");
-        this.setTitle("There were some conflicts");
+        this.setTitle("Conflicts");
         fileList.setItems(FXCollections.observableArrayList(conflicts));
     }
 
