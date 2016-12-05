@@ -1,0 +1,3 @@
+use System;
+
+System.printx("Hello World");

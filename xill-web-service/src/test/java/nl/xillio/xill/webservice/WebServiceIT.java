@@ -26,6 +26,7 @@ import nl.xillio.xill.webservice.model.XillWorkerFactory;
 import nl.xillio.xill.webservice.services.XillWebService;
 import nl.xillio.xill.webservice.types.XWID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.ManualRestDocumentation;
@@ -54,6 +55,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 /**
  * This class will run tests on the web api. It will also generate snippets that can be included
@@ -76,7 +78,8 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     private MockMvc mockMvc;
     private XillRuntime runtime;
-    private final String basePath = "/xws/api/1.0";
+    @Value("${xws.api.base.path}")
+    private String basePath;
 
     @BeforeMethod
     public void setUp(Method method) throws XillCompileException, XillNotFoundException {
@@ -117,7 +120,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
         this.mockMvc.perform(
                 post(basePath + "/workers")
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .param("robotFullyQualifiedName", "project.ScrapeFiles")
+                    .param("robotFullyQualifiedName", "test.worker")
         )
                 // The response must be 201-CREATED
                 .andExpect(status().isCreated())
@@ -138,7 +141,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 post(basePath + "/workers")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         // With an invalid robot name
-                        .param("robot", "Path/To/My Robot.xill")
+                        .param("robotFullyQualifiedName", "Path/To/My Robot.xill")
         )
                 // The response must be 404-NOT_FOUND
                 .andExpect(status().isNotFound());
@@ -156,14 +159,32 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 post(basePath + "/workers")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         // With an invalid robot name
-                        .param("","")
+                        .param("wrongParameterName", "value")
         )
-                // The response must be 404-NotFound
-                .andExpect(status().isNotFound());
+                // The response must be 400-Bad Request
+                .andExpect(status().isBadRequest());
     }
 
     /**
-     * When no more workers can be allocated, the response should be service unavailable.
+     * A robot must compile when allocating a worker.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testCreateWorkerRobotNotCompile() throws Exception {
+        // When creating a worker
+        this.mockMvc.perform(
+                post(basePath + "/workers")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        // With an invalid robot name
+                        .param("robotFullyQualifiedName", "test.invalidWorker")
+        )
+                // The response must be 409-Conflict
+                .andExpect(status().isConflict());
+    }
+
+    /**
+     * When no more workers can be allocated, the response should be not acceptable.
      *
      * @throws Exception
      */
@@ -175,7 +196,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                     post(basePath + "/workers")
                             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                             // With a valid robot name
-                            .param("robot", "unittest.pool.XillWorker" + i)
+                            .param("robotFullyQualifiedName", "test.worker")
 
             )
                     // The response must be 201-CREATED
@@ -187,9 +208,9 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 post(basePath + "/workers")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         // With a valid robot name
-                        .param("robot", "unittest.pool.WorkerError")
+                        .param("robotFullyQualifiedName", "test.worker")
         )
-                .andExpect(status().isServiceUnavailable());
+                .andExpect(status().isNotAcceptable());
     }
 
     /**
@@ -203,7 +224,8 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Deleting a worker by id
         this.mockMvc.perform(
-                delete(basePath + "/workers/{id}").param("id", Integer.toString(id.getId()))
+                //delete(basePath + "/workers/{id}").param("id", Integer.toString(id.getId()))
+                delete(basePath + "/worker/" + id.getId())
         )
                 // Should return 204-No Content
                 .andExpect(status().isNoContent())
@@ -219,7 +241,8 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     public void testDeleteNonExistingWorker() throws Exception {
         // Deleting a non-existing worker
         this.mockMvc.perform(
-                delete(basePath + "/workers/{id}").param("id", "000400")
+                //delete(basePath + "/workers/{id}").param("id", "000400")
+                delete(basePath + "/workers/000400")
         )
                 // Should return 404-Not Found
                 .andExpect(status().isNotFound())
@@ -251,13 +274,14 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Terminate a running worker
         this.mockMvc.perform(
-                delete(basePath + "/workers/{id}").param("id", Integer.toString(id.getId()))
+                //delete(basePath + "/workers/{id}").param("id", Integer.toString(id.getId()))
+                delete(basePath + "/worker/" + id.getId())
         )
-                // Should return 204 - NO CONTENT
-                .andExpect(status().isNoContent());
+                // Should return 409 - CONFLICT
+                .andExpect(status().isConflict());
 
-        // Expect the worker to have finished
-        assertFalse(running.isAlive());
+        // Expect the worker to continue running
+        assertTrue(running.isAlive());
     }
 
     /**
