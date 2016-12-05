@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 * Correct typing inconsistencies for booleans: now the strings "false" and "0" evaluate to `false` [CTC-1733]
 * Make StringBehavior conform to type conversion specification: a non-empty string will now evaluate to `true`, unless it contains any of the values "false", "0" or "null" [CTC-1865]
 * Deprecate `File.getText()` [CTC-1860]
+* Update File and Stream help files [CTC-1869]
 
 ### Fix
 * Settings file not found for paths with whitespaces [CTC-1887]
@@ -36,6 +37,7 @@ All notable changes to this project will be documented in this file.
 * Concurrency pipeline changes dates and ObjectIds to strings [CTC-1833]
 * Parsing String list results from xpath query floods log and is slow [CTC-1885] 
 * Excel.setCellFormula() throws caught error: "Cannot get a numeric value from a text formula cell [CTC-1528]
+* Order of package names in help file is off in Linux [CTC-1937]
 
 ## [3.4.2] - 2016-11-04
 
