@@ -1,0 +1,2 @@
+use System;
+System.print("Hello");

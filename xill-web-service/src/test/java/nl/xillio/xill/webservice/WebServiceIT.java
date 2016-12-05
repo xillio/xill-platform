@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.ManualRestDocumentation;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -60,6 +61,7 @@ import static org.testng.Assert.assertTrue;
  * @author Thomas Biesaart
  */
 @SpringBootTest
+@TestPropertySource(locations="classpath:test.properties")
 public class WebServiceIT extends AbstractTestNGSpringContextTests {
     private final ManualRestDocumentation restDocumentation = new ManualRestDocumentation("tmp-test");
 
@@ -330,7 +332,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Run a robot
         this.mockMvc.perform(
-                post(basePath + "/workers/{id}/activate").param("id", Integer.toString(id.getId()))
+                post(basePath + "/worker/" + id.getId()+ "/run")
         )
                 // Should return 204 - NO CONTENT
                 .andExpect(status().isNoContent());
@@ -345,7 +347,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     public void testRunNotLoadedRobot() throws Exception {
         // Run a non existing robot/worker
         this.mockMvc.perform(
-                post(basePath + "/workers/{id}/activate").param("id", "000404")
+                post(basePath + "/workers/000404/activate")
         )
                 // Should return 404 - NOT FOUND
                 .andExpect(status().isNotFound());
@@ -363,7 +365,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Run a robot that throws an error
         this.mockMvc.perform(
-                post(basePath + "/workers/{id}/activate").param("id", Integer.toString(id.getId()))
+                post(basePath + "/worker/" + id.getId() + "/run")
         )
                 // Should return 500 - INTERNAL SERVER ERROR
                 .andExpect(status().isInternalServerError())

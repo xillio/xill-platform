@@ -1,0 +1,5 @@
+use System, File;
+
+File.openRead("qw:/a.txt");
+
+System.print("Done.");
