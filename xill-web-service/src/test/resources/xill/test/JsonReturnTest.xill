@@ -1,0 +1,5 @@
+use System;
+
+System.print("Returning JSON...");
+
+return { "a" : 5, "b" : 7, "message" : "Some message..." };

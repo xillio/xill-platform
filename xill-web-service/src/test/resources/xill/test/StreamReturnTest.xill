@@ -1,0 +1,5 @@
+use File;
+
+var filePath = "test/testFile.txt";
+var file = File.openRead(filePath);
+return file;

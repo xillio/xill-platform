@@ -291,12 +291,12 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Run a robot
         this.mockMvc.perform(
-                post(basePath + "/workers/{id}/activate").param("id", Integer.toString(id.getId()))
+                post(basePath + "/worker/" + id.getId() + "/run")
         )
                 // Should return 200 - OK
                 .andExpect(status().isOk())
                 // And contain a json body
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(content().string(not(isEmptyString())));
     }
 
@@ -312,7 +312,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
         // Run a robot
         this.mockMvc.perform(
-                post(basePath + "/workers/{id}/activate").param("id", Integer.toString(id.getId()))
+                post(basePath + "/worker/" + id.getId() + "/run")
         )
                 // Should return 200 - OK
                 .andExpect(status().isOk())
