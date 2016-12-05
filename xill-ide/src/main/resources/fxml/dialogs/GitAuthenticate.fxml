@@ -32,9 +32,9 @@
                               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
                                 <Label text="Username"/>
-                                <TextField fx:id="username" promptText="username"/>
+                                <TextField fx:id="username" promptText="Username"/>
                                 <Label text="Password"/>
-                                <PasswordField fx:id="password" promptText="password" HBox.hgrow="ALWAYS"/>
+                                <PasswordField fx:id="password" promptText="Password" HBox.hgrow="ALWAYS"/>
                             </children>
                         </VBox>
                     </children>

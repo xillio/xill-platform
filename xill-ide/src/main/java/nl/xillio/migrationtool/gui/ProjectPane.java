@@ -276,16 +276,16 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     private void versionControlMenu() {
-        MenuItem push = new MenuItem("Push");
+        MenuItem push = new MenuItem("Push...");
         push.setOnAction(e -> new GitPushDialog(repo).showAndWait());
 
-        MenuItem pull = new MenuItem("Pull");
+        MenuItem pull = new MenuItem("Pull...");
         pull.setOnAction(e -> new GitPullDialog(repo).showAndWait());
 
-        MenuItem branches = new MenuItem("Branches");
+        MenuItem branches = new MenuItem("Branches...");
         branches.setOnAction(e -> new GitBranchDialog(repo).showAndWait());
 
-        menuVersionControl = new Menu("Version control", null, push, pull, branches);
+        menuVersionControl = new Menu("Version control", null, push, pull, new SeparatorMenuItem(), branches);
     }
 
     private static Group createIcon(final String shape) {
