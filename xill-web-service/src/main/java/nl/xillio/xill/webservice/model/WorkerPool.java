@@ -29,7 +29,6 @@ public class WorkerPool {
 
     private final Path workDirectory;
     private final int poolCardinality;
-    private final WorkerID workerPoolId;
     private final WorkerFactory workerFactory;
 
     private final Map<WorkerID, Worker> workerPool = new HashMap<>();
@@ -38,12 +37,12 @@ public class WorkerPool {
         this.workDirectory = workDirectory;
         this.poolCardinality = poolCardinality;
         this.workerFactory = workerFactory;
-        this.workerPoolId = new WorkerID();
     }
 
     /**
-     * Allocate worker for the robot.
-     * It can create new worker or reuse free existing worker or throw an exception if no worker can be created and reused.
+     * Allocates a worker for the robot.
+     * It can create new worker or reuse free existing worker,
+     * or throw an exception if no worker can be created or reused.
      *
      * @param robotFQN the robot fully qualified name
      * @return the allocated worker
@@ -80,7 +79,7 @@ public class WorkerPool {
     /**
      * Runs the worker (i.e. robot associated with the worker).
      *
-     * @param id         the worker's ID
+     * @param id         the worker ID
      * @param parameters The parameters for the robot run
      * @return the result of the robot run
      * @throws InvalidStateException  if the worker is not in IDLE state
@@ -98,7 +97,7 @@ public class WorkerPool {
     /**
      * Stops running worker (i.e. stop robot associated with the worker).
      *
-     * @param id the worker's ID
+     * @param id the worker ID
      * @throws RobotNotFoundException when the robot is not found
      * @throws InvalidStateException  if the worker is not in RUNNING state
      */
@@ -114,7 +113,7 @@ public class WorkerPool {
     /**
      * Finds the worker in the worker workerPool.
      *
-     * @param workerId the identifier of the worker
+     * @param workerId the worker ID
      * @return the found Worker
      * @throws RobotNotFoundException if the worker was not found
      */
@@ -128,7 +127,7 @@ public class WorkerPool {
     /**
      * Releases the worker in the worker workerPool.
      *
-     * @param workerId the ID of the worker
+     * @param workerId the worker ID
      * @throws RobotNotFoundException if the worker was not found
      * @throws InvalidStateException  if the worker is not in IDLE state
      */
@@ -148,7 +147,7 @@ public class WorkerPool {
      */
     public void releaseAllWorkers() {
         synchronized (workerPool) {
-            workerPool.forEach((xwid, worker) -> worker.close());
+            workerPool.forEach((id, worker) -> worker.close());
             workerPool.clear();
         }
     }

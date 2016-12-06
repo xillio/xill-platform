@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -79,6 +79,7 @@ public class Worker implements AutoCloseable {
      *
      * @param arguments the robotPath run arguments
      * @return the result of the robotPath run
+     * @throws InvalidStateException if case the worker is not IDLE
      */
     public Object run(final Map<String, Object> arguments) throws InvalidStateException {
         synchronized (lock) {
@@ -110,6 +111,8 @@ public class Worker implements AutoCloseable {
 
     /**
      * Aborts the running worker (i.e. abort the robot associated with the worker).
+     *
+     * @throws InvalidStateException if the worker is not RUNNING
      */
     public void abort() throws InvalidStateException {
         synchronized (lock) {
@@ -128,6 +131,9 @@ public class Worker implements AutoCloseable {
         state = WorkerState.IDLE;
     }
 
+    /**
+     * Aborts the worker if necessary and releases the runtime.
+     */
     @Override
     public void close() {
         if (state == WorkerState.RUNNING) {

@@ -53,8 +53,6 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
 
 /**
  * This class will run tests on the web api. It will also generate snippets that can be included
@@ -112,8 +110,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     /**
      * Posting to /workers should allocate a new available worker.
-     *
-     * @throws Exception
      */
     @Test
     public void testCreateWorker() throws Exception {
@@ -132,8 +128,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     /**
      * Workers MUST be created by fully qualified name. No paths.
-     *
-     * @throws Exception
      */
     @Test
     public void testCreateWorkerWithInvalidRobot() throws Exception {
@@ -150,8 +144,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     /**
      * A robot field must be present when allocating a worker.
-     *
-     * @throws Exception
      */
     @Test
     public void testCreateWorkerWithoutRobot() throws Exception {
@@ -168,8 +160,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     /**
      * A robot must compile when allocating a worker.
-     *
-     * @throws Exception
      */
     @Test
     public void testCreateWorkerRobotNotCompile() throws Exception {
@@ -186,8 +176,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     /**
      * When no more workers can be allocated, the response should be not acceptable.
-     *
-     * @throws Exception
      */
     @Test
     public void testCreateWorkerWithFullQueue() throws Exception {
@@ -216,8 +204,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     /**
      * Releasing a worker can be done by calling DELETE /worker/{id}
-     *
-     * @throws Exception
      */
     @Test
     public void testDeleteWorker() throws Exception {
@@ -234,8 +220,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     /**
      * If a non-valid or non-allocated worker id is used a 404 response will occur.
-     *
-     * @throws Exception
      */
     @Test
     public void testDeleteNonExistingWorker() throws Exception {
@@ -250,8 +234,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     /**
      * If a running worker is released, it should return an error
-     *
-     * @throws Exception
      */
     @Test
     public void testDeleteRunningWorker() throws Exception {
@@ -290,8 +272,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     /**
      * Running a worker that is attached to a robot with a non-stream, non-null result should result in an
      * application/json response
-     *
-     * @throws Exception
      */
     @Test
     public void testRunLoadedRobotWithJsonReturnValue() throws Exception {
@@ -311,8 +291,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     /**
      * Running a worker that is attached to a robot with a stream result should result in an application/octet-stream
      * response.
-     *
-     * @throws Exception
      */
     @Test
     public void testRunLoadedRobotWithStreamReturnValue() throws Exception {
@@ -331,8 +309,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     /**
      * Running a worker that is attached to a robot with a null result should result in a 204 - NO CONTENT response.
-     *
-     * @throws Exception
      */
     @Test
     public void testRunLoadedRobotWithoutReturnValue() throws Exception {
@@ -348,8 +324,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     /**
      * Running a worker that is not allocated or does not exist should result in a 404 - NOT FOUNT response.
-     *
-     * @throws Exception
      */
     @Test
     public void testRunNotLoadedRobot() throws Exception {
@@ -360,27 +334,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 // Should return 404 - NOT FOUND
                 .andExpect(status().isNotFound());
     }
-
-    /**
-     * Running a worker that result in a fatal error should result in a 412??? http result code with a
-     * clear description as the response body.
-     *
-     * @throws Exception
-     */
-//    @Test
-//    public void testRunRobotWithError() throws Exception {
-//        WorkerID id = allocateWorker("test.ErrorThrowingRobot");
-//
-//        // Run a robot that throws an error
-//        this.mockMvc.perform(
-//                post(basePath + "/worker/" + id.getId() + "/run")
-//        )
-//                // Should return  ???
-//                .andExpect(status().isPreconditionFailed())
-//                // And it should contain a body explaining the error
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-//                .andExpect(content().string(not(isEmptyString())));
-//    }
 
     /**
      * A running worker can be terminated by calling POST /worker/{id}/stop.
@@ -419,8 +372,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     /**
      * If a worker is not running the result of the terminate call should be 400 - BAD REQUEST.
-     *
-     * @throws Exception
      */
     @Test
     public void testTerminateNotRunningWorker() throws Exception {
@@ -436,8 +387,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     /**
      * If the id is either invalid or does not exist the response should be 404 - NOT FOUND
-     *
-     * @throws Exception
      */
     @Test
     public void testTerminateNonExistingWorker() throws Exception {

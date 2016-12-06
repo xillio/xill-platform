@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,10 +15,7 @@
  */
 package nl.xillio.xill.webservice.model;
 
-import nl.xillio.xill.webservice.exceptions.AllocateWorkerException;
 import nl.xillio.xill.webservice.exceptions.BaseException;
-import nl.xillio.xill.webservice.exceptions.CompileException;
-import nl.xillio.xill.webservice.exceptions.RobotNotFoundException;
 import org.apache.commons.pool2.ObjectPool;
 import org.springframework.stereotype.Component;
 
