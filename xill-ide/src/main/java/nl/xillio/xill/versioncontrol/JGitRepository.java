@@ -100,10 +100,13 @@ public class JGitRepository implements GitRepository {
         try {
             MergeResult mergeResult = repository.pull().setCredentialsProvider(auth.getCredentials()).call().getMergeResult();
 
+            MergeResult.MergeStatus mergeStatus = mergeResult.getMergeStatus();
+
             // Throw an error if merging, and therefore the pull operation, has failed
-            if (!mergeResult.getMergeStatus().isSuccessful()) {
+            // Exclude conflicting merge status, because we create a custom message for that
+            if (!mergeStatus.equals(mergeStatus.CONFLICTING) && !mergeStatus.isSuccessful()) {
                 throw new GitException(String.format("Merge attempt was not successful (status: %s)",
-                        mergeResult.getMergeStatus().toString()));
+                        mergeStatus.toString()));
             }
 
             // Return list of conflicts

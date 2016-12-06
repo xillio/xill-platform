@@ -134,6 +134,7 @@ public class JGitRepositoryTest {
         MergeResult mr = mock(MergeResult.class);
         when(pr.getMergeResult()).thenReturn(mr);
         when(mr.getConflicts()).thenReturn(null);
+        when(mr.getMergeStatus()).thenReturn(MergeResult.MergeStatus.MERGED);
 
         // Run.
         Set<String> result = repository.pullCommand();
@@ -159,6 +160,7 @@ public class JGitRepositoryTest {
         PullResult pr = mock(PullResult.class);
         when(cmd.call()).thenReturn(pr);
         MergeResult mr = mock(MergeResult.class);
+        when(mr.getMergeStatus()).thenReturn(MergeResult.MergeStatus.CONFLICTING);
         when(pr.getMergeResult()).thenReturn(mr);
         Map<String, int[][]> mrConflictMap = mock(Map.class);
         when(mr.getConflicts()).thenReturn(mrConflictMap);
