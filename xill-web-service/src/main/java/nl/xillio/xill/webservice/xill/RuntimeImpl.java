@@ -22,9 +22,9 @@ import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.api.io.SimpleIOStream;
 import nl.xillio.xill.webservice.exceptions.RobotAbortException;
-import nl.xillio.xill.webservice.exceptions.XillCompileException;
-import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
-import nl.xillio.xill.webservice.model.XillRuntime;
+import nl.xillio.xill.webservice.exceptions.CompileException;
+import nl.xillio.xill.webservice.exceptions.RobotNotFoundException;
+import nl.xillio.xill.webservice.model.Runtime;
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
@@ -46,7 +46,7 @@ import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
 import static nl.xillio.xill.api.components.MetaExpression.extractValue;
 
 /**
- * Implementation of the {@link XillRuntime}.
+ * Implementation of the {@link Runtime}.
  *
  * The expected usage pattern is calling {@link #compile(Path, String)} once before being
  * able to call {@link #runRobot(Map)} as often as required. Running robots can be aborted
@@ -66,7 +66,7 @@ import static nl.xillio.xill.api.components.MetaExpression.extractValue;
  */
 @Component("xillRuntimeImpl")
 @Scope("prototype")
-public class XillRuntimeImpl implements XillRuntime, DisposableBean {
+public class RuntimeImpl implements Runtime, DisposableBean {
     private static final Logger LOGGER = me.biesaart.utils.Log.get();
 
     private XillEnvironment xillEnvironment;
@@ -91,12 +91,12 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
      * @param compileExecutor The executor for asynchronously recompiling robots after a run.
      */
     @Inject
-    public XillRuntimeImpl(XillEnvironment xillEnvironment, OutputHandler outputHandler, @Qualifier("robotCompileThreadPool") ThreadPoolTaskExecutor compileExecutor) {
+    public RuntimeImpl(XillEnvironment xillEnvironment, OutputHandler outputHandler, @Qualifier("robotCompileThreadPool") ThreadPoolTaskExecutor compileExecutor) {
         this.xillEnvironment = xillEnvironment;
         this.outputHandler = outputHandler;
 
         // Create a thread factory that can be cleaned up
-        xillThreadFactory = new CleaningXillThreadFactory();
+        xillThreadFactory = new CleaningThreadFactory();
         this.xillEnvironment.setXillThreadFactory(xillThreadFactory);
 
         // Create an executor for asynchronous recompilation
@@ -104,13 +104,13 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
     }
 
     @Override
-    public void compile(Path workDirectory, String robotFQN) throws XillCompileException, XillNotFoundException {
+    public void compile(Path workDirectory, String robotFQN) throws CompileException, RobotNotFoundException {
 
         String robotPath = robotFQN.replace('.', File.separatorChar) + XillEnvironment.ROBOT_EXTENSION;
 
         Path resolvedPath = workDirectory.resolve(robotPath);
         if (!resolvedPath.toFile().exists()) {
-            throw new XillNotFoundException("The robot does not exists: " + resolvedPath.toString());
+            throw new RobotNotFoundException("The robot does not exists: " + resolvedPath.toString());
         }
         try {
             xillProcessor = xillEnvironment.buildProcessor(workDirectory, resolvedPath);
@@ -124,7 +124,7 @@ public class XillRuntimeImpl implements XillRuntime, DisposableBean {
             // Mark the compilation as success
             compileSuccess = ConcurrentUtils.constantFuture(true);
         } catch (IOException | XillParsingException e) {
-            throw new XillCompileException("Failed to compile robot", e);
+            throw new CompileException("Failed to compile robot", e);
         }
     }
 

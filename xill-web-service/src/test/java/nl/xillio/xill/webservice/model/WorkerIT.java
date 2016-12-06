@@ -16,9 +16,9 @@
 package nl.xillio.xill.webservice.model;
 
 import nl.xillio.xill.webservice.RobotDeployer;
-import nl.xillio.xill.webservice.XillRuntimeConfiguration;
-import nl.xillio.xill.webservice.exceptions.XillBaseException;
-import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
+import nl.xillio.xill.webservice.RuntimeConfiguration;
+import nl.xillio.xill.webservice.exceptions.BaseException;
+import nl.xillio.xill.webservice.exceptions.InvalidStateException;
 import nl.xillio.xill.webservice.xill.*;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.test.context.ContextConfiguration;
@@ -38,15 +38,15 @@ import static org.testng.Assert.assertTrue;
 /**
  * @author Geert Konijnendijk
  */
-@ContextConfiguration(classes = { XillRuntimeConfiguration.class, XillRuntimeImpl.class,
-        XillEnvironmentFactory.class, XillRuntimeProperties.class, Log4JOutputHandler.class,
-        RuntimePooledObjectFactory.class, XillWorkerFactory.class})
-public class XillWorkerIT extends AbstractTestNGSpringContextTests {
+@ContextConfiguration(classes = { RuntimeConfiguration.class, RuntimeImpl.class,
+        EnvironmentFactory.class, RuntimeProperties.class, Log4JOutputHandler.class,
+        RuntimePooledObjectFactory.class, WorkerFactory.class})
+public class WorkerIT extends AbstractTestNGSpringContextTests {
 
     private RobotDeployer deployer;
 
     @Inject
-    private XillWorkerFactory xillWorkerFactory;
+    private WorkerFactory workerFactory;
 
     /**
      * Deploy a robot to be run during tests to a temporary directory.
@@ -78,7 +78,7 @@ public class XillWorkerIT extends AbstractTestNGSpringContextTests {
         Map<String, Object> arguments = new HashMap<>();
         arguments.put("input", 42);
 
-        XillWorker worker = xillWorkerFactory.constructWorker(deployer.getWorkingDirectory(), RobotDeployer.RETURN_ROBOT_NAME);
+        Worker worker = workerFactory.constructWorker(deployer.getWorkingDirectory(), RobotDeployer.RETURN_ROBOT_NAME);
         Object result = worker.run(arguments);
         worker.close();
 
@@ -86,21 +86,21 @@ public class XillWorkerIT extends AbstractTestNGSpringContextTests {
     }
 
     @Test
-    public void testAbort() throws XillBaseException, InterruptedException {
-        XillWorker worker = xillWorkerFactory.constructWorker(deployer.getWorkingDirectory(), RobotDeployer.WAIT_ROBOT_NAME);
+    public void testAbort() throws BaseException, InterruptedException {
+        Worker worker = workerFactory.constructWorker(deployer.getWorkingDirectory(), RobotDeployer.WAIT_ROBOT_NAME);
 
         // Start a robot in a new thread
         Thread runThread = new Thread(() -> {
             try {
                 worker.run(MapUtils.EMPTY_MAP);
-            } catch (XillInvalidStateException e) {
+            } catch (InvalidStateException e) {
                 throw new AssertionError(e);
             }
         });
         runThread.start();
 
         // Wait until the robot is running
-        while (worker.getState() != XillWorkerState.RUNNING) {
+        while (worker.getState() != WorkerState.RUNNING) {
             Thread.sleep(10);
             // If the robot finished running, something is wrong
             assertTrue(runThread.isAlive(), "The robot finished running before being aborted");
@@ -110,14 +110,14 @@ public class XillWorkerIT extends AbstractTestNGSpringContextTests {
         Thread abortThread = new Thread(() -> {
             try {
                 worker.abort();
-            } catch (XillInvalidStateException e) {
+            } catch (InvalidStateException e) {
                 throw new AssertionError(e);
             }
         });
         abortThread.start();
 
         // Wait until the robot is aborting
-        while (worker.getState() != XillWorkerState.ABORTING) {
+        while (worker.getState() != WorkerState.ABORTING) {
             Thread.sleep(10);
             // When aborting finished, something is wrong
             assertTrue(abortThread.isAlive(), "Aborting finished without the state being changed");
@@ -126,7 +126,7 @@ public class XillWorkerIT extends AbstractTestNGSpringContextTests {
         abortThread.join();
         runThread.join();
 
-        assertEquals(worker.getState(), XillWorkerState.IDLE);
+        assertEquals(worker.getState(), WorkerState.IDLE);
     }
 
 }

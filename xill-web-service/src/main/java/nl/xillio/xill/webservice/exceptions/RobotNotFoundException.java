@@ -19,17 +19,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Thrown when a method is called on an object when that object is in invalid state.
- *
- * @author Geert Konijnendijk
+ * The exception class - fired when something is not found.
  */
-@ResponseStatus(HttpStatus.CONFLICT)
-public class XillInvalidStateException extends XillBaseException {
-    public XillInvalidStateException(String message) {
+@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "The robot could not be found")
+public class RobotNotFoundException extends BaseException {
+    public RobotNotFoundException(String message) {
         super(message);
     }
 
-    public XillInvalidStateException(String message, Throwable cause) {
+    public RobotNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
 }

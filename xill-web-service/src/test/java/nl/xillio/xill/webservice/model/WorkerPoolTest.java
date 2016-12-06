@@ -15,10 +15,10 @@
  */
 package nl.xillio.xill.webservice.model;
 
-import nl.xillio.xill.webservice.exceptions.XillAllocateWorkerException;
-import nl.xillio.xill.webservice.exceptions.XillInvalidStateException;
-import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
-import nl.xillio.xill.webservice.types.XWID;
+import nl.xillio.xill.webservice.exceptions.AllocateWorkerException;
+import nl.xillio.xill.webservice.exceptions.InvalidStateException;
+import nl.xillio.xill.webservice.exceptions.RobotNotFoundException;
+import nl.xillio.xill.webservice.types.WorkerID;
 import org.apache.commons.collections.map.HashedMap;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -30,28 +30,28 @@ import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
 
 /**
- * Tests for the {@link XillWorkerPool}.
+ * Tests for the {@link WorkerPool}.
  */
-public class XillWorkerPoolTest {
+public class WorkerPoolTest {
 
-    private XillWorkerPool workerPool;
-    private XillWorker worker;
-    private XillWorker mockWorker;
+    private WorkerPool workerPool;
+    private Worker worker;
+    private Worker mockWorker;
 
     @BeforeMethod
     public void setUp() throws Exception {
-        worker = mock(XillWorker.class);
-        when(worker.getId()).thenReturn(new XWID(266));
-        when(worker.getState()).thenReturn(XillWorkerState.IDLE);
-        doThrow(new XillInvalidStateException("")).when(worker).abort();
+        worker = mock(Worker.class);
+        when(worker.getId()).thenReturn(new WorkerID(266));
+        when(worker.getState()).thenReturn(WorkerState.IDLE);
+        doThrow(new InvalidStateException("")).when(worker).abort();
 
-        workerPool = spy(new XillWorkerPool(Paths.get("test/path"), 2, null));
+        workerPool = spy(new WorkerPool(Paths.get("test/path"), 2, null));
         doReturn(worker).when(workerPool).createWorker(anyString());
 
         worker = workerPool.allocateWorker("robot1.name");
 
-        XWID id = new XWID(-2);
-        mockWorker = mock(XillWorker.class);
+        WorkerID id = new WorkerID(-2);
+        mockWorker = mock(Worker.class);
         when(mockWorker.getId()).thenReturn(id);
         doReturn(mockWorker).when(workerPool).findWorker(id);
     }
@@ -67,16 +67,16 @@ public class XillWorkerPoolTest {
         assertEquals(workerPool.getPoolSize(), 1);
     }
 
-    @Test(expectedExceptions = XillAllocateWorkerException.class)
+    @Test(expectedExceptions = AllocateWorkerException.class)
     public void allocateWorkerTestWhenAllocateFails() throws Exception {
-        doThrow(new XillAllocateWorkerException("")).when(workerPool).createWorker(anyString());
+        doThrow(new AllocateWorkerException("")).when(workerPool).createWorker(anyString());
 
         // Run
         workerPool.allocateWorker("robot2.name");
     }
 
     @Test
-    public void runWorkerTest() throws XillInvalidStateException, XillNotFoundException {
+    public void runWorkerTest() throws InvalidStateException, RobotNotFoundException {
         // Mock
         String someObject = "result";
         Map<String, Object> parameters = new HashedMap();
@@ -94,14 +94,14 @@ public class XillWorkerPoolTest {
         assertSame(result, someObject);
     }
 
-    @Test(expectedExceptions = XillNotFoundException.class)
-    public void runWorkerTestWhenNotFound() throws XillInvalidStateException, XillNotFoundException {
+    @Test(expectedExceptions = RobotNotFoundException.class)
+    public void runWorkerTestWhenNotFound() throws InvalidStateException, RobotNotFoundException {
         // Run
-        workerPool.runWorker(new XWID(-1), null);
+        workerPool.runWorker(new WorkerID(-1), null);
     }
 
     @Test
-    public void stopWorkerTest() throws XillInvalidStateException, XillNotFoundException {
+    public void stopWorkerTest() throws InvalidStateException, RobotNotFoundException {
         // Mock
         doNothing().when(mockWorker).abort();
 
@@ -113,14 +113,14 @@ public class XillWorkerPoolTest {
         verify(workerPool).findWorker(mockWorker.getId());
     }
 
-    @Test(expectedExceptions = XillInvalidStateException.class)
-    public void stopWorkerTestWhenNotRunning() throws XillInvalidStateException, XillNotFoundException {
+    @Test(expectedExceptions = InvalidStateException.class)
+    public void stopWorkerTestWhenNotRunning() throws InvalidStateException, RobotNotFoundException {
         // Run
         workerPool.stopWorker(worker.getId());
     }
 
     @Test
-    public void releaseWorkerTest() throws XillInvalidStateException, XillNotFoundException {
+    public void releaseWorkerTest() throws InvalidStateException, RobotNotFoundException {
         // Run
         workerPool.releaseWorker(worker.getId());
 
@@ -131,17 +131,17 @@ public class XillWorkerPoolTest {
         assertEquals(workerPool.getPoolSize(), 0);
     }
 
-    @Test(expectedExceptions = XillInvalidStateException.class)
-    public void releaseWorkerTestWhenInvalidState() throws XillInvalidStateException, XillNotFoundException {
+    @Test(expectedExceptions = InvalidStateException.class)
+    public void releaseWorkerTestWhenInvalidState() throws InvalidStateException, RobotNotFoundException {
         // Mock
-        when(mockWorker.getState()).thenReturn(XillWorkerState.RUNNING);
+        when(mockWorker.getState()).thenReturn(WorkerState.RUNNING);
 
         // Run
         workerPool.releaseWorker(mockWorker.getId());
     }
 
     @Test
-    public void releaseAllWorkers() throws XillInvalidStateException, XillNotFoundException {
+    public void releaseAllWorkers() throws InvalidStateException, RobotNotFoundException {
         // Run
         workerPool.releaseAllWorkers();
 

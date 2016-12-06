@@ -15,8 +15,8 @@
  */
 package nl.xillio.xill.webservice.model;
 
-import nl.xillio.xill.webservice.exceptions.XillCompileException;
-import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
+import nl.xillio.xill.webservice.exceptions.CompileException;
+import nl.xillio.xill.webservice.exceptions.RobotNotFoundException;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -24,21 +24,21 @@ import java.util.Map;
 /**
  * Represents an instance of the Xill environment able to run a single robot with low latency.
  *
- * This implementation allows for {@link XillRuntime runtimes} to be kept in a pool, preventing
+ * This implementation allows for {@link Runtime runtimes} to be kept in a pool, preventing
  * unnecessary recreation of environments.
  *
  * @author Geert Konijnendijk
  */
-public interface XillRuntime extends AutoCloseable {
+public interface Runtime extends AutoCloseable {
 
     /**
      * Compile a robot for future execution.
      *
      * @param workDirectory The working directory
      * @param robotFQN The robot's fully qualified name
-     * @throws XillCompileException if the robot could not be (re) compiles
+     * @throws CompileException if the robot could not be (re) compiles
      */
-    void compile(Path workDirectory, String robotFQN) throws XillCompileException, XillNotFoundException;
+    void compile(Path workDirectory, String robotFQN) throws CompileException, RobotNotFoundException;
 
     /**
      * Run the robot that was compiled by calling {@link #compile(Path, String)}.

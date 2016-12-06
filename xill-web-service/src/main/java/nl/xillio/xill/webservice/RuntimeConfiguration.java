@@ -15,7 +15,8 @@
  */
 package nl.xillio.xill.webservice;
 
-import nl.xillio.xill.webservice.model.XillRuntime;
+import nl.xillio.xill.webservice.model.Runtime;
+import nl.xillio.xill.webservice.xill.RuntimeImpl;
 import nl.xillio.xill.webservice.xill.RuntimePooledObjectFactory;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
@@ -31,15 +32,15 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  * @author Geert Konijnendijk
  */
 @Configuration
-public class XillRuntimeConfiguration {
+public class RuntimeConfiguration {
 
     /**
-     * @return A pool for {@link nl.xillio.xill.webservice.xill.XillRuntimeImpl} instances
+     * @return A pool for {@link RuntimeImpl} instances
      */
     @ConfigurationProperties(prefix = "runtimePool")
     @Lazy(false)
     @Bean(value = "xillRuntimePool", initMethod = "preparePool")
-    public ObjectPool<XillRuntime> xillRuntimePool(RuntimePooledObjectFactory runtimeFactory) throws Exception {
+    public ObjectPool<Runtime> xillRuntimePool(RuntimePooledObjectFactory runtimeFactory) throws Exception {
         return new GenericObjectPool<>(runtimeFactory);
     }
 

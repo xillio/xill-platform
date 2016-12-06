@@ -19,8 +19,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.xillio.xill.webservice.exceptions.*;
-import nl.xillio.xill.webservice.services.XillWebService;
-import nl.xillio.xill.webservice.types.XWID;
+import nl.xillio.xill.webservice.services.WebService;
+import nl.xillio.xill.webservice.types.WorkerID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
@@ -41,13 +41,13 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(path = "${xws.api.base.path}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-public class XillWebServiceController {
+public class WebServiceController {
 
-    private final XillWebService xillWebService;
+    private final WebService webService;
 
     @Autowired
-    public XillWebServiceController(XillWebService xillWebService) {
-        this.xillWebService = xillWebService;
+    public WebServiceController(WebService webService) {
+        this.webService = webService;
     }
 
     /**
@@ -63,11 +63,11 @@ public class XillWebServiceController {
     )
     @ResponseStatus(code = HttpStatus.OK)
     @ApiResponses({@ApiResponse(code = 200, message = "OK")})
-    public Map<String, String> ping() throws XillNotFoundException {
+    public Map<String, String> ping() throws RobotNotFoundException {
         final Map<String, String> info = new LinkedHashMap<>();
         info.put("Name", "Xill Microservice Server");
         info.put("Version", "0.1");
-        info.put("XillWebService", xillWebService.toString());
+        info.put("WebService", webService.toString());
         return info;
     }
 
@@ -91,11 +91,11 @@ public class XillWebServiceController {
             @ApiResponse(code = 404, message = "Robot not found"),
             @ApiResponse(code = 406, message = "Cannot allocate worker: resource limit reached"),
             @ApiResponse(code = 409, message = "The robot does not compile")})
-    public Map<String, Object> allocateWorker(@RequestParam("robotFullyQualifiedName") String robotFQN, HttpServletRequest request, HttpServletResponse response) throws XillBaseException {
+    public Map<String, Object> allocateWorker(@RequestParam("robotFullyQualifiedName") String robotFQN, HttpServletRequest request, HttpServletResponse response) throws BaseException {
         final Map<String, Object> result = new HashMap<>();
-        XWID xwid = xillWebService.allocateWorker(robotFQN);
-        result.put("workerId", xwid.toString());
-        response.addHeader("Location", request.getRequestURL().toString() + "/" + xwid.toString());
+        WorkerID workerID = webService.allocateWorker(robotFQN);
+        result.put("workerId", workerID.toString());
+        response.addHeader("Location", request.getRequestURL().toString() + "/" + workerID.toString());
         return result;
     }
 
@@ -115,8 +115,8 @@ public class XillWebServiceController {
             @ApiResponse(code = 204, message = "Worker successfully released"),
             @ApiResponse(code = 404, message = "Worker not found"),
             @ApiResponse(code = 409, message = "The worker is not in IDLE state")})
-    public void releaseWorker(@PathVariable("id") String workerId) throws XillInvalidStateException, XillNotFoundException {
-        xillWebService.releaseWorker(new XWID(Integer.parseInt(workerId)));
+    public void releaseWorker(@PathVariable("id") String workerId) throws InvalidStateException, RobotNotFoundException {
+        webService.releaseWorker(new WorkerID(Integer.parseInt(workerId)));
     }
 
     /**
@@ -137,8 +137,8 @@ public class XillWebServiceController {
             @ApiResponse(code = 204, message = "No return value"),
             @ApiResponse(code = 404, message = "Worker not found"),
             @ApiResponse(code = 409, message = "The worker is not in IDLE state")})
-    public Object runRobot(@PathVariable("id") String workerId, @RequestBody(required = false) Map<String, Object> requestBody, HttpServletResponse response) throws XillInvalidStateException, XillNotFoundException {
-        Object result = xillWebService.runWorker(new XWID(Integer.parseInt(workerId)), requestBody);
+    public Object runRobot(@PathVariable("id") String workerId, @RequestBody(required = false) Map<String, Object> requestBody, HttpServletResponse response) throws InvalidStateException, RobotNotFoundException {
+        Object result = webService.runWorker(new WorkerID(Integer.parseInt(workerId)), requestBody);
         if (result == null) {
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             return null;
@@ -179,8 +179,8 @@ public class XillWebServiceController {
     @ApiResponses({
             @ApiResponse(code = 404, message = "Worker not found"),
             @ApiResponse(code = 409, message = "The worker is not in RUNNING state")})
-    public void stopRobot(@PathVariable("id") String workerId, HttpServletResponse response) throws XillInvalidStateException, XillNotFoundException {
-        xillWebService.stopWorker(new XWID(Integer.parseInt(workerId)));
+    public void stopRobot(@PathVariable("id") String workerId, HttpServletResponse response) throws InvalidStateException, RobotNotFoundException {
+        webService.stopWorker(new WorkerID(Integer.parseInt(workerId)));
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 }

@@ -16,13 +16,13 @@
 package nl.xillio.xill.webservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.xillio.xill.webservice.exceptions.XillBaseException;
-import nl.xillio.xill.webservice.exceptions.XillCompileException;
-import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
-import nl.xillio.xill.webservice.model.XillRuntime;
-import nl.xillio.xill.webservice.model.XillWorkerFactory;
-import nl.xillio.xill.webservice.services.XillWebService;
-import nl.xillio.xill.webservice.types.XWID;
+import nl.xillio.xill.webservice.exceptions.BaseException;
+import nl.xillio.xill.webservice.exceptions.CompileException;
+import nl.xillio.xill.webservice.exceptions.RobotNotFoundException;
+import nl.xillio.xill.webservice.model.Runtime;
+import nl.xillio.xill.webservice.model.WorkerFactory;
+import nl.xillio.xill.webservice.services.WebService;
+import nl.xillio.xill.webservice.types.WorkerID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -70,22 +70,22 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     @Autowired
     private WebApplicationContext context;
     @Autowired
-    private XillWebService xillWebService;
+    private WebService webService;
     @Autowired
-    XillWorkerFactory xillWorkerFactory;
+    WorkerFactory workerFactory;
 
     private MockMvc mockMvc;
-    private XillRuntime runtime;
+    private Runtime runtime;
 
     @Value("${xws.api.base.path}")
     private String basePath;
 
     @BeforeMethod
-    public void setUp(Method method) throws XillCompileException, XillNotFoundException {
+    public void setUp(Method method) throws CompileException, RobotNotFoundException {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(documentationConfiguration(this.restDocumentation)).build();
         this.restDocumentation.beforeTest(getClass(), method.getName());
-        runtime = mock(XillRuntime.class);
+        runtime = mock(Runtime.class);
         doNothing().when(runtime).compile(any(), any());
     }
 
@@ -93,11 +93,11 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     public void tearDown() {
         this.restDocumentation.afterTest();
 
-        xillWebService.releaseAllWorkers();
+        webService.releaseAllWorkers();
     }
 
-    private XWID allocateWorker(final String robotFQN) throws XillBaseException {
-        return xillWebService.allocateWorker(robotFQN);
+    private WorkerID allocateWorker(final String robotFQN) throws BaseException {
+        return webService.allocateWorker(robotFQN);
     }
 
     @Test
@@ -219,7 +219,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testDeleteWorker() throws Exception {
-        XWID id = allocateWorker("test.worker");
+        WorkerID id = allocateWorker("test.worker");
 
         // Deleting a worker by id
         this.mockMvc.perform(
@@ -254,13 +254,13 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     @Test
     public void testDeleteRunningWorker() throws Exception {
         // Deleting a running worker should return error
-        XWID id = allocateWorker("test.TerminateTest");
+        WorkerID id = allocateWorker("test.TerminateTest");
 
         // Start running
         Thread running = new Thread(() -> {
             try {
-                xillWebService.runWorker(id, null);
-            } catch (XillBaseException e) {
+                webService.runWorker(id, null);
+            } catch (BaseException e) {
                 System.err.println(e.getMessage());
             }
         });
@@ -287,7 +287,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testRunLoadedRobotWithJsonReturnValue() throws Exception {
-        XWID id = allocateWorker("test.JsonReturnTest");
+        WorkerID id = allocateWorker("test.JsonReturnTest");
 
         // Run a robot
         this.mockMvc.perform(
@@ -308,7 +308,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testRunLoadedRobotWithStreamReturnValue() throws Exception {
-        XWID id = allocateWorker("test.StreamReturnTest");
+        WorkerID id = allocateWorker("test.StreamReturnTest");
 
         // Run a robot
         this.mockMvc.perform(
@@ -328,7 +328,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testRunLoadedRobotWithoutReturnValue() throws Exception {
-        XWID id = allocateWorker("test.NullReturnTest");
+        WorkerID id = allocateWorker("test.NullReturnTest");
 
         // Run a robot
         this.mockMvc.perform(
@@ -361,7 +361,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
 //    @Test
 //    public void testRunRobotWithError() throws Exception {
-//        XWID id = allocateWorker("test.ErrorThrowingRobot");
+//        WorkerID id = allocateWorker("test.ErrorThrowingRobot");
 //
 //        // Run a robot that throws an error
 //        this.mockMvc.perform(
@@ -381,13 +381,13 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testTerminateRunningWorker() throws Exception {
-        XWID id = allocateWorker("test.TerminateTest");
+        WorkerID id = allocateWorker("test.TerminateTest");
 
         // Start running
         Thread running = new Thread(() -> {
             try {
-                xillWebService.runWorker(id, null);
-            } catch (XillBaseException e) {
+                webService.runWorker(id, null);
+            } catch (BaseException e) {
                 System.err.println(e.getMessage());
             }
         });
@@ -413,7 +413,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
      */
     @Test
     public void testTerminateNotRunningWorker() throws Exception {
-        XWID id = allocateWorker("test.TerminateTest");
+        WorkerID id = allocateWorker("test.TerminateTest");
 
         // Terminate a non-running worker
         this.mockMvc.perform(

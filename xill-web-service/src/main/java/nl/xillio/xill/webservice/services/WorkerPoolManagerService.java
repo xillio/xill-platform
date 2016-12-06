@@ -15,44 +15,44 @@
  */
 package nl.xillio.xill.webservice.services;
 
-import nl.xillio.xill.webservice.model.XillWorkerPool;
-import nl.xillio.xill.webservice.types.XWID;
+import nl.xillio.xill.webservice.model.WorkerPool;
+import nl.xillio.xill.webservice.types.WorkerID;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Represents a service that manages {@link XillWorkerPool}: factory and reference.
+ * Represents a service that manages {@link WorkerPool}: factory and reference.
  */
-public interface XillWorkerPoolManagerService {
+public interface WorkerPoolManagerService {
     /**
-     * Create new or return existing XillWorkerPool for given projectId.
+     * Create new or return existing WorkerPool for given projectId.
      *
      * @param workDirectory The project directory. For the moment, it's not used as there is no support for projects yet.
-     * @return The XillWorkerPool for given workDirectory that has been created or reused. For the moment, it always returns one XillWorkerPool as there is no support for projects yet.
+     * @return The WorkerPool for given workDirectory that has been created or reused. For the moment, it always returns one WorkerPool as there is no support for projects yet.
      */
-    XillWorkerPool getWorkerPool(final Path workDirectory);
+    WorkerPool getWorkerPool(final Path workDirectory);
 
     /**
-     * Get the default {@link XillWorkerPool} based on configuration. The worker pool is instantiated if necessary.
+     * Get the default {@link WorkerPool} based on configuration. The worker pool is instantiated if necessary.
      *
      * @return the default worker pool for this service
      */
-    XillWorkerPool getDefaultWorkerPool();
+    WorkerPool getDefaultWorkerPool();
 
     /**
-     * Return existing XillWorkerPool for given projectId.
+     * Return existing WorkerPool for given projectId.
      *
      * @param projectId The project id. For the moment, it's not used as there is no support for projects yet.
-     * @return The existing XillWorkerPool for given projectId.
+     * @return The existing WorkerPool for given projectId.
      */
-    Optional<XillWorkerPool> findWorkerPool(final XWID projectId);
+    Optional<WorkerPool> findWorkerPool(final WorkerID projectId);
 
     /**
      * Get all worker pools.
      *
      * @return The list of all worker pools.
      */
-    List<XillWorkerPool> getAllWorkerPools();
+    List<WorkerPool> getAllWorkerPools();
 }

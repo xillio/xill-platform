@@ -29,7 +29,7 @@ import java.nio.file.Path;
  */
 @Component
 @ConfigurationProperties(prefix = "xillRuntime")
-public class XillRuntimeProperties {
+public class RuntimeProperties {
     private Path pluginDir = null;
     private Path licenseDir = null;
 

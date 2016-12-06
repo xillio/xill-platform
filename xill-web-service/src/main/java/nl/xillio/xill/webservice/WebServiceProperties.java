@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConfigurationProperties(prefix = "xill")
-public class XillProperties {
+public class WebServiceProperties {
     private int maxExecutors = 10;
     private String workDirectory = XWSUtils.getPresentWorkingDirectory();
 

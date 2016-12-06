@@ -15,19 +15,15 @@
  */
 package nl.xillio.xill.webservice.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 /**
- * The exception class - fired when something is not found.
+ * The base exception class.
  */
-@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "The robot could not be found")
-public class XillNotFoundException extends XillBaseException {
-    public XillNotFoundException(String message) {
+public class BaseException extends Exception {
+    public BaseException(String message) {
         super(message);
     }
 
-    public XillNotFoundException(String message, Throwable cause) {
+    public BaseException(String message, Throwable cause) {
         super(message, cause);
     }
 }

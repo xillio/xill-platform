@@ -15,15 +15,24 @@
  */
 package nl.xillio.xill.webservice.exceptions;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 /**
- * The base exception class.
+ * Thrown when the loading of the Xill environment fails.
+ *
+ * This is an unchecked exception since recovering from this exception is not possible
+ * without restarting.
+ *
+ * @author Geert Konijnendijk
  */
-public class XillBaseException extends Exception {
-    public XillBaseException(String message) {
+@ResponseStatus(code = HttpStatus.SERVICE_UNAVAILABLE, reason = "Cannot load the Xill Environment")
+public class EnvironmentLoadException extends RuntimeException {
+    public EnvironmentLoadException(String message) {
         super(message);
     }
 
-    public XillBaseException(String message, Throwable cause) {
+    public EnvironmentLoadException(String message, Throwable cause) {
         super(message, cause);
     }
 }

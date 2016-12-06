@@ -15,7 +15,7 @@
  */
 package nl.xillio.xill.webservice.xill;
 
-import nl.xillio.xill.webservice.model.XillRuntime;
+import nl.xillio.xill.webservice.model.Runtime;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
@@ -25,32 +25,32 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 /**
- * Factory for pooled {@link XillRuntime} instances.
+ * Factory for pooled {@link Runtime} instances.
  *
  * @author Geert Konijnendijk
  */
 @Component
-public class RuntimePooledObjectFactory extends BasePooledObjectFactory<XillRuntime> {
+public class RuntimePooledObjectFactory extends BasePooledObjectFactory<Runtime> {
 
-    private Provider<XillRuntime> xillRuntimeProvider;
+    private Provider<Runtime> runtimeProvider;
 
     @Inject
-    public RuntimePooledObjectFactory(Provider<XillRuntime> xillRuntimeProvider) {
-        this.xillRuntimeProvider = xillRuntimeProvider;
+    public RuntimePooledObjectFactory(Provider<Runtime> runtimeProvider) {
+        this.runtimeProvider = runtimeProvider;
     }
 
     @Override
-    public XillRuntime create() throws Exception {
-        return xillRuntimeProvider.get();
+    public Runtime create() throws Exception {
+        return runtimeProvider.get();
     }
 
     @Override
-    public PooledObject<XillRuntime> wrap(XillRuntime obj) {
+    public PooledObject<Runtime> wrap(Runtime obj) {
         return new DefaultPooledObject<>(obj);
     }
 
     @Override
-    public void destroyObject(PooledObject<XillRuntime> p) throws Exception {
+    public void destroyObject(PooledObject<Runtime> p) throws Exception {
         p.getObject().close();
     }
 }

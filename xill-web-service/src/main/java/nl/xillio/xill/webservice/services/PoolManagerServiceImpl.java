@@ -15,10 +15,10 @@
  */
 package nl.xillio.xill.webservice.services;
 
-import nl.xillio.xill.webservice.XillProperties;
-import nl.xillio.xill.webservice.model.XillWorkerFactory;
-import nl.xillio.xill.webservice.model.XillWorkerPool;
-import nl.xillio.xill.webservice.types.XWID;
+import nl.xillio.xill.webservice.WebServiceProperties;
+import nl.xillio.xill.webservice.model.WorkerFactory;
+import nl.xillio.xill.webservice.model.WorkerPool;
+import nl.xillio.xill.webservice.types.WorkerID;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,41 +31,41 @@ import java.util.*;
  * This class represents an implementation of the worker pools manager.
  */
 @Service
-public class XillWorkerPoolManagerServiceImpl implements XillWorkerPoolManagerService {
+public class PoolManagerServiceImpl implements WorkerPoolManagerService {
 
-    XillProperties properties;
+    WebServiceProperties properties;
 
     private final Path DEFAULT_DIRECTORY;
-    private final Map<Path, XillWorkerPool> pools = new HashMap<>();
-    private final XillWorkerPool DEFAULT_POOL;
-    private final XillWorkerFactory xillWorkerFactory;
+    private final Map<Path, WorkerPool> pools = new HashMap<>();
+    private final WorkerPool DEFAULT_POOL;
+    private final WorkerFactory workerFactory;
 
     @Autowired
-    public XillWorkerPoolManagerServiceImpl(XillProperties properties, XillWorkerFactory xillWorkerFactory) {
+    public PoolManagerServiceImpl(WebServiceProperties properties, WorkerFactory workerFactory) {
         this.properties = properties;
-        this.xillWorkerFactory = xillWorkerFactory;
+        this.workerFactory = workerFactory;
         DEFAULT_DIRECTORY = Paths.get(properties.getWorkDirectory());
-        DEFAULT_POOL = new XillWorkerPool(DEFAULT_DIRECTORY, properties.getMaxExecutors(), xillWorkerFactory);
+        DEFAULT_POOL = new WorkerPool(DEFAULT_DIRECTORY, properties.getMaxExecutors(), workerFactory);
     }
 
     @Override
-    public XillWorkerPool getWorkerPool(final Path workDirectory) {
-        return pools.getOrDefault(workDirectory, new XillWorkerPool(workDirectory, properties.getMaxExecutors(), xillWorkerFactory));
+    public WorkerPool getWorkerPool(final Path workDirectory) {
+        return pools.getOrDefault(workDirectory, new WorkerPool(workDirectory, properties.getMaxExecutors(), workerFactory));
     }
 
     @Override
-    public XillWorkerPool getDefaultWorkerPool() {
+    public WorkerPool getDefaultWorkerPool() {
         return DEFAULT_POOL;
     }
 
     @Override
-    public Optional<XillWorkerPool> findWorkerPool(final XWID projectId) {
+    public Optional<WorkerPool> findWorkerPool(final WorkerID projectId) {
         throw new NotImplementedException("The 'findWorkerPool' method has not been implemented yet");
         //pools.values().stream().filter(pool -> pool.getWorkDirectory()).findAny();
     }
 
     @Override
-    public List<XillWorkerPool> getAllWorkerPools() {
+    public List<WorkerPool> getAllWorkerPools() {
         return new LinkedList<>(pools.values());
     }
 }

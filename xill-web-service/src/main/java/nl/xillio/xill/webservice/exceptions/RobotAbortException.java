@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(code = HttpStatus.CONFLICT, reason = "The robot could not be aborted")
 public class RobotAbortException extends RuntimeException {
+
     public RobotAbortException(String message) {
         super(message);
     }

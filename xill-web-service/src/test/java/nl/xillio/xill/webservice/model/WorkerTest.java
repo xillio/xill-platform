@@ -32,108 +32,108 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 
 /**
- * Tests for the {@link XillWorker}.
+ * Tests for the {@link Worker}.
  *
  * @author Xillio
  */
-public class XillWorkerTest extends TestUtils {
+public class WorkerTest extends TestUtils {
 
-    private XillRuntime runtime;
-    private XillWorker worker;
+    private Runtime runtime;
+    private Worker worker;
 
-    private ObjectPool<XillRuntime> runtimePool;
+    private ObjectPool<Runtime> runtimePool;
 
     @BeforeMethod
     public void setUp() throws Exception {
-        runtime = mock(XillRuntime.class);
+        runtime = mock(Runtime.class);
         doNothing().when(runtime).compile(any(), any());
         runtimePool = mock(ObjectPool.class);
         when(runtimePool.borrowObject()).thenReturn(runtime);
-        worker = new XillWorker(Paths.get("test/path"), "robot.name", runtimePool);
+        worker = new Worker(Paths.get("test/path"), "robot.name", runtimePool);
 
     }
 
     /**
-     * Test {@link XillWorker#XillWorker(Path, String, ObjectPool)} when borrowing a runtime
+     * Test {@link Worker#Worker(Path, String, ObjectPool)} when borrowing a runtime
      * from the pool fails.
      */
-    @Test(expectedExceptions = XillAllocateWorkerException.class)
+    @Test(expectedExceptions = AllocateWorkerException.class)
     public void testPoolBorrowError() throws Exception {
         when(runtimePool.borrowObject()).thenThrow(Exception.class);
-        worker = new XillWorker(Paths.get("test/path"), "robot.name", runtimePool);
+        worker = new Worker(Paths.get("test/path"), "robot.name", runtimePool);
     }
 
     /**
      * A worker cannot be created if the robot cannot compile.
      */
-    @Test(expectedExceptions = XillCompileException.class)
+    @Test(expectedExceptions = CompileException.class)
     public void testCompileError() throws Exception {
-        doThrow(XillCompileException.class).when(runtime).compile(any(), any());
-        worker = new XillWorker(Paths.get("test/path"), "robot.name", runtimePool);
+        doThrow(CompileException.class).when(runtime).compile(any(), any());
+        worker = new Worker(Paths.get("test/path"), "robot.name", runtimePool);
     }
 
     /**
-     * A new worker should be in {@link XillWorkerState#IDLE}.
+     * A new worker should be in {@link WorkerState#IDLE}.
      */
     @Test
     public void testInitialState() throws Exception {
-        assertSame(worker.getState(), XillWorkerState.IDLE);
+        assertSame(worker.getState(), WorkerState.IDLE);
     }
 
     /**
-     * Checks that the worker is in {@link XillWorkerState#RUNNING} when run,
-     * then returns to {@link XillWorkerState#IDLE}.
+     * Checks that the worker is in {@link WorkerState#RUNNING} when run,
+     * then returns to {@link WorkerState#IDLE}.
      */
     @Test
     public void testRunningState() throws Exception {
         doAnswer(invocation -> {
-            assertSame(worker.getState(), XillWorkerState.RUNNING);
+            assertSame(worker.getState(), WorkerState.RUNNING);
             return null;
         }).when(runtime).runRobot(any());
         worker.run(MapUtils.EMPTY_MAP);
-        assertSame(worker.getState(), XillWorkerState.IDLE);
+        assertSame(worker.getState(), WorkerState.IDLE);
     }
 
     /**
      * If an exception happened during recompilation of a robot, an exception should be thrown
-     * and the worker should fall in {@link XillWorkerState#RUNTIME_ERROR} state.
+     * and the worker should fall in {@link WorkerState#RUNTIME_ERROR} state.
      */
-    @Test(expectedExceptions = XillInvalidStateException.class)
+    @Test(expectedExceptions = InvalidStateException.class)
     public void testRunTimeError() throws Exception {
         doThrow(ConcurrentRuntimeException.class).when(runtime).runRobot(MapUtils.EMPTY_MAP);
 
         try {
             worker.run(MapUtils.EMPTY_MAP);
         } finally {
-            assertSame(worker.getState(), XillWorkerState.RUNTIME_ERROR);
+            assertSame(worker.getState(), WorkerState.RUNTIME_ERROR);
         }
     }
 
     /**
-     * Running a worker if it is in {@link XillWorkerState#RUNTIME_ERROR} should throw an exception,
+     * Running a worker if it is in {@link WorkerState#RUNTIME_ERROR} should throw an exception,
      * and leave it in its state.
      */
-    @Test(expectedExceptions = XillInvalidStateException.class)
+    @Test(expectedExceptions = InvalidStateException.class)
     public void testNoRunIfErrorState() throws Exception {
         doThrow(ConcurrentRuntimeException.class).when(runtime).runRobot(MapUtils.EMPTY_MAP);
         try {
             worker.run(MapUtils.EMPTY_MAP);
-        } catch (XillInvalidStateException e) {
+        } catch (InvalidStateException e) {
             worker.run(MapUtils.EMPTY_MAP);
         } finally {
-            assertSame(worker.getState(), XillWorkerState.RUNTIME_ERROR);
+            assertSame(worker.getState(), WorkerState.RUNTIME_ERROR);
         }
     }
 
     /**
-     * Calling abort when a worker is running should set its state to {@link XillWorkerState#ABORTING},
-     * then return the state to {@link XillWorkerState#IDLE}.
+     * Calling abort when a worker is running should set its state to {@link WorkerState#ABORTING},
+     * then return the state to {@link WorkerState#IDLE}.
      */
     @Test
     public void testAbortStates() throws Exception {
         doAnswer(invocation -> {
             doAnswer(invocation1 -> {
-                assertSame(worker.getState(), XillWorkerState.ABORTING);
+                assertSame(worker.getState(), WorkerState.ABORTING);
                 return null;
             }).when(runtime).abortRobot();
             worker.abort();
@@ -142,20 +142,20 @@ public class XillWorkerTest extends TestUtils {
 
         worker.run(MapUtils.EMPTY_MAP);
 
-        assertSame(worker.getState(), XillWorkerState.IDLE);
+        assertSame(worker.getState(), WorkerState.IDLE);
     }
 
     /**
      * A robot not running should throw an exception when aborted.
      */
-    @Test(expectedExceptions = XillInvalidStateException.class)
+    @Test(expectedExceptions = InvalidStateException.class)
     public void testAbortIdleState() throws Exception {
         worker.abort();
-        assertSame(worker.getState(), XillWorkerState.IDLE);
+        assertSame(worker.getState(), WorkerState.IDLE);
     }
 
     /**
-     * Test {@link XillWorker#abort()} when aborting fails.
+     * Test {@link Worker#abort()} when aborting fails.
      */
     @Test(expectedExceptions = RobotAbortException.class)
     public void testAbortFail() throws Exception {
@@ -169,7 +169,7 @@ public class XillWorkerTest extends TestUtils {
     }
 
     /**
-     * Test {@link XillWorker#abort()} when aborting fails and invalidating the runtime fails.
+     * Test {@link Worker#abort()} when aborting fails and invalidating the runtime fails.
      */
     @Test(expectedExceptions = PoolFailureException.class)
     public void testInvalidationFail() throws Exception {
@@ -184,7 +184,7 @@ public class XillWorkerTest extends TestUtils {
     }
 
     /**
-     * Test {@link XillWorker#close()} under normal circumstances.
+     * Test {@link Worker#close()} under normal circumstances.
      */
     @Test
     public void testClose() throws Exception {
@@ -194,10 +194,10 @@ public class XillWorkerTest extends TestUtils {
     }
 
     /**
-     * Test that a running robot is aborted before a {@link XillWorker#close()} is called.
+     * Test that a running robot is aborted before a {@link Worker#close()} is called.
      */
     @Test
-    public void testCloseWhileRunning() throws XillInvalidStateException {
+    public void testCloseWhileRunning() throws InvalidStateException {
         doAnswer(a -> {
             worker.close();
             return null;

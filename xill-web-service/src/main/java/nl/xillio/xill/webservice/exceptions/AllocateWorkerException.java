@@ -19,20 +19,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Thrown when the loading of the Xill environment fails.
- *
- * This is an unchecked exception since recovering from this exception is not possible
- * without restarting.
- *
- * @author Geert Konijnendijk
+ * Thrown when a worker cannot be allocated.
  */
-@ResponseStatus(code = HttpStatus.SERVICE_UNAVAILABLE, reason = "Cannot load the Xill Environment")
-public class XillEnvironmentLoadException extends RuntimeException {
-    public XillEnvironmentLoadException(String message) {
+@ResponseStatus(code = HttpStatus.NOT_ACCEPTABLE, reason = "Cannot allocate worker: resource limit reached")
+public class AllocateWorkerException extends BaseException {
+    public AllocateWorkerException(String message) {
         super(message);
     }
 
-    public XillEnvironmentLoadException(String message, Throwable cause) {
+    public AllocateWorkerException(String message, Throwable cause) {
         super(message, cause);
     }
 }

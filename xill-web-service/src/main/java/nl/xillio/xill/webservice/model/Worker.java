@@ -17,7 +17,7 @@ package nl.xillio.xill.webservice.model;
 
 import me.biesaart.utils.Log;
 import nl.xillio.xill.webservice.exceptions.*;
-import nl.xillio.xill.webservice.types.XWID;
+import nl.xillio.xill.webservice.types.WorkerID;
 import org.apache.commons.lang3.concurrent.ConcurrentRuntimeException;
 import org.apache.commons.pool2.ObjectPool;
 import org.slf4j.Logger;
@@ -33,18 +33,18 @@ import java.util.Map;
  *
  * @author Xillio
  */
-public class XillWorker implements AutoCloseable {
+public class Worker implements AutoCloseable {
 
     private static final Logger LOGGER = Log.get();
 
-    protected final XWID id;
+    protected final WorkerID id;
     protected final Path workDirectory;
     protected final String robotFQN;
 
-    protected final XillRuntime runtime;
-    protected final ObjectPool<XillRuntime> runtimePool;
+    protected final Runtime runtime;
+    protected final ObjectPool<Runtime> runtimePool;
     protected final Object lock;
-    protected XillWorkerState state;
+    protected WorkerState state;
 
     /**
      * Creates a worker for a specific robot.
@@ -52,16 +52,16 @@ public class XillWorker implements AutoCloseable {
      * @param workDirectory the working directory of the enclosed robot
      * @param robotFQN      the fully qualified robot name
      * @param runtimePool   The pool holding runtime instances
-     * @throws XillCompileException if the robot could not be compiled
+     * @throws CompileException if the robot could not be compiled
      */
-    public XillWorker(Path workDirectory, String robotFQN, @Qualifier("runtimePool") ObjectPool<XillRuntime> runtimePool) throws XillBaseException {
-        id = new XWID();
+    public Worker(Path workDirectory, String robotFQN, @Qualifier("runtimePool") ObjectPool<Runtime> runtimePool) throws BaseException {
+        id = new WorkerID();
         this.runtimePool = runtimePool;
 
         try {
             this.runtime = runtimePool.borrowObject();
         } catch (Exception e) {
-            throw new XillAllocateWorkerException("Could not retrieve a runtime from the pool", e);
+            throw new AllocateWorkerException("Could not retrieve a runtime from the pool", e);
         }
 
         this.workDirectory = workDirectory;
@@ -71,7 +71,7 @@ public class XillWorker implements AutoCloseable {
 
         runtime.compile(workDirectory, robotFQN);
 
-        state = XillWorkerState.IDLE;
+        state = WorkerState.IDLE;
     }
 
     /**
@@ -80,13 +80,13 @@ public class XillWorker implements AutoCloseable {
      * @param arguments the robotPath run arguments
      * @return the result of the robotPath run
      */
-    public Object run(final Map<String, Object> arguments) throws XillInvalidStateException {
+    public Object run(final Map<String, Object> arguments) throws InvalidStateException {
         synchronized (lock) {
             // Check the worker state
-            if (state != XillWorkerState.IDLE) {
-                throw new XillInvalidStateException("Worker is not ready for running");
+            if (state != WorkerState.IDLE) {
+                throw new InvalidStateException("Worker is not ready for running");
             }
-            state = XillWorkerState.RUNNING;
+            state = WorkerState.RUNNING;
         }
 
         try {
@@ -95,45 +95,45 @@ public class XillWorker implements AutoCloseable {
 
             // Do not change the state when it is not running any more, it might have been changed while aborting a robot
             synchronized (lock) {
-                if (state == XillWorkerState.RUNNING) {
-                    state = XillWorkerState.IDLE;
+                if (state == WorkerState.RUNNING) {
+                    state = WorkerState.IDLE;
                 }
             }
             return returnValue;
         } catch (ConcurrentRuntimeException e) {
-            state = XillWorkerState.RUNTIME_ERROR;
+            state = WorkerState.RUNTIME_ERROR;
             // This worker can not continue, release the runtime
             releaseRuntime();
-            throw new XillInvalidStateException("The worker has encountered a problem and cannot continue", e);
+            throw new InvalidStateException("The worker has encountered a problem and cannot continue", e);
         }
     }
 
     /**
      * Aborts the running worker (i.e. abort the robot associated with the worker).
      */
-    public void abort() throws XillInvalidStateException {
+    public void abort() throws InvalidStateException {
         synchronized (lock) {
-            if (state != XillWorkerState.RUNNING) {
-                throw new XillInvalidStateException("Worker is not running.");
+            if (state != WorkerState.RUNNING) {
+                throw new InvalidStateException("Worker is not running.");
             }
-            state = XillWorkerState.ABORTING;
+            state = WorkerState.ABORTING;
         }
         try {
             runtime.abortRobot();
         } catch (RobotAbortException e) {
-            state = XillWorkerState.RUNTIME_ERROR;
+            state = WorkerState.RUNTIME_ERROR;
             invalidateRuntime();
             throw e;
         }
-        state = XillWorkerState.IDLE;
+        state = WorkerState.IDLE;
     }
 
     @Override
     public void close() {
-        if (state == XillWorkerState.RUNNING) {
+        if (state == WorkerState.RUNNING) {
             try {
                 abort();
-            } catch (XillInvalidStateException e) {
+            } catch (InvalidStateException e) {
                 LOGGER.error("The robot has already been aborted", e);
             }
         }
@@ -147,7 +147,7 @@ public class XillWorker implements AutoCloseable {
         try {
             runtimePool.invalidateObject(runtime);
         } catch (Exception e) {
-            state = XillWorkerState.RUNTIME_ERROR;
+            state = WorkerState.RUNTIME_ERROR;
             throw new PoolFailureException("Pool could not invalidate the runtime", e);
         }
     }
@@ -159,7 +159,7 @@ public class XillWorker implements AutoCloseable {
         try {
             runtimePool.returnObject(runtime);
         } catch (Exception e) {
-            state = XillWorkerState.RUNTIME_ERROR;
+            state = WorkerState.RUNTIME_ERROR;
             throw new PoolFailureException("Could not return the runtime to the pool", e);
         }
     }
@@ -183,11 +183,11 @@ public class XillWorker implements AutoCloseable {
     }
 
     /**
-     * Returns the id of the allocated worker, unique across the instances of {@link XillWorkerPool}.
+     * Returns the id of the allocated worker, unique across the instances of {@link WorkerPool}.
      *
      * @return the id of the allocated worker
      */
-    public XWID getId() {
+    public WorkerID getId() {
         return id;
     }
 
@@ -196,7 +196,7 @@ public class XillWorker implements AutoCloseable {
      *
      * @return the state of the worker
      */
-    public XillWorkerState getState() {
+    public WorkerState getState() {
         return state;
     }
 
@@ -205,7 +205,7 @@ public class XillWorker implements AutoCloseable {
      *
      * @return the worker runtime.
      */
-    public XillRuntime getRuntime() {
+    public Runtime getRuntime() {
         return runtime;
     }
 }

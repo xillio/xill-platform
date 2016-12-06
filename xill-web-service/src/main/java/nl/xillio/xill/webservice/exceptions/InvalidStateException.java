@@ -19,15 +19,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * The exception class - fired when worker cannot be allocated.
+ * Thrown when a method is called on an object when that object is in invalid state.
+ *
+ * @author Geert Konijnendijk
  */
-@ResponseStatus(code = HttpStatus.NOT_ACCEPTABLE, reason = "Cannot allocate worker: resource limit reached")
-public class XillAllocateWorkerException extends XillBaseException {
-    public XillAllocateWorkerException(String message) {
+@ResponseStatus(HttpStatus.CONFLICT)
+public class InvalidStateException extends BaseException {
+    public InvalidStateException(String message) {
         super(message);
     }
 
-    public XillAllocateWorkerException(String message, Throwable cause) {
+    public InvalidStateException(String message, Throwable cause) {
         super(message, cause);
     }
 }

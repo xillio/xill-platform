@@ -18,16 +18,16 @@ package nl.xillio.xill.webservice.types;
 import me.biesaart.utils.RandomUtils;
 
 /**
- * XillWorker ID - unique identificator of the XillWorker in the XillWorkerPool.
+ * Worker ID - unique identificator of the Worker in the WorkerPool.
  */
-public class XWID {
+public class WorkerID {
     private final int id;
 
-    public XWID(int id) {
+    public WorkerID(int id) {
         this.id = id;
     }
 
-    public XWID() {
+    public WorkerID() {
         this.id = RandomUtils.nextInt(0, Integer.MAX_VALUE);
     }
 
@@ -37,7 +37,7 @@ public class XWID {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof XWID && ((XWID)obj).id == id);
+        return (obj instanceof WorkerID && ((WorkerID)obj).id == id);
     }
 
     @Override

@@ -16,7 +16,7 @@
 package nl.xillio.xill.webservice;
 
 /**
- * Utility class for the Xill Web Service module.
+ * Utility class for the Web Service module.
  *
  * @author andrea.parrilli
  */

@@ -16,10 +16,10 @@
 package nl.xillio.xill.webservice.xill;
 
 import nl.xillio.xill.webservice.RobotDeployer;
-import nl.xillio.xill.webservice.XillRuntimeConfiguration;
-import nl.xillio.xill.webservice.exceptions.XillCompileException;
-import nl.xillio.xill.webservice.exceptions.XillNotFoundException;
-import nl.xillio.xill.webservice.model.XillRuntime;
+import nl.xillio.xill.webservice.RuntimeConfiguration;
+import nl.xillio.xill.webservice.exceptions.CompileException;
+import nl.xillio.xill.webservice.exceptions.RobotNotFoundException;
+import nl.xillio.xill.webservice.model.Runtime;
 import org.apache.commons.pool2.ObjectPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -37,21 +37,21 @@ import static nl.xillio.xill.webservice.RobotDeployer.RETURN_ROBOT_NAME;
 import static org.testng.Assert.assertEquals;
 
 /**
- * Integration tests for the {@link XillRuntimeImpl} and pooling.
+ * Integration tests for the {@link RuntimeImpl} and pooling.
  *
  * @author Geert Konijnendijk
  */
-@ContextConfiguration(classes = { XillRuntimeConfiguration.class, XillRuntimeImpl.class,
-        XillEnvironmentFactory.class, XillRuntimeProperties.class, Log4JOutputHandler.class,
+@ContextConfiguration(classes = { RuntimeConfiguration.class, RuntimeImpl.class,
+        EnvironmentFactory.class, RuntimeProperties.class, Log4JOutputHandler.class,
         RuntimePooledObjectFactory.class})
-public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
+public class RuntimeIT extends AbstractTestNGSpringContextTests {
 
     private RobotDeployer deployer;
 
     @Autowired
-    private ObjectPool<XillRuntime> runtimePool;
+    private ObjectPool<Runtime> runtimePool;
 
-    private XillRuntime xillRuntime;
+    private Runtime runtime;
 
     /**
      * Deploy a robot to be run during tests to a temporary directory.
@@ -62,7 +62,7 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
     public void deployRobot() throws Exception {
         deployer = new RobotDeployer();
         deployer.deployRobots();
-        xillRuntime = runtimePool.borrowObject();
+        runtime = runtimePool.borrowObject();
     }
 
     /**
@@ -78,16 +78,16 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
     /**
      * Test running a single robot returning a result.
      *
-     * @throws XillCompileException When compilation fails
+     * @throws CompileException When compilation fails
      */
     @Test
-    public void testRunRobot() throws XillCompileException, ExecutionException, XillNotFoundException {
-        xillRuntime.compile(deployer.getWorkingDirectory(), RETURN_ROBOT_NAME);
+    public void testRunRobot() throws CompileException, ExecutionException, RobotNotFoundException {
+        runtime.compile(deployer.getWorkingDirectory(), RETURN_ROBOT_NAME);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("input", 42);
 
-        Object result = xillRuntime.runRobot(parameters);
+        Object result = runtime.runRobot(parameters);
 
         assertEquals(result, 42, "Value returned by the robot did not match expected");
     }
@@ -95,16 +95,16 @@ public class XillRuntimeIT extends AbstractTestNGSpringContextTests {
     /**
      * Test running a single robot multiple times with different parameters.
      *
-     * @throws XillCompileException When compilation fails
+     * @throws CompileException When compilation fails
      */
     @Test
-    public void testRunRobotMultiple() throws XillCompileException, ExecutionException, XillNotFoundException {
-        xillRuntime.compile(deployer.getWorkingDirectory(), RETURN_ROBOT_NAME);
+    public void testRunRobotMultiple() throws CompileException, ExecutionException, RobotNotFoundException {
+        runtime.compile(deployer.getWorkingDirectory(), RETURN_ROBOT_NAME);
 
         for (int i=0; i<4; i++) {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("input", i);
-            Object result = xillRuntime.runRobot(parameters);
+            Object result = runtime.runRobot(parameters);
 
             assertEquals(result, i, "Value returned by the robot did not match expected");
         }

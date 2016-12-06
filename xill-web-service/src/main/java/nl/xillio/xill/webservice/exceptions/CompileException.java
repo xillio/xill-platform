@@ -15,19 +15,20 @@
  */
 package nl.xillio.xill.webservice.exceptions;
 
+import nl.xillio.xill.webservice.model.Runtime;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Exception thrown when {@link nl.xillio.xill.webservice.model.XillRuntime} fails
+ * Exception thrown when {@link Runtime} fails
  * to compile a robot.
  *
  * @author Geert Konijnendijk
  */
 @ResponseStatus(code = HttpStatus.CONFLICT, reason = "The robot does not compile")
-public class XillCompileException extends XillBaseException {
+public class CompileException extends BaseException {
 
-    public XillCompileException(String message, Throwable cause) {
+    public CompileException(String message, Throwable cause) {
         super(message, cause);
     }
 }

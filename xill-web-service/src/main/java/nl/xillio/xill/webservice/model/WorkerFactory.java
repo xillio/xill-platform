@@ -15,7 +15,7 @@
  */
 package nl.xillio.xill.webservice.model;
 
-import nl.xillio.xill.webservice.exceptions.XillBaseException;
+import nl.xillio.xill.webservice.exceptions.BaseException;
 import org.apache.commons.pool2.ObjectPool;
 import org.springframework.stereotype.Component;
 
@@ -23,30 +23,30 @@ import javax.inject.Inject;
 import java.nio.file.Path;
 
 /**
- * A factory for constructing {@link XillWorker workers}.
+ * A factory for constructing {@link Worker workers}.
  *
  * @author Geert Konijnendijk
  */
 @Component
-public class XillWorkerFactory {
+public class WorkerFactory {
 
-    private ObjectPool<XillRuntime> runtimePool;
+    private ObjectPool<Runtime> runtimePool;
 
     @Inject
-    public XillWorkerFactory(ObjectPool<XillRuntime> runtimePool) {
+    public WorkerFactory(ObjectPool<Runtime> runtimePool) {
         this.runtimePool = runtimePool;
     }
 
     /**
-     * Construct a {@link XillWorker}.
+     * Construct a {@link Worker}.
      *
      * @param workDirectory The working directory
      * @param robotFQN The robot's fully qualified name
-     * @return A new {@link XillWorker}
-     * @throws XillBaseException When an exception occurs in {@link XillWorker#XillWorker(Path, String, ObjectPool)}
-     * @see XillWorker
+     * @return A new {@link Worker}
+     * @throws BaseException When an exception occurs in {@link Worker#Worker(Path, String, ObjectPool)}
+     * @see Worker
      */
-    public XillWorker constructWorker(Path workDirectory, String robotFQN) throws XillBaseException {
-        return new XillWorker(workDirectory, robotFQN, runtimePool);
+    public Worker constructWorker(Path workDirectory, String robotFQN) throws BaseException {
+        return new Worker(workDirectory, robotFQN, runtimePool);
     }
 }

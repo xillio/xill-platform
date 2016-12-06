@@ -25,7 +25,7 @@ import nl.xillio.xill.api.XillThreadFactory;
  *
  * @author Geert Konijnendijk
  */
-public class CleaningXillThreadFactory implements XillThreadFactory {
+public class CleaningThreadFactory implements XillThreadFactory {
 
     private static final String THREAD_GROUP_NAME = "Xill Webservice Thread Factory";
 
@@ -34,7 +34,7 @@ public class CleaningXillThreadFactory implements XillThreadFactory {
     /**
      * Create a new factory with the default {@link ThreadGroup} name
      */
-    public CleaningXillThreadFactory() {
+    public CleaningThreadFactory() {
         this(THREAD_GROUP_NAME);
     }
 
@@ -42,7 +42,7 @@ public class CleaningXillThreadFactory implements XillThreadFactory {
      * Create a new factory
      * @param name The name of the {@link ThreadGroup}
      */
-    public CleaningXillThreadFactory(String name) {
+    public CleaningThreadFactory(String name) {
         group = new ThreadGroup(name);
         group.setDaemon(true);
     }
