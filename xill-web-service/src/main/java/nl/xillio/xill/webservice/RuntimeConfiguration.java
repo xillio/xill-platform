@@ -35,7 +35,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class RuntimeConfiguration {
 
     /**
-     * @return A pool for {@link RuntimeImpl} instances
+     * @return a pool for {@link RuntimeImpl} instances
      */
     @ConfigurationProperties(prefix = "runtimePool")
     @Lazy(false)
@@ -45,7 +45,7 @@ public class RuntimeConfiguration {
     }
 
     /**
-     * @return A thread pool for asynchronously compiling robots
+     * @return a thread pool for asynchronously compiling robots
      */
     @ConfigurationProperties(prefix = "compilePool")
     @Bean

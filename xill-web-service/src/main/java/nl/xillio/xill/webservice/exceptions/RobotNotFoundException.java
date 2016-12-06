@@ -19,7 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * The exception class - fired when something is not found.
+ * Thrown when a robot is not found.
  */
 @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "The robot could not be found")
 public class RobotNotFoundException extends BaseException {

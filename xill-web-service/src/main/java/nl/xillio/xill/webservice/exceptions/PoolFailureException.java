@@ -16,7 +16,7 @@
 package nl.xillio.xill.webservice.exceptions;
 
 /**
- * Thrown when retrieving or releasing objects from a pool fails.
+ * Thrown when failing to retrieve or release objects from a pool.
  *
  * @author Geert Konijnendijk
  */

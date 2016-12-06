@@ -20,8 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Exception thrown when {@link Runtime} fails
- * to compile a robot.
+ * Exception thrown when {@link Runtime} fails to compile a robot.
  *
  * @author Geert Konijnendijk
  */

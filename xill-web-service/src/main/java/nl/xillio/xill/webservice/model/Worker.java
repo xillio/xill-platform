@@ -51,7 +51,7 @@ public class Worker implements AutoCloseable {
      *
      * @param workDirectory the working directory of the enclosed robot
      * @param robotFQN      the fully qualified robot name
-     * @param runtimePool   The pool holding runtime instances
+     * @param runtimePool   the pool holding runtime instances
      * @throws CompileException if the robot could not be compiled
      */
     public Worker(Path workDirectory, String robotFQN, @Qualifier("runtimePool") ObjectPool<Runtime> runtimePool) throws BaseException {
@@ -141,7 +141,7 @@ public class Worker implements AutoCloseable {
     }
 
     /**
-     * Invalidate the runtime from the pool so it will not be used again.
+     * Invalidates the runtime from the pool so it will not be used again.
      */
     private void invalidateRuntime() {
         try {
@@ -153,7 +153,7 @@ public class Worker implements AutoCloseable {
     }
 
     /**
-     * Return the runtime to the pool
+     * Returns the runtime to the pool.
      */
     private void releaseRuntime() {
         try {

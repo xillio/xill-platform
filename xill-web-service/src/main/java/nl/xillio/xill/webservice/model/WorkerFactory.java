@@ -15,7 +15,10 @@
  */
 package nl.xillio.xill.webservice.model;
 
+import nl.xillio.xill.webservice.exceptions.AllocateWorkerException;
 import nl.xillio.xill.webservice.exceptions.BaseException;
+import nl.xillio.xill.webservice.exceptions.CompileException;
+import nl.xillio.xill.webservice.exceptions.RobotNotFoundException;
 import org.apache.commons.pool2.ObjectPool;
 import org.springframework.stereotype.Component;
 
@@ -38,13 +41,12 @@ public class WorkerFactory {
     }
 
     /**
-     * Construct a {@link Worker}.
+     * Constructs a Worker.
      *
-     * @param workDirectory The working directory
-     * @param robotFQN The robot's fully qualified name
-     * @return A new {@link Worker}
-     * @throws BaseException When an exception occurs in {@link Worker#Worker(Path, String, ObjectPool)}
-     * @see Worker
+     * @param workDirectory the working directory
+     * @param robotFQN the robot's fully qualified name
+     * @return a new Worker
+     * @throws BaseException when an exception occurs in {@link Worker#Worker(Path, String, ObjectPool)}
      */
     public Worker constructWorker(Path workDirectory, String robotFQN) throws BaseException {
         return new Worker(workDirectory, robotFQN, runtimePool);

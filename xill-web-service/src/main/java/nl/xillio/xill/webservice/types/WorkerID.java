@@ -18,7 +18,7 @@ package nl.xillio.xill.webservice.types;
 import me.biesaart.utils.RandomUtils;
 
 /**
- * Worker ID - unique identificator of the Worker in the WorkerPool.
+ * Unique identifier of the Worker in the WorkerPool.
  */
 public class WorkerID {
     private final int id;

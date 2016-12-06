@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,6 @@ package nl.xillio.xill.webservice.model;
 
 import nl.xillio.xill.webservice.exceptions.*;
 import nl.xillio.xill.webservice.types.WorkerID;
-import org.slf4j.Logger;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -27,7 +26,6 @@ import java.util.Map;
  * This class represents the workerPool of the workers for the given work directory.
  */
 public class WorkerPool {
-    private static final Logger LOGGER = me.biesaart.utils.Log.get();
 
     private final Path workDirectory;
     private final int poolCardinality;
@@ -47,19 +45,19 @@ public class WorkerPool {
      * Allocate worker for the robot.
      * It can create new worker or reuse free existing worker or throw an exception if no worker can be created and reused.
      *
-     * @param robotFQN The robot fully qualified name.
-     * @return The allocated worker.
-     * @throws RobotNotFoundException if the robot was not found.
-     * @throws AllocateWorkerException there are no resource available for worker allocation.
-     * @throws RobotNotFoundException when the robot is not found.
-     * @throws CompileException when the compilation of the robot has failed.
+     * @param robotFQN the robot fully qualified name
+     * @return the allocated worker
+     * @throws RobotNotFoundException  if the robot was not found
+     * @throws AllocateWorkerException there are no resource available for worker allocation
+     * @throws RobotNotFoundException  when the robot is not found
+     * @throws CompileException        when the compilation of the robot has failed
      */
     public Worker allocateWorker(final String robotFQN) throws BaseException {
         synchronized (workerPool) {
             checkWorkerPoolSize();
         }
 
-         // This operation includes compiling and can last longer time so it must be outside the synchronised block
+        // This operation includes compiling and can last longer time so it must be outside the synchronised block
         Worker worker = createWorker(robotFQN);
 
         synchronized (workerPool) {
@@ -82,11 +80,11 @@ public class WorkerPool {
     /**
      * Runs the worker (i.e. robot associated with the worker).
      *
-     * @param id The worker identificator.
-     * @param parameters The parameters for the robot run.
-     * @return The result of the robot run.
-     * @throws InvalidStateException if the worker is not in IDLE state.
-     * @throws RobotNotFoundException when the robot is not found.
+     * @param id         the worker's ID
+     * @param parameters The parameters for the robot run
+     * @return the result of the robot run
+     * @throws InvalidStateException  if the worker is not in IDLE state
+     * @throws RobotNotFoundException when the robot is not found
      */
     public Object runWorker(WorkerID id, final Map<String, Object> parameters) throws InvalidStateException, RobotNotFoundException {
         Worker worker;
@@ -100,9 +98,9 @@ public class WorkerPool {
     /**
      * Stops running worker (i.e. stop robot associated with the worker).
      *
-     * @param id The worker identificator.
-     * @throws RobotNotFoundException when the robot is not found.
-     * @throws InvalidStateException if the worker is not in RUNNING state.
+     * @param id the worker's ID
+     * @throws RobotNotFoundException when the robot is not found
+     * @throws InvalidStateException  if the worker is not in RUNNING state
      */
     public void stopWorker(WorkerID id) throws RobotNotFoundException, InvalidStateException {
         Worker worker;
@@ -114,11 +112,11 @@ public class WorkerPool {
     }
 
     /**
-     * Find the worker in the worker workerPool.
+     * Finds the worker in the worker workerPool.
      *
-     * @param workerId The identifier of the worker.
-     * @return The found Worker.
-     * @throws RobotNotFoundException if the worker was not found.
+     * @param workerId the identifier of the worker
+     * @return the found Worker
+     * @throws RobotNotFoundException if the worker was not found
      */
     Worker findWorker(WorkerID workerId) throws RobotNotFoundException {
         if (!workerPool.containsKey(workerId)) {
@@ -128,11 +126,11 @@ public class WorkerPool {
     }
 
     /**
-     * Release the worker in the worker workerPool.
+     * Releases the worker in the worker workerPool.
      *
-     * @param workerId The identifier of the worker.
-     * @throws RobotNotFoundException if the worker was not found.
-     * @throws InvalidStateException if the worker is not in IDLE state.
+     * @param workerId the ID of the worker
+     * @throws RobotNotFoundException if the worker was not found
+     * @throws InvalidStateException  if the worker is not in IDLE state
      */
     public void releaseWorker(WorkerID workerId) throws RobotNotFoundException, InvalidStateException {
         synchronized (workerPool) {
@@ -146,7 +144,7 @@ public class WorkerPool {
     }
 
     /**
-     * Release all workers in the worker workerPool.
+     * Releases all workers in the worker workerPool.
      */
     public void releaseAllWorkers() {
         synchronized (workerPool) {
@@ -156,9 +154,9 @@ public class WorkerPool {
     }
 
     /**
-     * This is helper method for testing.
+     * Helper method for testing.
      *
-     * @return the number of items in the worker pool.
+     * @return the number of items in the worker pool
      */
     int getPoolSize() {
         return workerPool.size();

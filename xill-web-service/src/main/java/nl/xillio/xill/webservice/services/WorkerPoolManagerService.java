@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,32 +27,32 @@ import java.util.Optional;
  */
 public interface WorkerPoolManagerService {
     /**
-     * Create new or return existing WorkerPool for given projectId.
+     * Creates new or return existing WorkerPool for given projectId.
      *
-     * @param workDirectory The project directory. For the moment, it's not used as there is no support for projects yet.
-     * @return The WorkerPool for given workDirectory that has been created or reused. For the moment, it always returns one WorkerPool as there is no support for projects yet.
+     * @param workDirectory the project directory. For the moment, it's not used as there is no support for projects yet.
+     * @return the po0ol for given workDirectory that has been created or reused. For the moment, it always returns one WorkerPool as there is no support for projects yet.
      */
     WorkerPool getWorkerPool(final Path workDirectory);
 
     /**
-     * Get the default {@link WorkerPool} based on configuration. The worker pool is instantiated if necessary.
+     * Gets the default pool based on configuration. The worker pool is instantiated if necessary.
      *
      * @return the default worker pool for this service
      */
     WorkerPool getDefaultWorkerPool();
 
     /**
-     * Return existing WorkerPool for given projectId.
+     * Returns existing pool for given project.
      *
-     * @param projectId The project id. For the moment, it's not used as there is no support for projects yet.
-     * @return The existing WorkerPool for given projectId.
+     * @param projectId the project id. For the moment, it's not used as there is no support for projects yet.
+     * @return the existing pool for given projectId
      */
     Optional<WorkerPool> findWorkerPool(final WorkerID projectId);
 
     /**
-     * Get all worker pools.
+     * Gets all worker pools.
      *
-     * @return The list of all worker pools.
+     * @return the list of all worker pools
      */
     List<WorkerPool> getAllWorkerPools();
 }

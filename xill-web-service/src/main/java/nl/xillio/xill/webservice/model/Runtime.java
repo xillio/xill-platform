@@ -32,26 +32,27 @@ import java.util.Map;
 public interface Runtime extends AutoCloseable {
 
     /**
-     * Compile a robot for future execution.
+     * Compiles a robot for future execution.
      *
-     * @param workDirectory The working directory
-     * @param robotFQN The robot's fully qualified name
-     * @throws CompileException if the robot could not be (re) compiles
+     * @param workDirectory the working directory
+     * @param robotFQN the robot's fully qualified name
+     * @throws CompileException if the robot could not be (re) compiled
+     * @throws RobotNotFoundException if the robot can not be found
      */
     void compile(Path workDirectory, String robotFQN) throws CompileException, RobotNotFoundException;
 
     /**
-     * Run the robot that was compiled by calling {@link #compile(Path, String)}.
+     * Runs the robot that was compiled by calling {@link #compile(Path, String)}.
      *
      * This method runs a single robot with low latency in a blocking fashion.
      *
-     * @param parameters The parameters to be passed as the robot's arguments
-     * @return The robot's return value
+     * @param parameters the parameters to be passed as the robot's arguments
+     * @return the robot's return value
      */
     Object runRobot(Map<String, Object> parameters);
 
     /**
-     * Abort a currently running robot.
+     * Aborts a currently running robot.
      *
      * This method will effectively stop a call to {@link #runRobot(Map)}
      * before the robot has fully finished running.
@@ -59,7 +60,7 @@ public interface Runtime extends AutoCloseable {
     void abortRobot();
 
     /**
-     * Shut down the this Xill runtime and associated resources
+     * Shuts down the this runtime and associated resources.
      */
     @Override
     void close();

@@ -84,11 +84,11 @@ public class RuntimeImpl implements Runtime, DisposableBean {
     private long abortTimeoutMillis;
 
     /**
-     * Create a new runtime.
+     * Creates a new runtime.
      *
-     * @param xillEnvironment The xill environment used for running robots. Is private to this runtime and will be closed when the runtime is closed.
-     * @param outputHandler The handler for robot output.
-     * @param compileExecutor The executor for asynchronously recompiling robots after a run.
+     * @param xillEnvironment the xill environment used for running robots. Is private to this runtime and will be closed when the runtime is closed.
+     * @param outputHandler the handler for robot output
+     * @param compileExecutor the executor for asynchronously recompiling robots after a run
      */
     @Inject
     public RuntimeImpl(XillEnvironment xillEnvironment, OutputHandler outputHandler, @Qualifier("robotCompileThreadPool") ThreadPoolTaskExecutor compileExecutor) {
@@ -164,10 +164,10 @@ public class RuntimeImpl implements Runtime, DisposableBean {
     }
 
     /**
-     * Create a MetaExpression containing a stream from an object
+     * Creates a MetaExpression containing a stream from an object.
      *
-     * @param input The object to wrap in a MetaExpression
-     * @return A MetaExpression if {@code input} is an {@link InputStream}, null otherwise
+     * @param input the object to wrap in a MetaExpression
+     * @return a MetaExpression if {@code input} is an {@link InputStream}, null otherwise
      */
     private MetaExpression getStream(Object input) {
         if (input instanceof InputStream) {
@@ -230,14 +230,14 @@ public class RuntimeImpl implements Runtime, DisposableBean {
     }
 
     /**
-     * @return The maximum time a call to abort a robot will block
+     * @return the maximum time a call to abort a robot will block
      */
     public long getAbortTimeoutMillis() {
         return abortTimeoutMillis;
     }
 
     /**
-     * @param abortTimeoutMillis The maximum time a call to abort a robot will block
+     * @param abortTimeoutMillis the maximum time a call to abort a robot will block
      */
     public void setAbortTimeoutMillis(long abortTimeoutMillis) {
         this.abortTimeoutMillis = abortTimeoutMillis;

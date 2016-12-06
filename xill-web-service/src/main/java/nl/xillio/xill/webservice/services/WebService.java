@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,41 +36,42 @@ public class WebService {
     }
 
     /**
-     * Allocate a worker for a specific robot if a space is available.
+     * Allocates a worker for a specific robot if a space is available.
      *
-     * @param robotFQN the robot identificator that should be connected to a worker
+     * @param robotFQN the robot ID that should be associated to a worker
      * @return the identifier for the worker
+     * @throws BaseException
      */
     public WorkerID allocateWorker(String robotFQN) throws BaseException {
         return workerPoolManagerService.getDefaultWorkerPool().allocateWorker(robotFQN).getId();
     }
 
     /**
-     * Release the worker with a specific identifier.
+     * Releases the worker with a specific identifier.
      *
      * @param id the identifier of the worker
-     * @throws RobotNotFoundException if the worker does not exist.
-     * @throws InvalidStateException if the worker is not in the required (RUNNING) state.
+     * @throws RobotNotFoundException if the worker does not exist
+     * @throws InvalidStateException if the worker is not in the required (RUNNING) state
      */
     public void releaseWorker(WorkerID id) throws RobotNotFoundException, InvalidStateException {
         workerPoolManagerService.getDefaultWorkerPool().releaseWorker(id);
     }
 
     /**
-     * Release all workers in all worker pools
+     * Releases all workers in all worker pools.
      */
     public void releaseAllWorkers() {
         workerPoolManagerService.getDefaultWorkerPool().releaseAllWorkers();
     }
 
     /**
-     * Run existing worker (i.e. run robot associated with the worker)
+     * Runs existing worker (i.e. run robot associated with the worker).
      *
-     * @param id The Worker id.
-     * @param parameters The parameters used for the associated robot run.
-     * @return The result from robot run.
-     * @throws RobotNotFoundException if the worker does not exist.
-     * @throws InvalidStateException if the worker is not in the required (IDLE) state.
+     * @param id the Worker id
+     * @param parameters the parameters used for the associated robot run
+     * @return the result from robot run
+     * @throws RobotNotFoundException if the worker does not exist
+     * @throws InvalidStateException if the worker is not in the required (IDLE) state
      */
     public Object runWorker(WorkerID id, final Map<String, Object> parameters) throws RobotNotFoundException, InvalidStateException {
         return workerPoolManagerService.getDefaultWorkerPool().runWorker(id, parameters);
@@ -79,9 +80,9 @@ public class WebService {
     /**
      * Interrupt and stop the running worker (i.e. associated robot).
      *
-     * @param id The Worker id.
-     * @throws RobotNotFoundException if the worker does not exist.
-     * @throws InvalidStateException if the worker is not in the required (RUNNING) state.
+     * @param id the Worker id
+     * @throws RobotNotFoundException if the worker does not exist
+     * @throws InvalidStateException if the worker is not in the required (RUNNING) state
      */
     public void stopWorker(WorkerID id) throws RobotNotFoundException, InvalidStateException {
         workerPoolManagerService.getDefaultWorkerPool().stopWorker(id);

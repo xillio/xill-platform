@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,9 @@ package nl.xillio.xill.webservice;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.xillio.xill.webservice.exceptions.*;
+import nl.xillio.xill.webservice.exceptions.BaseException;
+import nl.xillio.xill.webservice.exceptions.InvalidStateException;
+import nl.xillio.xill.webservice.exceptions.RobotNotFoundException;
 import nl.xillio.xill.webservice.services.WebService;
 import nl.xillio.xill.webservice.types.WorkerID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +55,8 @@ public class WebServiceController {
     /**
      * This is for the testing purposes only.
      *
-     * @return The info about this web service.
+     * @return the info about this web service
+     * @throws RobotNotFoundException if the robot can not be found
      */
     @RequestMapping(path = "ping", method = RequestMethod.GET)
     @ResponseBody
@@ -72,12 +75,13 @@ public class WebServiceController {
     }
 
     /**
-     * Allocate worker for the robot.
+     * Allocates a worker for the robot.
      *
-     * @param robotFQN The robot identificator.
-     * @param request The request.
-     * @param response The response.
-     * @return The worker id.
+     * @param robotFQN the robot ID
+     * @param request the request
+     * @param response the response
+     * @return the worker id
+     * @throws BaseException
      */
     @RequestMapping(value = "workers", method = RequestMethod.POST)
     @ResponseBody
@@ -100,9 +104,9 @@ public class WebServiceController {
     }
 
     /**
-     * Release existing worker - i.e. detach the robot associated with the worker.
+     * Releases an existing worker (i.e. detach the robot associated with the worker).
      *
-     * @param workerId The worker id.
+     * @param workerId the worker id
      */
     @RequestMapping(value = "worker/{id}", method = RequestMethod.DELETE)
     @ResponseBody
@@ -120,11 +124,11 @@ public class WebServiceController {
     }
 
     /**
-     * Run the worker (i.e run the robot associated with the worker).
+     * Runs the worker (i.e run the robot associated with the worker).
      *
-     * @param workerId The worker id.
-     * @param requestBody The parameters used for the associated robot run.
-     * @return The result from robot run.
+     * @param workerId the worker id
+     * @param requestBody the parameters used for the associated robot run
+     * @return the result from robot run
      */
     @RequestMapping(value = "worker/{id}/run", method = RequestMethod.POST,
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
@@ -147,10 +151,10 @@ public class WebServiceController {
     }
 
     /**
-     * Handle a robot return value. Handles input streams as a special case.
+     * Handles a robot return value. Handles input streams as a special case.
      *
-     * @param result The robot result
-     * @return An object that can be handled by Spring
+     * @param result the robot's result
+     * @return an object that can be handled by Spring
      */
     private Object parseRobotResult(Object result) {
         if (result instanceof InputStream) {
@@ -164,10 +168,10 @@ public class WebServiceController {
     }
 
     /**
-     * Stop running worker (i.e stop running robot associated with the worker).
+     * Stops a running worker (i.e stops the running robot associated with the worker).
      *
-     * @param workerId The worker id.
-     * @param response The response.
+     * @param workerId the worker id.
+     * @param response the response
      */
     @RequestMapping(value = "worker/{id}/stop", method = RequestMethod.POST)
     @ResponseBody

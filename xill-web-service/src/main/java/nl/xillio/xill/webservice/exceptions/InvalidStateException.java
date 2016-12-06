@@ -19,7 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Thrown when a method is called on an object when that object is in invalid state.
+ * Thrown when a method is called on an object when that object is an invalid state.
  *
  * @author Geert Konijnendijk
  */
