@@ -18,11 +18,17 @@
 -->
 <function>
     <description>
-Creates an empty folder at the target `path` if it doesn't exist and returns the absolute path to that folder.
-
+Creates an empty folder at the target `path` if no such folder exists, and returns the absolute path to that folder.
+    </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="path">
+The path at which the folder will be made.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
 Any necessary folders will be created in order to create this empty folder.
 For example "some/longer/pathName" will create the folder "some" and "longer", if these didn't exist yet, in order to make the "pathName" empty folder.
-    </description>
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Create a folder</header>

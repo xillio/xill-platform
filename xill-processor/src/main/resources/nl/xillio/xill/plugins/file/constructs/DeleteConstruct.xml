@@ -18,9 +18,17 @@
 -->
 <function>
     <description>
-Deletes the file or folder at the given `path` if it points to a valid file or folder and returns the absolute path this file or folder used to be located at.
-If this does not point to a valid file or folder, nothing will happen.
+Deletes the file or folder at the given `path`.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="path">
+The path to the file/folder that will be deleted.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Returns the absolute path to where the file or folder used to be located.
+If 'path' does not point to a valid file or folder, nothing will happen.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Create and delete a folder:</header>

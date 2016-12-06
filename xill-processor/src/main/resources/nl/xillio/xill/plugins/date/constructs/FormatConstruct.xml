@@ -38,8 +38,8 @@ The `format` parameter can be composed using various symbols. The most commonly 
 | m      | minute-of-hour           | number        | 55                     |
 | s      | second-of-minute         | number        | 30                     |
 | a      | am/pm                    | text          | PM;                    |
-| '      | escape for text ('text') | delimiter     |                        |
-| ''     | literal '                | literal       | '                      |
+| \'     | escape for text ('text') | delimiter     |                        |
+| \"     | literal \'               | literal       | \'                      |
 
 The Symbol column in the table lists the symbols that may directly be used in the `format` parameter. The way the value that corresponds to the symbol is represented, depends on the number of characters used in the symbol. For example: using "M" would result in "8", while "MM" results in "08" and "MMM" results in "Aug". A more thorough description of how these values are represented and what other options are available, can be found in [Java's pattern definition](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns).
 

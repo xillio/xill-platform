@@ -18,11 +18,18 @@
 -->
 <function>
     <description>
-Returns an iterator used to loop over all files in the folder at the given `path`.
-
-If `recursive` is set to `true` all files in sub folders will also be iterated. If it is set to `false` only the given folder will be iterated.
-`recursive` is set to `false` by default.
+Returns an iterator that can be used to loop over all files in the folder at the given `path`.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="path">
+The path that will be checked.
+This can be either a file or a folder, relative or absolute.
+        </parameterDescription>
+		<parameterDescription parameterName="recursive">
+If set to `true` all files in sub folders will also be iterated. If set to `false` only the given folder will be iterated.
+'false` by default.
+		</parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Print all files in a folder</header>

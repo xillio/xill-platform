@@ -23,6 +23,15 @@ Read all text from a file.
     <deprecated>
 This construct is deprecated, use the Stream package to read or write files.
     </deprecated>
+	<parameterDescriptions>
+		<parameterDescription parameterName="path">
+The path to which the rights will be checked.
+This can be either a file or a folder, relative or absolute.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Returns `true` if the file or folder exists or otherwise `false`.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Read text from a file</header>
