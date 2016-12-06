@@ -129,8 +129,8 @@ public class HotkeysHandler {
         hotkeys.put(Hotkeys.DUPLICATELINES, new Hotkey("Shortcut+D", Settings.DUPLICATE_LINES, "Shortcut to duplicate selected lines", "tfduplicatelines"));
         hotkeys.put(Hotkeys.RENAME, new Hotkey("F2", Settings.RENAME, "Shortcut to rename the selected file/folder.", "tfrename"));
         hotkeys.put(Hotkeys.PRINT, new Hotkey("Shortcut+Shift+P", Settings.PRINT, "Shortcut to print the currently open robot", "tfprint"));
-        hotkeys.put(Hotkeys.PULL, new Hotkey("Shortcut+DOWN", Settings.PULL, "Shortcut to pull changes for the project of the currently open robot", "tfpull"));
-        hotkeys.put(Hotkeys.PUSH, new Hotkey("Shortcut+UP", Settings.PUSH, "Shortcut to push changes for the project of the currently open robot", "tfpush"));
+        hotkeys.put(Hotkeys.PULL, new Hotkey("Shortcut+Shift+D", Settings.PULL, "Shortcut to pull changes for the project of the currently open robot", "tfpull"));
+        hotkeys.put(Hotkeys.PUSH, new Hotkey("Shortcut+Shift+U", Settings.PUSH, "Shortcut to push changes for the project of the currently open robot", "tfpush"));
     }
 
     /**
