@@ -25,7 +25,9 @@ If this does not point to a valid file or folder, nothing will happen.
         <example title="Usage">
             <header>Create and delete a folder:</header>
             <code>
-                use File, System;
+                use File;
+                use System;
+
                 var folder = File.createFolder("toBeDeleted");
                 File.delete(folder);
                 System.print(File.exists(folder));

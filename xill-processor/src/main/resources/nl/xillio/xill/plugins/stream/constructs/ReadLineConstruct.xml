@@ -28,7 +28,9 @@ If the input `stream` has already reached the end an error will be thrown.
         <example title="Usage">
             <header>Read the first three line from a file</header>
             <code>
-                use File, Stream, System;
+                use File;
+                use Stream;
+                use System;
 
                 var file = File.openRead("./file.txt");
 

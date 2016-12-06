@@ -24,7 +24,9 @@ Tests whether the `path` points to a folder returning `true` if it is a folder, 
         <example title="Usage">
             <header>Determine if the path points to a folder or not.</header>
             <code>
-                use File, System, Stream;
+                use File;
+                use System;
+                use Stream;
 
                 // We create a file that we can work with.
                 var path = "TestFile.txt";

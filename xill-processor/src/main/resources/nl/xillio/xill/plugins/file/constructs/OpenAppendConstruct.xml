@@ -24,7 +24,8 @@ Returns a stream that will write to the end of a file at the given `path`. This 
         <example title="Usage">
             <header>Append three lines to a file</header>
             <code>
-                use File, Stream;
+                use File;
+                use System;
 
                 var target = File.openAppend("./target.txt");
 

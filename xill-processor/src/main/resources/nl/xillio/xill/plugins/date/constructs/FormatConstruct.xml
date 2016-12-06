@@ -51,7 +51,8 @@ Text can be shown by putting single quotation marks around it. For example: "'Cu
         <example title="Usage">
             <header>Printing the formatted current datetime.</header>
             <code>
-use System, Date;
+use System;
+use Date;
 var date = Date.now();
 System.print(Date.format(date));
             </code>

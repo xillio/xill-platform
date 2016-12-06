@@ -32,11 +32,9 @@ The list of earlier bodies.
         </parameterDescription>
     </parameterDescriptions>
 	<longDescription>
-This construct is a convenience function, it will NOT persist or validate a document. It simply provides an easy
-way to build a document.
+This construct is a convenience function, it will NOT persist or validate a document. It simply provides an easy way to build a document.
 
-There are three possible parameters for this construct: The content type name, the body of the current version
-and an optional list of bodies for the version history.
+There are three possible parameters for this construct: The content type name, the body of the current version and an optional list of bodies for the version history.
 	</longDescription>
     <examples>
         <example title="Usage">

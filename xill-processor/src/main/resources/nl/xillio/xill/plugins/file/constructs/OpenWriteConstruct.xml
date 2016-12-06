@@ -24,7 +24,8 @@ Returns a stream that will write to the start of a file at the given `path`. Thi
         <example title="Usage">
             <header>Write three lines to a file</header>
             <code>
-                use File, Stream;
+                use File;
+                use System;
 
                 // Open the file
                 var target = File.openWrite("target.txt");
@@ -36,7 +37,9 @@ Returns a stream that will write to the start of a file at the given `path`. Thi
             </code>
             <header>Copy a file</header>
             <code>
-                use File, Stream, System;
+                use File;
+                use System;
+                use Stream;
 
                 // We create a file called "TestFile.txt".
                 var path = "TestFile.txt";

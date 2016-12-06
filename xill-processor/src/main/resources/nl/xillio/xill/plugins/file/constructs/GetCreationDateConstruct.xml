@@ -26,7 +26,8 @@ The existence of the file or folder at the given `path` should be checked before
         <example title="Usage">
             <header>Print date of creation from files in a directory:</header>
             <code>
-                use System, File;
+                use File;
+                use System;
 
                 // Provide us all files in the current directory.
                 // Substitute false with true to include subfolders as well.

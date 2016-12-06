@@ -46,7 +46,8 @@ The given parameters will sort each of those segments.
                 (Note: onKey option has no effect for lists)
             </header>
             <code>
-                use Collection, System;
+                use System;
+                use Collection;
 
                 var list = [2,1,"c","a",[1,2],[4,3],{"a":2,"b":1},{"1":"a","2":"z"}];
 
@@ -69,7 +70,8 @@ The given parameters will sort each of those segments.
                 Examples on how to use sorting for objects
             </header>
             <code>
-                use Collection, System;
+                use System;
+                use Collection;
 
                 var obj = {
                     "0": 50,

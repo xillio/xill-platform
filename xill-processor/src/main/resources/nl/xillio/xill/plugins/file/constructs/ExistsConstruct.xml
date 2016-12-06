@@ -25,7 +25,8 @@ Check if a file or folder exists on the given `path` and returns `true` if the f
         <example title="Usage">
             <header>Create and verify a folder</header>
             <code>
-                use File, System;
+                use File;
+                use System;
 
                 var folder = File.createFolder("toBeDeleted");
                 if(!File.exists(folder)) {

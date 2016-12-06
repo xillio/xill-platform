@@ -24,7 +24,9 @@ Returns a stream with read access to a file at a given `path`. This construct wi
         <example title="Usage">
             <header>Open a stream and read the text content</header>
             <code>
-                use File, Stream, System;
+                use File;
+                use System;
+                use Stream;
 
                 // We create a file that we can work with.
                 var path = "TestFile.txt";
@@ -39,7 +41,9 @@ Returns a stream with read access to a file at a given `path`. This construct wi
             </code>
             <header>Copy a file</header>
             <code>
-                use File, Stream, System;
+                use File;
+                use System;
+                use Stream;
 
                 // We create a file called "TestFile.txt".
                 var path = "TestFile.txt";

@@ -25,7 +25,9 @@ This will overwrite it if it exists and return an object containing the source d
         <example title="Usage">
             <header>Copy a file</header>
             <code>
-                use File, System, Stream;
+                use File;
+                use System;
+                use Stream;
 
                 // This creates a test file which we can run canExecute on.
                 var path = "TestFile.txt";

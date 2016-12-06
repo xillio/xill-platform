@@ -28,7 +28,8 @@ The collection which's length will be checked.
     <examples>
         <example title="Usage">
             <code>
-                use Collection, System;
+                use System;
+                use Collection;
 
                 var list = ["a","b","c","d","e"]; //list with five elements
                 System.print(Collection.length(list)); // 5

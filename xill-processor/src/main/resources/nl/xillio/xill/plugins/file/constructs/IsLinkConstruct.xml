@@ -24,7 +24,8 @@ Tests whether the file identified by the given `path` is a symbolic link returni
         <example title="Usage">
             <header>Determine if the file at path is a link to another file or directory.</header>
             <code>
-                use File, System;
+                use File;
+                use System;
 
                 // We create a link which we can work with
                 System.exec( ["cmd.exe", "/C",

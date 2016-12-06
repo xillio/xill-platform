@@ -33,7 +33,8 @@ parameter is a string, the inputCharset is ignored.
         <example title="Usage">
             <header>Write 3 lines to a file</header>
             <code>
-                use File, Stream;
+                use File;
+                use Stream;
 
                 var target = File.openWrite("./target.txt");
 
@@ -43,7 +44,8 @@ parameter is a string, the inputCharset is ignored.
             </code>
             <header>Copy a file</header>
             <code>
-                use File, Stream;
+                use File;
+                use Stream;
 
                 var source = File.openRead("./source.txt");
                 var target = File.openWrite("./source-copy.txt");

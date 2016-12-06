@@ -26,7 +26,8 @@ The `outputs` parameter must be a list of at least two streams.
         <example title="Usage">
             <header>Make two copies of a file</header>
             <code>
-                use File, Stream;
+                use File;
+                use Stream;
 
                 var source = File.openRead("./source.txt");
                 var output = Stream.fork([

@@ -30,7 +30,8 @@ If no parameter or a negative number is provided, a random floating point number
     <examples>
         <example title="Get a number between 1 and 6 (inclusive)">
             <code>
-                use Math, System;
+                use Math;
+                use System;
 
                 // Note that we add 1 to the result, to get a number between 1 and 6 inclusive.
                 System.print(Math.random(6) + 1);
@@ -38,7 +39,8 @@ If no parameter or a negative number is provided, a random floating point number
         </example>
         <example title="Get a random item from a list">
             <code>
-                use Math, System;
+                use Math;
+                use System;
 
                 var list = ["monday", "tuesday", "wednesday", "thursday", "friday"];
                 System.print(Math.random(list));
@@ -46,7 +48,8 @@ If no parameter or a negative number is provided, a random floating point number
         </example>
         <example title="Get a random number between 0 and 1">
             <code>
-                use Math, System;
+                use Math;
+                use System;
 
                 System.print(Math.random());
             </code>

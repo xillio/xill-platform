@@ -25,7 +25,9 @@ Determines if the currently authenticated user has write access to the specified
         <example title="Usage">
             <header>Determine if an authenticated user has write access to the specified file or folder.</header>
             <code>
-                use File, System, Stream;
+                use File;
+                use System;
+                use Stream;
 
                 // This creates a test file which we can work with.
                 var path = "TestFile.txt";

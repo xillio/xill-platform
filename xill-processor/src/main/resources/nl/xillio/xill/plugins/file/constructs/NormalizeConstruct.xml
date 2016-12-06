@@ -24,7 +24,8 @@ Returns an absolute path that is the input `path` with redundant name elements e
         <example title="Usage">
             <header>Clean up a complex path</header>
             <code>
-                use File, System;
+                use File;
+                use System;
 
                 var complexPath = "test/folder/../might/./../../not/../exist/.././data";
                 var path = File.normalize(complexPath);
@@ -34,7 +35,8 @@ Returns an absolute path that is the input `path` with redundant name elements e
             </code>
             <header>Get the path of the folder containing this robot</header>
             <code>
-                use File, System;
+                use File;
+                use System;
 
                 var folder = File.normalize(".");
                 System.print(folder);

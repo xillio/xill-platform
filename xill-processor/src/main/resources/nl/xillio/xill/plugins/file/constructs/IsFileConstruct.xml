@@ -24,7 +24,9 @@ Tests whether the `path` points to file returning `true` if it is a file, or `fa
         <example title="Usage">
             <header>Determine if the path points to a normal file or not.</header>
             <code>
-                use File, System, Stream;
+                use File;
+                use System;
+                use Stream;
 
                 // We create a file that we can work with.
                 var path = "TestFile.txt";

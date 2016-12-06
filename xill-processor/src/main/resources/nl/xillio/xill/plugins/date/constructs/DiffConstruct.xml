@@ -36,28 +36,28 @@ The return value is an object with the following fields:
 
 | Field | Description |
 | ---------- | ----------- |
-| totalMillis | The total difference expressed in milliseconds only |
-| totalSeconds | The total difference expressed in seconds only |
-| totalMinutes | The total difference expressed in minutes only |
-| totalHours | The total difference expressed in hours only |
-| totalDays | The total difference expressed in days only |
-| totalWeeks | The total difference expressed in weeks only |
-| totalMonths | The total difference expressed in months only |
-| totalYears| The total difference expressed in years only |
-| totalDecades | The total difference expressed in decades only |
-| totalCenturies | The total difference expressed in centuries only |
-| totalMillennia | The total difference expressed in millennia only |
-| millennia | The whole amount of millennia in the difference |
-| centuries | The whole amount of centuries in the difference after subtraction of `millennia` |
-| decades | The whole amount of decades in the difference after subtraction of `centuries` |
-| years | The whole amount of years in the difference after subtraction of `decades` |
-| months | The whole amount of months in the difference after subtraction of `years` |
-| weeks | The whole amount of weeks in the difference after subtraction of `months` |
-| days | The whole amount of days in the difference after subtraction of `weeks` |
-| hours | The whole amount of hours in the difference after subtraction of `days` |
-| minutes | The whole amount of minutes in the difference after subtraction of `hours` |
-| seconds | The whole amount of seconds in the difference after subtraction of `minutes` |
-| millis | The whole amount of millis in the difference after subtraction of `seconds` |
+| totalMillis    | The total difference expressed in milliseconds only                              |
+| totalSeconds   | The total difference expressed in seconds only                                   |
+| totalMinutes   | The total difference expressed in minutes only                                   |
+| totalHours     | The total difference expressed in hours only                                     |
+| totalDays      | The total difference expressed in days only                                      |
+| totalWeeks     | The total difference expressed in weeks only                                     |
+| totalMonths    | The total difference expressed in months only                                    |
+| totalYears     | The total difference expressed in years only                                     |
+| totalDecades   | The total difference expressed in decades only                                   |
+| totalCenturies | The total difference expressed in centuries only                                 |
+| totalMillennia | The total difference expressed in millennia only                                 |
+| millennia      | The whole amount of millennia in the difference                                  |
+| centuries      | The whole amount of centuries in the difference after subtraction of `millennia` |
+| decades        | The whole amount of decades in the difference after subtraction of `centuries`   |
+| years          | The whole amount of years in the difference after subtraction of `decades`       |
+| months         | The whole amount of months in the difference after subtraction of `years`        |
+| weeks          | The whole amount of weeks in the difference after subtraction of `months`        |
+| days           | The whole amount of days in the difference after subtraction of `weeks`          |
+| hours          | The whole amount of hours in the difference after subtraction of `days`          |
+| minutes        | The whole amount of minutes in the difference after subtraction of `hours`       |
+| seconds        | The whole amount of seconds in the difference after subtraction of `minutes`     |
+| millis         | The whole amount of millis in the difference after subtraction of `seconds`      |
 
 Result fields prefixed with _total_ contain the difference for that specific time unit only.
 The other fields contain the whole amount (floored) of the remaining difference after subtraction of its bigger time units.

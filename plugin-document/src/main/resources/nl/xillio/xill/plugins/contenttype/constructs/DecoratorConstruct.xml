@@ -32,16 +32,12 @@ The database that will be used.
         </parameterDescription>
     </parameterDescriptions>
     <longDescription>
-A decorator defines a set of fields, their types and whether they are mandatory or not. A content type is defined as
-a set of these decorators. Any document stored in the Universal Data Model, must specify a content type, which is then
-used to check if all decorator constraints are met.
+A decorator defines a set of fields, their types and whether they are mandatory or not. A content type is defined as a set of these decorators. Any document stored in the Universal Data Model, must specify a content type, which is then used to check if all decorator constraints are met.
 
 This construct will not push and persist the definition. This should be done using the `ContentType.save()` construct.
-Every field inside the decorator must contain 3 values: the name, the type and the optionality. In the examples
-below you can see how to build up these decorators.
+Every field inside the decorator must contain 3 values: the name, the type and the optionality. In the examples below you can see how to build up these decorators.
 
-The identity parameter determines which decorator cache will be used and to which database the decorators will be saved
-when `ContentType.save()` is called. For example, when identity is `default`, the `udm_default` database will be used.
+The identity parameter determines which decorator cache will be used and to which database the decorators will be saved when `ContentType.save()` is called. For example, when identity is `default`, the `udm_default` database will be used.
 
 Supported decorator types: BOOLEAN, STRING, NUMBER, DATE, LIST
     </longDescription>

@@ -24,7 +24,9 @@ Determines if the file or folder at the given `path` is hidden or not returning 
         <example title="Usage">
             <header>Determine if the specified file or folder is hidden or not.</header>
             <code>
-                use File, System, Stream;
+                use File;
+                use System;
+                use Stream;
 
                 // We create a file that we can work with.
                 var path = "TestFile.txt";

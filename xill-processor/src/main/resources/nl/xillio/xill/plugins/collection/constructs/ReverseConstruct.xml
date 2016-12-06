@@ -31,7 +31,8 @@ If set to true lists and objects inside the given list or object will also be re
     <examples>
         <example title="Usage">
             <code>
-                use Collection, System;
+                use System;
+                use Collection;
 
                 var list1 = [1,2,3,4,5];
                 var list2 = [1,[1,2,3],2,3];

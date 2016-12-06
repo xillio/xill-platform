@@ -32,7 +32,8 @@ The date that will be checked against.
         <example title="Usage">
             <header>Comparsion of two dates.</header>
             <code>
-                use System, Date;
+                use System;
+                use Date;
                 var date1 = Date.of(2015, 12, 31, 10, 5, 0);
                 var date2 = Date.of(2015, 12, 30, 1, 0, 0);
                 

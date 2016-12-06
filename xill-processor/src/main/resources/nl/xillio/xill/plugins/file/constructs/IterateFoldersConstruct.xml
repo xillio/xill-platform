@@ -29,7 +29,8 @@ The iterator returns an object containing various pieces of information about th
         <example title="Usage">
             <header>Executing</header>
             <code>
-                use File, System;
+                use File;
+                use System;
 
                 var iterator = File.iterateFolders("C:/Users");
                 foreach(folder in iterator) {

@@ -27,7 +27,8 @@ If `recursive` is set to `true` all files in sub folders will also be iterated. 
         <example title="Usage">
             <header>Print all files in a folder</header>
             <code>
-                use File, System;
+                use File;
+                use System;
 
                 var iterator = File.iterateFiles(".", true);
                 foreach(file in iterator) {

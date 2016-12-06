@@ -26,7 +26,9 @@ If you provide a value for the `limit` parameter the amount of bytes read from t
         <example title="Usage">
             <header>Read text from a file</header>
             <code>
-                use File, Stream, System;
+                use File;
+                use Stream;
+                use System;
 
                 var file = File.openRead("./file.txt");
                 var text = Stream.getText(file);
@@ -34,7 +36,9 @@ If you provide a value for the `limit` parameter the amount of bytes read from t
             </code>
             <header>Read the first 20 bytes from a file</header>
             <code>
-                use File, Stream, System;
+                use File;
+                use Stream;
+                use System;
 
                 var file = File.openRead("./file.txt");
                 var text = Stream.getText(file, "UTF-8", 20);

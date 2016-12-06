@@ -31,7 +31,8 @@ The key or index of the item that will be removed.
     <examples>
         <example title="Usage">
             <code>
-                use Collection, System;
+                use System;
+                use Collection;
 
                 var list = ["a","b","c","d"];
                 System.print(Collection.remove(list,2));

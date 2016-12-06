@@ -29,7 +29,8 @@ The date that will be used.
         <example title="Usage">
             <header>Showing information about the given datetime.</header>
             <code>
-                use System,Date;
+                use System;
+                use Date;
 
                 var date = Date.of(2015, 12, 31, 10, 5, 0);
                 var info = Date.info(date);

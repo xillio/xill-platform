@@ -21,13 +21,15 @@
 Get the MIME type of a file as a string value containing the MIME type of the specified file, or null if it could not identify it.
 The MIME type is inferred from the extension. Therefore, the MIME type will be wrong if there is no (correct) extension.
 To get a more accurate result, the ExifTool can be used (although this might be slower).
-
     </description>
     <examples>
         <example title="Usage">
             <header>Get the MIME type</header>
             <code>
-                use File, System, Stream;
+                use File;
+                use System;
+                use Stream;
+
                 // This creates a test file which we can work with.
                 var path = "TestFile.txt";
                 var testFile = File.openWrite(path);

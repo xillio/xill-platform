@@ -30,7 +30,9 @@ Parameter `replaceExisting` determines if the move operation can replace existin
         <example title="Usage">
             <header>Move a file</header>
             <code>
-                use File, System, Stream;
+                use File;
+                use System;
+                use Stream;
 
                 var path = "test/TestFile.txt";
                 var testFile = File.openWrite(path);

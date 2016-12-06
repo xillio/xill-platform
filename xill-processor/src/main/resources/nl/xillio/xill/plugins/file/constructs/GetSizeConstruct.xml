@@ -27,7 +27,9 @@ When using a relative path, its starting point is the containing folder of the r
         <example title="Usage">
             <header>Get the size of file</header>
             <code>
-                use File, System, Stream;
+                use File;
+                use System;
+                use Stream;
 
                 var path = "TestFile.txt";
                 var testFile = File.openWrite(path);

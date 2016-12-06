@@ -25,7 +25,9 @@ You can provide a regex pattern as `delimiter` that will split the input `stream
         <example title="Usage">
             <header>Read a file line by line</header>
             <code>
-                use File, Stream, System;
+                use File;
+                use Stream;
+                use System;
 
                 var file = File.openRead("path/to/file.txt");
 
@@ -35,7 +37,9 @@ You can provide a regex pattern as `delimiter` that will split the input `stream
             </code>
             <header>Read all words from a file</header>
             <code>
-                use File, Stream, System;
+                use File;
+                use Stream;
+                use System;
 
                 var file = File.openRead("path/to/file.txt");
                 var splitPattern = "[^\\w]+";

@@ -25,7 +25,9 @@ Tests if the currently authenticated user has execute rights to the specified fi
         <example title="Usage">
             <header>Determine if an authenticated user can execute a file or has execution rights in a folder.</header>
             <code>
-                use File, System, Stream;
+                use File;
+                use System;
+                use Stream;
 
                 // This creates a test file which we can work with.
                 var path = "TestFile.txt";
