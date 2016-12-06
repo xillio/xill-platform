@@ -26,11 +26,13 @@ import nl.xillio.xill.webservice.types.WorkerID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.ManualRestDocumentation;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.testng.annotations.AfterMethod;
@@ -264,15 +266,24 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 System.err.println(e.getMessage());
             }
         });
-        running.setDaemon(true);
         running.start();
 
-        // Terminate a running worker
-        this.mockMvc.perform(
-                delete(basePath + "/worker/" + id.getId())
-        )
-                // Should return 409 - CONFLICT
-                .andExpect(status().isConflict());
+
+        while (running.isAlive()) {
+            Thread.sleep(100);
+
+            // Terminate a running worker
+            MvcResult result = this.mockMvc.perform(
+                    delete(basePath + "/worker/" + id.getId())
+            ).andReturn();
+
+            // This test succeeds when conflict is returned
+            if (result.getResponse().getStatus() == HttpStatus.CONFLICT.value()) {
+                return;
+            }
+        }
+
+        throw new AssertionError("Deleting the worker did not return the correct return code");
     }
 
 
@@ -386,16 +397,24 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 System.err.println(e.getMessage());
             }
         });
-        running.setDaemon(true);
         running.start();
 
-        // Terminate a running worker
-        this.mockMvc.perform(
-                post(basePath + "/worker/" + id.getId() + "/stop")
-        )
-                // Should return 204 - NO CONTENT
-                .andExpect(status().isNoContent())
-                .andDo(document("terminate-worker"));
+
+        while (running.isAlive()) {
+            Thread.sleep(100);
+
+            // Terminate a running worker
+            MvcResult result = this.mockMvc.perform(
+                    post(basePath + "/worker/" + id.getId() + "/stop")
+            ).andReturn();
+
+            // This test succeeds when the robot is terminated
+            if (result.getResponse().getStatus() == HttpStatus.NO_CONTENT.value()) {
+                return;
+            }
+        }
+
+        throw new AssertionError("The robot was not terminated");
     }
 
     /**
