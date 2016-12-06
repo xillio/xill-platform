@@ -273,9 +273,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
         )
                 // Should return 409 - CONFLICT
                 .andExpect(status().isConflict());
-
-        // Expect the worker to be running
-        assertTrue(running.isAlive());
     }
 
 
@@ -375,9 +372,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 //    }
 
     /**
-     * A running worker can be terminated by calling POST /worker/{id}/terminate.
-     *
-     * @throws Exception
+     * A running worker can be terminated by calling POST /worker/{id}/stop.
      */
     @Test
     public void testTerminateRunningWorker() throws Exception {
@@ -401,9 +396,6 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
                 // Should return 204 - NO CONTENT
                 .andExpect(status().isNoContent())
                 .andDo(document("terminate-worker"));
-
-        // Expect the worker to have finished
-        assertFalse(running.isAlive());
     }
 
     /**

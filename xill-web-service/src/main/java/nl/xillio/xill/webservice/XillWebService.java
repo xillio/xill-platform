@@ -13,10 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.webservice.model;
+package nl.xillio.xill.webservice;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Created by andrea.parrilli on 2016-11-17.
+ * This application provides a simple web api that allows other actors to run robots quickly.
+ *
+ * @author Thomas Biesaart
  */
-public interface WorkerResult {
+@SpringBootApplication
+public class XillWebService {
+    public static void main(String[] args) {
+        SpringApplication.run(XillWebService.class, args);
+    }
 }

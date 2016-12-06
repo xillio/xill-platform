@@ -313,7 +313,8 @@ public class RuntimeImplTest extends TestUtils {
      */
     @Test
     public void testAbortRobot() throws CompileException, RobotNotFoundException {
-        // RunxillRuntime.compile(workingDir, RETURN_ROBOT_NAME);
+        // Run
+        runtime.compile(workingDir, RETURN_ROBOT_NAME);
         runtime.abortRobot();
 
         // verify
