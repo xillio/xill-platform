@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+This construct combines a template and a model using the given engine and writes the result to the provided output.
+
+This plugin uses a third-party library named FreeMarker to process the templates. For more information please
+check their [website](http://freemarker.org/docs/index.html).
+
+## Parameters
+
+### templateName
+
+The `templateName` parameter is mandatory and must contain the name and extension of the template file.
+This file must be located in the `templatesDirectory` of the (given) engine.
+
+
+### output
+
+The `output` parameter is mandatory and must contain a stream to which the template engine could write to.
+When willing to write to a file, use the `File` plugin.
+
+
+### model
+
+The `model` parameter is optional. This parameter must contain the data necessary to process the given template.
+When not providing this parameter (or giving an empty object) this would result in processing the template without
+any data.
+
+
+### engine
+
+The `engine` parameter is optional. This parameter must contain the engine to be for processing the templates.
+This engine is the value given from the `getEngine`-construct.
+When not providing this parameter this would result in using the default engine as described
+in the `getEngine`-construct.
+
+    </description>
+    <examples>
+        <example title="Default Usage">
+            <header>
+                The template named template.txt is located at the project's root directory.
+                The template gets combined with the provided model.
+                The result of the template-processing is written to the outputFolder
+                located at the project's root directory. The default engine is used here.
+            </header>
+            <code>
+                use Template, File;
+
+                var output = File.openWrite("outputFolder/output.txt");
+                var model = {
+                    "key1" : "value1",
+                    "key2" : "value2"
+                };
+
+                Template.process("template.txt", output , model);
+            </code>
+        </example>
+        <example title="Process without model">
+            <header>
+                In this example no model is used and the template.txt will be parsed as is.
+            </header>
+            <code>
+                use Template, File;
+
+                var output = File.openWrite("outputFolder/output.txt");
+
+                Template.process("template.txt", output);
+            </code>
+        </example>
+        <example title="Process with specified engine">
+            <header>
+                This example uses a specified engine to process the templates with.
+            </header>
+            <code>
+                use Template, File;
+
+                var options = {
+                    "templateDir" : "C:/tmp",
+                    "noCaching" : true
+                };
+                var output = File.openWrite("C:/tmp/output.txt");
+                var model = {
+                    "key1" : "value1",
+                    "key2" : "value2"
+                };
+
+                var config = Template.getEngine(options);
+                Template.process("template.txt", output , model, config);
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>getEngine</reference>
+        <reference>File.openWrite</reference>
+    </references>
+    <tags>
+        template, freemarker, process
+    </tags>
+</function>

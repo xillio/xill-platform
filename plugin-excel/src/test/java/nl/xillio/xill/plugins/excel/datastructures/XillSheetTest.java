@@ -215,4 +215,21 @@ public class XillSheetTest {
         verify(cellRef, times(6)).getColumn();
     }
 
+    /**
+     * Test {@link XillSheet#forceFormulaRecalculation()}
+     */
+    @Test
+    public void testForceFormulaRecalculation(){
+        // Mock
+        Sheet sheet = mock(Sheet.class);
+        XillWorkbook xillWorkbook = mock(XillWorkbook.class);
+        XillSheet xillSheet = new XillSheet(sheet, false, xillWorkbook);
+
+        // Run
+        xillSheet.forceFormulaRecalculation();
+
+        // Verify
+        verify(sheet).setForceFormulaRecalculation(true);
+    }
+
 }

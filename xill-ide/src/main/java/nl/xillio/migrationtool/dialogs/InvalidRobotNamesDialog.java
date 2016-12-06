@@ -52,12 +52,7 @@ public class InvalidRobotNamesDialog extends FXMLDialog {
     }
 
     @FXML
-    private void cancelBtnPressed(final ActionEvent event) {
-        close();
-    }
-
-    @FXML
-    private void skipBtnPressed(final ActionEvent event) {
+    private void okBtnPressed(final ActionEvent event) {
         canceled = false;
         close();
     }

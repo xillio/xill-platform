@@ -47,27 +47,53 @@ public class WordDistanceConstructTest extends TestUtils {
         MetaExpression relative = mockExpression(ATOMIC);
         when(relative.getBooleanValue()).thenReturn(relativeValue);
 
-        int distanceValue = 6;
-        int maxLength = 11;
-        StringUtilityService stringService = mock(StringUtilityService.class);
-        when(stringService.damlev(sourceValue, targetValue)).thenReturn(distanceValue);
+        double distanceValue = 1 - ((double) 2 / 11);
 
         //Run
-        WordDistanceConstruct construct = new WordDistanceConstruct(stringService);
+        WordDistanceConstruct construct = new WordDistanceConstruct();
         MetaExpression result = process(construct, source, target, relative);
 
         // Assert
-        Assert.assertEquals(result.getNumberValue().intValue(), distanceValue / maxLength);
+        Assert.assertEquals(result.getNumberValue(), distanceValue);
     }
 
     /**
      * Test the process method without relative distance.
      */
     @Test
-    public void processNullUsage() {
+    public void processAbsoluteUsage() {
 
         // Mock
         String sourceValue = "Lumberjack";
+        MetaExpression source = mockExpression(ATOMIC);
+        when(source.getStringValue()).thenReturn(sourceValue);
+
+        String targetValue = "Lmuberajck";
+        MetaExpression target = mockExpression(ATOMIC);
+        when(target.getStringValue()).thenReturn(targetValue);
+
+        boolean relativeValue = false;
+        MetaExpression relative = mockExpression(ATOMIC);
+        when(relative.getBooleanValue()).thenReturn(relativeValue);
+
+        int returnValue = 2;
+
+        //Run
+        WordDistanceConstruct construct = new WordDistanceConstruct();
+        MetaExpression result = process(construct, source, target, relative);
+
+        // Assert
+        Assert.assertEquals(result.getNumberValue().intValue(), returnValue);
+    }
+
+    /**
+     * Test the process method when source is empty.
+     */
+    @Test
+    public void processEmptySourceUsage() {
+
+        // Mock
+        String sourceValue = "";
         MetaExpression source = mockExpression(ATOMIC);
         when(source.getStringValue()).thenReturn(sourceValue);
 
@@ -79,12 +105,39 @@ public class WordDistanceConstructTest extends TestUtils {
         MetaExpression relative = mockExpression(ATOMIC);
         when(relative.getBooleanValue()).thenReturn(relativeValue);
 
-        int returnValue = 6;
-        StringUtilityService stringService = mock(StringUtilityService.class);
-        when(stringService.damlev(sourceValue, targetValue)).thenReturn(returnValue);
+        int returnValue = 11;
 
         //Run
-        WordDistanceConstruct construct = new WordDistanceConstruct(stringService);
+        WordDistanceConstruct construct = new WordDistanceConstruct();
+        MetaExpression result = process(construct, source, target, relative);
+
+        // Assert
+        Assert.assertEquals(result.getNumberValue().intValue(), returnValue);
+    }
+
+    /**
+     * Test the process method when target is empty.
+     */
+    @Test
+    public void processEmptyTargetUsage() {
+
+        // Mock
+        String sourceValue = "Lumberjack";
+        MetaExpression source = mockExpression(ATOMIC);
+        when(source.getStringValue()).thenReturn(sourceValue);
+
+        String targetValue = "";
+        MetaExpression target = mockExpression(ATOMIC);
+        when(target.getStringValue()).thenReturn(targetValue);
+
+        boolean relativeValue = false;
+        MetaExpression relative = mockExpression(ATOMIC);
+        when(relative.getBooleanValue()).thenReturn(relativeValue);
+
+        int returnValue = 10;
+
+        //Run
+        WordDistanceConstruct construct = new WordDistanceConstruct();
         MetaExpression result = process(construct, source, target, relative);
 
         // Assert

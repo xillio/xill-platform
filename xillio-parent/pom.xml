@@ -402,6 +402,11 @@
             </dependency>
             <dependency>
                 <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-template</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
                 <artifactId>plugin-web</artifactId>
                 <version>${xill.version}</version>
             </dependency>
@@ -510,7 +515,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.7.6.201602180812</version>
+                    <version>0.7.7.201606060606</version>
                 </plugin>
             </plugins>
         </pluginManagement>

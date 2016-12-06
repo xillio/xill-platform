@@ -18,7 +18,7 @@
 -->
 <function>
     <description>
-Returns an absolute path that is the input path with redundant name elements eliminated.
+Returns an absolute path that is the input `path` with redundant name elements eliminated.
     </description>
     <examples>
         <example title="Usage">

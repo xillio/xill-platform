@@ -18,8 +18,8 @@
 -->
 <function>
     <description>
-Tests if the currently authenticated user has execute rights to the specified file/folder. The test returns `true` if
-`uri` can be executed.
+Tests if the currently authenticated user has execute rights to the specified file/folder at `path` returning `true` if this is the case or `false` otherwise.
+`path` can be either a file or a folder, relative or absolute.
     </description>
     <examples>
         <example title="Usage">
