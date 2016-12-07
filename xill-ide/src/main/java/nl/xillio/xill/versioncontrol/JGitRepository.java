@@ -21,6 +21,8 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.NoWorkTreeException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.RemoteRefUpdate;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -63,12 +65,23 @@ public class JGitRepository implements GitRepository {
 
     @Override
     public void pushCommand() throws GitException {
+        Iterable<PushResult> pushResults;
         try {
-            repository.push().setCredentialsProvider(auth.getCredentials()).call();
+            pushResults = repository.push().setCredentialsProvider(auth.getCredentials()).call();
         } catch (GitAPIException e) {
             throw new GitException(e.getMessage(), e);
         }
 
+        // JGit doesn't automatically detect all issues with pushing, this manually checks if
+        // the push operation succeeded.
+        for(PushResult pushResult : pushResults) {
+            for (RemoteRefUpdate remoteRefUpdate : pushResult.getRemoteUpdates()) {
+                if (remoteRefUpdate.getStatus() != RemoteRefUpdate.Status.OK) {
+                    throw new GitException(String.format("Could not push updates to remote (error code: %s).",
+                            remoteRefUpdate.getStatus()));
+                }
+            }
+        }
     }
 
     @Override
@@ -85,11 +98,23 @@ public class JGitRepository implements GitRepository {
     @Override
     public Set<String> pullCommand() throws GitException {
         try {
-            MergeResult mr = repository.pull().setCredentialsProvider(auth.getCredentials()).call().getMergeResult();
-            if (mr.getConflicts() == null) {
+            MergeResult mergeResult = repository.pull().setCredentialsProvider(auth.getCredentials()).call().getMergeResult();
+
+            MergeResult.MergeStatus mergeStatus = mergeResult.getMergeStatus();
+
+            // Throw an error if merging, and therefore the pull operation, has failed
+            // Exclude conflicting merge status, because we create a custom message for that
+            if (!mergeStatus.equals(mergeStatus.CONFLICTING) && !mergeStatus.isSuccessful()) {
+                throw new GitException(String.format("Merge attempt was not successful (status: %s)",
+                        mergeStatus.toString()));
+            }
+
+            // Return list of conflicts
+            if (mergeResult.getConflicts() == null) {
                 return null;
             }
-            return mr.getConflicts().keySet();
+
+            return mergeResult.getConflicts().keySet();
         } catch (GitAPIException e) {
             throw new GitException(e.getMessage(), e);
         }
