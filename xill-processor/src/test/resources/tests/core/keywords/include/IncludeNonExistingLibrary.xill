@@ -21,7 +21,7 @@
 use Assert;
 
 do {
-    callbot("core/include/NonExistingLibTest.xill");
+    callbot("testresources/core/includes/NonExistingLibTest.xill");
 } success {
     Assert.error("This robot should not compile");
 }

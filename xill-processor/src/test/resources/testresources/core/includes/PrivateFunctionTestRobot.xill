@@ -13,4 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-include core.include.IncludeTestLib;
+include testresources.core.includes.IncludeTestLib;
+
+privateFunction();

@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import xill.lang.XillStandaloneSetup;
 import xill.lang.scoping.XillScopeProvider;
 import xill.lang.validation.XillValidator;
-import xill.lang.xill.ConstructCall;
+import xill.lang.xill.FunctionCall;
 import xill.lang.xill.IncludeStatement;
 import xill.lang.xill.InstructionSet;
 import xill.lang.xill.UseStatement;
@@ -107,8 +107,28 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
             XillScopeProvider.setProjectFolder(projectFolder);
             debugger.reset();
             Resource resource = resourceSet.getResource(URI.createFileURI(robotFile.getAbsolutePath()), true);
-            return validate(resource);
+            List<Issue> result = validate(resource);
+            result.addAll(validateByCompile());
+            return result;
         }
+    }
+
+    private List<Issue> validateByCompile() {
+        try {
+            compile();
+        } catch (XillParsingException e) {
+            return Collections.singletonList(
+                    new Issue(
+                            e.getMessage(),
+                            e.getLine(),
+                            Issue.Type.ERROR,
+                            e.getRobot()
+                    )
+            );
+        } catch (IOException e) {
+            return Collections.emptyList();
+        }
+        return Collections.emptyList();
     }
 
     @Override
@@ -136,7 +156,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
             rootRobot = robotID;
         }
 
-        LanguageFactory<xill.lang.xill.Robot> factory = new XillProgramFactory(plugins, getDebugger(), rootRobot, outputHandler);
+        LanguageFactory<xill.lang.xill.Robot> factory = new XillProgramFactory(plugins, getDebugger(), rootRobot, outputHandler, projectFolder);
 
 
         List<Issue> issues = validate(resource);
@@ -203,7 +223,11 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     }
 
     private URI getURI(final IncludeStatement include) {
-        String subPath = StringUtils.join(include.getName(), File.separator) + ".xill";
+        return getURI(include, projectFolder);
+    }
+
+    public static URI getURI(final IncludeStatement include, File projectFolder) {
+        String subPath = StringUtils.join(include.getParts(), File.separator) + ".xill";
         File libPath = new File(projectFolder, subPath);
         String fullPath = libPath.getAbsolutePath();
 
@@ -273,6 +297,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
                 issues.addAll(constructIssues);
             }
         }
+
         return issues;
     }
 
@@ -284,27 +309,41 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
         while (iterator.hasNext()) {
             EObject object = iterator.next();
 
-            if (object instanceof ConstructCall) {
-                ConstructCall call = (ConstructCall) object;
-                String plugin = getName(call.getPackage());
-                XillPlugin xillPlugin = plugins.stream()
-                        .filter(p -> p.getName().equals(plugin))
-                        .findAny()
-                        .orElse(null);
+            if (object instanceof xill.lang.xill.FunctionCall) {
+                xill.lang.xill.FunctionCall call = (xill.lang.xill.FunctionCall) object;
 
-                Construct construct = xillPlugin.getConstruct(call.getFunction());
-                INode node = NodeModelUtils.getNode(object);
-                if (construct == null) {
-                    // Create an error if the construct does not exist
-                    Issue issue = new Issue("No construct with name " + call.getFunction() + " was found in package " + plugin, node.getStartLine(), Issue.Type.ERROR, robotID);
-                    issues.add(issue);
-                } else if (construct.isDeprecated()) {
-                    Issue issue = new Issue("Call to deprecated construct with name " + call.getFunction(), node.getStartLine(), Issue.Type.WARNING, robotID);
-                    issues.add(issue);
+                if (call.getScope() != null) {
+                    String scope = call.getScope();
+                    XillPlugin xillPlugin = plugins.stream()
+                            .filter(p -> p.getName().equals(scope))
+                            .findAny()
+                            .orElse(null);
+                    if (xillPlugin != null) {
+                        Issue issue = checkConstruct(xillPlugin, call, robotID);
+                        if (issue != null) {
+                            issues.add(issue);
+                        }
+                    }
                 }
             }
         }
         return issues;
+    }
+
+    private Issue checkConstruct(XillPlugin xillPlugin, FunctionCall call, RobotID robotID) {
+
+        Construct construct = xillPlugin.getConstruct(call.getFunction());
+        INode node = NodeModelUtils.getNode(call);
+        if (construct == null) {
+            // Create an error if the construct does not exist
+            return new Issue("No construct with name " + call.getFunction() + " was found in package " + xillPlugin.getName(), node.getStartLine(), Issue.Type.ERROR, robotID);
+        }
+
+        if (construct.isDeprecated()) {
+            return new Issue("Call to deprecated construct with name " + call.getFunction(), node.getStartLine(), Issue.Type.WARNING, robotID);
+        }
+
+        return null;
     }
 
     private String getName(UseStatement statement) {

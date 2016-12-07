@@ -21,7 +21,7 @@
 use Assert;
 
 do {
-    callbot("core/include/PrivateFunctionTestRobot.xill");
+    callbot("testresources/core/includes/PrivateFunctionTestRobot.xill");
 } success {
     Assert.error("This robot should not compile");
 }

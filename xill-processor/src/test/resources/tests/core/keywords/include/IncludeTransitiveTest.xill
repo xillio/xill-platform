@@ -19,6 +19,6 @@
  * Expected: The included function returns "working"
  */
 use Assert;
-include core.include.TransitiveInclude;
+include testresources.core.includes.TransitiveInclude;
 
-Assert.equals(includeTest(), "working");
+Assert.equal(includeTest(), "working");

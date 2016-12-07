@@ -30,18 +30,14 @@ import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.api.events.RobotStartedAction;
 import nl.xillio.xill.api.events.RobotStoppedAction;
 import nl.xillio.xill.components.expressions.CallbotExpression;
-import nl.xillio.xill.components.expressions.ConstructCall;
-import nl.xillio.xill.components.expressions.pipeline.FilterExpression;
+import nl.xillio.xill.components.expressions.*;
 import nl.xillio.xill.components.expressions.FunctionCall;
 import nl.xillio.xill.components.expressions.FunctionParameterExpression;
+import nl.xillio.xill.components.expressions.pipeline.*;
+import nl.xillio.xill.components.expressions.pipeline.FilterExpression;
 import nl.xillio.xill.components.expressions.pipeline.MapExpression;
 import nl.xillio.xill.components.expressions.pipeline.PeekExpression;
 import nl.xillio.xill.components.expressions.runbulk.RunBulkExpression;
-import nl.xillio.xill.components.expressions.*;
-import nl.xillio.xill.components.expressions.pipeline.CollectTerminalExpression;
-import nl.xillio.xill.components.expressions.pipeline.ConsumeTerminalExpression;
-import nl.xillio.xill.components.expressions.pipeline.ForeachTerminalExpression;
-import nl.xillio.xill.components.expressions.pipeline.ReduceTerminalExpression;
 import nl.xillio.xill.components.instructions.BreakInstruction;
 import nl.xillio.xill.components.instructions.ContinueInstruction;
 import nl.xillio.xill.components.instructions.*;
@@ -60,6 +56,7 @@ import nl.xillio.xill.components.operators.Or;
 import nl.xillio.xill.debugging.DebugInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.nodemodel.INode;
@@ -96,6 +93,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
     private final Debugger debugger;
     private final RobotID rootRobot;
     private final Map<EObject, Map.Entry<RobotID, Robot>> compiledRobots = new HashMap<>();
+    private final Map<URI, xill.lang.xill.Robot> robotTokens = new HashMap<>();
 
     /**
      * Events for signalling that a robot has started and that a robot has stopped
@@ -104,41 +102,47 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
     private final EventHost<RobotStoppedAction> robotStoppedEvent = new EventHost<>();
     private final UUID compilerSerialId = UUID.randomUUID();
     private final OutputHandler outputHandler;
+    private final File projectFolder;
+
+    private xill.lang.xill.Robot currentlyParsingRobot;
 
     /**
      * Create a new {@link XillProgramFactory}
-     *
-     * @param plugins  list of xill plug-ins.
+     *  @param plugins  list of xill plug-ins.
      * @param debugger debugger object necessary for processing the robot.
      * @param robotID  the robot.
+     * @param projectFolder
      */
     public XillProgramFactory(final List<XillPlugin> plugins, final Debugger debugger,
-                              final RobotID robotID, final OutputHandler outputHandler) {
-        this(plugins, debugger, robotID, outputHandler, false);
+                              final RobotID robotID, final OutputHandler outputHandler, File projectFolder) {
+        this(plugins, debugger, robotID, outputHandler, false, projectFolder);
     }
 
     /**
      * Create a new {@link XillProgramFactory}
-     *
-     * @param plugins  list of xill plug-ins.
+     *  @param plugins  list of xill plug-ins.
      * @param debugger debugger object necessary for processing the robot.
      * @param robotID  the robot.
      * @param verbose  verbose logging for the compiler
+     * @param projectFolder
      */
     public XillProgramFactory(final List<XillPlugin> plugins, final Debugger debugger, final RobotID robotID,
                               final OutputHandler outputHandler,
-                              final boolean verbose) {
+                              final boolean verbose, File projectFolder) {
         this.debugger = debugger;
         rootRobot = robotID;
+        this.projectFolder = projectFolder;
         expressionParseInvoker.setVERBOSE(verbose);
         this.plugins = plugins;
         this.outputHandler = outputHandler;
     }
 
     @Override
-    public void parse(final xill.lang.xill.Robot robot, final RobotID robotID) throws XillParsingException {
+    public synchronized void parse(final xill.lang.xill.Robot robot, final RobotID robotID) throws XillParsingException {
 
         this.robotID.put(robot.eResource(), robotID);
+        currentlyParsingRobot = robot;
+        robotTokens.put(robot.eResource().getURI(), robot);
         DebugInfo info = new DebugInfo();
 
         info.setVariables(variables);
@@ -153,16 +157,16 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
             // Really? Java...
             String searchName = pluginName;
 
-            Optional<XillPlugin> ActualPlugin = plugins.stream()
+            Optional<XillPlugin> actualPlugin = plugins.stream()
                     .filter(pckage -> pckage.getName().equals(searchName)).findAny();
 
-            if (!ActualPlugin.isPresent()) {
+            if (!actualPlugin.isPresent()) {
                 CodePosition pos = pos(plugin);
                 throw new XillParsingException("Could not find plugin " + pluginName, pos.getLineNumber(),
                         pos.getRobotID());
             }
 
-            useStatements.put(plugin, ActualPlugin.get());
+            useStatements.put(plugin, actualPlugin.get());
         }
 
 
@@ -202,7 +206,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
             // Get includes
             for (IncludeStatement include : robotToken.getIncludes()) {
                 // Build robotID
-                String path = StringUtils.join(include.getName(), File.separator) + ".xill";
+                String path = StringUtils.join(include.getParts(), File.separator) + ".xill";
                 RobotID expectedID = RobotID.getInstance(new File(id.getProjectPath(), path),
                         id.getProjectPath());
                 CodePosition pos = pos(include);
@@ -329,8 +333,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
             elseInstruction.setPosition(pos(token.getElseBlock()));
         }
 
-        IfInstructionBlock instruction = new IfInstructionBlock(conditionals, elseInstruction);
-        return instruction;
+        return new IfInstructionBlock(conditionals, elseInstruction);
     }
 
     /**
@@ -903,7 +906,26 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
      * @throws XillParsingException
      */
     Processable parseToken(final xill.lang.xill.FunctionCall token) throws XillParsingException {
+        // This function call can be either an invocation of a function or a construct.
+        String scope = token.getScope();
 
+        if (scope == null) {
+            // No scope so this must be a function
+            return parseFunctionCall(token);
+        }
+
+        UseStatement useStatement = getUseStatement(currentlyParsingRobot, scope);
+
+        if (useStatement != null) {
+            // This is a construct call
+            return parseConstructCallToken(token, useStatement);
+        }
+
+        return parseFunctionCall(token);
+    }
+
+    private Processable parseFunctionCall(final xill.lang.xill.FunctionCall token) throws XillParsingException {
+        // This is a custom function invocation
         FunctionCall callExpression = new FunctionCall();
 
         functionCalls.push(new SimpleEntry<>(token, callExpression));
@@ -925,16 +947,16 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
      * @return
      * @throws XillParsingException
      */
-    Processable parseToken(final xill.lang.xill.ConstructCall token) throws XillParsingException {
+    private Processable parseConstructCallToken(final xill.lang.xill.FunctionCall token, UseStatement useStatement) throws XillParsingException {
 
-        XillPlugin pluginPackage = useStatements.get(token.getPackage());
+        XillPlugin pluginPackage = useStatements.get(useStatement);
 
         CodePosition pos = pos(token);
 
         if (pluginPackage == null) {
-            String pluginName = token.getPackage().getPlugin();
+            String pluginName = useStatement.getPlugin();
             if (pluginName == null) {
-                pluginName = token.getPackage().getName();
+                pluginName = useStatement.getName();
             }
 
             throw new XillParsingException("Could not resolve package `" + pluginName + "`", pos.getLineNumber(),
@@ -962,6 +984,16 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
         try (ConstructProcessor processor = construct.prepareProcess(constructContext)) {
             return buildCall(construct, processor, arguments, constructContext, pos);
         }
+    }
+
+    private UseStatement getUseStatement(xill.lang.xill.Robot robot, String name) {
+        for (UseStatement useStatement : robot.getUses()) {
+            if (useStatement.getName().equals(name)) {
+                // This is referencing a use statement so it is a construct call
+                return useStatement;
+            }
+        }
+        return null;
     }
 
     private ConstructCall buildCall(Construct construct, ConstructProcessor processor, List<Processable> arguments, ConstructContext context, CodePosition pos) throws XillParsingException {
@@ -1009,11 +1041,21 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
             arguments.add(parse(expr));
         }
 
-        FunctionDeclaration functionDeclaration = functions.get(token.getName());
+        FunctionDeclaration functionDeclaration = findFunctionDeclaration(token);
 
         if (functionDeclaration == null) {
+            String parameterDescription;
+            int count = token.getArgumentBlock().getParameters().size();
+            if(count == 0) {
+                parameterDescription = "no parameters";
+            } else if(count == 1) {
+                parameterDescription = "one parameter";
+            } else {
+                parameterDescription = count + " parameters";
+            }
+
             CodePosition pos = pos(token);
-            throw new XillParsingException("Could not find function " + token.getName().getName(), pos.getLineNumber(),
+            throw new XillParsingException("Could not find function " + token.getFunction() + " with " + parameterDescription, pos.getLineNumber(),
                     pos.getRobotID());
         }
 
@@ -1021,8 +1063,67 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
         declaration.initialize(functionDeclaration, arguments);
     }
 
-    private void parseToken(final xill.lang.xill.FunctionDeclaration key, final FunctionParameterExpression expression) {
+    private FunctionDeclaration findFunctionDeclaration(xill.lang.xill.FunctionCall token) throws XillParsingException {
+        xill.lang.xill.Robot robot = findRobot(token);
+        String scope = token.getScope();
 
+        if (scope == null) {
+            // The function must be present in this robot
+            return findFunctionDeclaration(token, robot, true, new ArrayList<>());
+        }
+
+        // This is a qualified included function. We have to search in a specific (other) robot
+        for (IncludeStatement includeStatement : robot.getIncludes()) {
+            if (scope.equals(includeStatement.getName())) {
+                // We found a match!
+                URI resourceURI = XillProcessor.getURI(includeStatement, projectFolder);
+                xill.lang.xill.Robot includedRobot = robotTokens.get(resourceURI);
+                return findFunctionDeclaration(token, includedRobot, false, new ArrayList<>());
+            }
+        }
+
+        CodePosition pos = pos(token);
+        throw new XillParsingException(
+                "Could not resolve an include or use statement for '" + scope + "'.",
+                pos.getLineNumber(),
+                pos.getRobotID()
+        );
+    }
+
+    private FunctionDeclaration findFunctionDeclaration(xill.lang.xill.FunctionCall token, xill.lang.xill.Robot robot, boolean allowPrivate, List<xill.lang.xill.Robot> visitedRobots) {
+        if(visitedRobots.contains(robot)) {
+            return null;
+        }
+        visitedRobots.add(robot);
+
+        // Check out this robot
+        Optional<FunctionDeclaration> match = robot.getInstructionSet().getInstructions()
+                .stream()
+                .filter(instruction -> instruction instanceof xill.lang.xill.FunctionDeclaration)
+                .map(instruction -> (xill.lang.xill.FunctionDeclaration)instruction)
+                .filter(functionDeclaration -> allowPrivate || !functionDeclaration.isPrivate())
+                .filter(functionDeclaration -> functionDeclaration.getName().equals(token.getFunction()))
+                .filter(functionDeclaration -> functionDeclaration.getParameters().size() == token.getArgumentBlock().getParameters().size())
+                .map(functions::get)
+                .findFirst();
+
+        if(match.isPresent()) {
+            return match.get();
+        }
+
+        // No match was found in this robot. Take a look at the includes
+        for(IncludeStatement includeStatement : robot.getIncludes()) {
+            if(includeStatement.getName() == null) {
+                URI resourceURI = XillProcessor.getURI(includeStatement, projectFolder);
+                xill.lang.xill.Robot includedRobot = robotTokens.get(resourceURI);
+                return findFunctionDeclaration(token, includedRobot, false, visitedRobots);
+            }
+        }
+
+        return null;
+    }
+
+    private void parseToken(final xill.lang.xill.FunctionDeclaration key, final FunctionParameterExpression expression) {
         FunctionDeclaration functionDeclaration = functions.get(key);
         expression.setFunction(functionDeclaration);
     }
