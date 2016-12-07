@@ -31,8 +31,7 @@ The object that will be inserted/updated.
 The key(s) of the wanted object(s).
         </parameterDescription>
 		<parameterDescription parameterName="allowUpdate">
-You can prevent updates from happening by setting the allowUpdate parameter to false. If you do this and an entry is
-found in the database this construct will throw an error.
+You can prevent updates from happening by setting the allowUpdate parameter to false. If you do this and an entry is found in the database this construct will throw an error.
         </parameterDescription>
 		<parameterDescription parameterName="database">
 The database parameter is optional. The last made connection will be used if no database is given.
@@ -46,8 +45,7 @@ The database parameter is optional. The last made connection will be used if no 
 | A matching row is found based on the keys  | Update    |
 | No matching row is found based on the keys | Insert    |
 
-The return value of this construct is true if the operation finished successfully. Otherwise it will throw an error and
-return null.
+The return value of this construct is true if the operation finished successfully. Otherwise it will throw an error and return null.
 	</longDescription>
     <examples>
         <example title="Usage">

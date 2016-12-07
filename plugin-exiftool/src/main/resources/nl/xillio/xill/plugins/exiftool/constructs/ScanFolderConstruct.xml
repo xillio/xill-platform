@@ -18,10 +18,7 @@
 -->
 <function>
     <description>
-Extract exif tags from multiple files inside a folder. This will return an iterator that you can iterate to get
-results.
-
-
+Extract exif tags from multiple files inside a folder. This will return an iterator that you can iterate to get results.
     </description>
 	<parameterDescriptions>
         <parameterDescription parameterName="folderPath">
@@ -33,8 +30,7 @@ The projection parameter accepts an *OBJECT* containing exif tag names as keys a
 For examples check out [ExifTool.scanFile](./scanFile.html).
         </parameterDescription>
 		<parameterDescription parameterName="options">
-To set options for this construct you can provide an *OBJECT* that contains the options as a key and values as
-the setting.
+To set options for this construct you can provide an *OBJECT* that contains the options as a key and values as the setting.
 
 | Option | Description | Value |
 | ---------- | ----------- | ----- |
@@ -45,25 +41,27 @@ the setting.
 	</parameterDescriptions>
 	<longDescription>
 ### Usage on a non-windows machine
-To use the Exiftool plugin on a non-windows machine some setup is required. Below you can find
-the steps to install the required files.
+To use the Exiftool plugin on a non-windows machine some setup is required. Below you can find the steps to install the required files.
 
 #### Linux
 Install the package through your system's package manager and restart Xill or follow the instructions below.
+
 * Download the exiftool perl source from *sno.phy.queensu.ca/~phil/exiftool/* (top link)
 * Extract the archive to your hard drive
-* Set your system's environmental variable *exiftool_bin* to the absolute path of the exiftool file or
-add the directory containing exiftool to your PATH environmental variable
-* (Optional) Set your systems's envirionmental variable *perl_bin* to the path of the perl installation.
-(Defaults to */usr/bin/perl*)
+* Set your system's environmental variable *exiftool_bin* to the absolute path of the exiftool file or add the directory containing exiftool to your PATH environmental variable
+* (Optional) Set your systems's envirionmental variable *perl_bin* to the path of the perl installation. (Defaults to */usr/bin/perl*)
 * Restart Xill IDE
 
 #### Mac OSX
-* Download the exiftool osx executable from *sno.phy.queensu.ca/~phil/exiftool/* (bottom link)
-* Install the application
-* (Optional) Set your system's environmental variable *exiftool_bin* to the absolute path of the exiftool file
-or add the directory containing exiftool to your PATH environmental variable
-(Defaults to */usr/local/bin/exiftool*)
+
+##### Using Homebrew
+If you have the homebrew package manager installed (see http://brew.sh ) you can simply enter the following in a terminal window:
+```brew install exiftool```
+
+##### Manual install
+* Download the exiftool osx executables from *sno.phy.queensu.ca/~phil/exiftool/* (bottom link)
+* Install the applications
+* (Optional) Set your system's environmental variable *exiftool_bin* to the absolute path of the exiftool file or add the directory containing exiftool to your PATH environmental variable (Defaults to */usr/local/bin/exiftool*)
 * Restart Xill IDE
 	</longDescription>
     <examples>

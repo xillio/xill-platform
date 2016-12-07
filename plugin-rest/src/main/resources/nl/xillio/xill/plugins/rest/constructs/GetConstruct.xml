@@ -31,7 +31,7 @@ The URL the REST can be found on.
 | `proxyhost`| The proxy server URL |
 | `proxyport`| The port of the proxy server |
 | `user`     | The user name for server authentication  |
-| `pass`     | password for server authentication |
+| `pass`     | Password for server authentication |
 | 'insecure' | If set to true, insecure SSL connections and transfers are allowed (default = false) |
 | 'headers'  | The object of name and value pair strings added as a parts of HTTP request header |
 

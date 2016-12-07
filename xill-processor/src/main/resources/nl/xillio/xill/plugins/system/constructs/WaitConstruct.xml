@@ -22,7 +22,7 @@ Makes the robot wait.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="delay">
-The provided amount of time that the robot will be delayed in milliseconds. (default is 100)
+The provided amount of time that the robot will be delayed in milliseconds (default is 100).
         </parameterDescription>
 	</parameterDescriptions>
     <examples>

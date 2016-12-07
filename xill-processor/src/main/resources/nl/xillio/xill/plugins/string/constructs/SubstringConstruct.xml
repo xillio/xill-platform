@@ -19,18 +19,16 @@
 <function>
     <description>
 Returns the substring of `string` between integer positions `start` and `end`.
-
-
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="string">
 The string that will be looked at.
         </parameterDescription>
 		<parameterDescription parameterName="start">
-The start index of the area of 'string' that will be given.
+The start index of the area of `string` that will be given.
         </parameterDescription>
 		<parameterDescription parameterName="end">
-The end index of the area of 'string' that will be given.
+The end index of the area of `string` that will be given.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

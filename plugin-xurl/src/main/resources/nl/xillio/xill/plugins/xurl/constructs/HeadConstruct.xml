@@ -25,8 +25,7 @@ Performs a head request to `url` with the given `options` and returns the respon
 The URL that the request will be sent to.
         </parameterDescription>
 		<parameterDescription parameterName="options">
-To set various options for the request you can use the options parameter. The passed value should be an object containing
-option names as keys and their respective values as values.
+To set various options for the request you can use the options parameter. The passed value should be an object containing option names as keys and their respective values as values.
 Check out the code examples for more information about the options.
 
 | Option Name         | Value                                                                                                   | Description                                                                       |
@@ -46,8 +45,7 @@ Check out the code examples for more information about the options.
 If the request is performed without errors the return value will be an object that describes the response.
 
 ### Status
-The `status` field contains an object that has a `code` field that contains the HTTP Status Code
-and a `phrase` field that contains the description.
+The `status` field contains an object that has a `code` field that contains the HTTP Status Code and a `phrase` field that contains the description.
 
     {
         "status": {
@@ -83,8 +81,7 @@ The `version` field contains a string describing the current HTTP protocol versi
     }
 
 ### Body
-The `body` field contains the response body. The type of content in here is auto detected form the Content-Type
-header which can be overridden using the `responseContentType` option.
+The `body` field contains the response body. The type of content in here is auto detected form the Content-Type header which can be overridden using the `responseContentType` option.
 
 | Content-Type    | Result                                         |
 | --------------- | ---------------------------------------------- |

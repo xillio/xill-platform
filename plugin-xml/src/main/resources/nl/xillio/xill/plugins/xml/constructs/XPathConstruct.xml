@@ -32,7 +32,7 @@ The optional namespace that will be used.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-For more information about the XPath syntax and available xPath functions look here: [http://www.w3schools.com/xsl/xpath_intro.asp](http://www.w3schools.com/xsl/xpath_intro.asp)
+For more information about the XPath syntax and available xPath functions look here: [w3schools XPath manual](http://www.w3schools.com/xsl/xpath_intro.asp)
 	</longDescription>
     <examples>
         <example title="Usage">

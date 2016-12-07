@@ -26,8 +26,7 @@ Read text from a `stream`.
 The stream that will be read from.
         </parameterDescription>
 		<parameterDescription parameterName="encoding">
-The encoding that will be used.
-By default "UTF-8" will be used as encoding.
+The encoding that will be used (default is "UTF-8").
         </parameterDescription>
 		<parameterDescription parameterName="limit">
 The amount of bytes read from the stream.

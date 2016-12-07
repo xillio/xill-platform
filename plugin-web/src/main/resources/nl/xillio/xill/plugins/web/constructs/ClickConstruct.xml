@@ -19,10 +19,6 @@
 <function>
     <description>
 Performs a click action on the `element` argument. which must be a visible `node` from an (X)HTML document with height and width greater than zero.
-
-Javascript handlers bound on click actions of the argument node will also be triggered.
-If this causes a new page to load, this method will attempt to block until the page has loaded, after which references to the node are no more valid, throwing `StaleElementReferenceException` on subsequent operations.
-If `click(element)` causes a new page to be loaded via an event or is done by sending a native event, then the method will not wait for it to be loaded and the caller should verify that a new page has been loaded.
     </description>
 	<parameterDescriptions>
         <parameterDescription parameterName="element">

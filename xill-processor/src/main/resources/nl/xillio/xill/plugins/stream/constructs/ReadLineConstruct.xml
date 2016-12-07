@@ -25,8 +25,7 @@ Read a single line from a `stream` and return this.
 The stream that will be read from.
         </parameterDescription>
 		<parameterDescription parameterName="encoding">
-The encoding that will be used.
-By default "UTF-8" will be used as encoding.
+The encoding that will be used (default is "UTF-8").
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

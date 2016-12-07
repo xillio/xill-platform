@@ -31,10 +31,10 @@ The string that will be searched for.
 The string that will replace the found needle(s).
         </parameterDescription>
 		<parameterDescription parameterName="useRegex">
-If set to `false` the function will treat `needle` and `replacement` as regular text. (default is 'true')
+If set to `false` the function will treat `needle` and `replacement` as regular text (default is 'true').
         </parameterDescription>
 		<parameterDescription parameterName="replaceAll">
-If set to `false` the routine will only replace the first occurrence of `needle`. (default is `true`)
+If set to `false` the routine will only replace the first occurrence of `needle` (default is `true`).
         </parameterDescription>
 		<parameterDescription parameterName="timeout">
 The amount of time in milliseconds the construct is allowed to run. (default is 5000)
@@ -47,7 +47,7 @@ The `needle` is by default interpreted as a regex pattern, so all special regex 
 Also in `replacement` you can use the capture groups from `needle` as "$1", "$2", etc.
 To use a literal "$" in `replacement`, you need to escape it like this: "\$".
 
-See the regular expressions page for more about regular expression support in Xill IDE.
+For more information about regular expressions viset the [regular expression support page](https://support.xillio.com/support/solutions/articles/6000058847-regex).
 	</longDescription>
     <examples>
         <example title="Usage">

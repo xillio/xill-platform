@@ -25,7 +25,7 @@ Returns `true` if the `string` starts with `prefix`, or `false` if it does not.
 The string that will be looked at.
         </parameterDescription>
 		<parameterDescription parameterName="perfix">
-The string that will be looked for at the start of 'string'.
+The string that will be looked for at the start of `string`.
         </parameterDescription>
 	</parameterDescriptions>
     <examples>

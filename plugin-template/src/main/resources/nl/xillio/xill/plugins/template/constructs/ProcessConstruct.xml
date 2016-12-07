@@ -31,8 +31,7 @@ When willing to write to a file, use the `File` plugin.
         </parameterDescription>
 		<parameterDescription parameterName="model">
 The data necessary to process the given template.
-When not providing this parameter (or giving an empty object) this would result in processing the template without
-any data.
+When not providing this parameter (or giving an empty object) this would result in processing the template without any data.
         </parameterDescription>
 		<parameterDescription parameterName="engine">
 The engine to be for processing the templates.
@@ -41,8 +40,8 @@ When not providing this parameter this would result in using the default engine 
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-This plugin uses a third-party library named FreeMarker to process the templates. For more information please
-check their [website](http://freemarker.org/docs/index.html).
+This plugin uses a third-party library named FreeMarker to process the templates.
+For more information please check their [website](http://freemarker.org/docs/index.html).
 	</longDescription>
     <examples>
         <example title="Default Usage">

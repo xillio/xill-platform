@@ -20,7 +20,7 @@
     <description>
 Removes the attribute from the XML-node. 
     </description>
-	<parameterDescriptions>
+    <parameterDescriptions>
 		<parameterDescription parameterName="node">
 The XML-node that the attribute will be removed from.
         </parameterDescription>

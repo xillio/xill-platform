@@ -31,9 +31,7 @@ The simple format of the connection string is:
 
     jdbc:sqlite:[database_specifier]
 
-The default behavior is to locate the file at the path of in the url and use it as a database. The preferable
-way to
-locate your database is by using an abstract path.
+The default behavior is to locate the file at the path of in the url and use it as a database. The preferable way to locate your database is by using an abstract path.
 
     jdbc:sqlite:C:/tmp/sqlite.db
 

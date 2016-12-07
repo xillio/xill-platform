@@ -31,9 +31,7 @@ The xPath that will be matched
 	<longDescription>
 This function has full XPath 2.0 support.
 
-For more information about the XPath syntax and available xpath functions look here:
-
-	http://www.w3schools.com/xsl/xpath_intro.asp
+For more information about the XPath syntax and available xpath functions look here: [w3schools XPath manual] (http://www.w3schools.com/xsl/xpath_intro.asp)
 	</longDescription>
     <examples>
         <example title="Usage">

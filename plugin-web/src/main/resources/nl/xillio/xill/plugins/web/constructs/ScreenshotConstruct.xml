@@ -22,7 +22,7 @@ Takes a screenshot storing it as a PNG image.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="page">
-The web page who's cookie will be removed.
+The web page that a screenshot will be made of.
         </parameterDescription>
 		<parameterDescription parameterName="filename">
 The fileName (path) that the screenshot will be saved to.

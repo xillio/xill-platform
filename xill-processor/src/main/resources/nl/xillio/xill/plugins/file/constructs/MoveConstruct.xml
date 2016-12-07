@@ -30,8 +30,7 @@ The path that will be moved to.
 This can be either relative or absolute.
         </parameterDescription>
 		<parameterDescription parameterName="replaceExisting">
-Determines if the move operation can replace existing target file. If set to `false` and the target file already exists it will fail.
-`replaceExisting` is `true` by default.
+Determines if the move operation can replace existing target file. If set to `false` and the target file already exists it will fail (default is `true`).
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

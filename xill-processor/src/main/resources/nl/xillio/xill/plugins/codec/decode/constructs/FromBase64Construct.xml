@@ -22,11 +22,10 @@ Decode a base64 stream or string.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="input">
-The string or stream that will be docoded
+The string or stream that will be decoded
         </parameterDescription>
 		<parameterDescription parameterName="charset">
-Only relevant when a string is provided and determines what character set should be used
-for the output string.
+Only relevant when a string is provided and determines what character set should be used for the output string.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

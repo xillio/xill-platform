@@ -22,8 +22,7 @@ Runs a command line application and returns the output of the process.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="arguments">
-The valid path to an executable file as the first value, optionally followed by zero or more command line arguments. These arguments should be specified
-one by one.
+The valid path to an executable file as the first value, optionally followed by zero or more command line arguments. These arguments should be specified one by one.
         </parameterDescription>
 		<parameterDescription parameterName="directory">
 The working directory where the command will be executed.

@@ -22,7 +22,7 @@ Returns the reverse of the given list or object.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="collection">
-The XML-node that the attribute will be removed from.
+The list or object that will be reversed.
         </parameterDescription>
 		<parameterDescription parameterName="recursive">
 If set to true lists and objects inside the given list or object will also be reversed.

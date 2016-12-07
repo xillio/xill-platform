@@ -53,7 +53,7 @@ This deactivates JavaScript and image loading, drastically reducing load times f
 
 ####Usage on non-windows machines
 To use the Web.loadPage() function on a non-windows machine an installation of PhantomJS is required.
-Downloads and documentation can be found at *phantomjs.org/download.html*.
+Downloads and documentation can be found at [Phantomjs download ](phantomjs.org/download.html).
 Make sure you add the binary to your `PATH` environment variable.
 	</longDescription>
     <examples>

@@ -29,15 +29,15 @@ Otherwise the string value of the source parameter will be written to the `targe
 The stream that will be writen to.
         </parameterDescription>
 		<parameterDescription parameterName="limit">
-The amount of bytes written to the stream.
-If set to -1 all bytes will be written, this is the default.
+The amount of bytes written to the stream (default is -1).
+If set to -1 all bytes will be written.
         </parameterDescription>
 		<parameterDescription parameterName="outputCharset">
-The character set that will be used to write to the stream.
+The character set that will be used to write to the stream (default is `null`).
 When this is null, the default character set is used. 
         </parameterDescription>
 		<parameterDescription parameterName="inputCharset">
-The character set that will be used to read from the source.
+The character set that will be used to read from the source (default is `null`).
 When this is null, the default character set is used. 
         </parameterDescription>
 	</parameterDescriptions>

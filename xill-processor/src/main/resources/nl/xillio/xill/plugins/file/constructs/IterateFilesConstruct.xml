@@ -26,8 +26,7 @@ The path that will be checked.
 This can be either a file or a folder, relative or absolute.
         </parameterDescription>
 		<parameterDescription parameterName="recursive">
-If set to `true` all files in sub folders will also be iterated. If set to `false` only the given folder will be iterated.
-'false` by default.
+If set to `true` all files in sub folders will also be iterated. If set to `false` only the given folder will be iterated (default is `false`).
 		</parameterDescription>
 	</parameterDescriptions>
     <examples>

@@ -28,13 +28,13 @@ The string that will be used.
 The regular expression that will be used.
         </parameterDescription>
 		<parameterDescription parameterName="timeout">
-The amount of time in milliseconds the construct is allowed to run. (default is 5000)
+The amount of time in milliseconds the construct is allowed to run (default is 5000).
 Set timeout to zero to let the function run without timeout.
 This should only be altered when dealing with large source documents, the timeout is there to protect the system from hanging on invalid expressions.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-See the regular expressions page for more about regular expression support in Xill IDE.
+For more information about regular expressions viset the [regular expression support page](https://support.xillio.com/support/solutions/articles/6000058847-regex).
 	</longDescription>
     <examples>
         <example title="Usage">

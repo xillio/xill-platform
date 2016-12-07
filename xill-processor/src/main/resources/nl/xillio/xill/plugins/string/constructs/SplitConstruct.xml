@@ -25,17 +25,17 @@ Splits `string` into a LIST of strings, based on the provided `delimiter`.
 The string that will be split.
         </parameterDescription>
 		<parameterDescription parameterName="delimiter">
-The delimiter that will be used to split 'string'.
+The delimiter that will be used to split `string`.
         </parameterDescription>
 		<parameterDescription parameterName="keepEmpty">
 If set to true empty entries will also be added to the results. (default is false)
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-`delimiter` is interpreted as a Java Regular expression. Since all backslash "\" characters will be interpreted (by the Xill IDE) as an escape character, all forward slashes you want to be evaluated by the regex have to be doubled.
-This means that "\\" would denote a single literal backslash "\" and "\*" would denote a literal asterisk "*".
+`delimiter` is interpreted as a Java Regular expression. Since all backslash "\\" characters will be interpreted (by the Xill IDE) as an escape character, all backslashes you want to be evaluated by the regex have to be doubled.
+This means that "\\\\" would denote a single literal backslash "\\" and "\\*" would denote a literal asterisk "*".
 
-Read more about Java regular expressions here: https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html
+Read more about Java regular expressions [here] (https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html).
 	</longDescription>
     <examples>
         <example title="Usage">
