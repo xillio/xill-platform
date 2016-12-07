@@ -31,7 +31,8 @@ The string that will be searched for.
     <examples>
         <example title="String Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 if (String.contains("testing", "tes")) {
                     System.print("testing contains tes");

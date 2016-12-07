@@ -31,7 +31,8 @@ If set to `true`, `String.trim()` will also replace slack white spaces - includi
     <examples>
         <example title="Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 System.print(String.trim(" Xillio   "));
                 // Result: "Xillio"

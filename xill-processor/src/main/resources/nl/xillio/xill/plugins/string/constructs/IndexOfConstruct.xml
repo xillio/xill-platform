@@ -37,7 +37,8 @@ Returns -1 if the index could not be found.
     <examples>
         <example title="Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 System.print(String.indexOf("maxTestTest", "Test"));    // Result: 3
                 System.print(String.indexOf("maxTestTest", "Test", 3)); // Result: 3

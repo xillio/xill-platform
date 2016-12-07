@@ -31,7 +31,8 @@ The string that will be looked for at the start of 'string'.
     <examples>
         <example title="Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 if (String.startsWith("testing", "test")) {
                     System.print("testing starts with test");

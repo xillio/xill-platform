@@ -25,7 +25,7 @@ Count the amount of documents that match the `query`.
 The name of the collection that will be used.
         </parameterDescription>
 		<parameterDescription parameterName="query">
-The Query that will be applied.
+The query that will be applied.
         </parameterDescription>
 		<parameterDescription parameterName="database">
 The database that will be used.

@@ -37,7 +37,8 @@ This routine uses the Damereau Levenshtein distance to calculate the similarity.
     <examples>
         <example title="Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 System.print(String.wordDistance("boy", "boy"));                  // 1
                 System.print(String.wordDistance("boy", "boys"));                 // 0.75

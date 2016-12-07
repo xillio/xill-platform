@@ -53,7 +53,8 @@ Format specifiers begin with a percent sign (%) and end with a converter. The co
         </example>
         <example title="Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 System.print(String.format("%3$2s %1$2s %1$2s %2$2s", ["a", "b", "c"]));
                 // Result: c a a b

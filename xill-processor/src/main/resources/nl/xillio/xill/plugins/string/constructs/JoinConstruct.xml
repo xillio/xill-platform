@@ -34,7 +34,8 @@ If `list` only contains one string, `join` returns that string. If an element co
     <examples>
         <example title="Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 System.print(String.join(["a", "b", "c"]));      // Result: abc
                 System.print(String.join(["a", "b", "c"], "_")); // Result: a_b_c

@@ -40,7 +40,8 @@ Optionally `end` can be left out or set to 0, which means the returned string wi
     <examples>
         <example title="Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 var firstTen = String.substring("Welcome to our site!", 0, 10);
                 // This will print: The first 10 characters are Welcome to

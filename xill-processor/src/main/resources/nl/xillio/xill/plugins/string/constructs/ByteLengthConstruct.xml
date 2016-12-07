@@ -32,7 +32,8 @@ The encoding that will be used.
         <example title="Usage">
             <header>Get the byte length.</header>
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 var byteLength = String.byteLength("foo");
                 // This prints: "foo" contains 3 bytes.

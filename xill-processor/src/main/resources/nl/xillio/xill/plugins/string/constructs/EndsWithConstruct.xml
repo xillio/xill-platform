@@ -34,7 +34,8 @@ See the regular expressions page for more about regular expression support in Xi
     <examples>
         <example title="Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 if (String.endsWith("testing", "ing")) {
                     System.print("testing ends with ing");

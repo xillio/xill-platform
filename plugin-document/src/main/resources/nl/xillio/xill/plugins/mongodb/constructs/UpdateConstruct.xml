@@ -25,7 +25,7 @@ Modifies existing documents in a collection.
 The name of the collection that will be used.
         </parameterDescription>
 		<parameterDescription parameterName="query">
-The Query that will be applied.
+The query that will be applied.
         </parameterDescription>
 		<parameterDescription parameterName="update">
 The update that will be applied.

@@ -19,9 +19,6 @@
 <function>
     <description>
 Splits `string` into a LIST of strings, based on the provided `delimiter`.
-
-
-
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="string">
@@ -44,7 +41,8 @@ Read more about Java regular expressions here: https://docs.oracle.com/javase/7/
         <example title="Usage">
             <header>Splitting a string</header>
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 System.print(String.split("a--b---c", "-"));
                 // Result: ["a", "b", "c"]

@@ -39,7 +39,8 @@ See the regular expressions page for more about regular expression support in Xi
     <examples>
         <example title="Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 var s = "abc def ghi jkl. Mno";
                 System.print(String.allMatches(s, "\\w+"));

@@ -31,7 +31,8 @@ The amount of times the 'string' will be repeated.
     <examples>
         <example title="Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 System.print(String.repeat("thisIsAString", 3));
                 // Result: thisIsAStringthisIsAStringthisIsAString

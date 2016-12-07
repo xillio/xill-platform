@@ -28,7 +28,7 @@ The name that the collection will be renamed to.
 The collection that will be renamed.
         </parameterDescription>
 		<parameterDescription parameterName="dropTarget">
-Will mongoDB drop the target collection?
+An object that can contain a boolean. If this boolean is true mongoDB will drop the target collection. (default = empty object = false)
         </parameterDescription>
 		<parameterDescription parameterName="database">
 The database that will be used.

@@ -28,7 +28,8 @@ The string that will be escaped.
     <examples>
         <example title="Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 // Search string, could be from a source that can contain regex special characters
                 var search = "\\d";
