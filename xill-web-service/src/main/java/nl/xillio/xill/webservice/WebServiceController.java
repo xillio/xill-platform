@@ -119,7 +119,7 @@ public class WebServiceController {
             @ApiResponse(code = 204, message = "Worker successfully released"),
             @ApiResponse(code = 404, message = "Worker not found"),
             @ApiResponse(code = 409, message = "The worker is not in IDLE state")})
-    public void releaseWorker(@PathVariable("id") String workerId) throws InvalidStateException, RobotNotFoundException {
+    public void releaseWorker(@PathVariable("id") String workerId) throws BaseException {
         webService.releaseWorker(new WorkerID(Integer.parseInt(workerId)));
     }
 
@@ -141,7 +141,7 @@ public class WebServiceController {
             @ApiResponse(code = 204, message = "No return value"),
             @ApiResponse(code = 404, message = "Worker not found"),
             @ApiResponse(code = 409, message = "The worker is not in IDLE state")})
-    public Object runRobot(@PathVariable("id") String workerId, @RequestBody(required = false) Map<String, Object> requestBody, HttpServletResponse response) throws InvalidStateException, RobotNotFoundException {
+    public Object runRobot(@PathVariable("id") String workerId, @RequestBody(required = false) Map<String, Object> requestBody, HttpServletResponse response) throws BaseException {
         Object result = webService.runWorker(new WorkerID(Integer.parseInt(workerId)), requestBody);
         if (result == null) {
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
@@ -183,7 +183,7 @@ public class WebServiceController {
     @ApiResponses({
             @ApiResponse(code = 404, message = "Worker not found"),
             @ApiResponse(code = 409, message = "The worker is not in RUNNING state")})
-    public void stopRobot(@PathVariable("id") String workerId, HttpServletResponse response) throws InvalidStateException, RobotNotFoundException {
+    public void stopRobot(@PathVariable("id") String workerId, HttpServletResponse response) throws BaseException {
         webService.stopWorker(new WorkerID(Integer.parseInt(workerId)));
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }

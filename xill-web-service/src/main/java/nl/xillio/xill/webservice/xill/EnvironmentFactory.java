@@ -46,8 +46,9 @@ public class EnvironmentFactory implements FactoryBean<XillEnvironment> {
      * @throws EnvironmentLoadException When loading the environment fails
      */
     public XillEnvironment load() {
+        XillEnvironment environment = null;
         try {
-            XillEnvironment environment = XillLoader.getEnv(null);
+            environment = XillLoader.getEnv(null);
 
             Path pluginDir = properties.getPluginDir();
             if (pluginDir != null) {
@@ -57,6 +58,10 @@ public class EnvironmentFactory implements FactoryBean<XillEnvironment> {
 
             return environment;
         } catch (IOException e) {
+            // Clean up when loading the plugins has failed
+            if (environment != null) {
+                environment.close();
+            }
             throw new EnvironmentLoadException(
                     "The xill installation could not be loaded. Either the installation is missing or it was corrupt.\n" +
                             "Please make sure you have manually installed xill and pointed the xill.home property to the root folder.",

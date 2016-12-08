@@ -53,7 +53,7 @@ public class WebService {
      * @throws RobotNotFoundException if the worker does not exist
      * @throws InvalidStateException if the worker is not in the required (RUNNING) state
      */
-    public void releaseWorker(WorkerID id) throws RobotNotFoundException, InvalidStateException {
+    public void releaseWorker(WorkerID id) throws BaseException {
         workerPoolManagerService.getDefaultWorkerPool().releaseWorker(id);
     }
 
@@ -73,7 +73,7 @@ public class WebService {
      * @throws RobotNotFoundException if the worker does not exist
      * @throws InvalidStateException if the worker is not in the required (IDLE) state
      */
-    public Object runWorker(WorkerID id, final Map<String, Object> parameters) throws RobotNotFoundException, InvalidStateException {
+    public Object runWorker(WorkerID id, final Map<String, Object> parameters) throws BaseException {
         return workerPoolManagerService.getDefaultWorkerPool().runWorker(id, parameters);
     }
 
@@ -84,7 +84,7 @@ public class WebService {
      * @throws RobotNotFoundException if the worker does not exist
      * @throws InvalidStateException if the worker is not in the required (RUNNING) state
      */
-    public void stopWorker(WorkerID id) throws RobotNotFoundException, InvalidStateException {
+    public void stopWorker(WorkerID id) throws BaseException {
         workerPoolManagerService.getDefaultWorkerPool().stopWorker(id);
     }
 }

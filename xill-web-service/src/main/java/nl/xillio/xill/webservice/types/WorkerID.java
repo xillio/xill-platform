@@ -37,7 +37,7 @@ public class WorkerID {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof WorkerID && ((WorkerID)obj).id == id);
+        return obj instanceof WorkerID && ((WorkerID)obj).id == id;
     }
 
     @Override

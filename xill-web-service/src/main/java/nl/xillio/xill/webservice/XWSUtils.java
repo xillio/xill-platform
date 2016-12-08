@@ -21,8 +21,7 @@ package nl.xillio.xill.webservice;
  * @author andrea.parrilli
  */
 public class XWSUtils {
-    public XWSUtils() throws IllegalAccessException {
-        throw new IllegalAccessException("Please do not instantiate utility classes");
+    private XWSUtils() {
     }
 
     public static String getPresentWorkingDirectory() {

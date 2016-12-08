@@ -87,6 +87,7 @@
         <flapdoodle.version>1.50.5</flapdoodle.version>
         <asm.version>5.0.1</asm.version>
         <springboot.version>1.4.1.RELEASE</springboot.version>
+        <awaitility.version>2.0.0</awaitility.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

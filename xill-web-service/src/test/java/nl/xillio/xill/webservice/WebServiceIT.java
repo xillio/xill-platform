@@ -29,6 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.ManualRestDocumentation;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,8 +41,13 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.TimeUnit;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static nl.xillio.xill.webservice.IsValidUrlMatcher.isValidUrl;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.text.IsEmptyString.isEmptyString;
 import static org.mockito.Matchers.any;
@@ -81,7 +87,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     private String basePath;
 
     @BeforeMethod
-    public void setUp(Method method) throws CompileException, RobotNotFoundException {
+    public void setUp(Method method) throws BaseException {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(documentationConfiguration(this.restDocumentation)).build();
         this.restDocumentation.beforeTest(getClass(), method.getName());
@@ -250,22 +256,17 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
         });
         running.start();
 
-
-        while (running.isAlive()) {
-            Thread.sleep(100);
-
+        await().atMost(10, SECONDS).until(() -> {
             // Terminate a running worker
             MvcResult result = this.mockMvc.perform(
                     delete(basePath + "/worker/" + id.getId())
             ).andReturn();
 
-            // This test succeeds when conflict is returned
-            if (result.getResponse().getStatus() == HttpStatus.CONFLICT.value()) {
-                return;
-            }
-        }
+            return result.getResponse().getStatus();
+        }, equalTo(HttpStatus.CONFLICT.value()));
 
-        throw new AssertionError("Deleting the worker did not return the correct return code");
+        // Wait until the robot finishes
+        await().atMost(10, SECONDS).until(() -> !running.isAlive());
     }
 
 
@@ -352,22 +353,17 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
         });
         running.start();
 
-
-        while (running.isAlive()) {
-            Thread.sleep(100);
-
+        await().atMost(10, SECONDS).until(() -> {
             // Terminate a running worker
             MvcResult result = this.mockMvc.perform(
                     post(basePath + "/worker/" + id.getId() + "/stop")
             ).andReturn();
 
-            // This test succeeds when the robot is terminated
-            if (result.getResponse().getStatus() == HttpStatus.NO_CONTENT.value()) {
-                return;
-            }
-        }
+            return result.getResponse().getStatus();
+        }, equalTo(HttpStatus.NO_CONTENT.value()));
 
-        throw new AssertionError("The robot was not terminated");
+        // Wait until the robot finishes
+        await().atMost(10, SECONDS).until(() -> !running.isAlive());
     }
 
     /**

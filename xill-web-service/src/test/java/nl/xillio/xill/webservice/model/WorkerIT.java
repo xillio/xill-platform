@@ -31,7 +31,11 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.equalTo;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -99,12 +103,7 @@ public class WorkerIT extends AbstractTestNGSpringContextTests {
         });
         runThread.start();
 
-        // Wait until the robot is running
-        while (worker.getState() != WorkerState.RUNNING) {
-            Thread.sleep(10);
-            // If the robot finished running, something is wrong
-            assertTrue(runThread.isAlive(), "The robot finished running before being aborted");
-        }
+        await().atMost(5, SECONDS).until(worker::getState, equalTo(WorkerState.RUNNING));
 
         // Abort the running robot in a new thread
         Thread abortThread = new Thread(() -> {
@@ -116,15 +115,13 @@ public class WorkerIT extends AbstractTestNGSpringContextTests {
         });
         abortThread.start();
 
-        // Wait until the robot is aborting
-        while (worker.getState() != WorkerState.ABORTING) {
-            Thread.sleep(10);
-            // When aborting finished, something is wrong
-            assertTrue(abortThread.isAlive(), "Aborting finished without the state being changed");
-        }
+
+        await().atMost(5, SECONDS).until(worker::getState, equalTo(WorkerState.ABORTING));
 
         abortThread.join();
         runThread.join();
+
+        await().atMost(5, SECONDS).until(() -> !abortThread.isAlive() && !runThread.isAlive());
 
         assertEquals(worker.getState(), WorkerState.IDLE);
     }

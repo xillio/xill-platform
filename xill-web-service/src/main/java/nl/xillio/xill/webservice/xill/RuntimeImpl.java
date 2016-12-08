@@ -116,7 +116,7 @@ public class RuntimeImpl implements Runtime, DisposableBean {
             xillProcessor = xillEnvironment.buildProcessor(workDirectory, resolvedPath);
             xillProcessor.setOutputHandler(outputHandler);
             // Ignore all errors since they will be picked up by the output handler
-            xillProcessor.getDebugger().setErrorHandler(e -> { });
+            xillProcessor.getDebugger().setErrorHandler(new RobotErrorHandler());
 
             // Compile to check for errors in the robot
             xillProcessor.compile();

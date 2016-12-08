@@ -45,7 +45,7 @@ public class SwaggerConfiguration {
                 .apiInfo(apiInfo())
                 .select()
                     .paths(path -> !path.endsWith(serviceBaseURL) && // exclude the swagger controller
-                            !path.equals("/error")) // and the error controller
+                            !"/error".equals(path)) // and the error controller
                     .build()
                 .genericModelSubstitutes(ResponseEntity.class)
                 .useDefaultResponseMessages(false);

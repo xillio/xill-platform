@@ -42,7 +42,7 @@ public class RuntimeConfiguration {
     @ConfigurationProperties(prefix = "runtimePool")
     @Lazy(false)
     @Bean(value = "xillRuntimePool", initMethod = "preparePool")
-    public ObjectPool<Runtime> xillRuntimePool(RuntimePooledObjectFactory runtimeFactory) throws Exception {
+    public ObjectPool<Runtime> xillRuntimePool(RuntimePooledObjectFactory runtimeFactory) {
         return new GenericObjectPool<>(runtimeFactory);
     }
 

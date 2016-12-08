@@ -35,17 +35,17 @@ public class PoolManagerServiceImpl implements WorkerPoolManagerService {
 
     WebServiceProperties properties;
 
-    private final Path DEFAULT_DIRECTORY;
+    private final Path defaultDirectory;
     private final Map<Path, WorkerPool> pools = new HashMap<>();
-    private final WorkerPool DEFAULT_POOL;
+    private final WorkerPool defaultPool;
     private final WorkerFactory workerFactory;
 
     @Autowired
     public PoolManagerServiceImpl(WebServiceProperties properties, WorkerFactory workerFactory) {
         this.properties = properties;
         this.workerFactory = workerFactory;
-        DEFAULT_DIRECTORY = Paths.get(properties.getWorkDirectory());
-        DEFAULT_POOL = new WorkerPool(DEFAULT_DIRECTORY, properties.getMaxExecutors(), workerFactory);
+        defaultDirectory = Paths.get(properties.getWorkDirectory());
+        defaultPool = new WorkerPool(defaultDirectory, properties.getMaxExecutors(), workerFactory);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class PoolManagerServiceImpl implements WorkerPoolManagerService {
 
     @Override
     public WorkerPool getDefaultWorkerPool() {
-        return DEFAULT_POOL;
+        return defaultPool;
     }
 
     @Override

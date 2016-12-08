@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.webservice.model;
 
+import nl.xillio.xill.webservice.exceptions.BaseException;
 import nl.xillio.xill.webservice.exceptions.CompileException;
 import nl.xillio.xill.webservice.exceptions.RobotNotFoundException;
 
@@ -39,7 +40,7 @@ public interface Runtime extends AutoCloseable {
      * @throws CompileException if the robot could not be (re) compiled
      * @throws RobotNotFoundException if the robot can not be found
      */
-    void compile(Path workDirectory, String robotFQN) throws CompileException, RobotNotFoundException;
+    void compile(Path workDirectory, String robotFQN) throws BaseException;
 
     /**
      * Runs the robot that was compiled by calling {@link #compile(Path, String)}.

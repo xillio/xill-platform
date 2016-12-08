@@ -17,6 +17,7 @@ package nl.xillio.xill.webservice.xill;
 
 import nl.xillio.xill.webservice.RobotDeployer;
 import nl.xillio.xill.webservice.RuntimeConfiguration;
+import nl.xillio.xill.webservice.exceptions.BaseException;
 import nl.xillio.xill.webservice.exceptions.CompileException;
 import nl.xillio.xill.webservice.exceptions.RobotNotFoundException;
 import nl.xillio.xill.webservice.model.Runtime;
@@ -81,7 +82,7 @@ public class RuntimeIT extends AbstractTestNGSpringContextTests {
      * @throws CompileException When compilation fails
      */
     @Test
-    public void testRunRobot() throws CompileException, ExecutionException, RobotNotFoundException {
+    public void testRunRobot() throws BaseException {
         runtime.compile(deployer.getWorkingDirectory(), RETURN_ROBOT_NAME);
 
         Map<String, Object> parameters = new HashMap<>();
@@ -98,7 +99,7 @@ public class RuntimeIT extends AbstractTestNGSpringContextTests {
      * @throws CompileException When compilation fails
      */
     @Test
-    public void testRunRobotMultiple() throws CompileException, ExecutionException, RobotNotFoundException {
+    public void testRunRobotMultiple() throws BaseException {
         runtime.compile(deployer.getWorkingDirectory(), RETURN_ROBOT_NAME);
 
         for (int i=0; i<4; i++) {
