@@ -19,7 +19,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.xillio.xill.webservice.exceptions.BaseException;
-import nl.xillio.xill.webservice.exceptions.InvalidStateException;
 import nl.xillio.xill.webservice.exceptions.RobotNotFoundException;
 import nl.xillio.xill.webservice.services.WebService;
 import nl.xillio.xill.webservice.types.WorkerID;

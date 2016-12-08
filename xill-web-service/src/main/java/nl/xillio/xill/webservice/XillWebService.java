@@ -25,6 +25,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 public class XillWebService {
+    protected XillWebService() {
+        // Protected constructor to prevent instantiating this class
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(XillWebService.class, args);
     }

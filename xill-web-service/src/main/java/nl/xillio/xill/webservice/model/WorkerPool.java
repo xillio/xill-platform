@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class represents the workerPool of the workers for the given work directory.
+ * This class represents the pool of the workers for the given work directory.
  */
 public class WorkerPool {
 
@@ -31,7 +31,7 @@ public class WorkerPool {
     private final int poolCardinality;
     private final WorkerFactory workerFactory;
 
-    private final Map<WorkerID, Worker> workerPool = new HashMap<>();
+    private final Map<WorkerID, Worker> pool = new HashMap<>();
 
     public WorkerPool(final Path workDirectory, int poolCardinality, WorkerFactory workerFactory) {
         this.workDirectory = workDirectory;
@@ -52,16 +52,16 @@ public class WorkerPool {
      * @throws CompileException        when the compilation of the robot has failed
      */
     public Worker allocateWorker(final String robotFQN) throws BaseException {
-        synchronized (workerPool) {
+        synchronized (pool) {
             checkWorkerPoolSize();
         }
 
         // This operation includes compiling and can last longer time so it must be outside the synchronised block
         Worker worker = createWorker(robotFQN);
 
-        synchronized (workerPool) {
-            checkWorkerPoolSize(); // The check must be done again to ensure atomic operation on the workerPool
-            workerPool.put(worker.getId(), worker);
+        synchronized (pool) {
+            checkWorkerPoolSize(); // The check must be done again to ensure atomic operation on the pool
+            pool.put(worker.getId(), worker);
             return worker;
         }
     }
@@ -71,8 +71,8 @@ public class WorkerPool {
     }
 
     private void checkWorkerPoolSize() throws AllocateWorkerException {
-        if (workerPool.size() >= poolCardinality) {
-            throw new AllocateWorkerException("Could not allocate new worker. The worker workerPool has reached its maximum amount of workers.");
+        if (pool.size() >= poolCardinality) {
+            throw new AllocateWorkerException("Could not allocate new worker. The worker pool has reached its maximum amount of workers.");
         }
     }
 
@@ -85,9 +85,9 @@ public class WorkerPool {
      * @throws InvalidStateException  if the worker is not in IDLE state
      * @throws RobotNotFoundException when the robot is not found
      */
-    public Object runWorker(WorkerID id, final Map<String, Object> parameters) throws InvalidStateException, RobotNotFoundException {
+    public Object runWorker(WorkerID id, final Map<String, Object> parameters) throws BaseException {
         Worker worker;
-        synchronized (workerPool) {
+        synchronized (pool) {
             worker = findWorker(id);
         }
         // The protection of the xill worker against parallel run and stop operations is implemented in Worker itself so no need to deal with it
@@ -101,9 +101,9 @@ public class WorkerPool {
      * @throws RobotNotFoundException when the robot is not found
      * @throws InvalidStateException  if the worker is not in RUNNING state
      */
-    public void stopWorker(WorkerID id) throws RobotNotFoundException, InvalidStateException {
+    public void stopWorker(WorkerID id) throws BaseException {
         Worker worker;
-        synchronized (workerPool) {
+        synchronized (pool) {
             worker = findWorker(id);
         }
         // The protection of the xill worker against parallel run and stop operations is implemented in Worker itself so no need to deal with it
@@ -111,44 +111,44 @@ public class WorkerPool {
     }
 
     /**
-     * Finds the worker in the worker workerPool.
+     * Finds the worker in the worker pool.
      *
      * @param workerId the worker ID
      * @return the found Worker
      * @throws RobotNotFoundException if the worker was not found
      */
     private Worker findWorker(WorkerID workerId) throws RobotNotFoundException {
-        if (!workerPool.containsKey(workerId)) {
+        if (!pool.containsKey(workerId)) {
             throw new RobotNotFoundException(String.format("The worker %1$d cannot be found.", workerId.getId()));
         }
-        return workerPool.get(workerId);
+        return pool.get(workerId);
     }
 
     /**
-     * Releases the worker in the worker workerPool.
+     * Releases the worker in the worker pool.
      *
      * @param workerId the worker ID
      * @throws RobotNotFoundException if the worker was not found
      * @throws InvalidStateException  if the worker is not in IDLE state
      */
-    public void releaseWorker(WorkerID workerId) throws RobotNotFoundException, InvalidStateException {
-        synchronized (workerPool) {
+    public void releaseWorker(WorkerID workerId) throws BaseException {
+        synchronized (pool) {
             Worker worker = findWorker(workerId);
             if (worker.getState() != WorkerState.IDLE) {
                 throw new InvalidStateException(String.format("The worker %1$d cannot be released as it is not in the IDLE state.", worker.getId().getId()));
             }
             worker.close();
-            workerPool.remove(worker.getId());
+            pool.remove(worker.getId());
         }
     }
 
     /**
-     * Releases all workers in the worker workerPool.
+     * Releases all workers in the worker pool.
      */
     public void releaseAllWorkers() {
-        synchronized (workerPool) {
-            workerPool.forEach((id, worker) -> worker.close());
-            workerPool.clear();
+        synchronized (pool) {
+            pool.forEach((id, worker) -> worker.close());
+            pool.clear();
         }
     }
 }

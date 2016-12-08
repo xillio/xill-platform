@@ -61,7 +61,6 @@ public class PoolManagerServiceImpl implements WorkerPoolManagerService {
     @Override
     public Optional<WorkerPool> findWorkerPool(final WorkerID projectId) {
         throw new NotImplementedException("The 'findWorkerPool' method has not been implemented yet");
-        //pools.values().stream().filter(pool -> pool.getWorkDirectory()).findAny();
     }
 
     @Override
