@@ -17,6 +17,7 @@ package nl.xillio.xill.webservice.services;
 
 import nl.xillio.xill.webservice.model.WorkerPool;
 import nl.xillio.xill.webservice.types.WorkerID;
+import nl.xillio.xill.webservice.types.WorkerPoolID;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -47,7 +48,7 @@ public interface WorkerPoolManagerService {
      * @param projectId the project id. For the moment, it's not used as there is no support for projects yet.
      * @return the existing pool for given projectId
      */
-    Optional<WorkerPool> findWorkerPool(final WorkerID projectId);
+    Optional<WorkerPool> findWorkerPool(final WorkerPoolID projectId);
 
     /**
      * Gets all worker pools.

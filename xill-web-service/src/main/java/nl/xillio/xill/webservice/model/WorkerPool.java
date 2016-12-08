@@ -17,6 +17,7 @@ package nl.xillio.xill.webservice.model;
 
 import nl.xillio.xill.webservice.exceptions.*;
 import nl.xillio.xill.webservice.types.WorkerID;
+import nl.xillio.xill.webservice.types.WorkerPoolID;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ public class WorkerPool {
     private final Path workDirectory;
     private final int poolCardinality;
     private final WorkerFactory workerFactory;
+    private final WorkerPoolID workerPoolId = new WorkerPoolID();
 
     private final Map<WorkerID, Worker> pool = new HashMap<>();
 
@@ -74,6 +76,15 @@ public class WorkerPool {
         if (pool.size() >= poolCardinality) {
             throw new AllocateWorkerException("Could not allocate new worker. The worker pool has reached its maximum amount of workers.");
         }
+    }
+
+    /**
+     * Returns the worker pool id.
+     *
+     * @return the worker pool id.
+     */
+    public WorkerPoolID getId() {
+        return workerPoolId;
     }
 
     /**
