@@ -266,6 +266,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
         }, equalTo(HttpStatus.CONFLICT.value()));
 
         // Wait until the robot finishes
+        webService.stopWorker(id);
         await().atMost(10, SECONDS).until(() -> !running.isAlive());
     }
 
