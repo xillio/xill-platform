@@ -66,11 +66,11 @@ public class WorkerPool {
         }
     }
 
-    Worker createWorker(final String robotFQN) throws BaseException {
+    private Worker createWorker(final String robotFQN) throws BaseException {
         return workerFactory.constructWorker(workDirectory, robotFQN);
     }
 
-    void checkWorkerPoolSize() throws AllocateWorkerException {
+    private void checkWorkerPoolSize() throws AllocateWorkerException {
         if (workerPool.size() >= poolCardinality) {
             throw new AllocateWorkerException("Could not allocate new worker. The worker workerPool has reached its maximum amount of workers.");
         }
@@ -117,7 +117,7 @@ public class WorkerPool {
      * @return the found Worker
      * @throws RobotNotFoundException if the worker was not found
      */
-    Worker findWorker(WorkerID workerId) throws RobotNotFoundException {
+    private Worker findWorker(WorkerID workerId) throws RobotNotFoundException {
         if (!workerPool.containsKey(workerId)) {
             throw new RobotNotFoundException(String.format("The worker %1$d cannot be found.", workerId.getId()));
         }
@@ -150,14 +150,5 @@ public class WorkerPool {
             workerPool.forEach((id, worker) -> worker.close());
             workerPool.clear();
         }
-    }
-
-    /**
-     * Helper method for testing.
-     *
-     * @return the number of items in the worker pool
-     */
-    int getPoolSize() {
-        return workerPool.size();
     }
 }
