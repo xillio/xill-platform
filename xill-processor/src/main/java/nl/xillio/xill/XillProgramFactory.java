@@ -1015,11 +1015,6 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
                     pos.getLineNumber(), pos.getRobotID());
         }
 
-        // Check whether a construct is deprecated (has a Deprecated annotation) and log a warning if this is the case
-        if (construct.isDeprecated()) {
-            context.getRootLogger().warn("Call to deprecated construct with name \"{}\" at {}", construct.getName(), pos.toString());
-        }
-
         return new ConstructCall(construct, arguments, context);
     }
 
@@ -1046,9 +1041,9 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
         if (functionDeclaration == null) {
             String parameterDescription;
             int count = token.getArgumentBlock().getParameters().size();
-            if(count == 0) {
+            if (count == 0) {
                 parameterDescription = "no parameters";
-            } else if(count == 1) {
+            } else if (count == 1) {
                 parameterDescription = "one parameter";
             } else {
                 parameterDescription = count + " parameters";
@@ -1091,7 +1086,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
     }
 
     private FunctionDeclaration findFunctionDeclaration(xill.lang.xill.FunctionCall token, xill.lang.xill.Robot robot, boolean allowPrivate, List<xill.lang.xill.Robot> visitedRobots) {
-        if(visitedRobots.contains(robot)) {
+        if (visitedRobots.contains(robot)) {
             return null;
         }
         visitedRobots.add(robot);
@@ -1100,23 +1095,26 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
         Optional<FunctionDeclaration> match = robot.getInstructionSet().getInstructions()
                 .stream()
                 .filter(instruction -> instruction instanceof xill.lang.xill.FunctionDeclaration)
-                .map(instruction -> (xill.lang.xill.FunctionDeclaration)instruction)
+                .map(instruction -> (xill.lang.xill.FunctionDeclaration) instruction)
                 .filter(functionDeclaration -> allowPrivate || !functionDeclaration.isPrivate())
                 .filter(functionDeclaration -> functionDeclaration.getName().equals(token.getFunction()))
                 .filter(functionDeclaration -> functionDeclaration.getParameters().size() == token.getArgumentBlock().getParameters().size())
                 .map(functions::get)
                 .findFirst();
 
-        if(match.isPresent()) {
+        if (match.isPresent()) {
             return match.get();
         }
 
         // No match was found in this robot. Take a look at the includes
-        for(IncludeStatement includeStatement : robot.getIncludes()) {
-            if(includeStatement.getName() == null) {
+        for (IncludeStatement includeStatement : robot.getIncludes()) {
+            if (includeStatement.getName() == null) {
                 URI resourceURI = XillProcessor.getURI(includeStatement, projectFolder);
                 xill.lang.xill.Robot includedRobot = robotTokens.get(resourceURI);
-                return findFunctionDeclaration(token, includedRobot, false, visitedRobots);
+                FunctionDeclaration result = findFunctionDeclaration(token, includedRobot, false, visitedRobots);
+                if (result != null) {
+                    return result;
+                }
             }
         }
 
