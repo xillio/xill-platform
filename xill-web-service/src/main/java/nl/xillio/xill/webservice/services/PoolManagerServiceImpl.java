@@ -15,11 +15,11 @@
  */
 package nl.xillio.xill.webservice.services;
 
+import nl.xillio.xill.api.errors.NotImplementedException;
 import nl.xillio.xill.webservice.WebServiceProperties;
 import nl.xillio.xill.webservice.model.WorkerFactory;
 import nl.xillio.xill.webservice.model.WorkerPool;
 import nl.xillio.xill.webservice.types.WorkerID;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +36,7 @@ public class PoolManagerServiceImpl implements WorkerPoolManagerService {
     WebServiceProperties properties;
 
     private final Path defaultDirectory;
-    private final Map<Path, WorkerPool> pools = new HashMap<>();
+    private final Map<String, WorkerPool> pools = new HashMap<>();
     private final WorkerPool defaultPool;
     private final WorkerFactory workerFactory;
 
@@ -46,11 +46,19 @@ public class PoolManagerServiceImpl implements WorkerPoolManagerService {
         this.workerFactory = workerFactory;
         defaultDirectory = Paths.get(properties.getWorkDirectory());
         defaultPool = new WorkerPool(defaultDirectory, properties.getMaxExecutors(), workerFactory);
+        pools.put(pathToIdentifier(defaultDirectory), defaultPool);
     }
 
     @Override
     public WorkerPool getWorkerPool(final Path workDirectory) {
-        return pools.getOrDefault(workDirectory, new WorkerPool(workDirectory, properties.getMaxExecutors(), workerFactory));
+        // Convert to absolute path and string to always have the same path
+        String poolKey = pathToIdentifier(workDirectory);
+        WorkerPool pool = pools.get(poolKey);
+        if (pool == null) {
+            pool = new WorkerPool(workDirectory, properties.getMaxExecutors(), workerFactory);
+            pools.put(poolKey, pool);
+        }
+        return pool;
     }
 
     @Override
@@ -66,5 +74,14 @@ public class PoolManagerServiceImpl implements WorkerPoolManagerService {
     @Override
     public List<WorkerPool> getAllWorkerPools() {
         return new LinkedList<>(pools.values());
+    }
+
+    /**
+     * Convert a path to a string that can be used to identify pools
+     *
+     * @return A normalized absolute path
+     */
+    private String pathToIdentifier(Path path) {
+        return path.toAbsolutePath().normalize().toString();
     }
 }
