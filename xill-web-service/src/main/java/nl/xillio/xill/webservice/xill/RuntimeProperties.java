@@ -31,19 +31,6 @@ import java.nio.file.Path;
 @ConfigurationProperties(prefix = "runtime")
 public class RuntimeProperties {
     private Path pluginDir = null;
-    private Path licenseDir = null;
-
-    public Path getLicenseDir() {
-        return licenseDir;
-    }
-
-    public void setLicenseDir(Path licenseDir) {
-        if (Files.isRegularFile(licenseDir)) {
-            this.licenseDir = licenseDir.getParent();
-        } else {
-            this.licenseDir = licenseDir;
-        }
-    }
 
     public Path getPluginDir() {
         return pluginDir;
