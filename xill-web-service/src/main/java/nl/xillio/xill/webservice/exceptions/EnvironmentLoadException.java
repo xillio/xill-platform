@@ -27,10 +27,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(code = HttpStatus.SERVICE_UNAVAILABLE, reason = "Cannot load the Xill Environment")
 public class EnvironmentLoadException extends RuntimeException {
-    public EnvironmentLoadException(String message) {
-        super(message);
-    }
-
     public EnvironmentLoadException(String message, Throwable cause) {
         super(message, cause);
     }

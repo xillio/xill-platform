@@ -141,6 +141,10 @@ public class Worker implements AutoCloseable {
                 abort();
             } catch (InvalidStateException e) {
                 LOGGER.error("The robot has already been aborted", e);
+            } catch (RobotAbortException e) {
+                LOGGER.error("Could not abort the robot", e);
+                // The runtime already invalidated, do nothing
+                return;
             }
         }
         releaseRuntime();

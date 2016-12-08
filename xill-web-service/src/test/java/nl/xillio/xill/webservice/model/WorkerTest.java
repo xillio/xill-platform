@@ -28,6 +28,7 @@ import java.nio.file.Paths;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 
@@ -204,9 +205,29 @@ public class WorkerTest extends TestUtils {
         }).when(runtime).runRobot(anyMap());
 
         worker.run(MapUtils.EMPTY_MAP);
-        worker.close();
 
         verify(runtime).abortRobot();
+    }
+
+    /**
+     * Test that a runtime is invalidated if a robot could not be aborted in time.
+     */
+    @Test
+    public void testCloseAbortFail() throws Exception {
+        doAnswer(a -> {
+            worker.close();
+            return null;
+        }).when(runtime).runRobot(anyMap());
+
+        doAnswer(a -> {
+            throw new RobotAbortException("Test exception", null);
+        }).when(runtime).abortRobot();
+
+        worker.run(MapUtils.EMPTY_MAP);
+
+        verify(runtimePool).borrowObject();
+        verify(runtimePool).invalidateObject(runtime);
+        verifyNoMoreInteractions(runtimePool);
     }
 
 }

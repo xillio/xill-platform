@@ -21,11 +21,6 @@ package nl.xillio.xill.webservice.exceptions;
  * @author Geert Konijnendijk
  */
 public class PoolFailureException extends RuntimeException {
-
-    public PoolFailureException(String message) {
-        super(message);
-    }
-
     public PoolFailureException(String message, Throwable cause) {
         super(message, cause);
     }
