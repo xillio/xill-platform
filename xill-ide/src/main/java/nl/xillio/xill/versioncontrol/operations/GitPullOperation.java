@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.versioncontrol.operations;
 
+import javafx.application.Platform;
+import nl.xillio.migrationtool.dialogs.GitConflictDialog;
 import nl.xillio.xill.versioncontrol.GitException;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 
@@ -41,7 +43,7 @@ public class GitPullOperation extends GitOperation {
         Set<String> conflicts = repo.pullCommand();
 
         if (conflicts != null) {
-            handleConflicts(conflicts);
+            Platform.runLater(() -> new GitConflictDialog(conflicts).showAndWait());
         }
     }
 }

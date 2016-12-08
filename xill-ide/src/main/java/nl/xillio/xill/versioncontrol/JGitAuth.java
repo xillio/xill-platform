@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.versioncontrol;
 
+import com.sun.javafx.application.PlatformImpl;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import nl.xillio.migrationtool.dialogs.AlertDialog;
@@ -30,6 +31,9 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
  */
 public class JGitAuth {
     private CredentialsProvider credentials;
+
+    // Keep track of whether the authentication dialog was canceled.
+    private boolean authDialogCanceled = false;
 
     /**
      * Set the credentials.
@@ -56,10 +60,14 @@ public class JGitAuth {
      * @return true if the credentials were entered, or false if the dialog was canceled.
      */
     public boolean getAuthentication() {
-        GitAuthenticateDialog dlg = new GitAuthenticateDialog(this);
-        dlg.showAndWait();
+        PlatformImpl.runAndWait(() -> {
+            GitAuthenticateDialog dlg = new GitAuthenticateDialog(this);
+            dlg.showAndWait();
 
-        return !dlg.isCanceled();
+            authDialogCanceled = dlg.isCanceled();
+        });
+
+        return !authDialogCanceled;
     }
 
     /**
@@ -76,7 +84,7 @@ public class JGitAuth {
      * Show the dialog for invalid credentials.
      */
     public void openCredentialsInvalidDialog() {
-        new CredentialsAlertDialog().showAndWait();
+        PlatformImpl.runAndWait(() -> new CredentialsAlertDialog().showAndWait());
     }
 
     private class CredentialsAlertDialog extends AlertDialog {

@@ -26,6 +26,7 @@ public class GitPullOperationTest {
     public void testNormal() throws GitException {
         // Mock.
         JGitRepository repo = mock(JGitRepository.class);
+        when(repo.pullCommand()).thenReturn(null);
         GitPullOperation operation = new GitPullOperation(repo);
 
         // Execute, verify.

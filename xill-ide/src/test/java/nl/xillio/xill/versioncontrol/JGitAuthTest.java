@@ -15,15 +15,12 @@
  */
 package nl.xillio.xill.versioncontrol;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.internal.JGitText;
 import org.eclipse.jgit.transport.CredentialItem;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 public class JGitAuthTest {
     private JGitAuth auth = new JGitAuth();
@@ -50,8 +47,10 @@ public class JGitAuthTest {
 
     @Test
     public void testAuthorizationException() {
-        GitException noAuthException = new GitException("something something") {};
-        GitException authException = new GitException(JGitText.get().notAuthorized) {};
+        GitException noAuthException = new GitException("something something") {
+        };
+        GitException authException = new GitException(JGitText.get().notAuthorized) {
+        };
 
         assertFalse(auth.isAuthorizationException(noAuthException));
         assertTrue(auth.isAuthorizationException(authException));

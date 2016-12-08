@@ -15,7 +15,6 @@
  */
 package nl.xillio.xill.versioncontrol.operations;
 
-import com.sun.javafx.application.PlatformImpl;
 import nl.xillio.xill.versioncontrol.GitException;
 import nl.xillio.xill.versioncontrol.JGitAuth;
 import nl.xillio.xill.versioncontrol.JGitRepository;
@@ -38,9 +37,6 @@ public class GitOperationTest {
         repo = mock(JGitRepository.class);
         auth = mock(JGitAuth.class);
         when(repo.getAuth()).thenReturn(auth);
-
-        // This initializes the JavaFX runtime, which is needed for Platform.runLater.
-        PlatformImpl.startup(() -> {});
     }
 
     @Test
