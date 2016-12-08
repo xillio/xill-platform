@@ -16,136 +16,175 @@
 package nl.xillio.xill.webservice.model;
 
 import nl.xillio.xill.webservice.exceptions.AllocateWorkerException;
+import nl.xillio.xill.webservice.exceptions.BaseException;
 import nl.xillio.xill.webservice.exceptions.InvalidStateException;
 import nl.xillio.xill.webservice.exceptions.RobotNotFoundException;
 import nl.xillio.xill.webservice.types.WorkerID;
-import org.apache.commons.collections.map.HashedMap;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.nio.file.Paths;
-import java.util.Map;
-
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests for the {@link WorkerPool}.
  */
 public class WorkerPoolTest {
 
-    private WorkerPool workerPool;
-    private Worker worker;
-    private Worker mockWorker;
-
-    @BeforeMethod
-    public void setUp() throws Exception {
-        worker = mock(Worker.class);
-        when(worker.getId()).thenReturn(new WorkerID(266));
-        when(worker.getState()).thenReturn(WorkerState.IDLE);
-        doThrow(new InvalidStateException("")).when(worker).abort();
-
-        workerPool = spy(new WorkerPool(Paths.get("test/path"), 2, null));
-        doReturn(worker).when(workerPool).createWorker(anyString());
-
-        worker = workerPool.allocateWorker("robot1.name");
-
-        WorkerID id = new WorkerID(-2);
-        mockWorker = mock(Worker.class);
-        when(mockWorker.getId()).thenReturn(id);
-        doReturn(mockWorker).when(workerPool).findWorker(id);
-    }
-
     @Test
-    public void allocateWorkerTest() throws Exception {
-        // Verify
-        verify(workerPool, times(2)).checkWorkerPoolSize();
-        verify(workerPool, times(1)).createWorker(anyString());
+    public void allocateWorker() throws BaseException {
+        // mock
+        Worker worker = mock(Worker.class);
+        WorkerFactory factory = mock(WorkerFactory.class);
+        when(factory.constructWorker(any(), anyString())).thenReturn(worker);
 
-        // Assert
-        assertNotNull(worker);
-        assertEquals(workerPool.getPoolSize(), 1);
+        // run
+        WorkerPool pool = new WorkerPool(null, 3, factory);
+        Worker result = pool.allocateWorker("test.robot");
+
+        // verify
+        verify(factory).constructWorker(any(), anyString());
+
+        // assert
+        assertEquals(result, worker);
     }
 
     @Test(expectedExceptions = AllocateWorkerException.class)
     public void allocateWorkerTestWhenAllocateFails() throws Exception {
-        doThrow(new AllocateWorkerException("")).when(workerPool).createWorker(anyString());
+        // mock
+        WorkerFactory factory = mock(WorkerFactory.class);
+        when(factory.constructWorker(any(), anyString())).thenThrow(new AllocateWorkerException(""));
 
-        // Run
-        workerPool.allocateWorker("robot2.name");
+        // run
+        WorkerPool pool = new WorkerPool(null, 3, factory);
+        pool.allocateWorker("test.robot");
     }
 
     @Test
-    public void runWorkerTest() throws InvalidStateException, RobotNotFoundException {
-        // Mock
-        String someObject = "result";
-        Map<String, Object> parameters = new HashedMap();
+    public void runWorkerTest() throws BaseException {
+        // mock
+        String testResult = "test result";
+        Worker worker = mock(Worker.class);
+        when(worker.getId()).thenReturn(new WorkerID());
+        when(worker.run(any())).thenReturn(testResult);
 
-        when(mockWorker.run(any())).thenReturn(someObject);
+        WorkerFactory factory = mock(WorkerFactory.class);
+        when(factory.constructWorker(any(), anyString())).thenReturn(worker);
 
-        // Run
-        Object result = workerPool.runWorker(mockWorker.getId(), parameters);
+        WorkerPool pool = new WorkerPool(null, 3, factory);
+        pool.allocateWorker("test.robot");
 
-        // Verify
-        verify(mockWorker).run(parameters);
-        verify(workerPool).findWorker(mockWorker.getId());
+        // run
+        Object result = pool.runWorker(worker.getId(), null);
 
-        // Assert
-        assertSame(result, someObject);
+        // verify
+        verify(worker).run(any());
+
+        // assert
+        assertEquals(result, testResult);
     }
 
     @Test(expectedExceptions = RobotNotFoundException.class)
-    public void runWorkerTestWhenNotFound() throws InvalidStateException, RobotNotFoundException {
+    public void runWorkerTestWhenNotFound() throws BaseException {
         // Run
-        workerPool.runWorker(new WorkerID(-1), null);
+        WorkerPool pool = new WorkerPool(null, 3, null);
+        pool.runWorker(new WorkerID(-1), null);
     }
 
     @Test
-    public void stopWorkerTest() throws InvalidStateException, RobotNotFoundException {
-        // Mock
-        doNothing().when(mockWorker).abort();
+    public void stopWorkerTest() throws BaseException {
+        // mock
+        Worker worker = mock(Worker.class);
+        when(worker.getId()).thenReturn(new WorkerID());
+        doNothing().when(worker).abort();
 
-        // Run
-        workerPool.stopWorker(mockWorker.getId());
+        WorkerFactory factory = mock(WorkerFactory.class);
+        when(factory.constructWorker(any(), anyString())).thenReturn(worker);
 
-        // Verify
-        verify(mockWorker).abort();
-        verify(workerPool).findWorker(mockWorker.getId());
+        // run
+        WorkerPool pool = new WorkerPool(null, 3, factory);
+        pool.allocateWorker("test.robot");
+
+        // run
+        pool.stopWorker(worker.getId());
+
+        // verify
+        verify(worker).abort();
     }
 
     @Test(expectedExceptions = InvalidStateException.class)
-    public void stopWorkerTestWhenNotRunning() throws InvalidStateException, RobotNotFoundException {
-        // Run
-        workerPool.stopWorker(worker.getId());
+    public void stopWorkerTestWhenNotRunning() throws BaseException {
+        // mock
+        Worker worker = mock(Worker.class);
+        when(worker.getId()).thenReturn(new WorkerID());
+        doThrow(new InvalidStateException("")).when(worker).abort();
+
+        WorkerFactory factory = mock(WorkerFactory.class);
+        when(factory.constructWorker(any(), anyString())).thenReturn(worker);
+
+        // run
+        WorkerPool pool = new WorkerPool(null, 3, factory);
+        pool.allocateWorker("test.robot");
+
+        // run
+        pool.stopWorker(worker.getId());
     }
 
     @Test
-    public void releaseWorkerTest() throws InvalidStateException, RobotNotFoundException {
-        // Run
-        workerPool.releaseWorker(worker.getId());
+    public void releaseWorkerTest() throws BaseException {
+        // mock
+        Worker worker = mock(Worker.class);
+        when(worker.getId()).thenReturn(new WorkerID());
+        when(worker.getState()).thenReturn(WorkerState.IDLE);
 
-        // Verify
-        verify(workerPool).findWorker(worker.getId());
+        WorkerFactory factory = mock(WorkerFactory.class);
+        when(factory.constructWorker(any(), anyString())).thenReturn(worker);
 
-        // Assert
-        assertEquals(workerPool.getPoolSize(), 0);
+        // run
+        WorkerPool pool = new WorkerPool(null, 3, factory);
+        pool.allocateWorker("test.robot");
+
+        // run
+        pool.releaseWorker(worker.getId());
+
+        // verify
+        verify(worker).getState();
+        verify(worker).close();
     }
 
     @Test(expectedExceptions = InvalidStateException.class)
-    public void releaseWorkerTestWhenInvalidState() throws InvalidStateException, RobotNotFoundException {
-        // Mock
-        when(mockWorker.getState()).thenReturn(WorkerState.RUNNING);
+    public void releaseWorkerTestWhenInvalidState() throws BaseException {
+        // mock
+        Worker worker = mock(Worker.class);
+        when(worker.getId()).thenReturn(new WorkerID());
+        when(worker.getState()).thenReturn(WorkerState.RUNNING);
 
-        // Run
-        workerPool.releaseWorker(mockWorker.getId());
+        WorkerFactory factory = mock(WorkerFactory.class);
+        when(factory.constructWorker(any(), anyString())).thenReturn(worker);
+
+        // run
+        WorkerPool pool = new WorkerPool(null, 3, factory);
+        pool.allocateWorker("test.robot");
+
+        // run
+        pool.releaseWorker(worker.getId());
     }
 
     @Test
-    public void releaseAllWorkers() throws InvalidStateException, RobotNotFoundException {
-        // Run
-        workerPool.releaseAllWorkers();
+    public void releaseAllWorkers() throws BaseException {
+        // mock
+        Worker worker = mock(Worker.class);
+        when(worker.getId()).thenReturn(new WorkerID());
+        doNothing().when(worker).close();
 
-        // Assert
-        assertEquals(workerPool.getPoolSize(), 0);
+        WorkerFactory factory = mock(WorkerFactory.class);
+        when(factory.constructWorker(any(), anyString())).thenReturn(worker);
+
+        // run
+        WorkerPool pool = new WorkerPool(null, 3, factory);
+        pool.allocateWorker("test.robot");
+        pool.releaseAllWorkers();
+
+        // verify
+        verify(worker).close();
     }
 }
