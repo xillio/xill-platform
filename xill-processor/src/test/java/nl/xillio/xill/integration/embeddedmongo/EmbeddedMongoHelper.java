@@ -37,13 +37,14 @@ import java.security.ProviderException;
 /**
  * Created by andrea.parrilli on 2016-04-25.
  */
-public class EmbeddedMongoHelper {
-    private static Logger LOGGER = Log.get();
-    private static final MongodStarter starter;
-    private static final MongodExecutable executable;
+public enum EmbeddedMongoHelper {
+    INSTANCE;
+    private final Logger LOGGER = Log.get();
+    private final MongodStarter starter;
+    private final MongodExecutable executable;
     private static Net net;
 
-    static {
+    EmbeddedMongoHelper() {
         Command command = Command.MongoD;
 
         IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder()
@@ -63,7 +64,7 @@ public class EmbeddedMongoHelper {
         executable = deploy();
     }
 
-    private static MongodExecutable deploy() {
+    private MongodExecutable deploy() {
         try {
             net = new Net();
             IMongodConfig mongodConfig = new MongodConfigBuilder()
@@ -89,21 +90,21 @@ public class EmbeddedMongoHelper {
         }
     }
 
-    public static void start() throws IOException {
+    public void start() throws IOException {
         if (executable != null)
             executable.start();
         else
             throw new NullPointerException("The Embedded Mongo instance is not running, probably failed static initialization");
     }
 
-    public static void stop() throws IOException {
+    public void stop() throws IOException {
         if (executable != null)
             executable.stop();
         else
             throw new NullPointerException("The Embedded Mongo instance is not running, probably failed static initialization");
     }
 
-    public static void cleanupDB() {
+    public void cleanupDB() {
         try (MongoClient conn = new MongoClient("localhost", net.getPort())) {
             MongoIterable<String> dbs = conn.listDatabaseNames();
             for (String db : dbs)
