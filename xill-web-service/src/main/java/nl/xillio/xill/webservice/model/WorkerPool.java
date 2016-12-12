@@ -106,21 +106,6 @@ public class WorkerPool {
     }
 
     /**
-     * Finds worker and returns robot's FQN of that worker.
-     *
-     * @param id The worker id
-     * @return the fully qualified name of the robot
-     * @throws RobotNotFoundException if worker is not found
-     */
-    protected String getRobotFQN(final WorkerID id) throws RobotNotFoundException {
-        Worker worker;
-        synchronized (pool) {
-            worker = findWorker(id);
-        }
-        return worker.getRobotFQN();
-    }
-
-    /**
      * Stops running worker (i.e. stop robot associated with the worker).
      *
      * @param id the worker ID
@@ -138,12 +123,13 @@ public class WorkerPool {
 
     /**
      * Finds the worker in the worker pool.
+     * This method should be called under a synchronized(pool) lock.
      *
      * @param workerId the worker ID
      * @return the found Worker
      * @throws RobotNotFoundException if the worker was not found
      */
-    private Worker findWorker(WorkerID workerId) throws RobotNotFoundException {
+    protected Worker findWorker(WorkerID workerId) throws RobotNotFoundException {
         if (!pool.containsKey(workerId)) {
             throw new RobotNotFoundException(String.format("The worker %1$d cannot be found.", workerId.getId()));
         }
