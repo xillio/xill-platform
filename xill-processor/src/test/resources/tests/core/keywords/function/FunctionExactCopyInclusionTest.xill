@@ -1,0 +1,13 @@
+/*
+* Specification: An error must be thrown when a function with the same name
+    and amount of parameters is defined in a regular include and the current robot
+* Input: Calling the robot that contains these criteria
+* Expected: An error is thrown at compile time.
+*/
+use Assert;
+
+do {
+    callbot("testresources/core/keywords/functions/FunctionExactCopyInclusion.xill");
+} success {
+    Assert.error("This robot should not compile");
+}

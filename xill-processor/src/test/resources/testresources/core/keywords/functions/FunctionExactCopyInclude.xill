@@ -1,0 +1,7 @@
+function sameNameAndParameter(one) {
+
+}
+
+function sameNameDifferentParameter(one) {
+
+}

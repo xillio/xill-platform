@@ -22,7 +22,7 @@
 use Assert;
 
 do {
-    callbot("testresources/core/includes/NonTransitiveQualifiedIncludeRobot.xill");
+    callbot("testresources/core/keywords/includes/NonTransitiveQualifiedIncludeRobot.xill");
 } success {
     Assert.error("This robot should not compile");
 }

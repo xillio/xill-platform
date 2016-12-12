@@ -21,7 +21,7 @@
 use Assert;
 
 do {
-    callbot("testresources/core/includes//home/chappio/IllegalQualifiedName.xill");
+    callbot("testresources/core/keywords/includes/IllegalQualifiedName.xill");
 } success {
     Assert.error("This robot should not compile");
 }

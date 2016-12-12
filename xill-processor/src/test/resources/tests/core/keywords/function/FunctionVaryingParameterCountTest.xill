@@ -1,0 +1,50 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+* Specification: A function could be defined multiple times with the same name and with different parameter lengths
+* Input: Calling each function with different values, see below
+* Expected: The sum of the given values plus the value n of the n-th (missing) parameter.
+*/
+
+use Assert;
+
+Assert.equal(parameterCount(), 10);
+Assert.equal(parameterCount(0), 9);
+Assert.equal(parameterCount(0,0), 7);
+Assert.equal(parameterCount(0,0, 0), 4);
+Assert.equal(parameterCount(0,0,0,0), 0);
+Assert.equal(parameterCount(4,3,2,1), 10);
+Assert.equal(parameterCount(4,4,4,4), 16);
+
+function parameterCount() {
+    return parameterCount(1);
+}
+
+private function parameterCount(one) {
+    return parameterCount(one, 2);
+}
+
+function parameterCount(one, two) {
+    return parameterCount(one, two, 3);
+}
+
+private function parameterCount(one, two, three) {
+    return parameterCount(one, two, three, 4);
+}
+
+function parameterCount(one, two, three, four) {
+    return one + two + three + four;
+}

@@ -22,7 +22,7 @@
 use Assert;
 
 do {
-    callbot("testresources/core/includes/IncludeQualifiedUniqueName.xill");
+    callbot("testresources/core/keywords/includes/IncludeQualifiedUniqueName.xill");
 } success {
     Assert.error("This robot should not compile");
 }

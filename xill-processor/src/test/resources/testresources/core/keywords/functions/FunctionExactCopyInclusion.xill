@@ -1,0 +1,9 @@
+include testresources.core.keywords.functions.FunctionExactCopyInclude;
+
+function sameNameAndParameter(one) {
+
+}
+
+function sameNameDifferentParameter() {
+
+   }

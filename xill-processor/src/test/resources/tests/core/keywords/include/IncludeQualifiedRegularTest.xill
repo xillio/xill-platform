@@ -9,7 +9,7 @@ use Assert;
 include testresources.core.keywords.includes.IncludeTestLib as lib;
 
 do {
-    callbot("testresources/core/includes/IncludeQualifiedRegular.xill");
+    callbot("testresources/core/keywords/includes/IncludeQualifiedRegular.xill");
 } success {
     Assert.error("This robot should not compile");
 }
