@@ -25,8 +25,8 @@ var init = 7;
 var list = [ init ];
 var object = { 0 : init };
 
-callbot("testresources/core/callbot/addOne.xill", list);
-callbot("testresources/core/callbot/addOne.xill", object);
+callbot("testresources/core/keywords/callbot/addOne.xill", list);
+callbot("testresources/core/keywords/callbot/addOne.xill", object);
 
 Assert.equal(list[0], init + 1);
 Assert.equal(object[0], init + 1);

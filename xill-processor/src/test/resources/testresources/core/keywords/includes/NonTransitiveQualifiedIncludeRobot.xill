@@ -1,0 +1,3 @@
+include testresources.core.keywords.includes.QualifiedIncluderobot as lib;
+
+lib.includeTest();

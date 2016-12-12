@@ -13,4 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-include testresources.core.includes.IncludeTestLib;
+/*
+ * Specification: A robot must not be able to reach functions that are qualified included by the main robot's inclusions
+                and an error must be thrown that the function is not defined.
+ * Input: A robot that includes a robot that qualified-includes a robot.
+ * Expected: A compile time error when attempting to run an undefined function
+ */
+use Assert;
+
+do {
+    callbot("testresources/core/includes/NonTransitiveQualifiedIncludeRobot.xill");
+} success {
+    Assert.error("This robot should not compile");
+}

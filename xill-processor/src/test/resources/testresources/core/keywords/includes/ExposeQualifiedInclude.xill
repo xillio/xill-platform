@@ -1,0 +1,5 @@
+include testresources.core.keywords.includes.IncludeTestLib as lib;
+
+function includeTest() {
+    return lib.includeTest();
+}

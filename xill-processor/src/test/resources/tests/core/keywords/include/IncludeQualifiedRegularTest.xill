@@ -1,0 +1,15 @@
+/*
+ * Specification: A robot can not run the qualified included function without using the qualified name
+            and an error must be thrown
+ * Input: A robot that qualified includes a robot which tries to call the function the regular way.
+ * Expected: A compile time error when attempting to run an undefined function
+ */
+use Assert;
+
+include testresources.core.keywords.includes.IncludeTestLib as lib;
+
+do {
+    callbot("testresources/core/includes/IncludeQualifiedRegular.xill");
+} success {
+    Assert.error("This robot should not compile");
+}

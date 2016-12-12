@@ -1,0 +1,3 @@
+include testresources.core.keywords.includes.IncludeTestLib as lib;
+
+includeTest();

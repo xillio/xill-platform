@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* 
-* Specification: A called bot MUST use the default argument if none is given.
-* Input: A bot which returns the default argument "empty"
-* Expected: The callbot call returns "empty"
-*/
-
+/*
+ * Specification:  It is now allowed to name a qualified inclusion with a name that already exists in another qualified include,
+            and an error must be thrown
+ * Input: A robot that qualified-includes two robots with the same qualified name.
+ * Expected: A compile time error because of overlapping qualified names
+ */
 use Assert;
 
-var result = callbot("testresources/core/keywords/callbot/argument.xill");
-Assert.equal(result, "empty");
+do {
+    callbot("testresources/core/includes/IncludeQualifiedUniqueName.xill");
+} success {
+    Assert.error("This robot should not compile");
+}

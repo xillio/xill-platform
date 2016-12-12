@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* 
-* Specification: A called bot MUST use the default argument if none is given.
-* Input: A bot which returns the default argument "empty"
-* Expected: The callbot call returns "empty"
-*/
-
+/*
+ * Specification: Qualified including a library MUST expose its non-qualified inclusions
+ * Input: A robot exposes a function called `includeTest` via regular inclusion.
+ * Expected: The function returns "working"
+ */
 use Assert;
+include testresources.core.keywords.includes.TransitiveInclude as lib;
 
-var result = callbot("testresources/core/keywords/callbot/argument.xill");
-Assert.equal(result, "empty");
+Assert.equal(lib.includeTest(), "working");

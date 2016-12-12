@@ -19,6 +19,6 @@
  * Expected: The included function returns "working"
  */
 use Assert;
-include testresources.core.includes.IncludeTestLib as lib;
+include testresources.core.keywords.includes.IncludeTestLib as lib;
 
 Assert.equal(lib.includeTest(), "working");
