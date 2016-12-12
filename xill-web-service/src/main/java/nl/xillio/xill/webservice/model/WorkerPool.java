@@ -33,7 +33,7 @@ public class WorkerPool {
     private final WorkerFactory workerFactory;
     private final WorkerPoolID workerPoolId = new WorkerPoolID();
 
-    private final Map<WorkerID, Worker> pool = new HashMap<>();
+    protected final Map<WorkerID, Worker> pool = new HashMap<>();
 
     public WorkerPool(final Path workDirectory, int poolCardinality, WorkerFactory workerFactory) {
         this.workDirectory = workDirectory;
@@ -106,6 +106,21 @@ public class WorkerPool {
     }
 
     /**
+     * Finds worker and returns robot's FQN of that worker.
+     *
+     * @param id The worker id
+     * @return the fully qualified name of the robot
+     * @throws RobotNotFoundException if worker is not found
+     */
+    protected String getRobotFQN(final WorkerID id) throws RobotNotFoundException {
+        Worker worker;
+        synchronized (pool) {
+            worker = findWorker(id);
+        }
+        return worker.getRobotFQN();
+    }
+
+    /**
      * Stops running worker (i.e. stop robot associated with the worker).
      *
      * @param id the worker ID
@@ -138,13 +153,13 @@ public class WorkerPool {
     /**
      * Releases the worker in the worker pool.
      *
-     * @param workerId the worker ID
+     * @param id the worker ID
      * @throws RobotNotFoundException if the worker was not found
      * @throws InvalidStateException  if the worker is not in IDLE state
      */
-    public void releaseWorker(WorkerID workerId) throws BaseException {
+    public void releaseWorker(WorkerID id) throws BaseException {
         synchronized (pool) {
-            Worker worker = findWorker(workerId);
+            Worker worker = findWorker(id);
             if (worker.getState() != WorkerState.IDLE) {
                 throw new InvalidStateException(String.format("The worker %1$d cannot be released as it is not in the IDLE state.", worker.getId().getId()));
             }
