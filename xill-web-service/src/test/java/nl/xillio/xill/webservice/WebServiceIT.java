@@ -209,7 +209,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     }
 
     /**
-     * Releasing a worker can be done by calling DELETE /worker/{id}
+     * Releasing a worker can be done by calling DELETE /worker/{id}.
      */
     @Test
     public void testDeleteWorker() throws Exception {
@@ -239,7 +239,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     }
 
     /**
-     * If a running worker is released, it should return an error
+     * If a running worker is released, it should return an error.
      */
     @Test
     public void testDeleteRunningWorker() throws Exception {
@@ -273,7 +273,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
 
     /**
      * Running a worker that is attached to a robot with a non-stream, non-null result should result in an
-     * application/json response
+     * application/json response.
      */
     @Test
     public void testRunLoadedRobotWithJsonReturnValue() throws Exception {
@@ -383,7 +383,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     }
 
     /**
-     * If the id is either invalid or does not exist the response should be 404 - NOT FOUND
+     * If the id is either invalid or does not exist the response should be 404 - NOT FOUND.
      */
     @Test
     public void testTerminateNonExistingWorker() throws Exception {

@@ -79,8 +79,8 @@ public class WebServiceController {
      * @param robotFQN the robot ID
      * @param request the request
      * @param response the response
-     * @return the worker id
-     * @throws BaseException
+     * @return the worker id of the newly allocated worker
+     * @throws BaseException when allocating the worker fails
      */
     @RequestMapping(value = "workers", method = RequestMethod.POST)
     @ResponseBody

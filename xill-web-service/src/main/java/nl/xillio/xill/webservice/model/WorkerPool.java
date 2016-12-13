@@ -50,7 +50,6 @@ public class WorkerPool {
      * @return the allocated worker
      * @throws RobotNotFoundException  if the robot was not found
      * @throws AllocateWorkerException there are no resource available for worker allocation
-     * @throws RobotNotFoundException  when the robot is not found
      * @throws CompileException        when the compilation of the robot has failed
      */
     public Worker allocateWorker(final String robotFQN) throws BaseException {

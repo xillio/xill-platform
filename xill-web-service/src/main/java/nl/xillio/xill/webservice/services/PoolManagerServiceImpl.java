@@ -76,7 +76,7 @@ public class PoolManagerServiceImpl implements WorkerPoolManagerService {
     }
 
     /**
-     * Convert a path to a string that can be used to identify pools
+     * Convert a path to a string that can be used to identify pools.
      *
      * @return A normalized absolute path
      */

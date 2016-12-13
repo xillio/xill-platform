@@ -24,7 +24,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
 
 /**
- * Tests for {@link WebServiceController}
+ * Tests for {@link WebServiceController}.
  *
  * @author Geert Konijnendijk
  */

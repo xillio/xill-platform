@@ -65,7 +65,7 @@ public class WorkerIT extends AbstractTestNGSpringContextTests {
 
 
     /**
-     * Delete the temporary directory containing the robot
+     * Delete the temporary directory containing the robot.
      *
      * @throws IOException When deleting fails
      */
@@ -75,7 +75,7 @@ public class WorkerIT extends AbstractTestNGSpringContextTests {
     }
 
     /**
-     * Test creating multiple workers in multiple threads and running a robot
+     * Test creating multiple workers in multiple threads and running a robot.
      */
     @Test(threadPoolSize = 2, invocationCount = 4)
     public void testMultipleWorkers() throws Exception {
