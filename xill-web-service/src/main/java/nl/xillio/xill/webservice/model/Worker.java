@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This class represents a worker entity in the domain model.
@@ -43,8 +44,7 @@ public class Worker implements AutoCloseable {
 
     protected final Runtime runtime;
     protected final ObjectPool<Runtime> runtimePool;
-    protected final Object lock;
-    protected WorkerState state;
+    protected AtomicReference<WorkerState> state;
 
     /**
      * Creates a worker for a specific robot.
@@ -67,11 +67,9 @@ public class Worker implements AutoCloseable {
         this.workDirectory = workDirectory;
         this.robotFQN = robotFQN;
 
-        lock = new Object();
-
         runtime.compile(workDirectory, robotFQN);
 
-        state = WorkerState.IDLE;
+        state = new AtomicReference<>(WorkerState.IDLE);
     }
 
     /**
@@ -82,12 +80,8 @@ public class Worker implements AutoCloseable {
      * @throws InvalidStateException if case the worker is not IDLE
      */
     public Object run(final Map<String, Object> arguments) throws InvalidStateException {
-        synchronized (lock) {
-            // Check the worker state
-            if (state != WorkerState.IDLE) {
-                throw new InvalidStateException("Worker is not ready for running");
-            }
-            state = WorkerState.RUNNING;
+        if (!state.compareAndSet(WorkerState.IDLE, WorkerState.RUNNING)) {
+            throw new InvalidStateException("Worker is not ready for running");
         }
 
         try {
@@ -95,14 +89,11 @@ public class Worker implements AutoCloseable {
             Object returnValue = runtime.runRobot(arguments);
 
             // Do not change the state when it is not running any more, it might have been changed while aborting a robot
-            synchronized (lock) {
-                if (state == WorkerState.RUNNING) {
-                    state = WorkerState.IDLE;
-                }
-            }
+            state.compareAndSet(WorkerState.RUNNING, WorkerState.IDLE);
+
             return returnValue;
         } catch (ConcurrentRuntimeException e) {
-            state = WorkerState.RUNTIME_ERROR;
+            state.set(WorkerState.RUNTIME_ERROR);
             // This worker can not continue, release the runtime
             releaseRuntime();
             throw new InvalidStateException("The worker has encountered a problem and cannot continue", e);
@@ -115,20 +106,18 @@ public class Worker implements AutoCloseable {
      * @throws InvalidStateException if the worker is not RUNNING
      */
     public void abort() throws InvalidStateException {
-        synchronized (lock) {
-            if (state != WorkerState.RUNNING) {
-                throw new InvalidStateException("Worker is not running.");
-            }
-            state = WorkerState.ABORTING;
+        if (!state.compareAndSet(WorkerState.RUNNING, WorkerState.ABORTING)) {
+            throw new InvalidStateException("Worker is not running.");
         }
+
         try {
             runtime.abortRobot();
         } catch (RobotAbortException e) {
-            state = WorkerState.RUNTIME_ERROR;
+            state.set(WorkerState.RUNTIME_ERROR);
             invalidateRuntime();
             throw e;
         }
-        state = WorkerState.IDLE;
+        state.set(WorkerState.IDLE);
     }
 
     /**
@@ -136,7 +125,7 @@ public class Worker implements AutoCloseable {
      */
     @Override
     public void close() {
-        if (state == WorkerState.RUNNING) {
+        if (state.get() == WorkerState.RUNNING) {
             try {
                 abort();
             } catch (InvalidStateException e) {
@@ -157,7 +146,7 @@ public class Worker implements AutoCloseable {
         try {
             runtimePool.invalidateObject(runtime);
         } catch (Exception e) {
-            state = WorkerState.RUNTIME_ERROR;
+            state.set(WorkerState.RUNTIME_ERROR);
             throw new PoolFailureException("Pool could not invalidate the runtime", e);
         }
     }
@@ -169,7 +158,7 @@ public class Worker implements AutoCloseable {
         try {
             runtimePool.returnObject(runtime);
         } catch (Exception e) {
-            state = WorkerState.RUNTIME_ERROR;
+            state.set(WorkerState.RUNTIME_ERROR);
             throw new PoolFailureException("Could not return the runtime to the pool", e);
         }
     }
@@ -207,7 +196,7 @@ public class Worker implements AutoCloseable {
      * @return the state of the worker
      */
     public WorkerState getState() {
-        return state;
+        return state.get();
     }
 
     /**
