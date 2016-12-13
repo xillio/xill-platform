@@ -1,0 +1,9 @@
+use Math;
+
+function print(string) {
+    return string;
+}
+
+function round(number) {
+    return Math.round(number);
+}
