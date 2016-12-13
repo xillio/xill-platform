@@ -18,7 +18,6 @@ package nl.xillio.xill.webservice.xill;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**

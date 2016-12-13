@@ -16,7 +16,6 @@
 package nl.xillio.xill.webservice.services;
 
 import nl.xillio.xill.webservice.model.WorkerPool;
-import nl.xillio.xill.webservice.types.WorkerID;
 import nl.xillio.xill.webservice.types.WorkerPoolID;
 
 import java.nio.file.Path;

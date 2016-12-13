@@ -15,11 +15,9 @@
  */
 package nl.xillio.xill.webservice.services;
 
-import nl.xillio.xill.api.errors.NotImplementedException;
 import nl.xillio.xill.webservice.WebServiceProperties;
 import nl.xillio.xill.webservice.model.WorkerFactory;
 import nl.xillio.xill.webservice.model.WorkerPool;
-import nl.xillio.xill.webservice.types.WorkerID;
 import nl.xillio.xill.webservice.types.WorkerPoolID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

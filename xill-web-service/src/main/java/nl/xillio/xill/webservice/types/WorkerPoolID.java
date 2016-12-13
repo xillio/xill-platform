@@ -25,5 +25,6 @@ public class WorkerPoolID extends WorkerID {
     }
 
     public WorkerPoolID() {
+        // Calls the no-args constructor in WorkerID
     }
 }
