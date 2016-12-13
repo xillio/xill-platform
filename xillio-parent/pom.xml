@@ -87,6 +87,7 @@
         <flapdoodle.version>1.50.5</flapdoodle.version>
         <asm.version>5.0.1</asm.version>
         <springboot.version>1.4.1.RELEASE</springboot.version>
+        <springfox.version>2.6.1</springfox.version>
         <awaitility.version>2.0.0</awaitility.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -344,6 +345,21 @@
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm-commons</artifactId>
                 <version>${asm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${springfox.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${springfox.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.awaitility</groupId>
+                <artifactId>awaitility</artifactId>
+                <version>${awaitility.version}</version>
             </dependency>
             <!-- Internal Project Dependencies -->
             <dependency>
