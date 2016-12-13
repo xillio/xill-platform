@@ -13,12 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-include testresources.core.keywords.functions.FunctionExactCopyInclude;
 
-function sameNameAndParameter(one) {
-
+function testNonShadow() {
+    return true;
 }
-
-function sameNameDifferentParameter() {
-
-   }
