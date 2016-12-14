@@ -34,7 +34,8 @@ More information about MongoDB getCollectionNames can be found in the [MongoDB m
         <example title="Usage">
             <header>Get collections in the default database</header>
             <code>
-                use Mongo, System;
+                use Mongo;
+                use System;
 
                 var db = Mongo.connect("udm_default");
                 var collections = Mongo.getCollectionNames();

@@ -32,8 +32,7 @@ The engine could be configured using the following options:
 | strongCache          | An ATOMIC containing a number (from 0 to 2147483647).                           | The amount of templates to hold a hard reference to so it will not be garbage collected.                   |
 | softCache            | An ATOMIC containing a number (from 0 to 2147483647).                           | The amount of templates to hold a soft reference to so it will be garbage collected when memory is needed. |
 
-`strongCache` and `softCache` could be combined. The engine will then place the most used templates in the `strongCache`.
-When `noCaching` is set, `strongCache` and `softCache` will have no meaning for the engine.
+`strongCache` and `softCache` could be combined. The engine will then place the most used templates in the `strongCache`. When `noCaching` is set, `strongCache` and `softCache` will have no meaning for the engine.
 
 Default is:
         var options = {
@@ -46,8 +45,7 @@ Default is:
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-This plugin uses a third-party library named FreeMarker to process the templates. For more information please
-check their [website](http://freemarker.org/docs/index.html).
+This plugin uses a third-party library named FreeMarker to process the templates. For more information please check their [website](http://freemarker.org/docs/index.html).
 	
 When encountering charset or encoding issues please read the [FreeMarker documentation](http://freemarker.org/docs/pgui_misc_charset.html) on this.
 	</longDescription>

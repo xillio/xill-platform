@@ -22,8 +22,7 @@ Determine the date of creation of the specified file.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="path">
-The path that will be looked at.
-This can be either relative or absolute.
+The path that will be looked at. This can be either relative or absolute.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

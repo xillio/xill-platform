@@ -48,13 +48,10 @@ The optional `options` argument contains additional attributes or modifiers for 
 	<longDescription>
 Local (X)HTML files are also supported with the `file://` protocol.
 
-Usually it is a good idea to reduce loading time by setting up the options to ({"loadimages"=false, "enablejs"=false}) when calling Web.loadPage().
-This deactivates JavaScript and image loading, drastically reducing load times for the page.
+Usually it is a good idea to reduce loading time by setting up the options to ({"loadimages"=false, "enablejs"=false}) when calling Web.loadPage(). This deactivates JavaScript and image loading, drastically reducing load times for the page.
 
 ####Usage on non-windows machines
-To use the Web.loadPage() function on a non-windows machine an installation of PhantomJS is required.
-Downloads and documentation can be found at [Phantomjs download ](phantomjs.org/download.html).
-Make sure you add the binary to your `PATH` environment variable.
+To use the Web.loadPage() function on a non-windows machine an installation of PhantomJS is required. Downloads and documentation can be found at [Phantomjs download](phantomjs.org/download.html). Make sure you add the binary to your `PATH` environment variable.
 	</longDescription>
     <examples>
         <example title="Usage">

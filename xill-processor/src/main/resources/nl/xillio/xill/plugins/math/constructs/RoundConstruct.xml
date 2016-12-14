@@ -22,7 +22,7 @@ Rounds the provided value to the nearest whole number.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="value">
-The value that will be rounded.
+The number that will be rounded.
         </parameterDescription>
 	</parameterDescriptions>
     <examples>

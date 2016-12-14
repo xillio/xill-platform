@@ -32,7 +32,8 @@ The row that will be used.
         <example title="Printing the content of a row">
             <header></header>
             <code>
-                use Excel, System;
+                use Excel;
+                use System;
                 var wb = Excel.loadWorkbook("./test.xlsx");
                 var sheet = Excel.loadSheet(wb, "testSheet");
 

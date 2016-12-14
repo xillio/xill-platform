@@ -29,8 +29,7 @@ The list of changes that will be used.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-The function changes input date according to changes in list and returns new date variable.  
-Change identificators can be: zone, timezone, YEARS, MONTHS, DAYS, HOURS, MINUTES, SECONDS, etc. 
+The function changes input date according to changes in list and returns new date variable. Change identificators can be: zone, timezone, YEARS, MONTHS, DAYS, HOURS, MINUTES, SECONDS, etc.
 	</longDescription>
     <examples>
         <example title="Usage">

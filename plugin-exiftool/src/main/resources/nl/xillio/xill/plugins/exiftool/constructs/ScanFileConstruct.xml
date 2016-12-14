@@ -25,9 +25,7 @@ Extract exif tags from a single file and returns an *OBJECT* containing the tags
 The path to the file that will be scanned.
         </parameterDescription>
 		<parameterDescription parameterName="projection">
-The projection parameter accepts an *OBJECT* containing exif tag names as keys and a boolean flag as a value.
-This value denotes whether or not the tag should be included in the result or not.
-Whenever you specify a tag that should be included in the projection all other tags will default to false.
+The projection parameter accepts an *OBJECT* containing exif tag names as keys and a boolean flag as a value. This value denotes whether or not the tag should be included in the result or not. Whenever you specify a tag that should be included in the projection all other tags will default to false.
 
 #### Examples
 To get only the MIME Type tag:

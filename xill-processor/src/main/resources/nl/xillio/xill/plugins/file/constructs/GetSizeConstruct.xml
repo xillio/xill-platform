@@ -22,8 +22,7 @@ Returns the size of a file or folder in bytes.
 	</description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="path">
-The path that will be checked.
-This can be either a file or a folder, relative or absolute.
+The path that will be checked. This can be either a file or a folder, relative or absolute.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

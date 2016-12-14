@@ -40,8 +40,7 @@ The `onStop` parmameters:
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-The progress bar is always hidden when the robot is opened in Xill IDE.   
-Every call of `setProgress` construct with valid value makes progress bar visible. The only exception is when negative value is provided then the progress bar will be hidden.
+The progress bar is always hidden when the robot is opened in Xill IDE. Every call of `setProgress` construct with valid value makes progress bar visible. The only exception is when negative value is provided then the progress bar will be hidden.
 
 It's possible to make zero progress bar visible at the beginning of the robot code but it's not necessary.
 	</longDescription>

@@ -24,8 +24,7 @@ Returns an iterator that can be used to loop over all folder in the folder at th
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="path">
-The path that will be checked.
-This can be either a file or a folder, relative or absolute.
+The path that will be checked. This can be either a file or a folder, relative or absolute.
         </parameterDescription>
 		<parameterDescription parameterName="recursive">
 If set to `true` all folders in sub folders will also be iterated. If set to `false` only the folders in this folder will be iterated (default is `false`).

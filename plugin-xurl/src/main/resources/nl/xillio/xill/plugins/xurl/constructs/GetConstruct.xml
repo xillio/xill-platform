@@ -117,7 +117,8 @@ The `body` field contains the response body. The type of content in here is auto
         <example title="Usage">
             <header>Make a minimal get request</header>
             <code>
-                use XURL, System;
+                use XURL;
+                use System;
 
                 var response = XURL.get(
                     "https://httpbin.org/get"
@@ -128,7 +129,8 @@ The `body` field contains the response body. The type of content in here is auto
             </code>
             <header>Send a request under basic authentication</header>
             <code>
-                use XURL, System;
+                use XURL;
+                use System;
 
                 var response = XURL.get(
                     "https://httpbin.org/get",
@@ -146,7 +148,8 @@ The `body` field contains the response body. The type of content in here is auto
             </code>
             <header>Send a request with a custom content type header</header>
             <code>
-                use XURL, System;
+                use XURL;
+                use System;
 
                 var response = XURL.get(
                     "https://httpbin.org/get",
@@ -162,7 +165,8 @@ The `body` field contains the response body. The type of content in here is auto
             </code>
             <header>Override the detected response content type</header>
             <code>
-                use XURL, System;
+                use XURL;
+                use System;
 
                 var response = XURL.get(
                     "https://httpbin.org/get",
@@ -176,7 +180,8 @@ The `body` field contains the response body. The type of content in here is auto
             </code>
             <header>Enable debug logging for requests</header>
             <code>
-                use XURL, System;
+                use XURL;
+                use System;
 
                 var response = XURL.get(
                     "https://httpbin.org/get",

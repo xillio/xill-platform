@@ -35,7 +35,8 @@ The column can be referenced by number or alpha-numeric reference.
         <example title="Printing the content of a row">
             <header>Numeric notation</header>
             <code>
-                use Excel, System;
+                use Excel;
+                use System;
                 var wb = Excel.loadWorkbook("./test.xlsx");
                 var sheet = Excel.loadSheet(wb, "testSheet");
 

@@ -25,11 +25,11 @@ Returns `true` if `string` ends with `suffix` or `false` if it does not.
 The string that will be looked at.
         </parameterDescription>
 		<parameterDescription parameterName="suffix">
-The string that will be looked for at the end of 'string'.
+The string that will be looked for at the end of the 'string' parameter.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-See the regular expressions page for more about regular expression support in Xill IDE.
+Read more about Java regular expressions [here] (https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html).
 	</longDescription>
     <examples>
         <example title="Usage">

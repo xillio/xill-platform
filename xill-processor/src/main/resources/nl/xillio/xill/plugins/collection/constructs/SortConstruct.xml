@@ -35,8 +35,7 @@ If set to true the list or object will sort highest first.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-Input will be sorted in order of: Lists -> Objects -> Numbers -> Strings
-The given parameters will sort each of those segments.
+Input will be sorted in order of: Lists -> Objects -> Numbers -> Strings. The given parameters will sort each of those segments.
 	</longDescription>
     <examples>
         <example title="Sorting Lists">

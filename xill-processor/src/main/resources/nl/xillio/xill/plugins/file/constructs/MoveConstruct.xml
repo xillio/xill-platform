@@ -22,12 +22,10 @@ Move a file from a `source` path to a `target` path.
 	</description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="source">
-The path to the file that will be moved.
-This can be either relative or absolute.
+The path to the file that will be moved. This can be either relative or absolute.
         </parameterDescription>
 		<parameterDescription parameterName="target">
-The path that will be moved to.
-This can be either relative or absolute.
+The path that will be moved to. This can be either relative or absolute.
         </parameterDescription>
 		<parameterDescription parameterName="replaceExisting">
 Determines if the move operation can replace existing target file. If set to `false` and the target file already exists it will fail (default is `true`).

@@ -22,8 +22,7 @@ Check if a file or folder exists on the given `path`.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="path">
-The path to which the rights will be checked.
-This can be either a file or a folder, relative or absolute.
+The path to which the rights will be checked. This can be either a file or a folder, relative or absolute.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

@@ -25,7 +25,7 @@ This construct provides a convenient way to perform a query-by-example that resu
 The table that will be used.
         </parameterDescription>
 		<parameterDescription parameterName="keys">
-The key(s) of the wanted object(s).
+The key(s) of the object(s).
         </parameterDescription>
 		<parameterDescription parameterName="database">
 The database parameter is optional. The last made connection will be used if no database is given.
@@ -44,7 +44,8 @@ __NOTE__: Fields with `null` values are ignored in the search of objects.
         <example title="Usage">
         <header>Get an object by it's id</header>
         <code>
-            use MariaDB as db, System;
+            use MariaDB as db;
+            use System;
 
             // Connect to the database
             db.connect(
@@ -60,7 +61,8 @@ __NOTE__: Fields with `null` values are ignored in the search of objects.
         </code>
         <header>Get an object by example</header>
         <code>
-            use MariaDB as db, System;
+            use MariaDB as db;
+            use System;
 
             // Connect to the database
             db.connect(
@@ -74,7 +76,7 @@ __NOTE__: Fields with `null` values are ignored in the search of objects.
                 "lastName": "Doe"
             };
 
-            var row = db.getObject("people", example);
+            var object = db.getObject("people", example);
 
             var json = System.toJSON(row, true);
             System.print(json);

@@ -28,7 +28,7 @@ The string that will be searched.
 The string that will be searched for in 'string1'.
         </parameterDescription>
 		<parameterDescription parameterName="startPos">
-The index at which the search will start. (default is 0)
+The index at which the search will start (default is 0).
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

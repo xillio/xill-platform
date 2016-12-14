@@ -35,7 +35,8 @@ Mainly used to decode XML characters to their original characters.
         <example title="Usage">
             <header>Single pass</header>
             <code><![CDATA[
-                use Decode, System;
+                use Decode;
+                use System;
 
                 System.print(Decode.unescapeXML("Money &amp;lt;&amp;amp;gt; Health"));
 
@@ -43,7 +44,8 @@ Mainly used to decode XML characters to their original characters.
             ]]></code>
             <header>Multiple passes</header>
             <code><![CDATA[
-                use Decode, System;
+                use Decode;
+                use System;
 
                 System.print(Decode.unescapeXML("Money &amp;lt;&amp;amp;gt; Health", 2));
 

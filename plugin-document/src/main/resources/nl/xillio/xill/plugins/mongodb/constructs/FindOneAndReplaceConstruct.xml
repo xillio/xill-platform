@@ -63,8 +63,8 @@ More information about MongoDB findOneAndReplace can be found in the [MongoDB ma
                 // The document to replace the old document with.
                 var newDocument = {
                     "contenttype": "postcard",
-					"timestamp": Date.now(),
-					"content": "I am a postcard!"
+                    "timestamp": Date.now(),
+                    "content": "I am a postcard!"
                 };
 
                 var options = {

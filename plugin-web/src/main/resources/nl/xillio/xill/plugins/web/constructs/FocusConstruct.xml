@@ -26,8 +26,7 @@ The element that will be focused on.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-This is used as a replacement for `mouseover` and `mouseout` events in the absence of a mouse.
-Some pages require these events to be triggered to load data for combo-boxes, menus or other dynamic elements.
+This is used as a replacement for `mouseover` and `mouseout` events in the absence of a mouse. Some pages require these events to be triggered to load data for combo-boxes, menus or other dynamic elements.
 	</longDescription>
     <examples>
         <example title="Usage">

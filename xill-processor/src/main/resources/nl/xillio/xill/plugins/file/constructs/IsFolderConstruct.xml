@@ -22,8 +22,7 @@ Tests whether the `path` points to a folder.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="path">
-The path that will be checked.
-This can be either relative or absolute.
+The path that will be checked. This can be either relative or absolute.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

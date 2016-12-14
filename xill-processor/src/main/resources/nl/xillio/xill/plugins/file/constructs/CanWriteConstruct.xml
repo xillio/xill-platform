@@ -22,8 +22,7 @@ Determines if the currently authenticated user has write access to the specified
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="path">
-The path to which the rights will be checked.
-This can be either a file or a folder, relative or absolute.
+The path to which the rights will be checked. This can be either a file or a folder, relative or absolute.
         </parameterDescription>
 	</parameterDescriptions>
     <examples>

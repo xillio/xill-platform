@@ -22,7 +22,7 @@ Removes all cookies associated with the loaded page.
     </description>
 	<parameterDescriptions>
         <parameterDescription parameterName="page">
-The web page who's cookies will be removed.
+The web page that cookies will be removed from.
         </parameterDescription>
 	</parameterDescriptions>
     <examples>

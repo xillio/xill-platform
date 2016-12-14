@@ -51,7 +51,8 @@ More information about MongoDB updateOne can be found in the [MongoDB manual](ht
         <example title="Usage">
             <header>Update contenttype of document with "_id" value 1 in the assets collection</header>
             <code>
-                use System, Mongo;
+                use System;
+                use Mongo;
                 Mongo.connect("udm_default");
 
                 var query = {"_id" : "1"};

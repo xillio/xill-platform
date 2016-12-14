@@ -22,8 +22,7 @@ Returns a stream with read access to a file at a given `path`.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="path">
-The path to the file that will be used.
-This can be either relative or absolute.
+The path to the file that will be used. This can be either relative or absolute.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

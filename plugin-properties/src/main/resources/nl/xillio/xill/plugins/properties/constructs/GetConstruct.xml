@@ -44,9 +44,7 @@ An example of a file that contains 3 properties:
 There are two ways to define a property's default value. Either through a *defaults.properties* file or through the *defaultValue* construct parameter. If you specify the default in construct parameter then the value in the *defaults.properties* file will be ignored.
 
 ### Defaults hierarchy
-You can create the *defaults.properties* file anywhere in your project.
-The defaults set in that file will then apply to all the robots in that folder and all it's subfolders.
-If a subfolder contains a *defaults.properties* file that defines the same property with a different value the value is overridden for all scripts under that folder.
+You can create the *defaults.properties* file anywhere in your project. The defaults set in that file will then apply to all the robots in that folder and all it's subfolders. If a subfolder contains a *defaults.properties* file that defines the same property with a different value the value is overridden for all scripts under that folder.
 
 ## Context Properties
 By default some properties are already available.
@@ -92,7 +90,8 @@ In the values of your properties you can use an expression syntax to substitute 
             </code>
             <header>Server.xill</header>
             <code>
-                use Properties, XURL;
+                use Properties;
+                use XURL;
 
                 function connect() {
                     var url = Properties.get("server.url");

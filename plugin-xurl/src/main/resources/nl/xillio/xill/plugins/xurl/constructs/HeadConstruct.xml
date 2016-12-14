@@ -25,8 +25,7 @@ Performs a head request to `url` with the given `options` and returns the respon
 The URL that the request will be sent to.
         </parameterDescription>
 		<parameterDescription parameterName="options">
-To set various options for the request you can use the options parameter. The passed value should be an object containing option names as keys and their respective values as values.
-Check out the code examples for more information about the options.
+To set various options for the request you can use the options parameter. The passed value should be an object containing option names as keys and their respective values as values. Check out the code examples for more information about the options.
 
 | Option Name         | Value                                                                                                   | Description                                                                       |
 | ------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
@@ -117,7 +116,8 @@ The `body` field contains the response body. The type of content in here is auto
         <example title="Usage">
             <header>Make a minimal head request</header>
             <code>
-                use XURL, System;
+                use XURL;
+                use System;
 
                 var response = XURL.head(
                     "https://httpbin.org/"
@@ -128,7 +128,8 @@ The `body` field contains the response body. The type of content in here is auto
             </code>
             <header>Send a request under basic authentication</header>
             <code>
-                use XURL, System;
+                use XURL;
+                use System;
 
                 var response = XURL.head(
                     "https://httpbin.org/",
@@ -146,7 +147,8 @@ The `body` field contains the response body. The type of content in here is auto
             </code>
             <header>Enable debug logging for requests</header>
             <code>
-                use XURL, System;
+                use XURL;
+                use System;
 
                 var response = XURL.head(
                     "https://httpbin.org/",

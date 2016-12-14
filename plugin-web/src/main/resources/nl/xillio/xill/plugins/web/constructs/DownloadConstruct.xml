@@ -51,7 +51,8 @@ It supports the HTTP and HTTPS protocols and automatically bypasses all invalid 
         <example title="Usage">
             <header>Download a pdf document with context</header>
             <code>
-                use Web, System;
+                use Web;
+                use System;
                 var page = Web.loadPage("http://www.something.com/archive/login.php", {"user" : "Joe", "pass" : "Password123"});
                 var httpCode = Web.download("http://www.something.com/archive/document.pdf", "c:/tmp/doc.pdf", page, 60000);
                 if (httpCode != 200) {

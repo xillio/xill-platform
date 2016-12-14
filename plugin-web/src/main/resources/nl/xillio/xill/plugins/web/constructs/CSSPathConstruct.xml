@@ -22,8 +22,7 @@ Returns a string, element or a list of node sub-elements from the specified node
     </description>
 	<parameterDescriptions>
         <parameterDescription parameterName="element">
-The element that will be clicked on.
-This must be a visible `node` from an (X)HTML document with a height and width greater than zero.
+The element that will be clicked on. This must be a visible `node` from an (X)HTML document with a height and width greater than zero.
         </parameterDescription>
 		<parameterDescription parameterName="cssPath">
 The cssPath string that will be used.
@@ -32,7 +31,7 @@ The cssPath string that will be used.
 	<longDescription>
 For more information about the CSS Selector syntax and available CSS path functions look here:
 
-	http://www.w3schools.com/cssref/css_selectors.asp
+	[http://www.w3schools.com/cssref/css_selectors.asp](http://www.w3schools.com/cssref/css_selectors.asp)
 	</longDescription>
     <examples>
         <example title="Usage">

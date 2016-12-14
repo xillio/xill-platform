@@ -26,8 +26,7 @@ The json string that will be converted.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-When provided an `ATOMIC`, this construct will parse that single `JSON` string to a variable. When provided a `LIST`, all the top-level elements of that list will be parsed as single `JSON` strings to a variable.
-These variables will then be combined in a `LIST`.
+When provided an `ATOMIC`, this construct will parse that single `JSON` string to a variable. When provided a `LIST`, all the top-level elements of that list will be parsed as single `JSON` strings to a variable. These variables will then be combined in a `LIST`.
 
 The given `ATOMIC` or `LIST`, and the elements of that `LIST`, may not be `null` or empty.
 

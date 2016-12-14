@@ -22,9 +22,7 @@ Returns a randomized value based on the optional parameter value.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="value">
-The value that will lock the the return value between 0 (inclusive) and 'value' (exclusive).
-If a list argument is provided, the result is a random entry from the list.
-If no parameter or a negative number is provided, a random floating point number between 0 and 1 will be generated.
+The value that will lock the the return value between 0 (inclusive) and 'value' (exclusive). If a list argument is provided, the result is a random entry from the list. If no parameter or a negative number is provided, a random floating point number between 0 and 1 will be generated.
         </parameterDescription>
 	</parameterDescriptions>
     <examples>

@@ -22,8 +22,7 @@ Creates and returns a single output stream that will forward all output to other
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="outputs">
-The streams that will be outputted to.
-This must be a list of at least two streams.
+The streams that will be outputted to. This must be a list of at least two streams.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

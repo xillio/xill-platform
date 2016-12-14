@@ -32,8 +32,7 @@ The end index of the area of `string` that will be given.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-The first character in `string` is numbered 0. The last character returned by substring is the character before position `end`.
-Optionally `end` can be left out or set to 0, which means the returned string will end at the last position.
+The first character in `string` is numbered 0. The last character returned by substring is the character before position `end`. Optionally `end` can be left out or set to 0, which means the returned string will end at the last position.
 	</longDescription>
     <examples>
         <example title="Usage">

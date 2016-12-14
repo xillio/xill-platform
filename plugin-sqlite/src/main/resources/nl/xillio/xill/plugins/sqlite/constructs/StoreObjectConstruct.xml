@@ -79,7 +79,8 @@ The return value of this construct is true if the operation finished successfull
             </code>
             <header>Update an item by id</header>
             <code>
-                use SQLite as db, File;
+                use SQLite as db;
+                use File;
 
                 // Connect to the database
                 db.connect("jdbc:sqlite::memory:");

@@ -22,13 +22,10 @@ This construct prints a message to the console.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="text">
-The text that will be printed.
-If an OBJECT or LIST variable is given then its JSON representation will be printed.
-If an ATOMIC variable is given then the textual representation will be printed.
+The text that will be printed. If an OBJECT or LIST variable is given then its JSON representation will be printed. If an ATOMIC variable is given then the textual representation will be printed.
         </parameterDescription>
 		<parameterDescription parameterName="logLevel">
-The log level of the message.
-The available log levels are: "debug", "info", "warning"  and "error".
+The log level of the message. The available log levels are: "debug", "info", "warning"  and "error".
         </parameterDescription>
 	</parameterDescriptions>
     <examples>

@@ -41,7 +41,8 @@ The encoding that will be used.
             </code>
             <header>Get the byte length with a different encoding.</header>
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 var byteLength = String.byteLength("foo", "UTF-16");
                 // This prints: "foo" in UTF-16 contains 8 bytes.

@@ -43,8 +43,7 @@ The second of the date that will be made.
 The nanosecond of the date that will be made.
         </parameterDescription>
 		<parameterDescription parameterName="zone">
-The tiemzone for the date that will be made.
-This will default to your system's timezone.
+The tiemzone for the date that will be made. This will default to your system's timezone.
         </parameterDescription>
 	</parameterDescriptions>
     <examples>

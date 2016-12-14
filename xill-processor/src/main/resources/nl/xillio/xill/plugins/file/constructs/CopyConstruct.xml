@@ -22,12 +22,10 @@ Copy a file/folder from a `source` path to a `target` path.
 	</description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="source">
-The path to the file/folder that will be copied.
-This can be either a file or a folder, relative or absolute.
+The path to the file/folder that will be copied. This can be either a file or a folder, relative or absolute.
         </parameterDescription>
 		<parameterDescription parameterName="target">
-The path that will be copied to.
-This can be either a file or a folder, relative or absolute.
+The path that will be copied to. This can be either a file or a folder, relative or absolute.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

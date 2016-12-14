@@ -29,8 +29,7 @@ The stream that will be read from.
 The encoding that will be used (default is "UTF-8").
         </parameterDescription>
 		<parameterDescription parameterName="limit">
-The amount of bytes read from the stream.
-This will not limit the amount if left empty.
+The amount of bytes read from the stream. This will not limit the amount if left empty.
         </parameterDescription>
 	</parameterDescriptions>
     <examples>

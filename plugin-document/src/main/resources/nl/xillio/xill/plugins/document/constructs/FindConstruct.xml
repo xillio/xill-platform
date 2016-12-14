@@ -32,12 +32,9 @@ The database that will be used.
         </parameterDescription>
     </parameterDescriptions>
     <longDescription>
-This construct expects a mongo filter and a mongo sort query. It will iterate over all documents that match that filter.
-It will then be sorted afterwards. If no filter is provided this construct will iterate over all results.
-If no sort query is provided this construct will iterate without sorting it.
+This construct expects a mongo filter and a mongo sort query. It will iterate over all documents that match that filter. It will then be sorted afterwards. If no filter is provided this construct will iterate over all results. If no sort query is provided this construct will iterate without sorting it.
 
-The identity parameter determines which database will be used.
-For example, when identity is `default`, the `udm_default` database will be used.
+The identity parameter determines which database will be used. For example, when identity is `default`, the `udm_default` database will be used.
     </longDescription>
     <examples>
         <example title="Usage">

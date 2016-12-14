@@ -25,8 +25,7 @@ Execute a single SQL query.
 The query that will be used.
         </parameterDescription>
         <parameterDescription parameterName="parameters">
-If your query requires input it is generally bad practice to use string concatenation to build your own queries.
-The correct way to do this it by using parameterization. This you can do in two ways.
+If your query requires input it is generally bad practice to use string concatenation to build your own queries. The correct way to do this it by using parameterization. This you can do in two ways.
 
 ### Named Parameters
 To create parameters that are labeled, you can use the colon-syntax.
@@ -51,16 +50,17 @@ The database parameter is optional, if not given the last used database will be 
 	</parameterDescriptions>
 	<longDescription>
 The timeout parameter is optional. The default is set to 30 seconds. When the query takes longer than the given timeout it will stop. A timeout of 0 means that there is no limit.
+
 The return value of this construct depends on the type of query. If the query results in a result set it will return an iterator that will iterate over every row in that set. If the query is an update, insert or delete query it will return the number of affected rows.
 
-If you want to pass a string containing a colon you could either escape the colon by preceding the colon with two backslashes (\\\\:), or insert the string in an object and use named parameters (see below) with that object.
-See an example of the latter solution in the code examples.
+If you want to pass a string containing a colon you could either escape the colon by preceding the colon with two backslashes (\\\\:), or insert the string in an object and use named parameters (see below) with that object. See an example of the latter solution in the code examples.
 	</longDescription>
     <examples>
         <example title="Usage">
             <header>Create a table and insert data</header>
             <code>
-                use MSSQL as db, System;
+                use MSSQL as db;
+                use System;
 
                 // First we connect to a database
                 db.connect(
@@ -121,7 +121,8 @@ See an example of the latter solution in the code examples.
             </code>
             <header>Use a string containing a colon as a parameter</header>
             <code>
-                use MSSQL as db, System;
+                use MSSQL as db;
+                use System;
 
                 // Connect to your database
                 db.connect(

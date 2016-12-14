@@ -39,8 +39,7 @@ The body parameter can contain the following types:
 However, you can influence the content type by manually setting the Content-Type header.
         </parameterDescription>
 		<parameterDescription parameterName="options">
-To set various options for the request you can use the options parameter. The passed value should be an object containing option names as keys and their respective values as values.
-Check out the code examples for more information about the options.
+To set various options for the request you can use the options parameter. The passed value should be an object containing option names as keys and their respective values as values. Check out the code examples for more information about the options.
 
 | Option Name         | Value                                                                                                   | Description                                                                       |
 | ------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
@@ -81,11 +80,9 @@ or a LIST in the following format:
 
 The two bodies above are equivalent. A body can contain multiple parts.
 
-A part must contain a `[PART NAME]` (as shown above). This could either be as a key when using the OBJECT syntax for the multipart body, or this could be with a `name` option when using the LIST syntax for the multipart body.
-Passing the body as a LIST allows for multiple parts with the same name.
+A part must contain a `[PART NAME]` (as shown above). This could either be as a key when using the OBJECT syntax for the multipart body, or this could be with a `name` option when using the LIST syntax for the multipart body. Passing the body as a LIST allows for multiple parts with the same name.
 
-A part must contain at least the `content` and `type` options. The `contentType` option is optional.
-See the table below for an explanation of the options which a body part should consist of.
+A part must contain at least the `content` and `type` options. The `contentType` option is optional. See the table below for an explanation of the options which a body part should consist of.
 
 | Option Name            | Value                                                                                                                                                                                            | Description                                                                    |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
@@ -178,7 +175,8 @@ The `body` field contains the response body. The type of content in here is auto
         <example title="Usage">
             <header>Make a minimal put request</header>
             <code>
-                use XURL, System;
+                use XURL;
+                use System;
 
                 var response = XURL.put(
                     "https://httpbin.org/put",
@@ -190,7 +188,9 @@ The `body` field contains the response body. The type of content in here is auto
             </code>
             <header>Send a multipart request</header>
             <code>
-                use XURL, System, File;
+                use XURL;
+                use System;
+                use File;
 
                 var filePath = System.info().robotPath;
 
@@ -218,7 +218,8 @@ The `body` field contains the response body. The type of content in here is auto
             </code>
             <header>Send a request under basic authentication</header>
             <code>
-                use XURL, System;
+                use XURL;
+                use System;
 
                 var response = XURL.put(
                     "https://httpbin.org/put",
@@ -237,7 +238,8 @@ The `body` field contains the response body. The type of content in here is auto
             </code>
             <header>Send a request with a custom content type header</header>
             <code>
-                use XURL, System;
+                use XURL;
+                use System;
 
                 var response = XURL.put(
                     "https://httpbin.org/put",
@@ -254,7 +256,8 @@ The `body` field contains the response body. The type of content in here is auto
             </code>
             <header>Override the detected response content type</header>
             <code>
-                use XURL, System;
+                use XURL;
+                use System;
 
                 var response = XURL.put(
                     "https://httpbin.org/put",
@@ -269,7 +272,8 @@ The `body` field contains the response body. The type of content in here is auto
             </code>
             <header>Enable debug logging for requests</header>
             <code>
-                use XURL, System;
+                use XURL;
+                use System;
 
                 var response = XURL.put(
                     "https://httpbin.org/put",

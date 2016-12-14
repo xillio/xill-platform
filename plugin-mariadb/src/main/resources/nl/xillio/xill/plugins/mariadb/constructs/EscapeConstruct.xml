@@ -32,7 +32,8 @@ If you use parameters in your queries there is no need to escape them.
         <example title="Usage">
             <header>Escape a string</header>
             <code>
-                use MariaDB as db, System;
+                use MariaDB as db;
+                use System;
 
                 var string = 'Hello, this quote: " might be a problem';
                 var escaped = db.escape(string);

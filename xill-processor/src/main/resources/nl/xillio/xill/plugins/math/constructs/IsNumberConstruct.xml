@@ -26,8 +26,7 @@ The value that will be checked.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-A boolean is returned as a result.
-Strings representing numbers and boolean values are considered numbers.
+A boolean is returned as a result. Strings representing numbers and boolean values are considered numbers.
 	</longDescription>
     <examples>
         <example title="Usage">

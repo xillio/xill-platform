@@ -24,8 +24,7 @@ Format the text.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="text">
-The format string specifying how the elements of the LIST `values`, are to be formatted.
-This contains plain text as well as format specifiers, which are special characters that format the arguments of values.
+The format string specifying how the elements of the LIST `values`, are to be formatted. This contains plain text as well as format specifiers, which are special characters that format the arguments of values.
         </parameterDescription>
 		<parameterDescription parameterName="values">
 The values that will be formated into the text.

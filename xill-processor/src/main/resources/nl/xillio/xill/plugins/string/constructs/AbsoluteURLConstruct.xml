@@ -43,7 +43,8 @@ Returns the resulting URL as a string.
             </code>
             <header>One page up</header>
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 System.print(String.absoluteURL("http://www.xillio.nl/calendar/", "../"));
                 // Result: http://www.xillio.nl/

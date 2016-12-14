@@ -25,9 +25,7 @@ Extract exif tags from multiple files inside a folder. This will return an itera
 The path to the folder that will be scanned.
         </parameterDescription>
 		<parameterDescription parameterName="projection">
-The tags that will be gotten.
-The projection parameter accepts an *OBJECT* containing exif tag names as keys and a boolean flag as a value.
-For examples check out [ExifTool.scanFile](./scanFile.html).
+The tags that will be gotten. The projection parameter accepts an *OBJECT* containing exif tag names as keys and a boolean flag as a value. For examples check out [ExifTool.scanFile](./scanFile.html).
         </parameterDescription>
 		<parameterDescription parameterName="options">
 To set options for this construct you can provide an *OBJECT* that contains the options as a key and values as the setting.

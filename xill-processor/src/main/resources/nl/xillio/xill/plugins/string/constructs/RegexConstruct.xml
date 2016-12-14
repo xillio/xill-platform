@@ -28,9 +28,7 @@ The string that will be used.
 The regular expression that will be used.
         </parameterDescription>
 		<parameterDescription parameterName="timeout">
-The amount of time in milliseconds the construct is allowed to run (default is 5000).
-Set timeout to zero to let the function run without timeout.
-This should only be altered when dealing with large source documents, the timeout is there to protect the system from hanging on invalid expressions.
+The amount of time in milliseconds the construct is allowed to run (default is 5000). Set timeout to zero to let the function run without timeout. This should only be altered when dealing with large source documents, the timeout is there to protect the system from hanging on invalid expressions.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

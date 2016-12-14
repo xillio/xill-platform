@@ -25,7 +25,7 @@ Calculates aggregate values for data in a collection.
 The name of the collection that will be used.
         </parameterDescription>
 		<parameterDescription parameterName="pipeline">
-The pipeline that will be used on the collection
+The pipeline that will be used on the collection.
         </parameterDescription>
 		<parameterDescription parameterName="options">
 The `options` parameter may contain the following options:

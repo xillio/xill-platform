@@ -25,8 +25,7 @@ Wraps an iterator around a `stream` and returns this.
 The stream that will be wrapped around.
         </parameterDescription>
 		<parameterDescription parameterName="delimiter">
-The regex pattern that will split the input `stream` in parts.
-If none is provided the stream will be split on new lines.
+The regex pattern that will split the input `stream` in parts. If none is provided the stream will be split on new lines.
         </parameterDescription>
 	</parameterDescriptions>
     <examples>

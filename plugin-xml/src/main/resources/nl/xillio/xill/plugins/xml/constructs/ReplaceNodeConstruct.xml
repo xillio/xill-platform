@@ -22,8 +22,7 @@ Replace the provided XML node with the new node.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="node">
-The new node that will be inserted.
-This must be a string containing valid xml.
+The new node that will be inserted. This must be a string containing valid xml.
         </parameterDescription>
 		<parameterDescription parameterName="xml">
 The XML-node that will be replaced.

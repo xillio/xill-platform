@@ -22,8 +22,7 @@ Returns true if the `element` node is selected.
     </description>
 	<parameterDescriptions>
         <parameterDescription parameterName="element">
-The element that will be checked.
-It has to be a HTML selectable element, such as a radio or check button.
+The element that will be checked. It has to be a HTML selectable element, such as a radio or check button.
         </parameterDescription>
 	</parameterDescriptions>
     <examples>

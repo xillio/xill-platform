@@ -87,7 +87,8 @@ The return value of this construct is true if the operation finished successfull
             </code>
             <header>Update an item by id</header>
             <code>
-                use MSSQL as db, File;
+                use MSSQL as db;
+                use File;
 
                 // Connect to the database
                 db.connect(

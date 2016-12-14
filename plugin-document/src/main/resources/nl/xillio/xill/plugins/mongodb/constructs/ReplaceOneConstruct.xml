@@ -48,7 +48,8 @@ More information about MongoDB replaceOne can be found in the [MongoDB manual](h
         <example title="Usage">
             <header>Replace first document found with author John</header>
             <code>
-                use System, Mongo;
+                use System;
+                use Mongo;
                 Mongo.connect("udm_default");
 
                 // Set contenttype to postcard

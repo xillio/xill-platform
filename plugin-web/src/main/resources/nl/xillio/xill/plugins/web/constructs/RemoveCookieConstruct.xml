@@ -25,8 +25,7 @@ Removes a cookie named `cookie` from the `page`.
 The web page who's cookie will be removed.
         </parameterDescription>
 		<parameterDescription parameterName="cookie">
-The cookie that will be removed.
-can be a string or a list of strings containing the cookie name(s).
+The cookie that will be removed. Can be a string or a list of strings containing the cookie name(s).
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
