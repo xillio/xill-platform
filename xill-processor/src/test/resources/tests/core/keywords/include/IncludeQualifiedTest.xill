@@ -21,4 +21,4 @@
 use Assert;
 include testresources.core.keywords.includes.IncludeTestLib as lib;
 
-Assert.equal(lib.includeTest(), "working");
+Assert.equal(lib->includeTest(), "working");

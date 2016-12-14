@@ -21,8 +21,6 @@
  */
 use Assert;
 
-include testresources.core.keywords.includes.IncludeTestLib as lib;
-
 do {
     callbot("testresources/core/keywords/includes/IncludeQualifiedRegular.xill");
 } success {

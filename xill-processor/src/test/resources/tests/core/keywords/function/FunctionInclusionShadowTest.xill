@@ -25,7 +25,7 @@ include testresources.core.keywords.functions.FunctionQualifiedIncludeNonShadow 
 
 Assert.isTrue(testShadow(), "Shadowing functions of include fails.");
 Assert.isFalse(testNonShadow(), "A qualified include is called instead of this robot's function");
-Assert.isTrue(test.testNonShadow(), "A qualified include gets shadowed.");
+Assert.isTrue(test->testNonShadow(), "A qualified include gets shadowed.");
 
 function testShadow() {
     return true;
