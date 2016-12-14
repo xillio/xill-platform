@@ -162,11 +162,8 @@ public class RobotControls implements EventHandler<KeyEvent>, ErrorHandlingPolic
      * @param userAction whether the pause action is triggered by the user or not
      */
     public void pause(boolean userAction) {
-        StatusBar.Status status = tab.getStatusBar().statusProperty().get();
-        if (status != StatusBar.Status.COMPILING) {
-            disableAll(StatusBar.Status.PAUSING);
-            getDebugger().pause(userAction);
-        }
+        disableAll(StatusBar.Status.PAUSING);
+        getDebugger().pause(userAction);
     }
 
     private void onPause() {
