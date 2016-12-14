@@ -22,6 +22,7 @@ import org.testng.annotations.Test;
 import java.math.BigInteger;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author titusn
@@ -34,19 +35,40 @@ public class MathUtilsTest {
      */
     @DataProvider(name = "addition")
     Object[][] additionNumbers() {
-        return new Object[][] {
+        return new Object[][]{
                 {10, 5, 15},
                 {10.0, 5.0, 15.0},
                 {Integer.MAX_VALUE, 1, Integer.MAX_VALUE + 1L},
-                {Long.MAX_VALUE, 1,  BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.ONE)},
+                {Long.MAX_VALUE, 1, BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.ONE)},
                 {2147483648L, 10, 2147483658L},
                 {new BigInteger("18446744073709551616"), BigInteger.TEN, new BigInteger("18446744073709551626")}
         };
     }
 
-    @Test(dataProvider="addition")
+    @Test(dataProvider = "addition")
     public void testAdd(Number a, Number b, Number expected) {
         assertEquals(MathUtils.add(a, b), expected);
+    }
+
+    /**
+     * @return An array in the form {@code {{Operand, expectedResult}}}
+     */
+    @DataProvider(name = "absolute")
+    Object[][] absoluteNumbers() {
+        return new Object[][]{
+                {-10, 10},
+                {1, 1},
+                {-50.55, 50.55},
+                {Integer.MIN_VALUE + 1, Integer.MAX_VALUE},
+                {Long.MIN_VALUE + 1, BigInteger.valueOf(Long.MAX_VALUE)},
+                {2147483648L, 2147483648L},
+                {new BigInteger("-18446744073709551616"), new BigInteger("18446744073709551616")}
+        };
+    }
+
+    @Test(dataProvider = "absolute")
+    public void testAbs(Number a, Number expected) {
+        assertTrue(MathUtils.compare(MathUtils.abs(a), expected) == 0);
     }
 
     /**
@@ -54,17 +76,17 @@ public class MathUtilsTest {
      */
     @DataProvider(name = "subtraction")
     Object[][] subtractionNumbers() {
-        return new Object[][] {
+        return new Object[][]{
                 {10, 5, 5},
                 {10.0, 5.0, 5.0},
                 {Integer.MIN_VALUE, 1, Integer.MIN_VALUE - 1L},
-                {Long.MIN_VALUE, 1,  BigInteger.valueOf(Long.MIN_VALUE).subtract(BigInteger.ONE)},
+                {Long.MIN_VALUE, 1, BigInteger.valueOf(Long.MIN_VALUE).subtract(BigInteger.ONE)},
                 {2147483648L, 10, 2147483638L},
                 {new BigInteger("18446744073709551616"), BigInteger.TEN, new BigInteger("18446744073709551606")}
         };
     }
 
-    @Test(dataProvider="subtraction")
+    @Test(dataProvider = "subtraction")
     public void testSubtract(Number a, Number b, Number expected) {
         assertEquals(MathUtils.subtract(a, b), expected);
     }
@@ -74,7 +96,7 @@ public class MathUtilsTest {
      */
     @DataProvider(name = "division")
     Object[][] divisionNumbers() {
-        return new Object[][] {
+        return new Object[][]{
                 {10, 5, 2},
                 {10.0, 5.0, 2.0},
                 {5, 2, 2.5},
@@ -94,7 +116,7 @@ public class MathUtilsTest {
         };
     }
 
-    @Test(dataProvider="division")
+    @Test(dataProvider = "division")
     public void testDivision(Number a, Number b, Number expected) {
         assertEquals(MathUtils.divide(a, b), expected);
     }
@@ -104,7 +126,7 @@ public class MathUtilsTest {
      */
     @DataProvider(name = "multiplication")
     Object[][] multiplicationNumbers() {
-        return new Object[][] {
+        return new Object[][]{
                 {10, 5, 50},
                 {10.0, 5.0, 50.0},
                 {2147483648L, 2L, 4294967296L},
@@ -114,7 +136,7 @@ public class MathUtilsTest {
         };
     }
 
-    @Test(dataProvider="multiplication")
+    @Test(dataProvider = "multiplication")
     public void testMultiplication(Number a, Number b, Number expected) {
         assertEquals(MathUtils.multiply(a, b), expected);
     }
@@ -124,7 +146,7 @@ public class MathUtilsTest {
      */
     @DataProvider(name = "modulo")
     Object[][] moduloNumbers() {
-        return new Object[][] {
+        return new Object[][]{
                 {10, 3, 1},
                 {10.0, 3.0, 1.0},
                 {2147483649L, 2L, 1L},
@@ -136,7 +158,7 @@ public class MathUtilsTest {
         };
     }
 
-    @Test(dataProvider="modulo")
+    @Test(dataProvider = "modulo")
     public void testModulo(Number a, Number b, Number expected) {
         assertEquals(MathUtils.modulo(a, b), expected);
     }
@@ -146,7 +168,7 @@ public class MathUtilsTest {
      */
     @DataProvider(name = "power")
     Object[][] powerNumbers() {
-        return new Object[][] {
+        return new Object[][]{
                 // Integer powers return a double
                 {10, 3, 1000.0},
                 {10.0, 3.0, 1000.0},
@@ -156,7 +178,7 @@ public class MathUtilsTest {
         };
     }
 
-    @Test(dataProvider="power")
+    @Test(dataProvider = "power")
     public void testPower(Number a, Number b, Number expected) {
         assertEquals(MathUtils.power(a, b), expected);
     }
@@ -166,7 +188,7 @@ public class MathUtilsTest {
      */
     @DataProvider(name = "compare")
     Object[][] compareNumbers() {
-        return new Object[][] {
+        return new Object[][]{
                 {10, 3, 1},
                 {3, 10, -1},
                 {3, 3, 0},
@@ -182,7 +204,7 @@ public class MathUtilsTest {
         };
     }
 
-    @Test(dataProvider="compare")
+    @Test(dataProvider = "compare")
     public void testCompare(Number a, Number b, Number expected) {
         assertEquals(MathUtils.compare(a, b), expected);
     }
