@@ -181,7 +181,8 @@ public class WorkerThreadTest extends TestUtils {
     /**
      * Test {@link WorkerThread#run()} when the thread is interrupted.
      */
-    @Test
+    @Test(enabled = false, description = "This test is disabled because the thread is interrupted, which kills the " +
+            "jacoco agent. This results in no coverage data")
     public void testRunInterrupted() throws InterruptedException, WorkerCompileException {
         // mock
         when(control.shouldStop()).thenReturn(false, true);
