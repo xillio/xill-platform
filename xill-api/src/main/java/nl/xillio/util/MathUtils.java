@@ -31,7 +31,8 @@ public class MathUtils {
     /**
      * Private constructor since this class contains only static methods
      */
-    private MathUtils() {}
+    private MathUtils() {
+    }
 
     /**
      * Performs the arithmetic addition operation on two abstract numbers.
@@ -44,6 +45,18 @@ public class MathUtils {
     public static Number add(Number a, Number b) {
         NumberType type = NumberType.forClass(a.getClass(), b.getClass());
         return type.add(a, b);
+    }
+
+    /**
+     * Performs the absolute operation on an abstract number.
+     *
+     * @param a the operand
+     * @return the result of the operation
+     * @throws UnsupportedOperationException if no supported number type is found
+     */
+    public static Number abs(Number a) {
+        NumberType type = NumberType.forClass(a.getClass());
+        return type.abs(a);
     }
 
     /**
@@ -210,7 +223,7 @@ public class MathUtils {
         // Check the result using the divide operator
         // and check for the special case of Long.MIN_VALUE * -1
         if ((ax | ay) >>> 31 != 0 && testMultiplyOverflow(x, y, r)) {
-                return null;
+            return null;
         }
         return r;
     }
@@ -295,6 +308,11 @@ public class MathUtils {
             }
 
             @Override
+            public Number abs(Number a) {
+                return Math.abs(a.doubleValue());
+            }
+
+            @Override
             public Number subtract(Number a, Number b) {
                 return a.doubleValue() - b.doubleValue();
             }
@@ -324,7 +342,7 @@ public class MathUtils {
                 return Double.compare(a.doubleValue(), b.doubleValue());
             }
         },
-        LONG(Long.class){
+        LONG(Long.class) {
             @Override
             public Number add(Number a, Number b) {
                 Long longR = addExactWithoutException(a.longValue(), b.longValue());
@@ -333,6 +351,11 @@ public class MathUtils {
                 } else {
                     return BIG.add(a, b);
                 }
+            }
+
+            @Override
+            public Number abs(Number a) {
+                return Math.abs(a.longValue());
             }
 
             @Override
@@ -392,12 +415,18 @@ public class MathUtils {
                 return Long.compare(a.longValue(), b.longValue());
             }
         },
-        BIG(BigInteger.class){
+        BIG(BigInteger.class) {
             @Override
             public Number add(Number a, Number b) {
                 BigInteger bigA = getBig(a);
                 BigInteger bigB = getBig(b);
                 return bigA.add(bigB);
+            }
+
+            @Override
+            public Number abs(Number a) {
+                BigInteger bigA = getBig(a);
+                return bigA.abs();
             }
 
             @Override
@@ -462,7 +491,7 @@ public class MathUtils {
                 return bigA.compareTo(bigB);
             }
         },
-        INT(Integer.class, Byte.class, Short.class){
+        INT(Integer.class, Byte.class, Short.class) {
             @Override
             public Number add(Number a, Number b) {
                 Integer intR = addExactWithoutException(a.intValue(), b.intValue());
@@ -472,6 +501,11 @@ public class MathUtils {
                 } else {
                     return LONG.add(a, b);
                 }
+            }
+
+            @Override
+            public Number abs(Number a) {
+                return Math.abs(a.intValue());
             }
 
             @Override
@@ -549,6 +583,14 @@ public class MathUtils {
         public abstract Number add(Number a, Number b);
 
         /**
+         * Type-specific abs operation
+         * @param a The left operand
+         * @return The result of the operation
+         * @throws UnsupportedOperationException If the operation is not supported by the type
+         */
+        public abstract Number abs(Number a);
+
+        /**
          * Type-specific subtract operation
          * @param a The left operand
          * @param b The right operand
@@ -618,13 +660,22 @@ public class MathUtils {
             return false;
         }
 
+        public static NumberType forClass(Class<? extends Number> classA) {
+            for (NumberType type : values) {
+                if (type.supports(classA)) {
+                    return type;
+                }
+            }
+            throw new IllegalArgumentException("Incompatible number type for " + classA.getSimpleName());
+        }
+
         public static NumberType forClass(Class<? extends Number> classA, Class<? extends Number> classB) {
             for (NumberType type : values) {
                 if (type.supports(classA) || type.supports(classB)) {
                     return type;
                 }
             }
-            throw new IllegalArgumentException("Incompatible number type for " + classA.getSimpleName() + " or " + classB);
+            throw new IllegalArgumentException("Incompatible number type for " + classA.getSimpleName() + " or " + classB.getSimpleName());
         }
     }
 }

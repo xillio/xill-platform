@@ -1,0 +1,40 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Specification: The range MUST return doubles when given doubles as parameters
+ * Input: [0,10,1.0] and [-10.0, -20, -1.5]
+ * Expected: [0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0] and [-10,-11.5,-13.0,-14.5,-16.0,-17.5,-19.0]
+ */
+use Assert, Collection, Math;
+ 
+var iterator1 = Collection.range(0.0, 10, 1.0);
+var iterator2 = Collection.range(-10, -20, -1.5);
+var output1 = [0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0];
+var output2 = [-10,-11.5,-13.0,-14.5,-16.0,-17.5,-19.0];
+
+var allowedDiff = 0.000000000000001; // Abitrary small number to allow offset in double inconsistincies
+var count = 0;
+    
+testInput(collect(iterator1), output1);
+testInput(collect(iterator2), output2);
+
+function testInput(iterator, output) {
+    while(count < Collection.length(iterator)) {
+        // Logic to check whether double values do not have a too high of an offset.
+        var absDiff = Math.abs(iterator[count] - output[count]);
+        Assert.isTrue(absDiff < allowedDiff);
+        count++;
+    }
+}
