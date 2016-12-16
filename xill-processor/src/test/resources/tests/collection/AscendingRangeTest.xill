@@ -1,0 +1,63 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Specification: When start is lesser than end, the range MUST be ascending
+ * Input: See input variable
+ * Expected: See output variable
+ */
+ use Assert, Collection, Math;
+ 
+ var input = [
+     [0, 10, 1],
+     [10, 20, 2],
+     [-10, -5, 1.5],
+     [-0.01, 0.1, 0.01], 
+     [0, 10, 100],
+     [10, 20, 10]
+ ];
+ 
+ var output = [
+    [0,1,2,3,4,5,6,7,8,9], 
+    [10,12,14,16,18],
+    [-10, -8.5, -7, -5.5],
+    [-0.01,0.0,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09], 
+    [0], 
+    [10]
+ ];
+ var allowedDiff = 0.000000000000001; // Abitrary small number to allow offset in double inconsistincies
+ 
+ var count = Collection.length(output) - 1;
+ 
+ while(count > 0) {
+    var currentInput = input[count];
+    var currentOutput = output[count];
+    testInput(currentInput[0], currentInput[1], currentInput[2], currentOutput);
+    count--;
+ }
+ 
+ function testInput(start, end, step, output) {
+    var iterator = Collection.range(start, end, step);    
+    var result = collect(iterator);
+    var count = 0;
+    
+    while(count < Collection.length(result)) {
+        // Logic to check whether double values do not have a too high of an offset.
+        var absDiff = Math.abs(result[count] - output[count]);
+        Assert.isTrue(absDiff < allowedDiff);
+        count++;
+    }
+    
+    Assert.equal(Collection.length(output), Collection.length(result));
+ }

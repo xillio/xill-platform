@@ -35,9 +35,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class RuntimeConfiguration {
 
     /**
-     * @param runtimeFactory
+     * @param runtimeFactory the factory for creating runtime instances
      * @return a pool for {@link RuntimeImpl} instances
-     * @throws Exception
      */
     @ConfigurationProperties(prefix = "runtimePool")
     @Lazy(false)

@@ -67,7 +67,7 @@ public class RuntimeIT extends AbstractTestNGSpringContextTests {
     }
 
     /**
-     * Delete the temporary directory containing the robot
+     * Delete the temporary directory containing the robot.
      *
      * @throws IOException When deleting fails
      */

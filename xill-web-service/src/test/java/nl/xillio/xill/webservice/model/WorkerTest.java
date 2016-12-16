@@ -230,4 +230,11 @@ public class WorkerTest extends TestUtils {
         verifyNoMoreInteractions(runtimePool);
     }
 
+    /**
+     * Test WorkerID.toString method
+     */
+    @Test
+    public void testGetStringWorkerId() throws Exception {
+        assertEquals(worker.getId().toString(), Integer.toString(worker.getId().getId()));
+    }
 }

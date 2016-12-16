@@ -23,7 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Helper class for deploying and removing testing robots
+ * Helper class for deploying and removing testing robots.
  *
  * @author Geert Konijnendijk
  */
@@ -50,7 +50,7 @@ public class RobotDeployer {
     }
 
     /**
-     * Delete the temporary directory containing the robot
+     * Delete the temporary directory containing the robot.
      *
      * @throws IOException When deleting fails
      */

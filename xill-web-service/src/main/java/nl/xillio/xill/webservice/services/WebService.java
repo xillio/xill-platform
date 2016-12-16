@@ -40,7 +40,7 @@ public class WebService {
      *
      * @param robotFQN the robot ID that should be associated to a worker
      * @return the identifier for the worker
-     * @throws BaseException
+     * @throws BaseException when allocating the worker fails
      */
     public WorkerID allocateWorker(String robotFQN) throws BaseException {
         return workerPoolManagerService.getDefaultWorkerPool().allocateWorker(robotFQN).getId();

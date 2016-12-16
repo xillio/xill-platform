@@ -13,29 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.webservice.xill;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
-
-import java.nio.file.Path;
+package nl.xillio.xill.webservice.types;
 
 /**
- * Properties for locating anf loading the Xill environment.
- *
- * @author Thomas Biesaart
- * @author Geert Konijnendijk
+ * Unique identifier of the WorkerPool.
  */
-@Component
-@ConfigurationProperties(prefix = "runtime")
-public class RuntimeProperties {
-    private Path pluginDir = null;
+public class WorkerPoolID extends WorkerID {
 
-    public Path getPluginDir() {
-        return pluginDir;
+    public WorkerPoolID(int id) {
+        super(id);
     }
 
-    public void setPluginDir(Path pluginDir) {
-        this.pluginDir = pluginDir;
+    public WorkerPoolID() {
+        // Calls the no-args constructor in WorkerID
     }
 }

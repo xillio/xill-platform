@@ -17,6 +17,7 @@ package nl.xillio.xill.webservice.model;
 
 import nl.xillio.xill.webservice.exceptions.*;
 import nl.xillio.xill.webservice.types.WorkerID;
+import nl.xillio.xill.webservice.types.WorkerPoolID;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -30,8 +31,9 @@ public class WorkerPool {
     private final Path workDirectory;
     private final int poolCardinality;
     private final WorkerFactory workerFactory;
+    private final WorkerPoolID workerPoolId = new WorkerPoolID();
 
-    private final Map<WorkerID, Worker> pool = new HashMap<>();
+    protected final Map<WorkerID, Worker> pool = new HashMap<>();
 
     public WorkerPool(final Path workDirectory, int poolCardinality, WorkerFactory workerFactory) {
         this.workDirectory = workDirectory;
@@ -48,7 +50,6 @@ public class WorkerPool {
      * @return the allocated worker
      * @throws RobotNotFoundException  if the robot was not found
      * @throws AllocateWorkerException there are no resource available for worker allocation
-     * @throws RobotNotFoundException  when the robot is not found
      * @throws CompileException        when the compilation of the robot has failed
      */
     public Worker allocateWorker(final String robotFQN) throws BaseException {
@@ -74,6 +75,15 @@ public class WorkerPool {
         if (pool.size() >= poolCardinality) {
             throw new AllocateWorkerException("Could not allocate new worker. The worker pool has reached its maximum amount of workers.");
         }
+    }
+
+    /**
+     * Returns the worker pool id.
+     *
+     * @return the worker pool id.
+     */
+    public WorkerPoolID getId() {
+        return workerPoolId;
     }
 
     /**
@@ -112,12 +122,13 @@ public class WorkerPool {
 
     /**
      * Finds the worker in the worker pool.
+     * This method should be called under a synchronized(pool) lock.
      *
      * @param workerId the worker ID
      * @return the found Worker
      * @throws RobotNotFoundException if the worker was not found
      */
-    private Worker findWorker(WorkerID workerId) throws RobotNotFoundException {
+    protected Worker findWorker(WorkerID workerId) throws RobotNotFoundException {
         if (!pool.containsKey(workerId)) {
             throw new RobotNotFoundException(String.format("The worker %1$d cannot be found.", workerId.getId()));
         }
@@ -127,13 +138,13 @@ public class WorkerPool {
     /**
      * Releases the worker in the worker pool.
      *
-     * @param workerId the worker ID
+     * @param id the worker ID
      * @throws RobotNotFoundException if the worker was not found
      * @throws InvalidStateException  if the worker is not in IDLE state
      */
-    public void releaseWorker(WorkerID workerId) throws BaseException {
+    public void releaseWorker(WorkerID id) throws BaseException {
         synchronized (pool) {
-            Worker worker = findWorker(workerId);
+            Worker worker = findWorker(id);
             if (worker.getState() != WorkerState.IDLE) {
                 throw new InvalidStateException(String.format("The worker %1$d cannot be released as it is not in the IDLE state.", worker.getId().getId()));
             }

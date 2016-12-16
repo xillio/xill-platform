@@ -15,11 +15,10 @@
  */
 package nl.xillio.xill.webservice.services;
 
-import nl.xillio.xill.api.errors.NotImplementedException;
 import nl.xillio.xill.webservice.WebServiceProperties;
 import nl.xillio.xill.webservice.model.WorkerFactory;
 import nl.xillio.xill.webservice.model.WorkerPool;
-import nl.xillio.xill.webservice.types.WorkerID;
+import nl.xillio.xill.webservice.types.WorkerPoolID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -67,8 +66,8 @@ public class PoolManagerServiceImpl implements WorkerPoolManagerService {
     }
 
     @Override
-    public Optional<WorkerPool> findWorkerPool(final WorkerID projectId) {
-        throw new NotImplementedException("The 'findWorkerPool' method has not been implemented yet");
+    public Optional<WorkerPool> findWorkerPool(final WorkerPoolID projectId) {
+        return pools.values().stream().filter(p -> p.getId().equals(projectId)).findFirst();
     }
 
     @Override
@@ -77,7 +76,7 @@ public class PoolManagerServiceImpl implements WorkerPoolManagerService {
     }
 
     /**
-     * Convert a path to a string that can be used to identify pools
+     * Convert a path to a string that can be used to identify pools.
      *
      * @return A normalized absolute path
      */

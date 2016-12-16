@@ -5,13 +5,14 @@ import nl.xillio.xill.webservice.WebServiceProperties;
 import nl.xillio.xill.webservice.XWSUtils;
 import nl.xillio.xill.webservice.model.WorkerFactory;
 import nl.xillio.xill.webservice.model.WorkerPool;
-import nl.xillio.xill.webservice.types.WorkerID;
+import nl.xillio.xill.webservice.types.WorkerPoolID;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
@@ -46,11 +47,15 @@ public class PoolManagerServiceImplTest {
     }
 
     /**
-     * Test for {@link PoolManagerServiceImpl#findWorkerPool(WorkerID)}, which has not been implemented.
+     * Test for {@link PoolManagerServiceImpl#findWorkerPool(WorkerPoolID)}, which has not been implemented.
      */
-    @Test(expectedExceptions = NotImplementedException.class)
+    @Test
     public void testFindWorkerPool() {
-        poolManagerService.findWorkerPool(null);
+        WorkerPool pool = poolManagerService.getWorkerPool(Paths.get(XWSUtils.getPresentWorkingDirectory()));
+
+        Optional<WorkerPool> result = poolManagerService.findWorkerPool(pool.getId());
+
+        assertSame(pool, result.get());
     }
 
     /**

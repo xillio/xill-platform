@@ -13,29 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.webservice.xill;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
-
-import java.nio.file.Path;
-
-/**
- * Properties for locating anf loading the Xill environment.
- *
- * @author Thomas Biesaart
- * @author Geert Konijnendijk
+/* Specification: When working with very big number this construct MUST also return very big numbers
+ * Input: 19223372036854775808
+ * Expected: 19223372036854775809, 19223372036854775810
  */
-@Component
-@ConfigurationProperties(prefix = "runtime")
-public class RuntimeProperties {
-    private Path pluginDir = null;
-
-    public Path getPluginDir() {
-        return pluginDir;
-    }
-
-    public void setPluginDir(Path pluginDir) {
-        this.pluginDir = pluginDir;
-    }
-}
+use Assert, Collection;
+var bigint = 19223372036854775808; // Bigger than long
+var iterator = Collection.range(bigint, 19223372036854775810);
+Assert.equal(collect(iterator), [bigint, 19223372036854775809]);
