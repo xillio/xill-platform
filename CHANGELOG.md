@@ -4,13 +4,14 @@ All notable changes to this project will be documented in this file.
 ## [3.5.0] - unreleased
 
 ### Add
-* Qualified includes for xill libraries [CTC-1946]
+* Qualified includes for xill libraries using the new `as` keyword [CTC-1946]
 * Function overloading based on parameters [CTC-1613]
 * Create template plugin [CTC-1799]
 * `System.parseJSON()` now parses LIST [CTC-1769]
 * Warn users about invalid asset names [CTC-1798]
 * Support external logging by adding logging handler that exposes all logging events and exceptions [XSVR-50]
-* Progress bar dialog and `System.setProgress()` construct for overview of robot progress [CTC-1101] 
+* Progress bar dialog and `System.setProgress()` construct for overview of robot progress [CTC-1101]
+* `Collection.range()` construct to easily create oprderediterators for loops [CTC-1592]
 
 ### Change
 * Make `System.print` automatically pretty print LISTs and OBJECTs [CTC-1675]
