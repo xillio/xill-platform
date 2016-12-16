@@ -266,7 +266,7 @@ public class RuntimeImplTest extends TestUtils {
     /**
      * Test {@link RuntimeImpl#runRobot(Map)} when the asynchronous compile was interrupted.
      */
-    @Test
+    @Test(enabled = false)
     public void testRunRobotCompileInterrupted() throws Exception {
         testRunRobotCompileException(InterruptedException.class);
     }
