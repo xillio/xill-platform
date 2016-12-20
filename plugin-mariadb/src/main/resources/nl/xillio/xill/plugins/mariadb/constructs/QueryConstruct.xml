@@ -59,7 +59,8 @@ If you want to pass a string containing a colon you could either escape the colo
         <example title="Usage">
             <header>Create a table and insert data</header>
             <code>
-                use MariaDB as db, System;
+                use MariaDB as db;
+                use System;
 
                 // First we connect to a database
                 db.connect(
@@ -120,7 +121,8 @@ If you want to pass a string containing a colon you could either escape the colo
             </code>
             <header>Use a string containing a colon as a parameter</header>
             <code>
-                use MariaDB as db, System;
+                use MariaDB as db;
+                use System;
 
                 // Connect to your database
                 db.connect(

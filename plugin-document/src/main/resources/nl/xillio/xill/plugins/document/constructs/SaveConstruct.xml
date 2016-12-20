@@ -29,12 +29,9 @@ The database that will be used.
         </parameterDescription>
     </parameterDescriptions>
 	<longDescription>
-This construct will create a new document. If the document id already exists, the document will be updated.
-Before saving, the document will be validated for constraints defined in its content type and decorators.
-If no version field is provided for a version it is set to 1 by default.
+This construct will create a new document. If the document id already exists, the document will be updated. Before saving, the document will be validated for constraints defined in its content type and decorators. If no version field is provided for a version it is set to 1 by default.
 
-The identity parameter determines which database will be used.
-For example, when identity is `default`, the `udm_default` database will be used.
+The identity parameter determines which database will be used. For example, when identity is `default`, the `udm_default` database will be used.
 	</longDescription>
     <examples>
         <example title="Usage">

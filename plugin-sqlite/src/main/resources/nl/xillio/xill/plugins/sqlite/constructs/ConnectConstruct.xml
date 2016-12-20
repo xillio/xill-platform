@@ -35,7 +35,8 @@ The default behavior is to locate the file at the path of in the url and use it 
     jdbc:sqlite:C:/tmp/sqlite.db
 
 If you do not want to save your database you can simply create an in-memory database.
-*Note the double colon after sqlite*
+
+*Note the double colon after sqlite.*
 
     jdbc:sqlite::memory:
 

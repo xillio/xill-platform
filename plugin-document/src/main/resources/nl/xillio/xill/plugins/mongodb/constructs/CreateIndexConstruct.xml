@@ -46,8 +46,7 @@ The database that will be used.
         </parameterDescription>
     </parameterDescriptions>
 	<longDescription>
-The `keys` is an object which contains pairs where the key is the index key, and the value describes the type of index for that field.
-For an ascending index on a field specify a value of 1, for a descending index specify -1.
+The `keys` is an object which contains pairs where the key is the index key, and the value describes the type of index for that field. For an ascending index on a field specify a value of 1, for a descending index specify -1.
 
 More information about MongoDB createIndex can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.createIndex/).
 	</longDescription>

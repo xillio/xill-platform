@@ -26,7 +26,7 @@ The path to the file/folder that will be deleted.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-Returns the absolute path to where the file or folder used to be located. If 'path' does not point to a valid file or folder, nothing will happen.
+Returns the absolute path to where the file or folder used to be located. If `path` does not point to a valid file or folder, nothing will happen.
 	</longDescription>
     <examples>
         <example title="Usage">

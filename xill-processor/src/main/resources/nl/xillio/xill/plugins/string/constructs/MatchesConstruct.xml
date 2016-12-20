@@ -37,16 +37,16 @@ For more information about regular expressions viset the [regular expression sup
     <examples>
         <example title="Usage">
             <code><![CDATA[
-                use System;
-                use String;
+use System;
+use String;
 
-              	if (String.matches("I need help!", ".*help.*")) {
-              	    System.print("Someone is calling for help!");
-                }
+if (String.matches("I need help!", ".*help.*")) {
+    System.print("Someone is calling for help!");
+}
 
-		        if (String.matches("<p>paragraph text</p>", "<p\\b[^>]*>(.*?)</p>")) {
-		            System.print("This text contains a paragraph.");
-		        }
+if (String.matches("<p>paragraph text</p>", "<p\\b[^>]*>(.*?)</p>")) {
+    System.print("This text contains a paragraph.");
+}
           ]]></code>
         </example>
     </examples>

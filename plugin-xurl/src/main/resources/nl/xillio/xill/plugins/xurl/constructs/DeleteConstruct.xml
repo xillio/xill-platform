@@ -129,7 +129,8 @@ The `body` field contains the response body. The type of content in here is auto
             </code>
             <header>Send a request under basic authentication</header>
             <code>
-                use XURL, System;
+                use XURL;
+                use System;
 
                 var response = XURL.delete(
                     "https://httpbin.org/delete",

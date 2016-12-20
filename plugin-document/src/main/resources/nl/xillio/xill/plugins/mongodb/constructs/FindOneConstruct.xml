@@ -34,15 +34,18 @@ The field that will be included/excluded.
 How the results will be sorted.
         </parameterDescription>
 		<parameterDescription parameterName="options">
-Several options can be set here.
+The `options` parameter may contain the following options:
+
+| Option       | Description |
+| ------------ | ----------- |
+| `maxTime`    | The maximum execution time in milliseconds for this operation. |
         </parameterDescription>
 		<parameterDescription parameterName="database">
 The database that will be used.
         </parameterDescription>
     </parameterDescriptions>
 	<longDescription>
-If multiple documents match the query, the first document in the result will be returned.
-If no documents match the `query` it will return `null`.
+If multiple documents match the query, the first document in the result will be returned. If no documents match the `query` it will return `null`.
 
 More information about MongoDB findOne can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.findOne/).
 	</longDescription>
@@ -50,28 +53,28 @@ More information about MongoDB findOne can be found in the [MongoDB manual](http
         <example title="Usage">
             <header>Get the first document in the documents collection</header>
             <code>
-                use Mongo;
-                use System;
-                Mongo.connect("udm_default");
+use Mongo;
+use System;
+Mongo.connect("udm_default");
 
-                var document = Mongo.findOne("documents");
+var document = Mongo.findOne("documents");
 
-                System.print(document);
+System.print(document);
             </code>
             <header>Get a the newest document</header>
             <code>
-                use Mongo;
-                use System;
-                Mongo.connect("udm_default");
+use Mongo;
+use System;
+Mongo.connect("udm_default");
 
-                // Sort by timestamp (newest first).
-                var sort = {
-                    "target.timestamp": -1
-                };
+// Sort by timestamp (newest first).
+var sort = {
+    "target.timestamp": -1
+};
 
-                var document = Mongo.findOne("documents", {}, {}, sort);
+var document = Mongo.findOne("documents", {}, {}, sort);
 
-                System.print(document);
+System.print(document);
             </code>
         </example>
     </examples>

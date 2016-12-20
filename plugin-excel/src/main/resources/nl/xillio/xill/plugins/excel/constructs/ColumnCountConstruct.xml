@@ -45,11 +45,11 @@ The sheet that will be used.
                 var numberOfColumns = Excel.columnCount(sheet);
                 var i = 1;
                 while(i &#60;&#61; numberOfColumns){
-                var cellContent = Excel.getCell(sheet,i,1);
-                if(cellContent != "[EMPTY]"){
-                System.print(Excel.getCell(sheet, i, 1));
-                }
-                i++;
+                    var cellContent = Excel.getCell(sheet,i,1);
+                    if(cellContent != "[EMPTY]"){
+                        System.print(Excel.getCell(sheet, i, 1));
+                    }
+                    i++;
                 }
             </code>
         </example>

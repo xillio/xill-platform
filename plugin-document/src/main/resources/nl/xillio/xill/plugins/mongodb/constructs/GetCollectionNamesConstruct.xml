@@ -34,27 +34,28 @@ More information about MongoDB getCollectionNames can be found in the [MongoDB m
         <example title="Usage">
             <header>Get collections in the default database</header>
             <code>
-                use Mongo;
-                use System;
+use Mongo;
+use System;
 
-                var db = Mongo.connect("udm_default");
-                var collections = Mongo.getCollectionNames();
+var db = Mongo.connect("udm_default");
+var collections = Mongo.getCollectionNames();
 
-                foreach(collectionName in collections) {
-                    System.print(collectionName);
-                }
+foreach(collectionName in collections) {
+    System.print(collectionName);
+}
             </code>
             <header>Get collection names using a named database connection</header>
             <code>
-                use Mongo, System;
+use Mongo;
+use System;
 
-                var db1 = Mongo.connect("source_docs");
-                var db2 = Mongo.connect("udm_default");
-                var collections = Mongo.getCollectionNames(db2);
+var db1 = Mongo.connect("source_docs");
+var db2 = Mongo.connect("udm_default");
+var collections = Mongo.getCollectionNames(db2);
 
-                foreach(collectionName in collections) {
-                    System.print(collectionName);
-                }
+foreach(collectionName in collections) {
+    System.print(collectionName);
+}
             </code>
         </example>
     </examples>

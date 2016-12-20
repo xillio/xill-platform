@@ -29,8 +29,7 @@ The database that will be used.
         </parameterDescription>
     </parameterDescriptions>
 	<longDescription>
-This also removes any indexes associated with the dropped collection.
-Returns `true` if the collection was successfully dropped, or `false` otherwise.	
+This also removes any indexes associated with the dropped collection. Returns `true` if the collection was successfully dropped, or `false` otherwise.
 	
 More information about MongoDB drop can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.drop/).
 	</longDescription>

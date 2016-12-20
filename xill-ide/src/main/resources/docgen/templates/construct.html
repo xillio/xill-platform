@@ -128,9 +128,7 @@
                 </#if>
                 <div class="example">
                     <#list example.nodes as node>
-                        <div class="example-node ${node.tag}">
-                            <#if node.contents??>${node.contents}</#if>
-                        </div>
+                        <div class="example-node ${node.tag}"><#if node.contents??>${node.contents}</#if></div>
                     </#list>
                 </div>
             </#list>

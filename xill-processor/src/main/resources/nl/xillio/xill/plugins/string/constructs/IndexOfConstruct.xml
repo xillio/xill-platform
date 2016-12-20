@@ -25,7 +25,7 @@ Returns the index at which `string2` occurs in `string1`.
 The string that will be searched.
         </parameterDescription>
 		<parameterDescription parameterName="string2">
-The string that will be searched for in 'string1'.
+The string that will be searched for in `string1`.
         </parameterDescription>
 		<parameterDescription parameterName="startPos">
 The index at which the search will start (default is 0).

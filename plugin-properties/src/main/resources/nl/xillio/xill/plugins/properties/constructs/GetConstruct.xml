@@ -30,8 +30,7 @@ Read more on this below.
 	</parameterDescriptions>
 	<longDescription>
 ## Properties Configuration
-The configuration file should exist in the root of the project and is called *xill.properties*.
-In here you can specify key-value properties using the following syntax: `[PROPERTY-KEY]=[PROPERTY-VALUE]`.
+The configuration file should exist in the root of the project and is called *xill.properties*. In here you can specify key-value properties using the following syntax: `[PROPERTY-KEY]=[PROPERTY-VALUE]`.
 
 An example of a file that contains 3 properties:
 

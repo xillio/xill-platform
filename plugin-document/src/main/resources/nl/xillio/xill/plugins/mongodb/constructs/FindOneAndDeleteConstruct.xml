@@ -41,8 +41,7 @@ The database that will be used.
         </parameterDescription>
     </parameterDescriptions>
 	<longDescription>
-If multiple documents match the query, the first document in the result will be deleted.
-If no documents match the `query` it will return `null`.
+If multiple documents match the query, the first document in the result will be deleted. If no documents match the `query` it will return `null`.
 	
 More information about MongoDB findOneAndDelete can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.findOneAndDelete/).
 	</longDescription>

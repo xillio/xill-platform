@@ -43,8 +43,7 @@ The database that will be used.
         </parameterDescription>
     </parameterDescriptions>
 	<longDescription>
-The method can modify specific fields of an existing document or documents or replace an existing document entirely, depending on the update parameter.
-Returns the amount of modified documents. Will return 0 when no documents were modified or a Mongo server prior to version 2.6 is used.
+The method can modify specific fields of an existing document or documents or replace an existing document entirely, depending on the update parameter. Returns the amount of modified documents. Will return 0 when no documents were modified or a Mongo server prior to version 2.6 is used.
 
 More information about MongoDB update can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.update/).
 	</longDescription>

@@ -61,7 +61,8 @@ __NOTE__: Fields with `null` values are ignored in the search of objects.
         </code>
         <header>Get an object by example</header>
         <code>
-            use MSSQL as db, System;
+            use MSSQL as db;
+            use System;
 
             // Connect to the database
             db.connect(

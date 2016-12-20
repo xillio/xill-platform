@@ -55,14 +55,14 @@ public class ExampleNode implements PropertiesProvider {
         }
 
         String[] cleaned = removeCharacters(indentOffset, lines);
-
+        String dinges = String.join("\n", cleaned);
         return String.join("\n", cleaned);
     }
 
     static String[] removeCharacters(int indentOffset, String[] lines) {
         return Arrays.stream(lines)
                 .map(line -> {
-                    if (indentOffset >= line.length()) {
+                    if(countWhiteSpaces(line) == line.length() || indentOffset >= line.length()) {
                         //Is white line
                         return "";
                     }
@@ -95,7 +95,7 @@ public class ExampleNode implements PropertiesProvider {
     static String[] getLines(String content) {
         //Remove trailing newline
         String code = content.replaceAll("^\\s*\n|\n\\s*$", "");
-
+        code.trim();
         //Split
         return Arrays.stream(code.split("\n"))
                 .map(line -> line.replaceAll("\\s", "").isEmpty() ? "" : line)

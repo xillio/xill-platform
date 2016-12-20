@@ -41,11 +41,9 @@ The database that will be used.
         </parameterDescription>
     </parameterDescriptions>
 	<longDescription>
-MongoDB allows the definition of a pipeline, a sequence of filters and computation steps which can do operations like grouping and filtering data.
-This pipeline is input as a list of objects with the stage name as key and its parameters as value.
+MongoDB allows the definition of a pipeline, a sequence of filters and computation steps which can do operations like grouping and filtering data. This pipeline is input as a list of objects with the stage name as key and its parameters as value.
 
-The database parameter determines which database will be used.
-For example, when database is `default`, the `udm_default` database will be used.
+The database parameter determines which database will be used. For example, when database is `default`, the `udm_default` database will be used.
 
 More information about MongoDB aggregation can be found in the [MongoDB manual](https://docs.mongodb.com/manual/core/aggregation-pipeline/).
 	</longDescription>

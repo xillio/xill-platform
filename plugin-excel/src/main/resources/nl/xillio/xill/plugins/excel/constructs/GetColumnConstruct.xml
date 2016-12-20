@@ -48,7 +48,8 @@ The column can be referenced by number or alpha-numeric reference.
             </code>
             <header>Reference notation</header>
             <code>
-                use Excel, System;
+                use Excel;
+                use System;
                 var wb = Excel.loadWorkbook("./test.xlsx");
                 var sheet = Excel.loadSheet(wb, "testSheet");
 

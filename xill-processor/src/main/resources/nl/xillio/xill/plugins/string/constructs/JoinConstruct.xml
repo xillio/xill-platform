@@ -25,7 +25,7 @@ Joins the elements of `list`. Returns the result as one string.
 The list that will be made into one string.
         </parameterDescription>
 		<parameterDescription parameterName="delimiter">
-The delimiter that will be used to seperate the items (default is "").
+The delimiter that will be used to seperate the items (default is empty string).
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

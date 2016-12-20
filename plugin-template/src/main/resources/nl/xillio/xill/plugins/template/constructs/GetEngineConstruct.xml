@@ -24,24 +24,15 @@ This construct parses the given options and returns the engine for the template 
 		<parameterDescription parameterName="options">
 The engine could be configured using the following options:
 
-| Option               | Values                                                                          | Description                                                                                                |
-|----------------------|---------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
-| templatesDirectory   | An ATOMIC containing a relative path from the project root or an absolute path. | The directory that contains all the templates that will be used with this engine.                          |
-| encoding             | An ATOMIC containing a string.                                                  | This sets the encoding for the template that will be provided in the process-construct.                    |
-| noCaching            | An ATOMIC containing a boolean.                                                 | Set this to true to cache no templates at all (decreased performance and less memory usage).               |
-| strongCache          | An ATOMIC containing a number (from 0 to 2147483647).                           | The amount of templates to hold a hard reference to so it will not be garbage collected.                   |
-| softCache            | An ATOMIC containing a number (from 0 to 2147483647).                           | The amount of templates to hold a soft reference to so it will be garbage collected when memory is needed. |
+| Option               | Values                                                                          | Description                                                                                                | Default    |
+|----------------------|---------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|------------|
+| templatesDirectory   | An ATOMIC containing a relative path from the project root or an absolute path. | The directory that contains all the templates that will be used with this engine.                          | "."        |
+| encoding             | An ATOMIC containing a string.                                                  | This sets the encoding for the template that will be provided in the process-construct.                    | "UTF-8"    |
+| noCaching            | An ATOMIC containing a boolean.                                                 | Set this to true to cache no templates at all (decreased performance and less memory usage).               | false      |
+| strongCache          | An ATOMIC containing a number (from 0 to 2147483647).                           | The amount of templates to hold a hard reference to so it will not be garbage collected.                   | 0          |
+| softCache            | An ATOMIC containing a number (from 0 to 2147483647).                           | The amount of templates to hold a soft reference to so it will be garbage collected when memory is needed. | 2147483647 |
 
 `strongCache` and `softCache` could be combined. The engine will then place the most used templates in the `strongCache`. When `noCaching` is set, `strongCache` and `softCache` will have no meaning for the engine.
-
-Default is:
-        var options = {
-            "templatesDirectory" :      ".",        // Project root
-            "encoding" :                "UTF-8",
-            "noCaching" :               false,
-            "strongCache" :             0,
-            "softCache" :               2147483647 // Max integer
-        };
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

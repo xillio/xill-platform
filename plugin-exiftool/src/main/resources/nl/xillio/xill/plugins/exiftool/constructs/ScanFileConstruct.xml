@@ -86,7 +86,8 @@ If you have the homebrew package manager installed (see http://brew.sh ) you can
         <example title="Usage">
             <header>Get all available tags on a file</header>
             <code>
-                use ExifTool, System;
+                use ExifTool;
+                use System;
 
                 var info = ExifTool.scanFile("D:\\temp\\myFile.png");
                 var json = System.toJSON(info, true);
@@ -103,7 +104,8 @@ If you have the homebrew package manager installed (see http://brew.sh ) you can
             </code>
             <header>Get the file type tag on a file</header>
             <code>
-                use ExifTool, System;
+                use ExifTool;
+                use System;
 
                 var info = ExifTool.scanFile(
                 "D:\\temp\\myFile.png",

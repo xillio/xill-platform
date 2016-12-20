@@ -34,15 +34,18 @@ The field that will be included/excluded.
 How the results will be sorted.
         </parameterDescription>
 		<parameterDescription parameterName="options">
-Several options can be set here.
+The `options` parameter may contain the following options:
+
+| Option       | Description |
+| ------------ | ----------- |
+| `maxTime`    | The maximum execution time in milliseconds for this operation. |
         </parameterDescription>
 		<parameterDescription parameterName="database">
 The database that will be used.
         </parameterDescription>
     </parameterDescriptions>
 	<longDescription>
-If `query` is not empty it will only select documents that match the query.
-Using the `projection` parameter you can select fields to include or exclude. By default all fields are included.
+If `query` is not empty it will only select documents that match the query. Using the `projection` parameter you can select fields to include or exclude. By default all fields are included.
 
 More information about MongoDB find can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.find/).
 	</longDescription>

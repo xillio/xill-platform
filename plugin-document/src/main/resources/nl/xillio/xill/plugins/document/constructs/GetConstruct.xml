@@ -29,8 +29,7 @@ The database that will be used.
         </parameterDescription>
     </parameterDescriptions>
 	<longDescription>
-This construct will try to get a document with the given id from the given database.
-If the provided id was not found this construct will return null and throw an error.	
+This construct will try to get a document with the given id from the given database. If the provided id was not found this construct will return null and throw an error.
 	</longDescription>
     <examples>
         <example title="Usage">

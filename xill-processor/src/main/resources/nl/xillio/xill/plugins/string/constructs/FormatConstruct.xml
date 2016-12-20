@@ -19,8 +19,6 @@
 <function>
     <description>
 Format the text.
-
-
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="text">
@@ -32,24 +30,20 @@ The values that will be formated into the text.
 	</parameterDescriptions>
 	<longDescription>
 Format specifiers begin with a percent sign (%) and end with a converter. The converter is a character indicating the type of argument to be formatted. In between the percent sign (%) and the converter you can have optional flags and specifiers.
+
+####Converters
+| d | A decimal integer.                                                       |
+| f | A float. Eg: 0.3f is a float with 3 decimals. It rounds.                 |
+| n | A newline character appropriate for the platform. Note to always use %n. |
+
+####Flags
+| 8 (or any other integer)  | Set the width to that integer. Defaults right-justified.                                                              |
+| 08 (or any other integer) | Fill up the empty space with 0's if necessary. (Doesn't work on left justified formats.)                              |
+| +                         | Left justified.                                                                                                       |                                                                                               |
+| -                         | Print the sign, with both positive and negative numbers. (Note that negative numbers always have their sign printed). |
+| ,                         | Include locale specific grouping characters (change 100000 to 100,000).                                               |
 	</longDescription>
     <examples>
-        <example title="Syntax">
-            <header>Converters</header>
-            <p>d - A decimal integer.</p>
-            <p>f - A float. Eg: 0.3f is a float with 3 decimals. It rounds.</p>
-            <p>n - A newline character appropriate for the platform. Note to always use %n.</p>
-            <header>Flags</header>
-            <p>8 (or any other integer) - Set the width to that integer. Defaults right-justified.</p>
-            <p>08 (or any other integer) - Fill up the empty space with 0's if necessary. (Doesn't work on left
-                justified formats.)
-            </p>
-            <p>+ - Left justified.</p>
-            <p>- - Print the sign, with both positive and negative numbers. (Note that negative numbers always have
-                their sign printed).
-            </p>
-            <p>, - Include locale specific grouping characters. (change 100000 to 100,000).</p>
-        </example>
         <example title="Usage">
             <code>
                 use System;

@@ -37,8 +37,7 @@ The database that will be used.
 	<longDescription>
 A robot exception will be generated if the update failed.
  
-If an error occurs with a document during an ordered insert, the remaining documents will not be inserted.
-If an error occurs during an unordered insert it will continue processing the remaining documents.	
+If an error occurs with a document during an ordered insert, the remaining documents will not be inserted. If an error occurs during an unordered insert it will continue processing the remaining documents.
 	
 More information about MongoDB insert can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.insert/).
 	</longDescription>
