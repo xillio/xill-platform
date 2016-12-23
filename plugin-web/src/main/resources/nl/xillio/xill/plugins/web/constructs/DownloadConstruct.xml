@@ -22,16 +22,16 @@ Downloads the file identified by `url` to local file `filename` and returns the 
     </description>
 	<parameterDescriptions>
         <parameterDescription parameterName="url">
-The URL of the source
+The URL of the source.
         </parameterDescription>
 		<parameterDescription parameterName="fileName">
-Filename where the source content will be saved
+Filename where the source content will be saved.
         </parameterDescription>
 		<parameterDescription parameterName="webContext">
-Optional `PAGE variable` holding the page context
+Optional `PAGE variable` holding the page context.
         </parameterDescription>
 		<parameterDescription parameterName="timeout">
-Download timeout in milliseconds (default 5000 ms)
+Download timeout in milliseconds (default 5000 ms).
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

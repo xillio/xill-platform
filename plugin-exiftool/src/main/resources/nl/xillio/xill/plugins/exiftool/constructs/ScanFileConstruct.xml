@@ -126,7 +126,8 @@ If you have the homebrew package manager installed (see http://brew.sh ) you can
 
             <header>Get all tags on a file with capitalized tag names</header>
             <code>
-                use ExifTool, System;
+                use ExifTool;
+                use System;
 
                 var info = ExifTool.scanFile(
                 "D:\\temp\\myFile.png",

@@ -21,10 +21,10 @@
 Moves the subnode to the parentnode.
     </description>
 	<parameterDescriptions>
-        <parameterDescription parameterName="parentnode">
+        <parameterDescription parameterName="parentNode">
 The XML-node that will be moved to.
         </parameterDescription>
-		<parameterDescription parameterName="subnode">
+		<parameterDescription parameterName="subNode">
 The XML node that will be moved.
         </parameterDescription>
 		<parameterDescription parameterName="beforeNode">

@@ -25,7 +25,7 @@ Repeats `string` for `count` times and concatenates the result.
 The string that will be repeated.
         </parameterDescription>
 		<parameterDescription parameterName="count">
-The amount of times the 'string' will be repeated.
+The amount of times the `string` will be repeated.
         </parameterDescription>
 	</parameterDescriptions>
     <examples>

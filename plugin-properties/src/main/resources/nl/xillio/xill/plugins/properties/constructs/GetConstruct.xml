@@ -61,6 +61,7 @@ By default some properties are already available.
 ### Xill properties
 
 | Name             | Description                                             |
+| ---------------- | ------------------------------------------------------- |
 | xill.plugin      | A list of all plugins loaded in the current environment |
 | xill.projectPath | The path to the currently executing project             |
 | xill.robotPath   | The path to the currently executing robot               |

@@ -22,10 +22,10 @@ Returns `true` if `string` ends with `suffix` or `false` if it does not.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="string">
-The string that will be looked at.
+The string which is examined.
         </parameterDescription>
 		<parameterDescription parameterName="suffix">
-The string that will be looked for at the end of the 'string' parameter.
+The string that will be looked for at the end of the `string` parameter.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

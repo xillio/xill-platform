@@ -28,7 +28,7 @@ The name of the collection that will be used.
 The documents that will be inserted.
         </parameterDescription>
 		<parameterDescription parameterName="ordered">
-perform an ordered insert of the documents?
+Determines if the insertion of the documents is ordered.
         </parameterDescription>
 		<parameterDescription parameterName="database">
 The database that will be used.

@@ -32,7 +32,7 @@ If set to true empty entries will also be added to the results. (default is fals
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-`delimiter` is interpreted as a Java Regular expression. Since all backslash "\\" characters will be interpreted (by the Xill IDE) as an escape character, all backslashes you want to be evaluated by the regex have to be doubled. This means that "\\\\" would denote a single literal backslash "\\" and "\\*" would denote a literal asterisk "*".
+The `delimiter` is interpreted as a Java Regular expression. Since all backslash "\\" characters will be interpreted (by the Xill IDE) as an escape character, all backslashes you want to be evaluated by the regex have to be doubled. This means that "\\\\" would denote a single literal backslash "\\" and "\\*" would denote a literal asterisk "*".
 
 Read more about Java regular expressions [here] (https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html).
 	</longDescription>

@@ -22,7 +22,7 @@ Returns the largest number smaller than or equal to the given value.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="value">
-The value that will be used.
+The number that will be used.
         </parameterDescription>
 	</parameterDescriptions>
     <examples>

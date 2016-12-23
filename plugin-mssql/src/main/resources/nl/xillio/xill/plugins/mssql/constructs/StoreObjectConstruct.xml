@@ -28,7 +28,7 @@ The table that will be used.
 The object that will be inserted/updated.
 		</parameterDescription>
 		<parameterDescription parameterName="keys">
-The key(s) of the wanted object(s).
+The key(s) of the object(s).
         </parameterDescription>
 		<parameterDescription parameterName="allowUpdate">
 You can prevent updates from happening by setting the allowUpdate parameter to false. If you do this and an entry is found in the database this construct will throw an error.
