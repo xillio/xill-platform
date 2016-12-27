@@ -76,8 +76,9 @@ public class ExampleNode implements PropertiesProvider {
                 .mapToInt(ExampleNode::countWhiteSpaces)
                 .min();
 
-        if (!offset.isPresent())
+        if (!offset.isPresent()) {
             return -1;
+        }
 
         return offset.getAsInt();
     }
@@ -94,7 +95,7 @@ public class ExampleNode implements PropertiesProvider {
     static String[] getLines(String content) {
         //Remove trailing newline
         String code = content.replaceAll("^\\s*\n|\n\\s*$", "");
-        
+
         //Split
         return Arrays.stream(code.split("\n"))
                 .map(line -> line.replaceAll("\\s", "").isEmpty() ? "" : line)
