@@ -18,10 +18,16 @@
 -->
 <function>
     <description>
-This construct throws an error if `version` is not supported in the current version of the language.
-It will return the current version of the language if the provided version is supported or if left empty.
-
+Throws an error if `requiredVersion` is not supported in the current version of the language.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="requiredVersion">
+The version that will be checked.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Will return the current version of the language if the provided version is supported or if left empty.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Print the current version of the language</header>

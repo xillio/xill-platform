@@ -19,8 +19,20 @@
 <function>
     <description>
 Drops all indexes on a collection and recreates them.
-Note that this operation may be expensive for collections that have a large amount of data and/or a large number of indexes.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="collectionName">
+The name of the collection that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+Note that this operation may be expensive for collections that have a large amount of data and/or a large number of indexes.
+
+More information about MongoDB reIndex can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.reIndex/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Reindex the user collection</header>

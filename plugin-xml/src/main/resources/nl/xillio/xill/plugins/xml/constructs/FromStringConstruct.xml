@@ -18,8 +18,13 @@
 -->
 <function>
     <description>
-Loads the specified text as XML and returns an XML node object.
+Loads the text as XML and returns an XML node object.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="source">
+The string that will be loaded.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Loading an XML node from a string.</header>

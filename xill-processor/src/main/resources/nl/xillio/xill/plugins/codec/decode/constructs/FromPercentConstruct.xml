@@ -18,8 +18,16 @@
 -->
 <function>
     <description>
-Returns the URL-decoded (percent-decoded) version of an encoded string. Essential for converting URL’s back with GET variables in them.
+Returns the URL-decoded (percent-decoded) version of an encoded string.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="inputString">
+The string that will be decoded.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Essential for converting URL’s back with GET variables in them.
+	</longDescription>
     <examples>
         <example title="Usage">
             <code>

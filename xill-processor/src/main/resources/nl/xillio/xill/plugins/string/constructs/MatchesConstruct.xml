@@ -19,24 +19,34 @@
 <function>
     <description>
 Returns `true` if `text` matches the pattern specified by `regex`.
-
-Optionally a timeout can be provided in milliseconds, the default value is 5000 milliseconds.
-Set `timeout` to zero to let the function run without timeout. This should only be altered when dealing with large source documents.
-The timeout is there to protect the system from hanging on invalid expressions.  
-See the Regular Expressions page for more about Regular Expression support in Xill IDE.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="value">
+The string that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="regex">
+The regular expression that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="timeout">
+The amount of time in milliseconds the construct is allowed to run (default is 5000). Set timeout to zero to let the function run without timeout. This should only be altered when dealing with large source documents, the timeout is there to protect the system from hanging on invalid expressions.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+For more information about regular expressions viset the [regular expression support page](https://support.xillio.com/support/solutions/articles/6000058847-regex).
+	</longDescription>
     <examples>
         <example title="Usage">
             <code><![CDATA[
-                use System, String;
+use System;
+use String;
 
-              	if (String.matches("I need help!", ".*help.*")) {
-              	    System.print("Someone is calling for help!");
-                }
+if (String.matches("I need help!", ".*help.*")) {
+    System.print("Someone is calling for help!");
+}
 
-		        if (String.matches("<p>paragraph text</p>", "<p\\b[^>]*>(.*?)</p>")) {
-		            System.print("This text contains a paragraph.");
-		        }
+if (String.matches("<p>paragraph text</p>", "<p\\b[^>]*>(.*?)</p>")) {
+    System.print("This text contains a paragraph.");
+}
           ]]></code>
         </example>
     </examples>

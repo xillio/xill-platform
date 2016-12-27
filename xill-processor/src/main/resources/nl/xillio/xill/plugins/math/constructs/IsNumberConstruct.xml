@@ -18,11 +18,16 @@
 -->
 <function>
     <description>
-        This function checks whether a given value is a number or not.
-        A boolean is returned as a result.
-
-        Note that strings representing numbers and boolean values are considered numbers.
+This function checks whether a given value is a number or not.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="value">
+The value that will be checked.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+A boolean is returned as a result. Strings representing numbers and boolean values are considered numbers.
+	</longDescription>
     <examples>
         <example title="Usage">
             <code>

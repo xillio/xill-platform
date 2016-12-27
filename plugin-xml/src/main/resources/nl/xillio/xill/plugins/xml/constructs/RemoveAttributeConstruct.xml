@@ -18,10 +18,19 @@
 -->
 <function>
     <description>
-Removes the attribute from the XML-node.  
-
-Returns false if attribute does not exist, otherwise true.
+Removes the attribute from the XML-node. 
     </description>
+    <parameterDescriptions>
+		<parameterDescription parameterName="node">
+The XML-node that the attribute will be removed from.
+        </parameterDescription>
+		<parameterDescription parameterName="attributeName">
+The name of the attribute that will be removed.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Returns false if attribute does not exist, otherwise true.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Assuming we have an XML file note.xml which contains the following:</header>

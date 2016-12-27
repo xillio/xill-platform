@@ -18,16 +18,18 @@
 -->
 <function>
     <description>
-Returns a randomized value based on the optional parameter value.  
-
-If an integer argument N is provided the return value is a random integer between 0 (inclusive) and N (exclusive).
-If a list argument is provided, the result is a random entry from the list.
-If no parameter or a negative number is provided, a random floating point number between 0 and 1 will be generated.
+Returns a randomized value based on the optional parameter value.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="value">
+The value that will lock the the return value between 0 (inclusive) and 'value' (exclusive). If a list argument is provided, the result is a random entry from the list. If no parameter or a negative number is provided, a random floating point number between 0 and 1 will be generated.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Get a number between 1 and 6 (inclusive)">
             <code>
-                use Math, System;
+                use Math;
+                use System;
 
                 // Note that we add 1 to the result, to get a number between 1 and 6 inclusive.
                 System.print(Math.random(6) + 1);
@@ -35,7 +37,8 @@ If no parameter or a negative number is provided, a random floating point number
         </example>
         <example title="Get a random item from a list">
             <code>
-                use Math, System;
+                use Math;
+                use System;
 
                 var list = ["monday", "tuesday", "wednesday", "thursday", "friday"];
                 System.print(Math.random(list));
@@ -43,7 +46,8 @@ If no parameter or a negative number is provided, a random floating point number
         </example>
         <example title="Get a random number between 0 and 1">
             <code>
-                use Math, System;
+                use Math;
+                use System;
 
                 System.print(Math.random());
             </code>

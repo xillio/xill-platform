@@ -18,8 +18,19 @@
 -->
 <function>
     <description>
-Moves the XML-node 'subnode' to the XML-node 'parentnode', optionally before 'beforenode'.
+Moves the subnode to the parentnode.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="parentNode">
+The XML-node that will be moved to.
+        </parameterDescription>
+		<parameterDescription parameterName="subNode">
+The XML node that will be moved.
+        </parameterDescription>
+		<parameterDescription parameterName="beforeNode">
+The optional position of the node.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Assuming we have an XML file note.xml which contains the following:</header>

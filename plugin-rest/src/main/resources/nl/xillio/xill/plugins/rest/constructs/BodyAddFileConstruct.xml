@@ -20,6 +20,17 @@
     <description>
 Adds file to REST mulipart body.
      </description>
+	 <parameterDescriptions>
+        <parameterDescription parameterName="body">
+The REST body that the file will be added to.
+        </parameterDescription>
+		<parameterDescription parameterName="name">
+The name of the file that will be added.
+        </parameterDescription>
+		<parameterDescription parameterName="fileName">
+The fileName (path) of the file that will be added.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Put request with multipart body</header>

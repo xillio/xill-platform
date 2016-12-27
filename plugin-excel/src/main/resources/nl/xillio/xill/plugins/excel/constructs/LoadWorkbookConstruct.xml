@@ -19,9 +19,15 @@
 <function>
     <description>
 Loads an Excel workbook from the file system.
-
-Note that workbooks are not thread-safe. Handling different document-objects in different threads will work. Accessing the same document in multiple threads will not work.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="filePath">
+The path at which the workbook is located.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Note that workbooks are not thread-safe. Handling different document-objects in different threads will work. Accessing the same document in multiple threads will not work.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Loading a workbook from the current workspace</header>

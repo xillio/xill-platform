@@ -19,9 +19,29 @@
 <function>
     <description>
 Connect to a MongoDB database.
-
-All parameters except `database` are optional. The defaults will connect you to a default local mongodb database at the standard port.
     </description>
+	<parameterDescriptions>
+	    <parameterDescription parameterName="database">
+The database that will be connected to.
+        </parameterDescription>
+        <parameterDescription parameterName="host">
+The address the database can be found on.
+        </parameterDescription>
+		<parameterDescription parameterName="port">
+The port that will be used to connect to the database.
+        </parameterDescription>
+		<parameterDescription parameterName="username">
+The username used to log in to the database.
+        </parameterDescription>
+        <parameterDescription parameterName="password">
+The username used to log in to the database.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+All parameters except `database` are optional. The defaults will connect you to a default local mongodb database at the standard port.
+
+More information about MongoDB connect can be found in the [MongoDB manual](https://docs.mongodb.com/manual/reference/method/connect/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Connect to a database on a default local host</header>

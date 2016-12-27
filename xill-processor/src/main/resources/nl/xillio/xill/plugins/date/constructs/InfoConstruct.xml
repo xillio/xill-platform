@@ -20,11 +20,17 @@
     <description>
 Returns detailed information about provided date.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="date">
+The date that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Showing information about the given datetime.</header>
             <code>
-                use System,Date;
+                use System;
+                use Date;
 
                 var date = Date.of(2015, 12, 31, 10, 5, 0);
                 var info = Date.info(date);

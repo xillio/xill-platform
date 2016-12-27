@@ -20,6 +20,11 @@
     <description>
 Returns an `object` representing information about the page in argument, such as the page's title and cookies.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="page">
+The web page that will be looked at.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Retrieve info about a web page</header>

@@ -19,18 +19,29 @@
 <function>
     <description>
 Splits `string` into a LIST of strings, based on the provided `delimiter`.
-
-`delimiter` is interpreted as a Java Regular expression. Since all backslash "\" characters will be interpreted (by the Xill IDE) as an escape character, all forward slashes you want to be evaluated by the regex have to be doubled.
-This means that "\\" would denote a single literal backslash "\" and "\*" would denote a literal asterisk "*".
-
-Empty entries are skipped by default. You can optionally set `keepempty` to `true` to also add empty entries to the resulting list.
-Read more about Java regular expressions here:
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="string">
+The string that will be split.
+        </parameterDescription>
+		<parameterDescription parameterName="delimiter">
+The delimiter that will be used to split `string`.
+        </parameterDescription>
+		<parameterDescription parameterName="keepEmpty">
+If set to true empty entries will also be added to the results. (default is false)
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+The `delimiter` is interpreted as a Java Regular expression. Since all backslash "\\" characters will be interpreted (by the Xill IDE) as an escape character, all backslashes you want to be evaluated by the regex have to be doubled. This means that "\\\\" would denote a single literal backslash "\\" and "\\*" would denote a literal asterisk "*".
+
+Read more about Java regular expressions [here] (https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Splitting a string</header>
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 System.print(String.split("a--b---c", "-"));
                 // Result: ["a", "b", "c"]

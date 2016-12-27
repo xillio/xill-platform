@@ -20,6 +20,17 @@
     <description>
 Adds the attribute to the XML-node and assigns it the value.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="node">
+The XML-node that the attribute will be created in.
+        </parameterDescription>
+		<parameterDescription parameterName="attributeName">
+The name of the attribute that will be created.
+        </parameterDescription>
+		<parameterDescription parameterName="attributeValue">
+The value of the attribute that will be created.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Assuming we have an XML file note.xml which contains the following:</header>

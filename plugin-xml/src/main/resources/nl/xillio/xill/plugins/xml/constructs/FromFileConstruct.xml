@@ -18,8 +18,13 @@
 -->
 <function>
     <description>
-Loads the XML file filename and returns an XML node object.
+Loads the XML file and returns an XML node object.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="uri">
+The location of the file that will be read.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Assuming we have an XML file note.xml which contains the following:</header>

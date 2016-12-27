@@ -18,13 +18,23 @@
 -->
 <function>
     <description>
-Determines if the file or folder at the given `path` is hidden or not returning `true` if the path or folder is hidden or `false` otherwise.
+Determines if the file or folder at the given `path` is hidden.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="path">
+The path that will be checked. This can be either a file or a folder, relative or absolute.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Returns `true` if the path or folder is hidden or `false` otherwise.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Determine if the specified file or folder is hidden or not.</header>
             <code>
-                use File, System, Stream;
+                use File;
+                use System;
+                use Stream;
 
                 // We create a file that we can work with.
                 var path = "TestFile.txt";

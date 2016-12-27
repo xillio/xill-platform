@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file.
 * Make StringBehavior conform to type conversion specification: a non-empty string will now evaluate to `true`, unless it contains any of the values "false", "0" or "null" [CTC-1865]
 * Deprecate `File.getText()` [CTC-1860]
 * Update File and Stream help files [CTC-1869]
+* Improve layout for help files. Add a parameter description to all help files [CTC-1511]
 
 ### Fix
 * Settings file not found for paths with whitespaces [CTC-1887]

@@ -20,10 +20,16 @@
     <description>
 Returns the length of `string` in characters.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="value">
+The string that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 var length = String.length("four");
                 // This will print: four has 4 letters.

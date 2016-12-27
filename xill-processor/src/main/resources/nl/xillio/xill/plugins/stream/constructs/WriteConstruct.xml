@@ -19,21 +19,33 @@
 <function>
     <description>
 Write content to an output stream.
-If the `source` parameter contains binary data, consume that data.
-Otherwise the string value of the source parameter will be written to the `target` stream.
-
-This construct accepts a `limit` parameter, when this parameter is provided this construct will stop writing at X
-bytes where X is the number value passed to the limit parameter. When limit is -1, all bytes will be written, this is the default.
-
-This construct accepts `outputCharset` and `inputCharset` parameters. These cause the `target` and `source` respectively
-to be read using the given character sets. When these are null, the default character set is used. When the `source`
-parameter is a string, the inputCharset is ignored.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="source">
+If the `source` parameter contains binary data, consume that data. Otherwise the string value of the source parameter will be written to the `target` stream.
+        </parameterDescription>
+		<parameterDescription parameterName="target">
+The stream that will be writen to.
+        </parameterDescription>
+		<parameterDescription parameterName="limit">
+The amount of bytes written to the stream (default is -1). If set to -1 all bytes will be written.
+        </parameterDescription>
+		<parameterDescription parameterName="outputCharset">
+The character set that will be used to write to the stream (default is `null`). When this is null, the default character set is used.
+        </parameterDescription>
+		<parameterDescription parameterName="inputCharset">
+The character set that will be used to read from the source (default is `null`). When this is null, the default character set is used.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+When the `source` parameter is a string, the inputCharset is ignored.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Write 3 lines to a file</header>
             <code>
-                use File, Stream;
+                use File;
+                use Stream;
 
                 var target = File.openWrite("./target.txt");
 
@@ -43,7 +55,8 @@ parameter is a string, the inputCharset is ignored.
             </code>
             <header>Copy a file</header>
             <code>
-                use File, Stream;
+                use File;
+                use Stream;
 
                 var source = File.openRead("./source.txt");
                 var target = File.openWrite("./source-copy.txt");

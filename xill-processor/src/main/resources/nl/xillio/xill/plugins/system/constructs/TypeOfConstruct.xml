@@ -19,8 +19,15 @@
 <function>
     <description>
 Returns the type of the provided variable.
-Evaluates to ATOMIC, LIST or OBJECT.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="value">
+The value that will be evaluated.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Evaluates to ATOMIC, LIST or OBJECT.
+	</longDescription>
     <examples>
         <example title="Usage">
             <code>

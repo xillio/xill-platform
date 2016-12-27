@@ -19,7 +19,25 @@
 <function>
     <description>
 This construct provides a convenient way to insert or update a row in the database.
-
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="table">
+The table that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="object">
+The object that will be inserted/updated.
+		</parameterDescription>
+		<parameterDescription parameterName="keys">
+The key(s) of the object(s).
+        </parameterDescription>
+		<parameterDescription parameterName="allowUpdate">
+You can prevent updates from happening by setting the allowUpdate parameter to false. If you do this and an entry is found in the database this construct will throw an error.
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database parameter is optional. The last made connection will be used if no database is given.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
 ## What operation will be performed?
 | Scenario                                   | Operation |
 | ------------------------------------------ | --------- |
@@ -27,13 +45,8 @@ This construct provides a convenient way to insert or update a row in the databa
 | A matching row is found based on the keys  | Update    |
 | No matching row is found based on the keys | Insert    |
 
-You can prevent updates from happening by setting the allowUpdate parameter to false. If you do this and an entry is
-found in the database this construct will throw an error.
-
-The database parameter is optional. The last made connection will be used if no database is given.
-The return value of this construct is true if the operation finished successfully. Otherwise it will throw an error and
-return null.
-    </description>
+The return value of this construct is true if the operation finished successfully. Otherwise it will throw an error and return null.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Insert a new row</header>
@@ -74,7 +87,8 @@ return null.
             </code>
             <header>Update an item by id</header>
             <code>
-                use Oracle as db, File;
+                use Oracle as db;
+                use File;
 
                 // Connect to the database
                 db.connect(
