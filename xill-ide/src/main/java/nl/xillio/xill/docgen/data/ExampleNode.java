@@ -55,7 +55,6 @@ public class ExampleNode implements PropertiesProvider {
         }
 
         String[] cleaned = removeCharacters(indentOffset, lines);
-        String dinges = String.join("\n", cleaned);
         return String.join("\n", cleaned);
     }
 
