@@ -94,7 +94,7 @@ public class ExampleNode implements PropertiesProvider {
     static String[] getLines(String content) {
         //Remove trailing newline
         String code = content.replaceAll("^\\s*\n|\n\\s*$", "");
-        code.trim();
+        
         //Split
         return Arrays.stream(code.split("\n"))
                 .map(line -> line.replaceAll("\\s", "").isEmpty() ? "" : line)
