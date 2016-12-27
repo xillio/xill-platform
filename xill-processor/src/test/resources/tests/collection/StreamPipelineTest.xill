@@ -1,0 +1,100 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Specification: The iterator from the range construct MUST be able to work with the stream pipeline
+ * Input: See input variable
+ * Expected: See individual test functions
+ */
+use Assert, Collection;
+var input = {
+    "mapIterator" : Collection.range(1,6),
+    "filterIterator" : Collection.range(-1,5,1),
+    "peekIterator" : Collection.range(-10,-20, -2.5),
+    "reduceIterator" : Collection.range(1.0,10.0,1.5),
+    "collectIterator" : Collection.range(100,-100,-20),
+    "consumeIterator" : Collection.range(0,10000,2),
+    "foreachIterator" : Collection.range(0,-10)
+};
+var touched = false;
+var sum = 0;
+
+testMap();
+testFilter();
+testPeek();
+testReduce();
+testCollect();
+testConsume();
+testForeach();
+
+function testMap() {
+    Assert.equal(collect(map<reverse>(input.mapIterator)), [5,4,3,2,1]);
+}
+
+function testFilter() {
+    Assert.equal(collect(filter<negative>(input.filterIterator)), [-1]);
+}
+
+function testPeek() {
+    Assert.isFalse(touched);
+    var peekIterator = peek<touch>(input.peekIterator);
+    Assert.isFalse(touched);
+    collect(peekIterator);
+    Assert.isTrue(touched);
+    touched = false;
+}
+
+function testReduce() {
+    Assert.equal(reduce<sum>(0, input.reduceIterator), 28.5);
+}
+
+function testCollect() {
+    Assert.equal(collect(input.collectIterator), [100, 80, 60, 40, 20, 0, -20, -40, -60, -80]);
+}
+
+function testConsume() {
+    Assert.isFalse(touched);
+    var peekIterator = peek<touch>(input.consumeIterator);
+    Assert.isFalse(touched);
+    var nums = consume(peekIterator);
+    Assert.isTrue(touched);
+    Assert.equal(nums, 5000);
+    touched = false;
+}
+
+function testForeach() {
+    foreach<foreachSum>(input.foreachIterator);
+    Assert.equal(sum, -45);
+}
+
+// ==================== Helper Functions ==================== 
+function reverse(item) {
+    return 6 - item;
+}
+
+function negative(item) {
+    return item < 0;
+}
+
+function touch(item) {
+    touched = true;
+}
+
+function sum(result, item) {
+    return result + item;
+}
+
+function foreachSum(item) {
+    sum += item;
+}

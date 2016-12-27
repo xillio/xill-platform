@@ -109,6 +109,7 @@
         <module>xill-plugins-parent</module>
         <module>xill-processor</module>
         <module>xill-testutils</module>
+        <module>xill-web-service</module>
         <module>xillio-parent</module>
     </modules>
 
