@@ -13,6 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-include testresources.core.callbot_include.includeMe;
+function test() {
 
-timesCalled();
+}
+
+function test() {
+
+}
+
+function test2(one, two, three) {
+
+}
+
+function test2(were, playing, hideandseek) {
+
+}

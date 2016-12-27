@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* 
-* Specification: A called bot MUST use the default argument if none is given.
-* Input: A bot which returns the default argument "empty"
-* Expected: The callbot call returns "empty"
-*/
+use System as test;
+use Math, Assert;
+include testresources.core.keywords.includes.IncludePackageConstructs as Math;
+include testresources.core.keywords.includes.IncludePackageConstructs as test;
 
-use Assert;
-
-var result = callbot("testresources/core/keywords/callbot/argument.xill");
-Assert.equal(result, "empty");
+Assert.equal(Math.round(5.3), 5);
+Assert.isNull(test.Print("Test"));

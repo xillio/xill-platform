@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* 
-* Specification: A called bot MUST use the default argument if none is given.
-* Input: A bot which returns the default argument "empty"
-* Expected: The callbot call returns "empty"
+/*
+* Specification: A private function is not accessible via inclusion even if a public function with the same name
+    and different parameter length is defined in the same robot
+* Input: Including a robot that contains a private functions and a public function with different parameter length
+* Expected: An error is thrown when trying to run the private function.
 */
-
 use Assert;
 
-var result = callbot("testresources/core/keywords/callbot/argument.xill");
-Assert.equal(result, "empty");
+do {
+    callbot("testresources/core/keywords/functions/FunctionPrivateInaccessibleByInclusionRobot.xill");
+} success {
+    Assert.error("This robot should not be able to run.");
+}
