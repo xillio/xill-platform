@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* 
-* Specification: A called bot MUST use the default argument if none is given.
-* Input: A bot which returns the default argument "empty"
-* Expected: The callbot call returns "empty"
-*/
-
+/*
+ * Specification: Including a library MUST NOT expose its private functions.
+ * Input: A robot that implements a private function called `privateTest`.
+ * Expected: A compile time error when attempting to run a robot that uses the private function
+ */
 use Assert;
 
-var result = callbot("testresources/core/keywords/callbot/argument.xill");
-Assert.equal(result, "empty");
+do {
+    callbot("testresources/core/keywords/includes/PrivateFunctionTestRobot.xill");
+} success {
+    Assert.error("This robot should not compile");
+}

@@ -45,6 +45,8 @@ public class EnvironmentFactory implements FactoryBean<XillEnvironment> {
      * @return an environment
      * @throws EnvironmentLoadException When loading the environment fails
      */
+    @SuppressWarnings("squid:S2095")
+    //Suppress Sonar warning about XillEnvironment not being closed (is closed elsewhere)
     public XillEnvironment load() {
         XillEnvironment environment = null;
         try {

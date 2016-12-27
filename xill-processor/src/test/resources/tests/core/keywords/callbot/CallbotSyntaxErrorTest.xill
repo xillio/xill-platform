@@ -25,7 +25,7 @@ var result;
 var error;
 
 do {
-	result = callbot("testresources/core/callbot/invalid.xill");
+	result = callbot("testresources/core/keywords/callbot/invalid.xill");
 } fail(e) {
 	error = e;
 }
