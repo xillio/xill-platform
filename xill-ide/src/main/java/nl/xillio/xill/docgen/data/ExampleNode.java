@@ -61,7 +61,7 @@ public class ExampleNode implements PropertiesProvider {
     static String[] removeCharacters(int indentOffset, String[] lines) {
         return Arrays.stream(lines)
                 .map(line -> {
-                    if(countWhiteSpaces(line) == line.length() || indentOffset >= line.length()) {
+                    if (countWhiteSpaces(line) == line.length() || indentOffset >= line.length()) {
                         //Is white line
                         return "";
                     }
