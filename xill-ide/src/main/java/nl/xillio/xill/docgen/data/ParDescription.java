@@ -17,7 +17,6 @@ package nl.xillio.xill.docgen.data;
 
 import nl.xillio.xill.docgen.PropertiesProvider;
 import nl.xillio.xill.docgen.impl.ConstructDocumentationEntity;
-import nl.xillio.xill.plugins.codec.decode.services.DecoderService;
 
 import java.util.*;
 
