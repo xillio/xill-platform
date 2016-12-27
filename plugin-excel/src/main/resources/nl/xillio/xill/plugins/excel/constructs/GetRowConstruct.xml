@@ -20,11 +20,20 @@
     <description>
 Gets an iterator over a row of an Excel sheet.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="sheet">
+The sheet that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="row">
+The row that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Printing the content of a row">
             <header></header>
             <code>
-                use Excel, System;
+                use Excel;
+                use System;
                 var wb = Excel.loadWorkbook("./test.xlsx");
                 var sheet = Excel.loadSheet(wb, "testSheet");
 

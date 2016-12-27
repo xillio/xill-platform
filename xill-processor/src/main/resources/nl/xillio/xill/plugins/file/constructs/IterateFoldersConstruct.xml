@@ -18,18 +18,27 @@
 -->
 <function>
     <description>
-Returns an iterator used to loop over all folder in the folder at the given `path`.
+Returns an iterator that can be used to loop over all folder in the folder at the given `path`.
 
-If recursive is set to `true` all folders in sub folders will also be iterated. When set to `false` only the folders in this folder will be iterated.
-`recursive` is set to `false` by default.
 
-The iterator returns an object containing various pieces of information about the folder access.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="path">
+The path that will be checked. This can be either a file or a folder, relative or absolute.
+        </parameterDescription>
+		<parameterDescription parameterName="recursive">
+If set to `true` all folders in sub folders will also be iterated. If set to `false` only the folders in this folder will be iterated (default is `false`).
+		</parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+The iterator returns an object containing various pieces of information about the folder access.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Executing</header>
             <code>
-                use File, System;
+                use File;
+                use System;
 
                 var iterator = File.iterateFolders("C:/Users");
                 foreach(folder in iterator) {

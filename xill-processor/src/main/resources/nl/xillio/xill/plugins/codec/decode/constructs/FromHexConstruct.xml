@@ -18,12 +18,21 @@
 -->
 <function>
     <description>
-Convert a string representing hexadecimal values into string of those same values. The returned string will be
-(at most) half the length of the passed array, as it takes at least two characters to represent any given byte.
-Some character sets use double bytes to represent diacritic characters.
+Convert a string representing hexadecimal values into string of those same values.
+    </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="hexString">
+The string representing hexadecimal values that will be decoded.
+        </parameterDescription>
+		<parameterDescription parameterName="charset">
+The character set that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+The returned string will be (at most) half the length of the passed array, as it takes at least two characters to represent any given byte. Some character sets use double bytes to represent diacritic characters.
 
 An error occurs if the passed `hexString` has an odd number of characters or contains an illegal hexadecimal character.
-    </description>
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Convert a hex value to String</header>

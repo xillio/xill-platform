@@ -19,15 +19,26 @@
 <function>
     <description>
 Wraps `text`, identifying words by a space character (" ").
-
-If `wrapLongWords` is `true`, then words are split as well.
-`width` specifies the number of characters after which the line is wrapped.
-Leading spaces on a new line are stripped. Trailing spaces are not stripped.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="text">
+The string that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="width">
+The number of characters after which the line is wrapped.
+        </parameterDescription>
+		<parameterDescription parameterName="wrapLongWords">
+If set to `true` words are split as well.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Leading spaces on a new line are stripped. Trailing spaces are not stripped.
+	</longDescription>
     <examples>
         <example description="Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 var test = "Time is an illusion. Lunchtime doubly so.";
                 System.print(String.wrap(test, 10, false));

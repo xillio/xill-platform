@@ -18,38 +18,50 @@
 -->
 <function>
     <description>
-Carries out the Put REST request. Returns response from server.
+Carries out the Post REST request. Returns response from server.
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="url">
+The URL the REST can be found on.
+        </parameterDescription>
+		<parameterDescription parameterName="options">
+| Option       | Description |
+| ------------ | ----------- |
+| `timeout`  | The processing timeout in ms (default = 5000) |
+| `proxyhost`| The proxy server URL |
+| `proxyport`| The port of the proxy server |
+| `user`     | The user name for server authentication  |
+| `pass`     | Password for server authentication |
+| 'insecure' | If set to true, insecure SSL connections and transfers are allowed (default = false) |
+| 'headers'  | The object of name and value pair strings added as a parts of HTTP request header |
 
+        </parameterDescription>
+		<parameterDescription parameterName="body">
 The body for request can be one of the following types:
 
-	* XML (XmlNode)
-	* JSON (Object)
-	* String [with custom content type]
-	* REST multipart body (bodyCreate() function)
-
+* XML (XmlNode)
+* JSON (Object)
+* String [with custom content type]
+* REST multipart body (bodyCreate() function)
+        </parameterDescription>
+		<parameterDescription parameterName="contentType">
+The contentType of the body that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
 The response.body can be one of the following types:
 
-	* XML (XmlNode)
-	* JSON (Object)
-	* String
-
-Options:
-
-	* timeout - processing timeout in ms (default = 5000)
-	* proxyhost - proxy server URL
-	* proxyport - port of the proxy server
-	* user - user name for server authentication
-	* pass - password for server authentication
-    * insecure - if set to true, insecure SSL connections and transfers are allowed (default = false)
-	* headers - the object of name and value pair strings added as a parts of HTTP request header
+* XML (XmlNode)
+* JSON (Object)
+* String
 
 The proxy and server authentication options can be combined as follows:
 
 	proxyhost
-	proxyhost+proxyport
+	proxyhost+proxyport 
 	proxyhost+proxyport+user+pass
 	user+pass
-    </description>
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Post request</header>

@@ -18,8 +18,13 @@
 -->
 <function>
     <description>
-Returns the absolute value of the provided value.
+Returns the absolute value of the provided number.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="value">
+The value that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <code>

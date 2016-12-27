@@ -19,16 +19,26 @@
 <function>
     <description>
 Returns a list with all substrings matching `regex`.
-
-Optionally a timeout can be provided in milliseconds, the default value is 5000 milliseconds.
-Set timeout to zero to let the function run without timeout.
-This should only be altered when dealing with large source documents, the timeout is there to protect the system from hanging on invalid expressions.
-See the regular expressions page for more about regular expression support in Xill IDE.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="value">
+The string that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="regex">
+The regular expression that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="timeout">
+The amount of time in milliseconds the construct is allowed to run (default is 5000). Set timeout to zero to let the function run without timeout. This should only be altered when dealing with large source documents, the timeout is there to protect the system from hanging on invalid expressions.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+For more information about regular expressions viset the [regular expression support page](https://support.xillio.com/support/solutions/articles/6000058847-regex).
+	</longDescription>
     <examples>
         <example title="Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 var s = "abc def ghi jkl. Mno";
                 System.print(String.allMatches(s, "\\w+"));

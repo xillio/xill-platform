@@ -19,14 +19,26 @@
 <function>
     <description>
 Returns the substring of `string` between integer positions `start` and `end`.
-
-The first character in `string` is numbered 0. The last character returned by substring is the character before position `end`.
-Optionally `end` can be left out or set to 0, which means the returned string will end at the last position.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="string">
+The string that will be looked at.
+        </parameterDescription>
+		<parameterDescription parameterName="start">
+The start index of the area of `string` that will be given.
+        </parameterDescription>
+		<parameterDescription parameterName="end">
+The end index of the area of `string` that will be given.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+The first character in `string` is numbered 0. The last character returned by substring is the character before position `end`. Optionally `end` can be left out or set to 0, which means the returned string will end at the last position.
+	</longDescription>
     <examples>
         <example title="Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 var firstTen = String.substring("Welcome to our site!", 0, 10);
                 // This will print: The first 10 characters are Welcome to

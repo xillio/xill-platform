@@ -20,6 +20,7 @@ import nl.xillio.xill.docgen.PropertiesProvider;
 import nl.xillio.xill.docgen.data.Example;
 import nl.xillio.xill.docgen.data.Parameter;
 import nl.xillio.xill.docgen.data.Reference;
+import nl.xillio.xill.docgen.data.ParDescription;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,6 +36,8 @@ public class ConstructDocumentationEntity implements DocumentationEntity {
     private final String identity;
     private String description;
     private List<Parameter> parameters;
+    private List<ParDescription> parameterDescriptions;
+    private String longDescription;
     private List<Example> examples;
     private List<Reference> references;
     private Set<String> searchTags;
@@ -63,6 +66,8 @@ public class ConstructDocumentationEntity implements DocumentationEntity {
         properties.put("identity", identity);
         properties.put("description", description);
         properties.put("parameters", PropertiesProvider.extractContent(parameters));
+        properties.put("parameterDescriptions", PropertiesProvider.extractContent(parameterDescriptions));
+        properties.put("longDescription", longDescription);
         properties.put("examples", PropertiesProvider.extractContent(examples));
         properties.put("references", PropertiesProvider.extractContent(references));
         properties.put("tags", searchTags);
@@ -98,6 +103,15 @@ public class ConstructDocumentationEntity implements DocumentationEntity {
      */
     public void setParameters(final List<Parameter> parameters) {
         this.parameters = parameters;
+    }
+
+    /**
+     * Returns the parameters of the construct.
+     *
+     * @return The parameters.
+     */
+    public List<Parameter> getParameters() {
+        return parameters;
     }
 
     /**
@@ -143,7 +157,7 @@ public class ConstructDocumentationEntity implements DocumentationEntity {
      *
      * @param deprecated True if deprecated, false if not
      */
-    public void setDeprecated(final boolean deprecated){
+    public void setDeprecated(final boolean deprecated) {
         this.deprecated = deprecated;
     }
 
@@ -156,6 +170,14 @@ public class ConstructDocumentationEntity implements DocumentationEntity {
      */
     public void setDeprecateDescription(final String deprecateDescription) {
         this.deprecateDescription = deprecateDescription;
+    }
+
+    public void setParameterDescription(final List<ParDescription> parameterDescriptions) {
+        this.parameterDescriptions = parameterDescriptions;
+    }
+
+    public void setLongDescription(final String longDescription) {
+        this.longDescription = longDescription;
     }
 
     /**

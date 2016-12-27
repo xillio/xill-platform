@@ -20,6 +20,11 @@
     <description>
 Counts the number of columns in a given sheet.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="sheet">
+The sheet that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Getting the number of columns in a sheet</header>
@@ -40,11 +45,11 @@ Counts the number of columns in a given sheet.
                 var numberOfColumns = Excel.columnCount(sheet);
                 var i = 1;
                 while(i &#60;&#61; numberOfColumns){
-                var cellContent = Excel.getCell(sheet,i,1);
-                if(cellContent != "[EMPTY]"){
-                System.print(Excel.getCell(sheet, i, 1));
-                }
-                i++;
+                    var cellContent = Excel.getCell(sheet,i,1);
+                    if(cellContent != "[EMPTY]"){
+                        System.print(Excel.getCell(sheet, i, 1));
+                    }
+                    i++;
                 }
             </code>
         </example>

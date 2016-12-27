@@ -19,20 +19,13 @@
 <function>
     <description>
 Execute a single SQL query.
-The connection parameter is optional, if not given the last created connection will be used.
-The timeout parameter is optional. The default is set to 30 seconds. When the query takes longer than the given
-timeout it will stop. A timeout of 0 means that there is no limit.
-The return value of this construct depends on the type of query. If the query results in a result set it will return
-an iterator that will iterate over every row in that set. If the query is an update, insert or delete query it
-will return the number of affected rows.
-
-If you want to pass a string containing a colon you could either escape the colon by preceding the colon with two
-backslashes (\\\\:), or insert the string in an object and use named parameters (see below) with that object.
-See an example of the latter solution in the code examples.
-
-## Parameters
-If your query requires input it is generally bad practice to use string concatenation to build your own queries.
-The correct way to do this it by using parameterization. This you can do in two ways.
+    </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="query">
+The query that will be used.
+        </parameterDescription>
+        <parameterDescription parameterName="parameters">
+If your query requires input it is generally bad practice to use string concatenation to build your own queries. The correct way to do this it by using parameterization. This you can do in two ways.
 
 ### Named Parameters
 To create parameters that are labeled, you can use the colon-syntax.
@@ -47,12 +40,27 @@ An other way is to not use labels but order your list for input parameters.
 SELECT * from table WHERE column = ? AND other = ?
 
 If you use this syntax, your parameters input should be a list containing the same amount of elements as question marks.
-    </description>
+        </parameterDescription>
+		<parameterDescription parameterName="timeout">
+The amount of time the query is allowed to take.
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database parameter is optional, if not given the last used database will be used.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+The timeout parameter is optional. The default is set to 30 seconds. When the query takes longer than the given timeout it will stop. A timeout of 0 means that there is no limit.
+
+The return value of this construct depends on the type of query. If the query results in a result set it will return an iterator that will iterate over every row in that set. If the query is an update, insert or delete query it will return the number of affected rows.
+
+If you want to pass a string containing a colon you could either escape the colon by preceding the colon with two backslashes (\\\\:), or insert the string in an object and use named parameters (see below) with that object. See an example of the latter solution in the code examples.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Create a table and insert data</header>
             <code>
-                use SQLite as db, System;
+                use SQLite as db;
+                use System;
 
                 // First we connect to a database
                 db.connect("jdbc:sqlite::memory:");
@@ -87,7 +95,8 @@ If you use this syntax, your parameters input should be a list containing the sa
             </code>
             <header>Use an object as parameters</header>
             <code>
-                use SQLite as db,System;
+                use SQLite as db;
+                use System;
                 // Connect to your database
                 db.connect("jdbc:sqlite::memory:");
 
@@ -105,7 +114,8 @@ If you use this syntax, your parameters input should be a list containing the sa
             </code>
             <header>Use a string containing a colon as a parameter</header>
             <code>
-                use SQLite as db, System;
+                use SQLite as db;
+                use System;
 
                 // Connect to your database
                 db.connect("jdbc:sqlite::memory:");

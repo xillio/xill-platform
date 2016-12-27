@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
  * @author Ivor van der Hoog
  * @since 12-8-2015
  */
+@FunctionalInterface
 public interface PropertiesProvider {
     Map<String, Object> getProperties();
 

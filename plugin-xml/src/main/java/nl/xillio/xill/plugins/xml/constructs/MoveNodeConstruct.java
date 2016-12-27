@@ -39,7 +39,7 @@ public class MoveNodeConstruct extends Construct {
         return new ConstructProcessor(
                 (parentNode, subnode, beforeNode) -> process(parentNode, subnode, beforeNode, nodeService),
                 new Argument("parentNode", ATOMIC),
-                new Argument("subnode", ATOMIC),
+                new Argument("subNode", ATOMIC),
                 new Argument("beforeNode", NULL, ATOMIC)
         );
     }

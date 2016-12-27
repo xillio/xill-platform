@@ -20,6 +20,20 @@
     <description>
 Removes a single document from a collection. Returns `true` if a document was deleted, otherwise `false`.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="collectionName">
+The name of the collection that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="query">
+The query that will be applied.
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+More information about MongoDB removeOne can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.remove/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Delete a document with author John from the assets collection</header>

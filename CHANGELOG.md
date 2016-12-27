@@ -4,11 +4,14 @@ All notable changes to this project will be documented in this file.
 ## [3.5.0] - unreleased
 
 ### Add
+* Qualified includes for xill libraries using the new `as` keyword [CTC-1946]
+* Function overloading based on parameters [CTC-1613]
 * Create template plugin [CTC-1799]
 * `System.parseJSON()` now parses LIST [CTC-1769]
 * Warn users about invalid asset names [CTC-1798]
 * Support external logging by adding logging handler that exposes all logging events and exceptions [XSVR-50]
-* Progress bar dialog and `System.setProgress()` construct for overview of robot progress [CTC-1101] 
+* Progress bar dialog and `System.setProgress()` construct for overview of robot progress [CTC-1101]
+* `Collection.range()` construct to easily create oprderediterators for loops [CTC-1592]
 
 ### Change
 * Make `System.print` automatically pretty print LISTs and OBJECTs [CTC-1675]
@@ -17,6 +20,7 @@ All notable changes to this project will be documented in this file.
 * Make StringBehavior conform to type conversion specification: a non-empty string will now evaluate to `true`, unless it contains any of the values "false", "0" or "null" [CTC-1865]
 * Deprecate `File.getText()` [CTC-1860]
 * Update File and Stream help files [CTC-1869]
+* Improve layout for help files. Add a parameter description to all help files [CTC-1511]
 
 ### Fix
 * Settings file not found for paths with whitespaces [CTC-1887]

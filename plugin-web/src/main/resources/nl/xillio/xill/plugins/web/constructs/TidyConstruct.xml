@@ -19,12 +19,21 @@
 <function>
     <description>
 Parses HTML from a string and tidies it. When tidying, missing end tags are added and the input is changed to conform to either the HTML5 or XHTML standard.
-
-The fullHTML, syntax and prettyPrint parameters are optional.
-When fullHTML is true, the input will be parsed as a full HTML document and the output will at least contain html, head and body tags. When it is false, the input will be parsed as a body fragment and no tags will be added to the output.
-The syntax parameter can either be "xhtml", for XHTML compliant output or "html" for HTML5 compliant output.
-When the prettyPrint parameter is true, the output is formatted to be easier to read, but the output will be larger.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="html">
+The string that will be tidied up.
+        </parameterDescription>
+		<parameterDescription parameterName="fullHTML">
+When set to true, the input will be parsed as a full HTML document and the output will at least contain html, head and body tags. When set to false, the input will be parsed as a body fragment and no tags will be added to the output.
+        </parameterDescription>
+		<parameterDescription parameterName="syntax">
+The syntax can either be "xhtml", for XHTML compliant output or "html" for HTML5 compliant output.
+        </parameterDescription>
+		<parameterDescription parameterName="prettyPrint">
+When set to true, the output is formatted to be easier to read, but the output will be larger.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Tidy incorrect HTML</header>

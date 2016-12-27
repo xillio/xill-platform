@@ -19,13 +19,19 @@
 <function>
     <description>
 Determines if the currently authenticated user has write access to the specified file or folder at the given `path` returning `true` if this is the case or `false` otherwise.
-`path` can be either a file or a folder, relative or absolute.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="path">
+The path to which the rights will be checked. This can be either a file or a folder, relative or absolute.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Determine if an authenticated user has write access to the specified file or folder.</header>
             <code>
-                use File, System, Stream;
+                use File;
+                use System;
+                use Stream;
 
                 // This creates a test file which we can work with.
                 var path = "TestFile.txt";

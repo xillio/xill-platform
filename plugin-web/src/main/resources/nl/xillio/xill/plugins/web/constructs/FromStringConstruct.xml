@@ -20,6 +20,11 @@
     <description>
 Returns a new `page` object based on the argument (X)HTML `content`, which is just a string.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="content">
+The web page as a string.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Convert a string to a web page</header>

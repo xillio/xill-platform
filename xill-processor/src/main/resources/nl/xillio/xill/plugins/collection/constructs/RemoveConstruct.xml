@@ -18,13 +18,21 @@
 -->
 <function>
     <description>
-If the input is a list it will remove the element at the given index.  
-If the input is an object it will remove the element with the given key.
+Remove an item from an object or a list.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="collection">
+The object or list that the item will be removed from.
+        </parameterDescription>
+		<parameterDescription parameterName="index">
+The key or index of the item that will be removed.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <code>
-                use Collection, System;
+                use System;
+                use Collection;
 
                 var list = ["a","b","c","d"];
                 System.print(Collection.remove(list,2));

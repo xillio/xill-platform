@@ -18,7 +18,14 @@
 -->
 <function>
     <description>
-Sets a single `cookie` on the given `page`. Cookies must be specified as an `object`, using the following properties in the format:
+Sets a single `cookie` on the given `page`.
+    </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="page">
+The web page that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="cookies">
+Cookies must be specified as an `object`, using the following properties in the format:
 
 |Property   |Description                    |Example        |Mandatory      |
 |-----------|-------------------------------|---------------|---------------|
@@ -27,9 +34,11 @@ Sets a single `cookie` on the given `page`. Cookies must be specified as an `obj
 |domain|The domain the cookie is associated with, together with path determines, per request wether the cookie is available|".xillio.com"|No|
 |value|The value this cookie holds|"Delivery finished."|No|
 |expires|Expiration date of the cookie|"2018-10-18T09:42:15"|No|
-
-Due to the nature of Xill IDE, all cookies will be removed every time Xill IDE is restarted.
-    </description>
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Due to the nature of Xill IDE, all locally stored cookies will be removed with every restart.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Set a cookie.</header>
