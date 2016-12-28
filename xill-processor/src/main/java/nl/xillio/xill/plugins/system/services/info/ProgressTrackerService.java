@@ -21,6 +21,7 @@ import nl.xillio.xill.services.ProgressTracker;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 /**
@@ -40,7 +41,11 @@ public class ProgressTrackerService implements ProgressTracker {
 
     @Override
     public void setOnStopBehavior(UUID compilerSerialId, OnStopBehavior onStopBehavior) {
-        get(compilerSerialId, true).progressBarOnStopBehavior = onStopBehavior;
+        ProgressInfo progressInfo = get(compilerSerialId, true);
+        // Do nothing if the robot does not exist
+        if (progressInfo != null) {
+            progressInfo.progressBarOnStopBehavior = onStopBehavior;
+        }
     }
 
     @Override
@@ -56,6 +61,10 @@ public class ProgressTrackerService implements ProgressTracker {
     @Override
     public void setProgress(UUID compilerSerialId, double progress) {
         ProgressInfo progressInfo = get(compilerSerialId, true);
+        if (progressInfo == null) {
+            // If the robot does not exist, do nothing
+            return;
+        }
         progressInfo.currentProgress = progress;
         if (progressInfo.startProgress < 0) {
             progressInfo.startProgress = progress;

@@ -117,7 +117,8 @@ public class SortImpl implements Sort {
         else if (object != null) {
             index = 4;
         }
-        else{
+        else {
+            // This should not occur since objects are not null at his point
             index = 5;
         }
 
@@ -135,12 +136,21 @@ public class SortImpl implements Sort {
 
         @Override
         public int compare(final Object objectA, final Object objectB) {
+            // Do not check with equals yet because it might be expensive
+            if (objectA == objectB) {
+                return 0;
+            } else if (objectA == null) {
+                return reverseOrder ? -1 : 1;
+            } else if (objectB == null) {
+                return reverseOrder ? 1 : -1;
+            }
+
             int priorityA = getPriorityIndex(objectA);
             int priorityB = getPriorityIndex(objectB);
             int result;
             if (priorityA != priorityB) {
                 return reverseOrder ? priorityB - priorityA : priorityA - priorityB;
-            } else if (objectA == objectB || objectA.equals(objectB)) {
+            } else if (objectA.equals(objectB)) {
                 return 0;
             }
 
