@@ -42,7 +42,7 @@ public class ProgressTrackerService implements ProgressTracker {
     @Override
     public void setOnStopBehavior(UUID compilerSerialId, OnStopBehavior onStopBehavior) {
         ProgressInfo progressInfo = get(compilerSerialId, true);
-        // Do nothing when the robot does not exist
+        // Do nothing if the robot does not exist
         if (progressInfo != null) {
             progressInfo.progressBarOnStopBehavior = onStopBehavior;
         }
@@ -62,7 +62,7 @@ public class ProgressTrackerService implements ProgressTracker {
     public void setProgress(UUID compilerSerialId, double progress) {
         ProgressInfo progressInfo = get(compilerSerialId, true);
         if (progressInfo == null) {
-            // When the robot does not exist, do nothing
+            // If the robot does not exist, do nothing
             return;
         }
         progressInfo.currentProgress = progress;
