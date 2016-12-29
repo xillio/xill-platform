@@ -24,6 +24,10 @@ public class WorkerPoolID extends WorkerID {
         super(id);
     }
 
+    public WorkerPoolID(String id) {
+        super(Integer.parseInt(id));
+    }
+
     public WorkerPoolID() {
         // Calls the no-args constructor in WorkerID
     }
