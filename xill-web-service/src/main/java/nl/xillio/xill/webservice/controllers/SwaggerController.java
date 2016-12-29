@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Controller
 public class SwaggerController {
-    @RequestMapping(path = "${xws.api.base.path}", method = RequestMethod.GET)
+    @RequestMapping(path = "${xill.xws.api.base.path}", method = RequestMethod.GET)
     public String apiDocumentation() {
         return "redirect:/swagger-ui.html";
     }
