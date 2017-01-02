@@ -24,7 +24,6 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import org.slf4j.Logger;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.HashMap;
