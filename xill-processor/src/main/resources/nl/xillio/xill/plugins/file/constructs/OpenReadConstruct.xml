@@ -18,13 +18,23 @@
 -->
 <function>
     <description>
-Returns a stream with read access to a file. This construct will throw an error if the file is not found or it is a directory.
+Returns a stream with read access to a file at a given `path`. 
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="path">
+The path to the file that will be used. This can be either relative or absolute.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+This construct will throw an error if the file is not found or if it is a directory.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Open a stream and read the text content</header>
             <code>
-                use File, Stream, System;
+                use File;
+                use System;
+                use Stream;
 
                 // We create a file that we can work with.
                 var path = "TestFile.txt";
@@ -39,7 +49,9 @@ Returns a stream with read access to a file. This construct will throw an error 
             </code>
             <header>Copy a file</header>
             <code>
-                use File, Stream, System;
+                use File;
+                use System;
+                use Stream;
 
                 // We create a file called "TestFile.txt".
                 var path = "TestFile.txt";

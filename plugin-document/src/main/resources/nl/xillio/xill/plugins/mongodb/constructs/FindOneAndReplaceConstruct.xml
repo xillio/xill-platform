@@ -19,9 +19,18 @@
 <function>
     <description>
 Finds a single document using the specified `query` and `options` and replaces it with `replacement`. Also returns the document that was replaced.
-If multiple documents match the query, the first document in the result will be replaced.
-If no documents match the `query` it will return `null`.
-
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="collectionName">
+The name of the collection that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="query">
+The query that will be applied.
+        </parameterDescription>
+		<parameterDescription parameterName="replacement">
+The document that will replace the found document.
+        </parameterDescription>
+		<parameterDescription parameterName="options">
 The `options` parameter may contain the following options:
 
 | Option       | Description |
@@ -31,7 +40,16 @@ The `options` parameter may contain the following options:
 | `upsert`     | If set to `true`, creates a new document if no document matches the query, or if documents match the query, performs an update. To avoid multiple upserts, ensure that the query fields are uniquely indexed. The default is `false`. |
 | `returnNew`  | If set to `true`, returns the modified document rather than the original. The default is `false`. |
 | `maxTime`    | The maximum execution time in milliseconds for this operation. |
-    </description>
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+If multiple documents match the query, the first document in the result will be replaced. If no documents match the `query` it will return `null`.
+
+More information about MongoDB findOneAndReplace can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.findOneAndReplace/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Replace the oldest document from the documents collection</header>
@@ -44,8 +62,8 @@ The `options` parameter may contain the following options:
                 // The document to replace the old document with.
                 var newDocument = {
                     "contenttype": "postcard",
-					"timestamp": Date.now(),
-					"content": "I am a postcard!"
+                    "timestamp": Date.now(),
+                    "content": "I am a postcard!"
                 };
 
                 var options = {

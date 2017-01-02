@@ -18,12 +18,21 @@
 -->
 <function>
     <description>
-Returns a string, element or a list of elements from the specified `element` matching `xpath`. This function has full XPath 2.0 support.
-
-For more information about the XPath syntax and available xpath functions look here:
-
-	http://www.w3schools.com/xsl/xpath_intro.asp
+Returns a string, element or a list of elements from the specified `element` matching `xpath`.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="element">
+The element that will be matched.
+        </parameterDescription>
+		<parameterDescription parameterName="xPath">
+The xPath that will be matched
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+This function has full XPath 2.0 support.
+
+For more information about the XPath syntax and available xpath functions look here: [w3schools XPath manual] (http://www.w3schools.com/xsl/xpath_intro.asp)
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Use XPath to extract an element from a web page</header>

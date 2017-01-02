@@ -18,13 +18,22 @@
 -->
 <function>
     <description>
-Returns a stream that will write to the start of a file. This will clear the file contents when invoked.
+Returns a stream that will write to the start of a file at the given `path`.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="path">
+The path to the file that will be used. This can be either relative or absolute.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+This will clear the file contents when invoked.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Write three lines to a file</header>
             <code>
-                use File, Stream;
+                use File;
+                use System;
 
                 // Open the file
                 var target = File.openWrite("target.txt");
@@ -36,7 +45,9 @@ Returns a stream that will write to the start of a file. This will clear the fil
             </code>
             <header>Copy a file</header>
             <code>
-                use File, Stream, System;
+                use File;
+                use System;
+                use Stream;
 
                 // We create a file called "TestFile.txt".
                 var path = "TestFile.txt";

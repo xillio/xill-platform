@@ -20,6 +20,7 @@ import nl.xillio.xill.docgen.DocumentationEntity;
 import nl.xillio.xill.docgen.DocumentationParser;
 import nl.xillio.xill.docgen.data.Example;
 import nl.xillio.xill.docgen.data.ExampleNode;
+import nl.xillio.xill.docgen.data.ParDescription;
 import nl.xillio.xill.docgen.data.Reference;
 import nl.xillio.xill.docgen.exceptions.ParsingException;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -55,6 +56,8 @@ public class XmlDocumentationParser implements DocumentationParser {
     private XPathExpression descriptionXPathQuery;
     private XPathExpression deprecateDescriptionXPath;
     private XPathExpression tagXPathQuery;
+    private XPathExpression parameterDescriptionsXPath;
+    private XPathExpression longDescriptionXPath;
     private XPathExpression exampleNodesXPathQuery;
     private XPathExpression exampleHeaderMDXPathQuery;
     private XPathExpression referenceXPathQuery;
@@ -88,6 +91,8 @@ public class XmlDocumentationParser implements DocumentationParser {
         XPath xPath = xpathFactory.newXPath();
         descriptionXPathQuery = xPath.compile("/function/description/text()");
         deprecateDescriptionXPath = xPath.compile("/function/deprecated/text()");
+        parameterDescriptionsXPath = xPath.compile("/function/parameterDescriptions/parameterDescription");
+        longDescriptionXPath = xPath.compile("/function/longDescription/text()");
         tagXPathQuery = xPath.compile("/function/tags");
         exampleNodesXPathQuery = xPath.compile("/function/examples/example");
         exampleHeaderMDXPathQuery = xPath.compile("/function/examples/example/header[@format='MD']");
@@ -118,6 +123,8 @@ public class XmlDocumentationParser implements DocumentationParser {
 
         construct.setDescription(parseDescription(doc));
         construct.setDeprecateDescription(parseDeprecateDescription(doc));
+        construct.setParameterDescription(parseParameterDescriptions(doc));
+        construct.setLongDescription(parseLongDescription(doc));
         construct.setExamples(parseExamples(doc));
         construct.setReferences(parseReferences(doc));
         construct.setSearchTags(parseSearchTags(doc));
@@ -154,14 +161,31 @@ public class XmlDocumentationParser implements DocumentationParser {
         return markdownProcessor.markdownToHtml((String) query.evaluate(doc, XPathConstants.STRING));
     }
 
-    String getAttributeOrNull(final String name, final Node node) {
-        NamedNodeMap attributes = node.getAttributes();
-        Node attribute = attributes.getNamedItem(name);
-        if (attribute == null) {
-            return null;
+    List<ParDescription> parseParameterDescriptions(final Document doc) throws ParsingException {
+        List<ParDescription> parameters = new ArrayList<>();
+
+        NodeList parDescriptionNodes;
+        try {
+            parDescriptionNodes = (NodeList) parameterDescriptionsXPath.evaluate(doc, XPathConstants.NODESET);
+
+            for (int t = 0; t < parDescriptionNodes.getLength(); ++t) {
+                parameters.add(new ParDescription(
+                        getAttributeOrNull("parameterName", parDescriptionNodes.item(t)),
+                        markdownProcessor.markdownToHtml(parDescriptionNodes.item(t).getTextContent())));
+            }
+        } catch (XPathExpressionException | NullPointerException e) {
+            throw new ParsingException("Failed to parse parameter descriptions", e);
         }
 
-        return attribute.getNodeValue();
+        return parameters;
+    }
+
+    String parseLongDescription(final Document doc) throws ParsingException {
+        try {
+            return parseStringFromXPath(doc, longDescriptionXPath);
+        } catch (XPathExpressionException e) {
+            throw new ParsingException("Failed to parse description", e);
+        }
     }
 
     List<Example> parseExamples(final Document doc) throws ParsingException {
@@ -215,6 +239,16 @@ public class XmlDocumentationParser implements DocumentationParser {
         }
 
         return false;
+    }
+
+    String getAttributeOrNull(final String name, final Node node) {
+        NamedNodeMap attributes = node.getAttributes();
+        Node attribute = attributes.getNamedItem(name);
+        if (attribute == null) {
+            return null;
+        }
+
+        return attribute.getNodeValue();
     }
 
     List<Reference> parseReferences(final Document doc) throws ParsingException {

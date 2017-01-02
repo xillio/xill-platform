@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+This construct parses the given options and returns the engine for the template plugin.
+    </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="options">
+The engine could be configured using the following options:
+
+| Option               | Values                                                                          | Description                                                                                                | Default    |
+|----------------------|---------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|------------|
+| templatesDirectory   | An ATOMIC containing a relative path from the project root or an absolute path. | The directory that contains all the templates that will be used with this engine.                          | "."        |
+| encoding             | An ATOMIC containing a string.                                                  | This sets the encoding for the template that will be provided in the process-construct.                    | "UTF-8"    |
+| noCaching            | An ATOMIC containing a boolean.                                                 | Set this to true to cache no templates at all (decreased performance and less memory usage).               | false      |
+| strongCache          | An ATOMIC containing a number (from 0 to 2147483647).                           | The amount of templates to hold a hard reference to so it will not be garbage collected.                   | 0          |
+| softCache            | An ATOMIC containing a number (from 0 to 2147483647).                           | The amount of templates to hold a soft reference to so it will be garbage collected when memory is needed. | 2147483647 |
+
+`strongCache` and `softCache` could be combined. The engine will then place the most used templates in the `strongCache`. When `noCaching` is set, `strongCache` and `softCache` will have no meaning for the engine.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+This plugin uses a third-party library named FreeMarker to process the templates. For more information please check their [website](http://freemarker.org/docs/index.html).
+	
+When encountering charset or encoding issues please read the [FreeMarker documentation](http://freemarker.org/docs/pgui_misc_charset.html) on this.
+	</longDescription>
+    <examples>
+        <example title="Get the default engine">
+            <header>
+                This returns an engine with the templates directory pointed to the project root.
+            </header>
+            <code>
+                use Template;
+
+                var config = Template.getEngine();
+            </code>
+        </example>
+        <example title="Specify templates directory">
+            <header>
+                This returns a default engine with the templates directory specified to the given input.
+            </header>
+            <code>
+                use Template;
+
+                var options = {
+                    "templatesDirectory" : "C:/templates"
+                };
+
+                var config = Template.getEngine(options);
+            </code>
+        </example>
+        <example title="Do not cache templates">
+            <header>
+                This returns a template engine that does not cache the used templates.
+                This does decrease performance, but also its memory usage.
+            </header>
+            <code>
+                use Template;
+
+                var options = {
+                    "noCaching" : true
+                };
+
+                var config = Template.getEngine(options);
+            </code>
+        </example>
+        <example title="Specify more options">
+            <header>
+                This returns an engine with given options.
+            </header>
+            <code>
+                use Template;
+
+                var options = {
+                    "templatesDirectory" : "C:/templates",
+                    "strongCache" : 10,
+                    "softCache" : 250,
+                    "encoding" : "UNICODE"
+                };
+
+                var config = Template.getEngine(options);
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>process</reference>
+    </references>
+    <tags>
+        template, freemarker, configuration
+    </tags>
+</function>

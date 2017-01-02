@@ -18,14 +18,20 @@
 -->
 <function>
     <description>
-Tests if the currently authenticated user has execute rights to the specified file/folder. The test returns `true` if
-`uri` can be executed.
+Tests if the currently authenticated user has execute rights to the specified file/folder at `path` returning `true` if this is the case or `false` otherwise.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="path">
+The path to which the rights will be checked. This can be either a file or a folder, relative or absolute.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Determine if an authenticated user can execute a file or has execution rights in a folder.</header>
             <code>
-                use File, System, Stream;
+                use File;
+                use System;
+                use Stream;
 
                 // This creates a test file which we can work with.
                 var path = "TestFile.txt";

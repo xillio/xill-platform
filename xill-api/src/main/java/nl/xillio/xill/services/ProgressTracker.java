@@ -47,6 +47,8 @@ public interface ProgressTracker extends XillService {
     /**
      * Setter for onStopBehaviour value.
      *
+     * Does nothing when a non-existent {@code compilerSerialId} is given.
+     *
      * @param compilerSerialId the running robot identificator
      * @param onStopBehavior the onStopBehaviour value
      */
@@ -62,6 +64,8 @@ public interface ProgressTracker extends XillService {
 
     /**
      * Setter for progress value.
+     *
+     * Does nothing when a non-existent {@code compilerSerialId} is given.
      *
      * @param compilerSerialId the running robot identificator
      * @param progress the current progress (0-1 or <0 for hiding the progress bar)

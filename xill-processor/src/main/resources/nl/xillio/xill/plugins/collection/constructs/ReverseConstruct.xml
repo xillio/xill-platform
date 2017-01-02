@@ -18,14 +18,21 @@
 -->
 <function>
     <description>
-Returns the reverse of the given list or object.  
-
-If recursive is true it will also reverse lists and objects inside the given list or object.
+Returns the reverse of the given list or object.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="collection">
+The list or object that will be reversed.
+        </parameterDescription>
+		<parameterDescription parameterName="recursive">
+If set to true lists and objects inside the given list or object will also be reversed.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <code>
-                use Collection, System;
+                use System;
+                use Collection;
 
                 var list1 = [1,2,3,4,5];
                 var list2 = [1,[1,2,3],2,3];

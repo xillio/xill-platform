@@ -19,11 +19,19 @@
 <function>
     <description>
 Returns a `string` containing all text extracted from (X)HTML `element` node(s) without any markup.
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="element">
+The web page(s) that will be converted.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
 Any HTML entities contained in the text, like the copyright symbol, will be converted to characters.
 
 If a `page` variable is provided as an input, it looks for the `body` tag and returns the extracted text from all its children.
+
 This function supports (X)HTML content only. Generic XML content can be processed using XML.getText.
-    </description>
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Extract text from a web page</header>

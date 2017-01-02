@@ -18,15 +18,23 @@
 -->
 <function>
     <description>
-Fetch read/write/execute permissions for a specific file or folder on a group and user basis.
-The output structure of this construct will be the same on all operating systems. It will output all the declared
-permissions for the file. So __not__ the effective permissions (i.e. automatic inheritance of of the group/user tree).
+Fetch read/write/execute permissions for the file or folder at the given `path`.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="path">
+The path that will be looked at. This can be either a file or a folder, relative or absolute.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Permissions will be on a group and user basis. The output structure of this construct will be the same on all operating systems. It will output all the declared permissions for the file. So __not__ the effective permissions (i.e. automatic inheritance of the group/user tree).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Get the permissions</header>
             <code>
-                use System, File, Stream;
+                use File;
+                use System;
+                use Stream;
 
                 // This creates a test file which we can work with.
                 var path = "TestFile.txt";

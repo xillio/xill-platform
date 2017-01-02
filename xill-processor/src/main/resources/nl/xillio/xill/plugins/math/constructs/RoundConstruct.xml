@@ -20,6 +20,11 @@
     <description>
 Rounds the provided value to the nearest whole number.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="value">
+The number that will be rounded.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <code>

@@ -18,15 +18,23 @@
 -->
 <function>
     <description>
-Wrap an iterator around a stream.
-You can provide a regex pattern that will split the input stream in parts, if no delimiter is provided the stream will
-be split on new lines.
+Wraps an iterator around a `stream` and returns this.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="stream">
+The stream that will be wrapped around.
+        </parameterDescription>
+		<parameterDescription parameterName="delimiter">
+The regex pattern that will split the input `stream` in parts. If none is provided the stream will be split on new lines.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Read a file line by line</header>
             <code>
-                use File, Stream, System;
+                use File;
+                use Stream;
+                use System;
 
                 var file = File.openRead("path/to/file.txt");
 
@@ -36,7 +44,9 @@ be split on new lines.
             </code>
             <header>Read all words from a file</header>
             <code>
-                use File, Stream, System;
+                use File;
+                use Stream;
+                use System;
 
                 var file = File.openRead("path/to/file.txt");
                 var splitPattern = "[^\\w]+";

@@ -18,10 +18,16 @@
 -->
 <function>
     <description>
-Returns an OBJECT variable containing all system and environmental properties if `property` parameter is left empty.
-If a property key is provided for `property` only that specific property will be returned as an ATOMIC variable.
-
+Gets a system and environmental property.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="property">
+The key of the property will be returned as an ATOMIC variable.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+if `property` is left empty an OBJECT variable containing all system and environmental properties will be returned.
+	</longDescription>
     <examples>
         <example title="Usage">
 			<code>

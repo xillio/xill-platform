@@ -18,15 +18,23 @@
 -->
 <function>
     <description>
-Delete a file or folder.  
-
-Returns the absolute path to the file or folder
+Deletes the file or folder at the given `path`.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="path">
+The path to the file/folder that will be deleted.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Returns the absolute path to where the file or folder used to be located. If `path` does not point to a valid file or folder, nothing will happen.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Create and delete a folder:</header>
             <code>
-                use File, System;
+                use File;
+                use System;
+
                 var folder = File.createFolder("toBeDeleted");
                 File.delete(folder);
                 System.print(File.exists(folder));

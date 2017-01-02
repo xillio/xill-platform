@@ -24,7 +24,8 @@ Throws an error if the two input parameters match. This can be used to test inpu
         <example title="Usage">
             <header>Checking for input type</header>
             <code>
-                use System, Assert;
+                use System;
+                use Assert;
 
                 function checkNotAtomic(input) {
                     // We do not allow atomic input

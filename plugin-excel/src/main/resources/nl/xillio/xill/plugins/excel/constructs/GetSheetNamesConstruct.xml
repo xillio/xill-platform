@@ -20,6 +20,11 @@
     <description>
 Get the names of all the sheets in a workbook.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="workbook">
+The workbook that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Getting sheet names">
             <header>Getting all names</header>

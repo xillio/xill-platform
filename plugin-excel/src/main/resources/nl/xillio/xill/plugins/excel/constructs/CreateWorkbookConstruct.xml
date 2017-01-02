@@ -19,9 +19,15 @@
 <function>
     <description>
 Creates a new Excel workbook at the given path.
-
-Note that workbooks are not thread-safe. Handling different document-objects in different threads will work. Accessing the same document in multiple threads will not work.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="filePath">
+The path that the new workbook will be saved at.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+Note that workbooks are not thread-safe. Handling different document-objects in different threads will work. Accessing the same document in multiple threads will not work.
+	</longDescription>
     <examples>
         <example title="Creation">
             <header>Default - in IDE workspace</header>

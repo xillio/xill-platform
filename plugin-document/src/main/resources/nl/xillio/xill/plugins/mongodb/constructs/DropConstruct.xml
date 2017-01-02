@@ -18,9 +18,21 @@
 -->
 <function>
     <description>
-Removes a collection from the database. This also removes any indexes associated with the dropped collection.
-Returns `true` if the collection was successfully dropped, or `false` otherwise.
+Removes a collection from the database.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="collectionName">
+The name of the collection that will be removed.
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+This also removes any indexes associated with the dropped collection. Returns `true` if the collection was successfully dropped, or `false` otherwise.
+	
+More information about MongoDB drop can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.drop/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Drop the assets collection</header>

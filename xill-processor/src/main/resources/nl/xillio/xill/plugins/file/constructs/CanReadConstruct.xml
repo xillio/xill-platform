@@ -18,14 +18,20 @@
 -->
 <function>
     <description>
-Determines if the currently authenticated user has read rights to the specified file/folder. The test returns `true` if
-`uri` can be read.
+Determines if the currently authenticated user has read rights to the specified file or folder. The test returns `true` if the file or folder at the given `path` can be read.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="path">
+The path to which the rights will be checked. This can be either a file or a folder, relative or absolute.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
-            <header>Determine if an authenticated user has read access to the specified file/folder.</header>
+            <header>Determine if an authenticated user has read access to the specified file or folder.</header>
             <code>
-                use File, System, Stream;
+                use File;
+                use System;
+                use Stream;
 
                 // This creates a test file which we can work with.
                 var path = "TestFile.txt";

@@ -18,15 +18,26 @@
 -->
 <function>
     <description>
-Read a single line from a stream.
-A line is defined as a string that ends on *\n*, *\r*, *\r\n* or end of stream.
-If the input stream has already reached the end an error will be thrown.
+Read a single line from a `stream` and return this.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="stream">
+The stream that will be read from.
+        </parameterDescription>
+		<parameterDescription parameterName="encoding">
+The encoding that will be used (default is "UTF-8").
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+A line is defined as a string that ends on *\n*, *\r*, *\r\n* or end of stream. If the input `stream` has already reached the end an error will be thrown.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Read the first three line from a file</header>
             <code>
-                use File, Stream, System;
+                use File;
+                use Stream;
+                use System;
 
                 var file = File.openRead("./file.txt");
 

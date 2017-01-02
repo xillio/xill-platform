@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Returns an iterator from the given `start` (inclusive) to the given `end` (exclusive) with a `step`.
+
+## Return value
+The return value is an iterator, which one could use to traverse (iterate) over its content.
+Its content in this case is the range from `start` to `end` with the given `step`. 
+The iterator could be used for various functionality, such as: `collect`, `foreach`, `map` or `filter`.
+
+## Parameters
+There are three parameters for this construct: `start`, `end` and `step`. The given iterator goes from `start` to `end`.
+When `start` is less than `end` then the iterator's range will be ascending.
+When `start` is greater than `end` then the iterator's range will be descending.
+
+The `start`-value is an inclusive value, meaning that the resulting iterator will also output the `start` value.
+The `end`-value is an exclusive value, meaning that the resulting iterator will not output the `end` value as last value.
+The last value is thus `end` minus `step`.
+
+The `start`-value and `end`-value must not be the exact same.
+
+### Step
+The step parameter is an optional parameter. It has two default values if no value is given:
+- The `step`-value is 1 when `start` is smaller than `end` (ascending range).
+- The `step`-value is -1 when `start` is greater than `end` (descending range).
+
+The `step` parameter must not be zero, positive when the range is descending or negative when the range is ascending.
+The `step` parameter may also be a decimal value, which results in an iterator with decimal values (see one of the examples below).
+
+    </description>
+    <examples>
+        <example title="Default Usage">
+            <header>This will give an iterator that goes from 0 to 10</header>
+            <code>
+                use Collection, System;
+
+                var iterator = Collection.range(0, 10);
+                var result = collect(iterator);
+                System.print(result); // Prints "0 1 2 3 4 5 6 7 8 9"
+            </code>
+        </example>
+        <example title="Define a step">
+            <header>This example provides a step variable that defines the difference for each next value in the iterator.</header>
+            <code>
+                use Collection, System;
+
+                var iterator = Collection.range(0.0, 10.0, 1.5);
+                var result = collect(iterator);
+                System.print(result); // Prints "0.0 1.5 3.0 4.5 6.0 7.5 9.0"
+            </code>
+        </example>
+        <example title="Descending range">
+            <header>This example shows that the range could also be descending</header>
+            <code>
+                use Collection, System;
+
+                var iterator = Collection.range(5, -5);
+                var result = collect(iterator);
+                System.print(result); // Prints "5 4 3 2 1 0 -1 -2 -3 -4"
+            </code>
+        </example>
+    </examples>
+    <searchTags>
+        iterator, range
+    </searchTags>
+</function>

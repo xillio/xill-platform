@@ -20,6 +20,17 @@
     <description>
 Returns an array that holds a list of documents that identify and describe the existing indexes on the collection.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="collectionName">
+The name of the collection that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+More information about MongoDB listIndexes can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.getIndexes/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>List all indexes in the user collection</header>

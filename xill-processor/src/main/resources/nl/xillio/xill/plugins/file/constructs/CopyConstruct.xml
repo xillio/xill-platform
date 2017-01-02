@@ -18,15 +18,26 @@
 -->
 <function>
     <description>
-Copy a file or folder to a target destination, overwriting it if it exists.  
-
-Returns an object containing the source destination [from] and the target destination [into].
-</description>
+Copy a file/folder from a `source` path to a `target` path.
+	</description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="source">
+The path to the file/folder that will be copied. This can be either a file or a folder, relative or absolute.
+        </parameterDescription>
+		<parameterDescription parameterName="target">
+The path that will be copied to. This can be either a file or a folder, relative or absolute.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+This will overwrite it if it exists and return an object containing the source destination at ["from"] and the target destination at ["into"]
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Copy a file</header>
             <code>
-                use File, System, Stream;
+                use File;
+                use System;
+                use Stream;
 
                 // This creates a test file which we can run canExecute on.
                 var path = "TestFile.txt";
@@ -37,6 +48,12 @@ Returns an object containing the source destination [from] and the target destin
 
                 // Prints {"from": "absolute/path/to/TestFile.txt", "into": "absolute/path/to/file_copy.txt"}
                 System.print(result);
+
+                // Prints "absolute/path/to/TestFile.txt"
+                System.print(result["from"]);
+
+                // Prints "absolute/path/to/file_copy.txt"
+                System.print(result["into"]);
             </code>
         </example>
     </examples>

@@ -21,8 +21,8 @@
 
 use Assert;
 
-include testresources.core.callbot_include.includeMe;
+include testresources.core.keywords.callbot_include.includeMe;
 
-callbot("testresources/core/callbot/includer.xill");
+callbot("testresources/core/keywords/callbot/includer.xill");
 
 Assert.equal(timesCalled(), 0);

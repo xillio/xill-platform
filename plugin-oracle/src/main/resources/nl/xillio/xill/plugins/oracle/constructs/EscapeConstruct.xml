@@ -19,13 +19,21 @@
 <function>
     <description>
 Escape a string value for usage in queries.
-*Note:* if you use parameters in your queries there is no need to escape them.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="input">
+The string that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+If you use parameters in your queries there is no need to escape them.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Escape a string</header>
             <code>
-                use Oracle as db, System;
+                use Oracle as db;
+                use System;
 
                 var string = 'Hello, this quote: " might be a problem';
                 var escaped = db.escape(string);

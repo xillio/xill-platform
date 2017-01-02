@@ -18,14 +18,27 @@
 -->
 <function>
     <description>
-Read text from a stream.
-If you provide a value for the limit parameter the amount of bytes read from the stream will be limited to that value.
+Read text from a `stream`.
+
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="stream">
+The stream that will be read from.
+        </parameterDescription>
+		<parameterDescription parameterName="encoding">
+The encoding that will be used (default is "UTF-8").
+        </parameterDescription>
+		<parameterDescription parameterName="limit">
+The amount of bytes read from the stream. This will not limit the amount if left empty.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Read text from a file</header>
             <code>
-                use File, Stream, System;
+                use File;
+                use Stream;
+                use System;
 
                 var file = File.openRead("./file.txt");
                 var text = Stream.getText(file);
@@ -33,7 +46,9 @@ If you provide a value for the limit parameter the amount of bytes read from the
             </code>
             <header>Read the first 20 bytes from a file</header>
             <code>
-                use File, Stream, System;
+                use File;
+                use Stream;
+                use System;
 
                 var file = File.openRead("./file.txt");
                 var text = Stream.getText(file, "UTF-8", 20);

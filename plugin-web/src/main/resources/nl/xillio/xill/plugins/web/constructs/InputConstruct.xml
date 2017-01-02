@@ -19,9 +19,18 @@
 <function>
     <description>
 Allows to programmatically enter `text` in the input field `element` on a web form.
-  
-Usually this function is used to fill a form before submitting it.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="element">
+The web page that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="text">
+The text that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Usually this function is used to fill a form before submitting it.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Enter text into a text input element</header>

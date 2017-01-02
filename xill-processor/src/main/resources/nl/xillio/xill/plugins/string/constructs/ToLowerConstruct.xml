@@ -20,10 +20,16 @@
     <description>
 Returns `string` lowercased.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="string">
+The string that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 System.print(String.toLower("HiGhER"));
                 // Result: higher

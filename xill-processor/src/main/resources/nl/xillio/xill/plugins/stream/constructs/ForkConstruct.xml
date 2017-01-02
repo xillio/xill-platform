@@ -18,15 +18,22 @@
 -->
 <function>
     <description>
-Create a single output stream that will forward all output to other streams.
-You can use this construct to read and stream data once to multiple targets.
-The outputs parameter must be a list of at least two stream.
+Creates and returns a single output stream that will forward all output to other streams.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="outputs">
+The streams that will be outputted to. This must be a list of at least two streams.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+You can use this construct to read and stream data once to multiple targets.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Make two copies of a file</header>
             <code>
-                use File, Stream;
+                use File;
+                use Stream;
 
                 var source = File.openRead("./source.txt");
                 var output = Stream.fork([

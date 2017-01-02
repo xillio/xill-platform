@@ -18,12 +18,13 @@
 -->
 <function>
     <description>
-Shows the progress on the progress bar.  
-
-The progress value range is from 0 to 1 (including). The progress bar is always hidden when the robot is opened in Xill IDE.   
-Every call of `setProgress` construct with valid value makes progress bar visible. The only exception is when negative value is provided then the progress bar will be hidden.  
- 
-*Note:* It's possible to make zero progress bar visible at the beginning of the robot code but it's not necessary.
+Shows the progress on the progress bar.
+    </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="progress">
+The progress between 0 and 1 (including) that has been made.
+        </parameterDescription>
+		<parameterDescription parameterName="options">
 
 | Option               | Description | Notes |
 |----------------------|-------------|-------|
@@ -36,8 +37,13 @@ The `onStop` parmameters:
 |hide                  |hide progress bar when the robot is stopped (default)|
 |leave                 |leave the progress bar as it is when the robot is stopped|
 |zero                  |set progress bar to 0 when the robot is stopped|
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+The progress bar is always hidden when the robot is opened in Xill IDE. Every call of `setProgress` construct with valid value makes progress bar visible. The only exception is when negative value is provided then the progress bar will be hidden.
 
-    </description>
+It's possible to make zero progress bar visible at the beginning of the robot code but it's not necessary.
+	</longDescription>
     <examples>
         <example title="Usage">
             <code>

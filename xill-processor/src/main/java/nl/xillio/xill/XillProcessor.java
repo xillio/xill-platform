@@ -203,7 +203,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     }
 
     private URI getURI(final IncludeStatement include) {
-        String subPath = StringUtils.join(include.getName(), File.separator) + ".xill";
+        String subPath = StringUtils.join(include.getLibrary(), File.separator) + ".xill";
         File libPath = new File(projectFolder, subPath);
         String fullPath = libPath.getAbsolutePath();
 

@@ -18,13 +18,19 @@
 -->
 <function>
     <description>
-Returns an absolute path that is the input path with redundant name elements eliminated.
+Returns an absolute path that is the input `path` with redundant name elements eliminated.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="path">
+The path that will be used. This can be either relative or absolute.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Clean up a complex path</header>
             <code>
-                use File, System;
+                use File;
+                use System;
 
                 var complexPath = "test/folder/../might/./../../not/../exist/.././data";
                 var path = File.normalize(complexPath);
@@ -34,7 +40,8 @@ Returns an absolute path that is the input path with redundant name elements eli
             </code>
             <header>Get the path of the folder containing this robot</header>
             <code>
-                use File, System;
+                use File;
+                use System;
 
                 var folder = File.normalize(".");
                 System.print(folder);

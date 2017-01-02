@@ -20,6 +20,11 @@
     <description>
 Creates a date variable from provided timestamp. Returns new date variable.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="timestamp">
+The timestamp that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Parsing a timestamp.</header>

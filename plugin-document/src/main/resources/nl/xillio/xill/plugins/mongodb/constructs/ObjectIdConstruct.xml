@@ -20,6 +20,14 @@
     <description>
 Creates a Mongo ObjectId based on a 24 character hexadecimal string. This ObjectId can then be used to identify Mongo documents.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="string">
+The string that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+More information about MongoDB objectId can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/ObjectId/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Find a document with a known objectId</header>

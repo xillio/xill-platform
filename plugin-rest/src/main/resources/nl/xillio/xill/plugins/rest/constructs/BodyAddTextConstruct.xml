@@ -20,6 +20,17 @@
     <description>
     Adds text to REST mulipart body.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="body">
+The REST body that the file will be added to.
+        </parameterDescription>
+		<parameterDescription parameterName="name">
+The name of the text that will be added.
+        </parameterDescription>
+		<parameterDescription parameterName="text">
+The text that will be added.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Put request with multipart body: demonstrates use of the bodyAddText function.</header>

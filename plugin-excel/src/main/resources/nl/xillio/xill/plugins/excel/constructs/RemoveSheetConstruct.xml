@@ -19,8 +19,18 @@
 <function>
     <description>
 Removes the specified sheet from the given workbook.   
-NB: a workbook must contain at least one sheet, otherwise it is not valid.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="workbook">
+The workbook that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="sheetName">
+The name of the sheet that will be deleted (a list of names).
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+A workbook must contain at least one sheet, otherwise it is not valid.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Removing a single sheet</header>
