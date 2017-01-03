@@ -153,8 +153,8 @@ public class PropertyService {
             // If the file does not exist we will not load them
             return result;
         }
-        try (InputStreamReader stream = new InputStreamReader(fileSystemAccess.read(file))) {
-            result.load(stream);
+        try (InputStreamReader reader = new InputStreamReader(fileSystemAccess.read(file))) {
+            result.load(reader);
         } catch (IOException e) {
             logger.warn("Failed to load properties from " + file + "\nReason: " + e.getMessage(), e);
         }
