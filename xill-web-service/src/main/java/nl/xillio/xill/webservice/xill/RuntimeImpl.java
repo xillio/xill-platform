@@ -69,16 +69,16 @@ import static nl.xillio.xill.api.components.MetaExpression.extractValue;
 public class RuntimeImpl implements Runtime, DisposableBean {
     private static final Logger LOGGER = me.biesaart.utils.Log.get();
 
-    private XillEnvironment xillEnvironment;
-    private OutputHandler outputHandler;
+    protected XillEnvironment xillEnvironment;
+    protected OutputHandler outputHandler;
 
     // Set after compile is called
-    private XillProcessor xillProcessor;
-    private XillThreadFactory xillThreadFactory;
+    protected XillProcessor xillProcessor;
+    protected XillThreadFactory xillThreadFactory;
 
     // Future for asynchronous recompiling
-    private Future<?> compileSuccess;
-    private ThreadPoolTaskExecutor compileExecutor;
+    protected Future<?> compileSuccess;
+    protected ThreadPoolTaskExecutor compileExecutor;
 
     @Value("${xillRuntime.abortTimeoutMillis:300000}")
     private long abortTimeoutMillis;
