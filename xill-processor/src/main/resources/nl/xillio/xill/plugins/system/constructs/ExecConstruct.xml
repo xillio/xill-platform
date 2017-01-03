@@ -40,10 +40,13 @@ Returns an OBJECT variable containing:
 	</longDescription>
     <examples>
         <example title="Usage">
-            <header>
-            In Windows you can execute a batch command by running `cmd.exe` with the `/C` parameter. The example below
-            prints the word `test`.
-            Example output: {"errors":"","output":"test\r\n","runtime":32,"exitCode":0}
+            <header format="MD">
+In Windows you can execute a batch command by running `cmd.exe` with the `/C` parameter. The example below
+prints the word `test`.
+
+Example output:
+
+    {"errors":"","output":"test\r\n","runtime":32,"exitCode":0}
             </header>
             <code>
                 use System;
@@ -54,12 +57,14 @@ Returns an OBJECT variable containing:
         </example>
         <example title="Usage">
             <header format="MD">
-            Copying a file in a specified working directory. In this specific example,
-            the working directory is specified as `C:/tmp`. The file `source.jpg` is copied and
-            the name of the new file is `target.jpg`. The copy, i.e. `target.jpg`, is created in the
-            specified working directory, in this case `C:/tmp`.
+Copying a file in a specified working directory. In this specific example,
+the working directory is specified as `C:/tmp`. The file `source.jpg` is copied and
+the name of the new file is `target.jpg`. The copy, i.e. `target.jpg`, is created in the
+specified working directory, in this case `C:/tmp`.
 
-            Example output: {"errors":"","output":"        1 file(s) copied.\r\n","runtime":40,"exitCode":0}.
+Example output:
+
+    {"errors":"","output":"        1 file(s) copied.\r\n","runtime":40,"exitCode":0}
             </header>
             <code>
                 use System;

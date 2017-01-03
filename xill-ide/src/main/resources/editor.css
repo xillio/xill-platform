@@ -17,7 +17,7 @@
 
 
 
-.example-node code, #editor {
+.example-node .code, #editor {
     margin: 0;
     position: absolute;
     top: 0;
