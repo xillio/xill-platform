@@ -42,6 +42,7 @@ All notable changes to this project will be documented in this file.
 * Parsing String list results from xpath query floods log and is slow [CTC-1885] 
 * Excel.setCellFormula() throws caught error: "Cannot get a numeric value from a text formula cell [CTC-1528]
 * Order of package names in help file is off in Linux [CTC-1937]
+* Formatting in Usage headers in help file [CTC-1709]
 
 ## [3.4.2] - 2016-11-04
 
