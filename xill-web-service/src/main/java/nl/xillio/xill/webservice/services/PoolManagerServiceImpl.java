@@ -33,7 +33,7 @@ public class PoolManagerServiceImpl implements WorkerPoolManagerService {
     protected WebServiceProperties properties;
 
     protected final Path defaultDirectory;
-    protected WorkerPool defaultPool;
+    private WorkerPool defaultPool;
     protected final WorkerFactory workerFactory;
 
     @Autowired
