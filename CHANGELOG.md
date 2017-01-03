@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [3.5.0] - unreleased
 
 ### Add
+* Git integration. Push and pull can be done from the IDE [CTC-1919]
 * Qualified includes for xill libraries using the new `as` keyword [CTC-1946]
 * Function overloading based on parameters [CTC-1613]
 * Create template plugin [CTC-1799]
