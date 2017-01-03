@@ -1,6 +1,20 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package nl.xillio.xill.webservice.services;
 
-import nl.xillio.xill.api.errors.NotImplementedException;
 import nl.xillio.xill.webservice.WebServiceProperties;
 import nl.xillio.xill.webservice.XWSUtils;
 import nl.xillio.xill.webservice.model.WorkerFactory;
@@ -15,9 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.mock;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertEqualsNoOrder;
-import static org.testng.Assert.assertSame;
+import static org.testng.Assert.*;
 
 /**
  * Tests for {@link PoolManagerServiceImpl}.
@@ -53,7 +65,7 @@ public class PoolManagerServiceImplTest {
     public void testFindWorkerPool() {
         WorkerPool pool = poolManagerService.getWorkerPool(Paths.get(XWSUtils.getPresentWorkingDirectory()));
 
-        Optional<WorkerPool> result = poolManagerService.findWorkerPool(pool.getId());
+        Optional<? extends WorkerPool> result = poolManagerService.findWorkerPool(pool.getId());
 
         assertSame(pool, result.get());
     }
@@ -63,7 +75,7 @@ public class PoolManagerServiceImplTest {
      */
     @Test
     public void testGetAllWorkerPoolsSingle() {
-        List<WorkerPool> pools = poolManagerService.getAllWorkerPools();
+        List<? extends WorkerPool> pools = poolManagerService.getAllWorkerPools();
 
         assertEquals(pools.size(), 1, "Only one pool should be created by default");
 
@@ -77,7 +89,7 @@ public class PoolManagerServiceImplTest {
     public void testGetAllWorkerPoolsMultiple() {
         WorkerPool pool = poolManagerService.getWorkerPool(Paths.get("some/nonexistant/path"));
 
-        List<WorkerPool> pools = poolManagerService.getAllWorkerPools();
+        List<? extends WorkerPool> pools = poolManagerService.getAllWorkerPools();
 
         assertEquals(pools.size(), 2, "One additional worker pool should have been created");
         assertEqualsNoOrder(pools.toArray(), new WorkerPool[]{pool, poolManagerService.getDefaultWorkerPool()});
