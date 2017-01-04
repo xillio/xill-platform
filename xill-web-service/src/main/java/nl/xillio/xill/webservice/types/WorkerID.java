@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 /**
  * Unique identifier of the Worker in the WorkerPool.
  */
-public class WorkerID implements Cloneable {
+public class WorkerID {
     private final int id;
     private static final Logger LOGGER = Log.get();
 
