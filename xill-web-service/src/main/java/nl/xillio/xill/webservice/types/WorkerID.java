@@ -52,15 +52,4 @@ public class WorkerID implements Cloneable {
     public String toString() {
         return Integer.toString(id);
     }
-
-    @Override
-    public WorkerID clone() {
-        try {
-            return (WorkerID) super.clone();
-        } catch(CloneNotSupportedException e) {
-            // this cannot happen
-            LOGGER.warn(String.format("WorkerID %s, could not be cloned: this should never happen", this));
-            return null;
-        }
-    }
 }
