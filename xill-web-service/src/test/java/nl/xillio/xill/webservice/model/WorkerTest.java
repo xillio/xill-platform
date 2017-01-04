@@ -17,6 +17,7 @@ package nl.xillio.xill.webservice.model;
 
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.webservice.exceptions.*;
+import nl.xillio.xill.webservice.types.WorkerID;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.concurrent.ConcurrentRuntimeException;
 import org.apache.commons.pool2.ObjectPool;
@@ -28,9 +29,7 @@ import java.nio.file.Paths;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertSame;
+import static org.testng.Assert.*;
 
 /**
  * Tests for the {@link Worker}.
@@ -62,6 +61,15 @@ public class WorkerTest extends TestUtils {
     public void testPoolBorrowError() throws Exception {
         when(runtimePool.borrowObject()).thenThrow(Exception.class);
         worker = new Worker(Paths.get("test/path"), "robot.name", runtimePool);
+    }
+
+    @Test
+    public void testCloneWorkerID() {
+        WorkerID id1 = new WorkerID();
+        WorkerID id2 = id1.clone();
+
+        assertEquals(id1, id2);
+        assertFalse(id1 == id2);
     }
 
     /**

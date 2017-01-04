@@ -20,7 +20,7 @@ import me.biesaart.utils.RandomUtils;
 /**
  * Unique identifier of the Worker in the WorkerPool.
  */
-public class WorkerID {
+public class WorkerID implements Cloneable {
     private final int id;
 
     public WorkerID(int id) {
@@ -48,5 +48,15 @@ public class WorkerID {
     @Override
     public String toString() {
         return Integer.toString(id);
+    }
+
+    @Override
+    public WorkerID clone() {
+        try {
+            return (WorkerID) super.clone();
+        } catch(CloneNotSupportedException e) {
+            // this cannot happen
+            return null;
+        }
     }
 }
