@@ -83,7 +83,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     private MockMvc mockMvc;
     private Runtime runtime;
 
-    @Value("${xws.api.base.path}")
+    @Value("${xill.xws.api.base.path}")
     private String basePath;
 
     @BeforeMethod
