@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 /* 
-* Specification: Qualified included functions can be used in the map function
-* Input: A library that implements a doubling function, a list of numbers
-* Expected: a list of numbers that are multiplied by two
+* Specification: Qualified included functions can be used in the filter function
+* Input: A library that implements an even-evaluation function, a list of numbers
+* Expected: a list of numbers that are even
 */
 use Assert;
 include testresources.core.pipeline.Multiply as lib;
 
-var input = [1,5,3,2,5];
-var expected = [2,10,6,4,10];
+var input = [1,5,3,2,5,8];
+var expected = [2,8];
 
-var iterator = map<lib->double>(input);
+var iterator = filter<lib->isEven>(input);
 
-foreach(index, element in iterator) {
-    Assert.equal(element, expected[index], input[index] :: " x 2 = " :: expected[index]);
-}
+Assert.equal(collect(iterator), expected);

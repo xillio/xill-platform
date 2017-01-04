@@ -13,7 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ use Math;
+
+function multiply(a, b) {
+    return a * b;
+}
 
 function double(input) {
-    return input * 2;
+    return multiply(input, 2);
+}
+
+function isEven(input) {
+    return input / 2 == Math.round(input / 2);
 }
