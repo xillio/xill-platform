@@ -229,7 +229,7 @@ public class XmlDocumentationParser implements DocumentationParser {
                 String value = format.getNodeValue();
 
                 if (value != null) {
-                    return value.equalsIgnoreCase("MD");
+                    return "MD".equalsIgnoreCase(value);
                 }
             }
         }
