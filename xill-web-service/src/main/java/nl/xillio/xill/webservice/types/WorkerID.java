@@ -15,16 +15,13 @@
  */
 package nl.xillio.xill.webservice.types;
 
-import me.biesaart.utils.Log;
 import me.biesaart.utils.RandomUtils;
-import org.slf4j.Logger;
 
 /**
  * Unique identifier of the Worker in the WorkerPool.
  */
 public class WorkerID {
     private final int id;
-    private static final Logger LOGGER = Log.get();
 
     public WorkerID(int id) {
         this.id = id;
