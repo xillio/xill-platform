@@ -15,13 +15,16 @@
  */
 package nl.xillio.xill.webservice.types;
 
+import me.biesaart.utils.Log;
 import me.biesaart.utils.RandomUtils;
+import org.slf4j.Logger;
 
 /**
  * Unique identifier of the Worker in the WorkerPool.
  */
 public class WorkerID implements Cloneable {
     private final int id;
+    private static final Logger LOGGER = Log.get();
 
     public WorkerID(int id) {
         this.id = id;
@@ -56,6 +59,7 @@ public class WorkerID implements Cloneable {
             return (WorkerID) super.clone();
         } catch(CloneNotSupportedException e) {
             // this cannot happen
+            LOGGER.warn(String.format("WorkerID %s, could not be cloned: this should never happen", this));
             return null;
         }
     }
