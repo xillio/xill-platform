@@ -19,32 +19,43 @@
 <function>
     <description>
 Returns an iterator containing the names of the collections defined in a MongoDB database.
-The optional ``database`` parameter can be used to address this request to a specific connection, otherwise the currently open one, if any, will be used.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+The optional ``database`` parameter can be used to address this request to a specific connection, otherwise the currently open one, if any, will be used.
+	
+More information about MongoDB getCollectionNames can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.getCollectionNames/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Get collections in the default database</header>
             <code>
-                use Mongo, System;
+use Mongo;
+use System;
 
-                var db = Mongo.connect("udm_default");
-                var collections = Mongo.getCollectionNames();
+var db = Mongo.connect("udm_default");
+var collections = Mongo.getCollectionNames();
 
-                foreach(collectionName in collections) {
-                    System.print(collectionName);
-                }
+foreach(collectionName in collections) {
+    System.print(collectionName);
+}
             </code>
             <header>Get collection names using a named database connection</header>
             <code>
-                use Mongo, System;
+use Mongo;
+use System;
 
-                var db1 = Mongo.connect("source_docs");
-                var db2 = Mongo.connect("udm_default");
-                var collections = Mongo.getCollectionNames(db2);
+var db1 = Mongo.connect("source_docs");
+var db2 = Mongo.connect("udm_default");
+var collections = Mongo.getCollectionNames(db2);
 
-                foreach(collectionName in collections) {
-                    System.print(collectionName);
-                }
+foreach(collectionName in collections) {
+    System.print(collectionName);
+}
             </code>
         </example>
     </examples>

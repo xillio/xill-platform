@@ -20,6 +20,7 @@ import nl.xillio.xill.docgen.DocumentationEntity;
 import nl.xillio.xill.docgen.DocumentationParser;
 import nl.xillio.xill.docgen.data.Example;
 import nl.xillio.xill.docgen.data.ExampleNode;
+import nl.xillio.xill.docgen.data.ParDescription;
 import nl.xillio.xill.docgen.data.Reference;
 import nl.xillio.xill.docgen.exceptions.ParsingException;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -37,7 +38,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
@@ -55,7 +55,10 @@ public class XmlDocumentationParser implements DocumentationParser {
     private XPathExpression descriptionXPathQuery;
     private XPathExpression deprecateDescriptionXPath;
     private XPathExpression tagXPathQuery;
+    private XPathExpression parameterDescriptionsXPath;
+    private XPathExpression longDescriptionXPath;
     private XPathExpression exampleNodesXPathQuery;
+    private XPathExpression exampleHeaderMDXPathQuery;
     private XPathExpression referenceXPathQuery;
     private static PegDownProcessor markdownProcessor = new PegDownProcessor(Extensions.ALL);
 
@@ -87,8 +90,11 @@ public class XmlDocumentationParser implements DocumentationParser {
         XPath xPath = xpathFactory.newXPath();
         descriptionXPathQuery = xPath.compile("/function/description/text()");
         deprecateDescriptionXPath = xPath.compile("/function/deprecated/text()");
+        parameterDescriptionsXPath = xPath.compile("/function/parameterDescriptions/parameterDescription");
+        longDescriptionXPath = xPath.compile("/function/longDescription/text()");
         tagXPathQuery = xPath.compile("/function/tags");
         exampleNodesXPathQuery = xPath.compile("/function/examples/example");
+        exampleHeaderMDXPathQuery = xPath.compile("/function/examples/example/header[@format='MD']");
         referenceXPathQuery = xPath.compile("/function/references/reference");
     }
 
@@ -96,7 +102,7 @@ public class XmlDocumentationParser implements DocumentationParser {
     public DocumentationEntity parse(final URL resource, final String identity) throws ParsingException {
         try {
             DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
-            Document doc = docBuilder.parse(openStream(resource));
+            Document doc = docBuilder.parse(resource.openStream());
 
             return doParse(doc, identity);
         } catch (IllegalArgumentException | IOException e) {
@@ -106,16 +112,14 @@ public class XmlDocumentationParser implements DocumentationParser {
         }
     }
 
-    InputStream openStream(final URL url) throws IOException {
-        return url.openStream();
-    }
-
-    DocumentationEntity doParse(final Document doc, final String identity) throws ParsingException {
+    private DocumentationEntity doParse(final Document doc, final String identity) throws ParsingException {
 
         ConstructDocumentationEntity construct = new ConstructDocumentationEntity(identity);
 
         construct.setDescription(parseDescription(doc));
         construct.setDeprecateDescription(parseDeprecateDescription(doc));
+        construct.setParameterDescription(parseParameterDescriptions(doc));
+        construct.setLongDescription(parseLongDescription(doc));
         construct.setExamples(parseExamples(doc));
         construct.setReferences(parseReferences(doc));
         construct.setSearchTags(parseSearchTags(doc));
@@ -123,7 +127,7 @@ public class XmlDocumentationParser implements DocumentationParser {
         return construct;
     }
 
-    String parseDescription(final Document doc) throws ParsingException {
+    private String parseDescription(final Document doc) throws ParsingException {
         try {
             return parseStringFromXPath(doc, descriptionXPathQuery);
         } catch (XPathExpressionException e) {
@@ -132,7 +136,7 @@ public class XmlDocumentationParser implements DocumentationParser {
     }
 
 
-    String parseDeprecateDescription(final Document doc) throws ParsingException {
+    private String parseDeprecateDescription(final Document doc) throws ParsingException {
         try {
             return parseStringFromXPath(doc, deprecateDescriptionXPath);
         } catch (XPathExpressionException e) {
@@ -142,7 +146,8 @@ public class XmlDocumentationParser implements DocumentationParser {
 
     /**
      * Query doc using the given {@link XPathExpression} and parse the resulting string as markdown.
-     * @param doc The document to use
+     *
+     * @param doc   The document to use
      * @param query An XPath query that should result in a string
      * @return Parsed markdown as HTML
      * @throws XPathExpressionException When the XPath query fails
@@ -151,7 +156,87 @@ public class XmlDocumentationParser implements DocumentationParser {
         return markdownProcessor.markdownToHtml((String) query.evaluate(doc, XPathConstants.STRING));
     }
 
-    String getAttributeOrNull(final String name, final Node node) {
+    private List<ParDescription> parseParameterDescriptions(final Document doc) throws ParsingException {
+        List<ParDescription> parameters = new ArrayList<>();
+
+        NodeList parDescriptionNodes;
+        try {
+            parDescriptionNodes = (NodeList) parameterDescriptionsXPath.evaluate(doc, XPathConstants.NODESET);
+
+            for (int t = 0; t < parDescriptionNodes.getLength(); ++t) {
+                parameters.add(new ParDescription(
+                        getAttributeOrNull("parameterName", parDescriptionNodes.item(t)),
+                        markdownProcessor.markdownToHtml(parDescriptionNodes.item(t).getTextContent())));
+            }
+        } catch (XPathExpressionException | NullPointerException e) {
+            throw new ParsingException("Failed to parse parameter descriptions", e);
+        }
+
+        return parameters;
+    }
+
+    private String parseLongDescription(final Document doc) throws ParsingException {
+        try {
+            return parseStringFromXPath(doc, longDescriptionXPath);
+        } catch (XPathExpressionException e) {
+            throw new ParsingException("Failed to parse description", e);
+        }
+    }
+
+    private List<Example> parseExamples(final Document doc) throws ParsingException {
+        List<Example> examples = new ArrayList<>();
+        NodeList exampleNodes;
+        try {
+            exampleNodes = (NodeList) exampleNodesXPathQuery.evaluate(doc, XPathConstants.NODESET);
+
+            for (int t = 0; t < exampleNodes.getLength(); ++t) {
+                examples.add(parseExample(doc, exampleNodes.item(t)));
+            }
+        } catch (XPathExpressionException | NullPointerException e) {
+            throw new ParsingException("Failed to parse examples", e);
+        }
+
+        return examples;
+    }
+
+    private Example parseExample(final Document doc, final Node node) throws XPathExpressionException {
+        // Get the example title
+        Example example = new Example(getAttributeOrNull("title", node));
+        NodeList exampleContent = node.getChildNodes();
+        for (int t = 0; t < exampleContent.getLength(); ++t) {
+            Node item = exampleContent.item(t);
+
+            if (checkMDHeader(item)) {
+                String md = parseStringFromXPath(doc, exampleHeaderMDXPathQuery);
+
+                example.addContent(
+                        new ExampleNode(item.getNodeName(), md));
+            } else if (item.getNodeName() != null && !item.getNodeName().startsWith("#")) {
+                example.addContent(
+                        new ExampleNode(item.getNodeName(),
+                                StringEscapeUtils.escapeHtml3(item.getTextContent())));
+            }
+        }
+        return example;
+    }
+
+    private boolean checkMDHeader(Node node) {
+        if (node.hasAttributes()) {
+            Node format = node.getAttributes().getNamedItem("format");
+
+            if (format != null) {
+                String value = format.getNodeValue();
+
+                if (value != null) {
+                    return "MD".equalsIgnoreCase(value);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private String getAttributeOrNull(final String name, final Node node) {
         NamedNodeMap attributes = node.getAttributes();
         Node attribute = attributes.getNamedItem(name);
         if (attribute == null) {
@@ -161,38 +246,7 @@ public class XmlDocumentationParser implements DocumentationParser {
         return attribute.getNodeValue();
     }
 
-    List<Example> parseExamples(final Document doc) throws ParsingException {
-        List<Example> examples = new ArrayList<>();
-        NodeList exampleNodes;
-        try {
-            exampleNodes = (NodeList) exampleNodesXPathQuery.evaluate(doc, XPathConstants.NODESET);
-
-            for (int t = 0; t < exampleNodes.getLength(); ++t) {
-                examples.add(parseExample(exampleNodes.item(t)));
-            }
-        } catch (XPathExpressionException | NullPointerException e) {
-            throw new ParsingException("Failed to parse examples", e);
-        }
-
-        return examples;
-    }
-
-    Example parseExample(final Node node) {
-        // Get the example title
-        Example example = new Example(getAttributeOrNull("title", node));
-        NodeList exampleContent = node.getChildNodes();
-        for (int t = 0; t < exampleContent.getLength(); ++t) {
-            Node item = exampleContent.item(t);
-            if (item.getNodeName() != null && !item.getNodeName().startsWith("#")) {
-                example.addContent(
-                        new ExampleNode(exampleContent.item(t).getNodeName(),
-                                StringEscapeUtils.escapeHtml3(exampleContent.item(t).getTextContent())));
-            }
-        }
-        return example;
-    }
-
-    List<Reference> parseReferences(final Document doc) throws ParsingException {
+    private List<Reference> parseReferences(final Document doc) throws ParsingException {
         List<Reference> references = new ArrayList<>();
         NodeList exampleNodes;
         try {
@@ -212,7 +266,7 @@ public class XmlDocumentationParser implements DocumentationParser {
         return references;
     }
 
-    Reference parseReference(final Node node) throws ParsingException {
+    private Reference parseReference(final Node node) throws ParsingException {
         String[] reference = node.getTextContent().trim().split("\\.");
         if (reference.length == 0) {
             throw new ParsingException("Failed to parse reference because no content was found");
@@ -227,7 +281,7 @@ public class XmlDocumentationParser implements DocumentationParser {
         return new Reference(packageName, constructName);
     }
 
-    Set<String> parseSearchTags(final Document doc) throws ParsingException {
+    private Set<String> parseSearchTags(final Document doc) throws ParsingException {
         String[] searchTags = new String[0];
         try {
             Node searchTagNode = (Node) tagXPathQuery.evaluate(doc, XPathConstants.NODE);

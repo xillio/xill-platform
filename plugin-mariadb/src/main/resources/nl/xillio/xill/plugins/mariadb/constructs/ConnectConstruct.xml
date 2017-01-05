@@ -19,9 +19,14 @@
 <function>
     <description>
 Connect to a MariaDB server.
-To connect to a MariaDB server you need to provide a connection string that contains all the required
-information.
-The simple format of the connection string is:
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="connectionString">
+The string that will be used to connect to the database.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+To connect to a MariaDB server you need to provide a connection string that contains all the required information. The simple format of the connection string is:
 
     jdbc:mariadb://[host]/[database]?[properties]
 
@@ -30,9 +35,8 @@ Some examples:
     jdbc:mariadb://localhost:3306/test
     jdbc:mariadb://localhost/test?user=root&amp;password=root
 
-Read more at the: [MariaDB Connection String
-Specification](https://mariadb.com/kb/en/mariadb/about-mariadb-connector-j/)
-    </description>
+Read more at the: [MariaDB Connection String Specification](https://mariadb.com/kb/en/mariadb/about-mariadb-connector-j/)
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Connect to a database using credentials</header>

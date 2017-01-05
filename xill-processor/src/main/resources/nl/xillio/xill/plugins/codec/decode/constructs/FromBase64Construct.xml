@@ -19,17 +19,25 @@
 <function>
     <description>
 Decode a base64 stream or string.
-If the input is a base64 string then the output is the decoded string.
-If the input is a base64 stream then the output is a base64 decoded stream.
-
-The charset parameter is only relevant when a string is provided and determines what character set should be used
-for the output string.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="input">
+The string or stream that will be decoded
+        </parameterDescription>
+		<parameterDescription parameterName="charset">
+Only relevant when a string is provided and determines what character set should be used for the output string.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+If the input is a base64 string then the output is the decoded string. If the input is a base64 stream then the output is a base64 decoded stream.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Assuming we have a file 'C:/tmp/note.xml' containing 'SGVsbG8gV29ybGQ='</header>
             <code>
-                use Decode, File, Stream;
+                use Decode;
+                use File;
+                use Stream;
 
                 var file = File.openRead("C:/tmp/note.xml");
                 var base64Read = Decode.fromBase64(file);
@@ -41,7 +49,8 @@ for the output string.
             </code>
             <header>Decode an in-memory base64 string</header>
             <code>
-                use Decode, System;
+                use Decode;
+                use System;
 
                 var base64 = "SGVsbG8gV29ybGQ=";
                 var text = Decode.fromBase64(base64);

@@ -32,10 +32,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfiguration {
-    @Value("${xws.api.base.path}")
+    @Value("${xill.xws.api.base.path}")
     private String serviceBaseURL;
 
-    @Value("${xws.api.version}")
+    @Value("${xill.xws.api.version}")
     private String apiVersion;
 
     @Bean

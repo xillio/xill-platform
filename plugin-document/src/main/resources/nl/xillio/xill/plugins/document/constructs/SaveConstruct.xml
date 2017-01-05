@@ -19,14 +19,20 @@
 <function>
     <description>
 Save a document to the database. Returns the id of the document.
-
-This construct will create a new document. If the document id already exists, the document will be updated.
-Before saving, the document will be validated for constraints defined in its content type and decorators.
-If no version field is provided for a version it is set to 1 by default.
-
-The identity parameter determines which database will be used.
-For example, when identity is `default`, the `udm_default` database will be used.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="document">
+The document that needs to be saved.
+        </parameterDescription>
+        <parameterDescription parameterName="identity">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+This construct will create a new document. If the document id already exists, the document will be updated. Before saving, the document will be validated for constraints defined in its content type and decorators. If no version field is provided for a version it is set to 1 by default.
+
+The identity parameter determines which database will be used. For example, when identity is `default`, the `udm_default` database will be used.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Make a change to a document</header>

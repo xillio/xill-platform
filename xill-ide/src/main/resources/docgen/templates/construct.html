@@ -60,6 +60,7 @@
         font-family: 'Glober Light';
         src: url('${jarFile}fonts/Glober Light.ttf') format('truetype');
         }
+
     </style>
 
 </head>
@@ -78,18 +79,20 @@
     <section id="signature">
         <header><h2>Signature</h2></header>
         <div class="signature-content">
-            <span class="package-name">${packageName}</span>.<span class="construct-name">${identity}</span><#list parameters>(
+            <span class="package-name">${packageName}</span>.<span class="construct-name">${identity}</span>
+            <#list parameters>(
                 <span class="parameters">
                     <br>
                     <#items as parameter>
                     <span class="parameter">
-                        <span class="parameter-type">${parameter.type}</span> <span class="parameter-name">${parameter.name}</span><#if parameter.defaultValue??><span class="parameter-default"> = ${parameter.defaultValue}</span></#if><#sep>,</#sep>
+                        <span class="parameter-type">${parameter.type}</span> <span class="parameter-name">${parameter.name}</span><#if parameter.defaultValue??><span
+                            class="parameter-default"> = ${parameter.defaultValue}</span></#if><#sep>,</#sep>
                     </span>
                     <br>
                     </#items>
                 </span>
                 );
-            <#else>();
+                <#else>();
             </#list>
             </span>
         </div>
@@ -97,34 +100,53 @@
         </table>
     </section>
 
+    <#if parameterDescriptions?? && parameterDescriptions?size != 0>
+        <section id="parameterDescriptions">
+            <header><h2>Parameter descriptions</h2></header>
+            <#list parameterDescriptions as parDescription>
+                <#if parDescription.parameterName?? && parDescription.parameterDescription??>
+                    <h3>${parDescription.parameterName}</h3>
+                    <div>${parDescription.parameterDescription}</div>
+                </#if>
+            </#list>
+        </section>
+    </#if>
+
+    <#if longDescription?? && longDescription != "">
+        <section id="longDescription">
+            <header><h2>Good to know</h2></header>
+            <div>${longDescription}</div>
+        </section>
+    </#if>
+
     <#if examples?? && examples?size != 0>
-    <section id="examples">
-        <header><h2>Examples</h2></header>
-        <#list examples as example>
-            <#if example.title??>
-            <h3>${example.title}</h3>
-            </#if>
-            <div class="example">
-                <#list example.nodes as node>
-                <div class="example-node ${node.tag}"><#if node.contents??>${node.contents}</#if></div>
-                </#list>
-            </div>
-        </#list>
-    </section>
+        <section id="examples">
+            <header><h2>Examples</h2></header>
+            <#list examples as example>
+                <#if example.title??>
+                    <h3>${example.title}</h3>
+                </#if>
+                <div class="example">
+                    <#list example.nodes as node>
+                        <div class="example-node ${node.tag}"><#if node.contents??>${node.contents}</#if></div>
+                    </#list>
+                </div>
+            </#list>
+        </section>
     </#if>
 
     <#if references?? && references?size != 0>
-    <section id="references">
-        <header><h2>See Also</h2></header>
-        <#list references as reference>
-        <#if reference.package??>
-            <a href="../${reference.package}/${reference.construct}.html">${reference.package}.${reference.construct}</a>
-        </#if>
-        <#if !(reference.package??)>
-            <a href="${reference.construct}.html">${packageName}.${reference.construct}</a>
-        </#if>
-        </#list>
-    </section>
+        <section id="references">
+            <header><h2>See Also</h2></header>
+            <#list references as reference>
+                <#if reference.package??>
+                    <a href="../${reference.package}/${reference.construct}.html">${reference.package}.${reference.construct}</a>
+                </#if>
+                <#if !(reference.package??)>
+                    <a href="${reference.construct}.html">${packageName}.${reference.construct}</a>
+                </#if>
+            </#list>
+        </section>
     </#if>
 </main>
 <script src="${jarFile}xillCore.js" type="text/javascript" charset="utf-8"></script>
@@ -171,6 +193,7 @@
 
         console.log("done");
     }
+
 </script>
 </body>
 </html>

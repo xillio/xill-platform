@@ -20,6 +20,20 @@
     <description>
 Inserts a single document into a collection.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="collectionName">
+The name of the collection that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="document">
+The document that will be inserted.
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+More information about MongoDB insertOne can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.insertOne/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Insert a document</header>

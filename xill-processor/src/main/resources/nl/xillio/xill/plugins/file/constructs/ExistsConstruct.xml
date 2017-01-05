@@ -18,14 +18,22 @@
 -->
 <function>
     <description>
-Check if a file or folder exists on the given `path` and returns `true` if the file or folder exists or otherwise `false`
-`path` can be either relative or absolute.
+Check if a file or folder exists on the given `path`. 
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="path">
+The path to which the rights will be checked. This can be either a file or a folder, relative or absolute.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Returns `true` if the file or folder exists or otherwise `false`.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Create and verify a folder</header>
             <code>
-                use File, System;
+                use File;
+                use System;
 
                 var folder = File.createFolder("toBeDeleted");
                 if(!File.exists(folder)) {

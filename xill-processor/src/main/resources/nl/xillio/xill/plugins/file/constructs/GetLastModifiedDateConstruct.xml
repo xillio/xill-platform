@@ -19,14 +19,21 @@
 <function>
     <description>
 Determine the date of the last modification to the specified file.
-The existence of the file or folder at the given `path` should be checked before calling this.
-`path` can be either relative or absolute.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="path">
+The path that will be looked at. This can be either relative or absolute.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+The existence of the file or folder at the given `path` should be checked before calling this.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Print last modified date from files in a directory:</header>
             <code>
-                use System, File;
+                use File;
+                use System;
 
                 // Provide us all files in the current directory.
                 // Substitute false with true to include subfolders as well.

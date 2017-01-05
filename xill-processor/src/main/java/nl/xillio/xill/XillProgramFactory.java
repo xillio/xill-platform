@@ -202,7 +202,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
             // Get includes
             for (IncludeStatement include : robotToken.getIncludes()) {
                 // Build robotID
-                String path = StringUtils.join(include.getName(), File.separator) + ".xill";
+                String path = StringUtils.join(include.getLibrary(), File.separator) + ".xill";
                 RobotID expectedID = RobotID.getInstance(new File(id.getProjectPath(), path),
                         id.getProjectPath());
                 CodePosition pos = pos(include);

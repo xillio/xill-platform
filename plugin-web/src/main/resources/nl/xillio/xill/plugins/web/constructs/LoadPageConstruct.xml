@@ -19,8 +19,12 @@
 <function>
     <description>
 Loads a web page, identified by `url` and returns it as a `page` object.
-Local (X)HTML files are also supported with the `file://` protocol.
-
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="url">
+The url of the web page that will be loaded.
+        </parameterDescription>
+		<parameterDescription parameterName="options">
 The optional `options` argument contains additional attributes or modifiers for the page loading:
 
 | Option               | Description | Notes |
@@ -39,14 +43,16 @@ The optional `options` argument contains additional attributes or modifiers for 
 |user                  |If HTTP authentication is required, the user name.| |
 |pass                  |If HTTP authentication is required, the password.| |
 |timeout               |Timeout for load, in milliseconds.| |
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Local (X)HTML files are also supported with the `file://` protocol.
 
-*Note:* Usually it is a good idea to reduce loading time by setting up the options to ({"loadimages"=false, "enablejs"=false}) when calling Web.loadPage().
-This deactivates JavaScript and image loading, drastically reducing load times for the page.
+Usually it is a good idea to reduce loading time by setting up the options to ({"loadimages"=false, "enablejs"=false}) when calling Web.loadPage(). This deactivates JavaScript and image loading, drastically reducing load times for the page.
 
-*Usage on non-windows machines:* To use the Web.loadPage() function on a non-windows machine an installation of PhantomJS is required.
-Downloads and documentation can be found at *phantomjs.org/download.html*.
-Make sure you add the binary to your `PATH` environment variable.
-    </description>
+####Usage on non-windows machines
+To use the Web.loadPage() function on a non-windows machine an installation of PhantomJS is required. Downloads and documentation can be found at [Phantomjs download](phantomjs.org/download.html). Make sure you add the binary to your `PATH` environment variable.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Load a web page</header>

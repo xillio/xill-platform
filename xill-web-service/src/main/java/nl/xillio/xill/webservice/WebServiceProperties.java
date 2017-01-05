@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
  * This class represents a configuration handler.
  */
 @Component
-@ConfigurationProperties(prefix = "xill")
+@ConfigurationProperties(prefix = "xill.xws")
 public class WebServiceProperties {
     private int maxExecutors = 10;
     private String workDirectory = XWSUtils.getPresentWorkingDirectory();

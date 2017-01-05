@@ -23,13 +23,18 @@ import nl.xillio.xill.webservice.types.WorkerID;
 import org.testng.annotations.Test;
 
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertSame;
 
 /**
  * Tests for the {@link WorkerPool}.
  */
 public class WorkerPoolTest {
 
+    private final String robotFQN = "test.robot";
+
+    /**
+     * Test {@link WorkerPool#allocateWorker} under normal circumstances.
+     */
     @Test
     public void allocateWorker() throws BaseException {
         // mock
@@ -39,15 +44,18 @@ public class WorkerPoolTest {
 
         // run
         WorkerPool pool = new WorkerPool(null, 3, factory);
-        Worker result = pool.allocateWorker("test.robot");
+        Worker result = pool.allocateWorker(robotFQN);
 
         // verify
-        verify(factory).constructWorker(any(), anyString());
+        verify(factory).constructWorker(any(), eq(robotFQN));
 
         // assert
-        assertEquals(result, worker);
+        assertSame(result, worker);
     }
 
+    /**
+     * Test {@link WorkerPool#allocateWorker} when the worker allocation fails.
+     */
     @Test(expectedExceptions = AllocateWorkerException.class)
     public void allocateWorkerTestWhenAllocateFails() throws Exception {
         // mock
@@ -56,9 +64,12 @@ public class WorkerPoolTest {
 
         // run
         WorkerPool pool = new WorkerPool(null, 3, factory);
-        pool.allocateWorker("test.robot");
+        pool.allocateWorker(robotFQN);
     }
 
+    /**
+     * Test {@link WorkerPool#runWorker} under normal circumstances.
+     */
     @Test
     public void runWorkerTest() throws BaseException {
         // mock
@@ -71,7 +82,7 @@ public class WorkerPoolTest {
         when(factory.constructWorker(any(), anyString())).thenReturn(worker);
 
         WorkerPool pool = new WorkerPool(null, 3, factory);
-        pool.allocateWorker("test.robot");
+        pool.allocateWorker(robotFQN);
 
         // run
         Object result = pool.runWorker(worker.getId(), null);
@@ -80,9 +91,12 @@ public class WorkerPoolTest {
         verify(worker).run(any());
 
         // assert
-        assertEquals(result, testResult);
+        assertSame(result, testResult);
     }
 
+    /**
+     * Test {@link WorkerPool#runWorker} when the worker is not found.
+     */
     @Test(expectedExceptions = RobotNotFoundException.class)
     public void runWorkerTestWhenNotFound() throws BaseException {
         // Run
@@ -90,6 +104,9 @@ public class WorkerPoolTest {
         pool.runWorker(new WorkerID(-1), null);
     }
 
+    /**
+     * Test {@link WorkerPool#stopWorker} under normal circumstances.
+     */
     @Test
     public void stopWorkerTest() throws BaseException {
         // mock
@@ -102,7 +119,7 @@ public class WorkerPoolTest {
 
         // run
         WorkerPool pool = new WorkerPool(null, 3, factory);
-        pool.allocateWorker("test.robot");
+        pool.allocateWorker(robotFQN);
 
         // run
         pool.stopWorker(worker.getId());
@@ -111,6 +128,9 @@ public class WorkerPoolTest {
         verify(worker).abort();
     }
 
+    /**
+     * Test {@link WorkerPool#stopWorker} when the worker is not in an expected state.
+     */
     @Test(expectedExceptions = InvalidStateException.class)
     public void stopWorkerTestWhenNotRunning() throws BaseException {
         // mock
@@ -123,12 +143,15 @@ public class WorkerPoolTest {
 
         // run
         WorkerPool pool = new WorkerPool(null, 3, factory);
-        pool.allocateWorker("test.robot");
+        pool.allocateWorker(robotFQN);
 
         // run
         pool.stopWorker(worker.getId());
     }
 
+    /**
+     * Test {@link WorkerPool#releaseWorker} under normal circumstances.
+     */
     @Test
     public void releaseWorkerTest() throws BaseException {
         // mock
@@ -141,7 +164,7 @@ public class WorkerPoolTest {
 
         // run
         WorkerPool pool = new WorkerPool(null, 3, factory);
-        pool.allocateWorker("test.robot");
+        pool.allocateWorker(robotFQN);
 
         // run
         pool.releaseWorker(worker.getId());
@@ -151,6 +174,9 @@ public class WorkerPoolTest {
         verify(worker).close();
     }
 
+    /**
+     * Test {@link WorkerPool#releaseWorker} when the worker is not in an expected state.
+     */
     @Test(expectedExceptions = InvalidStateException.class)
     public void releaseWorkerTestWhenInvalidState() throws BaseException {
         // mock
@@ -163,12 +189,15 @@ public class WorkerPoolTest {
 
         // run
         WorkerPool pool = new WorkerPool(null, 3, factory);
-        pool.allocateWorker("test.robot");
+        pool.allocateWorker(robotFQN);
 
         // run
         pool.releaseWorker(worker.getId());
     }
 
+    /**
+     * Test {@link WorkerPool#releaseAllWorkers} under normal circumstances.
+     */
     @Test
     public void releaseAllWorkers() throws BaseException {
         // mock
@@ -181,7 +210,7 @@ public class WorkerPoolTest {
 
         // run
         WorkerPool pool = new WorkerPool(null, 3, factory);
-        pool.allocateWorker("test.robot");
+        pool.allocateWorker(robotFQN);
         pool.releaseAllWorkers();
 
         // verify

@@ -19,9 +19,26 @@
 <function>
     <description>
 Renames an existing collection.
-A robot exception will be generated if you provide a `target` that is the name of an existing collection and `dropTarget` is `false`, or if `collection` is the name of a collection that doesn't exist.
-If `dropTarget` is `true`, mongod drops the target collection prior to renaming the collection.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="collectionName">
+The name that the collection will be renamed to.
+        </parameterDescription>
+		<parameterDescription parameterName="target">
+The collection that will be renamed.
+        </parameterDescription>
+		<parameterDescription parameterName="dropTarget">
+An object that can contain a boolean. If this boolean is true mongoDB will drop the target collection (default = empty object = false).
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+A robot exception will be generated if you provide a `target` that is the name of an existing collection and `dropTarget` is `false`, or if `collection` is the name of a collection that doesn't exist. If `dropTarget` is `true`, mongod drops the target collection prior to renaming the collection.
+
+More information about MongoDB renameCollection can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.renameCollection/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Rename the "asset" collection to "assets"</header>

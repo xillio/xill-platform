@@ -18,11 +18,19 @@
 -->
 <function>
     <description>
-Creates a date variable from provided date and list of changes.  
-
-The function changes input date according to changes in list and returns new date variable.  
-Change identificators can be: zone, timezone, YEARS, MONTHS, DAYS, HOURS, MINUTES, SECONDS, etc. 
+Creates a date variable from provided date and list of changes.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="date">
+The date that will be changed.
+        </parameterDescription>
+		<parameterDescription parameterName="change">
+The list of changes that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+The function changes input date according to changes in list and returns new date variable. Change identificators can be: zone, timezone, YEARS, MONTHS, DAYS, HOURS, MINUTES, SECONDS, etc.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Changing current date and time.</header>

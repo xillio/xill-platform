@@ -20,6 +20,11 @@
     <description>
 Counts the number of rows in a given sheet.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="sheet">
+The sheet that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Getting the number of rows in a sheet</header>

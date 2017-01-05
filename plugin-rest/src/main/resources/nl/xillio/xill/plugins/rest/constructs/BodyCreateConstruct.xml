@@ -19,9 +19,10 @@
 <function>
     <description>
 Creates empty multipart REST body content.  
-
-Returns an empty REST body variable.
     </description>
+	<longDescription>
+Returns an empty REST body variable.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Put request with multipart body: demonstrates use of the bodyCreate function.</header>

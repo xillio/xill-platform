@@ -27,7 +27,7 @@ import java.nio.file.Path;
  * @author Geert Konijnendijk
  */
 @Component
-@ConfigurationProperties(prefix = "runtime")
+@ConfigurationProperties(prefix = "xill.xws.runtime")
 public class RuntimeProperties {
     private Path pluginDir = null;
 

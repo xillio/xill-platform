@@ -19,10 +19,18 @@
 <function>
     <description>
 Removes a cookie named `cookie` from the `page`.
-
-`cookie` can be a string or a list of strings containing the cookie name(s).
-Due to the nature of Xill IDE, all locally stored cookies will be removed with every restart.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="page">
+The web page who's cookie will be removed.
+        </parameterDescription>
+		<parameterDescription parameterName="cookie">
+The cookie that will be removed. Can be a string or a list of strings containing the cookie(s) name(s).
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Due to the nature of Xill IDE, all locally stored cookies will be removed with every restart.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Remove cookies from a web page</header>

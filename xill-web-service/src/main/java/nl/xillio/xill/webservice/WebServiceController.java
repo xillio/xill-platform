@@ -41,7 +41,7 @@ import java.util.Map;
  * calls the web API.
  */
 @RestController
-@RequestMapping(path = "${xws.api.base.path}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(path = "${xill.xws.api.base.path}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class WebServiceController {
 
     private final WebService webService;
