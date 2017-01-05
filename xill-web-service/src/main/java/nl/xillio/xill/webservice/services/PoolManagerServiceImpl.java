@@ -18,13 +18,11 @@ package nl.xillio.xill.webservice.services;
 import nl.xillio.xill.webservice.WebServiceProperties;
 import nl.xillio.xill.webservice.model.WorkerFactory;
 import nl.xillio.xill.webservice.model.WorkerPool;
-import nl.xillio.xill.webservice.types.WorkerPoolID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
 
 /**
  * This class represents an implementation of the worker pools manager.
@@ -32,12 +30,11 @@ import java.util.*;
 @Service
 public class PoolManagerServiceImpl implements WorkerPoolManagerService {
 
-    WebServiceProperties properties;
+    protected WebServiceProperties properties;
 
-    private final Path defaultDirectory;
-    private final Map<String, WorkerPool> pools = new HashMap<>();
-    private final WorkerPool defaultPool;
-    private final WorkerFactory workerFactory;
+    protected final Path defaultDirectory;
+    private WorkerPool defaultPool;
+    protected final WorkerFactory workerFactory;
 
     @Autowired
     public PoolManagerServiceImpl(WebServiceProperties properties, WorkerFactory workerFactory) {
@@ -45,42 +42,12 @@ public class PoolManagerServiceImpl implements WorkerPoolManagerService {
         this.workerFactory = workerFactory;
         defaultDirectory = Paths.get(properties.getWorkDirectory());
         defaultPool = new WorkerPool(defaultDirectory, properties.getMaxExecutors(), workerFactory);
-        pools.put(pathToIdentifier(defaultDirectory), defaultPool);
     }
 
-    @Override
-    public WorkerPool getWorkerPool(final Path workDirectory) {
-        // Convert to absolute path and string to always have the same path
-        String poolKey = pathToIdentifier(workDirectory);
-        WorkerPool pool = pools.get(poolKey);
-        if (pool == null) {
-            pool = new WorkerPool(workDirectory, properties.getMaxExecutors(), workerFactory);
-            pools.put(poolKey, pool);
-        }
-        return pool;
-    }
 
     @Override
     public WorkerPool getDefaultWorkerPool() {
         return defaultPool;
     }
 
-    @Override
-    public Optional<WorkerPool> findWorkerPool(final WorkerPoolID projectId) {
-        return pools.values().stream().filter(p -> p.getId().equals(projectId)).findFirst();
-    }
-
-    @Override
-    public List<WorkerPool> getAllWorkerPools() {
-        return new LinkedList<>(pools.values());
-    }
-
-    /**
-     * Convert a path to a string that can be used to identify pools.
-     *
-     * @return A normalized absolute path
-     */
-    private String pathToIdentifier(Path path) {
-        return path.toAbsolutePath().normalize().toString();
-    }
 }
