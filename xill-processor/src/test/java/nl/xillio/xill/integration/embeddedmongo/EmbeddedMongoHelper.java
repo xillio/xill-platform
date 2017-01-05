@@ -25,9 +25,11 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.config.IRuntimeConfig;
 import de.flapdoodle.embed.process.exceptions.DistributionException;
 import de.flapdoodle.embed.process.extract.UserTempNaming;
+import de.flapdoodle.embed.process.io.directories.PropertyOrTempDirInPlatformTempDir;
 import me.biesaart.utils.Log;
 import org.slf4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -55,6 +57,7 @@ public enum EmbeddedMongoHelper {
                 .artifactStore(
                         new ExtractedArtifactStoreBuilder()
                                 .defaults(command)
+                                .tempDir(new PropertyOrTempDirInPlatformTempDir())
                                 .download(
                                         new DownloadConfigBuilder()
                                                 .defaultsForCommand(command).build())
