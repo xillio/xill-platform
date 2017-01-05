@@ -38,7 +38,7 @@ public class RuntimeConfiguration {
      * @param runtimeFactory the factory for creating runtime instances
      * @return a pool for {@link RuntimeImpl} instances
      */
-    @ConfigurationProperties(prefix = "runtimePool")
+    @ConfigurationProperties(prefix = "xill.xws.runtime.pool")
     @Lazy(false)
     @Bean(value = "xillRuntimePool", initMethod = "preparePool")
     public ObjectPool<Runtime> xillRuntimePool(RuntimePooledObjectFactory runtimeFactory) {

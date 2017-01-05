@@ -38,7 +38,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
@@ -229,7 +228,7 @@ public class XmlDocumentationParser implements DocumentationParser {
                 String value = format.getNodeValue();
 
                 if (value != null) {
-                    return value.equalsIgnoreCase("MD");
+                    return "MD".equalsIgnoreCase(value);
                 }
             }
         }
