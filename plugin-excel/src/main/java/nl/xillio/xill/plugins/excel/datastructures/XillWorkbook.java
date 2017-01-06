@@ -203,16 +203,18 @@ public class XillWorkbook implements MetadataExpression {
     }
 
     /**
-     * Saves the workbook to the new location specified in the file.
+     * Saves the workbook to the new location specified in the file. All sheets are recalculated
+     * before the workbook is saved.
      *
      * @param file the new location of the Excel workbook
      * @throws IOException when the write operation could not succeed
      */
     public void save(File file) throws IOException {
+        workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
         file.getParentFile().mkdirs();
-        OutputStream outputStream = getOutputStream(file);
-        workbook.write(outputStream);
-        outputStream.close();
+        try (OutputStream outputStream = getOutputStream(file)) {
+            workbook.write(outputStream);
+        }
     }
 
     /**
