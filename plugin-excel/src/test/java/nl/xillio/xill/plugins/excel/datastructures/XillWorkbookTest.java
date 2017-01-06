@@ -24,10 +24,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -257,7 +254,6 @@ public class XillWorkbookTest {
         File file = createFile("path", false);
         XillWorkbook testWorkbook = spy(new XillWorkbook(workbook, file));
         FileOutputStream stream = mock(FileOutputStream.class);
-        doReturn(stream).when(testWorkbook).getOuputStream();
         doReturn(stream).when(testWorkbook).getOutputStream(file);
         testWorkbook.save();
         testWorkbook.save(file);
@@ -309,6 +305,30 @@ public class XillWorkbookTest {
         FileOutputStream stream = mock(FileOutputStream.class);
         doReturn(stream).when(testWorkbook).getOutputStream(file);
         doThrow(new IOException()).when(workbook).write(any(OutputStream.class));
+        testWorkbook.save(file);
+    }
+
+    /**
+     * Tests that an exception is thrown when a workbook can not be saved to
+     * the new path specified.
+     *
+     * @throws Exception
+     */
+    @Test(expectedExceptions = IOException.class)
+    public void testSaveWithFileNotFoundException() throws Exception {
+        Workbook workbook = mock(Workbook.class);
+
+        // Alas! Deep stubs don't work :(
+        FormulaEvaluator formulaEvaluator = mock(FormulaEvaluator.class);
+        CreationHelper creationHelper = mock(CreationHelper.class);
+        when(workbook.getCreationHelper()).thenReturn(creationHelper);
+        when(creationHelper.createFormulaEvaluator()).thenReturn(formulaEvaluator);
+        doNothing().when(formulaEvaluator).evaluateAll();
+
+        File file = createFile("path", false);
+        XillWorkbook testWorkbook = spy(new XillWorkbook(workbook, file));
+
+        doThrow(new FileNotFoundException()).when(testWorkbook).getOutputStream(file);
         testWorkbook.save(file);
     }
 

@@ -185,10 +185,6 @@ public class XillWorkbook implements MetadataExpression {
         workbook.removeSheetAt(workbook.getSheetIndex(sheetName));
     }
 
-    public FileOutputStream getOuputStream() throws FileNotFoundException {
-        return new FileOutputStream(location);
-    }
-
     public FileOutputStream getOutputStream(File file) throws FileNotFoundException {
         return new FileOutputStream(file);
     }
