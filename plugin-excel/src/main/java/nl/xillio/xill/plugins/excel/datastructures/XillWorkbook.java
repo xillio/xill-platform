@@ -206,7 +206,6 @@ public class XillWorkbook implements MetadataExpression {
      * @throws IOException when the write operation could not succeed
      */
     public void save(File file) throws IOException {
-        workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
         file.getParentFile().mkdirs();
         try (OutputStream outputStream = getOutputStream(file)) {
             workbook.write(outputStream);
@@ -255,6 +254,15 @@ public class XillWorkbook implements MetadataExpression {
      */
     Workbook getWorkbook() {
         return workbook;
+    }
+
+    /**
+     * Recalculate the workbook;
+     *
+     *
+     */
+    public void recalculate() {
+        this.workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
     }
 }
 

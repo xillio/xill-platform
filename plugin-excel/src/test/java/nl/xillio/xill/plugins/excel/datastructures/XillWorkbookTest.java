@@ -243,14 +243,6 @@ public class XillWorkbookTest {
     @Test
     public void testSave() throws Exception {
         Workbook workbook = mock(Workbook.class);
-
-        // Alas! Deep stubs don't work :(
-        FormulaEvaluator formulaEvaluator = mock(FormulaEvaluator.class);
-        CreationHelper creationHelper = mock(CreationHelper.class);
-        when(workbook.getCreationHelper()).thenReturn(creationHelper);
-        when(creationHelper.createFormulaEvaluator()).thenReturn(formulaEvaluator);
-        doNothing().when(formulaEvaluator).evaluateAll();
-
         File file = createFile("path", false);
         XillWorkbook testWorkbook = spy(new XillWorkbook(workbook, file));
         FileOutputStream stream = mock(FileOutputStream.class);
@@ -268,14 +260,6 @@ public class XillWorkbookTest {
     @Test(expectedExceptions = IOException.class)
     public void testSaveException() throws Exception {
         Workbook workbook = mock(Workbook.class);
-
-        // Alas! Deep stubs don't work :(
-        FormulaEvaluator formulaEvaluator = mock(FormulaEvaluator.class);
-        CreationHelper creationHelper = mock(CreationHelper.class);
-        when(workbook.getCreationHelper()).thenReturn(creationHelper);
-        when(creationHelper.createFormulaEvaluator()).thenReturn(formulaEvaluator);
-        doNothing().when(formulaEvaluator).evaluateAll();
-
         File file = createFile("path", false);
         XillWorkbook testWorkbook = spy(new XillWorkbook(workbook, file));
         doReturn(mock(FileOutputStream.class)).when(testWorkbook).getOutputStream(any(File.class));
@@ -292,43 +276,11 @@ public class XillWorkbookTest {
     @Test(expectedExceptions = IOException.class)
     public void testSaveWithFileException() throws Exception {
         Workbook workbook = mock(Workbook.class);
-
-        // Alas! Deep stubs don't work :(
-        FormulaEvaluator formulaEvaluator = mock(FormulaEvaluator.class);
-        CreationHelper creationHelper = mock(CreationHelper.class);
-        when(workbook.getCreationHelper()).thenReturn(creationHelper);
-        when(creationHelper.createFormulaEvaluator()).thenReturn(formulaEvaluator);
-        doNothing().when(formulaEvaluator).evaluateAll();
-
         File file = createFile("path", false);
         XillWorkbook testWorkbook = spy(new XillWorkbook(workbook, file));
         FileOutputStream stream = mock(FileOutputStream.class);
         doReturn(stream).when(testWorkbook).getOutputStream(file);
         doThrow(new IOException()).when(workbook).write(any(OutputStream.class));
-        testWorkbook.save(file);
-    }
-
-    /**
-     * Tests that an exception is thrown when a workbook can not be saved to
-     * the new path specified.
-     *
-     * @throws Exception
-     */
-    @Test(expectedExceptions = IOException.class)
-    public void testSaveWithFileNotFoundException() throws Exception {
-        Workbook workbook = mock(Workbook.class);
-
-        // Alas! Deep stubs don't work :(
-        FormulaEvaluator formulaEvaluator = mock(FormulaEvaluator.class);
-        CreationHelper creationHelper = mock(CreationHelper.class);
-        when(workbook.getCreationHelper()).thenReturn(creationHelper);
-        when(creationHelper.createFormulaEvaluator()).thenReturn(formulaEvaluator);
-        doNothing().when(formulaEvaluator).evaluateAll();
-
-        File file = createFile("path", false);
-        XillWorkbook testWorkbook = spy(new XillWorkbook(workbook, file));
-
-        doThrow(new FileNotFoundException()).when(testWorkbook).getOutputStream(file);
         testWorkbook.save(file);
     }
 
