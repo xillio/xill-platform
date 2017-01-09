@@ -25,9 +25,11 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.config.IRuntimeConfig;
 import de.flapdoodle.embed.process.exceptions.DistributionException;
 import de.flapdoodle.embed.process.extract.UserTempNaming;
+import de.flapdoodle.embed.process.io.directories.PropertyOrTempDirInPlatformTempDir;
 import me.biesaart.utils.Log;
 import org.slf4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -37,13 +39,16 @@ import java.security.ProviderException;
 /**
  * Created by andrea.parrilli on 2016-04-25.
  */
-public class EmbeddedMongoHelper {
-    private static Logger LOGGER = Log.get();
-    private static final MongodStarter starter;
-    private static final MongodExecutable executable;
-    private static Net net;
+public enum EmbeddedMongoHelper {
+    INSTANCE;
 
-    static {
+    // The logger cannot be static because it is used in the constructor.
+    private final Logger LOGGER = Log.get();
+    private MongodStarter starter;
+    private MongodExecutable executable;
+    private Net net;
+
+    EmbeddedMongoHelper() {
         Command command = Command.MongoD;
 
         IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder()
@@ -52,6 +57,7 @@ public class EmbeddedMongoHelper {
                 .artifactStore(
                         new ExtractedArtifactStoreBuilder()
                                 .defaults(command)
+                                .tempDir(new PropertyOrTempDirInPlatformTempDir())
                                 .download(
                                         new DownloadConfigBuilder()
                                                 .defaultsForCommand(command).build())
@@ -63,7 +69,7 @@ public class EmbeddedMongoHelper {
         executable = deploy();
     }
 
-    private static MongodExecutable deploy() {
+    private MongodExecutable deploy() {
         try {
             net = new Net();
             IMongodConfig mongodConfig = new MongodConfigBuilder()
@@ -89,25 +95,28 @@ public class EmbeddedMongoHelper {
         }
     }
 
-    public static void start() throws IOException {
-        if (executable != null)
+    public void start() throws IOException {
+        if (executable != null) {
             executable.start();
-        else
-            throw new NullPointerException("The Embedded Mongo instance is not running, probably failed static initialization");
+        } else {
+            throw new IllegalStateException("The Embedded Mongo instance is not running, probably initialization failed");
+        }
     }
 
-    public static void stop() throws IOException {
-        if (executable != null)
+    public void stop() throws IOException {
+        if (executable != null) {
             executable.stop();
-        else
-            throw new NullPointerException("The Embedded Mongo instance is not running, probably failed static initialization");
+        } else {
+            throw new IllegalStateException("The Embedded Mongo instance is not running, probably initialization failed");
+        }
     }
 
-    public static void cleanupDB() {
+    public void cleanupDB() {
         try (MongoClient conn = new MongoClient("localhost", net.getPort())) {
             MongoIterable<String> dbs = conn.listDatabaseNames();
-            for (String db : dbs)
+            for (String db : dbs) {
                 conn.dropDatabase(db);
+            }
         }
     }
 }

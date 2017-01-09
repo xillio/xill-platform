@@ -80,7 +80,7 @@ public class RuntimeImpl implements Runtime, DisposableBean {
     protected Future<?> compileSuccess;
     protected ThreadPoolTaskExecutor compileExecutor;
 
-    @Value("${xillRuntime.abortTimeoutMillis:300000}")
+    @Value("${xill.xws.runtime.abortTimeoutMillis:300000}")
     private long abortTimeoutMillis;
 
     /**

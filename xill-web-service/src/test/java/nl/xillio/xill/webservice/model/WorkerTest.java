@@ -29,7 +29,6 @@ import java.nio.file.Paths;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 
 /**

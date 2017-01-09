@@ -127,6 +127,23 @@ public class AbstractSetCellConstructTest {
         assertEquals(captor.getValue(), "inputString");
     }
 
+   /**
+     * Tests if {@link AbstractSetCellConstruct#setValue(XillSheet, XillCellRef, MetaExpression, MetaExpression)} uses the String method when the input is
+     * a string value
+     */
+    @Test
+    public void testSetValueFormula() throws Exception {
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        XillSheet sheet = mock(XillSheet.class);
+        XillCellRef cellRef = mock(XillCellRef.class);
+
+        AbstractSetCellConstruct.setValue(sheet, cellRef, fromValue("SQRT(12)"), fromValue(true));
+
+        verify(sheet, times(0)).setCellValue(any(XillCellRef.class), captor.capture(), eq(false));
+        verify(sheet, times(1)).setCellValue(any(XillCellRef.class), captor.capture(), eq(true));
+        assertEquals(captor.getValue(), "SQRT(12)");
+    }
+
     /**
      * Tests if a numeric cell reference is correctly made.
      */

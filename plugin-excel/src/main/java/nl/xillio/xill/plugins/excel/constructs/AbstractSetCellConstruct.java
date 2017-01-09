@@ -86,12 +86,10 @@ public abstract class AbstractSetCellConstruct extends AbstractExcelConstruct {
      * @param formula a MetaExpression evaluating to True when value represents a formula and false otherwise
      */
     protected static void setValue(XillSheet sheet, XillCellRef cellRef, MetaExpression value, MetaExpression formula) {
-        if (formula.getBooleanValue()) {
-            sheet.setCellValue(cellRef, value.getStringValue(), true);
-        }
-
         if (value.isNull()) {
             sheet.emptyCellValue(cellRef);
+        } else if (formula.getBooleanValue()) {
+            sheet.setCellValue(cellRef, value.getStringValue(), true);
         } else {
             nl.xillio.xill.api.data.Date date = value.getMeta(nl.xillio.xill.api.data.Date.class);
             Object objectValue = MetaExpression.extractValue(value);
