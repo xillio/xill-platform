@@ -16,8 +16,6 @@
 package nl.xillio.xill.plugins.excel.constructs;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.components.MetaExpression;
-import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.excel.datastructures.XillWorkbook;
@@ -25,9 +23,6 @@ import nl.xillio.xill.plugins.excel.services.ExcelService;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.formula.eval.NotImplementedFunctionException;
 import org.testng.annotations.Test;
-
-import java.io.File;
-import java.io.IOException;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
@@ -45,9 +40,7 @@ public class RecalculateConstructTest extends TestUtils {
     @Test(expectedExceptions = RobotRuntimeException.class,
             expectedExceptionsMessageRegExp = "Expected parameter 'workbook' to be a result of loadWorkbook or createWorkbook")
     public void testProcessNoValidWorkbook() throws Exception {
-        ExcelService service = mock(ExcelService.class);
-        ConstructContext context = mock(ConstructContext.class);
-        RecalculateConstruct.process(service, context, NULL);
+        RecalculateConstruct.process(NULL);
     }
 
     /**
@@ -55,7 +48,6 @@ public class RecalculateConstructTest extends TestUtils {
      */
     @Test
     public void testProcessNormal() throws Exception {
-        ConstructContext context = mock(ConstructContext.class);
         XillWorkbook workbook = mock(XillWorkbook.class);
         doNothing().when(workbook).recalculate();
         assertEquals(RecalculateConstruct.process(workbook), fromValue(true));
@@ -67,7 +59,6 @@ public class RecalculateConstructTest extends TestUtils {
     @Test(expectedExceptions = RobotRuntimeException.class,
             expectedExceptionsMessageRegExp = "Workbook contains unknown function 'TEST' in cell Sheet1!A1")
     public void testProcessWithUnimplementedFunction() throws Exception {
-        ConstructContext context = mock(ConstructContext.class);
         XillWorkbook workbook = mock(XillWorkbook.class);
         NotImplementedException notImplementedException = new NotImplementedException("Error evaluating cell Sheet1!A1", new NotImplementedFunctionException("TEST"));
         doThrow(notImplementedException).when(workbook).recalculate();
@@ -81,7 +72,6 @@ public class RecalculateConstructTest extends TestUtils {
     @Test(expectedExceptions = RobotRuntimeException.class,
             expectedExceptionsMessageRegExp = "Error evaluating cell Sheet1!A1")
     public void testProcessWithUnknownImplementationFunction() throws Exception {
-        ConstructContext context = mock(ConstructContext.class);
         XillWorkbook workbook = mock(XillWorkbook.class);
         NotImplementedException notImplementedException = new NotImplementedException("Error evaluating cell Sheet1!A1", new NotImplementedException("NOT SHOWN"));
         doThrow(notImplementedException).when(workbook).recalculate();
@@ -95,7 +85,6 @@ public class RecalculateConstructTest extends TestUtils {
     @Test(expectedExceptions = RobotRuntimeException.class,
             expectedExceptionsMessageRegExp = "Error recalculating")
     public void testProcessWithUnknownException() throws Exception {
-        ConstructContext context = mock(ConstructContext.class);
         XillWorkbook workbook = mock(XillWorkbook.class);
         RuntimeException runtimeException = new RuntimeException("Error recalculating");
         doThrow(runtimeException).when(workbook).recalculate();
