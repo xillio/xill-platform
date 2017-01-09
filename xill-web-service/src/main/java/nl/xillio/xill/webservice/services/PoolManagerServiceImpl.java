@@ -30,20 +30,27 @@ import java.nio.file.Paths;
 @Service
 public class PoolManagerServiceImpl implements WorkerPoolManagerService {
 
-    protected WebServiceProperties properties;
-
     protected final Path defaultDirectory;
-    private WorkerPool defaultPool;
     protected final WorkerFactory workerFactory;
+    protected final WebServiceProperties properties;
+    protected final WorkerPool defaultPool;
 
     @Autowired
     public PoolManagerServiceImpl(WebServiceProperties properties, WorkerFactory workerFactory) {
         this.properties = properties;
         this.workerFactory = workerFactory;
         defaultDirectory = Paths.get(properties.getWorkDirectory());
-        defaultPool = new WorkerPool(defaultDirectory, properties.getMaxExecutors(), workerFactory);
+        defaultPool = createDefaultPool();
     }
 
+    /**
+     * Creates and assign the default pool (in a separate method to be overridden by the monitor).
+     *
+     * @return the newly created default pool
+     */
+    protected WorkerPool createDefaultPool() {
+        return new WorkerPool(defaultDirectory, properties.getMaxExecutors(), workerFactory);
+    }
 
     @Override
     public WorkerPool getDefaultWorkerPool() {
