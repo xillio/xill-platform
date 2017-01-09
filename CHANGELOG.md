@@ -40,8 +40,10 @@ All notable changes to this project will be documented in this file.
 * Dialogs do not render on (very) fast machines [CTC-1850]
 * Concurrency pipeline changes dates and ObjectIds to strings [CTC-1833]
 * Parsing String list results from xpath query floods log and is slow [CTC-1885] 
-* Excel.setCellFormula() throws caught error: "Cannot get a numeric value from a text formula cell [CTC-1528]
+* `Excel.setCellFormula()` throws caught error: "Cannot get a numeric value from a text formula cell [CTC-1528]
 * Order of package names in help file is off in Linux [CTC-1937]
+* Formatting in Usage headers in help file [CTC-1709]
+* `Excel.setCellFormula()` does not create formula in Excel sheet [CTC-1930]
 
 ## [3.4.2] - 2016-11-04
 

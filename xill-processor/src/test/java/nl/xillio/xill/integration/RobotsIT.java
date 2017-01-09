@@ -70,12 +70,12 @@ public class RobotsIT {
 
     @BeforeClass
     public void startEmbeddedMongo() throws IOException {
-        EmbeddedMongoHelper.start();
+        EmbeddedMongoHelper.INSTANCE.start();
     }
 
     @AfterClass
     public void stopEmbeddedMongo() throws IOException {
-        EmbeddedMongoHelper.stop();
+        EmbeddedMongoHelper.INSTANCE.stop();
     }
 
     protected String getPackage() {
@@ -103,7 +103,7 @@ public class RobotsIT {
         Path robotFile = projectPath.resolve(name);
 
         // cleanup mongo before each test (to make sure previous failures do not influence this test)
-        EmbeddedMongoHelper.cleanupDB();
+        EmbeddedMongoHelper.INSTANCE.cleanupDB();
 
         if (Files.exists(robotFile)) {
             Files.delete(robotFile);
