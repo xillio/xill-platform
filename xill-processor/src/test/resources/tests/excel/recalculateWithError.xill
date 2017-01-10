@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use Assert, Excel;
+use Assert, Excel, String;
 
 var workbookName = "test_wb.xlsx";
 var doubleCheck = true;
@@ -21,7 +21,7 @@ var doubleCheck = true;
 do {
     create();
 } fail(error) {
-    Assert.equal(error.message, "Workbook contains unknown function 'GEOMEAN' in cell testSheet!A3");
+    Assert.isTrue(String.startsWith(error.message, "Workbook contains unknown function 'GEOMEAN' in cell testSheet!A3"));
 }
 
 Assert.isTrue(doubleCheck, "The actual assertion for this test is not made.");
