@@ -31,7 +31,7 @@ function create() {
     var sheet = Excel.createSheet(wb, "testSheet");
     Excel.setCellValue(sheet, 1, 1, 1);
     Excel.setCellValue(sheet, 1, 2, 2);
-    Excel.setCellFormula(sheet, 1, 3, "GEOMEAN(A1:B1)");
+    Excel.setCellFormula(sheet, 1, 3, "GEOMEAN(A1:A2)");
     Excel.recalculate(wb);
     doubleCheck = false;
 }
