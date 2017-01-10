@@ -81,6 +81,7 @@ public abstract class BaseDatabaseService implements DatabaseService {
     }
 
     @Override
+    @SuppressWarnings("squid:S2095") //suppress "Close this statement" warning (statement is closed in iterator and is Autocloseable)
     public Object query(final Connection connection, final String query, final int timeout) throws SQLException {
         Statement stmt = connection.createStatement();
         stmt.setQueryTimeout(timeout);
