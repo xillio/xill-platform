@@ -102,10 +102,10 @@ public class UrlUtilityServiceImpl implements UrlUtilityService {
     }
 
     @Override
-    public void write(final File file, final byte[] output) throws IOException {
-        OutputStream out = new FileOutputStream(file);
-        out.write(output);
-        out.close();
+    public void write(final File file, final byte[] output) throws IOException{
+        try (OutputStream out = new FileOutputStream(file)) {
+            out.write(output);
+        }
     }
 
     @Override
