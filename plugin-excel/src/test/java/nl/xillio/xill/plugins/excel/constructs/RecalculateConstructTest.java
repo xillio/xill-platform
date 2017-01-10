@@ -17,15 +17,13 @@ package nl.xillio.xill.plugins.excel.constructs;
 
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
-import nl.xillio.xill.api.construct.ConstructContext;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
+import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.excel.datastructures.XillWorkbook;
-import nl.xillio.xill.plugins.excel.services.ExcelService;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.formula.eval.NotImplementedFunctionException;
 import org.testng.annotations.Test;
-
-import java.util.LinkedHashMap;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
@@ -43,7 +41,8 @@ public class RecalculateConstructTest extends TestUtils {
     @Test(expectedExceptions = RobotRuntimeException.class,
             expectedExceptionsMessageRegExp = "Expected parameter 'workbook' to be a result of loadWorkbook or createWorkbook")
     public void testProcessNoValidWorkbook() throws Exception {
-        RecalculateConstruct.process(NULL);
+        RecalculateConstruct construct = new RecalculateConstruct();
+        process(construct, NULL);
     }
 
     /**
@@ -52,51 +51,67 @@ public class RecalculateConstructTest extends TestUtils {
     @Test
     public void testProcessNormal() throws Exception {
         XillWorkbook workbook = mock(XillWorkbook.class);
-        LinkedHashMap<String, MetaExpression> sheetObject = new LinkedHashMap<>();
-        MetaExpression metaWorkbook = fromValue(sheetObject);
+        MetaExpression metaWorkbook = fromValue("workbook");
         metaWorkbook.storeMeta(workbook);
+
         doNothing().when(workbook).recalculate();
-        assertEquals(RecalculateConstruct.process(metaWorkbook), fromValue(true));
+
+        RecalculateConstruct construct = new RecalculateConstruct();
+        assertEquals(process(construct, metaWorkbook), fromValue(true));
     }
 
     /**
      * Tests recalculating sheet with unimplemented function.
      */
-    @Test(expectedExceptions = RobotRuntimeException.class,
-            expectedExceptionsMessageRegExp = "Workbook contains unknown function 'TEST' in cell Sheet1!A1")
+    @Test(expectedExceptions = InvalidUserInputException.class,
+            expectedExceptionsMessageRegExp = "Workbook contains unknown function 'TEST' in cell Sheet1!A1\\..*TEST.*")
     public void testProcessWithUnimplementedFunction() throws Exception {
         XillWorkbook workbook = mock(XillWorkbook.class);
+        MetaExpression metaWorkbook = fromValue("workbook");
+        metaWorkbook.storeMeta(workbook);
+
         NotImplementedException notImplementedException = new NotImplementedException("Error evaluating cell Sheet1!A1", new NotImplementedFunctionException("TEST"));
         doThrow(notImplementedException).when(workbook).recalculate();
-        RecalculateConstruct.process(workbook);
+
+        RecalculateConstruct construct = new RecalculateConstruct();
+        process(construct, metaWorkbook);
 
     }
 
    /**
      * Tests recalculating sheet with some unimplemented exception..
      */
-    @Test(expectedExceptions = RobotRuntimeException.class,
-            expectedExceptionsMessageRegExp = "Error evaluating cell Sheet1!A1")
+    @Test(expectedExceptions = OperationFailedException.class,
+            expectedExceptionsMessageRegExp = "Could not recalculate workbook\\..*Error evaluating cell Sheet1!A1")
     public void testProcessWithUnknownImplementationFunction() throws Exception {
         XillWorkbook workbook = mock(XillWorkbook.class);
+        MetaExpression metaWorkbook = fromValue("workbook");
+        metaWorkbook.storeMeta(workbook);
+
         NotImplementedException notImplementedException = new NotImplementedException("Error evaluating cell Sheet1!A1", new NotImplementedException("NOT SHOWN"));
         doThrow(notImplementedException).when(workbook).recalculate();
-        RecalculateConstruct.process(workbook);
+
+        RecalculateConstruct construct = new RecalculateConstruct();
+        process(construct, metaWorkbook);
 
     }
 
    /**
      * Tests recalculating sheet with unknown exception.
      */
-    @Test(expectedExceptions = RobotRuntimeException.class,
-            expectedExceptionsMessageRegExp = "Error recalculating")
+    @Test(expectedExceptions = OperationFailedException.class,
+            expectedExceptionsMessageRegExp = "Could not recalculate workbook\\..*Error recalculating")
     public void testProcessWithUnknownException() throws Exception {
         XillWorkbook workbook = mock(XillWorkbook.class);
+        MetaExpression metaWorkbook = fromValue("workbook");
+        metaWorkbook.storeMeta(workbook);
+
         RuntimeException runtimeException = new RuntimeException("Error recalculating");
         doThrow(runtimeException).when(workbook).recalculate();
-        RecalculateConstruct.process(workbook);
+
+        RecalculateConstruct construct = new RecalculateConstruct();
+        process(construct, metaWorkbook);
 
     }
-
 
 }

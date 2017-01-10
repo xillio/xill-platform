@@ -20,6 +20,8 @@ import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
+import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.excel.datastructures.XillWorkbook;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
@@ -32,6 +34,14 @@ import org.apache.poi.ss.formula.eval.NotImplementedFunctionException;
  */
 public class RecalculateConstruct extends Construct {
 
+    @Override
+    public ConstructProcessor prepareProcess(ConstructContext context) {
+        return new ConstructProcessor(
+                a -> process(a),
+                new Argument("workbook", ATOMIC)
+        );
+    }
+
     /**
      * Processes the xill code to recalculate the provided workbook.
      *
@@ -40,44 +50,29 @@ public class RecalculateConstruct extends Construct {
      * @return TRUE if successfull
      * @throws RobotRuntimeException when the file is read-only or cannot be written to
      */
-    static MetaExpression process(MetaExpression workbookInput) {
+    private MetaExpression process(MetaExpression workbookInput) {
         XillWorkbook workbook = assertMeta(workbookInput, "parameter 'workbook'", XillWorkbook.class, "result of loadWorkbook or createWorkbook");
-        return process(workbook);
-    }
-
-    /**
-     * Recalculate the workbook and handle exceptions.
-     *
-     * @param workbook the {@link XillWorkbook} which will be recalculated
-     * @return TRUE if successfull
-     * @throws RobotRuntimeException when the workbook can not be recalculated
-     */
-    static MetaExpression process(XillWorkbook workbook) {
         try {
             workbook.recalculate();
         } catch (NotImplementedException nie) {
-            Throwable theCause = nie.getCause();
-            if (theCause instanceof NotImplementedFunctionException) {
-                NotImplementedFunctionException cause = (NotImplementedFunctionException) theCause;
-                String message = String.format("Workbook contains unknown function '%s' in cell %s",
-                        cause.getFunctionName(),
-                        nie.getMessage().substring(22));
-                throw new RobotRuntimeException(message);
-            } else {
-                throw new RobotRuntimeException(nie.getMessage(), nie);
-            }
+            handleException(nie);
         } catch (RuntimeException e) {
-            throw new RobotRuntimeException(e.getMessage(), e);
+            throw new OperationFailedException("recalculate workbook", e.getMessage(), e);
         }
         return TRUE;
     }
 
-    @Override
-    public ConstructProcessor prepareProcess(ConstructContext context) {
-        return new ConstructProcessor(
-                a -> process(a),
-                new Argument("workbook", ATOMIC)
-        );
+    private void handleException(NotImplementedException nie) {
+        Throwable theCause = nie.getCause();
+        if (theCause instanceof NotImplementedFunctionException) {
+            NotImplementedFunctionException cause = (NotImplementedFunctionException) theCause;
+            String message = String.format("Workbook contains unknown function '%s' in cell %s.",
+                    cause.getFunctionName(),
+                    nie.getMessage().substring(22));
+            throw new InvalidUserInputException(message, cause.getFunctionName(), "A supported formula", "SUM(A1:B1)");
+        } else {
+            throw new OperationFailedException("recalculate workbook", nie.getMessage(), nie);
+        }
     }
 
 }

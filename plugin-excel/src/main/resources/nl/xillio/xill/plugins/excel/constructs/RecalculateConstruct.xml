@@ -19,7 +19,7 @@
 <function>
     <description>
 When a workbook contains formulas and the source cells are updated, then the workbook is not automatically updated with
-the new calculated value. `Excel.recalculate` scan the workbook for changed cell values and modifies the results of the
+the new calculated value. `Excel.recalculate` scans the workbook for changed cell values and modifies the results of the
 formulas accordingly.
     </description>
 	<parameterDescriptions>
