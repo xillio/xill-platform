@@ -16,6 +16,7 @@
 package nl.xillio.xill.plugins.excel.constructs;
 
 import nl.xillio.xill.TestUtils;
+import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.excel.datastructures.XillWorkbook;
@@ -23,6 +24,8 @@ import nl.xillio.xill.plugins.excel.services.ExcelService;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.formula.eval.NotImplementedFunctionException;
 import org.testng.annotations.Test;
+
+import java.util.LinkedHashMap;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
@@ -49,8 +52,11 @@ public class RecalculateConstructTest extends TestUtils {
     @Test
     public void testProcessNormal() throws Exception {
         XillWorkbook workbook = mock(XillWorkbook.class);
+        LinkedHashMap<String, MetaExpression> sheetObject = new LinkedHashMap<>();
+        MetaExpression metaWorkbook = fromValue(sheetObject);
+        metaWorkbook.storeMeta(workbook);
         doNothing().when(workbook).recalculate();
-        assertEquals(RecalculateConstruct.process(workbook), fromValue(true));
+        assertEquals(RecalculateConstruct.process(metaWorkbook), fromValue(true));
     }
 
     /**
