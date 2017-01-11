@@ -44,6 +44,7 @@ All notable changes to this project will be documented in this file.
 * Order of package names in help file is off in Linux [CTC-1937]
 * Formatting in Usage headers in help file [CTC-1709]
 * `Excel.setCellFormula()` does not create formula in Excel sheet [CTC-1930]
+* Pipeline functions do not support qualified includes [CTC-2001]
 
 ## [3.4.1] - 2016-10-28
 
