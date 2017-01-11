@@ -21,6 +21,7 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.OptionsEnum;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.xurl.data.Credentials;
+import nl.xillio.xill.plugins.xurl.data.NTLMOptions;
 import nl.xillio.xill.plugins.xurl.data.Options;
 import nl.xillio.xill.plugins.xurl.data.ProxyOptions;
 import org.apache.http.Header;
@@ -220,7 +221,26 @@ public class OptionsFactory {
             void apply(Options options, MetaExpression value) {
                 options.setLogging(getString(value, label()));
             }
-        };
+        },
+        NTLM {
+            @Override
+            void apply(Options options, MetaExpression value) {
+                assertValue(value, NO_NULL_MESSAGE, label());
+
+                Map<String, MetaExpression> proxyObject = toMap(value, label());
+
+                Credentials credentials = getCredentials(value, label());
+
+                MetaExpression workstation = proxyObject.get("workstation");
+                assertValue(workstation, "The %s option must contain a 'workstation' field", label());
+
+                MetaExpression domain = proxyObject.get("domain");
+                assertValue(domain, "The %s option must contain a 'domain' field", label());
+
+                options.setNTLMOptions(new NTLMOptions(credentials, workstation.getStringValue(), domain.getStringValue()));
+            }
+        }
+        ;
 
         abstract void apply(Options options, MetaExpression value);
     }

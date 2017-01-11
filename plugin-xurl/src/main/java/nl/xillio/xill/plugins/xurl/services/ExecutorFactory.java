@@ -17,50 +17,128 @@ package nl.xillio.xill.plugins.xurl.services;
 
 import com.google.inject.Singleton;
 import nl.xillio.xill.plugins.xurl.data.Options;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.fluent.Executor;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLInitializationException;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class is responsible for creating an executor.
  *
- * @author Thomas Biesaart
+ * @author Thomas Biesaart, Ernst van Rheenen
  */
 @Singleton
 public class ExecutorFactory {
 
+    private static final String DEFAULT_CLIENT_ID = "DEFAULT_CLIENT_ID";
+    private final Map<String, Executor> executors = new HashMap<>();
 
     /**
-     * Do NOT use a HttpClientBuilder to create the HttpClients!
-     * It will cause failing cookie authentication.
-     * See https://xillio.atlassian.net/browse/CTC-1804
+     * Creates a new Executor based on the provided client options
+     * @param options Options to be used for setting up the http connection
+     * @return An http client executor
      */
-    public Executor buildExecutor(Options options) {
+    public synchronized Executor buildExecutor(Options options) {
+        String uuid = getSessionID(options);
 
-        if(options.isInsecure() && !options.isEnableRedirect()){
-            return Executor.newInstance(
-                    HttpClients.custom()
-                            .setSSLHostnameVerifier(new NoopHostnameVerifier()).disableRedirectHandling()
-                            .build()
-            );
+        Executor executor;
+        if(executors.containsKey(uuid)) {
+            executor = executors.get(uuid);
+        } else {
+            executor = Executor.newInstance(buildClient(defaultBuilder(), options));
+            executors.put(uuid, executor);
         }
 
-        if (options.isInsecure()) {
-            return Executor.newInstance(
-                    HttpClients.custom()
-                            .setSSLHostnameVerifier(new NoopHostnameVerifier())
-                            .build()
-            );
+        return executor;
+    }
+
+
+    /**
+     * Returns a specific session UUID based on the provided options.
+     *
+     * The system will as much as possible try to keep sessions for domains. Because we cannot retroactively set the
+     * insecure and redirect options, the session will be lost when one of these options is changed by the user.
+     *
+     * @param options Options to be set
+     * @return The UUID for this session
+     */
+    public static String getSessionID(Options options) {
+        String id;
+        if(options.isBasicAuthEnabled()) {
+            id = options.getBasicAuth().getUsername();
+        } else if (options.isNTLMEnabled()) {
+            id = options.getNTLMOptions().getUsername() + "@" + options.getNTLMOptions().getDomain();
+        } else if(options.isProxyEnabled()) {
+            id = options.getProxyOptions().getUsername() + "@" + options.getProxyOptions().getHttpHost().toHostString();
+        } else {
+            id = DEFAULT_CLIENT_ID;
+        }
+        return id + "[" + options.isInsecure() + "," + options.isEnableRedirect() + "]";
+    }
+
+    /**
+     * Creates a new HttpClient using the specified options
+     * @param options Options to be set
+     * @return a new HttpClient
+     */
+    public static HttpClient buildClient(HttpClientBuilder builder, Options options) {
+
+        if(options.isInsecure()){
+            builder.setSSLHostnameVerifier(new NoopHostnameVerifier());
         }
 
         if(!options.isEnableRedirect()){
-            return Executor.newInstance(
-                    HttpClients.custom()
-                            .disableRedirectHandling()
-                            .build()
-            );
+            builder.disableRedirectHandling();
         }
-        return Executor.newInstance();
+
+        return builder.build();
+    }
+
+    /**
+     * Code borrowed from private implementation of org.apache.http.client.fluent.Executor
+     * @return A preconfigured HttpClientBuilder
+     */
+    public static HttpClientBuilder defaultBuilder() {
+        SSLConnectionSocketFactory ssl = null;
+
+        try {
+            ssl = SSLConnectionSocketFactory.getSystemSocketFactory();
+        } catch (SSLInitializationException var7) {
+            try {
+                SSLContext sslcontext = SSLContext.getInstance("TLS");
+                sslcontext.init((KeyManager[])null, (TrustManager[])null, (SecureRandom)null);
+                ssl = new SSLConnectionSocketFactory(sslcontext);
+            } catch (SecurityException var4) {
+                ;
+            } catch (KeyManagementException var5) {
+                ;
+            } catch (NoSuchAlgorithmException var6) {
+                ;
+            }
+        }
+
+        Registry sfr = RegistryBuilder.create().register("http", PlainConnectionSocketFactory.getSocketFactory()).register("https", ssl != null?ssl:SSLConnectionSocketFactory.getSocketFactory()).build();
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(sfr);
+        connectionManager.setDefaultMaxPerRoute(100);
+        connectionManager.setMaxTotal(200);
+        connectionManager.setValidateAfterInactivity(1000);
+        HttpClientBuilder builder = HttpClientBuilder.create().setConnectionManager(connectionManager);
+
+        return builder;
     }
 }
