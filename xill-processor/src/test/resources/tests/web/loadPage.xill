@@ -19,6 +19,6 @@
 
 use System, Web, Assert;
 
-var page = Web.loadPage("http://www.xillio.com");
+var page = Web.loadPage("http://developers.xillio.com/test.html");
 var title = Web.xPath(page,"//h1/text()");
-Assert.equal(title, "Easiest way to integrate content repositories");
+Assert.equal(title, "This is a test page");
