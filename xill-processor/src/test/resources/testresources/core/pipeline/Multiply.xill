@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * Specification: loading a page and check if the title is as expected
- */
+ use Math;
 
-use System, Web, Assert;
+function multiply(a, b) {
+    return a * b;
+}
 
-var page = Web.loadPage("http://developers.xillio.com/test.html");
-var title = Web.xPath(page,"//h1/text()");
-Assert.equal(title, "This is a test page");
+function double(input) {
+    return multiply(input, 2);
+}
+
+function isEven(input) {
+    return input / 2 == Math.round(input / 2);
+}

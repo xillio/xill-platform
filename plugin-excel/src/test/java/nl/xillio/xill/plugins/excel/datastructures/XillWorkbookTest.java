@@ -17,15 +17,14 @@ package nl.xillio.xill.plugins.excel.datastructures;
 
 import nl.xillio.xill.plugins.excel.NoSuchSheetException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -247,7 +246,6 @@ public class XillWorkbookTest {
         File file = createFile("path", false);
         XillWorkbook testWorkbook = spy(new XillWorkbook(workbook, file));
         FileOutputStream stream = mock(FileOutputStream.class);
-        doReturn(stream).when(testWorkbook).getOuputStream();
         doReturn(stream).when(testWorkbook).getOutputStream(file);
         testWorkbook.save();
         testWorkbook.save(file);

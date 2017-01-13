@@ -185,10 +185,6 @@ public class XillWorkbook implements MetadataExpression {
         workbook.removeSheetAt(workbook.getSheetIndex(sheetName));
     }
 
-    public FileOutputStream getOuputStream() throws FileNotFoundException {
-        return new FileOutputStream(location);
-    }
-
     public FileOutputStream getOutputStream(File file) throws FileNotFoundException {
         return new FileOutputStream(file);
     }
@@ -203,16 +199,17 @@ public class XillWorkbook implements MetadataExpression {
     }
 
     /**
-     * Saves the workbook to the new location specified in the file.
+     * Saves the workbook to the new location specified in the file. All sheets are recalculated
+     * before the workbook is saved.
      *
      * @param file the new location of the Excel workbook
      * @throws IOException when the write operation could not succeed
      */
     public void save(File file) throws IOException {
         file.getParentFile().mkdirs();
-        OutputStream outputStream = getOutputStream(file);
-        workbook.write(outputStream);
-        outputStream.close();
+        try (OutputStream outputStream = getOutputStream(file)) {
+            workbook.write(outputStream);
+        }
     }
 
     /**
@@ -257,6 +254,15 @@ public class XillWorkbook implements MetadataExpression {
      */
     Workbook getWorkbook() {
         return workbook;
+    }
+
+    /**
+     * Recalculate the workbook;
+     *
+     *
+     */
+    public void recalculate() {
+        this.workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
     }
 }
 

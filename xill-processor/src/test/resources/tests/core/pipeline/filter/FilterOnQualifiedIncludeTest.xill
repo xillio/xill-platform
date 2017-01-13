@@ -13,12 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * Specification: loading a page and check if the title is as expected
- */
+/* 
+* Specification: Qualified included functions can be used in the filter function
+* Input: A library that implements an even-evaluation function, a list of numbers
+* Expected: a list of numbers that are even
+*/
+use Assert;
+include testresources.core.pipeline.Multiply as lib;
 
-use System, Web, Assert;
+var input = [1,5,3,2,5,8];
+var expected = [2,8];
 
-var page = Web.loadPage("http://developers.xillio.com/test.html");
-var title = Web.xPath(page,"//h1/text()");
-Assert.equal(title, "This is a test page");
+var iterator = filter<lib->isEven>(input);
+
+Assert.equal(collect(iterator), expected);

@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * Specification: loading a page and check if the title is as expected
- */
+/* 
+* Specification: Qualified included functions can be used in the foreach function
+* Input: A library that implements a cache collection function, a list of numbers
+* Expected: a list of numbers that matches the input
+*/
+use Assert;
+include testresources.core.pipeline.Cache as cache;
 
-use System, Web, Assert;
+var input = [1,5,3,2,5];
 
-var page = Web.loadPage("http://developers.xillio.com/test.html");
-var title = Web.xPath(page,"//h1/text()");
-Assert.equal(title, "This is a test page");
+foreach<cache->add>(input);
+
+Assert.equal(cache->getCache(), input);

@@ -182,7 +182,7 @@ ace.define("ace/mode/xill_highlight_rules", function (require, exports) {
                 {token: "string", regex: '"', next: "qqString"},
                 {token: "string", regex: "'", next: "qString"},
                 {token: "constant.numeric", regex: "-?\\d+(?:(?:\\.\\d*)?)?\\b"},
-                {token: ["paren.lparen","functionArgument","paren.rparen"], regex: "(<)(\\s*\\w+\\s*)(>)"},
+                {token: ["paren.lparen","functionArgument", "paren.rparen"], regex: "(<)(\\s*\\w+(?:\\s*->\\s*\\w+)?\\s*)(>)"},
                 {token: "paren.lparen", regex: "[\\[({]"},
                 {token: "paren.rparen", regex: "[\\])}]"},
                 {token: "keyword", regex: "\\b(?:" + keywords + ")\\b"},

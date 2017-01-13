@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * Specification: loading a page and check if the title is as expected
- */
 
-use System, Web, Assert;
+var cache = [];
 
-var page = Web.loadPage("http://developers.xillio.com/test.html");
-var title = Web.xPath(page,"//h1/text()");
-Assert.equal(title, "This is a test page");
+function add(item) {
+    cache[] = item;
+}
+
+function getCache() {
+    return cache;
+}

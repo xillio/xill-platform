@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * Specification: loading a page and check if the title is as expected
- */
+/* 
+* Specification: Qualified included functions can be used in the map function
+* Input: A library that implements a multiplication function, a list of numbers
+* Expected: The product of all numbers is the list equals 150
+*/
+use Assert;
+include testresources.core.pipeline.Multiply as lib;
 
-use System, Web, Assert;
+var input = [1,5,3,2,5];
 
-var page = Web.loadPage("http://developers.xillio.com/test.html");
-var title = Web.xPath(page,"//h1/text()");
-Assert.equal(title, "This is a test page");
+var result = reduce<lib->multiply>(1, input);
+
+Assert.equal(result, 150);
