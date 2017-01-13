@@ -232,7 +232,9 @@ public class OptionsFactory {
                 Credentials credentials = getCredentials(value, label());
 
                 MetaExpression workstation = proxyObject.get("workstation");
-                assertValue(workstation, "The %s option must contain a 'workstation' field", label());
+                if(workstation.isNull()) {
+                    workstation = MetaExpression.parseObject("myworkstation");
+                }
 
                 MetaExpression domain = proxyObject.get("domain");
                 assertValue(domain, "The %s option must contain a 'domain' field", label());

@@ -15,7 +15,6 @@
  */
 package nl.xillio.xill.plugins.xurl.data;
 
-import org.apache.http.HttpHost;
 
 /**
  * This class represents a wrapper around all options regarding NTLM authentication.
