@@ -233,7 +233,7 @@ public class OptionsFactory {
 
                 MetaExpression workstation = proxyObject.get("workstation");
                 if(workstation.isNull()) {
-                    workstation = MetaExpression.parseObject("myworkstation");
+                    workstation = getWorkstation("myworkstation");
                 }
 
                 MetaExpression domain = proxyObject.get("domain");
@@ -245,5 +245,10 @@ public class OptionsFactory {
         ;
 
         abstract void apply(Options options, MetaExpression value);
+    }
+
+    @SuppressWarnings("squid:S2095") // Sonar expects MetaExpressions to be closed, which is done by our GC mechanism
+    private static MetaExpression getWorkstation(String workstation) {
+        return MetaExpression.parseObject("myworkstation");
     }
 }

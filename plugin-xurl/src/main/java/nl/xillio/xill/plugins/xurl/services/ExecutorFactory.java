@@ -16,6 +16,7 @@
 package nl.xillio.xill.plugins.xurl.services;
 
 import com.google.inject.Singleton;
+import me.biesaart.utils.Log;
 import nl.xillio.xill.plugins.xurl.data.Options;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.fluent.Executor;
@@ -27,6 +28,7 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLInitializationException;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.slf4j.Logger;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
@@ -44,7 +46,7 @@ import java.util.Map;
  */
 @Singleton
 public class ExecutorFactory {
-
+    private static final Logger LOGGER = Log.get();
     private static final String DEFAULT_CLIENT_ID = "DEFAULT_CLIENT_ID";
     private final Map<String, Executor> executors = new HashMap<>();
 
@@ -123,12 +125,12 @@ public class ExecutorFactory {
                 SSLContext sslcontext = SSLContext.getInstance("TLS");
                 sslcontext.init((KeyManager[])null, (TrustManager[])null, (SecureRandom)null);
                 ssl = new SSLConnectionSocketFactory(sslcontext);
-            } catch (SecurityException var4) {
-                ;
-            } catch (KeyManagementException var5) {
-                ;
-            } catch (NoSuchAlgorithmException var6) {
-                ;
+            } catch (SecurityException e) {
+                LOGGER.error(e.getMessage(), e);
+            } catch (KeyManagementException e) {
+                LOGGER.error(e.getMessage(), e);
+            } catch (NoSuchAlgorithmException e) {
+                LOGGER.error(e.getMessage(), e);
             }
         }
 
@@ -137,8 +139,6 @@ public class ExecutorFactory {
         connectionManager.setDefaultMaxPerRoute(100);
         connectionManager.setMaxTotal(200);
         connectionManager.setValidateAfterInactivity(1000);
-        HttpClientBuilder builder = HttpClientBuilder.create().setConnectionManager(connectionManager);
-
-        return builder;
+        return HttpClientBuilder.create().setConnectionManager(connectionManager);
     }
 }
