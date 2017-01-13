@@ -20,6 +20,7 @@ import nl.xillio.xill.webservice.model.WorkerPool;
 /**
  * Represents a service that manages {@link WorkerPool}: factory and reference.
  */
+@SuppressWarnings("squid:S1609") // not meant to be a functional interface, represents a service
 public interface WorkerPoolManagerService {
 
     /**
