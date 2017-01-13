@@ -24,7 +24,7 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import org.slf4j.Logger;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -153,8 +153,8 @@ public class PropertyService {
             // If the file does not exist we will not load them
             return result;
         }
-        try (InputStream stream = fileSystemAccess.read(file)) {
-            result.load(stream);
+        try (InputStreamReader reader = new InputStreamReader(fileSystemAccess.read(file))) {
+            result.load(reader);
         } catch (IOException e) {
             logger.warn("Failed to load properties from " + file + "\nReason: " + e.getMessage(), e);
         }
