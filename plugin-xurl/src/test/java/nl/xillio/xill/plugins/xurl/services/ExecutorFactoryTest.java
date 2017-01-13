@@ -17,31 +17,12 @@ package nl.xillio.xill.plugins.xurl.services;
 
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
-import nl.xillio.xill.api.data.XmlNode;
-import nl.xillio.xill.api.errors.RobotRuntimeException;
-import nl.xillio.xill.api.io.SimpleIOStream;
 import nl.xillio.xill.plugins.xurl.data.Options;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.http.HttpEntity;
 import org.apache.http.client.fluent.Executor;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.mockito.ArgumentCaptor;
 import org.testng.Assert;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
-
-import static org.mockito.ArgumentCaptor.forClass;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 public class ExecutorFactoryTest extends TestUtils {
     private final ExecutorFactory executorFactory = new ExecutorFactory();
@@ -86,7 +67,23 @@ public class ExecutorFactoryTest extends TestUtils {
      */
     @Test
     public void testOptionRedirect() {
-        // See the comments above
+        // See the comments regarding mocking final methods above
+
+        /*
+        // Baseline: when false, redirect settings should not be changed
+        HttpClientBuilder builder1 = mock(HttpClientBuilder.class);
+        Options options1 = mock(Options.class);
+        when(options1.isEnableRedirect()).thenReturn(true);
+        ExecutorFactory.buildClient(builder1, options1);
+        verify(builder1, times(0)).disableRedirectHandling();
+
+        // When true, redirect settings should be changed
+        HttpClientBuilder builder2 = mock(HttpClientBuilder.class);
+        Options options2 = mock(Options.class);
+        when(options2.isEnableRedirect()).thenReturn(false);
+        ExecutorFactory.buildClient(builder2, options2);
+        verify(builder2).disableRedirectHandling();
+        */
     }
 
 
@@ -104,11 +101,12 @@ public class ExecutorFactoryTest extends TestUtils {
     public void testIDBase() {
         MetaExpression input = emptyMap();
 
-        Options options = optionsFactory.build(input);
-        String id1 = ExecutorFactory.getSessionID(options);
-        String id2 = ExecutorFactory.getSessionID(options);
+        Options options1 = optionsFactory.build(input);
+        Options options2 = optionsFactory.build(input);
+        String id1 = ExecutorFactory.getSessionID(options1);
+        String id2 = ExecutorFactory.getSessionID(options2);
 
-        Assert.assertEquals(id1, id2);
+        Assert.assertEquals(id1, id2); // Two same inputs must yield same ID
     }
 
 
@@ -121,9 +119,9 @@ public class ExecutorFactoryTest extends TestUtils {
         Options options2 = optionsFactory.build(createMap("insecure", fromValue(false)));
 
         String id1 = ExecutorFactory.getSessionID(options1);
-        String id2 = ExecutorFactory.getSessionID(options2); // Should be different from id1
+        String id2 = ExecutorFactory.getSessionID(options2);
 
-        Assert.assertNotEquals(id1, id2);
+        Assert.assertNotEquals(id1, id2); // Insecure toggle should yield different ID
     }
 
     /**
@@ -135,9 +133,9 @@ public class ExecutorFactoryTest extends TestUtils {
         Options options2 = optionsFactory.build(createMap("enableRedirect", fromValue(false)));
 
         String id1 = ExecutorFactory.getSessionID(options1);
-        String id2 = ExecutorFactory.getSessionID(options2); // Should be different from id1
+        String id2 = ExecutorFactory.getSessionID(options2);
 
-        Assert.assertNotEquals(id1, id2);
+        Assert.assertNotEquals(id1, id2); // Redirect toggle should yield different ID
     }
 
     /**
@@ -172,15 +170,15 @@ public class ExecutorFactoryTest extends TestUtils {
         )));
 
         String id1 = ExecutorFactory.getSessionID(options1);
-        String id2 = ExecutorFactory.getSessionID(options2); // Should be different from id1
-        String id3 = ExecutorFactory.getSessionID(options3); // Should be different from id2
-        String id4 = ExecutorFactory.getSessionID(options4); // Should be different from id2
-        String id5 = ExecutorFactory.getSessionID(options5); // Should be same as id2
+        String id2 = ExecutorFactory.getSessionID(options2);
+        String id3 = ExecutorFactory.getSessionID(options3);
+        String id4 = ExecutorFactory.getSessionID(options4);
+        String id5 = ExecutorFactory.getSessionID(options5);
 
-        Assert.assertNotEquals(id1, id2);
-        Assert.assertNotEquals(id2, id3);
-        Assert.assertNotEquals(id2, id4);
-        Assert.assertEquals(id2, id5);
+        Assert.assertNotEquals(id1, id2); // NTLM options should yield different ID from plain request
+        Assert.assertNotEquals(id2, id3); // Different user should yield different ID
+        Assert.assertNotEquals(id2, id4); // Different domain should yield different ID
+        Assert.assertEquals(id2, id5);    // Different password or workstation should yield same ID
     }
 
     /**
@@ -203,13 +201,13 @@ public class ExecutorFactoryTest extends TestUtils {
         )));
 
         String id1 = ExecutorFactory.getSessionID(options1);
-        String id2 = ExecutorFactory.getSessionID(options2); // Should be Different from id1
-        String id3 = ExecutorFactory.getSessionID(options3); // Should be Different from id2
-        String id4 = ExecutorFactory.getSessionID(options4); // Should be same as id2
+        String id2 = ExecutorFactory.getSessionID(options2);
+        String id3 = ExecutorFactory.getSessionID(options3);
+        String id4 = ExecutorFactory.getSessionID(options4);
 
-        Assert.assertNotEquals(id1, id2);
-        Assert.assertNotEquals(id2, id3);
-        Assert.assertEquals(id2, id4);
+        Assert.assertNotEquals(id1, id2); // Basic auth should yield different ID from plain request
+        Assert.assertNotEquals(id2, id3); // Different user should yield different ID
+        Assert.assertEquals(id2, id4);    // Different password should yield same ID
     }
 
     /**
@@ -250,17 +248,17 @@ public class ExecutorFactoryTest extends TestUtils {
         )));
 
         String id1 = ExecutorFactory.getSessionID(options1);
-        String id2 = ExecutorFactory.getSessionID(options2); // Should be different from ex1
-        String id3 = ExecutorFactory.getSessionID(options3); // Should be different from ex2
-        String id4 = ExecutorFactory.getSessionID(options4); // Should be different from ex2
-        String id5 = ExecutorFactory.getSessionID(options5); // Should be different from ex2
-        String id6 = ExecutorFactory.getSessionID(options6); // Should be same as ex2
+        String id2 = ExecutorFactory.getSessionID(options2);
+        String id3 = ExecutorFactory.getSessionID(options3);
+        String id4 = ExecutorFactory.getSessionID(options4);
+        String id5 = ExecutorFactory.getSessionID(options5);
+        String id6 = ExecutorFactory.getSessionID(options6);
 
-        Assert.assertNotEquals(id1, id2);
-        Assert.assertNotEquals(id2, id3);
-        Assert.assertNotEquals(id2, id4);
-        Assert.assertNotEquals(id2, id5);
-        Assert.assertEquals(id2, id6);
+        Assert.assertNotEquals(id1, id2); // Proxy should yield different ID from plain request
+        Assert.assertNotEquals(id2, id3); // Different domain should yield different ID
+        Assert.assertNotEquals(id2, id4); // Different port should yield different ID
+        Assert.assertNotEquals(id2, id5); // Different user should yield different ID
+        Assert.assertEquals(id2, id6);    // Different password should yield same ID
     }
 
     /*
@@ -294,27 +292,15 @@ public class ExecutorFactoryTest extends TestUtils {
         Executor ex2a = executorFactory.buildExecutor(options2);
         Executor ex2b = executorFactory.buildExecutor(options2);
 
-        Assert.assertEquals(ex1a, ex1b);
-        Assert.assertEquals(ex2a, ex2b);
-        Assert.assertNotEquals(ex1a, ex2a);
+        Assert.assertEquals(ex1a, ex1b);    // Same plain request should result in same session
+        Assert.assertEquals(ex2a, ex2b);    // Same advanced request should result in same session
+        Assert.assertNotEquals(ex1a, ex2a); // Plain and advanced request should result in different session
     }
 
 
     /*
      * Utility functions
      */
-    private MetaExpression createMap(String name, MetaExpression value) {
-        LinkedHashMap<String, MetaExpression> result = new LinkedHashMap<>();
-        result.put(name, value);
-        return fromValue(result);
-    }
-
-    private MetaExpression createMap(String name, MetaExpression value, String name2, MetaExpression value2) {
-        LinkedHashMap<String, MetaExpression> result = new LinkedHashMap<>();
-        result.put(name, value);
-        result.put(name2, value2);
-        return fromValue(result);
-    }
 
     private MetaExpression emptyMap() {
         LinkedHashMap<String, MetaExpression> result = new LinkedHashMap<>();

@@ -109,4 +109,16 @@ public class OptionsTest {
         assertEquals(options.getBodyContentType().get().toString(), contentType.toString());
 
     }
+
+    @Test
+    public void testApplyNTLM() {
+        Options options = new Options();
+        NTLMOptions auth = new NTLMOptions(new Credentials("user", "pass"), "workstation", "domain.com");
+        options.setNTLMOptions(auth);
+
+        Executor executor = mock(Executor.class);
+        options.apply(executor);
+
+        verify(executor).auth(auth.getUsername(), auth.getPassword(),auth.getWorkstation(), auth.getDomain());
+    }
 }
