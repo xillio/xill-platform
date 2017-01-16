@@ -46,12 +46,20 @@ The optional `options` argument contains additional attributes or modifiers for 
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-Local (X)HTML files are also supported with the `file://` protocol.
+Usually it is a good idea to reduce loading time by setting up the options to `({"loadimages"=false, "enablejs"=false})`
+when calling `Web.loadPage()`. This deactivates JavaScript and image loading, drastically reducing load times for the
+page.
 
-Usually it is a good idea to reduce loading time by setting up the options to ({"loadimages"=false, "enablejs"=false}) when calling Web.loadPage(). This deactivates JavaScript and image loading, drastically reducing load times for the page.
+####Loading pages from files
+Local (X)HTML files can also be loaded using the `file://` protocol. However, relative URL's are *not* supported as a
+URL is used as a locator that should point to an exact location. See RFC-1738 for details. A way to work around this is
+to use `Web.fromString(Stream.getText(File.openRead(file)))` to read files from the file system and load these into the
+web context.
 
-####Usage on non-windows machines
-To use the Web.loadPage() function on a non-windows machine an installation of PhantomJS is required. Downloads and documentation can be found at [Phantomjs download](phantomjs.org/download.html). Make sure you add the binary to your `PATH` environment variable.
+####Usage on non windows machines
+To use the `Web.loadPage()` function on a non-windows machine an installation of PhantomJS is required. Downloads and
+documentation can be found at [Phantomjs download](phantomjs.org/download.html). Make sure you add the binary to your
+`PATH` environment variable.
 	</longDescription>
     <examples>
         <example title="Usage">

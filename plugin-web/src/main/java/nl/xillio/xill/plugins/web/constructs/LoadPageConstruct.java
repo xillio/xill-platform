@@ -62,7 +62,7 @@ public class LoadPageConstruct extends PhantomJSConstruct {
             getWebService().httpGet(page, url);
             return createPage(page, getWebService());
         } catch (MalformedURLException | InvalidUrlException e) {
-            throw new OperationFailedException("load the page.", "Malformed or Invalid URL during httpGet.", e);
+            throw new OperationFailedException("load the page", "Malformed or Invalid URL during httpGet.", e);
         }
     }
 }
