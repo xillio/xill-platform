@@ -16,10 +16,12 @@
 package nl.xillio.xill.versioncontrol;
 
 import javafx.application.Platform;
+import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.dialogs.GitAuthenticateDialog;
 import org.eclipse.jgit.internal.JGitText;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.slf4j.Logger;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -31,6 +33,7 @@ import java.util.concurrent.FutureTask;
  */
 public class JGitAuth {
     private CredentialsProvider credentials;
+    private static final Logger LOGGER = Log.get();
 
     // Keep track of whether the authentication dialog was canceled.
     private boolean authDialogCanceled = false;
@@ -67,13 +70,15 @@ public class JGitAuth {
             return dlg.isCanceled();
         });
         Platform.runLater(dialog);
+
+        boolean authDialogCanceled;
         try {
             authDialogCanceled = (boolean) dialog.get();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException|ExecutionException e) {
             authDialogCanceled = true;
-        } catch (ExecutionException e) {
-            authDialogCanceled = true;
+            LOGGER.error(e.getMessage());
         }
+
         return !authDialogCanceled;
     }
 
