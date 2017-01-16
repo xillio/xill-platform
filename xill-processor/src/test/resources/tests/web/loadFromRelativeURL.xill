@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 /*
- * Specification: loading a page and check if the title is as expected
+ * Specification: try loading a page with a relative URL and check that the
+ *                correct message is shown.
  */
 
 use Web, Assert, String;
