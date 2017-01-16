@@ -19,10 +19,13 @@ import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.xurl.data.Options;
 import org.apache.http.client.fluent.Executor;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.LinkedHashMap;
+
+import static org.mockito.Mockito.*;
 
 public class ExecutorFactoryTest extends TestUtils {
     private final ExecutorFactory executorFactory = new ExecutorFactory();
@@ -45,21 +48,14 @@ public class ExecutorFactoryTest extends TestUtils {
         // Mockito 2 can in fact handle this but it uses alfa functionality, see:
         // https://github.com/mockito/mockito/wiki/What's-new-in-Mockito-2#mock-the-unmockable-opt-in-mocking-of-final-classesmethods
 
-        /*
-        // Baseline: when false, ssl settings should not be changed
-        HttpClientBuilder builder1 = mock(HttpClientBuilder.class);
+
+        // Test that isInsecure is requested
+        HttpClientBuilder builder1 = ExecutorFactory.defaultBuilder();
         Options options1 = mock(Options.class);
         when(options1.isInsecure()).thenReturn(false);
         ExecutorFactory.buildClient(builder1, options1);
-        verify(builder1, times(0)).setSSLHostnameVerifier(any());
+        verify(options1, times(1)).isInsecure();
 
-        // When true, ssl settings should be changed
-        HttpClientBuilder builder2 = mock(HttpClientBuilder.class);
-        Options options2 = mock(Options.class);
-        when(options2.isInsecure()).thenReturn(true);
-        ExecutorFactory.buildClient(builder2, options2);
-        verify(builder2).setSSLHostnameVerifier(any());
-        */
     }
 
     /**
@@ -69,21 +65,13 @@ public class ExecutorFactoryTest extends TestUtils {
     public void testOptionRedirect() {
         // See the comments regarding mocking final methods above
 
-        /*
-        // Baseline: when false, redirect settings should not be changed
-        HttpClientBuilder builder1 = mock(HttpClientBuilder.class);
+        // Test that isEnableRedirect is requested
+        HttpClientBuilder builder1 = ExecutorFactory.defaultBuilder();
         Options options1 = mock(Options.class);
-        when(options1.isEnableRedirect()).thenReturn(true);
+        when(options1.isEnableRedirect()).thenReturn(false);
         ExecutorFactory.buildClient(builder1, options1);
-        verify(builder1, times(0)).disableRedirectHandling();
+        verify(options1, times(1)).isEnableRedirect();
 
-        // When true, redirect settings should be changed
-        HttpClientBuilder builder2 = mock(HttpClientBuilder.class);
-        Options options2 = mock(Options.class);
-        when(options2.isEnableRedirect()).thenReturn(false);
-        ExecutorFactory.buildClient(builder2, options2);
-        verify(builder2).disableRedirectHandling();
-        */
     }
 
 

@@ -120,16 +120,13 @@ public class ExecutorFactory {
 
         try {
             ssl = SSLConnectionSocketFactory.getSystemSocketFactory();
-        } catch (SSLInitializationException var7) {
+        } catch (SSLInitializationException err) {
+            LOGGER.error(err.getMessage(), err);
             try {
                 SSLContext sslcontext = SSLContext.getInstance("TLS");
                 sslcontext.init((KeyManager[])null, (TrustManager[])null, (SecureRandom)null);
                 ssl = new SSLConnectionSocketFactory(sslcontext);
-            } catch (SecurityException e) {
-                LOGGER.error(e.getMessage(), e);
-            } catch (KeyManagementException e) {
-                LOGGER.error(e.getMessage(), e);
-            } catch (NoSuchAlgorithmException e) {
+            } catch (SecurityException|KeyManagementException|NoSuchAlgorithmException e) {
                 LOGGER.error(e.getMessage(), e);
             }
         }
