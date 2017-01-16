@@ -120,7 +120,8 @@ public class ExecutorFactory {
 
         try {
             ssl = SSLConnectionSocketFactory.getSystemSocketFactory();
-        } catch (SSLInitializationException var7) {
+        } catch (SSLInitializationException err) {
+            LOGGER.error(err.getMessage(), err);
             try {
                 SSLContext sslcontext = SSLContext.getInstance("TLS");
                 sslcontext.init((KeyManager[])null, (TrustManager[])null, (SecureRandom)null);
