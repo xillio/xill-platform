@@ -72,8 +72,8 @@ public class JGitAuth {
         try {
             authDialogCanceled = (boolean) dialog.get();
         } catch (InterruptedException|ExecutionException e) {
+            LOGGER.error("Error while authenticating",e);
             authDialogCanceled = true;
-            LOGGER.error(e.getMessage());
         }
 
         return !authDialogCanceled;
