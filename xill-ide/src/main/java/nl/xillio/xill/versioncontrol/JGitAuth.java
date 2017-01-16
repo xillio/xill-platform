@@ -35,9 +35,6 @@ public class JGitAuth {
     private CredentialsProvider credentials;
     private static final Logger LOGGER = Log.get();
 
-    // Keep track of whether the authentication dialog was canceled.
-    private boolean authDialogCanceled = false;
-
     /**
      * Set the credentials.
      *
