@@ -20,10 +20,10 @@
 use Web, Assert, String;
 
 do {
-    var page = Web.loadPage("ftp://user@localhost/home/user/index.html");
+    var page = Web.loadPage("file://relative.html");
 } fail(errorMsg) {
     Assert.isTrue(String.contains(errorMsg.message, "Malformed or Invalid URL during httpGet"), "loadFromIllegalURL: Did not receive correct error message");
-    Assert.isTrue(String.contains(errorMsg.message, "ftp://user@localhost/home/user/index.html"), "loadFromIllegalURL: Did not receive correct error message");
+    Assert.isTrue(String.contains(errorMsg.message, "file://relative.html"));
 } success {
     Assert.error("loadFromIllegalURL: Should not finish sucessfully");
 }

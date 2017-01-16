@@ -19,7 +19,7 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
-import nl.xillio.xill.api.errors.OperationFailedException;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.plugins.web.InvalidUrlException;
 import nl.xillio.xill.plugins.web.data.Options;
 import nl.xillio.xill.plugins.web.data.PhantomJSPool;
@@ -44,7 +44,7 @@ public class LoadPageConstruct extends PhantomJSConstruct {
     /**
      * @param urlVar         string variable - page URL
      * @param optionsVar     list variable - options for loading the page (see CT help for details)
-     * @throws OperationFailedException if the URL is invalid
+     * @throws InvalidUserInputException if the URL is invalid
      * @return PAGE variable
      */
     MetaExpression process(final MetaExpression urlVar, final MetaExpression optionsVar) {
@@ -62,7 +62,7 @@ public class LoadPageConstruct extends PhantomJSConstruct {
             getWebService().httpGet(page, url);
             return createPage(page, getWebService());
         } catch (MalformedURLException | InvalidUrlException e) {
-            throw new OperationFailedException("load the page", "Malformed or Invalid URL during httpGet.", e);
+            throw new InvalidUserInputException("Malformed or Invalid URL during httpGet.", url, "a valid (non relative) URL", e);
         }
     }
 }
