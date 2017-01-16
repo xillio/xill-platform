@@ -13,29 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.webservice.xill;
+/* 
+* Specification: Qualified included functions can be used in the map function
+* Input: A library that implements a doubling function, a list of numbers
+* Expected: a list of numbers that are multiplied by two
+*/
+use Assert;
+include testresources.core.pipeline.Multiply as lib;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+var input = [1,5,3,2,5];
+var expected = [2,10,6,4,10];
 
-import java.nio.file.Path;
+var iterator = map<lib->double>(input);
 
-/**
- * Properties for locating anf loading the Xill environment.
- *
- * @author Thomas Biesaart
- * @author Geert Konijnendijk
- */
-@Component
-@ConfigurationProperties(prefix = "xill.xws.runtime")
-public class RuntimeProperties {
-    private Path pluginDir = null;
-
-    public Path getPluginDir() {
-        return pluginDir;
-    }
-
-    public void setPluginDir(Path pluginDir) {
-        this.pluginDir = pluginDir;
-    }
+foreach(index, element in iterator) {
+    Assert.equal(element, expected[index], input[index] :: " x 2 = " :: expected[index]);
 }

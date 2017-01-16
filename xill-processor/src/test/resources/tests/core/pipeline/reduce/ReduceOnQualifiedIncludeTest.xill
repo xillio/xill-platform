@@ -13,29 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.webservice.xill;
+/* 
+* Specification: Qualified included functions can be used in the map function
+* Input: A library that implements a multiplication function, a list of numbers
+* Expected: The product of all numbers is the list equals 150
+*/
+use Assert;
+include testresources.core.pipeline.Multiply as lib;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+var input = [1,5,3,2,5];
 
-import java.nio.file.Path;
+var result = reduce<lib->multiply>(1, input);
 
-/**
- * Properties for locating anf loading the Xill environment.
- *
- * @author Thomas Biesaart
- * @author Geert Konijnendijk
- */
-@Component
-@ConfigurationProperties(prefix = "xill.xws.runtime")
-public class RuntimeProperties {
-    private Path pluginDir = null;
-
-    public Path getPluginDir() {
-        return pluginDir;
-    }
-
-    public void setPluginDir(Path pluginDir) {
-        this.pluginDir = pluginDir;
-    }
-}
+Assert.equal(result, 150);

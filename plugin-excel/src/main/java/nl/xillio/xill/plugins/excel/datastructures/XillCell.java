@@ -172,6 +172,7 @@ public class XillCell {
      */
     public void setCellValue(Double value) {
         cell.setCellValue(value);
+        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
     }
 
     /**
@@ -181,6 +182,7 @@ public class XillCell {
      */
     public void setCellValue(boolean value) {
         cell.setCellValue(value);
+        cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
     }
 
     /**

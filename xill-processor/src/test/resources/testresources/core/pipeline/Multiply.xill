@@ -13,29 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.webservice.xill;
+ use Math;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+function multiply(a, b) {
+    return a * b;
+}
 
-import java.nio.file.Path;
+function double(input) {
+    return multiply(input, 2);
+}
 
-/**
- * Properties for locating anf loading the Xill environment.
- *
- * @author Thomas Biesaart
- * @author Geert Konijnendijk
- */
-@Component
-@ConfigurationProperties(prefix = "xill.xws.runtime")
-public class RuntimeProperties {
-    private Path pluginDir = null;
-
-    public Path getPluginDir() {
-        return pluginDir;
-    }
-
-    public void setPluginDir(Path pluginDir) {
-        this.pluginDir = pluginDir;
-    }
+function isEven(input) {
+    return input / 2 == Math.round(input / 2);
 }

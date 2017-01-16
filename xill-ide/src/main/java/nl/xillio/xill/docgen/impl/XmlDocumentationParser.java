@@ -38,7 +38,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
@@ -61,7 +60,8 @@ public class XmlDocumentationParser implements DocumentationParser {
     private XPathExpression exampleNodesXPathQuery;
     private XPathExpression exampleHeaderMDXPathQuery;
     private XPathExpression referenceXPathQuery;
-    private static PegDownProcessor markdownProcessor = new PegDownProcessor(Extensions.ALL);
+    // Enable all MD extensions except for the hardwraps (this converts linebreaks into <br />, which is unwanted)
+    private static PegDownProcessor markdownProcessor = new PegDownProcessor(Extensions.ALL ^ Extensions.HARDWRAPS);
 
     /**
      * The constructor for the parser when we hand it a factory.
@@ -229,7 +229,7 @@ public class XmlDocumentationParser implements DocumentationParser {
                 String value = format.getNodeValue();
 
                 if (value != null) {
-                    return value.equalsIgnoreCase("MD");
+                    return "MD".equalsIgnoreCase(value);
                 }
             }
         }

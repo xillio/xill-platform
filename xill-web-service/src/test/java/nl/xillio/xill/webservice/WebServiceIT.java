@@ -17,8 +17,6 @@ package nl.xillio.xill.webservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.xillio.xill.webservice.exceptions.BaseException;
-import nl.xillio.xill.webservice.exceptions.CompileException;
-import nl.xillio.xill.webservice.exceptions.RobotNotFoundException;
 import nl.xillio.xill.webservice.model.Runtime;
 import nl.xillio.xill.webservice.model.WorkerFactory;
 import nl.xillio.xill.webservice.services.WebService;
@@ -29,7 +27,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.ManualRestDocumentation;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
@@ -41,13 +38,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static nl.xillio.xill.webservice.IsValidUrlMatcher.isValidUrl;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.text.IsEmptyString.isEmptyString;
 import static org.mockito.Matchers.any;
@@ -83,7 +78,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
     private MockMvc mockMvc;
     private Runtime runtime;
 
-    @Value("${xws.api.base.path}")
+    @Value("${xill.xws.api.base.path}")
     private String basePath;
 
     @BeforeMethod
@@ -256,7 +251,7 @@ public class WebServiceIT extends AbstractTestNGSpringContextTests {
         });
         running.start();
 
-        await().atMost(10, SECONDS).until(() -> {
+        await().pollDelay(1, SECONDS).atMost(10, SECONDS).until(() -> {
             // Terminate a running worker
             MvcResult result = this.mockMvc.perform(
                     delete(basePath + "/worker/" + id.getId())

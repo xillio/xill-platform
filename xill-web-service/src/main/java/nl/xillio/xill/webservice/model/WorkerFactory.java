@@ -30,7 +30,7 @@ import java.nio.file.Path;
 @Component
 public class WorkerFactory {
 
-    private ObjectPool<Runtime> runtimePool;
+    protected ObjectPool<Runtime> runtimePool;
 
     @Inject
     public WorkerFactory(ObjectPool<Runtime> runtimePool) {

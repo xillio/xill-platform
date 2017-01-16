@@ -16,23 +16,12 @@
 package nl.xillio.xill.webservice.services;
 
 import nl.xillio.xill.webservice.model.WorkerPool;
-import nl.xillio.xill.webservice.types.WorkerPoolID;
-
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Represents a service that manages {@link WorkerPool}: factory and reference.
  */
+@SuppressWarnings("squid:S1609") // not meant to be a functional interface, represents a service
 public interface WorkerPoolManagerService {
-    /**
-     * Creates new or return existing WorkerPool for given projectId.
-     *
-     * @param workDirectory the project directory. For the moment, it's not used as there is no support for projects yet.
-     * @return the po0ol for given workDirectory that has been created or reused. For the moment, it always returns one WorkerPool as there is no support for projects yet.
-     */
-    WorkerPool getWorkerPool(final Path workDirectory);
 
     /**
      * Gets the default pool based on configuration. The worker pool is instantiated if necessary.
@@ -40,19 +29,4 @@ public interface WorkerPoolManagerService {
      * @return the default worker pool for this service
      */
     WorkerPool getDefaultWorkerPool();
-
-    /**
-     * Returns existing pool for given project.
-     *
-     * @param projectId the project id. For the moment, it's not used as there is no support for projects yet.
-     * @return the existing pool for given projectId
-     */
-    Optional<WorkerPool> findWorkerPool(final WorkerPoolID projectId);
-
-    /**
-     * Gets all worker pools.
-     *
-     * @return the list of all worker pools
-     */
-    List<WorkerPool> getAllWorkerPools();
 }
