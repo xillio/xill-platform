@@ -20,7 +20,6 @@ import nl.xillio.migrationtool.dialogs.GitConflictDialog;
 import nl.xillio.xill.versioncontrol.GitException;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -39,10 +38,11 @@ public class GitPullOperation extends GitOperation {
     }
 
     @Override
+    @SuppressWarnings("squid:S1612") // Lambda cannot be converted to method reference because it causes JavaFX to throw errors
     protected void execute() throws GitException {
         Set<String> conflicts = repo.pullCommand();
 
-        if (conflicts != null) {
+        if (conflicts.size() > 0) {
             Platform.runLater(() -> new GitConflictDialog(conflicts).showAndWait());
         }
     }

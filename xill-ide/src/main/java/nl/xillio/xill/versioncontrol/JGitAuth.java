@@ -15,14 +15,14 @@
  */
 package nl.xillio.xill.versioncontrol;
 
-import com.sun.javafx.application.PlatformImpl;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import nl.xillio.migrationtool.dialogs.AlertDialog;
+import javafx.application.Platform;
 import nl.xillio.migrationtool.dialogs.GitAuthenticateDialog;
 import org.eclipse.jgit.internal.JGitText;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * Class responsible for Git credentials management.
@@ -59,14 +59,21 @@ public class JGitAuth {
      *
      * @return true if the credentials were entered, or false if the dialog was canceled.
      */
-    public boolean getAuthentication() {
-        PlatformImpl.runAndWait(() -> {
+    public boolean getAuthentication(boolean invalidCredentials) {
+        final FutureTask dialog = new FutureTask(() -> {
             GitAuthenticateDialog dlg = new GitAuthenticateDialog(this);
+            dlg.setIncorrectLoginLabelToVisible(invalidCredentials);
             dlg.showAndWait();
-
-            authDialogCanceled = dlg.isCanceled();
+            return dlg.isCanceled();
         });
-
+        Platform.runLater(dialog);
+        try {
+            authDialogCanceled = (boolean) dialog.get();
+        } catch (InterruptedException e) {
+            authDialogCanceled = true;
+        } catch (ExecutionException e) {
+            authDialogCanceled = true;
+        }
         return !authDialogCanceled;
     }
 
@@ -80,17 +87,4 @@ public class JGitAuth {
         return e.getMessage().contains(JGitText.get().notAuthorized) || e.getMessage().contains(JGitText.get().noCredentialsProvider);
     }
 
-    /**
-     * Show the dialog for invalid credentials.
-     */
-    public void openCredentialsInvalidDialog() {
-        PlatformImpl.runAndWait(() -> new CredentialsAlertDialog().showAndWait());
-    }
-
-    private class CredentialsAlertDialog extends AlertDialog {
-        CredentialsAlertDialog() {
-            super(Alert.AlertType.WARNING, "Invalid credentials", "",
-                    "The credentials you entered are invalid, please try again.", ButtonType.OK);
-        }
-    }
 }

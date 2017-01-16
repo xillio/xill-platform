@@ -140,7 +140,7 @@ public class JGitRepositoryTest {
         Set<String> result = repository.pullCommand();
 
         // Assert.
-        assertNull(result);
+        assertTrue(result.size() == 0);
 
         // Verify.
         verify(cmd, times(1)).setCredentialsProvider(auth.getCredentials());

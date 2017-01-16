@@ -70,13 +70,13 @@ public class GitOperationTest {
         operation = spy(new ExceptionGitOperation(repo));
         when(auth.isAuthorizationException(GIT_EXCEPTION)).thenReturn(true);
         when(auth.getCredentials()).thenReturn(null);
-        when(auth.getAuthentication()).thenReturn(true);
+        when(auth.getAuthentication(anyBoolean())).thenReturn(true);
 
         operation.call();
 
         // Verify.
         verify(auth, times(1)).isAuthorizationException(GIT_EXCEPTION);
-        verify(auth, never()).openCredentialsInvalidDialog();
+        verify(auth, never()).getAuthentication(true);
         verify(operation, times(2)).execute();
     }
 
@@ -85,13 +85,13 @@ public class GitOperationTest {
         operation = spy(new ExceptionGitOperation(repo));
         when(auth.isAuthorizationException(GIT_EXCEPTION)).thenReturn(true);
         when(auth.getCredentials()).thenReturn(mock(CredentialsProvider.class));
-        when(auth.getAuthentication()).thenReturn(false);
+        when(auth.getAuthentication(anyBoolean())).thenReturn(false);
 
         operation.call();
 
         // Verify.
         verify(auth, times(1)).isAuthorizationException(GIT_EXCEPTION);
-        verify(auth, times(1)).openCredentialsInvalidDialog();
+        verify(auth, times(1)).getAuthentication(true);
         verify(operation, times(1)).execute();
         verify(operation, times(1)).cancelOperation();
     }

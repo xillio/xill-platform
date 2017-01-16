@@ -42,6 +42,16 @@ public class GitCommitAndPushOperationTest {
     }
 
     @Test
+    public void testAlreadyCommitted() throws GitException{
+        GitCommitAndPushOperation gitOperation = new GitCommitAndPushOperation(repo, commitMessage);
+        gitOperation.execute();
+        gitOperation.execute();
+
+        verify(repo, times(1)).commitCommand(any());
+        verify(repo, times(2)).pushCommand();
+    }
+
+    @Test
     public void testCancel() throws GitException {
         operation.cancelOperation();
         verify(repo, times(1)).resetCommitCommand();
