@@ -104,7 +104,7 @@ public class JGitRepository implements GitRepository {
 
             // Throw an error if merging, and therefore the pull operation, has failed
             // Exclude conflicting merge status, because we create a custom message for that
-            if (mergeStatus != mergeStatus.CONFLICTING && !mergeStatus.isSuccessful()) {
+            if (mergeStatus != MergeResult.MergeStatus.CONFLICTING && !mergeStatus.isSuccessful()) {
                 throw new GitException(String.format("Merge attempt was not successful (status: %s)",
                         mergeStatus.toString()));
             }
