@@ -30,12 +30,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 
-import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,6 +49,7 @@ public class ExecutorFactory {
 
     /**
      * Creates a new Executor based on the provided client options
+     *
      * @param options Options to be used for setting up the http connection
      * @return An http client executor
      */
@@ -59,7 +57,7 @@ public class ExecutorFactory {
         String uuid = getSessionID(options);
 
         Executor executor;
-        if(executors.containsKey(uuid)) {
+        if (executors.containsKey(uuid)) {
             executor = executors.get(uuid);
         } else {
             executor = Executor.newInstance(buildClient(defaultBuilder(), options));
@@ -72,7 +70,7 @@ public class ExecutorFactory {
 
     /**
      * Returns a specific session UUID based on the provided options.
-     *
+     * <p>
      * The system will as much as possible try to keep sessions for domains. Because we cannot retroactively set the
      * insecure and redirect options, the session will be lost when one of these options is changed by the user.
      *
@@ -81,11 +79,11 @@ public class ExecutorFactory {
      */
     public static String getSessionID(Options options) {
         String id;
-        if(options.isBasicAuthEnabled()) {
+        if (options.isBasicAuthEnabled()) {
             id = options.getBasicAuth().getUsername();
         } else if (options.isNTLMEnabled()) {
             id = options.getNTLMOptions().getUsername() + "@" + options.getNTLMOptions().getDomain();
-        } else if(options.isProxyEnabled()) {
+        } else if (options.isProxyEnabled()) {
             id = options.getProxyOptions().getUsername() + "@" + options.getProxyOptions().getHttpHost().toHostString();
         } else {
             id = DEFAULT_CLIENT_ID;
@@ -95,16 +93,17 @@ public class ExecutorFactory {
 
     /**
      * Creates a new HttpClient using the specified options
+     *
      * @param options Options to be set
      * @return a new HttpClient
      */
     public static HttpClient buildClient(HttpClientBuilder builder, Options options) {
 
-        if(options.isInsecure()){
+        if (options.isInsecure()) {
             builder.setSSLHostnameVerifier(new NoopHostnameVerifier());
         }
 
-        if(!options.isEnableRedirect()){
+        if (!options.isEnableRedirect()) {
             builder.disableRedirectHandling();
         }
 
@@ -113,29 +112,41 @@ public class ExecutorFactory {
 
     /**
      * Code borrowed from private implementation of org.apache.http.client.fluent.Executor
+     *
      * @return A preconfigured HttpClientBuilder
      */
     public static HttpClientBuilder defaultBuilder() {
-        SSLConnectionSocketFactory ssl = null;
-
-        try {
-            ssl = SSLConnectionSocketFactory.getSystemSocketFactory();
-        } catch (SSLInitializationException err) {
-            LOGGER.error(err.getMessage(), err);
-            try {
-                SSLContext sslcontext = SSLContext.getInstance("TLS");
-                sslcontext.init((KeyManager[])null, (TrustManager[])null, (SecureRandom)null);
-                ssl = new SSLConnectionSocketFactory(sslcontext);
-            } catch (SecurityException|KeyManagementException|NoSuchAlgorithmException e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
-
-        Registry sfr = RegistryBuilder.create().register("http", PlainConnectionSocketFactory.getSocketFactory()).register("https", ssl != null?ssl:SSLConnectionSocketFactory.getSocketFactory()).build();
+        Registry sfr = RegistryBuilder.create()
+                .register(
+                        "http", PlainConnectionSocketFactory.getSocketFactory()
+                )
+                .register(
+                        "https", defaultSSLFactory())
+                .build();
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(sfr);
         connectionManager.setDefaultMaxPerRoute(100);
         connectionManager.setMaxTotal(200);
         connectionManager.setValidateAfterInactivity(1000);
         return HttpClientBuilder.create().setConnectionManager(connectionManager);
+    }
+
+    private static SSLConnectionSocketFactory defaultSSLFactory() {
+        try {
+            return SSLConnectionSocketFactory.getSystemSocketFactory();
+        } catch (SSLInitializationException err) {
+            LOGGER.error(err.getMessage(), err);
+            return getTLSSSLFactory();
+        }
+    }
+
+    private static SSLConnectionSocketFactory getTLSSSLFactory() {
+        try {
+            SSLContext sslcontext = SSLContext.getInstance("TLS");
+            sslcontext.init(null, null, null);
+            return new SSLConnectionSocketFactory(sslcontext);
+        } catch (SecurityException | KeyManagementException | NoSuchAlgorithmException e) {
+            LOGGER.error(e.getMessage(), e);
+            return SSLConnectionSocketFactory.getSocketFactory();
+        }
     }
 }
