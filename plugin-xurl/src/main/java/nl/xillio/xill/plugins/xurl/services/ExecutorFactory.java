@@ -22,6 +22,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -33,8 +34,8 @@ import org.slf4j.Logger;
 import javax.net.ssl.SSLContext;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This class is responsible for creating an executor.
@@ -45,7 +46,7 @@ import java.util.Map;
 public class ExecutorFactory {
     private static final Logger LOGGER = Log.get();
     private static final String DEFAULT_CLIENT_ID = "DEFAULT_CLIENT_ID";
-    private final Map<String, Executor> executors = new HashMap<>();
+    private final Map<String, Executor> executors = new ConcurrentHashMap<>();
 
     /**
      * Creates a new Executor based on the provided client options
@@ -53,7 +54,7 @@ public class ExecutorFactory {
      * @param options Options to be used for setting up the http connection
      * @return An http client executor
      */
-    public synchronized Executor buildExecutor(Options options) {
+    public Executor buildExecutor(Options options) {
         String uuid = getSessionID(options);
 
         Executor executor;
@@ -113,15 +114,12 @@ public class ExecutorFactory {
     /**
      * Code borrowed from private implementation of org.apache.http.client.fluent.Executor
      *
-     * @return A preconfigured HttpClientBuilder
+     * @return A pre-configured HttpClientBuilder
      */
-    public static HttpClientBuilder defaultBuilder() {
-        Registry sfr = RegistryBuilder.create()
-                .register(
-                        "http", PlainConnectionSocketFactory.getSocketFactory()
-                )
-                .register(
-                        "https", defaultSSLFactory())
+    static HttpClientBuilder defaultBuilder() {
+        Registry<ConnectionSocketFactory> sfr = RegistryBuilder.<ConnectionSocketFactory>create()
+                .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                .register("https", defaultSSLFactory())
                 .build();
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(sfr);
         connectionManager.setDefaultMaxPerRoute(100);
@@ -134,7 +132,7 @@ public class ExecutorFactory {
         try {
             return SSLConnectionSocketFactory.getSystemSocketFactory();
         } catch (SSLInitializationException err) {
-            LOGGER.error(err.getMessage(), err);
+            LOGGER.debug(err.getMessage(), err);
             return getTLSSSLFactory();
         }
     }
@@ -145,7 +143,7 @@ public class ExecutorFactory {
             sslcontext.init(null, null, null);
             return new SSLConnectionSocketFactory(sslcontext);
         } catch (SecurityException | KeyManagementException | NoSuchAlgorithmException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
             return SSLConnectionSocketFactory.getSocketFactory();
         }
     }
