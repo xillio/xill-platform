@@ -6,7 +6,8 @@ All notable changes to this project will be documented in this file.
 ### Add
 * Qualified includes for xill libraries using the new `as` keyword [CTC-1946]
 * Function overloading based on parameters [CTC-1613]
-* Create template plugin [CTC-1799]
+* Git integration. Push and pull can be done from the IDE [CTC-1919]
+* `Template` plugin [CTC-1799]
 * `System.parseJSON()` now parses LIST [CTC-1769]
 * Warn users about invalid asset names [CTC-1798]
 * Support external logging by adding logging handler that exposes all logging events and exceptions [CTC-2031]
