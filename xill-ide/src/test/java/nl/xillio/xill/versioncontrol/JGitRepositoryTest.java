@@ -121,7 +121,7 @@ public class JGitRepositoryTest {
         when(pushResult.getRemoteUpdates()).thenReturn(remoteRefUpdateIterator);
 
         return Arrays.asList(pushResult);
-        }
+    }
 
     @Test
     public void testPullCommand() throws GitException, GitAPIException {
@@ -255,5 +255,25 @@ public class JGitRepositoryTest {
 
         // Assert.
         assertEquals(result, Collections.emptySet());
+    }
+
+    @Test
+    public void testCreateBranch() throws GitException, GitAPIException {
+        String name = "new-branch";
+
+        // Mock.
+        CreateBranchCommand branch = mock(CreateBranchCommand.class);
+        when(git.branchCreate()).thenReturn(branch);
+        when(branch.setName(name)).thenReturn(branch);
+        when(branch.setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM)).thenReturn(branch);
+
+        // Run.
+        repository.createBranch(name);
+
+        // Verify.
+        verify(git, times(1)).branchCreate();
+        verify(branch, times(1)).setName(name);
+        verify(branch, times(1)).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM);
+        verify(branch, times(1)).call();
     }
 }
