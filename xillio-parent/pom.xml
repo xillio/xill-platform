@@ -86,6 +86,7 @@
         <mysql.version>6.0.2</mysql.version>
         <flapdoodle.version>1.50.5</flapdoodle.version>
         <asm.version>5.0.1</asm.version>
+        <jgit.version>4.5.0.201609210915-r</jgit.version>
         <springboot.version>1.4.1.RELEASE</springboot.version>
         <springfox.version>2.6.1</springfox.version>
         <awaitility.version>2.0.0</awaitility.version>
@@ -347,6 +348,11 @@
                 <version>${asm.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.eclipse.jgit</groupId>
+                <artifactId>org.eclipse.jgit</artifactId>
+                <version>${jgit.version}</version>
+            </dependency>
+			<dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger-ui</artifactId>
                 <version>${springfox.version}</version>
