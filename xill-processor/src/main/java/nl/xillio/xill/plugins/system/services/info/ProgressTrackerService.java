@@ -110,7 +110,7 @@ public class ProgressTrackerService implements ProgressTracker {
         // Compute remaining time
         long elapsed = (long) ((progressInfo.currentProgress - progressInfo.startProgress) * 100); // Compute percent elapsed
         long remains = (long) ((1 - progressInfo.currentProgress) * 100); // Compute how many percent remains
-        return Duration.between(progressInfo.startTime, LocalDateTime.now()).dividedBy(elapsed).multipliedBy(remains);
+        return elapsed == 0L ? null : Duration.between(progressInfo.startTime, LocalDateTime.now()).dividedBy(elapsed).multipliedBy(remains);
     }
 
     private synchronized ProgressInfo get(UUID compilerSerialId, boolean createIfNotExist) {

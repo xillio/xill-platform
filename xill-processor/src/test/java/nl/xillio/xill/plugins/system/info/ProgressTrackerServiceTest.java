@@ -159,6 +159,23 @@ public class ProgressTrackerServiceTest {
     }
 
     /**
+     * Test getRemainingTime() when there is no progress.
+     */
+    @Test
+    public void testGetRemainingTimeNoProgress() {
+        ProgressTrackerService service = new ProgressTrackerService();
+        UUID csid = new UUID(1,1);
+        service.setProgress(csid, 0.001);
+        service.setProgress(csid, 0.0011);
+
+        // Run
+        Duration result = service.getRemainingTime(csid);
+
+        // Verify
+        assertEquals(result, null);
+    }
+
+    /**
      * Test getRemainingTime() when progress is 100%.
      */
     @Test
