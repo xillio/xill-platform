@@ -42,7 +42,7 @@ public class GitPullOperation extends GitOperation {
     protected void execute() throws GitException {
         Set<String> conflicts = repo.pullCommand();
 
-        if (conflicts.size() > 0) {
+        if (!conflicts.isEmpty()) {
             Platform.runLater(() -> new GitConflictDialog(conflicts).showAndWait());
         }
     }
