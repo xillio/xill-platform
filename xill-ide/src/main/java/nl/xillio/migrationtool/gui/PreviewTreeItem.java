@@ -52,10 +52,11 @@ public class PreviewTreeItem extends TreeItem<Pair<String, MetaExpression>> {
      */
     @Override
     public boolean isLeaf() {
-        if (getValue().getValue().isClosed()) {
-            return true; // It's closed so we treat it as a leaf
-        } else {
+        try {
             return getValue().getValue().getType() == ExpressionDataType.ATOMIC;
+        } catch (IllegalStateException e) {
+            // CTC-1892 - Catch rare expression-already-closed exception
+            return true;
         }
     }
 

@@ -173,7 +173,7 @@ public class VariablePane extends AnchorPane implements RobotTabComponent, ListC
             if (!selected.isEmpty()) {
                 selectedItem = selected.get(0);
             }
-            if (selectedItem != null && observableVariable != null && !observableVariable.getExpression().isClosed()) {
+            if (selectedItem != null && observableVariable != null) {
                 previewpane.preview(observableVariable);
             }
         });

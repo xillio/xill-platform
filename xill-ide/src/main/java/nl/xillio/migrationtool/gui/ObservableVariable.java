@@ -41,6 +41,15 @@ public class ObservableVariable {
     }
 
     /**
+     * Create a new anonymous {@link ObservableVariable} without name or source
+     *
+     * @param value
+     */
+    public ObservableVariable(final MetaExpression value) {
+        this("", value, null);
+    }
+
+    /**
      * @return the name
      */
     public String getName() {
@@ -55,19 +64,21 @@ public class ObservableVariable {
             return ExpressionBuilderHelper.NULL.toString();
         }
 
-        if (value.isClosed()) {
-            return "[closed]";
-        }
 
-        switch (value.getType()) {
-            case ATOMIC:
-                return value.toString();
-            case LIST:
-                return "List [" + value.getSize() + "]";
-            case OBJECT:
-                return "Object [" + value.getSize() + "]";
-            default:
-                throw new NotImplementedException("This type has not been implemented in the VariablePane");
+        try {
+            switch (value.getType()) {
+                case ATOMIC:
+                    return value.toString();
+                case LIST:
+                    return "List [" + value.getSize() + "]";
+                case OBJECT:
+                    return "Object [" + value.getSize() + "]";
+                default:
+                    throw new NotImplementedException("This type has not been implemented in the VariablePane");
+            }
+        } catch (IllegalStateException e) {
+            // CTC-1892 - Catch rare expression-already-closed exception
+            return e.getMessage();
         }
     }
 

@@ -46,25 +46,11 @@ public class PreviewCellItem extends TreeTableCell<Pair<String, MetaExpression>,
     @Override
     protected void updateItem(MetaExpression item, boolean empty) {
         super.updateItem(item, empty);
+
         if (item == null) {
             setText(null);
-        } else if (item.isClosed()) {
-            setText("[closed]");
         } else {
-            switch (item.getType()) {
-                case LIST:
-                    setText("LIST [" + item.getSize() + "]");
-                    break;
-                case OBJECT:
-                    setText("OBJECT [" + item.getSize() + "]");
-                    break;
-                case ATOMIC:
-                    setText(item.getStringValue());
-                    break;
-                default:
-                    // Should never happen
-                    throw new NotImplementedException("Invalid type: " + item.getType());
-            }
+            setText(new ObservableVariable(item).getValue());
         }
     }
 
