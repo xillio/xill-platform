@@ -20,10 +20,19 @@
     <description>
 Returns `true` if the `string` starts with `prefix`, or `false` if it does not.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="string">
+The string that will be looked at.
+        </parameterDescription>
+		<parameterDescription parameterName="perfix">
+The string that will be looked for at the start of `string`.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 if (String.startsWith("testing", "test")) {
                     System.print("testing starts with test");

@@ -18,15 +18,27 @@
 -->
 <function>
     <description>
-Returns the index at which `string2` occurs in `string1`. The search starts at index `startPos`.
-
-`startPos` defaults to 0.
-Returns -1 if the index could not be found.
+Returns the index at which `string2` occurs in `string1`.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="string1">
+The string that will be searched.
+        </parameterDescription>
+		<parameterDescription parameterName="string2">
+The string that will be searched for in `string1`.
+        </parameterDescription>
+		<parameterDescription parameterName="startPos">
+The index at which the search will start (default is 0).
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Returns -1 if the index could not be found.
+	</longDescription>
     <examples>
         <example title="Usage">
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 System.print(String.indexOf("maxTestTest", "Test"));    // Result: 3
                 System.print(String.indexOf("maxTestTest", "Test", 3)); // Result: 3

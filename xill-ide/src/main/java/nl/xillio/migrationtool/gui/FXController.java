@@ -42,6 +42,7 @@ import nl.xillio.xill.util.HotkeysHandler;
 import nl.xillio.xill.util.HotkeysHandler.Hotkeys;
 import nl.xillio.xill.util.settings.Settings;
 import nl.xillio.xill.util.settings.SettingsHandler;
+import nl.xillio.xill.versioncontrol.JGitRepository;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.pegdown.PegDownProcessor;
@@ -778,6 +779,21 @@ public class FXController implements Initializable, EventHandler<Event> {
                         tpnBots.getTabs().filtered(Tab::isSelected).forEach(tab ->
                                 ((FileTab) tab).getEditorPane().requestFocus());
                         break;
+                    case PULL:
+                        tpnBots.getTabs().filtered(Tab::isSelected).forEach(tab ->
+                                {
+                                    GitPullDialog dlg = new GitPullDialog(new JGitRepository(((FileTab) tab).projectPath));
+                                    dlg.showAndWait();
+                                }
+                        );
+                        break;
+                    case PUSH:
+                        tpnBots.getTabs().filtered(Tab::isSelected).forEach(tab ->
+                                {
+                                    GitPushDialog dlg = new GitPushDialog(new JGitRepository(((FileTab) tab).projectPath));
+                                    dlg.showAndWait();
+                                }
+                        );
                     default:
                         if (keyEvent.isControlDown() || keyEvent.isMetaDown()) {
                             // Check if other key is an integer, if so open that tab

@@ -25,9 +25,11 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.config.IRuntimeConfig;
 import de.flapdoodle.embed.process.exceptions.DistributionException;
 import de.flapdoodle.embed.process.extract.UserTempNaming;
+import de.flapdoodle.embed.process.io.directories.PropertyOrTempDirInPlatformTempDir;
 import me.biesaart.utils.Log;
 import org.slf4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -39,10 +41,12 @@ import java.security.ProviderException;
  */
 public enum EmbeddedMongoHelper {
     INSTANCE;
+
+    // The logger cannot be static because it is used in the constructor.
     private final Logger LOGGER = Log.get();
-    private final MongodStarter starter;
-    private final MongodExecutable executable;
-    private static Net net;
+    private MongodStarter starter;
+    private MongodExecutable executable;
+    private Net net;
 
     EmbeddedMongoHelper() {
         Command command = Command.MongoD;
@@ -53,6 +57,7 @@ public enum EmbeddedMongoHelper {
                 .artifactStore(
                         new ExtractedArtifactStoreBuilder()
                                 .defaults(command)
+                                .tempDir(new PropertyOrTempDirInPlatformTempDir())
                                 .download(
                                         new DownloadConfigBuilder()
                                                 .defaultsForCommand(command).build())
@@ -91,24 +96,27 @@ public enum EmbeddedMongoHelper {
     }
 
     public void start() throws IOException {
-        if (executable != null)
+        if (executable != null) {
             executable.start();
-        else
-            throw new NullPointerException("The Embedded Mongo instance is not running, probably failed static initialization");
+        } else {
+            throw new IllegalStateException("The Embedded Mongo instance is not running, probably initialization failed");
+        }
     }
 
     public void stop() throws IOException {
-        if (executable != null)
+        if (executable != null) {
             executable.stop();
-        else
-            throw new NullPointerException("The Embedded Mongo instance is not running, probably failed static initialization");
+        } else {
+            throw new IllegalStateException("The Embedded Mongo instance is not running, probably initialization failed");
+        }
     }
 
     public void cleanupDB() {
         try (MongoClient conn = new MongoClient("localhost", net.getPort())) {
             MongoIterable<String> dbs = conn.listDatabaseNames();
-            for (String db : dbs)
+            for (String db : dbs) {
                 conn.dropDatabase(db);
+            }
         }
     }
 }

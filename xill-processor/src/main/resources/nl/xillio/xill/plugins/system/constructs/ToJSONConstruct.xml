@@ -18,12 +18,19 @@
 -->
 <function>
     <description>
-This construct parses an ATOMIC, LIST or OBJECT variable to a JSON string and returns it as an ATOMIC variable.
-If `pretty` is set to true then the JSON string will be formatted.
-
-Note that circular references cannot be parsed and will be substituted.  
-
+Parses a variable to a JSON string and returns it as an ATOMIC variable.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="expression">
+The ATOMIC, LIST or OBJECT that will be parsed.
+        </parameterDescription>
+		<parameterDescription parameterName="pretty">
+If set to true the JSON string will be formatted.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Circular references cannot be parsed and will be substituted.
+	</longDescription>
     <examples>
         <example title="Usage">
             <code>

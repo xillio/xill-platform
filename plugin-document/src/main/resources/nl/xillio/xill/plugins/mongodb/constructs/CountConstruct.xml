@@ -20,6 +20,20 @@
     <description>
 Count the amount of documents that match the `query`.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="collectionName">
+The name of the collection that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="query">
+The query that will be applied.
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database that will be used.
+        </parameterDescription>
+    </parameterDescriptions>
+	<longDescription>
+More information about MongoDB count can be found in the [MongoDB manual](https://docs.mongodb.com/manual/reference/method/db.collection.count/).
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Count how many documents content type "page" has</header>

@@ -4,11 +4,16 @@ All notable changes to this project will be documented in this file.
 ## [3.5.0] - unreleased
 
 ### Add
-* Create template plugin [CTC-1799]
+* Qualified includes for xill libraries using the new `as` keyword [CTC-1946]
+* Function overloading based on parameters [CTC-1613]
+* Git integration. Push and pull can be done from the IDE [CTC-1919]
+* `Template` plugin [CTC-1799]
 * `System.parseJSON()` now parses LIST [CTC-1769]
 * Warn users about invalid asset names [CTC-1798]
-* Support external logging by adding logging handler that exposes all logging events and exceptions [XSVR-50]
-* Progress bar dialog and `System.setProgress()` construct for overview of robot progress [CTC-1101] 
+* Support external logging by adding logging handler that exposes all logging events and exceptions [CTC-2031]
+* Progress bar dialog and `System.setProgress()` construct for overview of robot progress [CTC-1101]
+* `Collection.range()` construct to easily create oprderediterators for loops [CTC-1592]
+* `Excel.recalculate()` construct to recalculate a previously saved workbook [CTC-1940]
 
 ### Change
 * Make `System.print` automatically pretty print LISTs and OBJECTs [CTC-1675]
@@ -17,6 +22,7 @@ All notable changes to this project will be documented in this file.
 * Make StringBehavior conform to type conversion specification: a non-empty string will now evaluate to `true`, unless it contains any of the values "false", "0" or "null" [CTC-1865]
 * Deprecate `File.getText()` [CTC-1860]
 * Update File and Stream help files [CTC-1869]
+* Improve layout for help files. Add a parameter description to all help files [CTC-1511]
 
 ### Fix
 * Settings file not found for paths with whitespaces [CTC-1887]
@@ -36,13 +42,12 @@ All notable changes to this project will be documented in this file.
 * Dialogs do not render on (very) fast machines [CTC-1850]
 * Concurrency pipeline changes dates and ObjectIds to strings [CTC-1833]
 * Parsing String list results from xpath query floods log and is slow [CTC-1885] 
-* Excel.setCellFormula() throws caught error: "Cannot get a numeric value from a text formula cell [CTC-1528]
+* `Excel.setCellFormula()` throws caught error: "Cannot get a numeric value from a text formula cell [CTC-1528]
 * Order of package names in help file is off in Linux [CTC-1937]
-
-## [3.4.2] - 2016-11-04
-
-### Fix
-* Parsing String list results from xpath query floods log and is slow [CTC-1885] 
+* Formatting in Usage headers in help file [CTC-1709]
+* `Excel.setCellFormula()` does not create formula in Excel sheet [CTC-1930]
+* Pipeline functions do not support qualified includes [CTC-2001]
+* Unable to use multibyte characters in Properties package [CTC-1846]
 
 ## [3.4.1] - 2016-10-28
 

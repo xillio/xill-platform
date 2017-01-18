@@ -218,9 +218,10 @@ public class ConstructProcessor implements AutoCloseable {
 
         int i = 0;
         for (MetaExpression arg : arguments) {
-            if (!processor.setArgument(i++, arg)) {
+            if (!processor.setArgument(i, arg)) {
                 throw new IllegalArgumentException("Argument " + processor.getArgumentName(i) + " is of wrong type");
             }
+            i++;
         }
 
         return processor.process();

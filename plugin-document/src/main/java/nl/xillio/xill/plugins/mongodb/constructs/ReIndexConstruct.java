@@ -36,23 +36,23 @@ public class ReIndexConstruct extends AbstractMongoApiConstruct {
     @SuppressWarnings("squid:S2095")  // Suppress "Resources should be closed": Arguments do not need to be closed here, because ConstructProcessor closes them
     protected Argument[] getApiArguments() {
         return new Argument[]{
-                new Argument("collection", ATOMIC)
+                new Argument("collectionName", ATOMIC)
         };
     }
 
     @Override
     MetaExpression process(MetaExpression[] arguments, Connection connection, ConstructContext context) {
-        String collection = arguments[0].getStringValue();
+        String collectionName = arguments[0].getStringValue();
 
         // Build the command.
         BsonDocument command = new BsonDocument();
-        command.put("reIndex", new BsonString(collection));
+        command.put("reIndex", new BsonString(collectionName));
 
         // Run the command and return the result.
         try {
             return toExpression(connection.getDatabase().runCommand(command));
         } catch (MongoCommandException e) {
-            throw new RobotRuntimeException("Failed to reIndex \"" + collection + "\", error: " + e.getErrorMessage(), e);
+            throw new RobotRuntimeException("Failed to reIndex \"" + collectionName + "\", error: " + e.getErrorMessage(), e);
         }
     }
 }

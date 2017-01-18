@@ -19,20 +19,33 @@
 <function>
     <description>
 This construct provides a convenient way to perform a query-by-example that results in a single row.
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="table">
+The table that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="keys">
+The key(s) of the object(s).
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database parameter is optional. The last made connection will be used if no database is given.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
 It is equivalent to executing:
 
     SELECT TOP 1 * FROM [table] WHERE [key=value [key=value]]
 
-The database parameter is optional. The last made connection will be used if no database is given.
 This function returns a new object with all its values.
 
 __NOTE__: Fields with `null` values are ignored in the search of objects.
-    </description>
+	</longDescription>
     <examples>
         <example title="Usage">
         <header>Get an object by it's id</header>
         <code>
-            use Oracle as db, System;
+            use Oracle as db;
+            use System;
 
             // Connect to the database
             db.connect(
@@ -48,7 +61,8 @@ __NOTE__: Fields with `null` values are ignored in the search of objects.
         </code>
         <header>Get an object by example</header>
         <code>
-            use Oracle as db, System;
+            use Oracle as db;
+            use System;
 
             // Connect to the database
             db.connect(

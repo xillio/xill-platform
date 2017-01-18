@@ -20,11 +20,20 @@
     <description>
 Returns the number of bytes in `string`.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="string">
+The string that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="encoding">
+The encoding that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Get the byte length.</header>
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 var byteLength = String.byteLength("foo");
                 // This prints: "foo" contains 3 bytes.
@@ -32,7 +41,8 @@ Returns the number of bytes in `string`.
             </code>
             <header>Get the byte length with a different encoding.</header>
             <code>
-                use System, String;
+                use System;
+                use String;
 
                 var byteLength = String.byteLength("foo", "UTF-16");
                 // This prints: "foo" in UTF-16 contains 8 bytes.

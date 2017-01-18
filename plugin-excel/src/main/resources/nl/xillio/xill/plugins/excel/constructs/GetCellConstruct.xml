@@ -20,6 +20,17 @@
     <description>
 Gets the content of a cell from an Excel sheet.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="sheet">
+The sheet that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="column">
+The column of the cell.
+        </parameterDescription>
+		<parameterDescription parameterName="row">
+The row of the cell
+        </parameterDescription>
+    </parameterDescriptions>
     <examples>
         <example title="Getting the content">
             <header>Alphabetic Column Notation</header>

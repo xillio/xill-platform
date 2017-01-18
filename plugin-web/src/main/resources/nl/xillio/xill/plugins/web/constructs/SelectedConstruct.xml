@@ -19,9 +19,12 @@
 <function>
     <description>
 Returns true if the `element` node is selected.
- 
-The `element` node has to be a HTML selectable element, such as a radio or check button.
     </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="element">
+The element that will be checked. It has to be a HTML selectable element, such as a radio or check button.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Determine if an element is selected</header>

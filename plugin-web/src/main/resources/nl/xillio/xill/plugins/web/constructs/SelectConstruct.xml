@@ -19,10 +19,18 @@
 <function>
     <description>
 In an HTML-select box (option, radio buttons, ...), marks the selectable `element` as selected.
-The `selected` optional argument can be used to *deselect* the `element`, when set to `false`.
-
-*Note*: The deselection is not supported for `option` tag.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="element">
+The element that will be selected.
+        </parameterDescription>
+		<parameterDescription parameterName="select">
+Can be used to *deselect* the `element`, when set to `false`.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+The deselection is not supported for `option` tag.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Select a radio button</header>

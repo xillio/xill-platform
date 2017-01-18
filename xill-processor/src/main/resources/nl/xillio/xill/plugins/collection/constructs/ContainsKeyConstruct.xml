@@ -20,6 +20,14 @@
     <description>
 Returns true if the key is contained in the given object, or false otherwise.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="collection">
+The collection that will be checked.
+        </parameterDescription>
+		<parameterDescription parameterName="key">
+The key that will be checked for.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <code>

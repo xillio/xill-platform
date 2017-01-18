@@ -18,10 +18,22 @@
 -->
 <function>
     <description>
-Add the provided XML string as a child to node, optionally at a provided position.  
-
-Returns the newly created node.
+Add the provided XML string as a child to node.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="baseNode">
+The XML-node that will be inserted into.
+        </parameterDescription>
+		<parameterDescription parameterName="xml">
+The XML string that will be inserted.
+        </parameterDescription>
+		<parameterDescription parameterName="beforeNode">
+The optional position of the node.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Returns the newly created node.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Assuming we have an XML file note.xml which contains the following:</header>

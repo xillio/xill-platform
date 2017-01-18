@@ -19,39 +19,24 @@
 <function>
     <description>
 This construct combines a template and a model using the given engine and writes the result to the provided output.
-
-This plugin uses a third-party library named FreeMarker to process the templates. For more information please
-check their [website](http://freemarker.org/docs/index.html).
-
-## Parameters
-
-### templateName
-
-The `templateName` parameter is mandatory and must contain the name and extension of the template file.
-This file must be located in the `templatesDirectory` of the (given) engine.
-
-
-### output
-
-The `output` parameter is mandatory and must contain a stream to which the template engine could write to.
-When willing to write to a file, use the `File` plugin.
-
-
-### model
-
-The `model` parameter is optional. This parameter must contain the data necessary to process the given template.
-When not providing this parameter (or giving an empty object) this would result in processing the template without
-any data.
-
-
-### engine
-
-The `engine` parameter is optional. This parameter must contain the engine to be for processing the templates.
-This engine is the value given from the `getEngine`-construct.
-When not providing this parameter this would result in using the default engine as described
-in the `getEngine`-construct.
-
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="templateName">
+The name and extension of the template file. This file must be located in the `templatesDirectory` of the (given) engine.
+        </parameterDescription>
+		<parameterDescription parameterName="output">
+The stream which the template engine will be written to. When willing to write to a file, use the `File` plugin.
+        </parameterDescription>
+		<parameterDescription parameterName="model">
+The data necessary to process the given template. When not providing this parameter (or giving an empty object) this would result in processing the template without any data.
+        </parameterDescription>
+		<parameterDescription parameterName="engine">
+The engine to be for processing the templates. This engine is the value given from the `getEngine`-construct. When not providing this parameter this would result in using the default engine as described in the `getEngine`-construct.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+This plugin uses a third-party library named FreeMarker to process the templates. For more information please check their [website](http://freemarker.org/docs/index.html).
+	</longDescription>
     <examples>
         <example title="Default Usage">
             <header>
@@ -61,7 +46,8 @@ in the `getEngine`-construct.
                 located at the project's root directory. The default engine is used here.
             </header>
             <code>
-                use Template, File;
+                use Template;
+                use File;
 
                 var output = File.openWrite("outputFolder/output.txt");
                 var model = {
@@ -77,7 +63,8 @@ in the `getEngine`-construct.
                 In this example no model is used and the template.txt will be parsed as is.
             </header>
             <code>
-                use Template, File;
+                use Template;
+                use File;
 
                 var output = File.openWrite("outputFolder/output.txt");
 
@@ -89,7 +76,8 @@ in the `getEngine`-construct.
                 This example uses a specified engine to process the templates with.
             </header>
             <code>
-                use Template, File;
+                use Template;
+                use File;
 
                 var options = {
                     "templateDir" : "C:/tmp",

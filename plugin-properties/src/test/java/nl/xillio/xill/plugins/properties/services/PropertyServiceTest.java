@@ -68,6 +68,39 @@ public class PropertyServiceTest extends TestUtils {
     }
 
     @Test
+    public void testGetPropertyFromProjectOverrideWithSpecialCharacters() throws Exception {
+        Path projectPath = Paths.get("project");
+        RobotID robotID = RobotID.getInstance(projectPath.resolve("robot.xill").toFile(), projectPath.toFile());
+
+        // Mock the file system
+        FileSystemAccess fileSystemAccess = new FileSystemAccess() {
+            @Override
+            public boolean exists(Path file) {
+                return file.equals(projectPath.resolve("xill.properties"));
+            }
+
+            @Override
+            public InputStream read(Path file) throws IOException {
+                return IOUtils.toInputStream("testProperty=¿Héllø Wœrld?");
+            }
+        };
+
+        PropertyService propertyService = new PropertyService(new Properties(), fileSystemAccess, new ContextPropertiesResolver());
+
+        String result = propertyService.getProperty("testProperty", null, new ConstructContext(
+                robotID,
+                robotID,
+                null,
+                null,
+                null,
+                null,
+                null
+        ));
+
+        assertEquals(result, "¿Héllø Wœrld?");
+    }
+
+    @Test
     public void testGetPropertyFromRobotOutsideOfProject() {
         Path projectPath = Paths.get("project");
         RobotID robotID = RobotID.getInstance(projectPath.resolve("../robot.xill").toFile(), projectPath.toFile());

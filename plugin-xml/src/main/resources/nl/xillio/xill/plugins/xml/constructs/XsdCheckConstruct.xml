@@ -18,10 +18,19 @@
 -->
 <function>
     <description>
-Validates a xml file against a xsd file.  
-
-Returns true if the xml file is valid, returns false and a warning when it is not.
+Validates a xml file against a xsd file.
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="xmlFile">
+The XML file that will be validated.
+        </parameterDescription>
+		<parameterDescription parameterName="xsdFile">
+The xsd file that will be validated.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+Returns true if the xml file is valid, returns false and a warning when it is not.
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Validating a xml file against a xsd.</header>

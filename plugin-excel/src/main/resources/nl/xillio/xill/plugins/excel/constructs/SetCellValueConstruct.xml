@@ -18,10 +18,27 @@
 -->
 <function>
     <description>
-Changes the value of a given cell to the provided one. The `column` parameter can be either given as numbers or letters (e.g. "A", "AB"), the `row` have to be given as numbers.
+Changes the value of a given cell to the provided one.
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="sheet">
+The sheet that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="column">
+The column of the cell that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="row">
+The row of the cell that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="value">
+The value that will be given to the cell.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+The `column` parameter can be either given as numbers or letters (e.g. "A", "AB"), the `row` have to be given as numbers.
 
 The `value` parameter input will automatically be converted to the corresponding Excel data type. For example, a boolean will be parsed to an Excel boolean.
-    </description>
+	</longDescription>
     <examples>
         <example title="Usage">
             <header>Changing a cell value</header>

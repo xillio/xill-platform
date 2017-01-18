@@ -55,14 +55,13 @@ public class ExampleNode implements PropertiesProvider {
         }
 
         String[] cleaned = removeCharacters(indentOffset, lines);
-
         return String.join("\n", cleaned);
     }
 
     static String[] removeCharacters(int indentOffset, String[] lines) {
         return Arrays.stream(lines)
                 .map(line -> {
-                    if (indentOffset >= line.length()) {
+                    if (countWhiteSpaces(line) == line.length() || indentOffset >= line.length()) {
                         //Is white line
                         return "";
                     }
@@ -77,8 +76,9 @@ public class ExampleNode implements PropertiesProvider {
                 .mapToInt(ExampleNode::countWhiteSpaces)
                 .min();
 
-        if (!offset.isPresent())
+        if (!offset.isPresent()) {
             return -1;
+        }
 
         return offset.getAsInt();
     }

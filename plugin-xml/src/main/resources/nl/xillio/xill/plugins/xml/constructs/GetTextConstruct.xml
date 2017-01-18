@@ -20,6 +20,11 @@
     <description>
 Returns a string containing all text extracted from XML-node (without any markup). 
     </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="node">
+The XML-node that will be used.
+        </parameterDescription>
+	</parameterDescriptions>
     <examples>
         <example title="Usage">
             <header>Assuming we have an XML file note.xml which contains the following:</header>

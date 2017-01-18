@@ -19,19 +19,27 @@
 <function>
     <description>
 Solves the optimal assignment problem using the Hungarian Algorithm on matrix, which is a two-dimensional list containing numbers.  
-
+    </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="matrix">
+The date that will be changed.
+        </parameterDescription>
+		<parameterDescription parameterName="max">
+If set to true the maximum sum should be returned (default). If set to false the minimum sum should be returned.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
 Returns the optimal combination of rows / columns and the optimal sum as an object.  
-The optional argument max (defaults to true) defines whether maximum sum or minimum sum should be returned.  
+
 Useful for calculating optimal costs or income based on a matrix.
 
-The algorithm treats the list as a matrix checks each column and calculates in which row the maximum value is found.
-Then it marks this row down and adds that number to the sum.
-However, each row and each column may only be used once so it will try all interesting combinations and return only the optimum.
-    </description>
+The algorithm treats the list as a matrix checks each column and calculates in which row the maximum value is found. Then it marks this row down and adds that number to the sum. However, each row and each column may only be used once so it will try all interesting combinations and return only the optimum.
+	</longDescription>
     <examples>
         <example title="Usage">
             <code>
-                use Math, System;
+                use Math;
+                use System;
 
                 var matrix = [[0,1,3], [2,2,3], [5,4,1]];
                 System.print(Math.hungarianAlgorithm(matrix, true));

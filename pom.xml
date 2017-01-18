@@ -32,7 +32,7 @@
     <parent>
         <groupId>nl.xillio</groupId>
         <artifactId>xillio-parent</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.6.0-SNAPSHOT</version>
         <relativePath>xillio-parent</relativePath>
     </parent>
 
@@ -109,6 +109,7 @@
         <module>xill-plugins-parent</module>
         <module>xill-processor</module>
         <module>xill-testutils</module>
+        <module>xill-web-service</module>
         <module>xillio-parent</module>
     </modules>
 
