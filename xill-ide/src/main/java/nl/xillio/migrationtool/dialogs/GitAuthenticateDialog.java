@@ -29,6 +29,8 @@ public class GitAuthenticateDialog extends FXMLDialog {
     private PasswordField password;
     @FXML
     private Label message;
+    @FXML
+    private Label lblIncorrectLogin;
 
     private final JGitAuth auth;
     private boolean canceled = true;
@@ -64,6 +66,14 @@ public class GitAuthenticateDialog extends FXMLDialog {
      */
     public boolean isCanceled() {
         return canceled;
+    }
+
+    /**
+     * Set the visibility of the label containing a message that the login information is incorrect.
+     * @param visible a boolean.
+     */
+    public void setIncorrectLoginLabelToVisible(boolean visible){
+        this.lblIncorrectLogin.setVisible(visible);
     }
 }
 
