@@ -61,7 +61,7 @@ public class XmlDocumentationParser implements DocumentationParser {
     private XPathExpression exampleHeaderMDXPathQuery;
     private XPathExpression referenceXPathQuery;
     // Enable all MD extensions except for the hardwraps (this converts linebreaks into <br />, which is unwanted)
-    private static PegDownProcessor markdownProcessor = new PegDownProcessor(Extensions.ALL ^ Extensions.HARDWRAPS);
+    private static PegDownProcessor markdownProcessor = new PegDownProcessor(Extensions.ALL ^ (Extensions.HARDWRAPS | Extensions.ANCHORLINKS));
 
     /**
      * The constructor for the parser when we hand it a factory.
