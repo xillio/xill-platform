@@ -18,24 +18,32 @@
 -->
 <function>
     <description>
-Returns a string, element or a list of elements from the specified `element` matching `xpath`.
+Returns a string, element or a list of elements from the specified `element`'s DOM tree matching `xPath`.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="element">
 The element that will be matched.
         </parameterDescription>
 		<parameterDescription parameterName="xPath">
-The xPath that will be matched
+The xPath used for matching.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
 This function has full XPath 2.0 support.
 
-For more information about the XPath syntax and available xpath functions look here: [w3schools XPath manual] (http://www.w3schools.com/xsl/xpath_intro.asp)
+Extracting values from a web page can sometimes give you a value that differs from the actual page's source. This
+happens because the software that is reading the URL is a real browser. This means that processing is done on the
+resulting DOM tree after loading the page, and not on the source HTML page. The results returned from the `xPath`
+construct can be updated by javascript that is executed when the page is loaded. It also happens with relative URL's
+that are found on a page. When the browser sees a relative URL, it's current value will be prefixed with the URL of the
+loaded page. See the code example below.
+
+For more information about the xPath syntax and available xPath functions look here:
+[w3schools XPath manual] (http://www.w3schools.com/xml/xpath_intro.asp)
 	</longDescription>
     <examples>
         <example title="Usage">
-            <header>Use XPath to extract an element from a web page</header>
+            <header>Use xPath to extract an element from a web page</header>
             <code>
                 use Web;
                 use System;
@@ -45,6 +53,8 @@ For more information about the XPath syntax and available xpath functions look h
 
                 foreach(_,link in links) {
                     var url = Web.xPath(link, "./@src");
+                    // If the url is relative it will be
+                    // prefixed with "http://www.xillio.com/"
                     System.print(url);
                 }
             </code>
