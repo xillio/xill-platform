@@ -51,7 +51,7 @@ when calling `Web.loadPage()`. This deactivates JavaScript and image loading, dr
 page.
 
 ####Loading pages from files
-Local (X)HTML files can also be loaded using the `file://` protocol. However, relative URL's are *not* supported as a
+Local (X)HTML files can also be loaded using the `file://` protocol. However, relative URLs are *not* supported, since a
 URL is used as a locator that should point to an exact location. See RFC-1738 for details. A way to work around this is
 to use `Web.fromString(Stream.getText(File.openRead(file)))` to read files from the file system and load these into the
 web context.
