@@ -1,6 +1,11 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.5.1] - unreleased
+
+### Fix
+* Web.loadPage does not work with file:// protocol [CTC-1935]
+
 ## [3.5.0] - 2017-02-17
 
 ### Add
