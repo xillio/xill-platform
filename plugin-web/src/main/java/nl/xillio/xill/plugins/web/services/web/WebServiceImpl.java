@@ -313,7 +313,7 @@ public class WebServiceImpl implements WebService {
         // Check if the new page is blank while that is not requested.
         String newUrl = driver.getCurrentUrl();
         if ("about:blank".equals(newUrl) && !"about:blank".equals(url)) {
-            throw new InvalidUrlException("The URL " + newUrl + " could not be found or is invalid.");
+            throw new InvalidUrlException("The URL " + url + " could not be found or is invalid.");
         }
     }
 
