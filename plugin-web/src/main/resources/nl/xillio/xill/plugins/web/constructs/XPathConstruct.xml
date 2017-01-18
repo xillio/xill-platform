@@ -29,14 +29,15 @@ The xPath used for matching.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-This function has full XPath 2.0 support.
+This function has XPath 2.0 support.
 
 Extracting values from a web page can sometimes give you a value that differs from the actual page's source. This
 happens because the software that is reading the URL is a real browser. This means that processing is done on the
-resulting DOM tree after loading the page, and not on the source HTML page. The results returned from the `xPath`
-construct can be updated by javascript that is executed when the page is loaded. It also happens with relative URL's
-that are found on a page. When the browser sees a relative URL, it's current value will be prefixed with the URL of the
-loaded page. See the code example below.
+resulting DOM tree after loading the page, and not on the source HTML page.
+
+Keep in mind that the results returned by the `xPath` construct may be updated by javascript that is executed when the page 
+is loaded. This also is the case for relative URL's that are found on a page. When the browser sees a relative URL, its current 
+value will be prefixed with the URL of the loaded page. See the code example below.
 
 For more information about the xPath syntax and available xPath functions look here:
 [w3schools XPath manual] (http://www.w3schools.com/xml/xpath_intro.asp)
