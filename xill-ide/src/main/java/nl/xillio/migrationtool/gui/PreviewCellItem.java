@@ -50,7 +50,7 @@ public class PreviewCellItem extends TreeTableCell<Pair<String, MetaExpression>,
         if (item == null) {
             setText(null);
         } else {
-            setText(new ObservableVariable(item).getValue());
+            setText(ObservableVariable.expressionToString(item));
         }
     }
 

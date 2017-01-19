@@ -41,15 +41,6 @@ public class ObservableVariable {
     }
 
     /**
-     * Create a new anonymous {@link ObservableVariable} without name or source
-     *
-     * @param value
-     */
-    public ObservableVariable(final MetaExpression value) {
-        this("", value, null);
-    }
-
-    /**
      * @return the name
      */
     public String getName() {
@@ -64,7 +55,26 @@ public class ObservableVariable {
             return ExpressionBuilderHelper.NULL.toString();
         }
 
+        return expressionToString(value);
+    }
 
+    /**
+     * @return the source
+     */
+    public Object getSource() {
+        return source;
+    }
+
+    public MetaExpression getExpression() {
+        return value;
+    }
+
+    /**
+     * Utility function to get a string representation of the provided MetaExpression
+     * @param value The MetaExpression to be parsed
+     * @return String representation of the meta expression
+     */
+    public static String expressionToString(MetaExpression value) {
         try {
             switch (value.getType()) {
                 case ATOMIC:
@@ -80,16 +90,5 @@ public class ObservableVariable {
             // CTC-1892 - Catch rare expression-already-closed exception
             return e.getMessage();
         }
-    }
-
-    /**
-     * @return the source
-     */
-    public Object getSource() {
-        return source;
-    }
-
-    public MetaExpression getExpression() {
-        return value;
     }
 }
