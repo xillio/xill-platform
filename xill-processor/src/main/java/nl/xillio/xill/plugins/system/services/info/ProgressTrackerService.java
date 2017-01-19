@@ -39,7 +39,9 @@ public class ProgressTrackerService implements ProgressTracker {
         }
 
         @Override
-        void setProgressBarOnStopBehavior(OnStopBehavior progressBarOnStopBehavior) {}
+        void setProgressBarOnStopBehavior(OnStopBehavior progressBarOnStopBehavior) {
+            // No processing here
+        }
 
         @Override
         Double getCurrentProgress() {
@@ -47,7 +49,9 @@ public class ProgressTrackerService implements ProgressTracker {
         }
 
         @Override
-        void update(Double progress) {}
+        void update(Double progress) {
+            // No processing here
+        }
 
         @Override
         Duration getRemainingTime() {
@@ -126,12 +130,13 @@ public class ProgressTrackerService implements ProgressTracker {
         }
 
         void update(Double progress) {
-            if (Double.compare(startProgress, 0.0) < 0) {
+            if (!isStarted()) {
                 startProgress = progress;
                 startTime = LocalDateTime.now();
             }
             currentProgress = progress;
         }
+
         private boolean isFinished() {
             return Double.compare(currentProgress, 1.0) >= 0;
         }
