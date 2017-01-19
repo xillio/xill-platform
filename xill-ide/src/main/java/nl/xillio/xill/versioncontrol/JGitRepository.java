@@ -104,14 +104,14 @@ public class JGitRepository implements GitRepository {
 
             // Throw an error if merging, and therefore the pull operation, has failed
             // Exclude conflicting merge status, because we create a custom message for that
-            if (!mergeStatus.equals(mergeStatus.CONFLICTING) && !mergeStatus.isSuccessful()) {
+            if (mergeStatus != MergeResult.MergeStatus.CONFLICTING && !mergeStatus.isSuccessful()) {
                 throw new GitException(String.format("Merge attempt was not successful (status: %s)",
                         mergeStatus.toString()));
             }
 
             // Return list of conflicts
             if (mergeResult.getConflicts() == null) {
-                return null;
+                return Collections.emptySet();
             }
 
             return mergeResult.getConflicts().keySet();
@@ -129,6 +129,7 @@ public class JGitRepository implements GitRepository {
         }
     }
 
+    @Override
     public List<String> getBranches() {
         try {
             // Get all remote branches.
@@ -140,10 +141,12 @@ public class JGitRepository implements GitRepository {
         }
     }
 
+
     private String friendlyBranchName(String name) {
         return name.substring(name.lastIndexOf('/') + 1);
     }
 
+    @Override
     public String getCurrentBranchName() {
         try {
             return repository.getRepository().getBranch();
@@ -153,6 +156,7 @@ public class JGitRepository implements GitRepository {
         return null;
     }
 
+    @Override
     public void checkout(String branch) throws GitException {
         // If there is already a local branch, the branch should not be created.
         try {
@@ -168,6 +172,7 @@ public class JGitRepository implements GitRepository {
         }
     }
 
+    @Override
     public void createBranch(String name) throws GitException {
         try {
             repository.branchCreate().setName(name).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
