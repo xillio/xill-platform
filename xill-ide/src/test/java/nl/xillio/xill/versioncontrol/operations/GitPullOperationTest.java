@@ -19,6 +19,8 @@ import nl.xillio.xill.versioncontrol.GitException;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import org.testng.annotations.Test;
 
+import java.util.Collections;
+
 import static org.mockito.Mockito.*;
 
 public class GitPullOperationTest {
@@ -26,7 +28,7 @@ public class GitPullOperationTest {
     public void testNormal() throws GitException {
         // Mock.
         JGitRepository repo = mock(JGitRepository.class);
-        when(repo.pullCommand()).thenReturn(null);
+        when(repo.pullCommand()).thenReturn(Collections.emptySet());
         GitPullOperation operation = new GitPullOperation(repo);
 
         // Execute, verify.
