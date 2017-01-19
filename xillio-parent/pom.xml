@@ -352,7 +352,7 @@
                 <artifactId>org.eclipse.jgit</artifactId>
                 <version>${jgit.version}</version>
             </dependency>
-			<dependency>
+            <dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger-ui</artifactId>
                 <version>${springfox.version}</version>
@@ -538,8 +538,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <!--<version>0.7.7.201606060606</version>-->
-                    <version>0.7.8</version>
+                    <version>0.7.7.201606060606</version>
                 </plugin>
             </plugins>
         </pluginManagement>
