@@ -1033,4 +1033,14 @@ public class WebServiceImplTest {
         // run
         implementation.download(url, Paths.get("42"), null, 1000);
     }
+
+    @Test(expectedExceptions = InvalidUrlException.class, expectedExceptionsMessageRegExp = "The URL file://relative\\.html could not be found or is invalid.")
+    public void testRelativeUrl() throws Exception {
+        WebServiceImpl implementation = spy(new WebServiceImpl());
+        WebVariable var = mock(WebVariable.class);
+        PhantomJSDriver driver = mock(PhantomJSDriver.class);
+        when(var.getDriver()).thenReturn(driver);
+        when(driver.getCurrentUrl()).thenReturn("about:blank");
+        implementation.httpGet(var, "file://relative.html");
+    }
 }

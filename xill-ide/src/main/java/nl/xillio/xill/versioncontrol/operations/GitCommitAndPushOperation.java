@@ -29,7 +29,7 @@ public class GitCommitAndPushOperation extends GitOperation {
     private static final Logger LOGGER = Log.get();
 
     private String commitMessage;
-    private boolean committed;
+    protected boolean committed;
 
     /**
      * Create a new commit and push operation.

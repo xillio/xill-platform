@@ -15,8 +15,6 @@
  */
 package nl.xillio.xill.versioncontrol;
 
-import org.eclipse.jgit.api.PullResult;
-
 import java.util.List;
 import java.util.Set;
 
