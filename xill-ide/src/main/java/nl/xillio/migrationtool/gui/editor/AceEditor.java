@@ -81,6 +81,9 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
     private ReplaceBar replaceBar;
     private int occurrences = 0;
 
+    // Keep a reference to make sure the autocompletion list survives the GC.
+    private XillJSObject xillCoreOverride = null;
+
     static {
         try {
             deployEditor();
@@ -456,9 +459,10 @@ public class AceEditor implements EventHandler<javafx.event.Event>, Replaceable,
         JSObject jsobj = (JSObject) executeJSBlocking("window");
         jsobj.setMember("javaEditor", this);
 
-        // Check if the tab is a robot tab.
+        // Check/ if the tab is a robot tab.
         if (tab instanceof RobotTab) {
-            jsobj.setMember("xillCoreOverride", new XillJSObject(((RobotTab) tab).getProcessor()));
+            xillCoreOverride = new XillJSObject(((RobotTab) tab).getProcessor());
+            jsobj.setMember("xillCoreOverride", xillCoreOverride);
         }
 
         executeJSBlocking("init();");
