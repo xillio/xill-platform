@@ -232,7 +232,7 @@ public class OptionsFactory {
                 Credentials credentials = getCredentials(value, label());
 
                 MetaExpression workstation = proxyObject.get("workstation");
-                if(workstation.isNull()) {
+                if(workstation == null || workstation.isNull()) {
                     workstation = getWorkstation("myworkstation");
                 }
 

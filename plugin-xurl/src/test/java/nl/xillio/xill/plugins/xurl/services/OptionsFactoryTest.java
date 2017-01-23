@@ -186,16 +186,50 @@ public class    OptionsFactoryTest extends TestUtils {
 
     @Test()
     public void testNTLMNoWorkstation() {
+        // Null value
         MetaExpression input = createNTLMObject(USERNAME, PASSWORD, null, DOMAIN);
 
         optionsFactory.build(input);
+
+        // Entry not provided at all
+        MetaExpression input2 = createNTLMObjectNoWorkspace(USERNAME, PASSWORD, DOMAIN);
+
+        optionsFactory.build(input2);
     }
 
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*domain.*")
     public void testNTLMNoDomain() {
+        // Null value
         MetaExpression input = createNTLMObject(USERNAME, PASSWORD, WORKSTATION, null);
 
         optionsFactory.build(input);
+
+        // Entry not provided at all
+        MetaExpression input2 = createNTLMObjectNoDomain(USERNAME, PASSWORD, WORKSTATION);
+
+        optionsFactory.build(input2);
+
+    }
+
+
+    private MetaExpression createNTLMObjectNoDomain(String username, String password, String workspace) {
+        MetaExpression auth = createMap(
+                "username", fromValue(username),
+                "password", fromValue(password),
+                "workspace", fromValue(workspace)
+        );
+        MetaExpression input = createMap("ntlm", auth);
+        return input;
+    }
+
+    private MetaExpression createNTLMObjectNoWorkspace(String username, String password, String domain) {
+        MetaExpression auth = createMap(
+                "username", fromValue(username),
+                "password", fromValue(password),
+                "domain", fromValue(domain)
+        );
+        MetaExpression input = createMap("ntlm", auth);
+        return input;
     }
 
     private MetaExpression createNTLMObject(String username, String password, String workstation, String domain) {
