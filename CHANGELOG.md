@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Add
 * Qualified includes for xill libraries using the new `as` keyword [CTC-1946]
 * Function overloading based on parameters [CTC-1613]
-* Create template plugin [CTC-1799]
+* `Template` plugin [CTC-1799]
 * `System.parseJSON()` now parses LIST [CTC-1769]
 * Warn users about invalid asset names [CTC-1798]
 * Support external logging by adding logging handler that exposes all logging events and exceptions [CTC-2031]
@@ -46,6 +46,8 @@ All notable changes to this project will be documented in this file.
 * Formatting in Usage headers in help file [CTC-1709]
 * `Excel.setCellFormula()` does not create formula in Excel sheet [CTC-1930]
 * Pipeline functions do not support qualified includes [CTC-2001]
+* Unable to use multibyte characters in Properties package [CTC-1846]
+* Autocomplete shows only local results [CTC-2056]
 
 ## [3.4.1] - 2016-10-28
 
