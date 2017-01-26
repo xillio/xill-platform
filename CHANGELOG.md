@@ -53,6 +53,7 @@ All notable changes to this project will be documented in this file.
 * `Excel.setCellFormula()` does not create formula in Excel sheet [CTC-1930]
 * Pipeline functions do not support qualified includes [CTC-2001]
 * Unable to use multibyte characters in Properties package [CTC-1846]
+* Autocomplete shows only local results [CTC-2056]
 
 ## [3.4.1] - 2016-10-28
 
