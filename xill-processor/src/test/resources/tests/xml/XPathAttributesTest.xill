@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /*
-* Specification: xPath MUST return a string for single attribute selectors, and an object for a generic attribute selector ("/@*")
+* Specification: xPath MUST return a string for single attribute selectors, and an object for a generic attribute selector ("@*")
 * Input: See dataset
 * Expected: See dataset
 */
@@ -24,7 +24,7 @@ use Assert, XML, System;
 // Xml, xPath, expected.
 var dataset = [
 	[ "<Pants shape=\"square\" />", "@shape", "square" ],
-	[ "<Parent><Child shape=\"square\" /><Child shape=\"round\" /></Parent>", "*/@shape", [ "square", "round" ] ],
+	[ "<Parent><Pants shape=\"square\" /><Pants shape=\"round\" /></Parent>", "*/@shape", [ "square", "round" ] ],
 	[ "<Pants shape=\"square\" />", "@*", { "shape": "square" } ]
 ];
 
