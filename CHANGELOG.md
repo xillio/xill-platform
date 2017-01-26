@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
 * Deprecate `File.getText()` [CTC-1860]
 * Update File and Stream help files [CTC-1869]
 * Improve layout for help files. Add a parameter description to all help files [CTC-1511]
+* Using `XML.xPath()` with `@*` now returns an `OBJECT` that includes the attribute names [CTC-2054]
 
 ### Fix
 * Settings file not found for paths with whitespaces [CTC-1887]
