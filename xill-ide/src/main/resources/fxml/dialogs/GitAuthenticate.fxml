@@ -16,11 +16,9 @@
     limitations under the License.
 
 -->
-<?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
-<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="150.0" prefWidth="400.0" styleClass="root" stylesheets="@../styles.css"
+<AnchorPane prefHeight="150.0" prefWidth="500.0" styleClass="root" stylesheets="@../styles.css"
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox styleClass="dialogWrapper" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
@@ -41,6 +39,7 @@
                 </AnchorPane>
                 <HBox styleClass="buttonsWrapper" VBox.vgrow="NEVER">
                     <children>
+                        <Label text="The login information was incorrect, please try again." visible="false" fx:id="lblIncorrectLogin"></Label>
                         <Button fx:id="okBtn" defaultButton="true" mnemonicParsing="false" onAction="#okBtnPressed"
                                 text="Ok"/>
                         <Button fx:id="cancelBtn" cancelButton="true" mnemonicParsing="false"

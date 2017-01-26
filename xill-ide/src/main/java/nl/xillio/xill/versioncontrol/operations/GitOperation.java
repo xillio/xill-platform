@@ -63,14 +63,10 @@ public abstract class GitOperation extends Task<Void> {
             // Check if the exception is an authorization exception.
             if (auth.isAuthorizationException(e)) {
                 boolean reRun = false;
-
-                // Check whether the invalid credentials dialog should be shown.
-                if (auth.getCredentials() != null) {
-                    auth.openCredentialsInvalidDialog();
-                }
+                boolean previouslyInvalid = auth.getCredentials() != null;
 
                 // Check if we should rerun, count down the latches.
-                if (auth.getAuthentication()) {
+                if (auth.getAuthentication(previouslyInvalid)) {
                     reRun = true;
                 } else {
                     // If the dialog was canceled, cancel the operation.
@@ -89,6 +85,7 @@ public abstract class GitOperation extends Task<Void> {
         }
     }
 
+    @SuppressWarnings("squid:S1612") // This lambda cannot be converted to a method reference because JavaFX will throw an error
     protected void handleError(Throwable cause) {
         Platform.runLater(() -> new AlertDialog(Alert.AlertType.ERROR, "Error", "An error occurred.", cause.getMessage()).showAndWait());
     }

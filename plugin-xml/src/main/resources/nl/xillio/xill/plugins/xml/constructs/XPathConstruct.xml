@@ -32,6 +32,20 @@ The optional namespace that will be used.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
+When querying for attributes using `@`, there are two possible scenarios:
+
+| Scenario             | Return Value |
+|----------------------|--------------|
+| one single result    | `ATOMIC` containing the attribute value |
+| multiple results     | `LIST` containing the attribute values |
+
+When querying for all attributes using `@*`, there are again two possible scenarios:
+
+| Scenario               | Return Value |
+|------------------------|--------------|
+| one single tag matches | `OBJECT` containing the name(s) of the matching attributes and their values |
+| multiple results       | `LIST` of OBJECTS  containing the name(s) of the matching attributes and their values |
+
 For more information about the XPath syntax and available xPath functions look here: [w3schools XPath manual](http://www.w3schools.com/xsl/xpath_intro.asp)
 	</longDescription>
     <examples>
@@ -64,6 +78,46 @@ For more information about the XPath syntax and available xPath functions look h
             <code>
                 &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;body&gt;Don't forget me this weekend!&lt;/body&gt;
            </code>
+        </example>
+        <example>
+            <header>Example of a query for an attribute</header>
+            <code>
+                <![CDATA[
+                    use XML, System ;
+
+                    var xml = XML.fromString("
+                    <Root>
+                        <Pants shape=\"square\"/>
+                        <Shirt shape=\"square\"/>
+                    </Root>");
+
+                    System.print(XML.xPath(xml, "//Pants/@shape", {})) ;
+
+                    System.print(XML.xPath(xml, "//@shape", {})) ;
+
+                    System.print(XML.xPath(xml, "//@*", {})) ;
+                ]]>
+            </code>
+            <header>
+                Output:
+            </header>
+            <code>
+                square
+
+                [
+                    "square",
+                    "square"
+                ]
+
+                [
+                    {
+                        "shape" : "square"
+                    },
+                    {
+                        "shape" : "square"
+                    }
+                ]
+            </code>
         </example>
     </examples>
     <references>
