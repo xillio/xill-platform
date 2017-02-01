@@ -116,7 +116,7 @@ public class ForeachInstruction extends CompoundInstruction {
         if (value.hasMeta(MetaExpressionIterator.class)) {
             return doIterations(debugger, value.getMeta(MetaExpressionIterator.class), null);
         } else {
-            return processIteration(() -> ExpressionBuilderHelper.fromValue(0), value, debugger);
+            return doIterations(debugger, new SingletonIterator<>(value), null);
         }
     }
 
@@ -200,5 +200,39 @@ public class ForeachInstruction extends CompoundInstruction {
             return Arrays.asList(valueVar, keyVar, list, instructionSet);
         }
         return Arrays.asList(valueVar, list, instructionSet);
+    }
+
+
+    /**
+     * Implementation of an iterator that takes a single object which it will iterate over once
+     * @param <E> The object to iterate once
+     */
+    private class SingletonIterator<E> implements Iterator<E>{
+        private final E item;
+        private boolean gotItem = false;
+
+        SingletonIterator(final E item) {
+            this.item = item;
+        }
+
+        public boolean hasNext() {
+            return !this.gotItem;
+        }
+
+        public E next() {
+            if(this.gotItem) {
+                throw new NoSuchElementException();
+            }
+            this.gotItem = true;
+            return item;
+        }
+
+        public void remove() {
+            if(!this.gotItem) {
+                this.gotItem = true;
+            } else {
+                throw new NoSuchElementException();
+            }
+        }
     }
 }
