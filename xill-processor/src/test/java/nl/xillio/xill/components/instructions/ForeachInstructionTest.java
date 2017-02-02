@@ -222,4 +222,33 @@ public class ForeachInstructionTest extends TestUtils {
 
         testProcessList();
     }
+
+    // Test that in a foreach-loop that is iterating an atomic value, a continue statement will only
+    // jump the current loop, but not the parent loop
+    @Test
+    public void testIterationsAtomicContinue() {
+        MetaExpression atomic = fromValue("ZZZ");
+        VariableDeclaration var = mock(VariableDeclaration.class);
+
+        InstructionSet outerInstructions = spy(new InstructionSet(debugger));
+        InstructionSet innerInstructions = spy(new InstructionSet(debugger));
+
+        Instruction finalInstruction = spy(new ReturnInstruction());
+        Instruction continueInstruction = spy(new ContinueInstruction());
+
+        ForeachInstruction foreach = new ForeachInstruction(innerInstructions, atomic, var);
+
+        Processable outerLoopCondition = mock(Processable.class);
+        when(outerLoopCondition.process(any())).thenReturn(InstructionFlow.doReturn(fromValue(true)));
+
+        instructions.add(new WhileInstruction(outerLoopCondition, outerInstructions));
+        outerInstructions.add(foreach);
+        outerInstructions.add(finalInstruction);
+
+        innerInstructions.add(continueInstruction);
+
+        instructions.process(debugger);
+
+        verify(finalInstruction).process(debugger);
+    }
 }

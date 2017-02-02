@@ -215,10 +215,12 @@ public class ForeachInstruction extends CompoundInstruction {
             this.item = item;
         }
 
+        @Override
         public boolean hasNext() {
             return !this.gotItem;
         }
 
+        @Override
         public E next() {
             if(this.gotItem) {
                 throw new NoSuchElementException();
@@ -227,6 +229,7 @@ public class ForeachInstruction extends CompoundInstruction {
             return item;
         }
 
+        @Override
         public void remove() {
             if(!this.gotItem) {
                 this.gotItem = true;
