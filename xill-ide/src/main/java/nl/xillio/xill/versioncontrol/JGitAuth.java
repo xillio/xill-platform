@@ -23,6 +23,9 @@ import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -32,8 +35,30 @@ import java.util.concurrent.FutureTask;
  * @author Edward van Egdom
  */
 public class JGitAuth {
-    private CredentialsProvider credentials;
     private static final Logger LOGGER = Log.get();
+    private static final Map<File, JGitAuth> AUTH_POOL = new HashMap<>();
+
+    private CredentialsProvider credentials;
+
+    private JGitAuth() {
+    }
+
+    /**
+     * Get a JGitAuth object from the auth pool, based on the git folder location.
+     *
+     * @param gitFolder The git folder location.
+     * @return The JGitAuth object.
+     */
+    public static JGitAuth get(File gitFolder) {
+        // If the pool contains an entry, use that.
+        if (AUTH_POOL.containsKey(gitFolder))
+            return AUTH_POOL.get(gitFolder);
+
+        // Add a new entry to the pool.
+        JGitAuth newAuth = new JGitAuth();
+        AUTH_POOL.put(gitFolder, newAuth);
+        return newAuth;
+    }
 
     /**
      * Set the credentials.
@@ -60,7 +85,7 @@ public class JGitAuth {
      * @return true if the credentials were entered, or false if the dialog was canceled.
      */
     public boolean getAuthentication(boolean invalidCredentials) {
-        final FutureTask dialog = new FutureTask(() -> {
+        final FutureTask<Boolean> dialog = new FutureTask<>(() -> {
             GitAuthenticateDialog dlg = new GitAuthenticateDialog(this);
             dlg.setIncorrectLoginLabelToVisible(invalidCredentials);
             dlg.showAndWait();
@@ -70,9 +95,9 @@ public class JGitAuth {
 
         boolean authDialogCanceled;
         try {
-            authDialogCanceled = (boolean) dialog.get();
-        } catch (InterruptedException|ExecutionException e) {
-            LOGGER.error("Error while authenticating",e);
+            authDialogCanceled = dialog.get();
+        } catch (InterruptedException | ExecutionException e) {
+            LOGGER.error("Error while authenticating", e);
             authDialogCanceled = true;
         }
 

@@ -46,7 +46,7 @@ public class GitOperationTest {
 
         operation.call();
 
-        // Verify that (apart from the getAuth) there are no interactions with the repo.
+        // Verify that (apart from the get) there are no interactions with the repo.
         verifyNoMoreInteractions(repo, auth);
         verify(operation, times(1)).execute();
     }
