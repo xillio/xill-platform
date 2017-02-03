@@ -251,4 +251,43 @@ public class ForeachInstructionTest extends TestUtils {
 
         verify(finalInstruction).process(debugger);
     }
+
+    @Test
+    public void testSingletonIteratorLoop() {
+        Object object = new Object();
+        Iterator iterator = spy(new ForeachInstruction.SingletonIterator<>(object));
+
+        while (iterator.hasNext()) {
+            assertEquals(iterator.next(), object);
+        }
+
+        verify(iterator, times(2)).hasNext();
+        verify(iterator, times(1)).next();
+    }
+
+    @Test
+    public void testSingletonIteratorRemove() {
+        Iterator iterator = spy(new ForeachInstruction.SingletonIterator<>(new Object()));
+
+        iterator.remove();
+        assertFalse(iterator.hasNext());
+    }
+
+    @Test(expectedExceptions = NoSuchElementException.class)
+    public void testSingletonIteratorRemoveException() {
+        Iterator iterator = spy(new ForeachInstruction.SingletonIterator<>(new Object()));
+
+        iterator.next();
+        iterator.remove();
+    }
+
+    @Test(expectedExceptions = NoSuchElementException.class)
+    public void testSingletonIteratorNextException() {
+        Iterator iterator = spy(new ForeachInstruction.SingletonIterator<>(new Object()));
+
+        iterator.next();
+        iterator.next();
+    }
+
+
 }

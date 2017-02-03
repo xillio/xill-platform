@@ -207,7 +207,7 @@ public class ForeachInstruction extends CompoundInstruction {
      * Implementation of an iterator that takes a single object which it will iterate over once
      * @param <E> The object to iterate once
      */
-    private class SingletonIterator<E> implements Iterator<E>{
+    static class SingletonIterator<E> implements Iterator<E>{
         private final E item;
         private boolean gotItem = false;
 
