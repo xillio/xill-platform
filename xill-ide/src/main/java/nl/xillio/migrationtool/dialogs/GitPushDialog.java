@@ -21,16 +21,21 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import nl.xillio.xill.versioncontrol.operations.GitCommitAndPushOperation;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 public class GitPushDialog extends GitDialog {
     @FXML
     private TextField message;
     @FXML
-    private ListView<String> fileList;
+    private ListView<TextFlow> fileList;
     @FXML
     private Label messageStatus;
     @FXML
@@ -49,10 +54,18 @@ public class GitPushDialog extends GitDialog {
         boolean changes = !changedFiles.isEmpty();
 
         if (changes) {
-            fileList.setItems(FXCollections.observableArrayList(changedFiles));
+            Text text1, text2;
+            Set<TextFlow> changedFilesTexts = new HashSet<>();
+            for (String changedFile : changedFiles) {
+                text1 = new Text(changedFile.substring(0,5));
+                text1.setFont(Font.font("monospaced", 16));
+                text2 = new Text(changedFile.substring(5));
+                changedFilesTexts.add(new TextFlow(text1,text2));
+            }
+            fileList.setItems(FXCollections.observableArrayList(changedFilesTexts));
             message.textProperty().addListener((obs) -> okBtn.setDisable("".equals(message.getText())));
         } else {
-            fileList.setItems(FXCollections.observableArrayList("No changes were found"));
+            fileList.setItems(FXCollections.observableArrayList(new TextFlow(new Text("No changes were found"))));
         }
     }
 

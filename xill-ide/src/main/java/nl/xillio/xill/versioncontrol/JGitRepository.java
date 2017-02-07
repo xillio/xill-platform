@@ -43,8 +43,10 @@ public class JGitRepository implements GitRepository {
 
     private Git repository;
     private JGitAuth auth;
+    private File path;
 
     public JGitRepository(File path) {
+        this.path = path;
         FileRepositoryBuilder builder = new FileRepositoryBuilder().addCeilingDirectory(path).findGitDir(path);
 
         try {
@@ -187,13 +189,13 @@ public class JGitRepository implements GitRepository {
         try {
             Status status = repository.status().call();
             for (String fileName: status.getMissing() ) {
-                changes.add("(removed)    " + fileName);
+                changes.add("-    " + fileName);
             }
             for (String fileName: status.getUntracked() ) {
-                changes.add("(added)    " + fileName);
+                changes.add("+    " + fileName);
             }
             for (String fileName: status.getModified() ) {
-                changes.add("(changed)    " + fileName);
+                changes.add("*    " + fileName);
             }
         } catch (GitAPIException | NoWorkTreeException e) {
             LOGGER.error("Error retrieving changed files.", e);
