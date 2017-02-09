@@ -27,7 +27,6 @@ import javafx.scene.text.TextFlow;
 import nl.xillio.xill.versioncontrol.JGitRepository;
 import nl.xillio.xill.versioncontrol.operations.GitCommitAndPushOperation;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -57,10 +56,10 @@ public class GitPushDialog extends GitDialog {
             Text text1, text2;
             Set<TextFlow> changedFilesTexts = new HashSet<>();
             for (String changedFile : changedFiles) {
-                text1 = new Text(changedFile.substring(0,5));
+                text1 = new Text(changedFile.substring(0, 5));
                 text1.setFont(Font.font("monospaced", 16));
                 text2 = new Text(changedFile.substring(5));
-                changedFilesTexts.add(new TextFlow(text1,text2));
+                changedFilesTexts.add(new TextFlow(text1, text2));
             }
             fileList.setItems(FXCollections.observableArrayList(changedFilesTexts));
             message.textProperty().addListener((obs) -> okBtn.setDisable("".equals(message.getText())));
