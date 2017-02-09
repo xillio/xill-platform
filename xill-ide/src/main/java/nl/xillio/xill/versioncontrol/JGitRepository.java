@@ -186,17 +186,23 @@ public class JGitRepository implements GitRepository {
     @Override
     public Set<String> getChangedFiles() {
         Set<String> changes = new HashSet<>();
+        Set<String> added = new HashSet<>();
+        Set<String> modified = new HashSet<>();
+        Set<String> removed = new HashSet<>();
         try {
             Status status = repository.status().call();
             for (String fileName: status.getMissing() ) {
-                changes.add("-    " + fileName);
+                removed.add("-    " + fileName);
             }
             for (String fileName: status.getUntracked() ) {
-                changes.add("+    " + fileName);
+                added.add("+    " + fileName);
             }
             for (String fileName: status.getModified() ) {
-                changes.add("*    " + fileName);
+                modified.add("*    " + fileName);
             }
+            changes.addAll(removed);
+            changes.addAll(modified);
+            changes.addAll(added);
         } catch (GitAPIException | NoWorkTreeException e) {
             LOGGER.error("Error retrieving changed files.", e);
         }
