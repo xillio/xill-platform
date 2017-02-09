@@ -220,20 +220,25 @@ public class JGitRepositoryTest {
 
     @Test
     public void testGetChangedFiles() throws GitAPIException {
-        Set<String> uncommitted = new HashSet<>();
-        uncommitted.add("not committed");
+        Set<String> modified = new HashSet<>();
+        modified.add("something changed");
+        Set<String> removed = new HashSet<>();
+        removed.add("no longer there");
         Set<String> untracked = new HashSet<>();
-        untracked.add("not tracked");
-        Set<String> total = new HashSet<>(uncommitted);
-        total.addAll(untracked);
+        untracked.add("just added");
+        Set<String> total = new HashSet<>();
+        total.add("+    just added");
+        total.add("*    something changed");
+        total.add("-    no longer there");
 
         // Mock.
         StatusCommand cmd = mock(StatusCommand.class);
         when(git.status()).thenReturn(cmd);
         Status status = mock(Status.class);
         when(cmd.call()).thenReturn(status);
-        when(status.getUncommittedChanges()).thenReturn(uncommitted);
+        when(status.getModified()).thenReturn(modified);
         when(status.getUntracked()).thenReturn(untracked);
+        when(status.getMissing()).thenReturn(removed);
 
         // Run.
         Set<String> result = repository.getChangedFiles();
