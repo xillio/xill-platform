@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Fix
 * Web.loadPage does not work with file:// protocol [CTC-1935]
 * Store git credentials [CTC-1975]
+* Cannot divide by zero error in progress bar [CTC-1884]
 
 ## [3.5.0] - unreleased
 
