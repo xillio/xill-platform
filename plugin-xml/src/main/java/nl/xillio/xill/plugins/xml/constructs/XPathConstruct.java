@@ -74,64 +74,63 @@ public class XPathConstruct extends Construct {
             }
         }
 
-        Object result = service.xpath(node, xpathVar.getStringValue(), namespaces);
-        return xpathResultToMetaExpression(result, service);
+        String xpath = xpathVar.getStringValue();
+        Object result = service.xpath(node, xpath, namespaces);
+        return xpathResultToMetaExpression(result, service, xpath);
     }
 
-
-    protected static MetaExpression xpathResultToMetaExpression(Object result, XpathService service) {
-        if(result instanceof String) {
+    protected static MetaExpression xpathResultToMetaExpression(Object result, XpathService service, final String xpath) {
+        if (result instanceof String) {
             return fromValue((String) result);
-        }
-        else if(result instanceof NodeList) {
-            return xpathResultToMetaExpression((NodeList) result, service);
-        }
-        else if(result instanceof Node) {
-            return xpathResultToMetaExpression((Node) result);
-        }
-        else {
+        } else if (result instanceof NodeList) {
+            return xpathResultToMetaExpression((NodeList) result, service, xpath);
+        } else if (result instanceof Node) {
+            return xpathResultToMetaExpression((Node) result, xpath);
+        } else {
             throw new OperationFailedException("extract information from XML node list", "unexpected result type: " + result.getClass().getSimpleName());
         }
     }
 
-
-    protected static MetaExpression xpathResultToMetaExpression(final NodeList result, XpathService service) {
+    protected static MetaExpression xpathResultToMetaExpression(final NodeList result, XpathService service, final String xpath) {
         int resultCardinality = result.getLength();
 
-        if(resultCardinality == 0) {
+        if (resultCardinality == 0) {
             return NULL;
-        }
-        else if(resultCardinality == 1) {
-            return xpathResultToMetaExpression(result.item(0));
-        }
-        else {
-            return fromValue(service.asStream(result).map(XPathConstruct::xpathResultToMetaExpression).collect(Collectors.toList()));
+        } else if (resultCardinality == 1) {
+            return xpathResultToMetaExpression(result.item(0), xpath);
+        } else {
+            return fromValue(service.asStream(result).map(n -> xpathResultToMetaExpression(n, xpath)).collect(Collectors.toList()));
         }
     }
 
-
-    protected static MetaExpression xpathResultToMetaExpression(final Node node) {
+    protected static MetaExpression xpathResultToMetaExpression(final Node node, final String xpath) {
         short nodeType = node.getNodeType();
         if (nodeType == Node.CDATA_SECTION_NODE ||
                 nodeType == Node.ENTITY_NODE ||
                 nodeType == Node.TEXT_NODE) {
             return fromValue(node.getTextContent());
-        }
-        else if (nodeType == Node.ATTRIBUTE_NODE) {
-            LinkedHashMap<String, MetaExpression> attributeMap = new LinkedHashMap<>();
-            attributeMap.put(node.getNodeName(), fromValue(node.getNodeValue()));
-            return fromValue(attributeMap);
-        }
-        else {
+        } else if (nodeType == Node.ATTRIBUTE_NODE) {
+            return makeAttributeMetaExpression(node, xpath);
+        } else {
             // XML nodes that cannot be converted to something xill: attach metadata expression
             return makeXmlNodeMetaExpression(node);
         }
     }
 
-
     protected static MetaExpression makeXmlNodeMetaExpression(final Node node) {
         MetaExpression output = fromValue(node.toString());
         output.storeMeta(new XmlNodeVar(node));
         return output;
+    }
+
+    protected static MetaExpression makeAttributeMetaExpression(final Node node, final String xpath) {
+        // If the xpath ends with "@*" return an object with all the attributes, otherwise return the attribute value.
+        if (xpath.endsWith("@*")) {
+            LinkedHashMap<String, MetaExpression> attributeMap = new LinkedHashMap<>();
+            attributeMap.put(node.getNodeName(), fromValue(node.getNodeValue()));
+            return fromValue(attributeMap);
+        } else {
+            return fromValue(node.getNodeValue());
+        }
     }
 }
