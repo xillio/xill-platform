@@ -3,15 +3,18 @@ All notable changes to this project will be documented in this file.
 
 ## [3.6.0] - unreleased
 
+### Add
+* Git integration. Push and pull can be done from the IDE [CTC-1919]
+
 ### Fix
 * Web.loadPage does not work with file:// protocol [CTC-1935]
+* Store git credentials [CTC-1975]
 
 ## [3.5.0] - unreleased
 
 ### Add
 * Qualified includes for xill libraries using the new `as` keyword [CTC-1946]
 * Function overloading based on parameters [CTC-1613]
-* Git integration. Push and pull can be done from the IDE [CTC-1919]
 * `Template` plugin [CTC-1799]
 * `System.parseJSON()` now parses LIST [CTC-1769]
 * Warn users about invalid asset names [CTC-1798]

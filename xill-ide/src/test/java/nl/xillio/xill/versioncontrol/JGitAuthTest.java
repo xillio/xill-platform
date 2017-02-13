@@ -20,10 +20,12 @@ import org.eclipse.jgit.transport.CredentialItem;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.testng.annotations.Test;
 
+import java.io.File;
+
 import static org.testng.Assert.*;
 
 public class JGitAuthTest {
-    private JGitAuth auth = new JGitAuth();
+    private JGitAuth auth = JGitAuth.get(new File(""));
 
     @Test
     public void testCredentialsProvider() {
@@ -54,5 +56,18 @@ public class JGitAuthTest {
 
         assertFalse(auth.isAuthorizationException(noAuthException));
         assertTrue(auth.isAuthorizationException(authException));
+    }
+
+    @Test
+    public void testAuthPool() {
+        // These should return the same auth object, because they have the same directory.
+        JGitAuth one = JGitAuth.get(new File("some/dir"));
+        JGitAuth sameAsOne = JGitAuth.get(new File("some/dir"));
+
+        // This is a different directory, and thus should be a different auth object.
+        JGitAuth other = JGitAuth.get(new File("other/dir"));
+
+        assertSame(sameAsOne, one);
+        assertNotSame(other, one);
     }
 }
