@@ -26,7 +26,7 @@ var dataset = [
 	[ "<Pants shape=\"square\" />", "@shape", "square" ],
 	[ "<Parent><Pants shape=\"square\" /><Pants shape=\"round\" /></Parent>", "*/@shape", [ "square", "round" ] ],
 	[ "<Pants shape=\"square\" />", "@*", { "shape": "square" } ],
-	[ "<Pants shape=\"square\" pattern=\"stars\" />", "/Pants/@*", { "pattern": "stars", "shape": "square" } ],
+	[ "<Pants shape=\"square\" pattern=\"stars\" />", "/Pants/@*", [ { "pattern": "stars", "shape": "square" } ] ],
 	[ "<Parent><Pants shape=\"square\" pattern=\"stars\" /><Pants shape=\"round\" pattern=\"blocks\" /></Parent>",
 		"//@*", [ { "shape": "square", "pattern": "stars" }, { "shape": "round", "pattern": "blocks" } ] ]
 ];
