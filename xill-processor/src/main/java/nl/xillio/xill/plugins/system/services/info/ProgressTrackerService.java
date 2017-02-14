@@ -20,113 +20,142 @@ import nl.xillio.xill.services.ProgressTracker;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.NoSuchElementException;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * This class represents a {@link ProgressTracker} implementation that provides information about the progress of currently running robots.
+ * This class represents a {@link ProgressTracker} implementation that provides information about the progress of
+ * currently running robots.
  */
 @Singleton
 public class ProgressTrackerService implements ProgressTracker {
 
-    private class ProgressInfo {
-        private OnStopBehavior progressBarOnStopBehavior = OnStopBehavior.HIDE;
-        private double currentProgress = -1; // Current progress (<0 if not set yet)
-        private double startProgress = -1; // The first set progress (<0 if not set yet)
-        private LocalDateTime startTime; // The datetime when the first progress was set (null if not set yet)
-    }
+    private final Map<UUID, ProgressInfo> progressData = new ConcurrentHashMap<>();
+    private static final ProgressInfo EMPTY_PROGRESS_INFO = new ProgressInfo() {
+        @Override
+        OnStopBehavior getProgressBarOnStopBehavior() {
+            return OnStopBehavior.NA;
+        }
 
-    private final HashMap<UUID, ProgressInfo> progressData = new HashMap<>();
+        @Override
+        void setProgressBarOnStopBehavior(OnStopBehavior progressBarOnStopBehavior) {
+            // No processing here
+        }
+
+        @Override
+        Double getCurrentProgress() {
+            return null;
+        }
+
+        @Override
+        void update(Double progress) {
+            // No processing here
+        }
+
+        @Override
+        Duration getRemainingTime() {
+            return null;
+        }
+
+    };
 
     @Override
     public void setOnStopBehavior(UUID compilerSerialId, OnStopBehavior onStopBehavior) {
-        ProgressInfo progressInfo = get(compilerSerialId, true);
-        // Do nothing if the robot does not exist
-        if (progressInfo != null) {
-            progressInfo.progressBarOnStopBehavior = onStopBehavior;
-        }
+        getOrCreate(compilerSerialId).setProgressBarOnStopBehavior(onStopBehavior);
     }
 
     @Override
     public OnStopBehavior getOnStopBehavior(UUID compilerSerialId) {
-        ProgressInfo progressInfo = get(compilerSerialId, false);
-        if (progressInfo == null) {
-            return null;
-        } else {
-            return progressInfo.progressBarOnStopBehavior;
-        }
+        return get(compilerSerialId).getProgressBarOnStopBehavior();
     }
 
     @Override
     public void setProgress(UUID compilerSerialId, double progress) {
-        ProgressInfo progressInfo = get(compilerSerialId, true);
-        if (progressInfo == null) {
-            // If the robot does not exist, do nothing
-            return;
-        }
-        progressInfo.currentProgress = progress;
-        if (progressInfo.startProgress < 0) {
-            progressInfo.startProgress = progress;
-            progressInfo.startTime = LocalDateTime.now();
-        }
+        getOrCreate(compilerSerialId).update(progress);
     }
 
     @Override
     public Double getProgress(UUID compilerSerialId) {
-        ProgressInfo progressInfo = get(compilerSerialId, false);
-        if (progressInfo == null) {
-            return null;
-        } else {
-            return progressInfo.currentProgress;
-        }
+        return get(compilerSerialId).getCurrentProgress();
     }
 
     @Override
-    public synchronized boolean remove(UUID compilerSerialId) {
-        if (progressData.containsKey(compilerSerialId)) {
-            progressData.remove(compilerSerialId);
-            return true;
-        } else {
-            return false;
-        }
+    public boolean remove(UUID compilerSerialId) {
+        // Concurrent hashmap never contains null key values, so remove returning a null value means that the entry is not found.
+        return progressData.remove(compilerSerialId) != null;
     }
 
     @Override
     public Duration getRemainingTime(UUID compilerSerialId) {
-        ProgressInfo progressInfo = get(compilerSerialId, false);
-        if (progressInfo == null) {
-            return null; // CSID not found
-        }
-
-        if (progressInfo.currentProgress < 0 || progressInfo.startProgress < 0 || progressInfo.currentProgress <= progressInfo.startProgress) {
-            return null; // Cannot estimate remaining time
-        }
-
-        if (progressInfo.currentProgress >= 1) {
-            return Duration.ZERO;
-        }
-
-        // Compute remaining time
-        long elapsed = (long) ((progressInfo.currentProgress - progressInfo.startProgress) * 100); // Compute percent elapsed
-        long remains = (long) ((1 - progressInfo.currentProgress) * 100); // Compute how many percent remains
-        return Duration.between(progressInfo.startTime, LocalDateTime.now()).dividedBy(elapsed).multipliedBy(remains);
+        return get(compilerSerialId).getRemainingTime();
     }
 
-    private synchronized ProgressInfo get(UUID compilerSerialId, boolean createIfNotExist) {
+    private ProgressInfo get(UUID compilerSerialId) {
+        return compilerSerialId != null && progressData.containsKey(compilerSerialId)
+                ? progressData.get(compilerSerialId) : EMPTY_PROGRESS_INFO;
+    }
+
+    private ProgressInfo getOrCreate(UUID compilerSerialId) {
         if (compilerSerialId == null) {
-            return null;
+            return EMPTY_PROGRESS_INFO;
         }
+        add(compilerSerialId);
+        return get(compilerSerialId);
+    }
+
+    private synchronized void add(UUID compilerSerialId) {
         if (!progressData.containsKey(compilerSerialId)) {
-            if (createIfNotExist) {
-                ProgressInfo progressInfo = new ProgressInfo();
-                progressData.put(compilerSerialId, progressInfo);
-                return progressInfo;
-            } else {
+            ProgressInfo progressInfo = new ProgressInfo();
+            progressData.put(compilerSerialId, progressInfo);
+        }
+    }
+
+    private static class ProgressInfo {
+        private OnStopBehavior progressBarOnStopBehavior = OnStopBehavior.HIDE;
+        private double currentProgress = -1.0; // Current progress (<0 if not set yet)
+        private double startProgress = -1.0; // The first set progress (<0 if not set yet)
+        private LocalDateTime startTime; // The datetime when the first progress was set (null if not set yet)
+
+        OnStopBehavior getProgressBarOnStopBehavior() {
+            return progressBarOnStopBehavior;
+        }
+
+        void setProgressBarOnStopBehavior(OnStopBehavior progressBarOnStopBehavior) {
+            this.progressBarOnStopBehavior = progressBarOnStopBehavior;
+        }
+
+        Double getCurrentProgress() {
+            return currentProgress;
+        }
+
+        void update(Double progress) {
+            if (!isStarted()) {
+                startProgress = progress;
+                startTime = LocalDateTime.now();
+            }
+            currentProgress = progress;
+        }
+
+        private boolean isFinished() {
+            return Double.compare(currentProgress, 1.0) >= 0;
+        }
+
+        private boolean isStarted() {
+            return Double.compare(startProgress, 0.0) >= 0;
+        }
+
+        Duration getRemainingTime() {
+            if (isFinished()) {
+                return Duration.ZERO;
+            }
+            if (!isStarted()) {
                 return null;
             }
-        } else {
-            return progressData.get(compilerSerialId);
+            long passedTime = Duration.between(startTime, LocalDateTime.now()).toNanos();
+            double remaining = (passedTime / currentProgress) - passedTime;
+            return Duration.ofNanos(Math.round(remaining));
         }
     }
+
 }
