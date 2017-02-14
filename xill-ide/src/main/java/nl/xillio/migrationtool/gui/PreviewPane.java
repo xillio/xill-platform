@@ -107,18 +107,23 @@ public class PreviewPane extends AnchorPane implements RobotTabComponent {
     }
 
     private Node getPreview(final MetaExpression expression, final SearchBar searchBar) {
-        // First allow the expression to provide a preview
-        if (expression.hasMeta(HtmlPreview.class)) {
-            HtmlPreview preview = expression.getMeta(HtmlPreview.class);
-            return getTextPreview(preview.getHtmlPreview());
-        }
-        if (expression.hasMeta(TextPreview.class)) {
-            TextPreview preview = expression.getMeta(TextPreview.class);
-            return getTextPreview(preview.getTextPreview());
-        }
+        try {
+            // First allow the expression to provide a preview
+            if (expression.hasMeta(HtmlPreview.class)) {
+                HtmlPreview preview = expression.getMeta(HtmlPreview.class);
+                return getTextPreview(preview.getHtmlPreview());
+            }
+            if (expression.hasMeta(TextPreview.class)) {
+                TextPreview preview = expression.getMeta(TextPreview.class);
+                return getTextPreview(preview.getTextPreview());
+            }
 
-        if (expression.getType() == ExpressionDataType.ATOMIC) {
-            return getTextPreview(expression.getStringValue());
+            if (expression.getType() == ExpressionDataType.ATOMIC) {
+                return getTextPreview(expression.getStringValue());
+            }
+        } catch (IllegalStateException e) {
+            // CTC-1892 - Catch rare expression-already-closed exception
+            return getTextPreview(e.getMessage());
         }
 
         return null;
