@@ -21,10 +21,13 @@ import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.xml.services.XpathService;
 import nl.xillio.xill.plugins.xml.utils.MockUtils;
 import org.testng.annotations.Test;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.NULL;
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
@@ -151,5 +154,50 @@ public class XpathConstructTest {
 
         // Run
         XPathConstruct.process(xmlNodeVar, textVar, MockUtils.mockNullExpression(), xpathService);
+    }
+
+    /**
+     * Test whether attributes are grouped correctly based on their owner.
+     */
+    @Test
+    public void testAllAttributesGroupNodes() {
+        String xpath = "//@*";
+
+        // Mock.
+        Attr node0 = mock(Attr.class);
+        when(node0.getNodeName()).thenReturn("shape");
+        when(node0.getNodeValue()).thenReturn("round");
+        when(node0.getNodeType()).thenReturn(Node.ATTRIBUTE_NODE);
+        Attr node1 = mock(Attr.class);
+        when(node1.getNodeName()).thenReturn("shape");
+        when(node1.getNodeValue()).thenReturn("square");
+        when(node1.getNodeType()).thenReturn(Node.ATTRIBUTE_NODE);
+        when(node1.getOwnerElement()).thenReturn(mock(Element.class));
+
+        NodeList nodeList = mock(NodeList.class);
+        when(nodeList.getLength()).thenReturn(2);
+        when(nodeList.item(0)).thenReturn(node0);
+        when(nodeList.item(1)).thenReturn(node1);
+
+        MetaExpression xmlVar = mock(MetaExpression.class);
+        when(xmlVar.getMeta(XmlNode.class)).thenReturn(mock(XmlNode.class));
+
+        XpathService service = mock(XpathService.class);
+        when(service.xpath(any(), any(), any())).thenReturn(nodeList);
+
+        // Run.
+        MetaExpression result = XPathConstruct.process(xmlVar, fromValue(xpath), NULL, service);
+
+        // Assert.
+        List<MetaExpression> list = result.getValue();
+        assertEquals(list.size(), 2);
+
+        LinkedHashMap<String, MetaExpression> group0 = list.get(0).getValue();
+        LinkedHashMap<String, MetaExpression> group1 = list.get(1).getValue();
+        assertEquals(group0.size(), 1);
+        assertEquals(group1.size(), 1);
+
+        assertEquals(group0.get("shape").getStringValue(), "round");
+        assertEquals(group1.get("shape").getStringValue(), "square");
     }
 }

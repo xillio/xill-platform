@@ -114,7 +114,7 @@ public class XPathConstruct extends Construct {
      *
      * @param list  The nodes to group.
      * @param xpath The xpath string.
-     * @return The resulting list of groups.
+     * @return The resulting list of groups, or a single element if there is only one result group.
      */
     protected static MetaExpression xpathResultToGroups(final NodeList list, final String xpath) {
         LinkedHashMap<Node, MetaExpression> parents = new LinkedHashMap<>();
