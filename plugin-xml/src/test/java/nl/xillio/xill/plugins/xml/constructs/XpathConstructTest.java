@@ -173,11 +173,16 @@ public class XpathConstructTest {
         when(node1.getNodeValue()).thenReturn("square");
         when(node1.getNodeType()).thenReturn(Node.ATTRIBUTE_NODE);
         when(node1.getOwnerElement()).thenReturn(mock(Element.class));
+        Attr node2 = mock(Attr.class);
+        when(node2.getNodeName()).thenReturn("size");
+        when(node2.getNodeValue()).thenReturn("large");
+        when(node2.getNodeType()).thenReturn(Node.ATTRIBUTE_NODE);
 
         NodeList nodeList = mock(NodeList.class);
-        when(nodeList.getLength()).thenReturn(2);
+        when(nodeList.getLength()).thenReturn(3);
         when(nodeList.item(0)).thenReturn(node0);
         when(nodeList.item(1)).thenReturn(node1);
+        when(nodeList.item(2)).thenReturn(node2);
 
         MetaExpression xmlVar = mock(MetaExpression.class);
         when(xmlVar.getMeta(XmlNode.class)).thenReturn(mock(XmlNode.class));
@@ -194,10 +199,11 @@ public class XpathConstructTest {
 
         LinkedHashMap<String, MetaExpression> group0 = list.get(0).getValue();
         LinkedHashMap<String, MetaExpression> group1 = list.get(1).getValue();
-        assertEquals(group0.size(), 1);
+        assertEquals(group0.size(), 2);
         assertEquals(group1.size(), 1);
 
         assertEquals(group0.get("shape").getStringValue(), "round");
+        assertEquals(group0.get("size").getStringValue(), "large");
         assertEquals(group1.get("shape").getStringValue(), "square");
     }
 }
