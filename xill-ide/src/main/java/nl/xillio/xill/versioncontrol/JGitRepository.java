@@ -187,8 +187,12 @@ public class JGitRepository implements GitRepository {
         try {
             Status status = repository.status().call();
             changes.addAll(status.getMissing().stream().map(s -> "-    " + s).collect(Collectors.toList()));
+            changes.addAll(status.getRemoved().stream().map(s -> "-    " + s).collect(Collectors.toList()));
             changes.addAll(status.getUntracked().stream().map(s -> "+    " + s).collect(Collectors.toList()));
+            changes.addAll(status.getAdded().stream().map(s -> "+    " + s).collect(Collectors.toList()));
             changes.addAll(status.getModified().stream().map(s -> "*    " + s).collect(Collectors.toList()));
+            changes.addAll(status.getChanged().stream().map(s -> "*    " + s).collect(Collectors.toList()));
+            changes.addAll(status.getConflicting().stream().map(s -> "#    " + s).collect(Collectors.toList()));
         } catch (GitAPIException | NoWorkTreeException e) {
             LOGGER.error("Error retrieving changed files.", e);
         }

@@ -237,8 +237,12 @@ public class JGitRepositoryTest {
         Status status = mock(Status.class);
         when(cmd.call()).thenReturn(status);
         when(status.getModified()).thenReturn(modified);
+        when(status.getChanged()).thenReturn(new HashSet<>());
         when(status.getUntracked()).thenReturn(untracked);
+        when(status.getAdded()).thenReturn(new HashSet<>());
         when(status.getMissing()).thenReturn(removed);
+        when(status.getRemoved()).thenReturn(new HashSet<>());
+        when(status.getConflicting()).thenReturn(new HashSet<>());
 
         // Run.
         Set<String> result = repository.getChangedFiles();
