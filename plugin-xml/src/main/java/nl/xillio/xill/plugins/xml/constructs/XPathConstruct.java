@@ -109,6 +109,13 @@ public class XPathConstruct extends Construct {
         }
     }
 
+    /**
+     * Turn an xpath result into a list of groups, where the values are grouped by owner.
+     *
+     * @param list  The nodes to group.
+     * @param xpath The xpath string.
+     * @return The resulting list of groups.
+     */
     protected static MetaExpression xpathResultToGroups(final NodeList list, final String xpath) {
         LinkedHashMap<Node, MetaExpression> parents = new LinkedHashMap<>();
 
@@ -120,6 +127,8 @@ public class XPathConstruct extends Construct {
             boolean found = false;
             for (Entry<Node, MetaExpression> entry : parents.entrySet()) {
                 Element owner = getOwner(node);
+
+                // Check if the entry key matches the owner.
                 if ((entry.getKey() == null && owner == null) || (owner != null && owner.isSameNode(entry.getKey()))) {
                     found = true;
                     entry.setValue(addToGroup(entry.getValue(), node, xpath));
@@ -136,10 +145,24 @@ public class XPathConstruct extends Construct {
         return fromValue(parents.values().stream().collect(Collectors.toList()));
     }
 
+    /**
+     * Get the owner of an attribute.
+     *
+     * @param node The attribute to get the owner from.
+     * @return The owner.
+     */
     private static Element getOwner(Node node) {
         return node instanceof Attr ? ((Attr) node).getOwnerElement() : null;
     }
 
+    /**
+     * Add a node to a group (list or object).
+     *
+     * @param group The group to add the node to. If this is not yet a group, it will be turned into a list.
+     * @param add   The node to add to the group.
+     * @param xpath The xpath string.
+     * @return The group.
+     */
     private static MetaExpression addToGroup(final MetaExpression group, final Node add, final String xpath) {
         if (group.getType() == ExpressionDataType.OBJECT) {
             // Add the node name and value to the object.
