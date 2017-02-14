@@ -33,6 +33,7 @@ All notable changes to this project will be documented in this file.
 * Update File and Stream help files [CTC-1869]
 * Improve layout for help files. Add a parameter description to all help files [CTC-1511]
 * Using `XML.xPath()` with `@*` now returns an `OBJECT` that includes the attribute names [CTC-2054]
+* Using `XML.xPath()` with `//@*` now returns a `LIST` of `OBJECTs` that includes the attribute names [CTC-2083]
 
 ### Fix
 * Settings file not found for paths with whitespaces [CTC-1887]
