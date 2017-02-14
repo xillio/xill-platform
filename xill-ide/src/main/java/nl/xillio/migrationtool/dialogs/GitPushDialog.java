@@ -53,13 +53,13 @@ public class GitPushDialog extends GitDialog {
         boolean changes = !changedFiles.isEmpty();
 
         if (changes) {
-            Text text1, text2;
+            Text prefix, fileName;
             Set<TextFlow> changedFilesTexts = new HashSet<>();
             for (String changedFile : changedFiles) {
-                text1 = new Text(changedFile.substring(0, 5));
-                text1.setFont(Font.font("monospaced", 16));
-                text2 = new Text(changedFile.substring(5));
-                changedFilesTexts.add(new TextFlow(text1, text2));
+                prefix = new Text(changedFile.substring(0, 5));
+                prefix.setFont(Font.font("monospaced", 16));
+                fileName = new Text(changedFile.substring(5));
+                changedFilesTexts.add(new TextFlow(prefix, fileName));
             }
             fileList.setItems(FXCollections.observableArrayList(changedFilesTexts));
             message.textProperty().addListener((obs) -> okBtn.setDisable("".equals(message.getText())));
