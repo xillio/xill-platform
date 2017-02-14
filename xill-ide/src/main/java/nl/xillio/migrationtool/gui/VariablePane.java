@@ -159,7 +159,6 @@ public class VariablePane extends AnchorPane implements RobotTabComponent, ListC
      */
     public void setPreviewPane(final PreviewPane previewpane) {
         this.previewpane = previewpane;
-
     }
 
     public Debugger getDebugger() {
@@ -177,7 +176,6 @@ public class VariablePane extends AnchorPane implements RobotTabComponent, ListC
             if (selectedItem != null && observableVariable != null) {
                 previewpane.preview(observableVariable);
             }
-
         });
     }
 }
