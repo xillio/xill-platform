@@ -121,28 +121,38 @@ public class XPathConstruct extends Construct {
 
         // Process all nodes.
         for (int i = 0; i < list.getLength(); i++) {
-            Node node = list.item(i);
+            findGroupAndAddNode(parents, list.item(i), xpath);
+        }
 
-            // Check if the parent node is already present.
-            boolean found = false;
-            for (Entry<Node, MetaExpression> entry : parents.entrySet()) {
-                Element owner = getOwner(node);
+        // Return a list with all values, or a single value.
+        List<MetaExpression> resultList = parents.values().stream().collect(Collectors.toList());
+        return resultList.size() == 1 ? resultList.get(0) : fromValue(resultList);
+    }
 
-                // Check if the entry key matches the owner.
-                if ((entry.getKey() == null && owner == null) || (owner != null && owner.isSameNode(entry.getKey()))) {
-                    found = true;
-                    entry.setValue(addToGroup(entry.getValue(), node, xpath));
-                }
-            }
+    /**
+     * Add a node to the right group.
+     *
+     * @param parents The parents map.
+     * @param node The node to process.
+     * @param xpath The xpath string.
+     */
+    private static void findGroupAndAddNode(LinkedHashMap<Node, MetaExpression> parents, Node node, String xpath) {
+        // Check if the parent node is already present.
+        boolean found = false;
+        for (Entry<Node, MetaExpression> entry : parents.entrySet()) {
+            Element owner = getOwner(node);
 
-            // If the parent was not yet present, add it.
-            if (!found) {
-                parents.put(getOwner(node), xpathResultToMetaExpression(node, xpath));
+            // Check if the entry key matches the owner.
+            if ((entry.getKey() == null && owner == null) || (owner != null && owner.isSameNode(entry.getKey()))) {
+                found = true;
+                entry.setValue(addToGroup(entry.getValue(), node, xpath));
             }
         }
 
-        // Return a list with all values.
-        return fromValue(parents.values().stream().collect(Collectors.toList()));
+        // If the parent was not yet present, add it.
+        if (!found) {
+            parents.put(getOwner(node), xpathResultToMetaExpression(node, xpath));
+        }
     }
 
     /**
