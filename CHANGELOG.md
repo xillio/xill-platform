@@ -59,6 +59,7 @@ All notable changes to this project will be documented in this file.
 * Pipeline functions do not support qualified includes [CTC-2001]
 * Unable to use multibyte characters in Properties package [CTC-1846]
 * Autocomplete shows only local results [CTC-2056]
+* Debugger unreliable [CTC-1892]
 
 ## [3.4.1] - 2016-10-28
 
