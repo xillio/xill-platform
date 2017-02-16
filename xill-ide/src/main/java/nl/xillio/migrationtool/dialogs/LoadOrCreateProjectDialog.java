@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,7 +25,6 @@ import nl.xillio.migrationtool.gui.ProjectPane;
 import nl.xillio.xill.util.settings.Settings;
 
 import java.io.File;
-import java.io.ObjectInput;
 
 /**
  * A dialog to add a new project.
@@ -35,12 +34,9 @@ public class LoadOrCreateProjectDialog extends FXMLDialog {
     private TextField tfprojectname;
     @FXML
     private TextField tfprojectfolder;
-    @FXML
-    private Label lprojectfolder;
 
     private final ProjectPane projectPane;
     private final String initalFoldervalue;
-    private boolean hasBeenTypedInProjectFolder;
 
     /**
      * Default constructor.
@@ -51,41 +47,19 @@ public class LoadOrCreateProjectDialog extends FXMLDialog {
         super("/fxml/dialogs/LoadOrCreateProject.fxml");
 
         this.projectPane = projectPane;
-        setTitle("Load/Create Project");
+        setTitle("Add Project");
 
         setProjectFolder(FXController.settings.simple().get(Settings.SETTINGS_GENERAL, Settings.DEFAULT_PROJECT_LOCATION));
         initalFoldervalue = tfprojectfolder.getText();
         tfprojectname.textProperty().addListener(this::typedInProjectName);
-        tfprojectfolder.setOnKeyTyped(e -> hasBeenTypedInProjectFolder = true);
     }
 
     private void typedInProjectName(Object source, String oldValue, String newValue) {
         // The name changed. See if we need to fix this in the project folder field.
         // This we only do if the project folder field remains untouched
-        if (isProjectFolderUntouched(tfprojectfolder.getText())) {
+        if (initalFoldervalue.equals(tfprojectfolder.getText())) {
             setProjectFolder(initalFoldervalue + File.separator + newValue);
         }
-    }
-
-    private boolean isProjectFolderUntouched(String newValue) {
-        // If the project value equals the initial value then it is untouched
-        if (newValue.equals(initalFoldervalue)) {
-            hasBeenTypedInProjectFolder = false;
-            return true;
-        }
-
-        // If anyone typed in this field it has been touched
-        if (hasBeenTypedInProjectFolder) {
-            return false;
-        }
-
-        // If the initial value isn't the prefix anymore it has been touched
-        if (!newValue.startsWith(initalFoldervalue)) {
-            return false;
-        }
-
-        int lastIndex = newValue.lastIndexOf(File.separatorChar);
-        return newValue.substring(0, lastIndex).equals(initalFoldervalue);
     }
 
     /**
@@ -101,7 +75,6 @@ public class LoadOrCreateProjectDialog extends FXMLDialog {
     private void browseBtnPressed(final ActionEvent event) {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setInitialDirectory(getInitialDirectory());
-
 
         File result = chooser.showDialog(getScene().getWindow());
         if (result != null) {

@@ -32,7 +32,6 @@
               <children>
                 <Label text="Specify the name and folder of the project" />
                 <TextField fx:id="tfprojectname" promptText="Project name" />
-                <Label text="When creating a new project this has to point to a new map." fx:id="lprojectfolder" />
                 <HBox alignment="TOP_LEFT" disable="false" focusTraversable="false" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" snapToPixel="true" spacing="4.0" visible="true" VBox.vgrow="NEVER">
                   <children>
                     <TextField fx:id="tfprojectfolder" alignment="TOP_LEFT" depthTest="INHERIT" promptText="Project folder" HBox.hgrow="ALWAYS"/>

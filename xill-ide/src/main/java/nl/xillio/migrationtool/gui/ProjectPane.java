@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -234,7 +234,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     private void addNewButtonContextMenu() {
-        MenuItem menuNewProject = new MenuItem("Load/Create project...", ProjectPane.createIcon(ProjectPane.NEW_PROJECT_ICON));
+        MenuItem menuNewProject = new MenuItem("Add project...", ProjectPane.createIcon(ProjectPane.NEW_PROJECT_ICON));
         menuNewProject.setOnAction(e -> newProjectButtonPressed());
 
         menuNewFolder = new MenuItem("New folder...", ProjectPane.createIcon(ProjectPane.NEW_FOLDER_ICON));
@@ -819,22 +819,27 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     /**
      * Creates a new project from source
      *
-     * @param name        the name of the new project
-     * @param folder      the folder representing the project
+     * @param name   the name of the new project
+     * @param folder the folder representing the project
      * @return whether creating the project was successful
      */
     public boolean loadOrCreateProject(final String name, final String folder) {
-        boolean projectExist = !root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
-                && findItemByPath(root, folder) == null;
-        boolean projectDoesntExist = root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
-                && findItemByPath(root, folder) == null;
+        boolean projectExist = settings.project().getAll().parallelStream().map(ProjectSettings::getFolder).anyMatch(n -> n.equalsIgnoreCase(folder));
+        boolean nameTaken = settings.project().getAll().parallelStream().map(ProjectSettings::getName).anyMatch(n -> n.equalsIgnoreCase(name));
+        settings.project().delete("");
+        List<ProjectSettings> projects = settings.project().getAll();
+        settings.project().getAll().clear();
 
         if (projectExist) {
-            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder.");
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder. \nTo create a new project an empty folder must be selected.");
+        }
+
+        if (nameTaken) {
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Make sure the name is not already in use.");
         }
 
         if ("".equals(folder)) {
-            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Select an empty folder to create a new project.");
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Make sure the \"folder\" field is not empty.");
         }
 
         if ("".equals(name)) {
@@ -843,7 +848,8 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         ProjectSettings project = new ProjectSettings(name, folder, "");
         settings.project().save(project);
-        if(projectDoesntExist) {
+        File projectFolder = new File(folder);
+        if (!projectFolder.exists()) {
             try {
                 FileUtils.forceMkdir(new File(project.getFolder()));
             } catch (IOException e) {
