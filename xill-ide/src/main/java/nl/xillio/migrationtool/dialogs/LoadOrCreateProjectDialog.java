@@ -17,6 +17,7 @@ package nl.xillio.migrationtool.dialogs;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import nl.xillio.migrationtool.gui.FXController;
@@ -24,15 +25,18 @@ import nl.xillio.migrationtool.gui.ProjectPane;
 import nl.xillio.xill.util.settings.Settings;
 
 import java.io.File;
+import java.io.ObjectInput;
 
 /**
  * A dialog to add a new project.
  */
-public class NewProjectDialog extends FXMLDialog {
+public class LoadOrCreateProjectDialog extends FXMLDialog {
     @FXML
     private TextField tfprojectname;
     @FXML
     private TextField tfprojectfolder;
+    @FXML
+    private Label lprojectfolder;
 
     private final ProjectPane projectPane;
     private final String initalFoldervalue;
@@ -43,11 +47,11 @@ public class NewProjectDialog extends FXMLDialog {
      *
      * @param projectPane the projectPane to which this dialog is attached to.
      */
-    public NewProjectDialog(final ProjectPane projectPane) {
-        super("/fxml/dialogs/NewProject.fxml");
+    public LoadOrCreateProjectDialog(final ProjectPane projectPane) {
+        super("/fxml/dialogs/LoadOrCreateProject.fxml");
 
         this.projectPane = projectPane;
-        setTitle("New Project");
+        setTitle("Load/Create Project");
 
         setProjectFolder(FXController.settings.simple().get(Settings.SETTINGS_GENERAL, Settings.DEFAULT_PROJECT_LOCATION));
         initalFoldervalue = tfprojectfolder.getText();
@@ -58,16 +62,14 @@ public class NewProjectDialog extends FXMLDialog {
     private void typedInProjectName(Object source, String oldValue, String newValue) {
         // The name changed. See if we need to fix this in the project folder field.
         // This we only do if the project folder field remains untouched
-        if (isProjectFolderUntouched(newValue)) {
+        if (isProjectFolderUntouched(tfprojectfolder.getText())) {
             setProjectFolder(initalFoldervalue + File.separator + newValue);
         }
     }
 
     private boolean isProjectFolderUntouched(String newValue) {
-        String project = tfprojectfolder.getText();
-
         // If the project value equals the initial value then it is untouched
-        if (project.equals(initalFoldervalue)) {
+        if (newValue.equals(initalFoldervalue)) {
             hasBeenTypedInProjectFolder = false;
             return true;
         }
@@ -77,13 +79,13 @@ public class NewProjectDialog extends FXMLDialog {
             return false;
         }
 
-        // If the initial value isn't the prefix anymore is het been touched
-        if (!project.startsWith(initalFoldervalue)) {
+        // If the initial value isn't the prefix anymore it has been touched
+        if (!newValue.startsWith(initalFoldervalue)) {
             return false;
         }
 
-        int lastIndex = project.lastIndexOf(File.separatorChar);
-        return project.substring(0, lastIndex).equals(initalFoldervalue);
+        int lastIndex = newValue.lastIndexOf(File.separatorChar);
+        return newValue.substring(0, lastIndex).equals(initalFoldervalue);
     }
 
     /**
@@ -122,7 +124,7 @@ public class NewProjectDialog extends FXMLDialog {
         String projectName = tfprojectname.getText();
         String projectFolder = tfprojectfolder.getText();
 
-        if (projectPane.newProject(projectName, projectFolder, "")) {
+        if (projectPane.loadOrCreateProject(projectName, projectFolder)) {
             close();
         }
     }
