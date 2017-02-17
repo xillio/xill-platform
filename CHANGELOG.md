@@ -1,7 +1,7 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
-## [3.5.0] - unreleased
+## [3.5.0] - 2017-02-17
 
 ### Add
 * Qualified includes for xill libraries using the new `as` keyword [CTC-1946]
