@@ -117,9 +117,14 @@ void buildOn(Map args) {
 
                 // Run the build and clean
                 stage("Run 'mvn $buildPhase' on $platform") {
-                    checkout scm
-                    cli "$mvn clean"
-                    cli "$mvn $buildPhase"
+                    try {
+                        checkout scm
+                        cli "$mvn clean"
+                        cli "$mvn $buildPhase"
+                    } finally {
+                        // make sure the integration test report is *alway* published.
+                        publishHTML([allowMissing: true, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'xill-processor/target/failsafe-reports', reportFiles: 'index.html', reportName: 'Integration tests'])
+                    }
                 }
             }
         }
