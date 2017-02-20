@@ -122,7 +122,7 @@ void buildOn(Map args) {
                         cli "$mvn clean"
                         cli "$mvn $buildPhase"
                     } finally {
-                        // make sure the integration test report is *alway* published.
+                        // make sure the integration test report is *always* published.
                         publishHTML([allowMissing: true, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'xill-processor/target/failsafe-reports', reportFiles: 'index.html', reportName: 'Integration tests'])
                     }
                 }
