@@ -828,7 +828,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         boolean nameTaken = settings.project().getAll().parallelStream().map(ProjectSettings::getName).anyMatch(n -> n.equalsIgnoreCase(name));
 
         if (projectExist) {
-            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder. \nTo create a new project an empty folder must be selected.");
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project. \nTo create a new project an empty folder must be selected.");
         }
 
         if (nameTaken) {
