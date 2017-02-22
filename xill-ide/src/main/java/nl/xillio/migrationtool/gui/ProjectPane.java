@@ -222,10 +222,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     private void addNewButtonContextMenu() {
-        MenuItem menuLoadProject = new MenuItem("New project from existing sources...", ProjectPane.createIcon(ProjectPane.NEW_PROJECT_ICON));
-        menuLoadProject.setOnAction(e -> loadProjectButtonPressed());
-
-        MenuItem menuNewProject = new MenuItem("New project...", ProjectPane.createIcon(ProjectPane.NEW_PROJECT_ICON));
+        MenuItem menuNewProject = new MenuItem("Add project...", ProjectPane.createIcon(ProjectPane.NEW_PROJECT_ICON));
         menuNewProject.setOnAction(e -> newProjectButtonPressed());
 
         menuNewFolder = new MenuItem("New folder...", ProjectPane.createIcon(ProjectPane.NEW_FOLDER_ICON));
@@ -236,7 +233,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         menuNewBotFromTemplate = new Menu("New robot from template...");
 
-        ContextMenu menu = new ContextMenu(menuLoadProject, menuNewProject, menuNewFolder, menuNewBot, menuNewBotFromTemplate);
+        ContextMenu menu = new ContextMenu(menuNewProject, menuNewFolder, menuNewBot, menuNewBotFromTemplate);
         btnNew.setOnAction(e -> {
             Bounds bounds = btnNew.localToScreen(btnNew.getBoundsInParent());
             generateTemplateMenu();
@@ -446,14 +443,8 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     /* End of bulk file functionality. */
 
     @FXML
-    private void loadProjectButtonPressed() {
-        LoadProjectDialog dlg = new LoadProjectDialog(this);
-        dlg.showAndWait();
-    }
-
-    @FXML
     private void newProjectButtonPressed() {
-        NewProjectDialog dlg = new NewProjectDialog(this);
+        LoadOrCreateProjectDialog dlg = new LoadOrCreateProjectDialog(this);
         dlg.showAndWait();
     }
 
@@ -803,30 +794,40 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     /**
      * Creates a new project from source
      *
-     * @param name        the name of the new project
-     * @param folder      the folder representing the project
+     * @param name   the name of the new project
+     * @param folder the folder representing the project
      * @return whether creating the project was successful
      */
-    public boolean loadProject(final String name, final String folder) {
-        boolean projectExist = !root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
-                && findItemByPath(root, folder) == null;
+    public boolean loadOrCreateProject(final String name, final String folder) {
+        boolean projectExist = settings.project().getAll().parallelStream().map(ProjectSettings::getFolder).anyMatch(n -> n.equalsIgnoreCase(folder));
+        boolean nameTaken = settings.project().getAll().parallelStream().map(ProjectSettings::getName).anyMatch(n -> n.equalsIgnoreCase(name));
 
         if (projectExist) {
-            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project or subfolder.");
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project. \nTo create a new project an empty folder must be selected.");
+        }
+
+        if (nameTaken) {
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Make sure the name is not already in use.");
         }
 
         if ("".equals(folder)) {
-            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Select a folder to create a new project.");
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Make sure the \"folder\" field is not empty.");
         }
 
-        File projectFolder = new File(folder);
-
-        if (!projectFolder.exists()) {
-            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder does not exist.");
+        if ("".equals(name)) {
+            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Make sure the name is not empty.");
         }
 
         ProjectSettings project = new ProjectSettings(name, folder, "");
         settings.project().save(project);
+        File projectFolder = new File(folder);
+        if (!projectFolder.exists()) {
+            try {
+                FileUtils.forceMkdir(new File(project.getFolder()));
+            } catch (IOException e) {
+                LOGGER.error("Failed to create project directory", e);
+            }
+        }
         addProject(project);
         return true;
     }
