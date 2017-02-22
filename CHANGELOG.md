@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 ### Fix
 * Web.loadPage does not work with file:// protocol [CTC-1935]
 * Cannot divide by zero error in progress bar [CTC-1884]
+* Merge 'Add Project' and 'Create Project from Sources' dialogs [CTC-2088]
 
 ## [3.5.0] - unreleased
 
