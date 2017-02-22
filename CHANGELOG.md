@@ -5,10 +5,11 @@ All notable changes to this project will be documented in this file.
 
 ### Add
 * Git integration. Push and pull can be done from the IDE [CTC-1919]
+* Store git credentials [CTC-1975]
+* Show status of changed files in git [CTC-1977]
 
 ### Fix
 * Web.loadPage does not work with file:// protocol [CTC-1935]
-* Store git credentials [CTC-1975]
 * Cannot divide by zero error in progress bar [CTC-1884]
 
 ## [3.5.0] - unreleased
