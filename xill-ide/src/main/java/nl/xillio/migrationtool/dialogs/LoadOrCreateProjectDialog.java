@@ -107,7 +107,7 @@ public class LoadOrCreateProjectDialog extends FXMLDialog {
         String project = tfprojectfolder.getText();
 
         // If the project value equals the initial value then it is untouched
-        if (project.equals(initalFolderValue)) {
+        if (new File(project).equals(new File(initalFolderValue))) {
             hasBeenTypedInProjectFolder = false;
             return true;
         }
