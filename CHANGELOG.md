@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file.
 * Web.loadPage does not work with file:// protocol [CTC-1935]
 * Cannot divide by zero error in progress bar [CTC-1884]
 
-## [3.5.0] - unreleased
+## [3.5.0] - 2017-02-17
 
 ### Add
 * Qualified includes for xill libraries using the new `as` keyword [CTC-1946]
