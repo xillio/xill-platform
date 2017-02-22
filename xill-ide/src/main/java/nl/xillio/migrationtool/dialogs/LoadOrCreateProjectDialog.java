@@ -77,7 +77,7 @@ public class LoadOrCreateProjectDialog extends FXMLDialog {
         chooser.setInitialDirectory(getInitialDirectory());
 
         File result = chooser.showDialog(getScene().getWindow());
-        if (result != null) {
+        if (result != null && !result.getPath().equals(tfprojectfolder.getText())) {
             tfprojectfolder.setText(result.getPath());
 
             // If we have no project name yet we want to auto fill this
