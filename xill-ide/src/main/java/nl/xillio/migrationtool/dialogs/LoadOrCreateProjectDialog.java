@@ -28,14 +28,14 @@ import java.io.File;
 /**
  * A dialog to add a new project.
  */
-public class NewProjectDialog extends FXMLDialog {
+public class LoadOrCreateProjectDialog extends FXMLDialog {
     @FXML
     private TextField tfprojectname;
     @FXML
     private TextField tfprojectfolder;
 
     private final ProjectPane projectPane;
-    private final String initalFoldervalue;
+    private final String initalFolderValue;
     private boolean hasBeenTypedInProjectFolder;
 
     /**
@@ -43,14 +43,14 @@ public class NewProjectDialog extends FXMLDialog {
      *
      * @param projectPane the projectPane to which this dialog is attached to.
      */
-    public NewProjectDialog(final ProjectPane projectPane) {
-        super("/fxml/dialogs/NewProject.fxml");
+    public LoadOrCreateProjectDialog(final ProjectPane projectPane) {
+        super("/fxml/dialogs/LoadOrCreateProject.fxml");
 
         this.projectPane = projectPane;
-        setTitle("New Project");
+        setTitle("Add Project");
 
         setProjectFolder(FXController.settings.simple().get(Settings.SETTINGS_GENERAL, Settings.DEFAULT_PROJECT_LOCATION));
-        initalFoldervalue = tfprojectfolder.getText();
+        initalFolderValue = tfprojectfolder.getText();
         tfprojectname.textProperty().addListener(this::typedInProjectName);
         tfprojectfolder.setOnKeyTyped(e -> hasBeenTypedInProjectFolder = true);
     }
@@ -59,31 +59,8 @@ public class NewProjectDialog extends FXMLDialog {
         // The name changed. See if we need to fix this in the project folder field.
         // This we only do if the project folder field remains untouched
         if (isProjectFolderUntouched(newValue)) {
-            setProjectFolder(initalFoldervalue + File.separator + newValue);
+            setProjectFolder(initalFolderValue + File.separator + newValue);
         }
-    }
-
-    private boolean isProjectFolderUntouched(String newValue) {
-        String project = tfprojectfolder.getText();
-
-        // If the project value equals the initial value then it is untouched
-        if (project.equals(initalFoldervalue)) {
-            hasBeenTypedInProjectFolder = false;
-            return true;
-        }
-
-        // If anyone typed in this field it has been touched
-        if (hasBeenTypedInProjectFolder) {
-            return false;
-        }
-
-        // If the initial value isn't the prefix anymore is het been touched
-        if (!project.startsWith(initalFoldervalue)) {
-            return false;
-        }
-
-        int lastIndex = project.lastIndexOf(File.separatorChar);
-        return project.substring(0, lastIndex).equals(initalFoldervalue);
     }
 
     /**
@@ -100,10 +77,9 @@ public class NewProjectDialog extends FXMLDialog {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setInitialDirectory(getInitialDirectory());
 
-
         File result = chooser.showDialog(getScene().getWindow());
-        if (result != null) {
-            tfprojectfolder.setText(result.getPath());
+        if (result != null && !result.equals(new File(tfprojectfolder.getText()))) {
+            setProjectFolder(result.getPath());
 
             // If we have no project name yet we want to auto fill this
             if (tfprojectname.getText().isEmpty()) {
@@ -122,9 +98,32 @@ public class NewProjectDialog extends FXMLDialog {
         String projectName = tfprojectname.getText();
         String projectFolder = tfprojectfolder.getText();
 
-        if (projectPane.newProject(projectName, projectFolder, "")) {
+        if (projectPane.loadOrCreateProject(projectName, projectFolder)) {
             close();
         }
+    }
+
+    private boolean isProjectFolderUntouched(String newValue) {
+        String project = tfprojectfolder.getText();
+
+        // If the project value equals the initial value then it is untouched
+        if (new File(project).equals(new File(initalFolderValue))) {
+            hasBeenTypedInProjectFolder = false;
+            return true;
+        }
+
+        // If anyone typed in this field it has been touched
+        if (hasBeenTypedInProjectFolder) {
+            return false;
+        }
+
+        // If the initial value isn't the prefix anymore is het been touched
+        if (!project.startsWith(initalFolderValue)) {
+            return false;
+        }
+
+        int lastIndex = project.lastIndexOf(File.separatorChar);
+        return project.substring(0, lastIndex).equals(initalFolderValue);
     }
 
     public File getInitialDirectory() {

@@ -46,16 +46,19 @@ public class JGitRepository implements GitRepository {
 
     public JGitRepository(File path) {
         FileRepositoryBuilder builder = new FileRepositoryBuilder().addCeilingDirectory(path).findGitDir(path);
+        File gitDir = builder.getGitDir();
+
+        // Check if this is a valid git repo.
+        if (gitDir == null)
+            return;
 
         try {
-            if (builder.getGitDir() != null) {
-                repository = new Git(builder.build());
-            }
+            repository = new Git(builder.build());
         } catch (IOException | IllegalArgumentException e) {
             LOGGER.error("An exception occurred while loading the repository.", e);
         }
 
-        auth = new JGitAuth();
+        auth = JGitAuth.get(path);
     }
 
     @Override
@@ -74,7 +77,7 @@ public class JGitRepository implements GitRepository {
 
         // JGit doesn't automatically detect all issues with pushing, this manually checks if
         // the push operation succeeded.
-        for(PushResult pushResult : pushResults) {
+        for (PushResult pushResult : pushResults) {
             for (RemoteRefUpdate remoteRefUpdate : pushResult.getRemoteUpdates()) {
                 if (remoteRefUpdate.getStatus() != RemoteRefUpdate.Status.OK) {
                     throw new GitException(String.format("Could not push updates to remote (error code: %s).",
@@ -162,11 +165,11 @@ public class JGitRepository implements GitRepository {
         try {
             Set<String> localBranches = repository.branchList().call().stream().map(Ref::getName).map(this::friendlyBranchName).collect(Collectors.toSet());
 
-        boolean exists = localBranches.contains(branch);
+            boolean exists = localBranches.contains(branch);
 
-        // Checkout the branch, creating and tracking the remote if it does not exist yet.
-        repository.checkout().setCreateBranch(!exists).setName(branch).setStartPoint("origin/" + branch)
-                .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
+            // Checkout the branch, creating and tracking the remote if it does not exist yet.
+            repository.checkout().setCreateBranch(!exists).setName(branch).setStartPoint("origin/" + branch)
+                    .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
         } catch (GitAPIException e) {
             throw new GitException(e.getMessage(), e);
         }
@@ -183,15 +186,20 @@ public class JGitRepository implements GitRepository {
 
     @Override
     public Set<String> getChangedFiles() {
-        Set<String> changedFiles = new HashSet<>();
+        Set<String> changes = new HashSet<>();
         try {
             Status status = repository.status().call();
-            changedFiles.addAll(status.getUncommittedChanges()); // Add changes
-            changedFiles.addAll(status.getUntracked()); // Add untracked files
+            changes.addAll(status.getMissing().stream().map(s -> "-    " + s).collect(Collectors.toList()));
+            changes.addAll(status.getRemoved().stream().map(s -> "-    " + s).collect(Collectors.toList()));
+            changes.addAll(status.getUntracked().stream().map(s -> "+    " + s).collect(Collectors.toList()));
+            changes.addAll(status.getAdded().stream().map(s -> "+    " + s).collect(Collectors.toList()));
+            changes.addAll(status.getModified().stream().map(s -> "*    " + s).collect(Collectors.toList()));
+            changes.addAll(status.getChanged().stream().map(s -> "*    " + s).collect(Collectors.toList()));
+            changes.addAll(status.getConflicting().stream().map(s -> "#    " + s).collect(Collectors.toList()));
         } catch (GitAPIException | NoWorkTreeException e) {
             LOGGER.error("Error retrieving changed files.", e);
         }
-        return changedFiles;
+        return changes;
     }
 
     public JGitAuth getAuth() {
