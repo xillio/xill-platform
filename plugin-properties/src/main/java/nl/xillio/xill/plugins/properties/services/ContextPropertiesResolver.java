@@ -33,7 +33,7 @@ public class ContextPropertiesResolver {
 
     public static ContextPropertiesResolver defaultXillResolver() {
         ContextPropertiesResolver resolver = new ContextPropertiesResolver();
-        resolver.register("xill.projectPath", context -> context.getRootRobot().getProjectPath().getAbsolutePath());
+        resolver.register("xill.workingDirectory", context -> context.getWorkingDirectory().toString());
         resolver.register("xill.robotPath", context -> context.getRootRobot().getPath().getAbsolutePath());
         return resolver;
     }
