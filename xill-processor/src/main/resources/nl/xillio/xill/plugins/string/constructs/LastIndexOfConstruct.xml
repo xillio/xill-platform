@@ -18,7 +18,7 @@
 -->
 <function>
     <description>
-Returns the index at which `needle` occurs in `haystack` for the last time.
+Returns the last index at which `needle` occurs in `haystack.
     </description>
     <parameterDescriptions>
         <parameterDescription parameterName="haystack">
