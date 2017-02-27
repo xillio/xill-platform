@@ -51,7 +51,7 @@ public class CreateWorkbookConstructTest extends TestUtils {
 
         //Mocking file
         RobotID id = mock(RobotID.class);
-        when(id.getPath()).thenReturn(new File("."));
+        when(id.getURI()).thenReturn(new URI("."));
         when(context.getRobotID()).thenReturn(id);
         when(context.getRootRobot()).thenReturn(id);
 

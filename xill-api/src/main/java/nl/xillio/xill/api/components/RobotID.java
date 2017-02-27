@@ -29,23 +29,24 @@ import java.util.Map;
  */
 public class RobotID implements Serializable {
     private static Map<String, RobotID> ids = new Hashtable<>();
-    private final File path;
     private final File projectPath;
 
     private static Map<URI, RobotID> urlIds = new Hashtable<>();
     private final URI uri;
+    private final String name;
 
-    private RobotID(final File path, final File projectPath, final URI uri) {
-        this.path = path;
+    private RobotID(final File projectPath, final URI uri) {
         this.projectPath = projectPath;
         this.uri = uri;
+        URI testuri = URI.create("xip:file:///dings/dangs.xip!/iets.xill");
+        name = testuri.getPath();
+        String dinges = "dignes";
     }
 
     private RobotID(final URI uri){
-        this.path = null;
         this.projectPath = null;
         this.uri = uri;
-
+        name = uri.getPath();
     }
 
     /**
@@ -75,15 +76,9 @@ public class RobotID implements Serializable {
 
         String identity = file.getAbsolutePath() + "in" + projectPath.getAbsolutePath();
         RobotID id = ids.get(identity);
-        try {
-            if (id == null) {
-                id = new RobotID(file, projectPath, new URI("file:///"+file.getAbsolutePath().replaceAll("\\\\", "/")));
-                ids.put(identity, id);
-                return id;
-            }
-        }
-        catch (URISyntaxException e){
-            System.out.println(e);
+        if (id == null) {
+            id = new RobotID(projectPath, URI.create("file:///" + file.getAbsolutePath().replaceAll("\\\\", "/")));
+            ids.put(identity, id);
         }
         return id;
     }
@@ -112,7 +107,7 @@ public class RobotID implements Serializable {
      */
     public static RobotID dummyRobot() {
         try {
-            return new RobotID(new File("."), new File("."), new URI("."));
+            return new RobotID(new File("."), new URI("."));
         }
         catch (URISyntaxException e){
 

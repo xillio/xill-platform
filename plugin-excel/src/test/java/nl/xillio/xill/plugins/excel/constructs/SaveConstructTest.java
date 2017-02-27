@@ -26,6 +26,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
@@ -82,7 +83,7 @@ public class SaveConstructTest extends TestUtils {
 
         //Mock RobotID
         RobotID id = mock(RobotID.class);
-        when(id.getPath()).thenReturn(new File("."));
+        when(id.getURI()).thenReturn(URI.create("."));
         when(context.getRobotID()).thenReturn(id);
         when(context.getRootRobot()).thenReturn(id);
 

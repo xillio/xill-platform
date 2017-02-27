@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.net.URI;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertTrue;
@@ -51,7 +52,7 @@ public class XsdCheckConstructTest extends TestUtils {
 
         File file = mock(File.class);
         RobotID robotID = mock(RobotID.class);
-        when(robotID.getPath()).thenReturn(file);
+        when(robotID.getURI()).thenReturn(URI.create("."));
 
         ConstructContext context = mock(ConstructContext.class);
         when(context.getRobotID()).thenReturn(robotID);
