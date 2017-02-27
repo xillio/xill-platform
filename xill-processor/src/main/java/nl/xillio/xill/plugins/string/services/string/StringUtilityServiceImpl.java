@@ -48,6 +48,11 @@ public class StringUtilityServiceImpl implements StringUtilityService {
     }
 
     @Override
+    public int lastIndexOf(String haystack, String needle) {
+        return haystack.lastIndexOf(needle);
+    }
+
+    @Override
     public String join(final String[] input, final String delimiter) {
         return StringUtils.join(input, delimiter);
     }
