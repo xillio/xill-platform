@@ -33,20 +33,15 @@ public class RobotID implements Serializable {
 
     private static Map<URI, RobotID> urlIds = new Hashtable<>();
     private final URI uri;
-    private final String name;
 
     private RobotID(final File projectPath, final URI uri) {
         this.projectPath = projectPath;
         this.uri = uri;
-        URI testuri = URI.create("xip:file:///dings/dangs.xip!/iets.xill");
-        name = testuri.getPath();
-        String dinges = "dignes";
     }
 
     private RobotID(final URI uri){
         this.projectPath = null;
         this.uri = uri;
-        name = uri.getPath();
     }
 
     /**
@@ -59,6 +54,8 @@ public class RobotID implements Serializable {
     }
 
     public URI getURI(){ return uri;}
+
+    public String getName() {return uri.toString().substring(uri.toString().lastIndexOf("/")+1);}
 
     @Override
     public String toString() {
@@ -77,7 +74,7 @@ public class RobotID implements Serializable {
         String identity = file.getAbsolutePath() + "in" + projectPath.getAbsolutePath();
         RobotID id = ids.get(identity);
         if (id == null) {
-            id = new RobotID(projectPath, URI.create("file:///" + file.getAbsolutePath().replaceAll("\\\\", "/")));
+            id = new RobotID(projectPath, URI.create("file:///" + file.getAbsolutePath().replaceAll("\\\\", "/").replaceAll(" ", "%20")));
             ids.put(identity, id);
         }
         return id;

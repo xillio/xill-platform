@@ -58,7 +58,7 @@ public abstract class Instruction implements nl.xillio.xill.api.components.Instr
 
     @Override
     public String toString() {
-        String path = getRobotID().getProjectPath().toURI().relativize(getRobotID().getPath().toURI()).getPath();
+        String path = getRobotID().getProjectPath().toURI().relativize(getRobotID().getURI()).getPath();
 
         return path + ":" + getLineNumber() + " > " + getClass().getSimpleName();
     }

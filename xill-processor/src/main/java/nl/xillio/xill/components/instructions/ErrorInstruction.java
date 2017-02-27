@@ -145,7 +145,7 @@ public class ErrorInstruction extends CompoundInstruction {
 
                 if (errorBlockDebugger.getErroredInstruction() != null) {
                     errorVar.put("line", fromValue(errorBlockDebugger.getErroredInstruction().getLineNumber()));
-                    errorVar.put("robot", fromValue(errorBlockDebugger.getErroredInstruction().getRobotID().getPath().toString()));
+                    errorVar.put("robot", fromValue(errorBlockDebugger.getErroredInstruction().getRobotID().getURI().getSchemeSpecificPart()));
                 }
 
                 cause.pushVariable(fromValue(errorVar), errorBlockDebugger.getStackDepth());

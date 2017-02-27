@@ -88,7 +88,7 @@ public class LoadWorkbookConstructTest extends TestUtils {
 
         //Mock RobotID
         RobotID id = mock(RobotID.class);
-        when(id.getPath()).thenReturn(new File("."));
+        when(id.getURI()).thenReturn(URI.create("."));
         when(context.getRobotID()).thenReturn(id);
         when(context.getRootRobot()).thenReturn(id);
 

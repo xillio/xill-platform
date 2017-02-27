@@ -349,7 +349,7 @@ public class RobotTab extends FileTab implements Initializable {
                 ContentAlertDialog confirmationDialog = new ContentAlertDialog(AlertType.CONFIRMATION,
                         "Do you want to save and run the robot?",
                         "",
-                        "The robot " + new File(currentRobot.getURI().getPath()).getName() + " needs to be saved before running. Do you want to continue?",
+                        "The robot " + currentRobot.getName() + " needs to be saved before running. Do you want to continue?",
                         gridPane);
                 // This enables Xillio icon to be displayed in the upper left corner
                 confirmationDialog.initOwner(editorPane.getScene().getWindow());
@@ -572,7 +572,7 @@ public class RobotTab extends FileTab implements Initializable {
         Platform.runLater(() -> {
             if (currentRobot != getProcessor().getRobotID()) {
                 String name = getName();
-                String filename = currentRobot.getPath().getName();
+                String filename = currentRobot.getName();
                 name += " > " + FilenameUtils.getBaseName(filename);
                 setText(name);
             }

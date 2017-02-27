@@ -56,7 +56,7 @@ public class Log4JOutputHandler implements OutputHandler {
     }
 
     private void log(String type, String message, org.apache.logging.log4j.Level level, RobotID robotID, Object... parameters) {
-        ThreadContext.put("robot", robotID.getPath().toString());
+        ThreadContext.put("robot", robotID.getURI().getSchemeSpecificPart());
         ThreadContext.put("type", type);
         LOGGER.log(level, message, parameters);
         ThreadContext.clearMap();
