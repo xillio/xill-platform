@@ -51,10 +51,10 @@ The return value of this construct is true if the operation finished successfull
         <example title="Usage">
             <header>Insert a new row</header>
             <code>
-                use MSSQL as db;
+                use MSSQL;
 
                 // Connect to the database
-                db.connect(
+                MSSQL.connect(
                     "jdbc:jtds:sqlserver://localhost/Database" ::
                     ";user=MyUserName" ::
                     ";password=MyPassword"
@@ -65,14 +65,14 @@ The return value of this construct is true if the operation finished successfull
                     "lastName": "Doe"
                 };
 
-                db.storeObject("people", person);
+                MSSQL.storeObject("people", person);
             </code>
             <header>Update a person if it exists otherwise insert</header>
             <code>
-                use MSSQL as db;
+                use MSSQL;
 
                 // Connect to the database
-                db.connect(
+                MSSQL.connect(
                     "jdbc:jtds:sqlserver://localhost/Database" ::
                     ";user=MyUserName" ::
                     ";password=MyPassword"
@@ -83,15 +83,15 @@ The return value of this construct is true if the operation finished successfull
                     "lastName": "Doe"
                 };
 
-                db.storeObject("people", person, ["firstName", "lastName"]);
+                MSSQL.storeObject("people", person, ["firstName", "lastName"]);
             </code>
             <header>Update an item by id</header>
             <code>
-                use MSSQL as db;
+                use MSSQL;
                 use File;
 
                 // Connect to the database
-                db.connect(
+                MSSQL.connect(
                     "jdbc:jtds:sqlserver://localhost/Database" ::
                     ";user=MyUserName" ::
                     ";password=MyPassword"
@@ -102,7 +102,7 @@ The return value of this construct is true if the operation finished successfull
                     "data": File.openRead("path/to/file.pdf")
                 };
 
-                db.storeObject("documents", file, ["id"]);
+                MSSQL.storeObject("documents", file, ["id"]);
             </code>
         </example>
     </examples>
