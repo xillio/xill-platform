@@ -18,7 +18,7 @@
 -->
 <function>
     <description>
-Returns the last index at which `needle` occurs in `haystack.
+Returns the last index at which `needle` occurs in `haystack`.
     </description>
     <parameterDescriptions>
         <parameterDescription parameterName="haystack">
@@ -30,7 +30,8 @@ The string that will be searched for in `haystack`.
     </parameterDescriptions>
     <longDescription>
 Returns -1 if the index could not be found.
-If an empty needle is provided, the length of the haystack will be returned.
+If an empty `needle` is provided, the length of the `haystack` will be returned.
+If either the `needle` or `haystack` is null, an error is thrown.
     </longDescription>
     <examples>
         <example title="Usage">
