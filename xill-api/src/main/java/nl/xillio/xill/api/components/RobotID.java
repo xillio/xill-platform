@@ -17,7 +17,11 @@ package nl.xillio.xill.api.components;
 
 import java.io.File;
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,9 +32,20 @@ public class RobotID implements Serializable {
     private final File path;
     private final File projectPath;
 
-    private RobotID(final File path, final File projectPath) {
+    private static Map<URI, RobotID> urlIds = new Hashtable<>();
+    private final URI uri;
+
+    private RobotID(final File path, final File projectPath, final URI uri) {
         this.path = path;
         this.projectPath = projectPath;
+        this.uri = uri;
+    }
+
+    private RobotID(final URI uri){
+        this.path = null;
+        this.projectPath = null;
+        this.uri = uri;
+
     }
 
     /**
@@ -39,12 +54,14 @@ public class RobotID implements Serializable {
      * @return the path associated with this id
      */
     public File getPath() {
-        return path;
+        return new File(uri.getPath());
     }
+
+    public URI getURI(){ return uri;}
 
     @Override
     public String toString() {
-        return path.getAbsolutePath();
+        return uri.toString();
     }
 
     /**
@@ -57,14 +74,27 @@ public class RobotID implements Serializable {
     public static RobotID getInstance(final File file, final File projectPath) {
 
         String identity = file.getAbsolutePath() + "in" + projectPath.getAbsolutePath();
-
         RobotID id = ids.get(identity);
-
-        if (id == null) {
-            id = new RobotID(file, projectPath);
-            ids.put(identity, id);
+        try {
+            if (id == null) {
+                id = new RobotID(file, projectPath, new URI("file:///"+file.getAbsolutePath().replaceAll("\\\\", "/")));
+                ids.put(identity, id);
+                return id;
+            }
         }
+        catch (URISyntaxException e){
+            System.out.println(e);
+        }
+        return id;
+    }
 
+
+    public static RobotID getURIInstance(final URI uri) {
+        RobotID id = urlIds.get(uri);
+        if (id == null) {
+            id = new RobotID(uri);
+            urlIds.put(uri, id);
+        }
         return id;
     }
 
@@ -81,6 +111,12 @@ public class RobotID implements Serializable {
      * @return a dummy IDfor testing.
      */
     public static RobotID dummyRobot() {
-        return new RobotID(new File("."), new File("."));
+        try {
+            return new RobotID(new File("."), new File("."), new URI("."));
+        }
+        catch (URISyntaxException e){
+
+        }
+        return null;
     }
 }

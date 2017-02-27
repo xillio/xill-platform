@@ -38,8 +38,8 @@ public class RobotRuntimeInfo implements PropertiesProvider {
      * @param context the context
      */
     public RobotRuntimeInfo(final ConstructContext context) {
-        robotPath = context.getRobotID().getPath().getAbsolutePath();
-        rootRobotPath = context.getRootRobot().getPath().getAbsolutePath();
+        robotPath = context.getRobotID().toString();
+        rootRobotPath = context.getRootRobot().toString();
         projectPath = context.getRobotID().getProjectPath().getAbsolutePath();
 
         properties.put("robotPath", robotPath);

@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.components.instructions;
 
+import me.biesaart.utils.FileUtils;
 import nl.xillio.xill.CodePosition;
 import nl.xillio.xill.api.components.RobotID;
 

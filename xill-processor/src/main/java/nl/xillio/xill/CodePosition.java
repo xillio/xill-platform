@@ -56,6 +56,6 @@ public class CodePosition {
 
     @Override
     public String toString() {
-        return robot.getPath().getAbsolutePath() + ":" + lineNumber;
+        return robot.toString() + ":" + lineNumber;
     }
 }
