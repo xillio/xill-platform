@@ -22,6 +22,7 @@ import nl.xillio.xill.plugins.mongodb.ConnectionFailedException;
 import nl.xillio.xill.plugins.mongodb.NoSuchConnectionException;
 import org.testng.annotations.Test;
 
+import java.nio.file.Paths;
 import java.util.UUID;
 
 import static org.mockito.Matchers.any;
@@ -118,6 +119,6 @@ public class ConnectionManagerTest {
     }
 
     private ConstructContext context(UUID id) {
-        return new ConstructContext(RobotID.dummyRobot(), RobotID.dummyRobot(), null, null, id, null, null);
+        return new ConstructContext(Paths.get("."), RobotID.dummyRobot(), RobotID.dummyRobot(), null, null, id, null, null);
     }
 }

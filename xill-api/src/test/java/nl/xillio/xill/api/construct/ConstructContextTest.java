@@ -40,6 +40,7 @@ public class ConstructContextTest {
         OutputHandler outputHandler = new DefaultOutputHandler();
 
         ConstructContext constructContext = new ConstructContext(
+                Paths.get("."),
                 RobotID.dummyRobot(),
                 RobotID.dummyRobot(),
                 null,

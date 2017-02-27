@@ -20,6 +20,7 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 import static org.testng.Assert.*;
 
@@ -29,8 +30,9 @@ public class ContextPropertiesResolverTest {
     public void testDefaultXillResolver() throws Exception {
         ContextPropertiesResolver resolver = ContextPropertiesResolver.defaultXillResolver();
         ConstructContext context = new ConstructContext(
+                Paths.get("./this/is/a/project"),
                 RobotID.dummyRobot(),
-                RobotID.getInstance(new File("I AM A UNIT TEST"), new File("I AM A PROJECT")),
+                RobotID.getInstance(new File("I AM A UNIT TEST")),
                 null,
                 null,
                 null,
@@ -38,10 +40,10 @@ public class ContextPropertiesResolverTest {
                 null
         );
 
-        String projectPath = resolver.resolve("xill.projectPath", context).get();
+        String workingDirectory = resolver.resolve("xill.workingDirectory", context).get();
         String robotPath = resolver.resolve("xill.robotPath", context).get();
 
-        assertTrue(projectPath.contains("I AM A PROJECT"));
+        assertTrue(workingDirectory.contains("./this/is/a/project"));
         assertTrue(robotPath.contains("I AM A UNIT TEST"));
     }
 
