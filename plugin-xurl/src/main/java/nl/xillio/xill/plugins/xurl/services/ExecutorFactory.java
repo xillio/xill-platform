@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * This class is responsible for creating an executor.
  *
- * @author Thomas Biesaart, Ernst van Rheenen
+ * @author Ernst van Rheenen
  */
 @Singleton
 public class ExecutorFactory {
