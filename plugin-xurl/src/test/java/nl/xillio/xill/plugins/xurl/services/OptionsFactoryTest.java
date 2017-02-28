@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.xurl.services;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.xurl.data.Options;
@@ -24,12 +25,16 @@ import org.testng.annotations.Test;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 
-import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-public class    OptionsFactoryTest {
+public class    OptionsFactoryTest extends TestUtils {
     private OptionsFactory optionsFactory = new OptionsFactory();
+
+    private final String USERNAME = "user";
+    private final String PASSWORD = "password";
+    private final String WORKSTATION = "workstation";
+    private final String DOMAIN = "domain.com";
 
     @Test(expectedExceptions = RobotRuntimeException.class)
     public void testUnknownOption() {
@@ -148,17 +153,96 @@ public class    OptionsFactoryTest {
         assertEquals(options.getLogging(), "info");
     }
 
+    @Test
+    public void testNTLM() {
+        MetaExpression input = createNTLMObject(USERNAME, PASSWORD, WORKSTATION, DOMAIN);
+        Options options = optionsFactory.build(input);
 
-    private MetaExpression createMap(String name, MetaExpression value) {
-        LinkedHashMap<String, MetaExpression> result = new LinkedHashMap<>();
-        result.put(name, value);
-        return fromValue(result);
+        assertEquals(options.getNTLMOptions().getUsername(), USERNAME);
+        assertEquals(options.getNTLMOptions().getPassword(), PASSWORD);
+        assertEquals(options.getNTLMOptions().getWorkstation(), WORKSTATION);
+        assertEquals(options.getNTLMOptions().getDomain(), DOMAIN);
     }
 
-    private MetaExpression createMap(String name, MetaExpression value, String name2, MetaExpression value2) {
-        LinkedHashMap<String, MetaExpression> result = new LinkedHashMap<>();
-        result.put(name, value);
-        result.put(name2, value2);
-        return fromValue(result);
+    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*OBJECT.*")
+    public void testNTLMNotObject() {
+        MetaExpression input = createMap("ntlm", fromValue(""));
+        optionsFactory.build(input);
     }
+
+    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*username.*")
+    public void testNTLMNoUsername() {
+        MetaExpression input = createNTLMObject(null, PASSWORD, WORKSTATION, DOMAIN);
+
+        optionsFactory.build(input);
+    }
+
+    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*password.*")
+    public void testNTLMNoPassword() {
+        MetaExpression input = createNTLMObject(USERNAME, null, WORKSTATION, DOMAIN);
+
+        optionsFactory.build(input);
+    }
+
+    @Test()
+    public void testNTLMNoWorkstation() {
+        // Null value
+        MetaExpression input = createNTLMObject(USERNAME, PASSWORD, null, DOMAIN);
+
+        optionsFactory.build(input);
+
+        // Entry not provided at all
+        MetaExpression input2 = createNTLMObjectNoWorkspace(USERNAME, PASSWORD, DOMAIN);
+
+        optionsFactory.build(input2);
+    }
+
+    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*domain.*")
+    public void testNTLMNoDomain() {
+        // Null value
+        MetaExpression input = createNTLMObject(USERNAME, PASSWORD, WORKSTATION, null);
+
+        optionsFactory.build(input);
+
+        // Entry not provided at all
+        MetaExpression input2 = createNTLMObjectNoDomain(USERNAME, PASSWORD, WORKSTATION);
+
+        optionsFactory.build(input2);
+
+    }
+
+
+    private MetaExpression createNTLMObjectNoDomain(String username, String password, String workspace) {
+        MetaExpression auth = createMap(
+                "username", fromValue(username),
+                "password", fromValue(password),
+                "workspace", fromValue(workspace)
+        );
+        MetaExpression input = createMap("ntlm", auth);
+        return input;
+    }
+
+    private MetaExpression createNTLMObjectNoWorkspace(String username, String password, String domain) {
+        MetaExpression auth = createMap(
+                "username", fromValue(username),
+                "password", fromValue(password),
+                "domain", fromValue(domain)
+        );
+        MetaExpression input = createMap("ntlm", auth);
+        return input;
+    }
+
+    private MetaExpression createNTLMObject(String username, String password, String workstation, String domain) {
+        MetaExpression auth = createMap(
+                "username", fromValue(username),
+                "password", fromValue(password),
+                "workstation", fromValue(workstation),
+                "domain", fromValue(domain)
+        );
+        MetaExpression input = createMap("ntlm", auth);
+        return input;
+    }
+
+
+
 }

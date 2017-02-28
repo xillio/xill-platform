@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 ## [3.5.1] - unreleased
 
+## [3.5.1] - unreleased
+
+### Add
+* XURL ntlm support [CTC-2004]
+
 ### Fix
 * Web.loadPage does not work with file:// protocol [CTC-1935]
 * Cannot divide by zero error in progress bar [CTC-1884]
