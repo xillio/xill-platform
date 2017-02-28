@@ -3,8 +3,6 @@ All notable changes to this project will be documented in this file.
 
 ## [3.5.1] - unreleased
 
-## [3.5.1] - unreleased
-
 ### Add
 * XURL ntlm support [CTC-2004]
 
