@@ -3,15 +3,21 @@ All notable changes to this project will be documented in this file.
 
 ## [3.6.0] - unreleased
 
+### Add
+* Git integration. Push and pull can be done from the IDE [CTC-1919]
+* Store git credentials [CTC-1975]
+* Show status of changed files in git [CTC-1977]
+
 ### Fix
 * Web.loadPage does not work with file:// protocol [CTC-1935]
+* Cannot divide by zero error in progress bar [CTC-1884]
+* Merge 'Add Project' and 'Create Project from Sources' dialogs [CTC-2088]
 
-## [3.5.0] - unreleased
+## [3.5.0] - 2017-02-17
 
 ### Add
 * Qualified includes for xill libraries using the new `as` keyword [CTC-1946]
 * Function overloading based on parameters [CTC-1613]
-* Git integration. Push and pull can be done from the IDE [CTC-1919]
 * `Template` plugin [CTC-1799]
 * `System.parseJSON()` now parses LIST [CTC-1769]
 * Warn users about invalid asset names [CTC-1798]
@@ -28,6 +34,8 @@ All notable changes to this project will be documented in this file.
 * Deprecate `File.getText()` [CTC-1860]
 * Update File and Stream help files [CTC-1869]
 * Improve layout for help files. Add a parameter description to all help files [CTC-1511]
+* Using `XML.xPath()` with `@*` now returns an `OBJECT` that includes the attribute names [CTC-2054]
+* Using `XML.xPath()` with `//@*` now returns a `LIST` of `OBJECTs` that includes the attribute names [CTC-2083]
 
 ### Fix
 * Settings file not found for paths with whitespaces [CTC-1887]
@@ -53,6 +61,8 @@ All notable changes to this project will be documented in this file.
 * `Excel.setCellFormula()` does not create formula in Excel sheet [CTC-1930]
 * Pipeline functions do not support qualified includes [CTC-2001]
 * Unable to use multibyte characters in Properties package [CTC-1846]
+* Autocomplete shows only local results [CTC-2056]
+* Debugger unreliable [CTC-1892]
 
 ## [3.4.1] - 2016-10-28
 
