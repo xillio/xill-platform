@@ -32,6 +32,7 @@ import static nl.xillio.xill.plugins.xurl.services.OptionsFactory.parseContentTy
 public class Options {
     private Credentials basicAuth;
     private ProxyOptions proxyOptions;
+    private NTLMOptions ntlmOptions;
     private boolean insecure;
     private boolean multipart = false;
     private ContentType responseContentType;
@@ -48,12 +49,32 @@ public class Options {
         this.basicAuth = basicAuth;
     }
 
+    public boolean isBasicAuthEnabled() {
+        return basicAuth != null;
+    }
+
     public ProxyOptions getProxyOptions() {
         return proxyOptions;
     }
 
     public void setProxyOptions(ProxyOptions proxyOptions) {
         this.proxyOptions = proxyOptions;
+    }
+
+    public boolean isProxyEnabled() {
+        return proxyOptions != null;
+    }
+
+    public NTLMOptions getNTLMOptions() {
+        return ntlmOptions;
+    }
+
+    public void setNTLMOptions(NTLMOptions ntlmOptions) {
+        this.ntlmOptions = ntlmOptions;
+    }
+
+    public boolean isNTLMEnabled() {
+        return ntlmOptions != null;
     }
 
     public boolean isInsecure() {
@@ -135,6 +156,10 @@ public class Options {
     public void apply(Executor executor) {
         if (basicAuth != null) {
             executor.auth(basicAuth.getUsername(), basicAuth.getPassword());
+        }
+
+        if(ntlmOptions != null) {
+            executor.auth(ntlmOptions.getUsername(), ntlmOptions.getPassword(), getNTLMOptions().getWorkstation(), ntlmOptions.getDomain());
         }
 
         if (proxyOptions != null) {
