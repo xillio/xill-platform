@@ -1,7 +1,7 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
-## [3.5.1] - unreleased
+## [3.5.1] - 2017-02-28
 
 ### Add
 * XURL ntlm support [CTC-2004]
