@@ -51,11 +51,10 @@ public class XsdCheckConstructTest extends TestUtils {
         when(xmlFilenameVar.getStringValue()).thenReturn(".");
 
         File file = mock(File.class);
-        RobotID robotID = mock(RobotID.class);
-        when(robotID.getURI()).thenReturn(URI.create("."));
+        RobotID id = RobotID.dummyRobot();
 
         ConstructContext context = mock(ConstructContext.class);
-        when(context.getRobotID()).thenReturn(robotID);
+        when(context.getRobotID()).thenReturn(id);
 
         when(xsdService.xsdCheck(any(), any(), any())).thenReturn(true);
 

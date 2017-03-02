@@ -31,7 +31,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.URL;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
@@ -44,17 +44,6 @@ import static org.testng.Assert.assertEquals;
 public class LoadWorkbookConstructTest extends TestUtils {
 
     /**
-     * Mocks the RobotID
-     *
-     * @return a mocked RobotID
-     */
-    private RobotID createRobotID() {
-        RobotID id = mock(RobotID.class);
-        when(id.getURI()).thenReturn(URI.create("."));
-        return id;
-    }
-
-    /**
      * Checks if correct RobotRuntimeException is thrown when an incorrect path is provided
      */
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "Path does not lead to an xls or xlsx Microsoft Excel file")
@@ -64,8 +53,7 @@ public class LoadWorkbookConstructTest extends TestUtils {
         ConstructContext context = mock(ConstructContext.class);
 
         //Mock RobotID
-        RobotID id = mock(RobotID.class);
-        when(id.getURI()).thenReturn(URI.create("."));
+        RobotID id = RobotID.dummyRobot();
         when(context.getRobotID()).thenReturn(id);
         when(context.getRootRobot()).thenReturn(id);
 
@@ -87,8 +75,7 @@ public class LoadWorkbookConstructTest extends TestUtils {
 
 
         //Mock RobotID
-        RobotID id = mock(RobotID.class);
-        when(id.getURI()).thenReturn(URI.create("."));
+        RobotID id = RobotID.dummyRobot();
         when(context.getRobotID()).thenReturn(id);
         when(context.getRootRobot()).thenReturn(id);
 
@@ -109,8 +96,7 @@ public class LoadWorkbookConstructTest extends TestUtils {
         ConstructContext context = mock(ConstructContext.class);
 
         //Mock RobotID
-        RobotID id = mock(RobotID.class);
-        when(id.getURI()).thenReturn(URI.create("."));
+        RobotID id = RobotID.dummyRobot();
         when(context.getRobotID()).thenReturn(id);
         when(context.getRootRobot()).thenReturn(id);
 
@@ -133,8 +119,7 @@ public class LoadWorkbookConstructTest extends TestUtils {
         ConstructContext context = mock(ConstructContext.class);
 
         //Mock RobotID
-        RobotID id = mock(RobotID.class);
-        when(id.getURI()).thenReturn(URI.create("."));
+        RobotID id = RobotID.dummyRobot();
         when(context.getRobotID()).thenReturn(id);
         when(context.getRootRobot()).thenReturn(id);
 
@@ -165,8 +150,7 @@ public class LoadWorkbookConstructTest extends TestUtils {
         when(context.getRootLogger()).thenReturn(logger);
 
         //Mock RobotID
-        RobotID id = mock(RobotID.class);
-        when(id.getURI()).thenReturn(URI.create("."));
+        RobotID id = RobotID.dummyRobot();
         when(context.getRobotID()).thenReturn(id);
         when(context.getRootRobot()).thenReturn(id);
 
@@ -202,8 +186,7 @@ public class LoadWorkbookConstructTest extends TestUtils {
         when(workbook.isReadOnly()).thenReturn(false);
 
         //Mock RobotID
-        RobotID id = mock(RobotID.class);
-        when(id.getURI()).thenReturn(URI.create("."));
+        RobotID id = RobotID.dummyRobot();
         when(context.getRobotID()).thenReturn(id);
         when(context.getRootRobot()).thenReturn(id);
 
@@ -229,8 +212,7 @@ public class LoadWorkbookConstructTest extends TestUtils {
         when(service.loadWorkbook(any(File.class))).thenReturn(workbook);
 
         //Mock RobotID
-        RobotID id = mock(RobotID.class);
-        when(id.getURI()).thenReturn(URI.create("."));
+        RobotID id = RobotID.dummyRobot();
         when(context.getRobotID()).thenReturn(id);
         when(context.getRootRobot()).thenReturn(id);
 

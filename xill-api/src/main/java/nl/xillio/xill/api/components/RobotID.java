@@ -15,77 +15,54 @@
  */
 package nl.xillio.xill.api.components;
 
+import me.biesaart.utils.Log;
+import org.slf4j.Logger;
+
 import java.io.File;
 import java.io.Serializable;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 
 /**
  * A unique identifier for robots.
  */
 public class RobotID implements Serializable {
-    private static Map<String, RobotID> ids = new Hashtable<>();
     private final File projectPath;
+    private static final Logger LOGGER = Log.get();
 
-    private static Map<URI, RobotID> urlIds = new Hashtable<>();
-    private final URI uri;
+    private static Map<URL, RobotID> ids = new Hashtable<>();
+    private final URL url;
 
-    private RobotID(final File projectPath, final URI uri) {
-        this.projectPath = projectPath;
-        this.uri = uri;
-    }
-
-    private RobotID(final URI uri){
+    private RobotID(final URL url){
         this.projectPath = null;
-        this.uri = uri;
+        this.url = url;
     }
 
-    /**
-     * Returns the path associated with this id.
-     *
-     * @return the path associated with this id
-     */
-    public File getPath() {
-        return new File(uri.getPath());
-    }
+    public URL getURL(){ return url;}
 
-    public URI getURI(){ return uri;}
-
-    public String getName() {return uri.toString().substring(uri.toString().lastIndexOf("/")+1);}
+    public String getName() {return url.toString().substring(url.toString().lastIndexOf("/")+1);}
 
     @Override
     public String toString() {
-        return uri.toString();
+        return "RobotID{" +
+                "projectPath=" + projectPath +
+                ", url=" + url +
+                '}';
     }
 
     /**
      * Gets/creates a robotID that is singular for every path.
      *
-     * @param file        the robot file
-     * @param projectPath the path to the root folder of the workspace
+     * @param url        the robot file
      * @return a unique robot id for this path
      */
-    public static RobotID getInstance(final File file, final File projectPath) {
-
-        String identity = file.getAbsolutePath() + "in" + projectPath.getAbsolutePath();
-        RobotID id = ids.get(identity);
+    public static RobotID getInstance(final URL url) {
+        RobotID id = ids.get(url);
         if (id == null) {
-            id = new RobotID(projectPath, URI.create("file:///" + file.getAbsolutePath().replaceAll("\\\\", "/").replaceAll(" ", "%20")));
-            ids.put(identity, id);
-        }
-        return id;
-    }
-
-
-    public static RobotID getURIInstance(final URI uri) {
-        RobotID id = urlIds.get(uri);
-        if (id == null) {
-            id = new RobotID(uri);
-            urlIds.put(uri, id);
+            id = new RobotID(url);
+            ids.put(url, id);
         }
         return id;
     }
@@ -104,10 +81,11 @@ public class RobotID implements Serializable {
      */
     public static RobotID dummyRobot() {
         try {
-            return new RobotID(new File("."), new URI("."));
+            return new RobotID(new URL("file:///"));
         }
-        catch (URISyntaxException e){
-
+        catch (MalformedURLException e)
+        {
+            LOGGER.error(". is not a valid URL");
         }
         return null;
     }

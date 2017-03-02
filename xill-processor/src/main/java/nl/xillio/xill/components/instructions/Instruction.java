@@ -15,7 +15,6 @@
  */
 package nl.xillio.xill.components.instructions;
 
-import me.biesaart.utils.FileUtils;
 import nl.xillio.xill.CodePosition;
 import nl.xillio.xill.api.components.RobotID;
 
@@ -58,7 +57,7 @@ public abstract class Instruction implements nl.xillio.xill.api.components.Instr
 
     @Override
     public String toString() {
-        String path = getRobotID().getProjectPath().toURI().relativize(getRobotID().getURI()).getPath();
+        String path = getRobotID().getURL().toString();
 
         return path + ":" + getLineNumber() + " > " + getClass().getSimpleName();
     }

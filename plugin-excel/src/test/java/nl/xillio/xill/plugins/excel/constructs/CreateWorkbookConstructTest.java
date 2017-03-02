@@ -27,6 +27,7 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.file.FileAlreadyExistsException;
 
 import static org.mockito.Mockito.*;
@@ -50,8 +51,7 @@ public class CreateWorkbookConstructTest extends TestUtils {
         ConstructContext context = mock(ConstructContext.class);
 
         //Mocking file
-        RobotID id = mock(RobotID.class);
-        when(id.getURI()).thenReturn(new URI("."));
+        RobotID id = RobotID.dummyRobot();
         when(context.getRobotID()).thenReturn(id);
         when(context.getRootRobot()).thenReturn(id);
 
@@ -74,8 +74,7 @@ public class CreateWorkbookConstructTest extends TestUtils {
 
 
         //Mocking file
-        RobotID id = mock(RobotID.class);
-        when(id.getURI()).thenReturn(new URI("."));
+        RobotID id = RobotID.dummyRobot();
         when(context.getRobotID()).thenReturn(id);
         when(context.getRootRobot()).thenReturn(id);
 
@@ -98,8 +97,7 @@ public class CreateWorkbookConstructTest extends TestUtils {
         XillWorkbook workbook = mock(XillWorkbook.class);
 
         //Mock filesystem
-        RobotID id = mock(RobotID.class);
-        when(id.getURI()).thenReturn(new URI("."));
+        RobotID id = RobotID.dummyRobot();
         when(context.getRobotID()).thenReturn(id);
         when(context.getRootRobot()).thenReturn(id);
         when(service.createWorkbook(any(File.class))).thenReturn(workbook);

@@ -82,8 +82,7 @@ public class SaveConstructTest extends TestUtils {
         MetaExpression inputPath = fromValue("path");
 
         //Mock RobotID
-        RobotID id = mock(RobotID.class);
-        when(id.getURI()).thenReturn(URI.create("."));
+        RobotID id = RobotID.dummyRobot();
         when(context.getRobotID()).thenReturn(id);
         when(context.getRootRobot()).thenReturn(id);
 
