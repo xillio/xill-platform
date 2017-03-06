@@ -99,6 +99,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
     private final Path workingDirectory;
     private final RobotID rootRobot;
     private final Map<EObject, Map.Entry<RobotID, Robot>> compiledRobots = new HashMap<>();
+    private final RobotLoader robotLoader;
 
     /**
      * Events for signalling that a robot has started and that a robot has stopped
