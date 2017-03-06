@@ -35,14 +35,18 @@ public class RobotID implements Serializable {
     private static Map<URL, RobotID> ids = new Hashtable<>();
     private final URL url;
 
-    private RobotID(final URL url){
+    private RobotID(final URL url) {
         this.projectPath = null;
         this.url = url;
     }
 
-    public URL getURL(){ return url;}
+    public URL getURL() {
+        return url;
+    }
 
-    public String getName() {return url.toString().substring(url.toString().lastIndexOf("/")+1);}
+    public String getName() {
+        return url.toString().substring(url.toString().lastIndexOf("/") + 1);
+    }
 
     @Override
     public String toString() {
@@ -80,12 +84,11 @@ public class RobotID implements Serializable {
      * @return a dummy IDfor testing.
      */
     public static RobotID dummyRobot() {
+        String basicURL = "file:///";
         try {
-            return new RobotID(new URL("file:///"));
-        }
-        catch (MalformedURLException e)
-        {
-            LOGGER.error(". is not a valid URL");
+            return new RobotID(new URL(basicURL));
+        } catch (MalformedURLException e) {
+            LOGGER.error(basicURL + " is not a valid URL");
         }
         return null;
     }
