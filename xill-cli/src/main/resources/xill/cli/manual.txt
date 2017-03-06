@@ -1,0 +1,43 @@
+Usage
+=====
+
+This program executes .xill scripts from the command line. If neither the -v or -h options are specified, this program
+will execute every robot that is passed as an argument.
+
+Run Test.xill:
+
+    xill Test.xill
+
+It is also possible to address a robot by its fully qualified name:
+
+    xill fully.qualified.Name
+
+
+Input and Output Streams
+========================
+
+The input, output and error streams are exposed to robots through the 'argument' keyword. You can use the 'Stream' plugin
+to read from the input and write to the output and error stream.
+
+For Example:
+
+    use Stream;
+
+    // This argument will contain the streams
+    argument std;
+
+    // Write a line to the output
+    Stream.write("-------------\n", std.output);
+
+    // Copy all input to the output
+    Stream.write(std.input, std.output);
+
+    // Write another line to the output
+    Stream.write("-------------\n", std.output);
+
+
+The script above can be used by piping data into the command:
+
+    echo "Hello World!" | xill MyRobot
+
+

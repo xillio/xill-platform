@@ -13,21 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.cli;
-
-import me.biesaart.wield.Wield;
+package n.xillio.xill.cli;
 
 /**
- * This class represents the main application loader.
- *
- * @author Thomas Biesaart
+ * This enum represents the result of an execution of the {@link XillCLI Xill Command Line Interface}.
  */
-public class Application {
-    private Application() {
-        // This is just the bootloader class
-    }
-
-    public static void main(String... args) {
-        Wield.the().power().run(args);
-    }
+public enum ProgramReturnCode {
+    OK,
+    INVALID_INPUT,
+    EXECUTION_ERROR
 }
