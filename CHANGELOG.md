@@ -13,6 +13,11 @@ All notable changes to this project will be documented in this file.
 * Store git credentials [CTC-1975]
 * Show status of changed files in git [CTC-1977]
 
+## [3.5.1] - unreleased
+
+### Add
+* XURL ntlm support [CTC-2004]
+
 ### Fix
 * Web.loadPage does not work with file:// protocol [CTC-1935]
 * Cannot divide by zero error in progress bar [CTC-1884]
