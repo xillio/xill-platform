@@ -86,7 +86,7 @@ public class DebugPane extends AnchorPane implements EventHandler<KeyEvent>, Rob
     }
 
     public String getFullPath(RobotTab tab) {
-        return tab.getProcessor().getRobotID().toString();
+        return tab.getProcessor().getRobotID().getPath().getAbsolutePath();
     }
 
     /**

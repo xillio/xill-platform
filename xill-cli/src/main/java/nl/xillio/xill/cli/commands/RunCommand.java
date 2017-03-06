@@ -71,7 +71,7 @@ public class RunCommand {
             executionService.run(robot, project)
                     .forEach(this::logIssue);
         } catch (CompileException e) {
-            compileError(e.getRobot().toString(), e.getLine(), e.getMessage(), e);
+            compileError(e.getRobot().getPath().getAbsolutePath(), e.getLine(), e.getMessage(), e);
         } catch (IOException e) {
             LOGGER.error("Failed to start robot: " + e.getMessage(), e);
         }
@@ -79,7 +79,7 @@ public class RunCommand {
 
     @SuppressWarnings("squid:UnusedPrivateMethod") // Sonar still doesn't do method references
     private void logIssue(Issue issue) {
-        compileError(issue.getRobot().toString(), issue.getLine(), issue.getMessage(), null);
+        compileError(issue.getRobot().getPath().getAbsolutePath(), issue.getLine(), issue.getMessage(), null);
     }
 
     private void compileError(String robotPath, int line, String message, Throwable e) {
