@@ -45,7 +45,7 @@ public class FileResolverImpl implements FileResolver {
         Path file = tryPath(path.getStringValue());
         if (!file.isAbsolute()) {
             //It's not absolute so we make it relative to the robot
-            file = context.getRobotID().getProjectPath().toPath().resolve(file);
+            file = context.getWorkingDirectory().resolve(file);
         }
         return file.normalize().toAbsolutePath();
     }

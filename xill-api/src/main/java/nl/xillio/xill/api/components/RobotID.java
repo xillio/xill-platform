@@ -72,16 +72,9 @@ public class RobotID implements Serializable {
     }
 
     /**
-     * @return the projectPath
-     */
-    public File getProjectPath() {
-        return projectPath;
-    }
-
-    /**
      * Used in tests to create a dummy ID.
      *
-     * @return a dummy IDfor testing.
+     * @return a dummy ID for testing.
      */
     public static RobotID dummyRobot() {
         String basicURL = "file:///";

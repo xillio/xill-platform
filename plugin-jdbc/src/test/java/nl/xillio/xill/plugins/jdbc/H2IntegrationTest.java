@@ -39,6 +39,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -215,6 +216,7 @@ public class H2IntegrationTest extends TestUtils {
 
     private MetaExpression run(Construct construct, MetaExpression... arguments) {
         ConstructContext context = new ConstructContext(
+                Paths.get("."),
                 RobotID.dummyRobot(),
                 RobotID.dummyRobot(),
                 construct,

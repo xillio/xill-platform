@@ -25,6 +25,7 @@ import nl.xillio.xill.plugins.mongodb.services.ConnectionFactory;
 import nl.xillio.xill.plugins.mongodb.services.ConnectionManager;
 import org.testng.annotations.Test;
 
+import java.nio.file.Paths;
 import java.util.UUID;
 
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
@@ -38,7 +39,7 @@ public class ConnectConstructTest extends TestUtils {
         ConnectionFactory factory = mock(ConnectionFactory.class, RETURNS_DEEP_STUBS);
         ConnectionManager connectionManager = new ConnectionManager(factory);
         ConnectConstruct connectConstruct = new ConnectConstruct(connectionManager);
-        ConstructContext context = new ConstructContext(RobotID.dummyRobot(), RobotID.dummyRobot(), connectConstruct, null, UUID.randomUUID(), null, null);
+        ConstructContext context = new ConstructContext(Paths.get("."), RobotID.dummyRobot(), RobotID.dummyRobot(), connectConstruct, null, UUID.randomUUID(), null, null);
         MetaExpression result = connectConstruct.process(
                 fromValue("database"),
                 fromValue("localhost"),

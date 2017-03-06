@@ -27,7 +27,7 @@ Returns an OBJECT variable containing:
 |-----|-----------|
 |`availableProcessors`|The number of available processors to this application|
 |`memory`|An OBJECT with information about the memory to this application|
-|`projectPath`|The path to the project of the current robot|
+|`workingDirectory`|The path to the working directory of the current robot|
 |`fileSystem`|An OBJECT with information about the current file system|
 |`rootRobotPath`|The path to the robot that is run first|
 |`robotPath`|The path to the robot that executes this function|
@@ -44,7 +44,7 @@ Returns an OBJECT variable containing:
                         {
                             "robotPath":"D:\\Code\\CT\\Xill 3.0\\projects\\tmp.xill",
                             "rootRobotPath":"D:\\Code\\CT\\Xill 3.0\\projects\\tmp.xill",
-                            "projectPath":"D:\\Code\\CT\\Xill 3.0",
+                            "workingDirectory":"D:\\Code\\CT\\Xill 3.0",
                             "availableProcessors":8,
                             "memory":{
                                 "free":281276656,

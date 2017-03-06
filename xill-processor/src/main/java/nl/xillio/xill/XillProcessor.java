@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,6 +39,7 @@ import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue.IssueImpl;
 import org.slf4j.Logger;
+import xill.RobotLoader;
 import xill.lang.XillStandaloneSetup;
 import xill.lang.scoping.XillScopeProvider;
 import xill.lang.validation.XillValidator;
@@ -49,6 +50,9 @@ import xill.lang.xill.UseStatement;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -63,8 +67,9 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     private final XtextResourceSet resourceSet;
 
     private final IResourceValidator validator;
-    private final File robotFile;
-    private final File projectFolder;
+    private final RobotID robotID;
+    private final Path workingDirectory;
+    private final RobotLoader robotLoader;
     private final List<XillPlugin> plugins;
     private final Debugger debugger;
     private final Map<Construct, String> argumentSignatures = new HashMap<>();
@@ -74,16 +79,18 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     /**
      * Create a new processor that can run a file.
      *
-     * @param projectFolder the project folder
-     * @param robotFile     the robot file
-     * @param plugins       the plugins
-     * @param debugger      the debugger
+     * @param workingDirectory   the project folder
+     * @param fullyQualifiedName fully qualified name of the robot that should be executed
+     * @param robotLoader             the robot loader
+     * @param plugins            the plugins
+     * @param debugger           the debugger
      * @throws IOException if thrown if a file(-related) operation fails.
      */
-    public XillProcessor(final File projectFolder, final File robotFile, final List<XillPlugin> plugins,
+    public XillProcessor(final Path workingDirectory, final String fullyQualifiedName, final RobotLoader robotLoader, final List<XillPlugin> plugins,
                          final Debugger debugger) throws IOException {
-        this.projectFolder = projectFolder;
-        this.robotFile = robotFile;
+        this.workingDirectory = workingDirectory;
+        this.robotLoader = robotLoader;
+        this.robotID = RobotID.getInstance(robotLoader.getRobot(fullyQualifiedName));
         this.plugins = plugins;
         this.debugger = debugger;
         Injector injector = new XillStandaloneSetup().createInjectorAndDoEMFRegistration();
@@ -103,21 +110,20 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     @Override
     public List<Issue> validate() {
         synchronized (XillValidator.LOCK) {
-            XillValidator.setProjectFolder(projectFolder);
-            XillScopeProvider.setProjectFolder(projectFolder);
+            XillValidator.setProjectFolder(workingDirectory.toFile());
+            XillScopeProvider.setProjectFolder(workingDirectory.toFile());
             debugger.reset();
-            Resource resource = resourceSet.getResource(URI.createFileURI(robotFile.getAbsolutePath()), true);
-            return validate(resource);
+            return validate(findResource(robotID));
         }
     }
 
     @Override
     public List<Issue> compileAsSubRobot(final RobotID rootRobot) throws XillParsingException {
         synchronized (XillValidator.LOCK) {
-            XillValidator.setProjectFolder(projectFolder);
-            XillScopeProvider.setProjectFolder(projectFolder);
+            XillValidator.setProjectFolder(workingDirectory.toFile());
+            XillScopeProvider.setProjectFolder(workingDirectory.toFile());
             debugger.reset();
-            return compile(robotFile, rootRobot);
+            return compile(robotID, rootRobot);
         }
     }
 
@@ -128,15 +134,14 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
         this.debugger.setOutputHandler(outputHandler);
     }
 
-    private List<Issue> compile(final File robotPath, RobotID rootRobot) throws XillParsingException {
-        Resource resource = resourceSet.getResource(URI.createFileURI(robotPath.getAbsolutePath()), true);
+    private List<Issue> compile(final RobotID robotID, RobotID rootRobot) throws XillParsingException {
+        Resource resource = findResource(robotID);
 
-        RobotID robotID = RobotID.getInstance(robotPath, projectFolder);
         if (rootRobot == null) {
             rootRobot = robotID;
         }
 
-        LanguageFactory<xill.lang.xill.Robot> factory = new XillProgramFactory(plugins, getDebugger(), rootRobot, outputHandler);
+        LanguageFactory<xill.lang.xill.Robot> factory = new XillProgramFactory(workingDirectory, plugins, getDebugger(), rootRobot, outputHandler, robotLoader);
 
 
         List<Issue> issues = validate(resource);
@@ -153,11 +158,12 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
         // Parse all resources
         for (Resource currentResource : resourceSet.getResources()) {
             for (EObject rootToken : currentResource.getContents()) {
-                // Build RobotID
-                File currentFile = new File(currentResource.getURI().toFileString());
 
                 // Parse
-                factory.parse((xill.lang.xill.Robot) rootToken, RobotID.getInstance(currentFile, projectFolder));
+                factory.parse(
+                        (xill.lang.xill.Robot) rootToken,
+                        toRobotID(currentResource)
+                );
 
                 // Check if is main robot token
                 if (rootToken.eResource() == resource) {
@@ -173,13 +179,30 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
 
     }
 
+    private URL toURL(URI uri) {
+
+        try {
+            return new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    private RobotID toRobotID(Resource resource) {
+        return RobotID.getInstance(toURL(resource.getURI()));
+    }
+
+    private Resource findResource(RobotID robotID) {
+        return resourceSet.getResource(URI.createURI(robotID.getURL().toString()), true);
+    }
+
     private List<Issue> validate(Resource resource) {
         gatherResources(resource);
         // Validate all resources and concat issues
         return resourceSet.getResources().stream()
                 .flatMap(
                         currentResource -> validate(currentResource,
-                                RobotID.getInstance(new File(currentResource.getURI().toFileString()), projectFolder)
+                                toRobotID(currentResource)
                         ).stream()
                 ).collect(Collectors.toList());
     }
@@ -204,7 +227,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
 
     private URI getURI(final IncludeStatement include) {
         String subPath = StringUtils.join(include.getLibrary(), File.separator) + ".xill";
-        File libPath = new File(projectFolder, subPath);
+        File libPath = new File(workingDirectory.toFile(), subPath);
         String fullPath = libPath.getAbsolutePath();
 
         return URI.createFileURI(fullPath);
@@ -330,7 +353,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
 
     @Override
     public RobotID getRobotID() {
-        return RobotID.getInstance(robotFile, projectFolder);
+        return robotID;
     }
 
     @Override
@@ -406,7 +429,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
      */
     private String getSignature(Construct construct) {
         if (!argumentSignatures.containsKey(construct)) {
-            ConstructContext context = new ConstructContext(getRobotID(), getRobotID(), construct, null, null, outputHandler, null, null);
+            ConstructContext context = new ConstructContext(workingDirectory, getRobotID(), getRobotID(), construct, null, null, outputHandler, null, null);
             try (ConstructProcessor processor = construct.prepareProcess(context)) {
 
                 List<String> args = new ArrayList<>();

@@ -116,17 +116,17 @@ public class XillEnvironmentImpl implements XillEnvironment {
     }
 
     @Override
-    public XillProcessor buildProcessor(Path projectRoot, Path robotPath) throws IOException {
-        return buildProcessor(projectRoot, robotPath, new XillDebugger());
+    public XillProcessor buildProcessor(Path workingDirectory, Path robotPath) throws IOException {
+        return buildProcessor(workingDirectory, robotPath, new XillDebugger());
     }
 
     @Override
-    public XillProcessor buildProcessor(Path projectRoot, Path robotPath, Debugger debugger) throws IOException {
+    public XillProcessor buildProcessor(Path workingDirectory, Path robotPath, Debugger debugger) throws IOException {
         if (needLoad) {
             loadPlugins();
         }
 
-        return new nl.xillio.xill.XillProcessor(projectRoot.toFile(), robotPath.toFile(), new ArrayList<>(loadedPlugins.values()), debugger);
+        return new nl.xillio.xill.XillProcessor(workingDirectory, robotPath.toFile(), new ArrayList<>(loadedPlugins.values()), debugger);
     }
 
     @Override

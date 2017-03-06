@@ -29,6 +29,7 @@ import nl.xillio.xill.api.construct.ConstructProcessor;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -77,10 +78,11 @@ public class GetConstructTest extends TestUtils {
 
     @Override
     protected MetaExpression process(Construct construct, MetaExpression... arguments) {
-        RobotID robotId = RobotID.getInstance(new File("./libs/test.xill"), new File("."));
+        RobotID robotId = RobotID.getInstance(new File("./libs/test.xill"));
         return ConstructProcessor.process(
                 construct.prepareProcess(
                         new ConstructContext(
+                                Paths.get("."),
                                 robotId,
                                 robotId,
                                 construct,

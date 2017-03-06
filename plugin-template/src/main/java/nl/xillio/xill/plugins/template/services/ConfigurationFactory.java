@@ -32,13 +32,13 @@ import java.nio.file.Paths;
  */
 public class ConfigurationFactory {
     /**
-     * Build the default configuration with the project root as templates directory
+     * Build the default configuration with the working directory as templates directory
      *
      * @param context The construct's context with the robot information attached
      * @return The default configuration with the project root as templates directory
      */
     public Configuration buildDefaultConfiguration(ConstructContext context) {
-        Path path = context.getRootRobot().getProjectPath().toPath();
+        Path path = context.getWorkingDirectory();
         return buildDefaultConfiguration(path);
     }
 

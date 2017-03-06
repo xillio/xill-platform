@@ -30,7 +30,7 @@ public class RobotRuntimeInfo implements PropertiesProvider {
     private final Map<String, Object> properties = new LinkedHashMap<>();
     private final String robotPath;
     private final String rootRobotPath;
-    private final String projectPath;
+    private final String workingDirectory;
 
     /**
      * Create a new {@link RobotRuntimeInfo} for a {@link ConstructContext}
@@ -40,11 +40,11 @@ public class RobotRuntimeInfo implements PropertiesProvider {
     public RobotRuntimeInfo(final ConstructContext context) {
         robotPath = context.getRobotID().getURL().toString();
         rootRobotPath = context.getRootRobot().getURL().toString();
-        projectPath = context.getRobotID().getProjectPath().getAbsolutePath();
+        workingDirectory = context.getWorkingDirectory().toString();
 
         properties.put("robotPath", robotPath);
         properties.put("rootRobotPath", rootRobotPath);
-        properties.put("projectPath", projectPath);
+        properties.put("workingDirectory", workingDirectory);
     }
 
     @Override
@@ -69,8 +69,8 @@ public class RobotRuntimeInfo implements PropertiesProvider {
     /**
      * @return the projectPath
      */
-    public String getProjectPath() {
-        return projectPath;
+    public String getWorkingDirectory() {
+        return workingDirectory;
     }
 
 }

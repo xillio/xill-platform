@@ -37,7 +37,7 @@ public class PropertyServiceTest extends TestUtils {
     @Test
     public void testGetPropertyFromProjectOverride() throws Exception {
         Path projectPath = Paths.get("project");
-        RobotID robotID = RobotID.getInstance(projectPath.resolve("robot.xill").toFile(), projectPath.toFile());
+        RobotID robotID = RobotID.getInstance(projectPath.resolve("robot.xill").toFile());
 
         // Mock the file system
         FileSystemAccess fileSystemAccess = new FileSystemAccess() {
@@ -54,15 +54,17 @@ public class PropertyServiceTest extends TestUtils {
 
         PropertyService propertyService = new PropertyService(new Properties(), fileSystemAccess, new ContextPropertiesResolver());
 
-        String result = propertyService.getProperty("testProperty", null, new ConstructContext(
-                robotID,
-                robotID,
-                null,
-                null,
-                null,
-                null,
-                null
-        ));
+        String result = propertyService.getProperty("testProperty", null,
+                new ConstructContext(
+                        projectPath,
+                        robotID,
+                        robotID,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                ));
 
         assertEquals(result, "Hello World");
     }
@@ -70,7 +72,7 @@ public class PropertyServiceTest extends TestUtils {
     @Test
     public void testGetPropertyFromProjectOverrideWithSpecialCharacters() throws Exception {
         Path projectPath = Paths.get("project");
-        RobotID robotID = RobotID.getInstance(projectPath.resolve("robot.xill").toFile(), projectPath.toFile());
+        RobotID robotID = RobotID.getInstance(projectPath.resolve("robot.xill").toFile());
 
         // Mock the file system
         FileSystemAccess fileSystemAccess = new FileSystemAccess() {
@@ -88,6 +90,7 @@ public class PropertyServiceTest extends TestUtils {
         PropertyService propertyService = new PropertyService(new Properties(), fileSystemAccess, new ContextPropertiesResolver());
 
         String result = propertyService.getProperty("testProperty", null, new ConstructContext(
+                projectPath,
                 robotID,
                 robotID,
                 null,
@@ -103,7 +106,7 @@ public class PropertyServiceTest extends TestUtils {
     @Test
     public void testGetPropertyFromRobotOutsideOfProject() {
         Path projectPath = Paths.get("project");
-        RobotID robotID = RobotID.getInstance(projectPath.resolve("../robot.xill").toFile(), projectPath.toFile());
+        RobotID robotID = RobotID.getInstance(projectPath.resolve("../robot.xill").toFile());
 
         // Mock the file system
         FileSystemAccess fileSystemAccess = new FileSystemAccess() {
@@ -122,6 +125,7 @@ public class PropertyServiceTest extends TestUtils {
 
 
         String result = propertyService.getProperty("testProperty", null, new ConstructContext(
+                projectPath,
                 robotID,
                 robotID,
                 null,
@@ -137,7 +141,7 @@ public class PropertyServiceTest extends TestUtils {
     @Test
     public void testGetPropertyDoesNotFailOnIOException() {
         Path projectPath = Paths.get("project");
-        RobotID robotID = RobotID.getInstance(projectPath.resolve("../robot.xill").toFile(), projectPath.toFile());
+        RobotID robotID = RobotID.getInstance(projectPath.resolve("../robot.xill").toFile());
 
         // Mock the file system
         FileSystemAccess fileSystemAccess = new FileSystemAccess() {
@@ -156,6 +160,7 @@ public class PropertyServiceTest extends TestUtils {
 
 
         propertyService.getProperty("testProperty", null, new ConstructContext(
+                projectPath,
                 robotID,
                 robotID,
                 null,
@@ -173,7 +178,8 @@ public class PropertyServiceTest extends TestUtils {
         properties.put("greet", "Hello ${name}!");
 
         String value = new PropertyService(properties, mock(FileSystemAccess.class), new ContextPropertiesResolver()).getFormattedProperty("greet", null, new ConstructContext(
-                RobotID.getInstance(new File("test/value.xill"), new File("test")),
+                Paths.get("test"),
+                RobotID.getInstance(new File("test/value.xill")),
                 RobotID.dummyRobot(),
                 null,
                 null,
@@ -192,7 +198,8 @@ public class PropertyServiceTest extends TestUtils {
         properties.put("greet", "Hello $${name}!");
 
         String value = new PropertyService(properties, mock(FileSystemAccess.class), new ContextPropertiesResolver()).getFormattedProperty("greet", null, new ConstructContext(
-                RobotID.getInstance(new File("test/value.xill"), new File("test")),
+                Paths.get("test"),
+                RobotID.getInstance(new File("test/value.xill")),
                 RobotID.dummyRobot(),
                 null,
                 null,

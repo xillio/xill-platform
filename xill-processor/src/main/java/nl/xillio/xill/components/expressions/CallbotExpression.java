@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -44,6 +45,7 @@ public class CallbotExpression implements Processable {
 
     private static final Logger LOGGER = Log.get();
     private final Logger robotLogger;
+    private Path workingDirectory;
     private final Processable path;
     private final RobotID robotID;
     private final List<XillPlugin> plugins;
@@ -54,12 +56,14 @@ public class CallbotExpression implements Processable {
     /**
      * Create a new {@link CallbotExpression}
      *
-     * @param path          the path of the called bot
-     * @param robotID       the root robot of this tree
-     * @param plugins       the current plugin loader
-     * @param outputHandler the event handler for all output
+     * @param workingDirectory  the working directory
+     * @param path              the path of the called bot
+     * @param robotID           the root robot of this tree
+     * @param plugins           the current plugin loader
+     * @param outputHandler     the event handler for all output
      */
-    public CallbotExpression(final Processable path, final RobotID robotID, final List<XillPlugin> plugins, OutputHandler outputHandler) {
+    public CallbotExpression(final Path workingDirectory, final Processable path, final RobotID robotID, final List<XillPlugin> plugins, OutputHandler outputHandler) {
+        this.workingDirectory = workingDirectory;
         this.path = path;
         this.robotID = robotID;
         this.plugins = plugins;
@@ -72,7 +76,7 @@ public class CallbotExpression implements Processable {
     public InstructionFlow<MetaExpression> process(final Debugger debugger) {
         MetaExpression pathExpression = path.process(debugger).get();
 
-        File otherRobot = resolver.buildPath(new ConstructContext(robotID, robotID, null, null, null, null, null), pathExpression).toFile();
+        File otherRobot = resolver.buildPath(new ConstructContext(workingDirectory, robotID, robotID, null, null, null, null, null), pathExpression).toFile();
 
         LOGGER.debug("Evaluating callbot for " + otherRobot.getAbsolutePath());
 
@@ -87,7 +91,7 @@ public class CallbotExpression implements Processable {
         // Process the robot
         try {
             Debugger childDebugger = debugger.createChild();
-            XillProcessor processor = new XillProcessor(robotID.getProjectPath(), otherRobot, plugins, childDebugger);
+            XillProcessor processor = new XillProcessor(workingDirectory, otherRobot, plugins, childDebugger);
             processor.setOutputHandler(outputHandler);
             processor.compileAsSubRobot(robotID);
 

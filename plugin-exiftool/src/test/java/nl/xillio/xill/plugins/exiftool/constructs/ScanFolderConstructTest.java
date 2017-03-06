@@ -29,6 +29,7 @@ import nl.xillio.xill.plugins.exiftool.services.ProjectionFactory;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 import static org.mockito.Mockito.*;
@@ -49,7 +50,7 @@ public class ScanFolderConstructTest extends TestUtils {
         // Initialize
         EventHost<RobotStoppedAction> event = new EventHost<>();
         ScanFolderConstruct construct = new ScanFolderConstruct(pool, mock(ProjectionFactory.class, RETURNS_DEEP_STUBS), mock(OptionsFactory.class, RETURNS_DEEP_STUBS));
-        ConstructContext constructContext = new ConstructContext(RobotID.dummyRobot(), RobotID.dummyRobot(), construct, null, UUID.randomUUID(), null, event);
+        ConstructContext constructContext = new ConstructContext(Paths.get("."), RobotID.dummyRobot(), RobotID.dummyRobot(), construct, null, UUID.randomUUID(), null, event);
         File file = new File(".");
         setFileResolverReturnValue(file);
 

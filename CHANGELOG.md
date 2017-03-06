@@ -1,12 +1,22 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.7.0] - unreleased
+
+### Change
+* Rename the `projectPath` field from `System.info()` to `workingDirectory` [CTC-2116]
+
 ## [3.6.0] - unreleased
 
 ### Add
 * Git integration. Push and pull can be done from the IDE [CTC-1919]
 * Store git credentials [CTC-1975]
 * Show status of changed files in git [CTC-1977]
+
+## [3.5.1] - unreleased
+
+### Add
+* XURL ntlm support [CTC-2004]
 
 ### Fix
 * Web.loadPage does not work with file:// protocol [CTC-1935]
