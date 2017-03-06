@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,6 @@ import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
-import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -50,7 +49,6 @@ import org.slf4j.MarkerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
@@ -111,18 +109,18 @@ public class RobotTab extends FileTab implements Initializable {
         currentRobot = getProcessor().getRobotID();
 
         // Initialize the settings and tab.
-        initializeSettings(currentRobot.getURI());
+        initializeSettings(documentPath);
         initializeTab(documentPath);
 
         // Validate the robot as soon as the editor is loaded.
         editorPane.getEditor().getOnDocumentLoaded().addListener(e -> validate());
     }
 
-    private static void initializeSettings(final URI documentPath) {
-        settings.simple().register(Settings.LAYOUT, Settings.RIGHT_PANEL_WIDTH + documentPath, "0.7", "Width of the right panel for the specified currentRobot");
-        settings.simple().register(Settings.LAYOUT, Settings.RIGHT_PANEL_COLLAPSED + documentPath, "true", "The collapsed-state of the right panel for the specified currentRobot");
-        settings.simple().register(Settings.LAYOUT, Settings.EDITOR_HEIGHT + documentPath, "0.6", "The height of the editor");
-    }
+
+    private static void initializeSettings(final File documentPath) {
+        settings.simple().register(Settings.LAYOUT, Settings.RIGHT_PANEL_WIDTH + documentPath.getAbsolutePath(), "0.7", "Width of the right panel for the specified currentRobot");
+        settings.simple().register(Settings.LAYOUT, Settings.RIGHT_PANEL_COLLAPSED + documentPath.getAbsolutePath(), "true", "The collapsed-state of the right panel for the specified currentRobot");
+        settings.simple().register(Settings.LAYOUT, Settings.EDITOR_HEIGHT + documentPath.getAbsolutePath(), "0.6", "The height of the editor");
 
     private void initializeTab(final File documentPath) {
         // Set the tab dividers
@@ -188,11 +186,11 @@ public class RobotTab extends FileTab implements Initializable {
      */
     @FXML
     private void hideButtonPressed() {
-        RobotID robot = processor.getRobotID();
-        if (robot != null) {
-            settings.simple().save(Settings.LAYOUT, Settings.RIGHT_PANEL_COLLAPSED + robot.toString(), "true");
+        File document = processor.getRobotID().getPath();
+        if (document != null) {
+            settings.simple().save(Settings.LAYOUT, Settings.RIGHT_PANEL_COLLAPSED + document.getAbsolutePath(), "true");
             if (!spnBotPanes.getDividers().isEmpty()) {
-                settings.simple().save(Settings.LAYOUT, Settings.RIGHT_PANEL_WIDTH + robot.toString(), Double.toString(spnBotPanes.getDividerPositions()[0]));
+                settings.simple().save(Settings.LAYOUT, Settings.RIGHT_PANEL_WIDTH + document.getAbsolutePath(), Double.toString(spnBotPanes.getDividerPositions()[0]));
             }
         }
 
@@ -210,8 +208,8 @@ public class RobotTab extends FileTab implements Initializable {
      */
     @FXML
     private void showButtonPressed() {
-        RobotID robot = processor.getRobotID();
-        settings.simple().save(Settings.LAYOUT, Settings.RIGHT_PANEL_COLLAPSED + robot.toString(), "false");
+        File document = processor.getRobotID().getPath();
+        settings.simple().save(Settings.LAYOUT, Settings.RIGHT_PANEL_COLLAPSED + document.getAbsolutePath(), "false");
 
         // Hide small bar
         hbxBot.getChildren().remove(vbxDebugHidden);
@@ -222,10 +220,10 @@ public class RobotTab extends FileTab implements Initializable {
         }
 
         // Add splitpane position listener
-        spnBotPanes.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.RIGHT_PANEL_WIDTH + robot.toString())));
+        spnBotPanes.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.RIGHT_PANEL_WIDTH + document.getAbsolutePath())));
         spnBotPanes.getDividers().get(0).positionProperty().addListener((position, oldPos, newPos) -> {
             if (spnBotPanes.getItems().contains(vbxDebugpane)) {
-                settings.simple().save(Settings.LAYOUT, Settings.RIGHT_PANEL_WIDTH + robot.toString(), newPos.toString());
+                settings.simple().save(Settings.LAYOUT, Settings.RIGHT_PANEL_WIDTH + document.getAbsolutePath(), newPos.toString());
             }
         });
     }
@@ -349,7 +347,7 @@ public class RobotTab extends FileTab implements Initializable {
                 ContentAlertDialog confirmationDialog = new ContentAlertDialog(AlertType.CONFIRMATION,
                         "Do you want to save and run the robot?",
                         "",
-                        "The robot " + currentRobot.getName() + " needs to be saved before running. Do you want to continue?",
+                        "The robot " + currentRobot.getPath().getName() + " needs to be saved before running. Do you want to continue?",
                         gridPane);
                 // This enables Xillio icon to be displayed in the upper left corner
                 confirmationDialog.initOwner(editorPane.getScene().getWindow());
@@ -470,12 +468,12 @@ public class RobotTab extends FileTab implements Initializable {
      */
     private void handleXillParsingError(final XillParsingException e) {
         if (currentRobot == e.getRobot()) {// Parse error in this robot
-            errorPopup(e.getLine(), e.getLocalizedMessage(), e.getClass().getSimpleName(), "Exception while compiling " + e.getRobot().toString());
+            errorPopup(e.getLine(), e.getLocalizedMessage(), e.getClass().getSimpleName(), "Exception while compiling " + e.getRobot().getPath().getAbsolutePath());
         } else {// Parse error in different (e.g. included) robot
             RobotTab tab = (RobotTab) globalController.findTab(e.getRobot().getPath());
             if (tab != null) {// RobotTab is open in editor
                 tab.requestFocus();
-                tab.errorPopup(e.getLine(), e.getLocalizedMessage(), e.getClass().getSimpleName(), "Exception while compiling " + e.getRobot().toString());
+                tab.errorPopup(e.getLine(), e.getLocalizedMessage(), e.getClass().getSimpleName(), "Exception while compiling " + e.getRobot().getPath().getAbsolutePath());
                 relatedHighlightTabs.add(tab);
             } else {// RobotTab is not open in editor
                 // Let's open the RobotTab where error occurred
@@ -486,7 +484,7 @@ public class RobotTab extends FileTab implements Initializable {
                             Platform.runLater(() -> {
                                 if (success) {
                                     // Highlight the tab
-                                    newTab.errorPopup(e.getLine(), e.getLocalizedMessage(), e.getClass().getSimpleName(), "Exception while compiling " + e.getRobot().toString());
+                                    newTab.errorPopup(e.getLine(), e.getLocalizedMessage(), e.getClass().getSimpleName(), "Exception while compiling " + e.getRobot().getPath().getAbsolutePath());
                                     relatedHighlightTabs.add(newTab);
                                 }
                             })
@@ -572,7 +570,7 @@ public class RobotTab extends FileTab implements Initializable {
         Platform.runLater(() -> {
             if (currentRobot != getProcessor().getRobotID()) {
                 String name = getName();
-                String filename = currentRobot.getName();
+                String filename = currentRobot.getPath().getName();
                 name += " > " + FilenameUtils.getBaseName(filename);
                 setText(name);
             }
