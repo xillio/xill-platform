@@ -28,6 +28,7 @@ import nl.xillio.xill.services.files.FileResolverImpl;
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -41,6 +42,7 @@ import static nl.xillio.xill.api.components.ExpressionDataType.LIST;
 public class RunBulkExpression implements Processable {
 
     private static final Logger LOGGER = Log.get();
+    private Path workingDirectory;
     private final Processable path;
     private final RobotID robotID;
     private final List<XillPlugin> plugins;
@@ -55,12 +57,14 @@ public class RunBulkExpression implements Processable {
     /**
      * Create a new {@link RunBulkExpression}.
      *
-     * @param path    the path of the called bot
-     * @param robotID the root robot of this tree
-     * @param plugins the current plugin loader
+     * @param workingDirectory  the working directory
+     * @param path              the path of the called bot
+     * @param robotID           the root robot of this tree
+     * @param plugins           the current plugin loader
      * @param outputHandler
      */
-    public RunBulkExpression(final Processable path, final RobotID robotID, final List<XillPlugin> plugins, OutputHandler outputHandler) {
+    public RunBulkExpression(final Path workingDirectory, final Processable path, final RobotID robotID, final List<XillPlugin> plugins, OutputHandler outputHandler) {
+        this.workingDirectory = workingDirectory;
         this.path = path;
         this.robotID = robotID;
         this.plugins = plugins;
@@ -72,7 +76,7 @@ public class RunBulkExpression implements Processable {
     public InstructionFlow<MetaExpression> process(final Debugger debugger) {
         MetaExpression pathExpression = path.process(debugger).get();
 
-        File otherRobot = resolver.buildPath(new ConstructContext(robotID, robotID, null, null, null, null, null), pathExpression).toFile();
+        File otherRobot = resolver.buildPath(new ConstructContext(workingDirectory, robotID, robotID, null, null, null, null, null), pathExpression).toFile();
 
         LOGGER.debug("Evaluating runBulk for " + otherRobot.getAbsolutePath());
 
@@ -172,7 +176,7 @@ public class RunBulkExpression implements Processable {
     private List<Thread> spawnWorkers(BlockingQueue<MetaExpression> queue, RunBulkControl control) {
         // Start working threads
         List<Thread> workingThreads = new LinkedList<>();
-        WorkerRobotFactory robotFactory = new WorkerRobotFactory(robotID, plugins, outputHandler);
+        WorkerRobotFactory robotFactory = new WorkerRobotFactory(workingDirectory, robotID, plugins, outputHandler);
         for (int i = 0; i < maxThreadsVal; i++) {
             Thread worker = new WorkerThread(queue, control, options.shouldStopOnError(), robotFactory);
             worker.start();

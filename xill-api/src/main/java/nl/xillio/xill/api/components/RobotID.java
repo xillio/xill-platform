@@ -26,11 +26,9 @@ import java.util.Map;
 public class RobotID implements Serializable {
     private static Map<String, RobotID> ids = new Hashtable<>();
     private final File path;
-    private final File projectPath;
 
-    private RobotID(final File path, final File projectPath) {
+    private RobotID(final File path) {
         this.path = path;
-        this.projectPath = projectPath;
     }
 
     /**
@@ -50,18 +48,16 @@ public class RobotID implements Serializable {
     /**
      * Gets/creates a robotID that is singular for every path.
      *
-     * @param file        the robot file
-     * @param projectPath the path to the root folder of the workspace
+     * @param file  the robot file
      * @return a unique robot id for this path
      */
-    public static RobotID getInstance(final File file, final File projectPath) {
-
-        String identity = file.getAbsolutePath() + "in" + projectPath.getAbsolutePath();
+    public static RobotID getInstance(final File file) {
+        String identity = file.getAbsolutePath();
 
         RobotID id = ids.get(identity);
 
         if (id == null) {
-            id = new RobotID(file, projectPath);
+            id = new RobotID(file);
             ids.put(identity, id);
         }
 
@@ -69,18 +65,11 @@ public class RobotID implements Serializable {
     }
 
     /**
-     * @return the projectPath
-     */
-    public File getProjectPath() {
-        return projectPath;
-    }
-
-    /**
      * Used in tests to create a dummy ID.
      *
-     * @return a dummy IDfor testing.
+     * @return a dummy ID for testing.
      */
     public static RobotID dummyRobot() {
-        return new RobotID(new File("."), new File("."));
+        return new RobotID(new File("."));
     }
 }

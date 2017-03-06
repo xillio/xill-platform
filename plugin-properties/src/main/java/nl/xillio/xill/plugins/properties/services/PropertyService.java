@@ -19,7 +19,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import me.biesaart.utils.Log;
-import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.construct.ConstructContext;
 import org.slf4j.Logger;
 
@@ -80,18 +79,18 @@ public class PropertyService {
 
     synchronized String getProperty(String name, String defaultValue, ConstructContext context) {
         // First we check the project
-        Path projectFolder = context.getRobotID().getProjectPath().toPath();
-        if (!projectPropertiesMap.containsKey(projectFolder)) {
+        Path workingDirectory = context.getWorkingDirectory();
+        if (!projectPropertiesMap.containsKey(workingDirectory)) {
             projectPropertiesMap.put(
-                    projectFolder,
+                    workingDirectory,
                     loadPropertiesFromFile(
-                            projectFolder.resolve(PROPERTIES_FILE),
+                            workingDirectory.resolve(PROPERTIES_FILE),
                             null,
                             context.getRootLogger()
                     )
             );
         }
-        Properties projectProperties = projectPropertiesMap.get(projectFolder);
+        Properties projectProperties = projectPropertiesMap.get(workingDirectory);
         if (projectProperties.containsKey(name)) {
             // We have a project override
             return projectProperties.getProperty(name);
@@ -105,7 +104,7 @@ public class PropertyService {
         }
 
         // Seems like we have to load a default
-        Properties properties = loadDefaultProperties(new PathPair(context.getRobotID()), context.getRootLogger());
+        Properties properties = loadDefaultProperties(new PathPair(context), context.getRootLogger());
 
         return properties.getProperty(name);
     }
@@ -118,11 +117,11 @@ public class PropertyService {
 
         // We need to load the properties
         Properties properties;
-        if (pathPair.isProjectFolder()) {
-            LOGGER.info("Loading properties for project: {}", pathPair.projectFolder);
+        if (pathPair.isWorkingDirectory()) {
+            LOGGER.info("Loading properties for project: {}", pathPair.workingDirectory);
             // This is the project root. Load from defaults.
             properties = loadPropertiesFromFile(
-                    pathPair.projectFolder.resolve(DEFAULTS_FILE),
+                    pathPair.workingDirectory.resolve(DEFAULTS_FILE),
                     defaultGlobalProperties,
                     warningLogger
             );
@@ -168,15 +167,15 @@ public class PropertyService {
     }
 
     private class PathPair {
-        private final Path projectFolder;
+        private final Path workingDirectory;
         private final Path robotFolder;
 
-        private PathPair(RobotID robotID) {
-            this(robotID.getProjectPath().toPath(), robotID.getPath().toPath().getParent());
+        private PathPair(ConstructContext context) {
+            this(context.getWorkingDirectory(), context.getRobotID().getPath().toPath().getParent());
         }
 
-        private PathPair(Path projectFolder, Path robotFolder) {
-            this.projectFolder = projectFolder.toAbsolutePath().normalize();
+        private PathPair(Path workingDirectory, Path robotFolder) {
+            this.workingDirectory = workingDirectory.toAbsolutePath().normalize();
             this.robotFolder = robotFolder.toAbsolutePath().normalize();
         }
 
@@ -187,26 +186,26 @@ public class PropertyService {
             }
             if (obj instanceof PathPair) {
                 PathPair other = (PathPair) obj;
-                return projectFolder.equals(other.projectFolder) && robotFolder.equals(other.robotFolder);
+                return workingDirectory.equals(other.workingDirectory) && robotFolder.equals(other.robotFolder);
             }
             return false;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(projectFolder, robotFolder);
+            return Objects.hash(workingDirectory, robotFolder);
         }
 
-        private boolean isProjectFolder() {
-            return projectFolder.equals(robotFolder);
+        private boolean isWorkingDirectory() {
+            return workingDirectory.equals(robotFolder);
         }
 
         private boolean isInProject() {
-            return robotFolder.startsWith(projectFolder);
+            return robotFolder.startsWith(workingDirectory);
         }
 
         private PathPair getParent() {
-            return new PathPair(projectFolder, robotFolder.getParent());
+            return new PathPair(workingDirectory, robotFolder.getParent());
         }
     }
 

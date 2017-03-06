@@ -49,6 +49,7 @@ import xill.lang.xill.UseStatement;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -64,7 +65,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
 
     private final IResourceValidator validator;
     private final File robotFile;
-    private final File projectFolder;
+    private final Path workingDirectory;
     private final List<XillPlugin> plugins;
     private final Debugger debugger;
     private final Map<Construct, String> argumentSignatures = new HashMap<>();
@@ -74,15 +75,15 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     /**
      * Create a new processor that can run a file.
      *
-     * @param projectFolder the project folder
-     * @param robotFile     the robot file
-     * @param plugins       the plugins
-     * @param debugger      the debugger
+     * @param workingDirectory  the project folder
+     * @param robotFile         the robot file
+     * @param plugins           the plugins
+     * @param debugger          the debugger
      * @throws IOException if thrown if a file(-related) operation fails.
      */
-    public XillProcessor(final File projectFolder, final File robotFile, final List<XillPlugin> plugins,
+    public XillProcessor(final Path workingDirectory, final File robotFile, final List<XillPlugin> plugins,
                          final Debugger debugger) throws IOException {
-        this.projectFolder = projectFolder;
+        this.workingDirectory = workingDirectory;
         this.robotFile = robotFile;
         this.plugins = plugins;
         this.debugger = debugger;
@@ -103,8 +104,8 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     @Override
     public List<Issue> validate() {
         synchronized (XillValidator.LOCK) {
-            XillValidator.setProjectFolder(projectFolder);
-            XillScopeProvider.setProjectFolder(projectFolder);
+            XillValidator.setProjectFolder(workingDirectory.toFile());
+            XillScopeProvider.setProjectFolder(workingDirectory.toFile());
             debugger.reset();
             Resource resource = resourceSet.getResource(URI.createFileURI(robotFile.getAbsolutePath()), true);
             return validate(resource);
@@ -114,8 +115,8 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     @Override
     public List<Issue> compileAsSubRobot(final RobotID rootRobot) throws XillParsingException {
         synchronized (XillValidator.LOCK) {
-            XillValidator.setProjectFolder(projectFolder);
-            XillScopeProvider.setProjectFolder(projectFolder);
+            XillValidator.setProjectFolder(workingDirectory.toFile());
+            XillScopeProvider.setProjectFolder(workingDirectory.toFile());
             debugger.reset();
             return compile(robotFile, rootRobot);
         }
@@ -131,12 +132,12 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     private List<Issue> compile(final File robotPath, RobotID rootRobot) throws XillParsingException {
         Resource resource = resourceSet.getResource(URI.createFileURI(robotPath.getAbsolutePath()), true);
 
-        RobotID robotID = RobotID.getInstance(robotPath, projectFolder);
+        RobotID robotID = getRobotID();
         if (rootRobot == null) {
             rootRobot = robotID;
         }
 
-        LanguageFactory<xill.lang.xill.Robot> factory = new XillProgramFactory(plugins, getDebugger(), rootRobot, outputHandler);
+        LanguageFactory<xill.lang.xill.Robot> factory = new XillProgramFactory(workingDirectory, plugins, getDebugger(), rootRobot, outputHandler);
 
 
         List<Issue> issues = validate(resource);
@@ -157,7 +158,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
                 File currentFile = new File(currentResource.getURI().toFileString());
 
                 // Parse
-                factory.parse((xill.lang.xill.Robot) rootToken, RobotID.getInstance(currentFile, projectFolder));
+                factory.parse((xill.lang.xill.Robot) rootToken, RobotID.getInstance(currentFile));
 
                 // Check if is main robot token
                 if (rootToken.eResource() == resource) {
@@ -179,7 +180,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
         return resourceSet.getResources().stream()
                 .flatMap(
                         currentResource -> validate(currentResource,
-                                RobotID.getInstance(new File(currentResource.getURI().toFileString()), projectFolder)
+                                RobotID.getInstance(new File(currentResource.getURI().toFileString()))
                         ).stream()
                 ).collect(Collectors.toList());
     }
@@ -204,7 +205,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
 
     private URI getURI(final IncludeStatement include) {
         String subPath = StringUtils.join(include.getLibrary(), File.separator) + ".xill";
-        File libPath = new File(projectFolder, subPath);
+        File libPath = new File(workingDirectory.toFile(), subPath);
         String fullPath = libPath.getAbsolutePath();
 
         return URI.createFileURI(fullPath);
@@ -330,7 +331,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
 
     @Override
     public RobotID getRobotID() {
-        return RobotID.getInstance(robotFile, projectFolder);
+        return RobotID.getInstance(robotFile);
     }
 
     @Override
@@ -406,7 +407,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
      */
     private String getSignature(Construct construct) {
         if (!argumentSignatures.containsKey(construct)) {
-            ConstructContext context = new ConstructContext(getRobotID(), getRobotID(), construct, null, null, outputHandler, null, null);
+            ConstructContext context = new ConstructContext(workingDirectory, getRobotID(), getRobotID(), construct, null, null, outputHandler, null, null);
             try (ConstructProcessor processor = construct.prepareProcess(context)) {
 
                 List<String> args = new ArrayList<>();

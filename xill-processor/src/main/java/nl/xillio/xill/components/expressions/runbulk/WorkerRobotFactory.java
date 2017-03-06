@@ -25,6 +25,7 @@ import nl.xillio.xill.api.errors.XillParsingException;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -32,11 +33,13 @@ import java.util.List;
  */
 class WorkerRobotFactory {
 
+    private Path workingDirectory;
     private RobotID robotID;
     private List<XillPlugin> plugins;
     private OutputHandler outputHandler;
 
-    public WorkerRobotFactory(RobotID robotID, List<XillPlugin> plugins, OutputHandler outputHandler) {
+    public WorkerRobotFactory(final Path workingDirectory, RobotID robotID, List<XillPlugin> plugins, OutputHandler outputHandler) {
+        this.workingDirectory = workingDirectory;
         this.robotID = robotID;
         this.plugins = plugins;
         this.outputHandler = outputHandler;
@@ -54,7 +57,7 @@ class WorkerRobotFactory {
     public Robot construct(File calledRobotFile, StoppableDebugger childDebugger) throws WorkerCompileException {
         XillProcessor processor = null;
         try {
-            processor = new XillProcessor(robotID.getProjectPath(), calledRobotFile, plugins, childDebugger);
+            processor = new XillProcessor(workingDirectory, calledRobotFile, plugins, childDebugger);
             processor.setOutputHandler(outputHandler);
             processor.compileAsSubRobot(robotID);
         } catch (IOException e) {

@@ -33,6 +33,7 @@ import java.util.function.Consumer;
  */
 public class ConstructContext {
 
+    private final Path workingDirectory;
     private final RobotID robotID;
     private final RobotID rootRobot;
     private final UUID compilerSerialId;
@@ -57,6 +58,7 @@ public class ConstructContext {
     /**
      * Creates a new {@link ConstructContext} for a specific robot.
      *
+     * @param workingDirectory  the workingDirectory of the current robot
      * @param robot             the robotID of the current robot
      * @param rootRobot         the robotID of the root robot
      * @param construct         the construct that will be using this context
@@ -66,8 +68,9 @@ public class ConstructContext {
      * @param robotStartedEvent the event host for started robots
      * @param robotStoppedEvent the event host for stopped robots
      */
-    public ConstructContext(final RobotID robot, final RobotID rootRobot, final Construct construct, final Debugger debugger, UUID compilerSerialId, OutputHandler outputHandler, final EventHost<RobotStartedAction> robotStartedEvent,
+    public ConstructContext(final Path workingDirectory, final RobotID robot, final RobotID rootRobot, final Construct construct, final Debugger debugger, UUID compilerSerialId, OutputHandler outputHandler, final EventHost<RobotStartedAction> robotStartedEvent,
                             final EventHost<RobotStoppedAction> robotStoppedEvent) {
+        this.workingDirectory = workingDirectory;
         robotID = robot;
         this.rootRobot = rootRobot;
         this.compilerSerialId = compilerSerialId;
@@ -80,6 +83,7 @@ public class ConstructContext {
     /**
      * Creates a new {@link ConstructContext} for a specific robot.
      *
+     * @param workingDirectory  the workingDirectory of the current robot
      * @param robot             the robotID of the current robot
      * @param rootRobot         the robotID of the root robot
      * @param construct         the construct that will be using this context
@@ -88,9 +92,16 @@ public class ConstructContext {
      * @param robotStartedEvent the event host for started robots
      * @param robotStoppedEvent the event host for stopped robots
      */
-    public ConstructContext(final RobotID robot, final RobotID rootRobot, final Construct construct, final Debugger debugger, UUID compilerSerialId, final EventHost<RobotStartedAction> robotStartedEvent,
+    public ConstructContext(final Path workingDirectory, final RobotID robot, final RobotID rootRobot, final Construct construct, final Debugger debugger, UUID compilerSerialId, final EventHost<RobotStartedAction> robotStartedEvent,
                             final EventHost<RobotStoppedAction> robotStoppedEvent) {
-        this(robot, rootRobot, construct, debugger, compilerSerialId, new DefaultOutputHandler(), robotStartedEvent, robotStoppedEvent);
+        this(workingDirectory, robot, rootRobot, construct, debugger, compilerSerialId, new DefaultOutputHandler(), robotStartedEvent, robotStoppedEvent);
+    }
+
+    /**
+     * @return the workingDirectory of the current robot
+     */
+    public Path getWorkingDirectory() {
+        return workingDirectory;
     }
 
     /**
@@ -214,7 +225,7 @@ public class ConstructContext {
      * @throws IOException if an IO error occurs
      */
     public XillProcessor createChildProcessor(Path robot, XillEnvironment xillEnvironment) throws IOException {
-        XillProcessor processor = xillEnvironment.buildProcessor(robotID.getProjectPath().toPath(), robot, debugger.createChild());
+        XillProcessor processor = xillEnvironment.buildProcessor(workingDirectory, robot, debugger.createChild());
         processor.setOutputHandler(outputHandler);
         return processor;
     }

@@ -46,6 +46,7 @@ public class ConnectionFactoryTest extends TestUtils {
                         null,
                         null,
                         null,
+                        null,
                         new NullDebugger(),
                         UUID.randomUUID(),
                         null,
@@ -64,6 +65,7 @@ public class ConnectionFactoryTest extends TestUtils {
         EventHost<RobotStoppedAction> robotStoppedEvent = new EventHost<>();
 
         ConstructContext context = new ConstructContext(
+                null,
                 null,
                 null,
                 null,

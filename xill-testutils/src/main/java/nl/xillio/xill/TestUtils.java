@@ -34,6 +34,7 @@ import nl.xillio.xill.services.json.PrettyJsonParser;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -117,7 +118,7 @@ public class TestUtils extends ExpressionBuilderHelper {
     }
 
     protected ConstructContext context(Construct construct) {
-        return new ConstructContext(RobotID.dummyRobot(), RobotID.dummyRobot(), construct, mock(Debugger.class, RETURNS_DEEP_STUBS), UUID.randomUUID(), new EventHost<>(), new EventHost<>());
+        return new ConstructContext(Paths.get("."), RobotID.dummyRobot(), RobotID.dummyRobot(), construct, mock(Debugger.class, RETURNS_DEEP_STUBS), UUID.randomUUID(), new EventHost<>(), new EventHost<>());
     }
 
     protected MetaExpression process(Construct construct, MetaExpression... arguments) {
