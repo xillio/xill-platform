@@ -1,6 +1,11 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.7.0] - unreleased
+
+### Change
+* Rename the `projectPath` field from `System.info()` to `workingDirectory` [CTC-2116]
+
 ## [3.6.0] - unreleased
 
 ### Add
