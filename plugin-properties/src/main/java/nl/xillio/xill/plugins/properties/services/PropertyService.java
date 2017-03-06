@@ -117,7 +117,7 @@ public class PropertyService {
 
         // We need to load the properties
         Properties properties;
-        if (pathPair.getWorkingDirectory()) {
+        if (pathPair.isWorkingDirectory()) {
             LOGGER.info("Loading properties for project: {}", pathPair.workingDirectory);
             // This is the project root. Load from defaults.
             properties = loadPropertiesFromFile(
@@ -196,7 +196,7 @@ public class PropertyService {
             return Objects.hash(workingDirectory, robotFolder);
         }
 
-        private boolean getWorkingDirectory() {
+        private boolean isWorkingDirectory() {
             return workingDirectory.equals(robotFolder);
         }
 
