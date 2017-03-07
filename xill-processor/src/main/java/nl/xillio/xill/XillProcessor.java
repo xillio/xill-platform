@@ -233,11 +233,9 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     }
 
     private URI getURI(final IncludeStatement include) {
-        String subPath = StringUtils.join(include.getLibrary(), File.separator) + ".xill";
-        File libPath = new File(workingDirectory.toFile(), subPath);
-        String fullPath = libPath.getAbsolutePath();
+        String fqn = StringUtils.join(include.getLibrary(), '.');
 
-        return URI.createFileURI(fullPath);
+        return URI.createURI(robotLoader.getRobot(fqn).toString());
     }
 
     private List<Issue> validate(final Resource resource, final RobotID robotID) {

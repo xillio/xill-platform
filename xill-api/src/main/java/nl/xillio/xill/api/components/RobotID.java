@@ -60,6 +60,9 @@ public class RobotID implements Serializable {
      * @return a unique robot id for this path
      */
     public static Optional<RobotID> getInstance(final URL url) {
+        if (url == null) {
+            return Optional.empty();
+        }
 
         return Optional.of(ids.computeIfAbsent(url, k -> new RobotID(url)));
     }
@@ -74,7 +77,7 @@ public class RobotID implements Serializable {
         try {
             return new RobotID(new URL(basicURL));
         } catch (MalformedURLException e) {
-            LOGGER.error(basicURL + " is not a valid URL");
+            LOGGER.error(basicURL + " is not a valid URL", e);
         }
         return null;
     }
