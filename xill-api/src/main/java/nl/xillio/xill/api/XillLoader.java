@@ -36,11 +36,10 @@ public class XillLoader {
      * Loads a XillEnvironment from a specific folder.
      *
      * @param coreFolder the folder
-     * @param robotPath  a collection of folders or archives that are used to find robots
      * @return the environment
      * @throws IOException if no environment could be found
      */
-    public static XillEnvironment getEnv(Path coreFolder, Path... robotPath) throws IOException {
+    public static XillEnvironment getEnv(Path coreFolder) throws IOException {
         // Try to load the XillEnvironment from the classpath first
         XillEnvironment environment = loadXillEnvironment(null);
         if (environment != null) {
