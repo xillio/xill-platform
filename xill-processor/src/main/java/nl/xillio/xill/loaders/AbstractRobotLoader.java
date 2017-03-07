@@ -85,6 +85,8 @@ public abstract class AbstractRobotLoader implements RobotLoader {
 
     @Override
     public void close() throws IOException {
-        // Default is no-op.
+        if (parent != null) {
+            parent.close();
+        }
     }
 }

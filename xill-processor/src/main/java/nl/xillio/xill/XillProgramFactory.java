@@ -107,10 +107,11 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
 
     /**
      * Create a new {@link XillProgramFactory}
-     *  @param workingDirectory  the working directory
-     * @param plugins           list of xill plug-ins.
-     * @param debugger          debugger object necessary for processing the robot.
-     * @param robotID           the robot.
+     *
+     * @param workingDirectory the working directory
+     * @param plugins          list of xill plug-ins.
+     * @param debugger         debugger object necessary for processing the robot.
+     * @param robotID          the robot.
      * @param robotLoader
      */
     public XillProgramFactory(final Path workingDirectory, final List<XillPlugin> plugins, final Debugger debugger,
@@ -120,11 +121,12 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
 
     /**
      * Create a new {@link XillProgramFactory}
-     *  @param workingDirectory  the working directory
-     * @param plugins           list of xill plug-ins.
-     * @param debugger          debugger object necessary for processing the robot.
-     * @param robotID           the robot.
-     * @param verbose           verbose logging for the compiler
+     *
+     * @param workingDirectory the working directory
+     * @param plugins          list of xill plug-ins.
+     * @param debugger         debugger object necessary for processing the robot.
+     * @param robotID          the robot.
+     * @param verbose          verbose logging for the compiler
      * @param robotLoader
      */
     public XillProgramFactory(final Path workingDirectory, final List<XillPlugin> plugins, final Debugger debugger, final RobotID robotID,
@@ -201,26 +203,30 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
             xill.lang.xill.Robot robotToken = (xill.lang.xill.Robot) token;
             Map.Entry<RobotID, Robot> pair = compiledRobots.get(robotToken);
             Robot robot = pair.getValue();
-            RobotID id = pair.getKey();
 
             // Get includes
             for (IncludeStatement include : robotToken.getIncludes()) {
                 // Build robotID
-                String path = StringUtils.join(include.getLibrary(), ".");
-                RobotID expectedID = RobotID.getInstance(robotLoader.getRobot(path));
+                String fqn = StringUtils.join(include.getLibrary(), ".");
                 CodePosition pos = pos(include);
+                RobotID expectedID = RobotID.getInstance(robotLoader.getRobot(fqn))
+                        .orElseThrow(() ->
+                                new XillParsingException("No robot could be resolved for '" + fqn + "'", pos.getLineNumber(), pos.getRobotID())
+                        );
 
                 // Find the matching robot
-                Optional<Entry<RobotID, Robot>> matchingRobot = compiledRobots.values().stream()
-                        .filter(entry -> entry.getKey() == expectedID).findAny();
-
-                if (!matchingRobot.isPresent()) {
-                    throw new XillParsingException("Could not resolve import", pos.getLineNumber(), pos.getRobotID());
-                }
+                Robot matchingRobot = compiledRobots.values()
+                        .stream()
+                        .filter(entry -> entry.getKey() == expectedID)
+                        .map(Entry::getValue)
+                        .findAny()
+                        .orElseThrow(
+                                () -> new XillParsingException("Could not resolve import", pos.getLineNumber(), pos.getRobotID())
+                        );
 
                 // Push the library
                 ((nl.xillio.xill.components.Robot) robot)
-                        .addLibrary((nl.xillio.xill.components.Robot) matchingRobot.get().getValue());
+                        .addLibrary((nl.xillio.xill.components.Robot) matchingRobot);
             }
         }
     }

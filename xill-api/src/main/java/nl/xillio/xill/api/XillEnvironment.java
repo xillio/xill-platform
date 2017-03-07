@@ -89,23 +89,23 @@ public interface XillEnvironment extends AutoCloseable {
     /**
      * Builds a processor for a specific execution.
      *
-     * @param projectRoot the root folder of the project
-     * @param robotPath   the path to the main robot
+     * @param workingDirectory   the working directory of the project
+     * @param fullyQualifiedName the fully qualified name of the robot that should be started
      * @return the processor
      * @throws IOException if we could not load the processor
      */
-    XillProcessor buildProcessor(Path projectRoot, Path robotPath) throws IOException;
+    XillProcessor buildProcessor(Path workingDirectory, String fullyQualifiedName) throws IOException;
 
     /**
      * Builds a processor for a specific execution, with a debugger.
      *
-     * @param projectRoot the root folder of the project
-     * @param robotPath   the path to the main robot
-     * @param debugger    the debugger that should be used
+     * @param workingDirectory   the working directory of the project
+     * @param fullyQualifiedName the fully qualified name of the robot that should be started
+     * @param debugger           the debugger that should be used
      * @return the processor
      * @throws IOException if we could not load the processor
      */
-    XillProcessor buildProcessor(Path projectRoot, Path robotPath, Debugger debugger) throws IOException;
+    XillProcessor buildProcessor(Path workingDirectory, String fullyQualifiedName, Debugger debugger) throws IOException;
 
     /**
      * Set a chain of paths (directories and archives) that are traversed when searching for robots.

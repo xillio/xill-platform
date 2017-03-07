@@ -52,6 +52,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -81,7 +82,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
      *
      * @param workingDirectory   the project folder
      * @param fullyQualifiedName fully qualified name of the robot that should be executed
-     * @param robotLoader             the robot loader
+     * @param robotLoader        the robot loader
      * @param plugins            the plugins
      * @param debugger           the debugger
      * @throws IOException if thrown if a file(-related) operation fails.
@@ -90,7 +91,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
                          final Debugger debugger) throws IOException {
         this.workingDirectory = workingDirectory;
         this.robotLoader = robotLoader;
-        this.robotID = RobotID.getInstance(robotLoader.getRobot(fullyQualifiedName));
+        this.robotID = toRobotID(fullyQualifiedName);
         this.plugins = plugins;
         this.debugger = debugger;
         Injector injector = new XillStandaloneSetup().createInjectorAndDoEMFRegistration();
@@ -188,8 +189,14 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
         }
     }
 
+    private RobotID toRobotID(String fullyQualifiedName) throws NoSuchFileException {
+        return RobotID.getInstance(robotLoader.getRobot(fullyQualifiedName))
+                .orElseThrow(() -> new NoSuchFileException("No robot was found for '" + fullyQualifiedName + "'"));
+    }
+
     private RobotID toRobotID(Resource resource) {
-        return RobotID.getInstance(toURL(resource.getURI()));
+        return RobotID.getInstance(toURL(resource.getURI()))
+                .orElse(null);
     }
 
     private Resource findResource(RobotID robotID) {
@@ -249,7 +256,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
         List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl).stream()
                 .map(issue -> {
                     IssueImpl impl = (IssueImpl) issue;
-                    Issue.Type type = null;
+                    Issue.Type type;
 
                     switch (impl.getSeverity()) {
                         case ERROR:

@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * A unique identifier for robots.
@@ -55,12 +56,12 @@ public class RobotID implements Serializable {
     /**
      * Gets/creates a robotID that is singular for every path.
      *
-     * @param url        the robot file
+     * @param url the robot file
      * @return a unique robot id for this path
      */
-    public static RobotID getInstance(final URL url) {
+    public static Optional<RobotID> getInstance(final URL url) {
 
-        return ids.computeIfAbsent(url, k -> new RobotID(url));
+        return Optional.of(ids.computeIfAbsent(url, k -> new RobotID(url)));
     }
 
     /**

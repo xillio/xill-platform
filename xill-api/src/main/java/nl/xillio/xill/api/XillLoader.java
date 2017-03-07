@@ -63,7 +63,7 @@ public class XillLoader {
 
         for (Path jarFile : finder.getJarFiles()) {
             if (jarFile.toString().contains("processor")) {
-                // This check if to improve performance. We only load from processor jars
+                // This check is to improve performance. We only load from processor jars
                 URL url = jarFile.toUri().toURL();
                 URLClassLoader classLoader = new URLClassLoader(new URL[]{url}, parentClassLoader);
                 XillEnvironment xillEnvironment = loadXillEnvironment(classLoader);
