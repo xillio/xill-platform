@@ -69,7 +69,7 @@ public interface XillEnvironment extends AutoCloseable {
 
     /**
      * Sets the {@link XillThreadFactory} used to create threads in plugins.
-     *
+     * <p>
      * Needs to be called before {@link #loadPlugins()}.
      *
      * @param xillThreadFactory the factory
@@ -107,6 +107,14 @@ public interface XillEnvironment extends AutoCloseable {
      */
     XillProcessor buildProcessor(Path projectRoot, Path robotPath, Debugger debugger) throws IOException;
 
+    /**
+     * Set a chain of paths (directories and archives) that are traversed when searching for robots.
+     * If a Path in this chain is recognised to be a file, it is interpreted as an archive. Otherwise it is
+     * interpreted as a directory.
+     *
+     * @param robotPath the robot path
+     */
+    void setRobotPath(Path... robotPath) throws IOException;
 
     /**
      * Gets a list of all loaded plugins.

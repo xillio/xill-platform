@@ -18,7 +18,6 @@ package nl.xillio.xill.api.components;
 import me.biesaart.utils.Log;
 import org.slf4j.Logger;
 
-import java.io.File;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,14 +28,12 @@ import java.util.Map;
  * A unique identifier for robots.
  */
 public class RobotID implements Serializable {
-    private final File projectPath;
     private static final Logger LOGGER = Log.get();
 
     private static Map<URL, RobotID> ids = new Hashtable<>();
     private final URL url;
 
     private RobotID(final URL url) {
-        this.projectPath = null;
         this.url = url;
     }
 
@@ -51,8 +48,7 @@ public class RobotID implements Serializable {
     @Override
     public String toString() {
         return "RobotID{" +
-                "projectPath=" + projectPath +
-                ", url=" + url +
+                "url=" + url +
                 '}';
     }
 
@@ -63,12 +59,8 @@ public class RobotID implements Serializable {
      * @return a unique robot id for this path
      */
     public static RobotID getInstance(final URL url) {
-        RobotID id = ids.get(url);
-        if (id == null) {
-            id = new RobotID(url);
-            ids.put(url, id);
-        }
-        return id;
+
+        return ids.computeIfAbsent(url, k -> new RobotID(url));
     }
 
     /**
