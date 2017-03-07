@@ -116,7 +116,7 @@ public class RobotTab extends FileTab implements Initializable {
         // Validate the robot as soon as the editor is loaded.
         editorPane.getEditor().getOnDocumentLoaded().addListener(e -> validate());
     }
-
+    
     private static void initializeSettings(final File documentPath) {
         settings.simple().register(Settings.LAYOUT, Settings.RIGHT_PANEL_WIDTH + documentPath.getAbsolutePath(), "0.7", "Width of the right panel for the specified currentRobot");
         settings.simple().register(Settings.LAYOUT, Settings.RIGHT_PANEL_COLLAPSED + documentPath.getAbsolutePath(), "true", "The collapsed-state of the right panel for the specified currentRobot");

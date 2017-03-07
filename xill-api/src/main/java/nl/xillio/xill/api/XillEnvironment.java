@@ -69,7 +69,7 @@ public interface XillEnvironment extends AutoCloseable {
 
     /**
      * Sets the {@link XillThreadFactory} used to create threads in plugins.
-     *
+     * <p>
      * Needs to be called before {@link #loadPlugins()}.
      *
      * @param xillThreadFactory the factory
@@ -89,24 +89,32 @@ public interface XillEnvironment extends AutoCloseable {
     /**
      * Builds a processor for a specific execution.
      *
-     * @param projectRoot the root folder of the project
-     * @param robotPath   the path to the main robot
+     * @param workingDirectory   the working directory of the project
+     * @param fullyQualifiedName the fully qualified name of the robot that should be started
      * @return the processor
      * @throws IOException if we could not load the processor
      */
-    XillProcessor buildProcessor(Path projectRoot, Path robotPath) throws IOException;
+    XillProcessor buildProcessor(Path workingDirectory, String fullyQualifiedName) throws IOException;
 
     /**
      * Builds a processor for a specific execution, with a debugger.
      *
-     * @param projectRoot the root folder of the project
-     * @param robotPath   the path to the main robot
-     * @param debugger    the debugger that should be used
+     * @param workingDirectory   the working directory of the project
+     * @param fullyQualifiedName the fully qualified name of the robot that should be started
+     * @param debugger           the debugger that should be used
      * @return the processor
      * @throws IOException if we could not load the processor
      */
-    XillProcessor buildProcessor(Path projectRoot, Path robotPath, Debugger debugger) throws IOException;
+    XillProcessor buildProcessor(Path workingDirectory, String fullyQualifiedName, Debugger debugger) throws IOException;
 
+    /**
+     * Set a chain of paths (directories and archives) that are traversed when searching for robots.
+     * If a Path in this chain is recognised to be a file, it is interpreted as an archive. Otherwise it is
+     * interpreted as a directory.
+     *
+     * @param robotPath the robot path
+     */
+    void setRobotPath(Path... robotPath) throws IOException;
 
     /**
      * Gets a list of all loaded plugins.

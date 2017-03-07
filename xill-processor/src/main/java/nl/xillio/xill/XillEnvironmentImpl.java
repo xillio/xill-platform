@@ -27,9 +27,12 @@ import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.api.XillProcessor;
 import nl.xillio.xill.api.XillThreadFactory;
 import nl.xillio.xill.debugging.XillDebugger;
+import nl.xillio.xill.loaders.DirectoryRobotLoader;
+import nl.xillio.xill.loaders.XipRobotLoader;
 import nl.xillio.xill.services.ProgressTracker;
 import nl.xillio.xill.services.inject.DefaultInjectorModule;
 import org.slf4j.Logger;
+import xill.RobotLoader;
 
 import java.io.IOException;
 import java.net.URL;
@@ -54,6 +57,7 @@ public class XillEnvironmentImpl implements XillEnvironment {
     private boolean needLoad = true;
     private XillThreadFactory xillThreadFactory;
     private ProgressTracker progressTracker;
+    private RobotLoader robotLoader;
 
     @Override
     public XillEnvironment setLoadHomeFolder(boolean value) {
@@ -116,17 +120,32 @@ public class XillEnvironmentImpl implements XillEnvironment {
     }
 
     @Override
-    public XillProcessor buildProcessor(Path workingDirectory, Path robotPath) throws IOException {
-        return buildProcessor(workingDirectory, robotPath, new XillDebugger());
+    public XillProcessor buildProcessor(Path workingDirectory, String fullyQualifiedName) throws IOException {
+        return buildProcessor(workingDirectory, fullyQualifiedName, new XillDebugger());
     }
 
     @Override
-    public XillProcessor buildProcessor(Path workingDirectory, Path robotPath, Debugger debugger) throws IOException {
+    public XillProcessor buildProcessor(Path workingDirectory, String fullyQualifiedName, Debugger debugger) throws IOException {
+        if (robotLoader == null) {
+            robotLoader = new DirectoryRobotLoader(null, workingDirectory);
+        }
+
         if (needLoad) {
             loadPlugins();
         }
 
-        return new nl.xillio.xill.XillProcessor(workingDirectory, robotPath.toFile(), new ArrayList<>(loadedPlugins.values()), debugger);
+        return new nl.xillio.xill.XillProcessor(workingDirectory, fullyQualifiedName, robotLoader, new ArrayList<>(loadedPlugins.values()), debugger);
+    }
+
+    @Override
+    public void setRobotPath(Path... robotPath) throws IOException {
+        for (Path path : robotPath) {
+            if (Files.isRegularFile(path)) {
+                robotLoader = new XipRobotLoader(robotLoader, path);
+            } else {
+                robotLoader = new DirectoryRobotLoader(robotLoader, path);
+            }
+        }
     }
 
     @Override
@@ -141,6 +160,14 @@ public class XillEnvironmentImpl implements XillEnvironment {
 
     @Override
     public void close() {
+        if (robotLoader != null) {
+            try {
+                robotLoader.close();
+            } catch (IOException e) {
+                LOGGER.error("Failed to close the robotLoader");
+            }
+            robotLoader = null;
+        }
         getPlugins().forEach(XillPlugin::close);
     }
 

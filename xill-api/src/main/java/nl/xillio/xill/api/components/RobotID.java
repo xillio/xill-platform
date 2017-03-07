@@ -15,53 +15,56 @@
  */
 package nl.xillio.xill.api.components;
 
-import java.io.File;
+import me.biesaart.utils.Log;
+import org.slf4j.Logger;
+
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * A unique identifier for robots.
  */
 public class RobotID implements Serializable {
-    private static Map<String, RobotID> ids = new Hashtable<>();
-    private final File path;
+    private static final Logger LOGGER = Log.get();
 
-    private RobotID(final File path) {
-        this.path = path;
+    private static Map<URL, RobotID> ids = new Hashtable<>();
+    private final URL url;
+
+    private RobotID(final URL url) {
+        this.url = url;
     }
 
-    /**
-     * Returns the path associated with this id.
-     *
-     * @return the path associated with this id
-     */
-    public File getPath() {
-        return path;
+    public URL getURL() {
+        return url;
+    }
+
+    public String getName() {
+        return url.toString().substring(url.toString().lastIndexOf("/") + 1);
     }
 
     @Override
     public String toString() {
-        return path.getAbsolutePath();
+        return "RobotID{" +
+                "url=" + url +
+                '}';
     }
 
     /**
      * Gets/creates a robotID that is singular for every path.
      *
-     * @param file  the robot file
+     * @param url the robot file
      * @return a unique robot id for this path
      */
-    public static RobotID getInstance(final File file) {
-        String identity = file.getAbsolutePath();
-
-        RobotID id = ids.get(identity);
-
-        if (id == null) {
-            id = new RobotID(file);
-            ids.put(identity, id);
+    public static Optional<RobotID> getInstance(final URL url) {
+        if (url == null) {
+            return Optional.empty();
         }
 
-        return id;
+        return Optional.of(ids.computeIfAbsent(url, k -> new RobotID(url)));
     }
 
     /**
@@ -70,6 +73,12 @@ public class RobotID implements Serializable {
      * @return a dummy ID for testing.
      */
     public static RobotID dummyRobot() {
-        return new RobotID(new File("."));
+        String basicURL = "file:///";
+        try {
+            return new RobotID(new URL(basicURL));
+        } catch (MalformedURLException e) {
+            LOGGER.error(basicURL + " is not a valid URL", e);
+        }
+        return null;
     }
 }

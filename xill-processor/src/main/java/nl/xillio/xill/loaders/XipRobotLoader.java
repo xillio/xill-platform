@@ -75,5 +75,6 @@ public class XipRobotLoader extends AbstractRobotLoader {
     @Override
     public void close() throws IOException {
         archive.close();
+        super.close();
     }
 }

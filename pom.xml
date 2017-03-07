@@ -102,14 +102,14 @@
         <module>plugin-xurl</module>
         <module>xill-api</module>
         <module>xill-assemblies</module>
-        <module>xill-cli</module>
-        <module>xill-ide</module>
+        <!--module>xill-cli</module-->
+        <!--module>xill-ide</module-->
         <module>xill-parent</module>
         <module>xill-plugin-archetype</module>
         <module>xill-plugins-parent</module>
         <module>xill-processor</module>
         <module>xill-testutils</module>
-        <module>xill-web-service</module>
+        <!--module>xill-web-service</module-->
         <module>xillio-parent</module>
     </modules>
 
