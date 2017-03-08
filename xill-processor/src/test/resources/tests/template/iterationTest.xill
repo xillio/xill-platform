@@ -1,0 +1,44 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+* Specification: The <#list> functionality must be able to print key-value pairs in the list.
+* Expected: The given key-value pair: testKey, testValue.
+* Input: {testKey, testValue}
+*/
+
+use Template;
+use File;
+use Assert;
+use Stream;
+
+// Set up output
+var output = File.openWrite("testresources/template/output.txt");
+
+// Model
+var model = {
+    "hash" : { "testKey" : "testValue" }
+};
+
+// Process template with given configuration
+var config = Template.getEngine();
+
+Template.process("testresources/template/template.txt", output , model, config);
+
+var outputText = Stream.getText(File.openRead("testresources/template/output.txt"));
+
+Assert.equal(outputText, "testKey, testValue");
+
+File.delete("testresources/template/output.txt");

@@ -1,0 +1,1 @@
+<#list hash as key, value>${key}, ${value}</#list>

@@ -96,7 +96,7 @@ public class TemplateProcessorTest extends TestUtils {
 
         // Instantiate
         TemplateProcessor templateProcessor = new TemplateProcessor();
-        Configuration configuration = new Configuration(Configuration.VERSION_2_3_23);
+        Configuration configuration = new Configuration(Configuration.VERSION_2_3_25);
 
         // Run
         templateProcessor.generate("", outputStream, null, configuration);
