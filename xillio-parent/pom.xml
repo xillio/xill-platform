@@ -370,11 +370,6 @@
             <!-- Internal Project Dependencies -->
             <dependency>
                 <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-database</artifactId>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
                 <artifactId>plugin-document</artifactId>
                 <version>${xill.version}</version>
             </dependency>

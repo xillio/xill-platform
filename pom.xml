@@ -84,7 +84,6 @@
     </properties>
 
     <modules>
-        <module>plugin-database</module>
         <module>plugin-document</module>
         <module>plugin-excel</module>
         <module>plugin-exiftool</module>
