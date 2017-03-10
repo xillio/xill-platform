@@ -99,11 +99,6 @@
         </dependency>
         <dependency>
             <groupId>nl.xillio.xill</groupId>
-            <artifactId>plugin-rest</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>nl.xillio.xill</groupId>
             <artifactId>plugin-sqlite</artifactId>
             <scope>runtime</scope>
         </dependency>

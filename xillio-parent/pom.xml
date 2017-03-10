@@ -410,11 +410,6 @@
             </dependency>
             <dependency>
                 <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-rest</artifactId>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
                 <artifactId>plugin-sqlite</artifactId>
                 <version>${xill.version}</version>
             </dependency>
