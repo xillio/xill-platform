@@ -44,28 +44,26 @@ __NOTE__: Fields with `null` values are ignored in the search of objects.
         <example title="Usage">
         <header>Get an object by it's id</header>
         <code>
-            use MSSQL as db;
-            use System;
+            use MSSQL, System;
 
             // Connect to the database
-            db.connect(
+            MSSQL.connect(
                 "jdbc:jtds:sqlserver://localhost/Database" ::
                 ";user=MyUserName" ::
                 ";password=MyPassword"
             );
 
-            var object = db.getObject("people", {"id": 5346});
+            var object = MSSQL.getObject("people", {"id": 5346});
 
             var json = System.toJSON(object, true);
             System.print(json);
         </code>
         <header>Get an object by example</header>
         <code>
-            use MSSQL as db;
-            use System;
+            use MSSQL, System;
 
             // Connect to the database
-            db.connect(
+            MSSQL.connect(
                 "jdbc:jtds:sqlserver://localhost/Database" ::
                 ";user=MyUserName" ::
                 ";password=MyPassword"
@@ -76,7 +74,7 @@ __NOTE__: Fields with `null` values are ignored in the search of objects.
                 "lastName": "Doe"
             };
 
-            var row = db.getObject("people", example);
+            var row = MSSQL.getObject("people", example);
 
             var json = System.toJSON(row, true);
             System.print(json);

@@ -51,46 +51,45 @@ The return value of this construct is true if the operation finished successfull
         <example title="Usage">
             <header>Insert a new row</header>
             <code>
-                use SQLite as db;
+                use SQLite;
 
                 // Connect to the database
-                db.connect("jdbc:sqlite::memory:");
+                SQLite.connect("jdbc:sqlite::memory:");
 
                 var person = {
                     "firstName": "John",
                     "lastName": "Doe"
                 };
 
-                db.storeObject("people", person);
+                SQLite.storeObject("people", person);
             </code>
             <header>Update a person if it exists otherwise insert</header>
             <code>
-                use SQLite as db;
+                use SQLite;
 
                 // Connect to the database
-                db.connect("jdbc:sqlite::memory:");
+                SQLite.connect("jdbc:sqlite::memory:");
 
                 var person = {
                     "firstName": "John",
                     "lastName": "Doe"
                 };
 
-                db.storeObject("people", person, ["firstName", "lastName"]);
+                SQLite.storeObject("people", person, ["firstName", "lastName"]);
             </code>
             <header>Update an item by id</header>
             <code>
-                use SQLite as db;
-                use File;
+                use SQLite, File;
 
                 // Connect to the database
-                db.connect("jdbc:sqlite::memory:");
+                SQLite.connect("jdbc:sqlite::memory:");
 
                 var file = {
                     "id": 246354246,
                     "data": File.openRead("path/to/file.pdf")
                 };
 
-                db.storeObject("documents", file, ["id"]);
+                SQLite.storeObject("documents", file, ["id"]);
             </code>
         </example>
     </examples>
