@@ -24,12 +24,10 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
-import nl.xillio.xill.api.errors.XillParsingException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import xill.RobotLoader;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 
 import static org.mockito.Matchers.any;
@@ -49,7 +47,8 @@ public class WorkerThreadTest extends TestUtils {
     private RobotID robotID;
     private Debugger debugger;
     private Debugger childDebugger;
-    private File robotFile;
+    private String robotQualifiedName;
+    private RobotLoader loader;
     private WorkerRobotFactory workerRobotFactory;
     private Robot robot;
 
@@ -59,10 +58,12 @@ public class WorkerThreadTest extends TestUtils {
         childDebugger = mock(StoppableDebugger.class, RETURNS_DEEP_STUBS);
         when(debugger.createChild()).thenReturn(childDebugger);
         queue = mock(BlockingQueue.class);
-        robotFile = mock(File.class);
+        robotQualifiedName = "";
+        loader = mock(RobotLoader.class);
         control = mock(RunBulkControl.class);
         when(control.getDebugger()).thenReturn(debugger);
-        when(control.getCalledRobotFile()).thenReturn(robotFile);
+        when(control.getCalledRobotFqn()).thenReturn(robotQualifiedName);
+        when(control.getLoader()).thenReturn(loader);
         outputHandler = mock(OutputHandler.class);
         robotID = mock(RobotID.class);
         robot = mock(Robot.class);
@@ -79,7 +80,7 @@ public class WorkerThreadTest extends TestUtils {
         MetaExpression item = mockExpression(ExpressionDataType.ATOMIC);
         when(queue.poll(anyInt(), any())).thenReturn(item);
         when(debugger.shouldStop()).thenReturn(false);
-        when(workerRobotFactory.construct(any(), any())).thenReturn(mock(Robot.class));
+        when(workerRobotFactory.construct(any(), any(), any())).thenReturn(mock(Robot.class));
 
         WorkerThread workerThread = new WorkerThread(queue, control, false, workerRobotFactory);
 
@@ -100,7 +101,7 @@ public class WorkerThreadTest extends TestUtils {
         MetaExpression item = mockExpression(ExpressionDataType.ATOMIC);
         when(queue.poll(anyInt(), any())).thenReturn(item);
         when(debugger.shouldStop()).thenReturn(true);
-        when(workerRobotFactory.construct(any(), any())).thenReturn(mock(Robot.class));
+        when(workerRobotFactory.construct(any(), any(), any())).thenReturn(mock(Robot.class));
 
         WorkerThread workerThread = new WorkerThread(queue, control, false, workerRobotFactory);
 
@@ -121,7 +122,7 @@ public class WorkerThreadTest extends TestUtils {
         MetaExpression item = mockExpression(ExpressionDataType.ATOMIC);
         when(queue.poll(anyInt(), any())).thenReturn(item);
         when(debugger.shouldStop()).thenReturn(false);
-        when(workerRobotFactory.construct(any(), any())).thenThrow(new WorkerCompileException("Robot error", new Exception()));
+        when(workerRobotFactory.construct(any(), any(), any())).thenThrow(new WorkerCompileException("Robot error", new Exception()));
 
         WorkerThread workerThread = new WorkerThread(queue, control, false, workerRobotFactory);
 
@@ -140,7 +141,7 @@ public class WorkerThreadTest extends TestUtils {
         when(queue.poll(anyInt(), any())).thenReturn(item);
         when(debugger.shouldStop()).thenReturn(false);
         RobotRuntimeException runtimeException = new RobotRuntimeException("Error running robot");
-        when(workerRobotFactory.construct(any(), any())).thenReturn(robot);
+        when(workerRobotFactory.construct(any(), any(), any())).thenReturn(robot);
         when(robot.process(any())).thenThrow(runtimeException);
 
         WorkerThread workerThread = new WorkerThread(queue, control, false, workerRobotFactory);
@@ -164,7 +165,7 @@ public class WorkerThreadTest extends TestUtils {
         when(queue.poll(anyInt(), any())).thenReturn(item);
         when(debugger.shouldStop()).thenReturn(false);
         RuntimeException runtimeException = new RuntimeException("Error running robot");
-        when(workerRobotFactory.construct(any(), any())).thenReturn(robot);
+        when(workerRobotFactory.construct(any(), any(), any())).thenReturn(robot);
         when(robot.process(any())).thenThrow(runtimeException);
         when(childDebugger.getStackTrace().get(anyInt()).getLineNumber()).thenReturn(0);
 

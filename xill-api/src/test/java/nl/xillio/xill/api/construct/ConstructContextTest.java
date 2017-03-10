@@ -24,9 +24,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertSame;
 
 
@@ -51,7 +49,7 @@ public class ConstructContextTest {
                 null
         );
 
-        XillProcessor child = constructContext.createChildProcessor(Paths.get("test.xill"), environment);
+        XillProcessor child = constructContext.createChildProcessor("test", environment);
 
         // Check if the OutputHandler is set correctly
         ArgumentCaptor<OutputHandler> handlerArgumentCaptor = ArgumentCaptor.forClass(OutputHandler.class);

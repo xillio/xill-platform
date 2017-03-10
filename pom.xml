@@ -93,7 +93,7 @@
         <module>plugin-mssql</module>
         <module>plugin-mysql</module>
         <module>plugin-oracle</module>
-        <module>plugin-properties</module>
+        <!--module>plugin-properties</module-->
         <module>plugin-rest</module>
         <module>plugin-sqlite</module>
         <module>plugin-template</module>

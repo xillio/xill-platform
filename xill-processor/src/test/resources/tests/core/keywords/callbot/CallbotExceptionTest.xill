@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* 
+/*
 * Specification: Errors in called bots MUST be thrown in the calling bot and callbot MUST return null.
 * Input: A robot which throws an error when given an ATOMIC as argument
 * Expected: An error is thrown
@@ -25,7 +25,7 @@ var result;
 var error;
 
 do {
-	result = callbot("testresources/core/keywords/callbot/addOne.xill", 1);
+	result = callbot("testresources.core.keywords.callbot.addOne", 1);
 } fail(e) {
 	error = e;
 }

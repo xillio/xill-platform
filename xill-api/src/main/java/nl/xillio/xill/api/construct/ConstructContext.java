@@ -224,7 +224,7 @@ public class ConstructContext {
      * @return the processor
      * @throws IOException if an IO error occurs
      */
-    public XillProcessor createChildProcessor(Path robot, XillEnvironment xillEnvironment) throws IOException {
+    public XillProcessor createChildProcessor(String robot, XillEnvironment xillEnvironment) throws IOException {
         XillProcessor processor = xillEnvironment.buildProcessor(workingDirectory, robot, debugger.createChild());
         processor.setOutputHandler(outputHandler);
         return processor;

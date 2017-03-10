@@ -22,8 +22,8 @@ import nl.xillio.xill.api.StoppableDebugger;
 import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.errors.XillParsingException;
+import xill.RobotLoader;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -48,16 +48,17 @@ class WorkerRobotFactory {
     /**
      * Compile a {@link Robot}.
      *
-     * @param calledRobotFile The file to compile
+     * @param calledRobotQualifiedName The qualified name of the robot to compile
+     * @param loader The robotLoader that is used
      * @param childDebugger The debugger to compile with
      * @return The compiled robot
      * @throws IOException When the robot could not be read
      * @throws XillParsingException When the robot could not be compiled
      */
-    public Robot construct(File calledRobotFile, StoppableDebugger childDebugger) throws WorkerCompileException {
+    public Robot construct(String calledRobotQualifiedName, RobotLoader loader, StoppableDebugger childDebugger) throws WorkerCompileException {
         XillProcessor processor = null;
         try {
-            processor = new XillProcessor(workingDirectory, calledRobotFile, plugins, childDebugger);
+            processor = new XillProcessor(workingDirectory, calledRobotQualifiedName, loader, plugins, childDebugger);
             processor.setOutputHandler(outputHandler);
             processor.compileAsSubRobot(robotID);
         } catch (IOException e) {

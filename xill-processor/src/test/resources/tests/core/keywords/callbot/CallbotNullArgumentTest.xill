@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* 
+/*
 * Specification: A called bot MUST NOT use the default argument if null is given as the argument
 * Input: A bot which returns the argument
 * Expected: The callbot call returns null
@@ -21,5 +21,5 @@
 
 use Assert;
 
-var result = callbot("testresources/core/keywords/callbot/argument.xill", null);
+var result = callbot("testresources.core.keywords.callbot.argument", null);
 Assert.isNull(result);

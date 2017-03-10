@@ -19,15 +19,15 @@ import me.biesaart.utils.Log;
 import nl.xillio.plugins.XillPlugin;
 import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.OutputHandler;
-import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.api.components.*;
-import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.services.files.FileResolver;
 import nl.xillio.xill.services.files.FileResolverImpl;
 import org.slf4j.Logger;
+import xill.RobotLoader;
 
-import java.io.File;
+import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -51,6 +51,7 @@ public class RunBulkExpression implements Processable {
     private Processable optionsProcessable;
     private RunBulkOptions options;
     private final OutputHandler outputHandler;
+    private final RobotLoader loader;
 
     private int maxThreadsVal;
 
@@ -62,34 +63,29 @@ public class RunBulkExpression implements Processable {
      * @param robotID           the root robot of this tree
      * @param plugins           the current plugin loader
      * @param outputHandler
+     * @param loader
      */
-    public RunBulkExpression(final Path workingDirectory, final Processable path, final RobotID robotID, final List<XillPlugin> plugins, OutputHandler outputHandler) {
+    public RunBulkExpression(final Path workingDirectory, final Processable path, final RobotID robotID, final List<XillPlugin> plugins, OutputHandler outputHandler, RobotLoader loader) {
         this.workingDirectory = workingDirectory;
         this.path = path;
         this.robotID = robotID;
         this.plugins = plugins;
         this.outputHandler = outputHandler;
+        this.loader = loader;
         resolver = new FileResolverImpl();
     }
 
     @Override
     public InstructionFlow<MetaExpression> process(final Debugger debugger) {
-        MetaExpression pathExpression = path.process(debugger).get();
+        String otherRobot = path.process(debugger).get().getStringValue();
 
-        File otherRobot = resolver.buildPath(new ConstructContext(workingDirectory, robotID, robotID, null, null, null, null, null), pathExpression).toFile();
-
-        LOGGER.debug("Evaluating runBulk for " + otherRobot.getAbsolutePath());
-
-        if (!otherRobot.exists()) {
-            throw new RobotRuntimeException("Called robot " + otherRobot.getAbsolutePath() + " does not exist.");
-        }
-
-        if (!otherRobot.getName().endsWith(XillEnvironment.ROBOT_EXTENSION)) {
-            throw new RobotRuntimeException("Can only call robots with the ." + XillEnvironment.ROBOT_EXTENSION + " extension.");
+        LOGGER.debug("Evaluating runBulk for " + otherRobot);
+        if (loader.getRobot(otherRobot) == null) {
+            throw new RobotRuntimeException("Called robot " + otherRobot + " does not exist.");
         }
 
         options = new RunBulkOptions(optionsProcessable);
-        int robotRunCount = runBulk(debugger, otherRobot);
+        int robotRunCount = runBulk(debugger, otherRobot, loader);
 
         return InstructionFlow.doResume(ExpressionBuilderHelper.fromValue(robotRunCount));
     }
@@ -121,7 +117,7 @@ public class RunBulkExpression implements Processable {
      *
      * @return The number of robot runs
      */
-    private int runBulk(final Debugger debugger, final File calledRobotFile) {
+    private int runBulk(final Debugger debugger, final String calledRobotQualifiedName, final RobotLoader loader) {
         // Evaluate argument
         if (argument == null) {
             return 0; // Nothing to do
@@ -140,7 +136,7 @@ public class RunBulkExpression implements Processable {
         }
 
         BlockingQueue<MetaExpression> queue = new ArrayBlockingQueue<>(maxThreadsVal);
-        RunBulkControl control = new RunBulkControl(debugger, calledRobotFile);
+        RunBulkControl control = new RunBulkControl(debugger, calledRobotQualifiedName, loader);
 
         // Start master thread
         Thread master = new MasterThread(source, queue, control);

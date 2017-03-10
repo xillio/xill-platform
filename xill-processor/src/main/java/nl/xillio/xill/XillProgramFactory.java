@@ -1132,9 +1132,9 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
      * @throws XillParsingException
      */
     Processable parseToken(final xill.lang.xill.CallbotExpression token) throws XillParsingException {
-        Processable path = parse(token.getPath());
+        Processable qualifiedName = parse(token.getPath());
 
-        CallbotExpression expression = new CallbotExpression(workingDirectory, path, rootRobot, plugins, outputHandler);
+        CallbotExpression expression = new CallbotExpression(workingDirectory, qualifiedName, rootRobot, plugins, outputHandler, robotLoader);
 
         if (token.getArgument() != null) {
             expression.setArgument(parse(token.getArgument()));
@@ -1151,9 +1151,9 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
      * @throws XillParsingException
      */
     Processable parseToken(final xill.lang.xill.RunBulkExpression token) throws XillParsingException {
-        Processable path = parse(token.getPath());
+        Processable qualifiedName = parse(token.getPath());
 
-        RunBulkExpression expression = new RunBulkExpression(workingDirectory, path, rootRobot, plugins, outputHandler);
+        RunBulkExpression expression = new RunBulkExpression(workingDirectory, qualifiedName, rootRobot, plugins, outputHandler, robotLoader);
 
         if (token.getArgument() != null) {
             expression.setArgument(parse(token.getArgument()));

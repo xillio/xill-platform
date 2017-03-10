@@ -24,7 +24,7 @@ use String, Assert, System;
 var i = 1;
 while(i < 24){
     do{
-       callbot("testresources/core/binaryOperators/concatenation/ConcatenationAssignationToConstantSyntaxTest" :: i :: ".xill");
+       callbot("testresources.core.binaryOperators.concatenation.ConcatenationAssignationToConstantSyntaxTest" :: i);
     }fail(error){
         Assert.isTrue(String.contains(error["message"], "Can only assign to variables"));
     }

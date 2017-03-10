@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* 
+/*
 * Specification: Callbot MUST throw an error and MUST return null when the called bot does not exist.
 * Input: A non-existent file
 * Expected: An error is thrown
@@ -25,7 +25,7 @@ var result;
 var error;
 
 do {
-	result = callbot("testresources/core/callbot/non-existent.xill");
+	result = callbot("testresources.core.keywords.callbot.non-existent");
 } fail(e) {
 	error = e;
 }

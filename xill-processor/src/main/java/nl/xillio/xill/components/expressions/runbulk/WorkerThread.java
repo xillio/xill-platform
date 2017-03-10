@@ -23,8 +23,8 @@ import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.api.errors.XillParsingException;
 import org.slf4j.Logger;
+import xill.RobotLoader;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -51,7 +51,7 @@ class WorkerThread extends Thread {
      * @param robotFactory The factory compiling robots
      */
     public WorkerThread(final BlockingQueue<MetaExpression> queue, final RunBulkControl control,
-                 boolean stopOnError, WorkerRobotFactory robotFactory) {
+                        boolean stopOnError, WorkerRobotFactory robotFactory) {
         super("RunBulk WorkerThread");
         this.queue = queue;
         this.control = control;
@@ -83,7 +83,7 @@ class WorkerThread extends Thread {
      */
     private void processQueueItem(final MetaExpression item) {
         if (item != null) {
-            if (!processRobot(control.getDebugger(), control.getCalledRobotFile(), item)) {
+            if (!processRobot(control.getDebugger(), control.getCalledRobotFqn(), control.getLoader(), item)) {
                 control.signalStop();
             } else {
                 if (control.getDebugger().shouldStop()) {
@@ -98,13 +98,13 @@ class WorkerThread extends Thread {
     /**
      * @return true if the robot ended up successfully, false if there was an error or interruption, etc.
      */
-    private boolean processRobot(final Debugger debugger, final File calledRobotFile, final MetaExpression arg) {
+    private boolean processRobot(final Debugger debugger, final String calledRobotQualifiedName, RobotLoader loader, final MetaExpression arg) {
         // Process the robot
         try {
-            return runRobot(debugger, calledRobotFile, arg);
+            return runRobot(debugger, calledRobotQualifiedName, loader, arg);
         } catch (WorkerCompileException e) {
             throw new RobotRuntimeException(e.getMessage(), e);
-        }  catch (Exception e) {
+        } catch (Exception e) {
             debugger.handle(e);
         }
 
@@ -115,17 +115,18 @@ class WorkerThread extends Thread {
      * Run a single robot.
      *
      * @param debugger The debugger to use as parent debugger
-     * @param calledRobotFile The file to process
+     * @param calledRobotQualifiedName The qualified name of the robot to process
+     * @param loader The RobotLoader that will be used
      * @param arg The argument input to the robot
      * @return True if the robot was successful, false otherwise
      * @throws IOException When reading the robot fails
      * @throws XillParsingException When a compile error occurs
      */
-    private boolean runRobot(Debugger debugger, File calledRobotFile, MetaExpression arg) throws WorkerCompileException {
+    private boolean runRobot(Debugger debugger, String calledRobotQualifiedName, RobotLoader loader, MetaExpression arg) throws WorkerCompileException {
         StoppableDebugger childDebugger = (StoppableDebugger) debugger.createChild();
         childDebugger.setStopOnError(stopOnError);
 
-        Robot robot = robotFactory.construct(calledRobotFile, childDebugger);
+        Robot robot = robotFactory.construct(calledRobotQualifiedName, loader, childDebugger);
 
         try {
             robot.setArgument(arg);
@@ -138,9 +139,9 @@ class WorkerThread extends Thread {
         } catch (RobotRuntimeException e) {
             int line = childDebugger.getStackTrace().get(childDebugger.getStackDepth()).getLineNumber();
             childDebugger.endInstruction(null, null);
-            throw new RobotRuntimeException("Caused by '" + calledRobotFile.getName() + "' (line " + line + ")", e);
+            throw new RobotRuntimeException("Caused by '" + calledRobotQualifiedName + "' (line " + line + ")", e);
         } catch (Exception e) {
-            throw new RobotRuntimeException("An exception occurred while evaluating " + calledRobotFile.getAbsolutePath(), e);
+            throw new RobotRuntimeException("An exception occurred while evaluating " + calledRobotQualifiedName, e);
         } finally {
             debugger.removeChild(childDebugger);
         }

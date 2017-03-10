@@ -17,22 +17,19 @@ package nl.xillio.xill.components.expressions;
 
 import me.biesaart.utils.Log;
 import nl.xillio.plugins.XillPlugin;
-import nl.xillio.xill.Xill;
 import nl.xillio.xill.XillProcessor;
 import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.DefaultOutputHandler;
 import nl.xillio.xill.api.LogUtil;
 import nl.xillio.xill.api.OutputHandler;
 import nl.xillio.xill.api.components.*;
-import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.api.errors.XillParsingException;
-import nl.xillio.xill.services.files.FileResolver;
-import nl.xillio.xill.services.files.FileResolverImpl;
 import org.slf4j.Logger;
+import xill.RobotLoader;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,8 +47,8 @@ public class CallbotExpression implements Processable {
     private final RobotID robotID;
     private final List<XillPlugin> plugins;
     private Processable argument;
-    private final FileResolver resolver;
     private final OutputHandler outputHandler;
+    private final RobotLoader loader;
 
     /**
      * Create a new {@link CallbotExpression}
@@ -61,37 +58,33 @@ public class CallbotExpression implements Processable {
      * @param robotID           the root robot of this tree
      * @param plugins           the current plugin loader
      * @param outputHandler     the event handler for all output
+     * @param loader
      */
-    public CallbotExpression(final Path workingDirectory, final Processable path, final RobotID robotID, final List<XillPlugin> plugins, OutputHandler outputHandler) {
+    public CallbotExpression(final Path workingDirectory, final Processable path, final RobotID robotID, final List<XillPlugin> plugins, OutputHandler outputHandler, RobotLoader loader) {
         this.workingDirectory = workingDirectory;
         this.path = path;
         this.robotID = robotID;
         this.plugins = plugins;
         robotLogger = LogUtil.getLogger(robotID, new DefaultOutputHandler());
         this.outputHandler = outputHandler;
-        resolver = new FileResolverImpl();
+        this.loader = loader;
     }
 
     @Override
     public InstructionFlow<MetaExpression> process(final Debugger debugger) {
-        MetaExpression pathExpression = path.process(debugger).get();
+        String otherRobot = path.process(debugger).get().getStringValue();
 
-        File otherRobot = resolver.buildPath(new ConstructContext(workingDirectory, robotID, robotID, null, null, null, null, null), pathExpression).toFile();
+        LOGGER.debug("Evaluating callbot for " + otherRobot);
+        URL otherRobotURL = loader.getRobot(otherRobot);
 
-        LOGGER.debug("Evaluating callbot for " + otherRobot.getAbsolutePath());
-
-        if (!otherRobot.exists()) {
-            throw new RobotRuntimeException("Called robot " + otherRobot.getAbsolutePath() + " does not exist.");
-        }
-
-        if (!otherRobot.getName().endsWith(Xill.FILE_EXTENSION)) {
-            throw new RobotRuntimeException("Can only call robots with the ." + Xill.FILE_EXTENSION + " extension.");
+        if (otherRobotURL == null) {
+            throw new RobotRuntimeException("Called robot " + otherRobot + " does not exist.");
         }
 
         // Process the robot
         try {
             Debugger childDebugger = debugger.createChild();
-            XillProcessor processor = new XillProcessor(workingDirectory, otherRobot, plugins, childDebugger);
+            XillProcessor processor = new XillProcessor(workingDirectory, otherRobot, loader, plugins, childDebugger);
             processor.setOutputHandler(outputHandler);
             processor.compileAsSubRobot(robotID);
 
@@ -113,9 +106,9 @@ public class CallbotExpression implements Processable {
                 if (e instanceof RobotRuntimeException) {
                     int line = childDebugger.getStackTrace().get(childDebugger.getStackDepth()).getLineNumber();
                     childDebugger.endInstruction(null, null); //pop from stack so stacktrace can be made.
-                    throw new RobotRuntimeException("Caused by '" + otherRobot.getName() + "' (line " + line + ")", e);
+                    throw new RobotRuntimeException("Caused by '" + otherRobot + "' (line " + line + ")", e);
                 }
-                throw new RobotRuntimeException("An exception occurred while evaluating " + otherRobot.getAbsolutePath(), e);
+                throw new RobotRuntimeException("An exception occurred while evaluating " + otherRobot, e);
             } finally {
                 debugger.removeChild(childDebugger);
             }
