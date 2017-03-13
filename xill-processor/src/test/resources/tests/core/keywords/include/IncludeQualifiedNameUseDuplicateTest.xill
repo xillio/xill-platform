@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 /*
-* Specification: An error MUST be thrown when the 'as' keyword is used with the 'use' statement
-* Input: Including a robot that contains statement 'use' with 'as'.
+* Specification: An error MUST be thrown when a qualified include uses the same name as a 'use' statement
+* Input: Including a robot that contains a qualified include using the same name as a plugin.
 * Expected: An error is thrown when trying to compile this robot.
 */
 use Assert;
 
 do {
-    callbot("testresources/core/keywords/include/IncludeQualifiedNameUse.xill");
+    callbot("testresources/core/keywords/include/IncludeQualifiedNameUseDuplicate.xill");
 } success {
     Assert.error("This robot should not compile.");
 }
