@@ -90,7 +90,7 @@ If you want to pass a string containing a colon you could either escape the colo
                 use MariaDB;
 
                 // Connect to your database
-                MariaDB.connect(
+                var connection = MariaDB.connect(
                     "jdbc:mariadb://localhost/my-database" ::
                     "?user=root" ::
                     "&amp;password=super1secret"

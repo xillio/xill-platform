@@ -90,7 +90,7 @@ If you want to pass a string containing a colon you could either escape the colo
                 use MSSQL;
 
                 // Connect to your database
-                MSSQL.connect(
+                var connection = MSSQL.connect(
                     "jdbc:jtds:sqlserver://localhost/Database" ::
                     ";user=MyUserName" ::
                     ";password=MyPassword"

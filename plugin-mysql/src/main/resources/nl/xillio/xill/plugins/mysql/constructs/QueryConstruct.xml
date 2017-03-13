@@ -90,7 +90,7 @@ If you want to pass a string containing a colon you could either escape the colo
                 use MySQL;
 
                 // Connect to your database
-                MySQL.connect(
+                var connection = MySQL.connect(
                     "jdbc:mysql://localhost/my-database" ::
                     "?user=root" ::
                     "&amp;password=super1secret"
