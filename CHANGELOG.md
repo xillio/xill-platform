@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 * Git integration. Push and pull can be done from the IDE [CTC-1919]
 * Store git credentials [CTC-1975]
 * Show status of changed files in git [CTC-1977]
+* Decrease minimum height of help pane [CTC-2133]
 
 ### Change
 * Remove `as` keyword from `use` statement [CTC-1384]
