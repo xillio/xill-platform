@@ -22,6 +22,8 @@ use Assert, File;
 
 var file = "testresources/file/file.txt";
 var unknown = "testresources/file/folder/subfile.unknown";
+var fileDoesNotexist = "nonexistingfile.docx";
 
 Assert.equal(File.getMimeType(file), "text/plain");
 Assert.equal(File.getMimeType(unknown), null);
+Assert.equal(File.getMimeType(fileDoesNotexist), "application/vnd.openxmlformats-officedocument.wordprocessingml.document");

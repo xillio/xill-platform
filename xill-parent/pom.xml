@@ -223,4 +223,55 @@
             </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>LATEST</version>
+                <reportSets>
+                    <reportSet>
+                        <!-- defines unit test reports in the modules -->
+                        <id>unit-tests</id>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+
+                    <reportSet>
+                        <!-- defines aggregate unit test report -->
+                        <id>unit-tests-aggregate</id>
+                        <inherited>false</inherited>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                        <configuration>
+                            <aggregate>true</aggregate>
+                        </configuration>
+                    </reportSet>
+
+                    <reportSet>
+                        <!-- defines integration test reports in the modules -->
+                        <id>integration-tests</id>
+                        <reports>
+                            <report>failsafe-report-only</report>
+                        </reports>
+                    </reportSet>
+
+                    <reportSet>
+                        <!-- defines aggregate integration test report -->
+                        <id>integration-tests-aggregate</id>
+                        <inherited>false</inherited>
+                        <reports>
+                            <report>failsafe-report-only</report>
+                        </reports>
+                        <configuration>
+                            <aggregate>true</aggregate>
+                        </configuration>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
