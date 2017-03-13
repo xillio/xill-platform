@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
+
 import com.google.inject.Inject;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
@@ -25,37 +26,30 @@ import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
 
 /**
  * <p>
- * Returns the first index of the needle in the provided text.
+ * Returns the last index of the needle in the provided text.
  * </p>
- * <p>
- * Optionally an alternative start position can be specified.
- * </p>
- *
- * @author Sander
+ * @author Daan Knoope
  */
-public class IndexOfConstruct extends Construct {
+public class LastIndexOfConstruct extends Construct{
 
-    private final StringUtilityService stringService;
+    private final StringUtilityService stringUtilityService;
 
     @Inject
-    public IndexOfConstruct(StringUtilityService stringService) {
-        this.stringService = stringService;
-    }
+    public LastIndexOfConstruct(StringUtilityService stringUtilityService) {this.stringUtilityService = stringUtilityService;}
 
     @Override
-    public ConstructProcessor prepareProcess(final ConstructContext context) {
+    public ConstructProcessor prepareProcess(ConstructContext context) {
         return new ConstructProcessor(
                 this::process,
                 new Argument("haystack", ATOMIC),
-                new Argument("needle", ATOMIC),
-                new Argument("startPos", fromValue(0), ATOMIC));
+                new Argument("needle", ATOMIC)
+        );
     }
 
-    private MetaExpression process(final MetaExpression haystack, final MetaExpression needle, final MetaExpression value) {
+    private MetaExpression process(final MetaExpression haystack, final MetaExpression needle){
         assertNotNull(haystack, "haystack");
         assertNotNull(needle, "needle");
 
-        return fromValue(stringService.indexOf(
-                haystack.getStringValue(), needle.getStringValue(), value.getNumberValue().intValue()));
+        return fromValue(stringUtilityService.lastIndexOf(haystack.getStringValue(), needle.getStringValue()));
     }
 }

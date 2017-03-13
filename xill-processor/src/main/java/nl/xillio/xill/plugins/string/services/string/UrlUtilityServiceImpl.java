@@ -33,19 +33,17 @@ import java.util.regex.Pattern;
 public class UrlUtilityServiceImpl implements UrlUtilityService {
 
     static String getParentUrl(final String pageurl, String relativeurl) {
-        if ("..".equals(relativeurl)) {
-            relativeurl = "../";
-        }
+        String relativeUrl = "..".equals(relativeurl) ? "../" : relativeurl;
 
-        if (relativeurl.startsWith("../")) {
+        if (relativeUrl.startsWith("../")) {
             Matcher m = Pattern.compile("(.+:(//).*)(/[^/]*/[^/]*)").matcher(pageurl);
             if (m.matches()) {
                 String parenturl = m.group(1);
-                return getParentUrl(parenturl + "/", relativeurl.substring(3));
+                return getParentUrl(parenturl + "/", relativeUrl.substring(3));
             }
             return null;
         }
-        return pageurl + relativeurl;
+        return pageurl + relativeUrl;
     }
 
     @Override
@@ -61,7 +59,7 @@ public class UrlUtilityServiceImpl implements UrlUtilityService {
 
     @Override
     public String tryConvert(final String pageUrl, final String relativeUrl) {
-        if(relativeUrl.matches(".+:(//).*")){
+        if (relativeUrl.matches(".+:(//).*")) {
             return cleanupUrl(relativeUrl);
         } else if (relativeUrl.matches("//w+.*")) {
             Matcher m = Pattern.compile("(https?:).*").matcher(pageUrl);
@@ -102,7 +100,7 @@ public class UrlUtilityServiceImpl implements UrlUtilityService {
     }
 
     @Override
-    public void write(final File file, final byte[] output) throws IOException{
+    public void write(final File file, final byte[] output) throws IOException {
         try (OutputStream out = new FileOutputStream(file)) {
             out.write(output);
         }
