@@ -42,12 +42,12 @@ public class GetMimeTypeConstruct extends Construct {
     @Override
     public ConstructProcessor prepareProcess(ConstructContext context) {
         return new ConstructProcessor(
-                path -> process(path, context),
+                path -> process(path),
                 new Argument("path", ATOMIC)
         );
     }
 
-    private MetaExpression process(MetaExpression path, ConstructContext context) {
+    private MetaExpression process(MetaExpression path) {
         String filename = path.getStringValue();
         return fromValue(getExtension(filename).orElse(null));
     }
