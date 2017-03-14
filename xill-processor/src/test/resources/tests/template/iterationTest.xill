@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 /*
-* Specification: The <#list> functionality must be able to print key-value pairs in the list.
+* Specification: The <#list> functionality must be able to process key-value pairs from the model.
 * Expected: The given key-value pair: testKey, testValue.
-* Input: {testKey, testValue}
+* Input: {"testKey": "testValue"}
 */
 
 use Template;
@@ -24,21 +24,22 @@ use File;
 use Assert;
 use Stream;
 
-// Set up output
+// Temporary output file
 var output = File.openWrite("testresources/template/output.txt");
 
-// Model
+// Create model and configuration
 var model = {
     "hash" : { "testKey" : "testValue" }
 };
 
-// Process template with given configuration
 var config = Template.getEngine();
 
+// Process the template
 Template.process("testresources/template/template.txt", output , model, config);
 
+// Verify output
 var outputText = Stream.getText(File.openRead("testresources/template/output.txt"));
-
 Assert.equal(outputText, "testKey, testValue");
 
+// Delete temporary output file
 File.delete("testresources/template/output.txt");
