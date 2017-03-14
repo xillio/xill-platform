@@ -41,9 +41,9 @@ Read more at the: [MySQL Connection String Specification](https://dev.mysql.com/
         <example title="Usage">
             <header>Connect to a database using credentials</header>
             <code>
-                use MySQL as db;
+                use MySQL;
 
-                db.connect(
+                MySQL.connect(
                     "jdbc:mysql://localhost/my-database" ::
                     "?user=root" ::
                     "&amp;password=super1secret"

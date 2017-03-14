@@ -13,15 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
-* Specification: An error MUST be thrown when the 'as' keyword is used with the 'use' statement
-* Input: Including a robot that contains statement 'use' with 'as'.
-* Expected: An error is thrown when trying to compile this robot.
-*/
-use Assert;
+use Math, Assert;
+include testresources.core.keywords.includes.IncludePackageConstructs as Math;
 
-do {
-    callbot("testresources/core/keywords/include/IncludeQualifiedNameUse.xill");
-} success {
-    Assert.error("This robot should not compile.");
-}
+Assert.equal(Math.round(5.3), 5);
