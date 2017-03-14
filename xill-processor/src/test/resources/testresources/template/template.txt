@@ -1,1 +1,1 @@
-<#list hash as key, value>${key}, ${value}</#list>
+<#list testObject as key, value>${key}, ${value}</#list>

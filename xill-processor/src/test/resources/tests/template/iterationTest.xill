@@ -29,7 +29,7 @@ var output = File.openWrite("testresources/template/output.txt");
 
 // Create model and configuration
 var model = {
-    "hash" : { "testKey" : "testValue" }
+    "testObject" : { "testKey" : "testValue" }
 };
 
 var config = Template.getEngine();
