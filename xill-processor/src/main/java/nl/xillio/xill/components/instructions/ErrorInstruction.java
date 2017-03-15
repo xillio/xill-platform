@@ -162,7 +162,7 @@ public class ErrorInstruction extends CompoundInstruction {
         String message = "Unknown internal error";
         if (e.getMessage() != null) {
             List<Throwable> exceptionList = ExceptionUtils.getThrowableList(e);
-            message = String.join("\n\t", Lists.reverse(exceptionList.stream().filter(p -> p.getMessage() != null).map(f -> f.getMessage()).collect(Collectors.toList())));
+            message = String.join("\n\t", Lists.reverse(exceptionList.stream().filter(p -> p.getMessage() != null).map(Throwable::getMessage).collect(Collectors.toList())));
         }
         return message;
     }
