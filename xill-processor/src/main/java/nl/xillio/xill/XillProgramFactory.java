@@ -151,10 +151,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
         info.setUsing(useStatements);
 
         for (UseStatement plugin : robot.getUses()) {
-            String pluginName = plugin.getPlugin();
-            if (pluginName == null) { // In case of non-qualified name: use MySQL;
-                pluginName = plugin.getName();
-            }
+            String pluginName = plugin.getName();
 
             // Really? Java...
             String searchName = pluginName;
@@ -941,10 +938,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
         CodePosition pos = pos(token);
 
         if (pluginPackage == null) {
-            String pluginName = token.getPackage().getPlugin();
-            if (pluginName == null) {
-                pluginName = token.getPackage().getName();
-            }
+            String pluginName = token.getPackage().getName();
 
             throw new XillParsingException("Could not resolve package `" + pluginName + "`", pos.getLineNumber(),
                     pos.getRobotID());
