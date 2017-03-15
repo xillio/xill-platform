@@ -23,10 +23,7 @@ import nl.xillio.xill.debugging.XillDebugger;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -173,10 +170,11 @@ public class ErrorInstructionTest {
     }
 
    @Test
-    public void testNestedException() {
+    public void testNestedException() throws Exception {
        result = (InstructionFlow<MetaExpression>) mock(InstructionFlow.class);
        InstructionFlow<MetaExpression> resultError = (InstructionFlow<MetaExpression>) mock(InstructionFlow.class);
-       Throwable throwableMock = mock(Throwable.class);
+       Throwable causedBy = new Throwable("Cause");
+       Throwable throwableMock = new Throwable("Identifying Exception", causedBy);
        InstructionSet mockDoBlock = mock(InstructionSet.class);
        InstructionSet mockErrorBlock = mock(InstructionSet.class);
        Processable mockProcessable = mock(Processable.class);
@@ -188,9 +186,9 @@ public class ErrorInstructionTest {
        when(errorDebugger.getError()).thenReturn(throwableMock);
        when(result.hasValue()).thenReturn(false);
        when(errorDebugger.hasError()).thenReturn(true);
-       when(throwableMock.getMessage()).thenReturn("LINE");
        InstructionFlow<MetaExpression> var = instruction.process(xillDebugger, errorDebugger);
 
-       verify(throwableMock, times(3)).getMessage();
+       Map<String, MetaExpression> status = cause.getVariable().getValue();
+       assertEquals(status.get("message").getStringValue(), "Cause\n\tIdentifying Exception");
     }
 }
