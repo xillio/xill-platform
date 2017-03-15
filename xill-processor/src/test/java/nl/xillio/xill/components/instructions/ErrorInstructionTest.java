@@ -171,4 +171,26 @@ public class ErrorInstructionTest {
 
         assertEquals(new HashSet<>(returnValue), new HashSet<>(children));
     }
+
+   @Test
+    public void testNestedException() {
+       result = (InstructionFlow<MetaExpression>) mock(InstructionFlow.class);
+       InstructionFlow<MetaExpression> resultError = (InstructionFlow<MetaExpression>) mock(InstructionFlow.class);
+       Throwable throwableMock = mock(Throwable.class);
+       InstructionSet mockDoBlock = mock(InstructionSet.class);
+       InstructionSet mockErrorBlock = mock(InstructionSet.class);
+       Processable mockProcessable = mock(Processable.class);
+       VariableDeclaration cause = new VariableDeclaration(mockProcessable, "fail");
+
+       ErrorInstruction instruction = new ErrorInstruction(mockDoBlock, successBlock, errorBlock, finallyBlock, cause);
+       when(mockDoBlock.process(errorDebugger)).thenReturn(result);
+       when(mockErrorBlock.process(xillDebugger)).thenReturn(resultError);
+       when(errorDebugger.getError()).thenReturn(throwableMock);
+       when(result.hasValue()).thenReturn(false);
+       when(errorDebugger.hasError()).thenReturn(true);
+       when(throwableMock.getMessage()).thenReturn("LINE");
+       InstructionFlow<MetaExpression> var = instruction.process(xillDebugger, errorDebugger);
+
+       verify(throwableMock, times(3)).getMessage();
+    }
 }

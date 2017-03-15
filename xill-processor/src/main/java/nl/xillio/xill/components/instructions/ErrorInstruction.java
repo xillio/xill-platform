@@ -15,6 +15,8 @@
  */
 package nl.xillio.xill.components.instructions;
 
+import com.google.common.collect.Lists;
+import me.biesaart.utils.ExceptionUtils;
 import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.components.InstructionFlow;
 import nl.xillio.xill.api.components.MetaExpression;
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
 
@@ -156,7 +159,12 @@ public class ErrorInstruction extends CompoundInstruction {
     }
 
     private String getMessage(Throwable e) {
-        return e.getMessage() == null ? "Unknown internal error" : e.getMessage();
+        String message = "Unknown internal error";
+        if (e.getMessage() != null) {
+            List<Throwable> exceptionList = ExceptionUtils.getThrowableList(e);
+            message = String.join("\n\t", Lists.reverse(exceptionList.stream().filter(p -> p.getMessage() != null).map(f -> f.getMessage()).collect(Collectors.toList())));
+        }
+        return message;
     }
 
     @Override
