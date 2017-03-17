@@ -21,10 +21,14 @@ import xill.RobotLoader;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.zip.ZipFile;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A {@link RobotLoader} which loads resources from a given xip archive.
@@ -37,7 +41,7 @@ public class XipRobotLoader extends AbstractRobotLoader {
     private static final Logger LOGGER = Log.get();
 
     private final Path xipFile;
-    private final ZipFile archive;
+    private final FileSystem archiveFs;
 
     /**
      * Create a new xip robot loader.
@@ -49,17 +53,20 @@ public class XipRobotLoader extends AbstractRobotLoader {
     public XipRobotLoader(RobotLoader parent, Path xipFile) throws IOException {
         super(parent);
         this.xipFile = xipFile.toAbsolutePath().normalize();
-        archive = new ZipFile(this.xipFile.toFile());
+        Map<String, String> env = new HashMap<>();
+        env.put("create", "true");
+        archiveFs = FileSystems.newFileSystem(URI.create("jar:" + this.xipFile.toUri()), env);
     }
 
     @Override
     protected URL doGetResource(String path) {
-        return archive.getEntry(path) == null ? null : createUrl(Paths.get(path).normalize());
+        Path pathInArchive = archiveFs.getPath(path).normalize();
+        return Files.exists(pathInArchive) ? createUrl(pathInArchive) : null;
     }
 
     private URL createUrl(Path path) {
         try {
-            return new URL("jar:" + xipFile.toUri().toURL() + "!/" + path);
+            return path.toUri().toURL();
         } catch (MalformedURLException e) {
             LOGGER.error("Malformed url for archive: " + xipFile.toString() + " and file: " + path, e);
             return null;
@@ -74,7 +81,7 @@ public class XipRobotLoader extends AbstractRobotLoader {
      */
     @Override
     public void close() throws IOException {
-        archive.close();
+        archiveFs.close();
         super.close();
     }
 }

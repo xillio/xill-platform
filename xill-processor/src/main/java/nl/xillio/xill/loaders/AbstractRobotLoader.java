@@ -18,7 +18,6 @@ package nl.xillio.xill.loaders;
 import nl.xillio.xill.api.XillEnvironment;
 import xill.RobotLoader;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -57,7 +56,7 @@ public abstract class AbstractRobotLoader implements RobotLoader {
     }
 
     private String fqnToPath(String fullyQualifiedName) {
-        return fullyQualifiedName.replace(".", File.separator) + XillEnvironment.ROBOT_EXTENSION;
+        return fullyQualifiedName.replace('.', '/') + XillEnvironment.ROBOT_EXTENSION;
     }
 
     @Override

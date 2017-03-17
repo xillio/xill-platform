@@ -22,6 +22,7 @@ import org.testng.annotations.Test;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -92,7 +93,9 @@ public class XipRobotLoaderTest {
 
     @Test
     public void testGetRobotAsStream() throws IOException {
-        assertEquals(new Scanner(childLoader.getRobotAsStream("sub.robot")).nextLine(), "Parent robot");
+        try (InputStream stream = childLoader.getRobotAsStream("sub.robot")) {
+            assertEquals(new Scanner(stream).nextLine(), "Parent robot");
+        }
     }
 
     @Test
@@ -117,6 +120,8 @@ public class XipRobotLoaderTest {
 
     @Test
     public void testGetResourceAsStream() throws IOException {
-        assertEquals(new Scanner(childLoader.getResourceAsStream("sub/robot.xill")).nextLine(), "Parent robot");
+        try (InputStream stream = childLoader.getResourceAsStream("sub/robot.xill")) {
+            assertEquals(new Scanner(stream).nextLine(), "Parent robot");
+        }
     }
 }

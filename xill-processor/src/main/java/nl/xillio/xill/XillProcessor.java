@@ -41,14 +41,11 @@ import org.eclipse.xtext.validation.Issue.IssueImpl;
 import org.slf4j.Logger;
 import xill.RobotLoader;
 import xill.lang.XillStandaloneSetup;
-import xill.lang.scoping.XillScopeProvider;
 import xill.lang.validation.XillValidator;
 import xill.lang.xill.ConstructCall;
-import xill.lang.xill.IncludeStatement;
 import xill.lang.xill.InstructionSet;
 import xill.lang.xill.UseStatement;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -94,9 +91,8 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
         this.robotID = toRobotID(fullyQualifiedName);
         this.plugins = plugins;
         this.debugger = debugger;
-        Injector injector = new XillStandaloneSetup().createInjectorAndDoEMFRegistration();
+        Injector injector = new XillStandaloneSetup(robotLoader).createInjectorAndDoEMFRegistration();
         injector.injectMembers(this);
-
 
         // obtain a resource set
         resourceSet = injector.getInstance(XtextResourceSet.class);
@@ -109,23 +105,9 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     }
 
     @Override
-    public List<Issue> validate() {
-        synchronized (XillValidator.LOCK) {
-            XillValidator.setProjectFolder(workingDirectory.toFile());
-            XillScopeProvider.setProjectFolder(workingDirectory.toFile());
-            debugger.reset();
-            return validate(findResource(robotID));
-        }
-    }
-
-    @Override
     public List<Issue> compileAsSubRobot(final RobotID rootRobot) throws XillParsingException {
-        synchronized (XillValidator.LOCK) {
-            XillValidator.setProjectFolder(workingDirectory.toFile());
-            XillScopeProvider.setProjectFolder(workingDirectory.toFile());
-            debugger.reset();
-            return compile(robotID, rootRobot);
-        }
+        debugger.reset();
+        return compile(robotID, rootRobot);
     }
 
     @Override
@@ -145,7 +127,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
         LanguageFactory<xill.lang.xill.Robot> factory = new XillProgramFactory(workingDirectory, plugins, getDebugger(), rootRobot, outputHandler, robotLoader);
 
 
-        List<Issue> issues = validate(resource);
+        List<Issue> issues = validateAllResources();
 
         // Throw an exception when an error was found
         Optional<Issue> error = issues.stream().filter(issue -> issue.getSeverity() == Issue.Type.ERROR).findFirst();
@@ -181,7 +163,6 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     }
 
     private URL toURL(URI uri) {
-
         try {
             return new URL(uri.toString());
         } catch (MalformedURLException e) {
@@ -203,39 +184,28 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
         return resourceSet.getResource(URI.createURI(robotID.getURL().toString()), true);
     }
 
-    private List<Issue> validate(Resource resource) {
-        gatherResources(resource);
+    @Override
+    public List<Issue> validate() {
+        debugger.reset();
+        return validateAllResources();
+    }
+
+    private List<Issue> validateAllResources() {
         // Validate all resources and concat issues
-        return resourceSet.getResources().stream()
-                .flatMap(
-                        currentResource -> validate(currentResource,
-                                toRobotID(currentResource)
-                        ).stream()
-                ).collect(Collectors.toList());
-    }
+        List<Resource> resources = resourceSet.getResources();
+        List<Issue> result = new ArrayList<>();
 
-    private void gatherResources(final Resource resource) {
-        for (EObject root : resource.getContents()) {
-            xill.lang.xill.Robot rootRobot = (xill.lang.xill.Robot) root;
-
-            for (IncludeStatement include : rootRobot.getIncludes()) {
-                URI uri = getURI(include);
-                if (!resourceSet.getURIResourceMap().containsKey(uri)) {
-                    // This is not in there yet
-                    if (!new File(uri.toFileString()).exists()) {
-                        continue;
-                    }
-                    Resource library = resourceSet.getResource(uri, true);
-                    gatherResources(library);
-                }
-            }
+        // This cannot be replaced by a foreach since the resource set is
+        // modified while validating (resources are added)
+        for (int i = 0; i < resources.size(); i++) {
+            Resource resource = resources.get(i);
+            result.addAll(validate(
+                    resource,
+                    toRobotID(resource)
+            ));
         }
-    }
 
-    private URI getURI(final IncludeStatement include) {
-        String fqn = StringUtils.join(include.getLibrary(), '.');
-
-        return URI.createURI(robotLoader.getRobot(fqn).toString());
+        return result;
     }
 
     private List<Issue> validate(final Resource resource, final RobotID robotID) {
