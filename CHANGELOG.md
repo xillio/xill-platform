@@ -13,6 +13,9 @@ All notable changes to this project will be documented in this file.
 * Decrease minimum height of help pane [CTC-2133]
 * Remove `as` keyword from `use` statement [CTC-1384]
 
+### Fix
+* (Asserted) error messages not displayed when calling a bot using `callbot()` [CTC-1986]
+
 ## [3.5.1] - unreleased
 
 ### Add
