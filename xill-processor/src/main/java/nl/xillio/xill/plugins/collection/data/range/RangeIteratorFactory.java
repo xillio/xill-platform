@@ -38,6 +38,7 @@ public class RangeIteratorFactory {
             } else if (MathUtils.compare(end, start) < 0) {
                 return -1;
             }
+            return 0;
         }
 
         return step;
