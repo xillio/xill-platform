@@ -28,14 +28,18 @@ The name and extension of the template file. This file must be located in the `t
 The stream which the template engine will be written to. When willing to write to a file, use the `File` plugin.
         </parameterDescription>
 		<parameterDescription parameterName="model">
-The data necessary to process the given template. When not providing this parameter (or giving an empty object) this would result in processing the template without any data.
+The data necessary to process the given template. When not providing this parameter (or giving an empty object) this
+would result in processing the template without any data.
         </parameterDescription>
 		<parameterDescription parameterName="engine">
-The engine to be for processing the templates. This engine is the value given from the `getEngine`-construct. When not providing this parameter this would result in using the default engine as described in the `getEngine`-construct.
+The engine to be for processing the templates. This engine is the value returned from the `getEngine`-construct. When
+this parameter is omitted the Template plugin will either use the engine created by a previous Template.getEngine()
+construct or create a new default engine if there is no engine created yet.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-This plugin uses a third-party library named FreeMarker to process the templates. For more information please check their [website](http://freemarker.org/docs/index.html).
+This plugin uses a third-party library named FreeMarker to process the templates. For more information please check
+their [website](http://freemarker.org/docs/index.html).
 	</longDescription>
     <examples>
         <example title="Default Usage">
@@ -43,7 +47,7 @@ This plugin uses a third-party library named FreeMarker to process the templates
                 The template named template.txt is located at the project's root directory.
                 The template gets combined with the provided model.
                 The result of the template-processing is written to the outputFolder
-                located at the project's root directory. The default engine is used here.
+                located at the project's root directory. The default engine is created by the Template plugin.
             </header>
             <code>
                 use Template;
@@ -51,16 +55,25 @@ This plugin uses a third-party library named FreeMarker to process the templates
 
                 var output = File.openWrite("outputFolder/output.txt");
                 var model = {
-                    "key1" : "value1",
-                    "key2" : "value2"
+                    "key1" : "Hello",
+                    "key2" : "world"
                 };
 
                 Template.process("template.txt", output , model);
             </code>
+            <header>This is how the template (template.txt) would look:</header>
+            <code>
+                ${key1} ${key2}!
+            </code>
+            <header>The resulting file (outputFolder/output.txt) looks like this:</header>
+            <code>
+                Hello World!
+            </code>
         </example>
         <example title="Process without model">
             <header>
-                In this example no model is used and the template.txt will be parsed as is.
+                In this example no model is used and the template.txt will be parsed as is. However if model
+                variables are used in the template, the process will terminate with an error.
             </header>
             <code>
                 use Template;
@@ -73,7 +86,7 @@ This plugin uses a third-party library named FreeMarker to process the templates
         </example>
         <example title="Process with specified engine">
             <header>
-                This example uses a specified engine to process the templates with.
+                This example uses a configured engine to process the templates with.
             </header>
             <code>
                 use Template;
@@ -85,8 +98,8 @@ This plugin uses a third-party library named FreeMarker to process the templates
                 };
                 var output = File.openWrite("C:/tmp/output.txt");
                 var model = {
-                    "key1" : "value1",
-                    "key2" : "value2"
+                    "key1" : "Hello",
+                    "key2" : "world"
                 };
 
                 var config = Template.getEngine(options);
