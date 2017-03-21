@@ -68,6 +68,7 @@ public class XipRobotLoaderTest {
 
     @AfterClass
     private void afterClass() throws IOException {
+        childLoader.close();
         FileUtils.deleteDirectory(dir.toFile());
     }
 
