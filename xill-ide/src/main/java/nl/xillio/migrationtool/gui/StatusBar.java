@@ -131,19 +131,17 @@ public class StatusBar extends AnchorPane {
                 remainingTimeProperty.set(null);
                 // Set progress bar according to its settings
                 ProgressTracker.OnStopBehavior onStopBehavior = progressTracker.getOnStopBehavior(robotCSID);
-                if (onStopBehavior != null) {
-                    switch (onStopBehavior) {
-                        case ZERO: // Set to zero
-                            progressProperty().set(0);
-                            break;
-                        case HIDE: // Hide progress bar
-                            barRobotProgress.setVisible(false);
-                            progressBarVisible = false;
-                            progressProperty().set(-1);
-                            FXController.ON_PROGRESS_REMOVE.invoke(this);
-                            break;
-                        default: // Otherwise do nothing
-                    }
+                switch (onStopBehavior) {
+                    case ZERO: // Set to zero
+                        progressProperty().set(0);
+                        break;
+                    case HIDE: // Hide progress bar
+                        barRobotProgress.setVisible(false);
+                        progressBarVisible = false;
+                        progressProperty().set(-1);
+                        FXController.ON_PROGRESS_REMOVE.invoke(this);
+                        break;
+                    default: // Otherwise do nothing
                 }
                 progressTracker.remove(robotCSID);
                 robotCSID = null;

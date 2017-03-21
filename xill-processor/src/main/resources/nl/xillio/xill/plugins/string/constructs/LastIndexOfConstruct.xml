@@ -18,32 +18,30 @@
 -->
 <function>
     <description>
-Returns the index at which `needle` occurs in `haystack`.
+Returns the last index at which `needle` occurs in `haystack`.
     </description>
-	<parameterDescriptions>
-		<parameterDescription parameterName="haystack">
+    <parameterDescriptions>
+        <parameterDescription parameterName="haystack">
 The string that will be searched.
         </parameterDescription>
-		<parameterDescription parameterName="needle">
+        <parameterDescription parameterName="needle">
 The string that will be searched for in `haystack`.
         </parameterDescription>
-		<parameterDescription parameterName="startPos">
-The index at which the search will start (default is 0).
-        </parameterDescription>
-	</parameterDescriptions>
-	<longDescription>
+    </parameterDescriptions>
+    <longDescription>
 Returns -1 if the index could not be found.
-	</longDescription>
+If an empty `needle` is provided, the length of the `haystack` will be returned.
+If either the `needle` or `haystack` is null, an error is thrown.
+    </longDescription>
     <examples>
         <example title="Usage">
             <code>
-                use System;
-                use String;
+                use System, String;
 
-                System.print(String.indexOf("maxTestTest", "Test"));    // Result: 3
-                System.print(String.indexOf("maxTestTest", "Test", 3)); // Result: 3
-                System.print(String.indexOf("maxTestTest", "Test", 5)); // Result: 7
-                System.print(String.indexOf("maxTestTest", "foo"));     // Result: -1
+                System.print(String.lastIndexOf("ABBA", "A")); // Result: 3
+                System.print(String.lastIndexOf("ABBA", ""));  // Result: 4
+                System.print(String.lastIndexOf("ABBA", "C")); // Result: -1
+                System.print(String.lastIndexOf("document.doc", "doc")); // Result: 9
             </code>
         </example>
     </examples>

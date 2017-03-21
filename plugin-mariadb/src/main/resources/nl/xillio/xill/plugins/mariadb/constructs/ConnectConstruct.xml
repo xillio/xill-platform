@@ -41,9 +41,9 @@ Read more at the: [MariaDB Connection String Specification](https://mariadb.com/
         <example title="Usage">
             <header>Connect to a database using credentials</header>
             <code>
-                use MariaDB as db;
+                use MariaDB;
 
-                db.connect(
+                MariaDB.connect(
                     "jdbc:mariadb://localhost/my-database" ::
                     "?user=root" ::
                     "&amp;password=super1secret"
