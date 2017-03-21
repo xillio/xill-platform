@@ -21,7 +21,6 @@ import xill.RobotLoader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * The abstract base class for robot loaders.
@@ -72,11 +71,7 @@ public abstract class AbstractRobotLoader implements RobotLoader {
     @Override
     public InputStream getResourceAsStream(String path) throws IOException {
         URL resource = getResource(path);
-        if(resource == null)
-            return null;
-        URLConnection uc = resource.openConnection();
-        uc.setUseCaches(false);
-        return uc.getInputStream();
+        return resource == null ? null : resource.openStream();
     }
 
     /**

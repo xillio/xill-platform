@@ -20,9 +20,11 @@ import org.slf4j.Logger;
 import xill.RobotLoader;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -71,6 +73,20 @@ public class XipRobotLoader extends AbstractRobotLoader {
             LOGGER.error("Malformed url for archive: " + xipFile.toString() + " and file: " + path, e);
             return null;
         }
+    }
+
+    /*
+     * On Windows systems the default method leads to cached jar files which make deleting the Xip files impossible.
+     * This is a workaround suggested by Java.
+     */
+    @Override
+    public InputStream getResourceAsStream(String path) throws IOException {
+        URL resource = getResource(path);
+        if (resource == null)
+            return null;
+        URLConnection uc = resource.openConnection();
+        uc.setUseCaches(false);
+        return uc.getInputStream();
     }
 
     /**
