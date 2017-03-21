@@ -75,15 +75,14 @@ public class XipRobotLoader extends AbstractRobotLoader {
         }
     }
 
-    /*
-     * On Windows systems the default method leads to cached jar files which make deleting the Xip files impossible.
-     * This is a workaround suggested by Java.
-     */
     @Override
     public InputStream getResourceAsStream(String path) throws IOException {
         URL resource = getResource(path);
-        if (resource == null)
+        if (resource == null) {
             return null;
+        }
+
+        // Disable the caching, otherwise you can't delete the archive on Windows.
         URLConnection uc = resource.openConnection();
         uc.setUseCaches(false);
         return uc.getInputStream();
