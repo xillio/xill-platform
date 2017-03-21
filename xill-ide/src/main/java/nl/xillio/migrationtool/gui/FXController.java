@@ -71,6 +71,19 @@ public class FXController implements Initializable, EventHandler<Event> {
     public static final EventHost<StatusBar> ON_PROGRESS_REMOVE = new EventHost<>();
 
     /**
+     * List of explicitly supported file extensions
+     */
+    private static final List<String> WHITE_LISTED_EXTENSIONS = Arrays.asList(
+            "xill", "xilt", "sbot",                     // Xillio
+            "txt", "properties", "md", "cfg", "ini",    // Plain text / configuration
+            "html", "htm", "css",                       // Web
+            "xslt", "xml",                              // XML
+            "json", "js",                               // Javascript
+            "bat", "sh",                                // Shell script
+            "ftl", "ftlh", "ftlx"                       // Templates
+    );
+
+    /**
      * Instance of hotkeys handler
      */
     public static final HotkeysHandler hotkeys = new HotkeysHandler();
@@ -363,9 +376,12 @@ public class FXController implements Initializable, EventHandler<Event> {
         return tab;
     }
 
+    /**
+     * @param fileName Filename to be checked for compatibility
+     * @return true if the editor explicitly supports this file type
+     */
     private boolean isWhiteListed(String fileName) {
-        List<String> whiteList = Arrays.asList("xill", "txt", "properties", "html", "htm", "css", "xslt", "xml", "json", "js", "md", "cfg", "ini", "bat", "sh", "sbot");
-        return whiteList.contains(FilenameUtils.getExtension(fileName));
+        return WHITE_LISTED_EXTENSIONS.contains(FilenameUtils.getExtension(fileName));
     }
 
     @FXML
