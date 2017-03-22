@@ -50,6 +50,7 @@ public class ConnectionFactoryTest extends TestUtils {
                         new NullDebugger(),
                         UUID.randomUUID(),
                         null,
+                        null,
                         null
                 ),
                 NULL
@@ -72,7 +73,8 @@ public class ConnectionFactoryTest extends TestUtils {
                 debugger,
                 UUID.randomUUID(),
                 null,
-                robotStoppedEvent
+                robotStoppedEvent,
+                null
         );
 
         ConnectionFactory connectionFactory = new MockFactory();

@@ -16,6 +16,7 @@
 package nl.xillio.xill.loaders;
 
 import nl.xillio.xill.api.XillEnvironment;
+import nl.xillio.xill.api.io.ResourceLoader;
 import xill.RobotLoader;
 
 import java.io.IOException;
@@ -28,7 +29,7 @@ import java.net.URL;
  *
  * @author Luca Scalzotto
  */
-public abstract class AbstractRobotLoader implements RobotLoader {
+public abstract class AbstractRobotLoader implements ResourceLoader, RobotLoader {
     private RobotLoader parent;
 
     /**

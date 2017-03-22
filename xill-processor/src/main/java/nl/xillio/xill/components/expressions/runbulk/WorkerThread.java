@@ -22,8 +22,8 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.api.errors.XillParsingException;
+import nl.xillio.xill.loaders.AbstractRobotLoader;
 import org.slf4j.Logger;
-import xill.RobotLoader;
 
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
@@ -45,9 +45,9 @@ class WorkerThread extends Thread {
     /**
      * Create a worker.
      *
-     * @param queue Queue for receiving jobs from master
-     * @param control Controls runBulk threads
-     * @param stopOnError Whether to stop the thread when an error occurs
+     * @param queue        Queue for receiving jobs from master
+     * @param control      Controls runBulk threads
+     * @param stopOnError  Whether to stop the thread when an error occurs
      * @param robotFactory The factory compiling robots
      */
     public WorkerThread(final BlockingQueue<MetaExpression> queue, final RunBulkControl control,
@@ -98,7 +98,7 @@ class WorkerThread extends Thread {
     /**
      * @return true if the robot ended up successfully, false if there was an error or interruption, etc.
      */
-    private boolean processRobot(final Debugger debugger, final String calledRobotQualifiedName, RobotLoader loader, final MetaExpression arg) {
+    private boolean processRobot(final Debugger debugger, final String calledRobotQualifiedName, AbstractRobotLoader loader, final MetaExpression arg) {
         // Process the robot
         try {
             return runRobot(debugger, calledRobotQualifiedName, loader, arg);
@@ -114,15 +114,15 @@ class WorkerThread extends Thread {
     /**
      * Run a single robot.
      *
-     * @param debugger The debugger to use as parent debugger
+     * @param debugger                 The debugger to use as parent debugger
      * @param calledRobotQualifiedName The qualified name of the robot to process
-     * @param loader The RobotLoader that will be used
-     * @param arg The argument input to the robot
+     * @param loader                   The RobotLoader that will be used
+     * @param arg                      The argument input to the robot
      * @return True if the robot was successful, false otherwise
-     * @throws IOException When reading the robot fails
+     * @throws IOException          When reading the robot fails
      * @throws XillParsingException When a compile error occurs
      */
-    private boolean runRobot(Debugger debugger, String calledRobotQualifiedName, RobotLoader loader, MetaExpression arg) throws WorkerCompileException {
+    private boolean runRobot(Debugger debugger, String calledRobotQualifiedName, AbstractRobotLoader loader, MetaExpression arg) throws WorkerCompileException {
         StoppableDebugger childDebugger = (StoppableDebugger) debugger.createChild();
         childDebugger.setStopOnError(stopOnError);
 

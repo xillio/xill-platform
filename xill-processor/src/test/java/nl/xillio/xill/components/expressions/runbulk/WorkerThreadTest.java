@@ -24,9 +24,9 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
+import nl.xillio.xill.loaders.AbstractRobotLoader;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import xill.RobotLoader;
 
 import java.util.concurrent.BlockingQueue;
 
@@ -48,7 +48,7 @@ public class WorkerThreadTest extends TestUtils {
     private Debugger debugger;
     private Debugger childDebugger;
     private String robotQualifiedName;
-    private RobotLoader loader;
+    private AbstractRobotLoader loader;
     private WorkerRobotFactory workerRobotFactory;
     private Robot robot;
 
@@ -59,7 +59,7 @@ public class WorkerThreadTest extends TestUtils {
         when(debugger.createChild()).thenReturn(childDebugger);
         queue = mock(BlockingQueue.class);
         robotQualifiedName = "";
-        loader = mock(RobotLoader.class);
+        loader = mock(AbstractRobotLoader.class);
         control = mock(RunBulkControl.class);
         when(control.getDebugger()).thenReturn(debugger);
         when(control.getCalledRobotFqn()).thenReturn(robotQualifiedName);

@@ -39,7 +39,7 @@ public class ConnectConstructTest extends TestUtils {
         ConnectionFactory factory = mock(ConnectionFactory.class, RETURNS_DEEP_STUBS);
         ConnectionManager connectionManager = new ConnectionManager(factory);
         ConnectConstruct connectConstruct = new ConnectConstruct(connectionManager);
-        ConstructContext context = new ConstructContext(Paths.get("."), RobotID.dummyRobot(), RobotID.dummyRobot(), connectConstruct, null, UUID.randomUUID(), null, null);
+        ConstructContext context = new ConstructContext(Paths.get("."), RobotID.dummyRobot(), RobotID.dummyRobot(), connectConstruct, null, UUID.randomUUID(), null, null, null);
         MetaExpression result = connectConstruct.process(
                 fromValue("database"),
                 fromValue("localhost"),

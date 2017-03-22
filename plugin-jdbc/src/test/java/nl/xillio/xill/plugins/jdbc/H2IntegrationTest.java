@@ -223,7 +223,8 @@ public class H2IntegrationTest extends TestUtils {
                 debugger,
                 executionId,
                 new EventHost<>(),
-                new EventHost<>()
+                new EventHost<>(),
+                null
         );
 
         return ConstructProcessor.process(

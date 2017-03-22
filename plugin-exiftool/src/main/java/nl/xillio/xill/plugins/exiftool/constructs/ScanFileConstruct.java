@@ -59,7 +59,7 @@ public class ScanFileConstruct extends AbstractExifConstruct {
     }
 
     MetaExpression process(MetaExpression folderPath, MetaExpression projectionExpression, MetaExpression options, ConstructContext context) {
-        Path file = getFile(context, folderPath.getStringValue()).toPath();
+        Path file = getPath(context, folderPath);
         Projection projection = getProjection(projectionExpression);
         FileQueryOptions fileQueryOptions = optionsFactory.buildFileOptions(options);
 

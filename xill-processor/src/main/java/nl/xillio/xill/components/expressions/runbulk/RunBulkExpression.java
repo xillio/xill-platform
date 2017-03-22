@@ -21,13 +21,11 @@ import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.OutputHandler;
 import nl.xillio.xill.api.components.*;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
+import nl.xillio.xill.loaders.AbstractRobotLoader;
 import nl.xillio.xill.services.files.FileResolver;
 import nl.xillio.xill.services.files.FileResolverImpl;
 import org.slf4j.Logger;
-import xill.RobotLoader;
 
-import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -51,7 +49,7 @@ public class RunBulkExpression implements Processable {
     private Processable optionsProcessable;
     private RunBulkOptions options;
     private final OutputHandler outputHandler;
-    private final RobotLoader loader;
+    private final AbstractRobotLoader loader;
 
     private int maxThreadsVal;
 
@@ -65,7 +63,7 @@ public class RunBulkExpression implements Processable {
      * @param outputHandler
      * @param loader
      */
-    public RunBulkExpression(final Path workingDirectory, final Processable path, final RobotID robotID, final List<XillPlugin> plugins, OutputHandler outputHandler, RobotLoader loader) {
+    public RunBulkExpression(final Path workingDirectory, final Processable path, final RobotID robotID, final List<XillPlugin> plugins, OutputHandler outputHandler, AbstractRobotLoader loader) {
         this.workingDirectory = workingDirectory;
         this.path = path;
         this.robotID = robotID;
@@ -117,7 +115,7 @@ public class RunBulkExpression implements Processable {
      *
      * @return The number of robot runs
      */
-    private int runBulk(final Debugger debugger, final String calledRobotQualifiedName, final RobotLoader loader) {
+    private int runBulk(final Debugger debugger, final String calledRobotQualifiedName, final AbstractRobotLoader loader) {
         // Evaluate argument
         if (argument == null) {
             return 0; // Nothing to do

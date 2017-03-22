@@ -25,8 +25,8 @@ import nl.xillio.xill.api.OutputHandler;
 import nl.xillio.xill.api.components.*;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.api.errors.XillParsingException;
+import nl.xillio.xill.loaders.AbstractRobotLoader;
 import org.slf4j.Logger;
-import xill.RobotLoader;
 
 import java.io.IOException;
 import java.net.URL;
@@ -48,7 +48,7 @@ public class CallbotExpression implements Processable {
     private final List<XillPlugin> plugins;
     private Processable argument;
     private final OutputHandler outputHandler;
-    private final RobotLoader loader;
+    private final AbstractRobotLoader loader;
 
     /**
      * Create a new {@link CallbotExpression}
@@ -60,7 +60,7 @@ public class CallbotExpression implements Processable {
      * @param outputHandler     the event handler for all output
      * @param loader
      */
-    public CallbotExpression(final Path workingDirectory, final Processable path, final RobotID robotID, final List<XillPlugin> plugins, OutputHandler outputHandler, RobotLoader loader) {
+    public CallbotExpression(final Path workingDirectory, final Processable path, final RobotID robotID, final List<XillPlugin> plugins, OutputHandler outputHandler, AbstractRobotLoader loader) {
         this.workingDirectory = workingDirectory;
         this.path = path;
         this.robotID = robotID;

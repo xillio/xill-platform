@@ -55,18 +55,19 @@ import nl.xillio.xill.components.operators.*;
 import nl.xillio.xill.components.operators.And;
 import nl.xillio.xill.components.operators.Or;
 import nl.xillio.xill.debugging.DebugInfo;
+import nl.xillio.xill.loaders.AbstractRobotLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
-import xill.RobotLoader;
 import xill.lang.xill.*;
 import xill.lang.xill.Expression;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.Map.Entry;
@@ -95,7 +96,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
     private final Path workingDirectory;
     private final RobotID rootRobot;
     private final Map<EObject, Map.Entry<RobotID, Robot>> compiledRobots = new HashMap<>();
-    private final RobotLoader robotLoader;
+    private final AbstractRobotLoader robotLoader;
 
     /**
      * Events for signalling that a robot has started and that a robot has stopped
@@ -115,7 +116,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
      * @param robotLoader
      */
     public XillProgramFactory(final Path workingDirectory, final List<XillPlugin> plugins, final Debugger debugger,
-                              final RobotID robotID, final OutputHandler outputHandler, RobotLoader robotLoader) {
+                              final RobotID robotID, final OutputHandler outputHandler, AbstractRobotLoader robotLoader) {
         this(workingDirectory, plugins, debugger, robotID, outputHandler, false, robotLoader);
     }
 
@@ -131,7 +132,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
      */
     public XillProgramFactory(final Path workingDirectory, final List<XillPlugin> plugins, final Debugger debugger, final RobotID robotID,
                               final OutputHandler outputHandler,
-                              final boolean verbose, RobotLoader robotLoader) {
+                              final boolean verbose, AbstractRobotLoader robotLoader) {
         this.workingDirectory = workingDirectory;
         this.debugger = debugger;
         rootRobot = robotID;
@@ -143,7 +144,6 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
 
     @Override
     public void parse(final xill.lang.xill.Robot robot, final RobotID robotID) throws XillParsingException {
-
         this.robotID.put(robot.eResource(), robotID);
         DebugInfo info = new DebugInfo();
 
@@ -206,15 +206,12 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
                 // Build robotID
                 String fqn = StringUtils.join(include.getLibrary(), ".");
                 CodePosition pos = pos(include);
-                RobotID expectedID = RobotID.getInstance(robotLoader.getRobot(fqn))
-                        .orElseThrow(() ->
-                                new XillParsingException("No robot could be resolved for '" + fqn + "'", pos.getLineNumber(), pos.getRobotID())
-                        );
+                RobotID expectedID = new RobotID(robotLoader.getRobot(fqn), URI.create(RobotID.qualifiedNameToPath(fqn)));
 
                 // Find the matching robot
                 Robot matchingRobot = compiledRobots.values()
                         .stream()
-                        .filter(entry -> entry.getKey() == expectedID)
+                        .filter(entry -> entry.getKey().equals(expectedID))
                         .map(Entry::getValue)
                         .findAny()
                         .orElseThrow(
@@ -960,7 +957,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
         }
 
         // Check argument count by mocking the input
-        ConstructContext constructContext = new ConstructContext(workingDirectory, robotID.get(token.eResource()), rootRobot, construct, debugger, compilerSerialId, outputHandler, robotStartedEvent, robotStoppedEvent);
+        ConstructContext constructContext = new ConstructContext(workingDirectory, robotID.get(token.eResource()), rootRobot, construct, robotLoader, debugger, compilerSerialId, outputHandler, robotStartedEvent, robotStoppedEvent);
 
         try (ConstructProcessor processor = construct.prepareProcess(constructContext)) {
             return buildCall(construct, processor, arguments, constructContext, pos);

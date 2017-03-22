@@ -15,9 +15,6 @@
  */
 package nl.xillio.xill.plugins.properties.constructs;
 
-import nl.xillio.xill.plugins.properties.services.ContextPropertiesResolver;
-import nl.xillio.xill.plugins.properties.services.FileSystemAccess;
-import nl.xillio.xill.plugins.properties.services.PropertyService;
 import nl.xillio.events.EventHost;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.NullDebugger;
@@ -26,14 +23,17 @@ import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
+import nl.xillio.xill.api.io.ResourceLoader;
+import nl.xillio.xill.plugins.properties.services.ContextPropertiesResolver;
+import nl.xillio.xill.plugins.properties.services.PropertyService;
 import org.testng.annotations.Test;
 
-import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.UUID;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -45,40 +45,39 @@ public class GetConstructTest extends TestUtils {
      * This test will test normal usage without loading files.
      */
     @Test
-    public void testNormalUsageNoFiles() {
-        FileSystemAccess fileSystemAccess = mock(FileSystemAccess.class);
-        when(fileSystemAccess.exists(any())).thenReturn(false);
+    public void testNormalUsageNoFiles() throws IOException {
+        ResourceLoader resourceLoader = mock(ResourceLoader.class);
+        when(resourceLoader.getResourceAsStream(anyString())).thenReturn(null);
 
         GetConstruct construct = new GetConstruct(
-                new PropertyService(new Properties(), fileSystemAccess, new ContextPropertiesResolver())
+                new PropertyService(new Properties(), new ContextPropertiesResolver())
         );
 
-        MetaExpression notFound = process(construct, fromValue("propertyNotExists"));
+        MetaExpression notFound = process(resourceLoader, construct, fromValue("propertyNotExists"));
         assertEquals(notFound, NULL);
 
-        MetaExpression notFoundButDefault = process(construct, fromValue("notExists"), fromValue("Hello World"));
+        MetaExpression notFoundButDefault = process(resourceLoader, construct, fromValue("notExists"), fromValue("Hello World"));
         assertEquals(notFoundButDefault.getStringValue(), "Hello World");
     }
 
     @Test
-    public void testNormalUsageNoFilesButDefaults() {
-        FileSystemAccess fileSystemAccess = mock(FileSystemAccess.class);
-        when(fileSystemAccess.exists(any())).thenReturn(false);
+    public void testNormalUsageNoFilesButDefaults() throws IOException {
+        ResourceLoader resourceLoader = mock(ResourceLoader.class);
+        when(resourceLoader.getResourceAsStream(anyString())).thenReturn(null);
 
         Properties properties = new Properties();
         properties.put("defaultValue", "YES");
 
         GetConstruct construct = new GetConstruct(
-                new PropertyService(properties, fileSystemAccess, new ContextPropertiesResolver())
+                new PropertyService(properties, new ContextPropertiesResolver())
         );
 
-        MetaExpression result = process(construct, fromValue("defaultValue"));
+        MetaExpression result = process(resourceLoader, construct, fromValue("defaultValue"));
         assertEquals(result.getStringValue(), "YES");
     }
 
-    @Override
-    protected MetaExpression process(Construct construct, MetaExpression... arguments) {
-        RobotID robotId = RobotID.getInstance(new File("./libs/test.xill"));
+    protected MetaExpression process(ResourceLoader resourceLoader, Construct construct, MetaExpression... arguments) {
+        RobotID robotId = RobotID.dummyRobot();
         return ConstructProcessor.process(
                 construct.prepareProcess(
                         new ConstructContext(
@@ -89,8 +88,8 @@ public class GetConstructTest extends TestUtils {
                                 new NullDebugger(),
                                 UUID.randomUUID(),
                                 new EventHost<>(),
-                                new EventHost<>()
-                        )
+                                new EventHost<>(),
+                                resourceLoader)
                 ),
                 arguments
         );

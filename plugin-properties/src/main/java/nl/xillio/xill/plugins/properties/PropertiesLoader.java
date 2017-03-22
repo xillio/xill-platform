@@ -13,30 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.plugins.properties.services;
+package nl.xillio.xill.plugins.properties;
 
-import com.google.inject.Singleton;
+import nl.xillio.xill.api.construct.ConstructContext;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Properties;
 
-/**
- * This service allows other services to access the filesystem.
- * <p>
- * The main reason for the existence of this class is to remove IO responsibilities from
- * other services to make them more testable.
- *
- * @author Thomas Biesaart
- */
-@Singleton
-public class FileSystemAccess {
-    public boolean exists(Path file) {
-        return Files.exists(file);
-    }
-
-    public InputStream read(Path file) throws IOException {
-        return Files.newInputStream(file);
-    }
+@FunctionalInterface
+public interface PropertiesLoader {
+    Properties loadProperties(String resource, ConstructContext context, Properties defaults);
 }

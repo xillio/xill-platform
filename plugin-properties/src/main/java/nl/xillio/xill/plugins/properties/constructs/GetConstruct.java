@@ -16,12 +16,12 @@
 package nl.xillio.xill.plugins.properties.constructs;
 
 import com.google.inject.Inject;
-import nl.xillio.xill.plugins.properties.services.PropertyService;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
+import nl.xillio.xill.plugins.properties.services.PropertyService;
 
 /**
  * This construct will resolve a property using the properties service.
@@ -48,13 +48,11 @@ class GetConstruct extends Construct {
     private MetaExpression process(MetaExpression name, MetaExpression defaultValue, ConstructContext context) {
         assertNotNull(name, "property name");
 
-        String path = name.getStringValue();
-
-        context.addRobotStoppedListener(e -> propertyService.clean());
+        String property = name.getStringValue();
 
         String result = propertyService
-                .getFormattedProperty(path, defaultValue.isNull() ? null : defaultValue.getStringValue(), context);
-        if(result == null) {
+                .getFormattedProperty(property, defaultValue.isNull() ? null : defaultValue.getStringValue(), context);
+        if (result == null) {
             return NULL;
         }
 

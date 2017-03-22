@@ -16,7 +16,7 @@
 package nl.xillio.xill.components.expressions.runbulk;
 
 import nl.xillio.xill.api.Debugger;
-import xill.RobotLoader;
+import nl.xillio.xill.loaders.AbstractRobotLoader;
 
 /**
  * Controls the {@link RunBulkExpression} threads.
@@ -26,9 +26,9 @@ class RunBulkControl {
     private boolean stop = false;
     private final Debugger debugger;
     private final String calledRobotFqn;
-    private final RobotLoader loader;
+    private final AbstractRobotLoader loader;
 
-    public RunBulkControl(final Debugger debugger, final String calledRobotFqn, final RobotLoader loader) {
+    public RunBulkControl(final Debugger debugger, final String calledRobotFqn, final AbstractRobotLoader loader) {
         this.debugger = debugger;
         this.calledRobotFqn = calledRobotFqn;
         this.loader = loader;
@@ -42,7 +42,7 @@ class RunBulkControl {
         return calledRobotFqn;
     }
 
-    public RobotLoader getLoader() {
+    public AbstractRobotLoader getLoader() {
         return loader;
     }
 

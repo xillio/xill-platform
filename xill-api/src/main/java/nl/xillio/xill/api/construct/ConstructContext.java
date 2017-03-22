@@ -21,6 +21,7 @@ import nl.xillio.xill.api.components.EventEx;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.events.RobotStartedAction;
 import nl.xillio.xill.api.events.RobotStoppedAction;
+import nl.xillio.xill.api.io.ResourceLoader;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -38,6 +39,7 @@ public class ConstructContext {
     private final RobotID rootRobot;
     private final UUID compilerSerialId;
     private final OutputHandler outputHandler;
+    private final ResourceLoader resourceLoader;
     /**
      * Events for notifying constructs that robots have started or stopped.
      * Example uses are initialization and cleanup.
@@ -57,22 +59,23 @@ public class ConstructContext {
 
     /**
      * Creates a new {@link ConstructContext} for a specific robot.
-     *
-     * @param workingDirectory  the workingDirectory of the current robot
+     *  @param workingDirectory  the workingDirectory of the current robot
      * @param robot             the robotID of the current robot
      * @param rootRobot         the robotID of the root robot
      * @param construct         the construct that will be using this context
+     * @param resourceLoader
      * @param debugger          the debugger that is being used
      * @param compilerSerialId  the serial id of the compiler instance
      * @param outputHandler     the event handler for all robot output
      * @param robotStartedEvent the event host for started robots
      * @param robotStoppedEvent the event host for stopped robots
      */
-    public ConstructContext(final Path workingDirectory, final RobotID robot, final RobotID rootRobot, final Construct construct, final Debugger debugger, UUID compilerSerialId, OutputHandler outputHandler, final EventHost<RobotStartedAction> robotStartedEvent,
+    public ConstructContext(final Path workingDirectory, final RobotID robot, final RobotID rootRobot, final Construct construct, ResourceLoader resourceLoader, final Debugger debugger, UUID compilerSerialId, OutputHandler outputHandler, final EventHost<RobotStartedAction> robotStartedEvent,
                             final EventHost<RobotStoppedAction> robotStoppedEvent) {
         this.workingDirectory = workingDirectory;
         robotID = robot;
         this.rootRobot = rootRobot;
+        this.resourceLoader = resourceLoader;
         this.compilerSerialId = compilerSerialId;
         this.outputHandler = outputHandler;
         this.robotStartedEvent = robotStartedEvent;
@@ -82,8 +85,7 @@ public class ConstructContext {
 
     /**
      * Creates a new {@link ConstructContext} for a specific robot.
-     *
-     * @param workingDirectory  the workingDirectory of the current robot
+     *  @param workingDirectory  the workingDirectory of the current robot
      * @param robot             the robotID of the current robot
      * @param rootRobot         the robotID of the root robot
      * @param construct         the construct that will be using this context
@@ -91,10 +93,11 @@ public class ConstructContext {
      * @param compilerSerialId  the serial id of the compiler instance
      * @param robotStartedEvent the event host for started robots
      * @param robotStoppedEvent the event host for stopped robots
+     * @param resourceLoader
      */
     public ConstructContext(final Path workingDirectory, final RobotID robot, final RobotID rootRobot, final Construct construct, final Debugger debugger, UUID compilerSerialId, final EventHost<RobotStartedAction> robotStartedEvent,
-                            final EventHost<RobotStoppedAction> robotStoppedEvent) {
-        this(workingDirectory, robot, rootRobot, construct, debugger, compilerSerialId, new DefaultOutputHandler(), robotStartedEvent, robotStoppedEvent);
+                            final EventHost<RobotStoppedAction> robotStoppedEvent, ResourceLoader resourceLoader) {
+        this(workingDirectory, robot, rootRobot, construct, resourceLoader, debugger, compilerSerialId, new DefaultOutputHandler(), robotStartedEvent, robotStoppedEvent);
     }
 
     /**
@@ -142,6 +145,15 @@ public class ConstructContext {
         }
 
         return rootLogger;
+    }
+
+    /**
+     * Gets a {@link ResourceLoader} object.
+     *
+     * @return ResourceLoader object
+     */
+    public ResourceLoader getResourceLoader() {
+        return resourceLoader;
     }
 
     /**
@@ -214,20 +226,6 @@ public class ConstructContext {
      */
     public UUID getCompilerSerialId() {
         return compilerSerialId;
-    }
-
-    /**
-     * Create a processor using the current debugger as the parent.
-     *
-     * @param robot           the robot that should be compiled
-     * @param xillEnvironment the xill environment
-     * @return the processor
-     * @throws IOException if an IO error occurs
-     */
-    public XillProcessor createChildProcessor(String robot, XillEnvironment xillEnvironment) throws IOException {
-        XillProcessor processor = xillEnvironment.buildProcessor(workingDirectory, robot, debugger.createChild());
-        processor.setOutputHandler(outputHandler);
-        return processor;
     }
 
     /**

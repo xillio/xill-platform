@@ -119,6 +119,6 @@ public class ConnectionManagerTest {
     }
 
     private ConstructContext context(UUID id) {
-        return new ConstructContext(Paths.get("."), RobotID.dummyRobot(), RobotID.dummyRobot(), null, null, id, null, null);
+        return new ConstructContext(Paths.get("."), RobotID.dummyRobot(), RobotID.dummyRobot(), null, null, id, null, null, null);
     }
 }

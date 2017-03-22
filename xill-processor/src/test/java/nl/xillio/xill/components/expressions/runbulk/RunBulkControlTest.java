@@ -16,6 +16,7 @@
 package nl.xillio.xill.components.expressions.runbulk;
 
 import nl.xillio.xill.api.Debugger;
+import nl.xillio.xill.loaders.AbstractRobotLoader;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import xill.RobotLoader;
@@ -34,12 +35,12 @@ public class RunBulkControlTest {
 
     private Debugger debugger;
     private String robotFqn = "some.robot";
-    private RobotLoader loader;
+    private AbstractRobotLoader loader;
 
     @BeforeMethod
     public void setupControl() {
         debugger = mock(Debugger.class);
-        loader = mock(RobotLoader.class);
+        loader = mock(AbstractRobotLoader.class);
         control = new RunBulkControl(debugger, robotFqn, loader);
     }
 
