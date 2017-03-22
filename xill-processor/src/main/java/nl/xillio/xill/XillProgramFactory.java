@@ -31,17 +31,14 @@ import nl.xillio.xill.api.events.RobotStartedAction;
 import nl.xillio.xill.api.events.RobotStoppedAction;
 import nl.xillio.xill.components.expressions.CallbotExpression;
 import nl.xillio.xill.components.expressions.ConstructCall;
-import nl.xillio.xill.components.expressions.pipeline.FilterExpression;
 import nl.xillio.xill.components.expressions.FunctionCall;
 import nl.xillio.xill.components.expressions.FunctionParameterExpression;
+import nl.xillio.xill.components.expressions.*;
+import nl.xillio.xill.components.expressions.pipeline.*;
+import nl.xillio.xill.components.expressions.pipeline.FilterExpression;
 import nl.xillio.xill.components.expressions.pipeline.MapExpression;
 import nl.xillio.xill.components.expressions.pipeline.PeekExpression;
 import nl.xillio.xill.components.expressions.runbulk.RunBulkExpression;
-import nl.xillio.xill.components.expressions.*;
-import nl.xillio.xill.components.expressions.pipeline.CollectTerminalExpression;
-import nl.xillio.xill.components.expressions.pipeline.ConsumeTerminalExpression;
-import nl.xillio.xill.components.expressions.pipeline.ForeachTerminalExpression;
-import nl.xillio.xill.components.expressions.pipeline.ReduceTerminalExpression;
 import nl.xillio.xill.components.instructions.BreakInstruction;
 import nl.xillio.xill.components.instructions.ContinueInstruction;
 import nl.xillio.xill.components.instructions.*;
@@ -145,10 +142,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
         info.setUsing(useStatements);
 
         for (UseStatement plugin : robot.getUses()) {
-            String pluginName = plugin.getPlugin();
-            if (pluginName == null) { // In case of non-qualified name: use MySQL;
-                pluginName = plugin.getName();
-            }
+            String pluginName = plugin.getName();
 
             // Really? Java...
             String searchName = pluginName;
@@ -291,6 +285,8 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
      * @return
      * @throws XillParsingException When parsing an instruction wasn't successful
      */
+    @SuppressWarnings("squid:S2095")
+    // Don't close the InstructionSet as we are returning it
     InstructionSet parseToken(final xill.lang.xill.InstructionSet token) throws XillParsingException {
         InstructionSet instructionSet = new InstructionSet(debugger);
 
@@ -482,6 +478,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
     }
 
     private xill.lang.xill.Robot findRobot(EObject object) throws XillParsingException {
+        Objects.nonNull(object);
         EObject current = object;
 
         while (current != null) {
@@ -932,10 +929,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
         CodePosition pos = pos(token);
 
         if (pluginPackage == null) {
-            String pluginName = token.getPackage().getPlugin();
-            if (pluginName == null) {
-                pluginName = token.getPackage().getName();
-            }
+            String pluginName = token.getPackage().getName();
 
             throw new XillParsingException("Could not resolve package `" + pluginName + "`", pos.getLineNumber(),
                     pos.getRobotID());
