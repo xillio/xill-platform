@@ -39,6 +39,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import me.biesaart.utils.FileUtils;
+import me.biesaart.utils.IOUtils;
 import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.dialogs.*;
 import nl.xillio.migrationtool.gui.WatchDir.FolderListener;
@@ -57,7 +58,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.WatchEvent;
@@ -413,11 +416,11 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
     private boolean checkOpenTabsModified(final List<File> files) {
         for (File f : files) {
-            FileTab tab = controller.findTab(f);
+            FileTab tab = controller.findTab(toURL(f));
             if (tab != null) {
                 if (tab.getEditorPane().getDocumentState().getValue() == EditorPane.DocumentState.CHANGED) {
                     AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING, "Modified document",
-                            "The document " + tab.getDocument().getName() + " is modified.",
+                            "The document " + tab.getName() + " is modified.",
                             "Do you want to save the changes?",
                             YES, NO, ButtonType.CANCEL);
                     dialog.showAndWait();
@@ -436,10 +439,20 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         return true;
     }
 
+    private URL toURL(File string) {
+        try {
+
+            return string.toURI().toURL();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private void resetTabs(final List<Pair<File, File>> files) {
         // Close all related open target tabs (if exist they will be overwritten by source files having different path and project so we need to close them)
         files.forEach(f -> {
-            FileTab tab = controller.findTab(f.getValue()); // Target file
+            FileTab tab = controller.findTab(toURL(f.getValue())); // Target file
             if (tab != null) {
                 controller.closeTab(tab, true, true);
             }
@@ -447,10 +460,14 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         // Reset project and document of all related open source tabs
         files.forEach(f -> {
-            FileTab tab = controller.findTab(f.getKey()); // Source file
+            FileTab tab = controller.findTab(toURL(f.getKey())); // Source file
             if (tab != null) {
                 final File file = f.getValue();
-                tab.resetSource(file, new File(getProjectPath(file).orElse(file.getParent()))); // Target file
+                try {
+                    tab.resetSource(file.toURI().toURL()); // Target file
+                } catch (MalformedURLException e) {
+                    LOGGER.error("Could not reset sources for " + file, e);
+                }
             }
         });
     }
@@ -458,7 +475,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     // Reload content of all existing tabs that matches the (target) files in the list
     private void reloadTabs(final List<File> files) {
         files.forEach(f -> {
-            FileTab tab = controller.findTab(f);
+            FileTab tab = controller.findTab(toURL(f));
             if (tab != null) {
                 tab.reload();
             }
@@ -485,7 +502,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
     private void renameButtonPressed() {
         TreeItem<Pair<File, String>> item = getCurrentItem();
-        FileTab tab = controller.findTab(item.getValue().getKey());
+        FileTab tab = controller.findTab(toURL(item.getValue().getKey()));
 
         // Check if a robot is still running, show a dialog to stop them.
         if (checkRobotsRunning(Collections.singletonList(item), false, false)) {
@@ -517,7 +534,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             if (tab != null) {
                 boolean wasSelected = controller.getSelectedTab() == tab;
                 controller.closeTab(tab);
-                FileTab newTab = controller.openFile(item.getValue().getKey());
+                FileTab newTab = controller.openFile(toURL(item.getValue().getKey()));
                 if (wasSelected) {
                     controller.showTab(newTab);
                 }
@@ -628,14 +645,14 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 model.put("projectName", projectFile.getName());
                 model.put("projectPath", projectFile.getCanonicalPath());
                 templater.render(templateFile, model, Paths.get(chosen.toURI()));
-                controller.viewOrOpenRobot(chosen, projectFile, isRobot);
+                controller.viewOrOpenRobot(toURL(chosen), Paths.get(projectFile.toURI()), isRobot);
             } catch (IOException e) {
                 LOGGER.error("Failed to create file.", e);
                 AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Error creating robot.", "", "Could not create '" + chosen.toString() + "'.");
                 error.showAndWait();
             } catch (TemplateException e) {
                 new AlertDialog(Alert.AlertType.ERROR, "Invalid template", "The template you want to use could not be processed!", e.getMessage()).show();
-                controller.viewOrOpenRobot(chosen, projectFile, isRobot);
+                controller.viewOrOpenRobot(toURL(chosen), Paths.get(projectFile.toURI()), isRobot);
             }
         } else {
             // Inform the user about the file being created outside of a project.
@@ -705,7 +722,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         for (TreeItem<Pair<File, String>> item : items) {
             // Check if the robot tab is open and the robot is running.
-            FileTab tab = controller.findTab(item.getValue().getKey());
+            FileTab tab = controller.findTab(toURL(item.getValue().getKey()));
 
             // Check if the tab is a robot tab.
             if (tab != null && tab instanceof RobotTab) {
@@ -1011,21 +1028,19 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
      * Called when the outside change to the robot file has been done
      * Check if the outside change to the robot file should lead to asking user about loading new content and if so then do it
      *
-     * @param child The path to the robot file
+     * @param resource The url to the robot file
      */
-    public void fileChanged(final File child) {
+    public void fileChanged(URL resource) {
 
-        FileTab tab = controller.findTab(child);
+        FileTab tab = controller.findTab(resource);
         if (tab == null) {
             return;
         }
 
         // Test of content change
         String newContent = "";
-        try {
-            if (Files.exists(child.toPath())) {
-                newContent = new String(Files.readAllBytes(child.toPath()));
-            }
+        try (InputStream stream = resource.openStream()) {
+            newContent = IOUtils.toString(stream);
         } catch (IOException e) {
             LOGGER.warn("Failed to read changed robot content", e);
         }
@@ -1038,7 +1053,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
         // Create and show an alert dialog saying the content has been changed.
         AlertDialog alert = new AlertDialog(Alert.AlertType.WARNING, "File content change",
-                "The file \"" + tab.documentPath + "\" has been modified outside the editor.", "Do you want reload the file?",
+                "The file \"" + tab.getResourceUrl().getPath() + "\" has been modified outside the editor.", "Do you want reload the file?",
                 YES, NO);
 
         alert.showAndWait();
@@ -1134,14 +1149,14 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     /**
      * Gets the project path of a node.
      *
-     * @param file The file to get the project path for.
+     * @param url The file to get the project path for.
      * @return The project path if it exists
      */
-    public Optional<String> getProjectPath(final File file) {
+    public Optional<String> getProjectPath(URL url) {
         Optional<String> projectPath = Optional.empty();
 
         // Find the tree item.
-        TreeItem<Pair<File, String>> item = findItemByPath(root, file.getAbsolutePath());
+        TreeItem<Pair<File, String>> item = findItemByPath(root, url.getPath());
 
         // Check if the item is a part of the tree, only then should we try to get the project.
         if (item != null) {
@@ -1397,7 +1412,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1
                         && pair.getKey() != null && pair.getKey().exists() && pair.getKey().isFile()) {
                     // Open new tab from file.
-                    controller.openFile(pair.getKey());
+                    controller.openFile(toURL(pair.getKey()));
                 }
             });
         }

@@ -23,6 +23,6 @@ use Assert;
 
 include testresources.core.keywords.callbot_include.includeMe;
 
-callbot("testresources.core.keywords.callbot.includer");
+callbot("testresources/core/keywords/callbot/includer.xill");
 
 Assert.equal(timesCalled(), 0);

@@ -39,6 +39,7 @@ import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue.IssueImpl;
 import org.slf4j.Logger;
+import xill.RobotLoader;
 import xill.lang.XillResourceSet;
 import xill.lang.XillStandaloneSetup;
 import xill.lang.validation.XillValidator;
@@ -77,18 +78,18 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     /**
      * Create a new processor that can run a file.
      *
-     * @param workingDirectory   the project folder
-     * @param fullyQualifiedName fully qualified name of the robot that should be executed
-     * @param robotLoader        the robot loader
-     * @param plugins            the plugins
-     * @param debugger           the debugger
+     * @param workingDirectory the project folder
+     * @param robotID          the robot that should be executed
+     * @param robotLoader      the robot loader
+     * @param plugins          the plugins
+     * @param debugger         the debugger
      * @throws IOException if thrown if a file(-related) operation fails.
      */
-    public XillProcessor(final Path workingDirectory, final String fullyQualifiedName, final AbstractRobotLoader robotLoader, final List<XillPlugin> plugins,
+    public XillProcessor(final Path workingDirectory, RobotID robotID, final AbstractRobotLoader robotLoader, final List<XillPlugin> plugins,
                          final Debugger debugger) throws IOException {
         this.workingDirectory = workingDirectory;
         this.robotLoader = robotLoader;
-        this.robotID = toRobotID(fullyQualifiedName);
+        this.robotID = robotID;
         this.plugins = plugins;
         this.debugger = debugger;
         Injector injector = new XillStandaloneSetup(robotLoader).createInjectorAndDoEMFRegistration();
@@ -172,6 +173,10 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     }
 
     private RobotID toRobotID(String fullyQualifiedName) throws NoSuchFileException {
+        return toRobotID(fullyQualifiedName, robotLoader);
+    }
+
+    private static RobotID toRobotID(String fullyQualifiedName, RobotLoader robotLoader) throws NoSuchFileException {
         URL resource = robotLoader.getRobot(fullyQualifiedName);
         if (resource == null) {
             throw new NoSuchFileException("No robot was found for '" + fullyQualifiedName + "'");
@@ -184,7 +189,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
 
     private RobotID toRobotID(Resource resource) {
         String resourceUri = resourceSet.getInternalResourcePath(resource.getURI());
-        return new RobotID(toURL(resource.getURI()), java.net.URI.create(resourceUri));
+        return new RobotID(toURL(resource.getURI()), resourceUri);
     }
 
     private Resource findResource(RobotID robotID) {
@@ -193,12 +198,14 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
 
     @Override
     public List<Issue> validate() {
+        Resource resource = findResource(robotID);
         debugger.reset();
         return validateAllResources();
     }
 
+
     private List<Issue> validateAllResources() {
-        // Validate all resources and concat issues
+        // Validate all resources and concat issue.
         List<Resource> resources = resourceSet.getResources();
         List<Issue> result = new ArrayList<>();
 

@@ -25,7 +25,7 @@ var result;
 var error;
 
 do {
-	result = callbot("testresources.core.keywords.callbot.addOne", 1);
+	result = callbot("testresources/core/keywords/callbot/addOne.xill", 1);
 } fail(e) {
 	error = e;
 }

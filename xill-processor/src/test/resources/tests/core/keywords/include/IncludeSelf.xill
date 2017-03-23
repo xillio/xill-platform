@@ -18,4 +18,4 @@
  * Input: A robot that includes itself.
  * Expected: No errors
  */
-callbot("testresources.core.keywords.includes.IncludeSelf");
+callbot("testresources/core/keywords/includes/IncludeSelf.xill");

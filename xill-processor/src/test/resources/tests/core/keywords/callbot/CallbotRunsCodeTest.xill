@@ -22,5 +22,5 @@
 use Assert;
 
 var arg = 3;
-var result = callbot("testresources.core.keywords.callbot.argument", arg);
+var result = callbot("testresources/core/keywords/callbot/argument.xill", arg);
 Assert.equal(result, arg);

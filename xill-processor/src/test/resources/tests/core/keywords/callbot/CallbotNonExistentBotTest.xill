@@ -25,7 +25,7 @@ var result;
 var error;
 
 do {
-	result = callbot("testresources.core.keywords.callbot.non-existent");
+	result = callbot("testresources/core/keywords/callbot/nonexistent.xill");
 } fail(e) {
 	error = e;
 }

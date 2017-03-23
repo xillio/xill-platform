@@ -18,36 +18,39 @@ package nl.xillio.xill.api.components;
 import nl.xillio.xill.api.XillEnvironment;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.Objects;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
 /**
  * A unique identifier for robots.
- *
+ * <p>
  * A RobotID is composed of two components: The robot url and a resource uri.
- *
+ * <p>
  * The <b>robot url</b>, also called <code>url</code>, is an absolute url to the robot resource such that the resource
  * can be opened and read to get the robot source code.
- *
+ * <p>
  * The <b>resource uri</b>, or <code>resourceUri</code>, is represented by an {@link URI} relative to the resource root.
  * This resource root is the root of the parent container of resources. Examples of this could be an archive, folder or
  * network share.
- *
+ * <p>
  * The example below describes how these options are defined for a project on the hard drive at "/my/project":
- *
+ * <p>
  * <code>
- *     // Create the robot url
- *     URL robotUrl = new URL("file:///my/project/libs/URLParser.xill");
- *
- *     // Create the resourceUri relative to the project root
- *     URI resourceUri = URI.create("libs/URLParser.xill");
- *
- *     // Create the RobotID
- *     RobotID robotId = new RobotID(robotUrl, resourceUri);
+ * // Create the robot url
+ * URL robotUrl = new URL("file:///my/project/libs/URLParser.xill");
+ * <p>
+ * // Create the resourceUri relative to the project root
+ * URI resourceUri = URI.create("libs/URLParser.xill");
+ * <p>
+ * // Create the RobotID
+ * RobotID robotId = new RobotID(robotUrl, resourceUri);
  * </code>
  */
 public class RobotID implements Serializable {
@@ -55,10 +58,21 @@ public class RobotID implements Serializable {
     private final URI resourceUri;
 
     /**
+     * Create a new robotID from an url and a resource path.
+     *
+     * @param url          The url to this robot
+     * @param resourcePath The robot path relative to the resource root it will be escaped using percentage encoding
+     * @throws IllegalArgumentException if resourcePath is not a valid relative path
+     */
+    public RobotID(URL url, String resourcePath) {
+        this(url, escape(resourcePath));
+    }
+
+    /**
      * Create a new robotID from an url and a resource uri.
      *
-     * @param url           The url to this robot
-     * @param resourceUri   The robot uri relative to the resource root
+     * @param url         The url to this robot
+     * @param resourceUri The robot uri relative to the resource root
      * @throws IllegalArgumentException if resourceUri is not a relative uri
      */
     public RobotID(URL url, URI resourceUri) {
@@ -84,7 +98,7 @@ public class RobotID implements Serializable {
     }
 
     public String getResourcePath() {
-        return resourceUri.toString();
+        return resourceUri.getPath();
     }
 
     @Override
@@ -101,7 +115,7 @@ public class RobotID implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         RobotID robotID = (RobotID) o;
         return Objects.equals(url, robotID.url) &&
-                Objects.equals(resourceUri, robotID.resourceUri);
+                Objects.equals(getResourcePath(), robotID.getResourcePath());
     }
 
     @Override
@@ -120,12 +134,12 @@ public class RobotID implements Serializable {
     /**
      * Build a RobotID from a baseUrl and a resourcePath.
      *
-     * @param baseUrl       The url to the resource root that contains this robot
-     * @param resourcePath  The robot uri relative to the baseUrl
+     * @param baseUrl      The url to the resource root that contains this robot
+     * @param resourcePath The robot uri relative to the baseUrl
      * @return the RobotID
      */
     public static RobotID build(String baseUrl, String resourcePath) {
-        return new RobotID(createUrl(createUrl(null, baseUrl), resourcePath), URI.create(resourcePath));
+        return new RobotID(createUrl(createUrl(null, baseUrl), resourcePath), escape(resourcePath));
     }
 
     /**
@@ -137,10 +151,25 @@ public class RobotID implements Serializable {
         return build("file:///path/to/project", "my/Robot.xill");
     }
 
+
+    private static URI escape(String resourcePath) {
+        String[] parts = resourcePath.split("[\\\\|/]");
+
+        for (int i = 0; i < parts.length; i++) {
+            try {
+                parts[i] = URLEncoder.encode(parts[i], Charset.defaultCharset().name())
+                        .replace("+", "%20");
+            } catch (UnsupportedEncodingException e) {
+                throw new IllegalStateException("The default character set could not be found");
+            }
+        }
+        return URI.create(String.join("/", parts));
+    }
+
     /**
      * Convert a qualified name to a path.
      *
-     * @param fullyQualifiedName    the qualified name to convert to a path
+     * @param fullyQualifiedName the qualified name to convert to a path
      * @return the converted qualified name to a path
      */
     public static String qualifiedNameToPath(String fullyQualifiedName) {

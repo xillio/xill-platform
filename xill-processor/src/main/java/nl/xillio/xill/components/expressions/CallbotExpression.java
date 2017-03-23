@@ -53,11 +53,11 @@ public class CallbotExpression implements Processable {
     /**
      * Create a new {@link CallbotExpression}
      *
-     * @param workingDirectory  the working directory
-     * @param path              the path of the called bot
-     * @param robotID           the root robot of this tree
-     * @param plugins           the current plugin loader
-     * @param outputHandler     the event handler for all output
+     * @param workingDirectory the working directory
+     * @param path             the path of the called bot
+     * @param robotID          the root robot of this tree
+     * @param plugins          the current plugin loader
+     * @param outputHandler    the event handler for all output
      * @param loader
      */
     public CallbotExpression(final Path workingDirectory, final Processable path, final RobotID robotID, final List<XillPlugin> plugins, OutputHandler outputHandler, AbstractRobotLoader loader) {
@@ -75,16 +75,16 @@ public class CallbotExpression implements Processable {
         String otherRobot = path.process(debugger).get().getStringValue();
 
         LOGGER.debug("Evaluating callbot for " + otherRobot);
-        URL otherRobotURL = loader.getRobot(otherRobot);
 
-        if (otherRobotURL == null) {
+        URL robotResource = loader.getResource(otherRobot);
+        if (robotResource == null) {
             throw new RobotRuntimeException("Called robot " + otherRobot + " does not exist.");
         }
 
         // Process the robot
         try {
             Debugger childDebugger = debugger.createChild();
-            XillProcessor processor = new XillProcessor(workingDirectory, otherRobot, loader, plugins, childDebugger);
+            XillProcessor processor = new XillProcessor(workingDirectory, new RobotID(robotResource, otherRobot), loader, plugins, childDebugger);
             processor.setOutputHandler(outputHandler);
             processor.compileAsSubRobot(robotID);
 

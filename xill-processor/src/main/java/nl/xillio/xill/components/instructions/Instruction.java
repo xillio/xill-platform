@@ -18,6 +18,9 @@ package nl.xillio.xill.components.instructions;
 import nl.xillio.xill.CodePosition;
 import nl.xillio.xill.api.components.RobotID;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 /**
  * This is the base interface for all instructions. An instruction generally represents code that would qualify as a minimal syntactically correct program.
  */
@@ -57,9 +60,16 @@ public abstract class Instruction implements nl.xillio.xill.api.components.Instr
 
     @Override
     public String toString() {
-        String path = getRobotID().getURL().toString();
+        String path = getRobotID().getResourceUri().toString();
 
-        return path + ":" + getLineNumber() + " > " + getClass().getSimpleName();
+        String unescapedPath;
+        try {
+            unescapedPath = URLDecoder.decode(path, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException("Unhandled character set found.", e);
+        }
+
+        return unescapedPath + ":" + getLineNumber() + " > " + getClass().getSimpleName();
     }
 
     /**

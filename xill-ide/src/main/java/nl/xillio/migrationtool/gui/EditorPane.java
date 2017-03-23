@@ -108,7 +108,7 @@ public class EditorPane extends AnchorPane implements FileTabComponent, EventHan
             updateDocumentState(newValue);
         });
         editor.setReplaceBar(editorReplaceBar);
-        editor.getOnDocumentLoaded().addListener(e -> editor.autoDetectMode(tab.getDocument().getName()));
+        editor.getOnDocumentLoaded().addListener(e -> editor.autoDetectMode(tab.getResourceUrl().getFile()));
 
         btnRedo.setDisable(true);
         btnUndo.setDisable(true);
@@ -145,11 +145,12 @@ public class EditorPane extends AnchorPane implements FileTabComponent, EventHan
     }
 
     private void setBtnRedo(Object object) {
-        Boolean hasRedo = (Boolean)object;
+        Boolean hasRedo = (Boolean) object;
         btnRedo.setDisable(!hasRedo);
     }
+
     private void setBtnUndo(Object object) {
-        Boolean hasUndo = (Boolean)object;
+        Boolean hasUndo = (Boolean) object;
         btnUndo.setDisable(!hasUndo);
     }
 
@@ -325,7 +326,7 @@ public class EditorPane extends AnchorPane implements FileTabComponent, EventHan
     /**
      * Return the last saved editor's content
      */
-    public String getLastSavedCode(){
+    public String getLastSavedCode() {
         return lastSavedCode;
     }
 

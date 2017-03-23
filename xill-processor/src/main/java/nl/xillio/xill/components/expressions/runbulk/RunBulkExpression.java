@@ -78,7 +78,7 @@ public class RunBulkExpression implements Processable {
         String otherRobot = path.process(debugger).get().getStringValue();
 
         LOGGER.debug("Evaluating runBulk for " + otherRobot);
-        if (loader.getRobot(otherRobot) == null) {
+        if (loader.getResource(otherRobot) == null) {
             throw new RobotRuntimeException("Called robot " + otherRobot + " does not exist.");
         }
 

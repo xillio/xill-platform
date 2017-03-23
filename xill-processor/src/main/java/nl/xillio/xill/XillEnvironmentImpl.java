@@ -26,6 +26,7 @@ import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.api.XillProcessor;
 import nl.xillio.xill.api.XillThreadFactory;
+import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.debugging.XillDebugger;
 import nl.xillio.xill.loaders.AbstractRobotLoader;
 import nl.xillio.xill.loaders.DirectoryRobotLoader;
@@ -124,16 +125,47 @@ public class XillEnvironmentImpl implements XillEnvironment {
     }
 
     @Override
+    public XillProcessor buildProcessor(Path workingDirectory, RobotID robotId, Path... robotPath) throws IOException {
+        return buildProcessor(workingDirectory, robotId, new XillDebugger(), robotPath);
+    }
+
+    @Override
+    public XillProcessor buildProcessor(Path workingDirectory, RobotID robotID, Debugger debugger, Path... robotPath) throws IOException {
+        return buildProcessor(
+                workingDirectory,
+                robotID,
+                debugger,
+                buildRobotLoader(workingDirectory, robotPath)
+        );
+    }
+
+    @Override
     public XillProcessor buildProcessor(Path workingDirectory, String fullyQualifiedName, Debugger debugger, Path... robotPath) throws IOException {
+        AbstractRobotLoader robotLoader = buildRobotLoader(workingDirectory, robotPath);
+        URL resource = robotLoader.getRobot(fullyQualifiedName);
+        if (resource == null) {
+            throw new NoSuchFileException("'" + fullyQualifiedName + "' could not be resolved");
+        }
+        RobotID robotID = new RobotID(resource, RobotID.qualifiedNameToPath(fullyQualifiedName));
+
+        return buildProcessor(
+                workingDirectory,
+                robotID,
+                debugger,
+                robotLoader
+        );
+    }
+
+    private XillProcessor buildProcessor(Path workingDirectory, RobotID robotID, Debugger debugger, AbstractRobotLoader robotLoader) throws IOException {
         if (needLoad) {
             loadPlugins();
         }
 
         return new nl.xillio.xill.XillProcessor(
                 workingDirectory,
-                fullyQualifiedName,
-                buildRobotLoader(workingDirectory, robotPath),
-                new ArrayList<>(loadedPlugins.values()),
+                robotID,
+                robotLoader,
+                getPlugins(),
                 debugger
         );
     }

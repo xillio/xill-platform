@@ -18,7 +18,7 @@ package nl.xillio.xill.api;
 import com.google.inject.Injector;
 import nl.xillio.plugins.PluginLoadFailure;
 import nl.xillio.plugins.XillPlugin;
-import nl.xillio.xill.api.io.ResourceLoader;
+import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.services.ProgressTracker;
 
 import java.io.IOException;
@@ -89,22 +89,32 @@ public interface XillEnvironment extends AutoCloseable {
 
     /**
      * Builds a processor for a specific execution.
-     *
+     * <p>
      * To resolve robots a resource loader is created. This loader builds a chain of paths (directories and archives)
      * that are traversed when searching for robots. If a Path in this chain is recognised to be a file, it is
      * interpreted as an archive. Otherwise it is interpreted as a directory.
      *
      * @param workingDirectory   the working directory of the project
      * @param fullyQualifiedName the fully qualified name of the robot that should be started
-     * @param robotPath the robot path
+     * @param robotPath          the robot path
      * @return the processor
      * @throws IOException if we could not load the processor
      */
     XillProcessor buildProcessor(Path workingDirectory, String fullyQualifiedName, Path... robotPath) throws IOException;
 
     /**
-     * Builds a processor for a specific execution, with a debugger.
+     * Builds a processor for a specific execution.
      *
+     * @param workingDirectory the working directory of the project
+     * @param robotID          the robot that should be started
+     * @return the processor
+     * @throws IOException if we could not load the processor
+     */
+    XillProcessor buildProcessor(Path workingDirectory, RobotID robotID, Path... robotPath) throws IOException;
+
+    /**
+     * Builds a processor for a specific execution, with a debugger.
+     * <p>
      * To resolve robots a resource loader is created. This loader builds a chain of paths (directories and archives)
      * that are traversed when searching for robots. If a Path in this chain is recognised to be a file, it is
      * interpreted as an archive. Otherwise it is interpreted as a directory.
@@ -116,6 +126,17 @@ public interface XillEnvironment extends AutoCloseable {
      * @throws IOException if we could not load the processor
      */
     XillProcessor buildProcessor(Path workingDirectory, String fullyQualifiedName, Debugger debugger, Path... robotPath) throws IOException;
+
+    /**
+     * Builds a processor for a specific execution.
+     *
+     * @param workingDirectory the working directory of the project
+     * @param robotID          the robot that should be started
+     * @param debugger         the debugger that should be used
+     * @return the processor
+     * @throws IOException if we could not load the processor
+     */
+    XillProcessor buildProcessor(Path workingDirectory, RobotID robotID, Debugger debugger, Path... robotPath) throws IOException;
 
     /**
      * Gets a list of all loaded plugins.
