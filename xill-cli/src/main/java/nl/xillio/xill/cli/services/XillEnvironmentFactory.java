@@ -28,6 +28,9 @@ import java.nio.file.Path;
  */
 public class XillEnvironmentFactory {
 
+
+    @SuppressWarnings("squid:S2095")
+    // Don't close the XillEnvironment as we are returning it
     public XillEnvironment buildFor(Path coreFolder, Path... pluginFolders) throws IOException {
         if (coreFolder == null) {
             throw new IllegalArgumentException("No coreFolder provided");
