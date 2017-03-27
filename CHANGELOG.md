@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 * Store git credentials [CTC-1975]
 * Show status of changed files in git [CTC-1977]
 * `String.lastIndexOf()` to find the last occurrence of a substring in a string [CTC-1991]
+* Add `Date.isDate()` construct [CTC-2134]
 
 ### Change
 * Decrease minimum height of help pane [CTC-2133]
