@@ -102,7 +102,7 @@
         <module>plugin-xurl</module>
         <module>xill-api</module>
         <module>xill-assemblies</module>
-        <!--module>xill-cli</module-->
+        <module>xill-cli</module>
         <module>xill-ide</module>
         <module>xill-parent</module>
         <module>xill-plugin-archetype</module>

@@ -162,7 +162,7 @@ public class XillEnvironmentImpl implements XillEnvironment {
         }
 
         return new nl.xillio.xill.XillProcessor(
-                workingDirectory,
+                workingDirectory.toAbsolutePath(),
                 robotID,
                 robotLoader,
                 getPlugins(),
@@ -174,9 +174,9 @@ public class XillEnvironmentImpl implements XillEnvironment {
         AbstractRobotLoader robotLoader = new DirectoryRobotLoader(null, workingDirectory);
         for (Path path : robotPath) {
             if (Files.isRegularFile(path)) {
-                robotLoader = new XipRobotLoader(robotLoader, path);
+                robotLoader = new XipRobotLoader(robotLoader, path.toAbsolutePath());
             } else {
-                robotLoader = new DirectoryRobotLoader(robotLoader, path);
+                robotLoader = new DirectoryRobotLoader(robotLoader, path.toAbsolutePath());
             }
         }
         return robotLoader;

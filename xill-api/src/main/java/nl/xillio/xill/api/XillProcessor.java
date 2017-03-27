@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * This interface represents the main processing object.
  */
-public interface XillProcessor {
+public interface XillProcessor extends AutoCloseable {
     /**
      * Compiles the code in the file used to instantiate this processor.
      *
@@ -91,4 +91,6 @@ public interface XillProcessor {
     String[] getReservedKeywords();
 
     Map<String, List<String>> getCompletions(String currentLine, String prefix, int column, int row);
+
+    void close();
 }

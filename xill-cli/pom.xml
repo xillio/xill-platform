@@ -21,8 +21,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Xill Command Line Client</name>
-    <description>A command line client that allows running Xill scripts in a headless environment</description>
+    <name>Xill Command Line Interface</name>
+    <description>A command line interface to run Xill robots</description>
 
     <parent>
         <groupId>nl.xillio.xill</groupId>
@@ -36,15 +36,11 @@
     <dependencies>
         <dependency>
             <groupId>nl.xillio.xill</groupId>
-            <artifactId>xill-api</artifactId>
+            <artifactId>xill-processor</artifactId>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>me.biesaart</groupId>
-            <artifactId>wield</artifactId>
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -54,6 +50,10 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -61,23 +61,22 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>appassembler-maven-plugin</artifactId>
-                <version>1.10</version>
-                <configuration>
-                    <programs>
-                        <program>
-                            <mainClass>nl.xillio.xill.cli.Application</mainClass>
-                            <id>xill-cli</id>
-                        </program>
-                    </programs>
-                    <projectArtifactFirstInClassPath>true</projectArtifactFirstInClassPath>
-                </configuration>
                 <executions>
                     <execution>
-                        <id>assemble</id>
+                        <id>generate-programs</id>
                         <phase>package</phase>
                         <goals>
                             <goal>assemble</goal>
                         </goals>
+                        <configuration>
+                            <programs>
+                                <program>
+                                    <mainClass>n.xillio.xill.cli.XillCLI</mainClass>
+                                    <id>xill</id>
+                                </program>
+                            </programs>
+                            <extraJvmArguments>-Dfile.encoding=UTF-8</extraJvmArguments>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -85,13 +84,14 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>build-cli-zip</id>
-                        <phase>package</phase>
+                        <id>package-cli</id>
                         <goals>
                             <goal>single</goal>
                         </goals>
+                        <phase>package</phase>
                         <configuration>
-                            <descriptor>src/assembly/app.xml</descriptor>
+                            <descriptor>${project.basedir}/src/assembly/app.xml</descriptor>
+                            <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                     </execution>
                 </executions>

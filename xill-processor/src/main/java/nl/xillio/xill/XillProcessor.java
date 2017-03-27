@@ -373,6 +373,15 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
         return result;
     }
 
+    @Override
+    public void close() {
+        try {
+            robotLoader.close();
+        } catch (IOException e) {
+            LOGGER.warn("An error occurred while closing a robot loader", e);
+        }
+    }
+
     /**
      * This method will fill the result map with construct advice based on the test in front of the cursor.
      *
