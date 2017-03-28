@@ -48,23 +48,30 @@ public class PropertiesCache {
 
     public Optional<String> getDefaultProperty(String name, ConstructContext context) {
         return Optional.ofNullable(
-                getDefaultProperties(context.getRobotID().getResourceUri().toString(), context).getProperty(name)
+                getDefaultProperties(context.getRobotID().getResourcePath(), context).getProperty(name)
         );
     }
 
-    private Properties getDefaultProperties(String resource, ConstructContext context) {
-        return cache.computeIfAbsent(resource, p -> loadDefaultProperty(resource, context));
+    private Properties getDefaultProperties(String robotResourcePath, ConstructContext context) {
+        String resourceFolder = getParent(robotResourcePath);
+        return cache.computeIfAbsent(resourceFolder, p -> loadDefaultProperty(resourceFolder, context));
     }
 
-    private Properties loadDefaultProperty(String resource, ConstructContext context) {
-        if (resource.isEmpty()) {
+    private Properties loadDefaultProperty(String resourceFolder, ConstructContext context) {
+
+        if (resourceFolder.isEmpty()) {
             // This is the root folder
-            return new Properties(defaultGlobalProperties);
+            return propertiesLoader.loadProperties(
+                    PropertyService.DEFAULTS_FILE,
+                    context,
+                    defaultGlobalProperties
+            );
         } else {
+            String resource = resourceFolder + "/" + PropertyService.DEFAULTS_FILE;
             return propertiesLoader.loadProperties(
                     resource,
                     context,
-                    getDefaultProperties(getParent(resource), context)
+                    getDefaultProperties(resourceFolder, context)
             );
         }
     }

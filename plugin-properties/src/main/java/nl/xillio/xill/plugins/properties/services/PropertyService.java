@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
  */
 @Singleton
 public class PropertyService implements PropertiesLoader {
-    private static final String DEFAULTS_FILE = "defaults.properties";
+    public static final String DEFAULTS_FILE = "defaults.properties";
     private static final String PROPERTIES_FILE = "xill.properties";
     private static final Pattern VARIABLE_PATTERN = Pattern.compile("(?<!\\$)\\$\\{([^{}]+)}");
     private static final Logger LOGGER = Log.get();
@@ -108,14 +108,13 @@ public class PropertyService implements PropertiesLoader {
     }
 
     @Override
-    public Properties loadProperties(String resourceFolder, ConstructContext context, Properties defaults) {
-        if (resourceFolder == null || resourceFolder.isEmpty()) {
+    public Properties loadProperties(String resourcePath, ConstructContext context, Properties defaults) {
+        if (resourcePath == null || resourcePath.isEmpty()) {
             throw new IllegalArgumentException("An empty resource folder was provided");
         }
-        String resource = resourceFolder + "/" + DEFAULTS_FILE;
         Properties result = new Properties(defaults);
         try {
-            InputStream inputStream = context.getResourceLoader().getResourceAsStream(resource);
+            InputStream inputStream = context.getResourceLoader().getResourceAsStream(resourcePath);
 
             if (inputStream != null) {
                 try (InputStreamReader stream = new InputStreamReader(inputStream, Charset.defaultCharset())) {
@@ -124,7 +123,7 @@ public class PropertyService implements PropertiesLoader {
             }
 
         } catch (IOException e) {
-            context.getRootLogger().warn("Failed to load properties from " + resource + "\nReason: " + e.getMessage(), e);
+            context.getRootLogger().warn("Failed to load properties from " + resourcePath + "\nReason: " + e.getMessage(), e);
         }
         return result;
     }
