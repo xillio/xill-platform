@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,6 @@
 package nl.xillio.xill.mojos;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.*;
 import org.codehaus.plexus.archiver.Archiver;
@@ -26,15 +25,13 @@ import java.io.File;
 import java.io.IOException;
 
 @Mojo(name = "xlib", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
-public class XlibMojo extends AbstractMojo {
+public class XlibMojo extends AbstractXlibMojo {
     private static final String TYPE = "xlib";
 
     @Parameter(defaultValue = "${project.artifact}", readonly = true, required = true)
     private Artifact artifact;
     @Parameter(defaultValue = "${project.build.finalName}", readonly = true, required = true)
     private String finalName;
-    @Parameter(defaultValue = "${project.build.outputDirectory}", readonly = true, required = true)
-    private File classesDirectory;
 
     // Configuration.
     @Parameter(defaultValue = "${project.build.directory}", required = true)
@@ -47,7 +44,8 @@ public class XlibMojo extends AbstractMojo {
         File archive = createArchive();
 
         // Check if the project already has an artifact.
-        if (projectHasArtifact()) {
+        File artifactFile = artifact.getFile();
+        if (artifactFile != null && artifactFile.isFile()) {
             throw new MojoExecutionException("An artifact is already set for this project.");
         }
 
@@ -58,7 +56,7 @@ public class XlibMojo extends AbstractMojo {
         File archive = new File(outputDirectory, finalName + '.' + TYPE);
 
         archiver.setDestFile(archive);
-        archiver.addFileSet(new DefaultFileSet(classesDirectory));
+        archiver.addFileSet(new DefaultFileSet(getClassesDirectory().toFile()));
 
         try {
             archiver.createArchive();
@@ -66,10 +64,5 @@ public class XlibMojo extends AbstractMojo {
         } catch (IOException e) {
             throw new MojoExecutionException("Error assembling " + TYPE, e);
         }
-    }
-
-    private boolean projectHasArtifact() {
-        File file = artifact.getFile();
-        return file != null && file.isFile();
     }
 }

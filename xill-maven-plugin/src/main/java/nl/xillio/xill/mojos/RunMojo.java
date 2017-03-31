@@ -15,7 +15,6 @@
  */
 package nl.xillio.xill.mojos;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -23,7 +22,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 @Mojo(name = "run", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
-public class RunMojo extends AbstractMojo {
+public class RunMojo extends AbstractXlibMojo {
     // Configuration.
     @Parameter(defaultValue = "main", required = true)
     private String mainRobot;
