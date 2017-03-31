@@ -18,9 +18,8 @@ package nl.xillio.xill.mojos;
 import me.biesaart.utils.FileUtils;
 import nl.xillio.xill.api.Issue;
 import nl.xillio.xill.api.components.RobotID;
-import nl.xillio.xill.services.XillService;
+import nl.xillio.xill.services.XillEnvironmentService;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Build;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -45,7 +44,7 @@ public class CheckMojo extends AbstractMojo {
     private File classesDirectory;
 
     @Inject
-    private XillService xillService;
+    private XillEnvironmentService environmentService;
 
     private boolean hasErrors;
 
@@ -65,7 +64,7 @@ public class CheckMojo extends AbstractMojo {
 
     private void validateRobot(RobotID robot, Path[] robotPaths) {
         try {
-            xillService.getXillEnvironment().buildProcessor(classesDirectory.toPath(), robot, robotPaths).validate()
+            environmentService.getXillEnvironment().buildProcessor(classesDirectory.toPath(), robot, robotPaths).validate()
                     .forEach(this::logIssue);
         } catch (IOException e) {
             getLog().error("Could not build Xill processor for robot: " + robot.getResourcePath(), e);

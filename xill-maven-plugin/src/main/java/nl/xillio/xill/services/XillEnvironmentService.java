@@ -23,7 +23,7 @@ import javax.inject.Singleton;
 
 @Named
 @Singleton
-public class XillService {
+public class XillEnvironmentService {
     private XillEnvironment environment;
 
     public XillEnvironment getXillEnvironment() {
