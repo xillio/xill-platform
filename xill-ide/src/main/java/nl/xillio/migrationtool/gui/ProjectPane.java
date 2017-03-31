@@ -60,6 +60,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -1156,7 +1157,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         Optional<String> projectPath = Optional.empty();
 
         // Find the tree item.
-        TreeItem<Pair<File, String>> item = findItemByPath(root, url.getPath());
+        TreeItem<Pair<File, String>> item = findItemByPath(root, URI.create(url.toString()).getPath());
 
         // Check if the item is a part of the tree, only then should we try to get the project.
         if (item != null) {
