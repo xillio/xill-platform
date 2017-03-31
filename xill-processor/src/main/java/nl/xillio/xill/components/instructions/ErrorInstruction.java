@@ -23,10 +23,7 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.Processable;
 import nl.xillio.xill.debugging.ErrorBlockDebugger;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
@@ -44,11 +41,11 @@ public class ErrorInstruction extends CompoundInstruction {
     /**
      * Instantiate an {@link ErrorInstruction}
      *
-     * @param doInstructions         A collection of instructions that need to be executed.
-     * @param successInstructions    A collection of successfull instructions.
-     * @param errorInstructions      A collection of erroneous instructions.
-     * @param finallyInstructions    A collection of finally instructions.
-     * @param cause                  Cause of the error.
+     * @param doInstructions      A collection of instructions that need to be executed.
+     * @param successInstructions A collection of successfull instructions.
+     * @param errorInstructions   A collection of erroneous instructions.
+     * @param finallyInstructions A collection of finally instructions.
+     * @param cause               Cause of the error.
      */
     public ErrorInstruction(InstructionSet doInstructions, InstructionSet successInstructions, InstructionSet errorInstructions, InstructionSet finallyInstructions, VariableDeclaration cause) {
         this.doInstructions = doInstructions;
@@ -161,8 +158,11 @@ public class ErrorInstruction extends CompoundInstruction {
     private String getMessage(Throwable e) {
         String message = "Unknown internal error";
         if (e.getMessage() != null) {
-            List<Throwable> exceptionList = ExceptionUtils.getThrowableList(e);
-            message = String.join("\n\t", Lists.reverse(exceptionList.stream().filter(p -> p.getMessage() != null).map(Throwable::getMessage).collect(Collectors.toList())));
+            message = Lists.reverse(ExceptionUtils.getThrowableList(e))
+                    .stream()
+                    .map(Throwable::getMessage)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.joining("\n\t"));
         }
         return message;
     }
