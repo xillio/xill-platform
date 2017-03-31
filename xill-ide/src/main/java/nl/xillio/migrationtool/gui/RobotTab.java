@@ -512,26 +512,25 @@ public class RobotTab extends FileTab implements Initializable {
     @SuppressWarnings("squid:S1166")
     public void display(final RobotID robot, final int line) {
 
-        if (robot != getProcessor().getRobotID() && currentRobot == getProcessor().getRobotID()) {
+        if (!robot.equals(getProcessor().getRobotID()) && currentRobot.equals(getProcessor().getRobotID())) {
             // We are moving away from the main robot
             getEditorPane().getEditor().snapshotUndoManager();
         }
 
         // Update the code
-        if (currentRobot != robot) {
+        if (!currentRobot.equals(robot)) {
 
             currentRobot = robot;
             Platform.runLater(() -> {
                 reload(robot.getURL(), false);
-
-                if (robot == getProcessor().getRobotID()) {
+                getEditorPane().getEditor().refreshBreakpoints(currentRobot);
+                if (robot.equals(getProcessor().getRobotID())) {
                     // We are moving back to the current robot
                     getEditorPane().getEditor().restoreUndoManager();
-                    getEditorPane().getEditor().refreshBreakpoints(currentRobot);
                 }
 
                 // Blocker
-                getEditorPane().getEditor().setEditable(currentRobot == getProcessor().getRobotID());
+                getEditorPane().getEditor().setEditable(currentRobot.equals(getProcessor().getRobotID()));
             });
 
             // Remove the 'edited' state
