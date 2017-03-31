@@ -261,7 +261,7 @@ public class RobotTab extends FileTab implements Initializable {
     protected void validate() {
         List<Issue> issues = getProcessor().validate()
                 .stream()
-                .filter(issue -> issue.getRobot() == getCurrentRobot())
+                .filter(issue -> issue.getRobot().equals(getCurrentRobot()))
                 .collect(Collectors.toList());
 
         getEditorPane().getEditor().annotate(issues);
