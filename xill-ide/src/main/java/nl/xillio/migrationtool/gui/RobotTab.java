@@ -424,6 +424,7 @@ public class RobotTab extends FileTab implements Initializable {
         robotThread.setUncaughtExceptionHandler((thread, e) -> {
             // This error can occur if, e.g. deep recursion, is performed.
             if (e instanceof StackOverflowError) {
+                LOGGER.error("A stack overflow error occurred on the robot thread", e);
                 handleStackOverFlowError(robot, e.getClass().getName());
             }
         });
@@ -595,8 +596,12 @@ public class RobotTab extends FileTab implements Initializable {
         getEditorPane().getEditor().clearHighlight();
 
         // Clear all highlights in all related robot tabs.
-        relatedHighlightTabs.stream().filter(tab -> getGlobalController().findTab(tab.getResourceUrl()) != null).forEach(RobotTab::clearHighlight);
-        relatedHighlightTabs.clear();
+        for(int i = relatedHighlightTabs.size() - 1; i >= 0; i--) {
+            RobotTab tab = relatedHighlightTabs.remove(i);
+            if(getGlobalController().findTab(tab.getResourceUrl()) != null) {
+                tab.clearHighlight();
+            }
+        }
     }
 
     /**
