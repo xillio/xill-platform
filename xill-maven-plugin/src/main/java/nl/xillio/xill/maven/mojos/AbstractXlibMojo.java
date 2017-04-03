@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.mojos;
+package nl.xillio.xill.maven.mojos;
 
 import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.api.components.RobotID;
-import nl.xillio.xill.services.XillEnvironmentService;
+import nl.xillio.xill.maven.services.XillEnvironmentService;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -35,8 +35,12 @@ public abstract class AbstractXlibMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.outputDirectory}", readonly = true, required = true)
     private File classesDirectory;
 
-    @Inject
     private XillEnvironmentService environmentService;
+
+    @Inject
+    public AbstractXlibMojo(XillEnvironmentService environmentService) {
+        this.environmentService = environmentService;
+    }
 
     protected Path getClassesDirectory() {
         return classesDirectory.toPath();
@@ -61,5 +65,9 @@ public abstract class AbstractXlibMojo extends AbstractMojo {
     protected List<Path> getRobotFiles() {
         return FileUtils.listFiles(classesDirectory, new String[]{"xill"}, true)
                 .stream().map(File::toPath).collect(Collectors.toList());
+    }
+
+    public void setClassesDirectory(File classesDirectory) {
+        this.classesDirectory = classesDirectory;
     }
 }

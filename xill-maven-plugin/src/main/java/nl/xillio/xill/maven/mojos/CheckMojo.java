@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.mojos;
+package nl.xillio.xill.maven.mojos;
 
 import nl.xillio.xill.api.Issue;
 import nl.xillio.xill.api.components.RobotID;
+import nl.xillio.xill.maven.services.XillEnvironmentService;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -25,6 +26,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -36,6 +38,11 @@ public class CheckMojo extends AbstractXlibMojo {
     private Collection<Artifact> artifacts;
 
     private boolean hasErrors;
+
+    @Inject
+    public CheckMojo(XillEnvironmentService environmentService) {
+        super(environmentService);
+    }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

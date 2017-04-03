@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.services;
+package nl.xillio.xill.maven.services;
 
 import nl.xillio.xill.XillEnvironmentImpl;
 import nl.xillio.xill.api.XillEnvironment;
