@@ -15,12 +15,15 @@
  */
 package nl.xillio.xill.maven.mojos;
 
-import nl.xillio.xill.api.XillProcessor;
+import n.xillio.xill.cli.RobotExecutionException;
+import n.xillio.xill.cli.XillRobotExecutor;
 import nl.xillio.xill.api.Issue;
+import nl.xillio.xill.api.XillProcessor;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.api.io.SimpleIOStream;
 import nl.xillio.xill.maven.services.XillEnvironmentService;
+import nl.xillio.xill.plugins.system.services.info.SystemInfoService;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -36,7 +39,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
 
 @Mojo(name = "run", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
@@ -61,58 +63,18 @@ public class RunMojo extends AbstractXlibMojo {
         Path rootFolder = getClassesDirectory();;
         Path[] includePaths = artifacts.stream().map(Artifact::getFile).map(File::toPath).toArray(Path[]::new);
 
-        XillProcessor processor = buildProcessor(mainRobot, rootFolder, includePaths);
-        List<Issue> issues = compile(processor);
-        issues.forEach(this::logIssue);
-        
-        processor.getRobot().setArgument(buildArgument());
-    }
+        XillRobotExecutor robotExecutor = new XillRobotExecutor(
+                getXillEnvironment(),
+                rootFolder,
+                includePaths,
+                System.in,
+                System.out,
+                System.err);
 
-    private XillProcessor buildProcessor(String robot, Path root, Path[] includes) {
         try {
-            return getXillEnvironment().buildProcessor(root, robot, includes);
-        } catch (IOException e) {
-            getLog().error("Failed to initialize Xill. ", e);
-        }
-        return null;
-    }
-
-    private List<Issue> compile(XillProcessor processor) {
-        try {
-            return processor.compile();
-        } catch (IOException e) {
-            getLog().error("Fatal error during compilitation. ", e);
-        } catch (XillParsingException e) {
-            getLog().error("Compile error: " + e.getMessage(), e);
-        }
-        return null;
-    }
-
-    // TEMP UTIL
-    private MetaExpression buildArgument() {
-        LinkedHashMap<String, MetaExpression> data = new LinkedHashMap<>(3);
-
-        data.put("input", fromValue(new SimpleIOStream(System.in, "InputStream")));
-        data.put("output", fromValue(new SimpleIOStream(System.out, "OutputStream")));
-        data.put("error", fromValue(new SimpleIOStream(System.err, "ErrorStream")));
-
-        return fromValue(data);
-    }
-
-    private void logIssue(Issue issue) {
-        String message = String.format("%s:%d - %s", issue.getRobot().getURL(), issue.getLine(), issue.getMessage());
-
-        switch (issue.getSeverity()) {
-            case INFO:
-                getLog().info(message);
-                break;
-            case WARNING:
-                getLog().warn(message);
-                break;
-            case ERROR:
-                getLog().error(message);
-                hasErrors = true;
-                break;
+            robotExecutor.execute(mainRobot);
+        } catch (RobotExecutionException e) {
+            getLog().error("Execution Error: ", e);
         }
     }
 }
