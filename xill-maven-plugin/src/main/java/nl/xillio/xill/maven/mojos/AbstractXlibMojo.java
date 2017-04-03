@@ -42,6 +42,11 @@ public abstract class AbstractXlibMojo extends AbstractMojo {
         this.environmentService = environmentService;
     }
 
+    public AbstractXlibMojo(XillEnvironmentService environmentService, File classesDirectory) {
+        this.environmentService = environmentService;
+        this.classesDirectory = classesDirectory;
+    }
+
     protected Path getClassesDirectory() {
         return classesDirectory.toPath();
     }
@@ -65,9 +70,5 @@ public abstract class AbstractXlibMojo extends AbstractMojo {
     protected List<Path> getRobotFiles() {
         return FileUtils.listFiles(classesDirectory, new String[]{"xill"}, true)
                 .stream().map(File::toPath).collect(Collectors.toList());
-    }
-
-    public void setClassesDirectory(File classesDirectory) {
-        this.classesDirectory = classesDirectory;
     }
 }

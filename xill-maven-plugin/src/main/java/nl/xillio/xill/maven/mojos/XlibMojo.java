@@ -45,6 +45,15 @@ public class XlibMojo extends AbstractXlibMojo {
         super(environmentService);
     }
 
+    public XlibMojo(XillEnvironmentService environmentService, File classesDirectory,
+                    Artifact artifact, String finalName, File outputDirectory, Archiver archiver) {
+        super(environmentService, classesDirectory);
+        this.artifact = artifact;
+        this.finalName = finalName;
+        this.outputDirectory = outputDirectory;
+        this.archiver = archiver;
+    }
+
     public void execute() throws MojoExecutionException {
         File archive = createArchive();
 
@@ -71,21 +80,5 @@ public class XlibMojo extends AbstractXlibMojo {
         } catch (IOException e) {
             throw new MojoExecutionException("Error assembling xlib.", e);
         }
-    }
-
-    public void setArtifact(Artifact artifact) {
-        this.artifact = artifact;
-    }
-
-    public void setFinalName(String finalName) {
-        this.finalName = finalName;
-    }
-
-    public void setOutputDirectory(File outputDirectory) {
-        this.outputDirectory = outputDirectory;
-    }
-
-    public void setArchiver(Archiver archiver) {
-        this.archiver = archiver;
     }
 }
