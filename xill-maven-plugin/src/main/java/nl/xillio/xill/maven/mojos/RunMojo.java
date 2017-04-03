@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
 
 @Mojo(name = "run", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
@@ -44,8 +45,8 @@ public class RunMojo extends AbstractXlibMojo {
     @Parameter(defaultValue = "mainRobot", required = true)
     private String mainRobot;
 
-    @Parameter(defaultValue = "${project.build.finalName}", readonly = true, required = true)
-    private String finalName;
+    @Parameter(defaultValue = "${project.artifacts}", readonly = true, required = true)
+    private Collection<Artifact> artifacts;
 
     private boolean hasErrors;
 
@@ -58,8 +59,7 @@ public class RunMojo extends AbstractXlibMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         Path rootFolder = getClassesDirectory();;
-        Path[] includePaths = new Path[] {
-            rootFolder.resolve(finalName + ".xlib")};
+        Path[] includePaths = artifacts.stream().map(Artifact::getFile).map(File::toPath).toArray(Path[]::new);
 
         XillProcessor processor = buildProcessor(mainRobot, rootFolder, includePaths);
         List<Issue> issues = compile(processor);
