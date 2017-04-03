@@ -16,7 +16,7 @@
     limitations under the License.
 
 -->
-<Configuration packages="nl.xillio.xill.api">
+<Configuration>
     <Appenders>
         <Console name="stdout" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{ISO8601} %p\t- (%F:%L) %m%n"/>
@@ -24,21 +24,12 @@
         </Console>
         <Console name="stderr" target="SYSTEM_ERR">
             <PatternLayout pattern="%d{ISO8601} %p\t- (%F:%L) %m%n"/>
-            <Filters>
-                <MarkerFilter marker="NO_DEV" onMatch="DENY" onMismatch="ACCEPT"/>
-            </Filters>
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="nl.xillio" level="all">
-        </Logger>
-        <Logger name="xill" level="info">
-        </Logger>
-        <Logger name="robot" level="all">
-        </Logger>
         <Logger name="org.elasticsearch" level="error">
         </Logger>
-        <Root level="error">
+        <Root level="info">
             <AppenderRef ref="stdout"/>
             <AppenderRef ref="stderr" level="warn"/>
         </Root>
