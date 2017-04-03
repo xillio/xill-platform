@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *         http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,8 +29,8 @@ import static org.mockito.Mockito.*;
 
 public class XlibMojoTest {
     private Artifact artifact;
-    private String finalName;
-    private File outputDirectory;
+    private String finalName = "final-name";
+    private File outputDirectory = new File("target");
     private Archiver archiver;
 
     private XlibMojo mojo;
@@ -38,8 +38,6 @@ public class XlibMojoTest {
     @BeforeMethod
     public void reset() {
         artifact = mock(Artifact.class);
-        finalName = "final-name";
-        outputDirectory = new File("target");
         archiver = mock(Archiver.class);
 
         mojo = new XlibMojo(null, new File("classes"), artifact, finalName, outputDirectory, archiver);
