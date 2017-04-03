@@ -17,13 +17,7 @@ package nl.xillio.xill.maven.mojos;
 
 import n.xillio.xill.cli.RobotExecutionException;
 import n.xillio.xill.cli.XillRobotExecutor;
-import nl.xillio.xill.api.Issue;
-import nl.xillio.xill.api.XillProcessor;
-import nl.xillio.xill.api.components.MetaExpression;
-import nl.xillio.xill.api.errors.XillParsingException;
-import nl.xillio.xill.api.io.SimpleIOStream;
 import nl.xillio.xill.maven.services.XillEnvironmentService;
-import nl.xillio.xill.plugins.system.services.info.SystemInfoService;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -33,24 +27,17 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import javax.inject.Inject;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-
-import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
 
 @Mojo(name = "run", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class RunMojo extends AbstractXlibMojo {
-    // Configuration.
-    @Parameter(defaultValue = "mainRobot", required = true)
-    private String mainRobot;
-
     @Parameter(defaultValue = "${project.artifacts}", readonly = true, required = true)
     private Collection<Artifact> artifacts;
 
-    private boolean hasErrors;
+    // Configuration.
+    @Parameter(defaultValue = "mainRobot", required = true)
+    private String mainRobot;
 
     @Inject
     public RunMojo(XillEnvironmentService environmentService) {
@@ -59,22 +46,21 @@ public class RunMojo extends AbstractXlibMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-
-        Path rootFolder = getClassesDirectory();;
         Path[] includePaths = artifacts.stream().map(Artifact::getFile).map(File::toPath).toArray(Path[]::new);
 
         XillRobotExecutor robotExecutor = new XillRobotExecutor(
                 getXillEnvironment(),
-                rootFolder,
+                getClassesDirectory(),
                 includePaths,
                 System.in,
                 System.out,
-                System.err);
+                System.err
+        );
 
         try {
             robotExecutor.execute(mainRobot);
         } catch (RobotExecutionException e) {
-            getLog().error("Execution Error: ", e);
+            throw new MojoFailureException(e.getMessage(), e);
         }
     }
 }
