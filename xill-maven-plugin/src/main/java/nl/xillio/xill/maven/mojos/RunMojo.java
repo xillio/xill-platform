@@ -27,6 +27,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 
@@ -46,6 +47,12 @@ public class RunMojo extends AbstractXlibMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        // Check if the classes directory exists.
+        if (!Files.isDirectory(getClassesDirectory())) {
+            throw new MojoFailureException("The classes directory does not exist, " +
+                    "please run the compile phase before running robots.");
+        }
+
         Path[] includePaths = artifacts.stream().map(Artifact::getFile).map(File::toPath).toArray(Path[]::new);
 
         XillRobotExecutor robotExecutor = new XillRobotExecutor(
