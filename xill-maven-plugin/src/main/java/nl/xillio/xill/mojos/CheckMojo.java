@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *         http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +15,6 @@
  */
 package nl.xillio.xill.mojos;
 
-import me.biesaart.utils.FileUtils;
 import nl.xillio.xill.api.Issue;
 import nl.xillio.xill.api.components.RobotID;
 import org.apache.maven.artifact.Artifact;
@@ -42,9 +41,9 @@ public class CheckMojo extends AbstractXlibMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         Path[] robotPaths = artifacts.stream().map(Artifact::getFile).map(File::toPath).toArray(Path[]::new);
 
-        Collection<File> files = FileUtils.listFiles(getClassesDirectory().toFile(), null, true);
-        for (File file : files) {
-            validateRobot(getRobotId(file.toPath()), robotPaths);
+        // Find all robots and validate them.
+        for (Path robot : getRobotFiles()) {
+            validateRobot(getRobotId(robot), robotPaths);
         }
 
         if (hasErrors) {
@@ -54,6 +53,7 @@ public class CheckMojo extends AbstractXlibMojo {
 
     private void validateRobot(RobotID robot, Path[] robotPaths) {
         try {
+            // Build the processor, validate and log issues.
             getXillEnvironment().buildProcessor(getClassesDirectory(), robot, robotPaths).validate()
                     .forEach(this::logIssue);
         } catch (IOException e) {
