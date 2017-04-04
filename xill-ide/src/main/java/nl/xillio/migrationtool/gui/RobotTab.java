@@ -261,7 +261,7 @@ public class RobotTab extends FileTab implements Initializable {
     protected void validate() {
         List<Issue> issues = getProcessor().validate()
                 .stream()
-                .filter(issue -> issue.getRobot() == getCurrentRobot())
+                .filter(issue -> issue.getRobot().equals(getCurrentRobot()))
                 .collect(Collectors.toList());
 
         getEditorPane().getEditor().annotate(issues);
@@ -424,6 +424,7 @@ public class RobotTab extends FileTab implements Initializable {
         robotThread.setUncaughtExceptionHandler((thread, e) -> {
             // This error can occur if, e.g. deep recursion, is performed.
             if (e instanceof StackOverflowError) {
+                LOGGER.error("A stack overflow error occurred on the robot thread", e);
                 handleStackOverFlowError(robot, e.getClass().getName());
             }
         });
@@ -512,26 +513,25 @@ public class RobotTab extends FileTab implements Initializable {
     @SuppressWarnings("squid:S1166")
     public void display(final RobotID robot, final int line) {
 
-        if (robot != getProcessor().getRobotID() && currentRobot == getProcessor().getRobotID()) {
+        if (!robot.equals(getProcessor().getRobotID()) && currentRobot.equals(getProcessor().getRobotID())) {
             // We are moving away from the main robot
             getEditorPane().getEditor().snapshotUndoManager();
         }
 
         // Update the code
-        if (currentRobot != robot) {
+        if (!currentRobot.equals(robot)) {
 
             currentRobot = robot;
             Platform.runLater(() -> {
                 reload(robot.getURL(), false);
-
-                if (robot == getProcessor().getRobotID()) {
+                getEditorPane().getEditor().refreshBreakpoints(currentRobot);
+                if (robot.equals(getProcessor().getRobotID())) {
                     // We are moving back to the current robot
                     getEditorPane().getEditor().restoreUndoManager();
-                    getEditorPane().getEditor().refreshBreakpoints(currentRobot);
                 }
 
                 // Blocker
-                getEditorPane().getEditor().setEditable(currentRobot == getProcessor().getRobotID());
+                getEditorPane().getEditor().setEditable(currentRobot.equals(getProcessor().getRobotID()));
             });
 
             // Remove the 'edited' state
@@ -596,8 +596,12 @@ public class RobotTab extends FileTab implements Initializable {
         getEditorPane().getEditor().clearHighlight();
 
         // Clear all highlights in all related robot tabs.
-        relatedHighlightTabs.stream().filter(tab -> getGlobalController().findTab(tab.getResourceUrl()) != null).forEach(RobotTab::clearHighlight);
-        relatedHighlightTabs.clear();
+        for(int i = relatedHighlightTabs.size() - 1; i >= 0; i--) {
+            RobotTab tab = relatedHighlightTabs.remove(i);
+            if(getGlobalController().findTab(tab.getResourceUrl()) != null) {
+                tab.clearHighlight();
+            }
+        }
     }
 
     /**
