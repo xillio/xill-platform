@@ -450,9 +450,13 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     private void resetTabs(final List<Pair<File, File>> files) {
         // Close all related open target tabs (if exist they will be overwritten by source files having different path and project so we need to close them)
         files.forEach(f -> {
-            FileTab tab = controller.findTab(toURL(f.getValue())); // Target file
+            FileTab tab = controller.findTab(toURL(f.getKey())); // Target file
             if (tab != null) {
+                FileTab openTab = (FileTab) controller.getSelectedTab();
                 controller.closeTab(tab, true, true);
+                controller.openRobot(toURL(f.getValue()));
+                if(openTab != tab)
+                    controller.showTab(openTab);
             }
         });
 
