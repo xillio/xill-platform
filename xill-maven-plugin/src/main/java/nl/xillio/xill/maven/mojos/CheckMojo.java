@@ -16,6 +16,7 @@
 package nl.xillio.xill.maven.mojos;
 
 import nl.xillio.xill.api.Issue;
+import nl.xillio.xill.api.XillProcessor;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.maven.services.XillEnvironmentService;
 import org.apache.maven.artifact.Artifact;
@@ -64,10 +65,10 @@ public class CheckMojo extends AbstractXlibMojo {
     }
 
     private void validateRobot(RobotID robot, Path[] robotPaths) {
-        try {
-            // Build the processor, validate and log issues.
-            getXillEnvironment().buildProcessor(getClassesDirectory(), robot, robotPaths).validate()
-                    .forEach(this::logIssue);
+        // Build the processor, validate and log issues.
+        try (XillProcessor processor = getXillEnvironment().buildProcessor(getClassesDirectory(), robot, robotPaths)) {
+            getLog().debug("Validating " + robot.getResourcePath() + "...");
+            processor.validate().forEach(this::logIssue);
         } catch (IOException e) {
             getLog().error("Could not build Xill processor for robot: " + robot.getResourcePath(), e);
             hasErrors = true;
