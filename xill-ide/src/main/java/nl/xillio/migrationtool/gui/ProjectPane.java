@@ -1262,6 +1262,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         menuRename.setDisable(disable);
         menuOpenFolder.setDisable(disable);
         menuCut.setDisable(disable);
+        menuNewFolder.setDisable(disable);
         menuNewBot.setDisable(disable);
     }
 
