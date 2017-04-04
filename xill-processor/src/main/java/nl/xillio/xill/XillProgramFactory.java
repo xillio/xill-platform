@@ -294,6 +294,8 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
      * @return
      * @throws XillParsingException When parsing an instruction wasn't successful
      */
+    @SuppressWarnings("squid:S2095")
+    // Don't close the InstructionSet as we are returning it
     InstructionSet parseToken(final xill.lang.xill.InstructionSet token) throws XillParsingException {
         InstructionSet instructionSet = new InstructionSet(debugger);
 
@@ -485,6 +487,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
     }
 
     private xill.lang.xill.Robot findRobot(EObject object) throws XillParsingException {
+        Objects.nonNull(object);
         EObject current = object;
 
         while (current != null) {
