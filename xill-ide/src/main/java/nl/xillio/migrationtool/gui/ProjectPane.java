@@ -55,11 +55,9 @@ import org.slf4j.Logger;
 
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -803,7 +801,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             if (!settings.simple().getBoolean(Settings.INFO, Settings.HAS_RUN)) {
                 if (defaultProjectPath.exists()) {
                     // Projects must have an absolute directory
-                    newProject(DEFAULT_PROJECT_NAME, defaultProjectPath.getAbsolutePath(), "");
+                    newProject(DEFAULT_PROJECT_NAME, pathToURL(defaultProjectPath.toPath()), "");
                 }
                 // Mark that the IDE has run for the first time
                 settings.simple().save(Settings.INFO, Settings.HAS_RUN, true);
@@ -882,7 +880,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
      * @param description the description of the project
      * @return whether creating the project was successful
      */
-    public boolean newProject(final String name, final String folder, final String description) {
+    public boolean newProject(final String name, final URL folder, final String description) {
         // Check if the project is already opened
         boolean projectDoesntExist = root.getChildren().parallelStream().map(TreeItem::getValue).map(Pair::getValue).noneMatch(n -> n.equalsIgnoreCase(name))
                 && findItemByPath(root, folder) == null;
@@ -895,7 +893,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         }
 
         // Check if project folder already exists under different capitalization
-        File projectFolder = new File(folder);
+        File projectFolder = new File(folder.toString());
         if (projectFolder.exists()) {
             try {
                 String canonicalFileName = projectFolder.getCanonicalFile().getName();
@@ -913,7 +911,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         }
 
         // Create the project.
-        ProjectSettings project = new ProjectSettings(name, folder, description);
+        ProjectSettings project = new ProjectSettings(name, folder.toString(), description);
         settings.project().save(project);
         try {
             FileUtils.forceMkdir(new File(project.getFolder()));
@@ -962,13 +960,13 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
      *
      * @param path The path of the item to select.
      */
-    public void select(final String path) {
+    public void select(final URL path) {
         select(path != null ? findItemByPath(root, path) : null);
     }
 
-    private TreeItem<Pair<File, String>> findItemByPath(final TreeItem<Pair<File, String>> parent, final String path) {
+    private TreeItem<Pair<File, String>> findItemByPath(final TreeItem<Pair<File, String>> parent, final URL path) {
         for (TreeItem<Pair<File, String>> item : parent.getChildren()) {
-            if (path.equals(item.getValue().getKey().getPath())) {
+            if (path.equals(pathToURL(item.getValue().getKey().toPath()))) {
                 return item;
             } else {
                 TreeItem<Pair<File, String>> child = findItemByPath(item, path);
@@ -978,6 +976,14 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
             }
         }
         return null;
+    }
+
+    private URL pathToURL(Path path) {
+        try {
+            return path.toUri().toURL();
+        } catch (MalformedURLException e) {
+            throw new UncheckedIOException("Cannot convert path '"+ path.toString() +"' to URL", e);
+        }
     }
 
     /**
@@ -1084,9 +1090,9 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
      */
     public void selectNewItem(Path parent, Path child, ProjectTreeItem project) {
         project.refresh();
-        TreeItem<Pair<File, String>> item = findItemByPath(getRoot(), child.toString());
+        TreeItem<Pair<File, String>> item = findItemByPath(getRoot(), pathToURL(child));
         if (item == null) {
-            item = findItemByPath(getRoot(), parent.toString());
+            item = findItemByPath(getRoot(), pathToURL(parent));
         }
         select(item);
     }
@@ -1156,7 +1162,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         Optional<String> projectPath = Optional.empty();
 
         // Find the tree item.
-        TreeItem<Pair<File, String>> item = findItemByPath(root, url.getPath());
+        TreeItem<Pair<File, String>> item = findItemByPath(root, url);
 
         // Check if the item is a part of the tree, only then should we try to get the project.
         if (item != null) {
@@ -1256,6 +1262,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
         menuRename.setDisable(disable);
         menuOpenFolder.setDisable(disable);
         menuCut.setDisable(disable);
+        menuNewFolder.setDisable(disable);
         menuNewBot.setDisable(disable);
     }
 

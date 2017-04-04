@@ -266,7 +266,10 @@ public class FXController implements Initializable, EventHandler<Event> {
             if (!workspace.isEmpty()) {
                 String[] files = workspace.split(";");
                 for (final String filename : files) {
-                    openFile(new File(filename));
+                    FileTab tab = openFile(new File(filename));
+                    if(tab instanceof RobotTab){
+                        ((RobotTab) tab).validate();
+                    }
                 }
             }
         });
