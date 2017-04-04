@@ -47,8 +47,8 @@ public class XlibMojo extends AbstractXlibMojo {
         super(environmentService);
     }
 
-    public XlibMojo(XillEnvironmentService environmentService, File classesDirectory, Artifact artifact, String finalName, File outputDirectory, Archiver archiver) {
-        super(environmentService, classesDirectory);
+    public XlibMojo(XillEnvironmentService environmentService, Artifact artifact, String finalName, File outputDirectory, Archiver archiver) {
+        this(environmentService);
         this.artifact = artifact;
         this.finalName = finalName;
         this.outputDirectory = outputDirectory;

@@ -18,7 +18,7 @@ package nl.xillio.xill.maven.mojos;
 import n.xillio.xill.cli.RobotExecutionException;
 import n.xillio.xill.cli.XillRobotExecutor;
 import nl.xillio.xill.maven.services.XillEnvironmentService;
-import nl.xillio.xill.maven.services.XillRobotExecutorService;
+import nl.xillio.xill.maven.services.XillRobotExecutorFactory;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -43,17 +43,16 @@ public class RunMojo extends AbstractXlibMojo {
     @Parameter(defaultValue = "mainRobot", required = true, property = "mainRobot")
     private String mainRobot;
 
-    private XillRobotExecutorService robotExecutorService;
+    private XillRobotExecutorFactory robotExecutorService;
 
     @Inject
-    public RunMojo(XillEnvironmentService environmentService, XillRobotExecutorService robotExecutorService) {
+    public RunMojo(XillEnvironmentService environmentService, XillRobotExecutorFactory robotExecutorService) {
         super(environmentService);
         this.robotExecutorService = robotExecutorService;
     }
 
-    public RunMojo(XillEnvironmentService environmentService, XillRobotExecutorService robotExecutorService, File classesDirectory, Collection<Artifact> artifacts, String mainRobot) {
-        super(environmentService, classesDirectory);
-        this.robotExecutorService = robotExecutorService;
+    public RunMojo(XillEnvironmentService environmentService, XillRobotExecutorFactory robotExecutorService, Collection<Artifact> artifacts, String mainRobot) {
+        this(environmentService, robotExecutorService);
         this.artifacts = artifacts;
         this.mainRobot = mainRobot;
     }

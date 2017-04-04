@@ -39,7 +39,8 @@ public class XlibMojoTest {
         artifact = mock(Artifact.class);
         archiver = mock(Archiver.class);
 
-        mojo = new XlibMojo(null, new File("classes"), artifact, finalName, outputDirectory, archiver);
+        mojo = new XlibMojo(null, artifact, finalName, outputDirectory, archiver);
+        mojo.setClassesDirectory(new File("classes"));
     }
 
     @Test

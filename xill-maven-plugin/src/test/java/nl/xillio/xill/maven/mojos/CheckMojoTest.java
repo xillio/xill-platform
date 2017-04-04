@@ -23,6 +23,7 @@ import nl.xillio.xill.maven.services.XillEnvironmentService;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -46,6 +47,7 @@ public class CheckMojoTest {
     private File classesDirectory = new File("classes");
     private Path dependencyPath;
 
+    private Log log;
     private CheckMojo mojo;
 
     @BeforeMethod
@@ -65,7 +67,11 @@ public class CheckMojoTest {
         when(dependency.getFile()).thenReturn(depFile);
         when(depFile.toPath()).thenReturn(dependencyPath);
 
-        mojo = new TestableCheckMojo(environmentService, classesDirectory, Collections.singleton(dependency), Collections.singletonList(robot));
+        log = mock(Log.class);
+
+        mojo = new TestableCheckMojo(environmentService, Collections.singleton(dependency), Collections.singletonList(robot));
+        mojo.setClassesDirectory(classesDirectory);
+        mojo.setLog(log);
     }
 
     @Test
@@ -84,6 +90,9 @@ public class CheckMojoTest {
         when(processor.validate()).thenReturn(issues);
 
         mojo.execute();
+
+        verify(log, times(1)).info(anyString());
+        verify(log, times(1)).warn(anyString());
     }
 
     @Test(expectedExceptions = MojoFailureException.class)
@@ -106,8 +115,8 @@ public class CheckMojoTest {
     private class TestableCheckMojo extends CheckMojo {
         private final List<Path> robotFiles;
 
-        private TestableCheckMojo(XillEnvironmentService environmentService, File classesDirectory, Collection<Artifact> artifacts, List<Path> robotFiles) {
-            super(environmentService, classesDirectory, artifacts);
+        private TestableCheckMojo(XillEnvironmentService environmentService, Collection<Artifact> artifacts, List<Path> robotFiles) {
+            super(environmentService, artifacts);
             this.robotFiles = robotFiles;
         }
 

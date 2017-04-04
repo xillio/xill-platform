@@ -45,8 +45,8 @@ public class CheckMojo extends AbstractXlibMojo {
         super(environmentService);
     }
 
-    public CheckMojo(XillEnvironmentService environmentService, File classesDirectory, Collection<Artifact> artifacts) {
-        super(environmentService, classesDirectory);
+    public CheckMojo(XillEnvironmentService environmentService, Collection<Artifact> artifacts) {
+        this(environmentService);
         this.artifacts = artifacts;
     }
 

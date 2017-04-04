@@ -491,6 +491,11 @@
                 <artifactId>xill-ide</artifactId>
                 <version>${xill.version}</version>
             </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>xill-cli</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
