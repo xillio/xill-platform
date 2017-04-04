@@ -42,11 +42,6 @@ public abstract class AbstractXlibMojo extends AbstractMojo {
         this.environmentService = environmentService;
     }
 
-    public AbstractXlibMojo(XillEnvironmentService environmentService, File classesDirectory) {
-        this.environmentService = environmentService;
-        this.classesDirectory = classesDirectory;
-    }
-
     protected Path getClassesDirectory() {
         return classesDirectory.toPath();
     }

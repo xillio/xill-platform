@@ -38,8 +38,6 @@ import static org.mockito.Mockito.*;
 
 public class RunMojoTest {
     private XillRobotExecutor executor;
-
-    private File classesDirectory = new File(".");
     private String mainRobot = "mainRobot";
 
     private RunMojo mojo;
@@ -64,7 +62,8 @@ public class RunMojoTest {
         when(dependency.getFile()).thenReturn(depFile);
         when(depFile.toPath()).thenReturn(dependencyPath);
 
-        mojo = new RunMojo(environmentService, robotExecutorService, classesDirectory, Collections.singleton(dependency), mainRobot);
+        mojo = new RunMojo(environmentService, robotExecutorService, Collections.singleton(dependency), mainRobot);
+        mojo.setClassesDirectory(new File("."));
     }
 
     @Test

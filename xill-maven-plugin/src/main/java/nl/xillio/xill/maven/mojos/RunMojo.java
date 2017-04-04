@@ -51,9 +51,8 @@ public class RunMojo extends AbstractXlibMojo {
         this.robotExecutorService = robotExecutorService;
     }
 
-    public RunMojo(XillEnvironmentService environmentService, XillRobotExecutorService robotExecutorService, File classesDirectory, Collection<Artifact> artifacts, String mainRobot) {
-        super(environmentService, classesDirectory);
-        this.robotExecutorService = robotExecutorService;
+    public RunMojo(XillEnvironmentService environmentService, XillRobotExecutorService robotExecutorService, Collection<Artifact> artifacts, String mainRobot) {
+        this(environmentService, robotExecutorService);
         this.artifacts = artifacts;
         this.mainRobot = mainRobot;
     }

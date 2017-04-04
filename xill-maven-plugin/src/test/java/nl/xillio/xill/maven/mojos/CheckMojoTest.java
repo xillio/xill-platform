@@ -65,7 +65,8 @@ public class CheckMojoTest {
         when(dependency.getFile()).thenReturn(depFile);
         when(depFile.toPath()).thenReturn(dependencyPath);
 
-        mojo = new TestableCheckMojo(environmentService, classesDirectory, Collections.singleton(dependency), Collections.singletonList(robot));
+        mojo = new TestableCheckMojo(environmentService, Collections.singleton(dependency), Collections.singletonList(robot));
+        mojo.setClassesDirectory(classesDirectory);
     }
 
     @Test
@@ -106,8 +107,8 @@ public class CheckMojoTest {
     private class TestableCheckMojo extends CheckMojo {
         private final List<Path> robotFiles;
 
-        private TestableCheckMojo(XillEnvironmentService environmentService, File classesDirectory, Collection<Artifact> artifacts, List<Path> robotFiles) {
-            super(environmentService, classesDirectory, artifacts);
+        private TestableCheckMojo(XillEnvironmentService environmentService, Collection<Artifact> artifacts, List<Path> robotFiles) {
+            super(environmentService, artifacts);
             this.robotFiles = robotFiles;
         }
 
