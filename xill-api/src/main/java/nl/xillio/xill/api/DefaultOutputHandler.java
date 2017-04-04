@@ -17,7 +17,6 @@ package nl.xillio.xill.api;
 
 import nl.xillio.xill.api.components.Instruction;
 import nl.xillio.xill.api.components.RobotID;
-import org.slf4j.event.Level;
 
 /**
  * This output handler performs no actions. It exists to provide a convenient way to create
@@ -27,7 +26,7 @@ import org.slf4j.event.Level;
  */
 public class DefaultOutputHandler implements OutputHandler {
     @Override
-    public void handleLog(RobotID robotID, Level level, String message, Object... parameters) {
+    public void handleLog(RobotID robotID, String level, String message, Object... parameters) {
         // No Op
     }
 
