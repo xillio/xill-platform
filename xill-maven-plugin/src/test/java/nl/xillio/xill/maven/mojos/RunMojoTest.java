@@ -21,7 +21,7 @@ import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.api.XillProcessor;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.maven.services.XillEnvironmentService;
-import nl.xillio.xill.maven.services.XillRobotExecutorService;
+import nl.xillio.xill.maven.services.XillRobotExecutorFactory;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -45,7 +45,7 @@ public class RunMojoTest {
     @BeforeMethod
     public void reset() throws IOException {
         XillEnvironmentService environmentService = mock(XillEnvironmentService.class);
-        XillRobotExecutorService robotExecutorService = mock(XillRobotExecutorService.class);
+        XillRobotExecutorFactory robotExecutorService = mock(XillRobotExecutorFactory.class);
         XillEnvironment environment = mock(XillEnvironment.class);
         XillProcessor processor = mock(XillProcessor.class);
         executor = mock(XillRobotExecutor.class);

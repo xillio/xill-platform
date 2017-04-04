@@ -24,7 +24,7 @@ import java.io.PrintStream;
 import java.nio.file.Path;
 
 @Singleton
-public class XillRobotExecutorService {
+public class XillRobotExecutorFactory {
     public XillRobotExecutor getRobotExecutor(XillEnvironment xillEnvironment, Path projectRoot, Path[] includePaths, InputStream stdIn, PrintStream stdOut, PrintStream stdErr) {
         return new XillRobotExecutor(xillEnvironment, projectRoot, includePaths, stdIn, stdOut, stdErr);
     }
