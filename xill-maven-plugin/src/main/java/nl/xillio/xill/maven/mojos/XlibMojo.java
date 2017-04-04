@@ -33,7 +33,9 @@ public class XlibMojo extends AbstractXlibMojo {
     @Parameter(defaultValue = "${project.build.finalName}", readonly = true, required = true)
     private String finalName;
 
-    // Configuration.
+    /**
+     * The output directory to create the xlib archive in.
+     */
     @Parameter(defaultValue = "${project.build.directory}", required = true)
     private File outputDirectory;
 

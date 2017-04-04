@@ -37,8 +37,10 @@ public class RunMojo extends AbstractXlibMojo {
     @Parameter(defaultValue = "${project.artifacts}", readonly = true, required = true)
     private Collection<Artifact> artifacts;
 
-    // Configuration.
-    @Parameter(defaultValue = "mainRobot", required = true)
+    /**
+     * The fully-qualified name of the robot to execute.
+     */
+    @Parameter(defaultValue = "mainRobot", required = true, property = "mainRobot")
     private String mainRobot;
 
     private XillRobotExecutorService robotExecutorService;
