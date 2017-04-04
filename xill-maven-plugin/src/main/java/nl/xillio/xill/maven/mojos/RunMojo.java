@@ -18,6 +18,7 @@ package nl.xillio.xill.maven.mojos;
 import n.xillio.xill.cli.RobotExecutionException;
 import n.xillio.xill.cli.XillRobotExecutor;
 import nl.xillio.xill.maven.services.XillEnvironmentService;
+import nl.xillio.xill.maven.services.XillRobotExecutorService;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -40,9 +41,19 @@ public class RunMojo extends AbstractXlibMojo {
     @Parameter(defaultValue = "mainRobot", required = true)
     private String mainRobot;
 
+    private XillRobotExecutorService robotExecutorService;
+
     @Inject
-    public RunMojo(XillEnvironmentService environmentService) {
+    public RunMojo(XillEnvironmentService environmentService, XillRobotExecutorService robotExecutorService) {
         super(environmentService);
+        this.robotExecutorService = robotExecutorService;
+    }
+
+    public RunMojo(XillEnvironmentService environmentService, XillRobotExecutorService robotExecutorService, File classesDirectory, Collection<Artifact> artifacts, String mainRobot) {
+        super(environmentService, classesDirectory);
+        this.robotExecutorService = robotExecutorService;
+        this.artifacts = artifacts;
+        this.mainRobot = mainRobot;
     }
 
     @Override
@@ -55,7 +66,7 @@ public class RunMojo extends AbstractXlibMojo {
 
         Path[] includePaths = artifacts.stream().map(Artifact::getFile).map(File::toPath).toArray(Path[]::new);
 
-        XillRobotExecutor robotExecutor = new XillRobotExecutor(
+        XillRobotExecutor robotExecutor = robotExecutorService.getRobotExecutor(
                 getXillEnvironment(),
                 getClassesDirectory(),
                 includePaths,
