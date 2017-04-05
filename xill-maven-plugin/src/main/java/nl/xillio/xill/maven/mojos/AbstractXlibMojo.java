@@ -37,7 +37,7 @@ public abstract class AbstractXlibMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.outputDirectory}", readonly = true, required = true)
     private File classesDirectory;
 
-    @Parameter(defaultValue = "${project.build.directory}", readonly = false, required = true)
+    @Parameter(defaultValue = "${project.build.directory}", property = "workingDirectory", required = true)
     private File workingDirectory;
 
     private XillEnvironmentService environmentService;
