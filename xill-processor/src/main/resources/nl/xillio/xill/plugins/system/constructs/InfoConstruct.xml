@@ -29,8 +29,10 @@ Returns an OBJECT variable containing:
 |`memory`|An OBJECT with information about the memory to this application|
 |`workingDirectory`|The path to the working directory of the current robot|
 |`fileSystem`|An OBJECT with information about the current file system|
-|`rootRobotPath`|The path to the robot that is run first|
-|`robotPath`|The path to the robot that executes this function|
+|`rootRobotPath`|The url to the robot that is run first|
+|`robotPath`|The url to the robot that executes this function|
+|`qualifiedName`|The fully qualified name of the robot if it has one. Otherwise, null.|
+|`resourcePath`|The path from the project root to the robot|
 	</longDescription>
     <examples>
         <example title="Usage">
@@ -42,9 +44,11 @@ Returns an OBJECT variable containing:
                 /*
                     Outputs:
                         {
-                            "robotPath":"D:\\Code\\CT\\Xill 3.0\\projects\\tmp.xill",
-                            "rootRobotPath":"D:\\Code\\CT\\Xill 3.0\\projects\\tmp.xill",
+                            "robotPath":"file://D:\\Code\\CT\\Xill 3.0\\projects\\tmp.xill",
+                            "rootRobotPath":"file://D:\\Code\\CT\\Xill 3.0\\projects\\tmp.xill",
                             "workingDirectory":"D:\\Code\\CT\\Xill 3.0",
+                            "resourcePath": "projects/tmp.xill",
+                            "qualifiedName": "projects.tmp",
                             "availableProcessors":8,
                             "memory":{
                                 "free":281276656,
