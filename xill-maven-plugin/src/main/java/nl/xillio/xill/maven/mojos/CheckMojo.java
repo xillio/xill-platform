@@ -28,7 +28,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import javax.inject.Inject;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -52,7 +51,7 @@ public class CheckMojo extends AbstractXlibMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        Path[] robotPaths = artifacts.stream().map(Artifact::getFile).map(File::toPath).toArray(Path[]::new);
+        Path[] robotPaths = getRobotPaths(artifacts);
 
         // Find all robots and validate them.
         for (Path robot : getRobotFiles()) {
@@ -66,7 +65,7 @@ public class CheckMojo extends AbstractXlibMojo {
 
     private void validateRobot(RobotID robot, Path[] robotPaths) {
         // Build the processor, validate and log issues.
-        try (XillProcessor processor = getXillEnvironment().buildProcessor(getClassesDirectory(), robot, robotPaths)) {
+        try (XillProcessor processor = getXillEnvironment().buildProcessor(getWorkingDirectory(), robot, robotPaths)) {
             getLog().debug("Validating " + robot.getResourcePath() + "...");
             processor.validate().forEach(this::logIssue);
         } catch (IOException e) {

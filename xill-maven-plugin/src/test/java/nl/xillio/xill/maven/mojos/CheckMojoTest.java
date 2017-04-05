@@ -45,7 +45,6 @@ public class CheckMojoTest {
     private Path robot = Paths.get("robot.xill");
 
     private File classesDirectory = new File("classes");
-    private Path dependencyPath;
 
     private Log log;
     private CheckMojo mojo;
@@ -58,14 +57,12 @@ public class CheckMojoTest {
 
         // Mock the environment service.
         when(environmentService.getXillEnvironment()).thenReturn(environment);
-        when(environment.buildProcessor(any(), (RobotID) any(), any())).thenReturn(processor);
+        when(environment.buildProcessor(any(), (RobotID) any(), anyVararg())).thenReturn(processor);
 
         // Mock the dependency artifact and file.
         Artifact dependency = mock(Artifact.class);
-        dependencyPath = mock(Path.class);
-        File depFile = mock(File.class);
+        File depFile = new File("some-dependency.xlib");
         when(dependency.getFile()).thenReturn(depFile);
-        when(depFile.toPath()).thenReturn(dependencyPath);
 
         log = mock(Log.class);
 
@@ -78,8 +75,8 @@ public class CheckMojoTest {
     public void testCheck() throws MojoFailureException, MojoExecutionException, IOException {
         mojo.execute();
 
-        verify(environment, times(1)).buildProcessor(eq(classesDirectory.toPath()), (RobotID) any(), eq(dependencyPath));
-        verify(processor, times(1)).validate();
+        verify(environment).buildProcessor(eq(classesDirectory.toPath()), (RobotID) any(), eq(classesDirectory.toPath()), eq(Paths.get("some-dependency.xlib")));
+        verify(processor).validate();
     }
 
     @Test
@@ -106,7 +103,7 @@ public class CheckMojoTest {
 
     @Test(expectedExceptions = MojoFailureException.class)
     public void testIOException() throws MojoFailureException, MojoExecutionException, IOException {
-        when(environment.buildProcessor(any(), (RobotID) any(), any())).thenThrow(new IOException());
+        when(environment.buildProcessor(any(), (RobotID) any(), anyVararg())).thenThrow(new IOException());
 
         mojo.execute();
     }

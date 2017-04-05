@@ -27,9 +27,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import javax.inject.Inject;
-import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Collection;
 
 @Mojo(name = "run", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
@@ -65,12 +63,12 @@ public class RunMojo extends AbstractXlibMojo {
                     "please run the compile phase before running robots.");
         }
 
-        Path[] includePaths = artifacts.stream().map(Artifact::getFile).map(File::toPath).toArray(Path[]::new);
+        // Get dependencies
 
         XillRobotExecutor robotExecutor = robotExecutorService.getRobotExecutor(
                 getXillEnvironment(),
-                getClassesDirectory(),
-                includePaths,
+                getWorkingDirectory(),
+                getRobotPaths(artifacts),
                 System.in,
                 System.out,
                 System.err

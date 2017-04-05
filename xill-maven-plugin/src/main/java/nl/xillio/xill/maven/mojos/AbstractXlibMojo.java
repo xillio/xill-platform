@@ -19,6 +19,7 @@ import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.maven.services.XillEnvironmentService;
 import org.apache.commons.io.FileUtils;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -28,6 +29,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,15 +37,14 @@ public abstract class AbstractXlibMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.outputDirectory}", readonly = true, required = true)
     private File classesDirectory;
 
+    @Parameter(defaultValue = "${project.build.directory}", readonly = false, required = true)
+    private File workingDirectory;
+
     private XillEnvironmentService environmentService;
 
     @Inject
     public AbstractXlibMojo(XillEnvironmentService environmentService) {
         this.environmentService = environmentService;
-    }
-
-    protected Path getClassesDirectory() {
-        return classesDirectory.toPath();
     }
 
     protected XillEnvironment getXillEnvironment() {
@@ -67,7 +68,30 @@ public abstract class AbstractXlibMojo extends AbstractMojo {
                 .stream().map(File::toPath).collect(Collectors.toList());
     }
 
+    public Path getClassesDirectory() {
+        return classesDirectory.toPath();
+    }
+
     public void setClassesDirectory(File classesDirectory) {
         this.classesDirectory = classesDirectory;
+    }
+
+    public Path getWorkingDirectory() {
+        if (workingDirectory == null) {
+            return getClassesDirectory();
+        }
+        return workingDirectory.toPath();
+    }
+
+    public void setWorkingDirectory(File workingDirectory) {
+        this.workingDirectory = workingDirectory;
+    }
+
+    protected Path[] getRobotPaths(Collection<Artifact> artifacts) {
+        Path[] dependencies = artifacts.stream().map(Artifact::getFile).map(File::toPath).toArray(Path[]::new);
+        Path[] includePaths = new Path[dependencies.length + 1];
+        System.arraycopy(dependencies, 0, includePaths, 1, dependencies.length);
+        includePaths[0] = getClassesDirectory();
+        return includePaths;
     }
 }
