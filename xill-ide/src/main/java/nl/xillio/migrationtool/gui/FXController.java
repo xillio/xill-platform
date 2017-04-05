@@ -266,10 +266,7 @@ public class FXController implements Initializable, EventHandler<Event> {
             if (!workspace.isEmpty()) {
                 String[] files = workspace.split(";");
                 for (final String filename : files) {
-                    FileTab tab = openFile(new File(filename));
-                    if(tab instanceof RobotTab){
-                        ((RobotTab) tab).validate();
-                    }
+                    openFile(new File(filename));
                 }
             }
         });
@@ -583,9 +580,9 @@ public class FXController implements Initializable, EventHandler<Event> {
 
     private boolean closeApplication() {
         String openTabs = getTabs().stream()
-                        .map(FileTab::getResourceUrl)
-                        .map(this::unescapePathUrl)
-                        .collect(Collectors.joining(";"));
+                .map(FileTab::getResourceUrl)
+                .map(this::unescapePathUrl)
+                .collect(Collectors.joining(";"));
 
         // Save all tabs
         settings.simple().save(Settings.WORKSPACE, Settings.OPEN_TABS, openTabs, true);
