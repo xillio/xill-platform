@@ -10,8 +10,9 @@ All notable changes to this project will be documented in this file.
 
 ### Change
 * Remove `as` keyword from `use` statement [CTC-1384]
-* Removed deprecated packages `Database` and `REST` [CTC-2102]
-* Removed deprecated constructs `File.getText()` and `Excel.setCell()` [CTC-2102]
+* Remove deprecated packages `Database` and `REST` [CTC-2102]
+* Remove deprecated constructs `File.getText()` and `Excel.setCell()` [CTC-2102]
+* Upgrade version of Freemarker library for `Template` plugin to 2.3.25 for more functionality [CTC-2109]  
 
 ## [3.5.2] - unreleased
 

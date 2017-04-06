@@ -80,7 +80,7 @@ This plugin uses a third-party library named FreeMarker to process the templates
                 use File;
 
                 var options = {
-                    "templateDir" : "C:/tmp",
+                    "templatesDirectory" : "C:/tmp",
                     "noCaching" : true
                 };
                 var output = File.openWrite("C:/tmp/output.txt");
