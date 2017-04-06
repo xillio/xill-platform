@@ -53,7 +53,8 @@ The row of the cell
         <reference>loadWorkbook</reference>
         <reference>loadSheet</reference>
         <reference>System.print</reference>
-        <reference>setCell</reference>
+        <reference>setCellFormula</reference>
+        <reference>setCellValue</reference>
     </references>
     <tags>
         Excel, workbook, sheet, spreadsheet, cell, load, get, value, extract
