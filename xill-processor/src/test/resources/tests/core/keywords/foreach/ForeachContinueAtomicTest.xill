@@ -15,9 +15,9 @@
  */
 /* 
 * Specification: Calling continue in a foreach MUST go to the next loop and MUST NOT execute code after it. 
-*                The continue should NOT affect any containing loops.
+*                The continue MUST NOT affect any containing loops.
 * Input: An atomic value without iterator
-* Expected: Code block after the foreach is reached
+* Expected: Code in the while after the foreach is reached
 */
 
 use Assert;
@@ -29,9 +29,9 @@ while(i--) {
 	foreach(value in atomicValue) {
 		if(value == "ZZZ") {
 			continue;
-			Assert.error("Code in the same block, after continue should never be executed");
+			Assert.error("Code in the same block, after a continue statement should never be executed");
 		}
-		Assert.error("Code in the a foreach, after continue should never be executed");
+		Assert.error("Code in a foreach, after a continue statement should never be executed");
 	}
 	outerLoopExecuted = true;
 }
