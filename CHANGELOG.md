@@ -9,13 +9,18 @@ All notable changes to this project will be documented in this file.
 * Show status of changed files in git [CTC-1977]
 
 ### Change
-* Decrease minimum height of help pane [CTC-2133]
 * Remove `as` keyword from `use` statement [CTC-1384]
 
 ## [3.5.2] - unreleased
 
 ### Add
 * `String.lastIndexOf()` to find the last occurrence of a substring in a string [CTC-1991]
+
+### Change
+* Decrease minimum height of help pane [CTC-2133]
+
+### Fix
+* Unexpected behaviour of `continue` statement, where code in outer loop might be skipped when using `continue` in a nested loop structure [CTC-1987]
 
 ## [3.5.1] - 2017-02-28
 
