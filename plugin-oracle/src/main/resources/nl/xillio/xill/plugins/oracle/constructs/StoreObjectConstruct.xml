@@ -87,8 +87,7 @@ The return value of this construct is true if the operation finished successfull
             </code>
             <header>Update an item by id</header>
             <code>
-                use Oracle;
-                use File;
+                use Oracle, File;
 
                 // Connect to the database
                 Oracle.connect(
