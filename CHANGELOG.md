@@ -10,6 +10,8 @@ All notable changes to this project will be documented in this file.
 
 ### Change
 * Remove `as` keyword from `use` statement [CTC-1384]
+* Removed deprecated packages `Database` and `REST` [CTC-2102]
+* Removed deprecated constructs `File.getText()` and `Excel.setCell()` [CTC-2102]
 
 ## [3.5.2] - unreleased
 
