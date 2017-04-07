@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * This class represents a {@link Service} that provides information about the currently running robot
  */
 public class RobotRuntimeInfo implements PropertiesProvider {
-    private static final Pattern FQN_PATTERN = Pattern.compile("[A-z_][0-9A-z_]+(\\.[A-z_][0-9A-z_]+)*");
+    private static final Pattern FQN_PATTERN = Pattern.compile("[A-z_][0-9A-z_]*(\\.[A-z_][0-9A-z_]*)*");
 
     private final Map<String, Object> properties = new LinkedHashMap<>();
     private final String robotPath;
