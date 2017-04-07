@@ -13,25 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.api;
+package nl.xillio.xill.maven.services;
 
-import nl.xillio.xill.api.components.Instruction;
-import nl.xillio.xill.api.components.RobotID;
+import nl.xillio.xill.XillEnvironmentImpl;
+import nl.xillio.xill.api.XillEnvironment;
 
-/**
- * This output handler performs no actions. It exists to provide a convenient way to create
- * new output handlers that only consume a specific event.
- *
- * @author Thomas Biesaart
- */
-public class DefaultOutputHandler implements OutputHandler {
-    @Override
-    public void handleLog(RobotID robotID, String level, String message, Object... parameters) {
-        // No Op
-    }
+import javax.inject.Singleton;
 
-    @Override
-    public void inspect(Instruction instruction, Throwable e) {
-        // No Op
+@Singleton
+public class XillEnvironmentService {
+    private XillEnvironment environment;
+
+    public XillEnvironment getXillEnvironment() {
+        if (environment == null) {
+            environment = new XillEnvironmentImpl();
+        }
+        return environment;
     }
 }

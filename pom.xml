@@ -111,6 +111,7 @@
         <module>xill-testutils</module>
         <!--module>xill-web-service</module-->
         <module>xillio-parent</module>
+        <module>xill-maven-plugin</module>
     </modules>
 
     <build>

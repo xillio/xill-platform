@@ -73,8 +73,8 @@ public class GetEngineConstruct extends Construct {
             return configurationFactory.buildDefaultConfiguration(context);
         } else {
             return configurationFactory.buildDefaultConfiguration(
-                    fileResolver.buildPath(context, options.get(TEMPLATES_DIRECTORY))
-            );
+                    fileResolver.buildPath(context, options.get(TEMPLATES_DIRECTORY)),
+                    context);
         }
     }
 }
