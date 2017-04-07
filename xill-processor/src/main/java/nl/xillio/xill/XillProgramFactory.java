@@ -489,7 +489,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
                 return (xill.lang.xill.Robot) current;
             }
 
-            current = current.eContainer();
+            current = current.eContainer(); //NOSONAR
         }
 
         CodePosition pos = pos(object);
