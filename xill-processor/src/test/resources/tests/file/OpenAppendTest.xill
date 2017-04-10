@@ -24,7 +24,7 @@ var file = "testresources/file/file.txt";
 var stream = File.openAppend(file);
 Stream.write("!", stream);
 
-Assert.equal(File.getText(file), "Text file!");
+Assert.equal(Stream.getText(File.openRead(file)), "Text file!");
 
 // Reset the file.
 stream = File.openWrite(file);

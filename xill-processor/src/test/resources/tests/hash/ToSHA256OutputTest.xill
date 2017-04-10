@@ -18,13 +18,14 @@
  * Expected: A file containing the input
  */
 
-use Assert, Hash, File;
+use Assert, Hash, Stream, File;
 
 var input = "foo bar 123 !@#";
 var file = "testresources/hash/output.txt";
 
 var hash = Hash.toSHA256(input, File.openWrite(file));
-Assert.equal(File.getText(file), input);
+var output = File.openRead(file);
+Assert.equal(Stream.getText(output), input);
 Assert.equal(hash, "341f4b54cd2b15d2e1004f6518eb84df874920047b90bb95612c4a8c7d0a6c95");
 
 File.delete(file);

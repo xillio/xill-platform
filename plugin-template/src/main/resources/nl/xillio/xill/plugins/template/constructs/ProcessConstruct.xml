@@ -136,7 +136,7 @@ is:
                 use File;
 
                 var options = {
-                    "templateDir" : "C:/tmp",
+                    "templatesDirectory" : "C:/tmp",
                     "noCaching" : true
                 };
                 var output = File.openWrite("C:/tmp/output.txt");

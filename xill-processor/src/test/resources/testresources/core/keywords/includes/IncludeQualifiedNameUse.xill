@@ -13,4 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use System as test;
+use Math, Assert, System;
+include testresources.core.keywords.includes.IncludePackageConstructs as Math;
+include testresources.core.keywords.includes.IncludePackageConstructs as test;
+
+Assert.equal(Math.round(5.3), 5);
+Assert.isNull(test.Print("Test"));
