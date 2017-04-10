@@ -100,11 +100,6 @@ public class XillCLITest {
         assertTrue(
                 text.contains("Usage")
         );
-
-        // Contains Information about streams
-        assertTrue(
-                text.contains("argument std;")
-        );
     }
 
     @Test
