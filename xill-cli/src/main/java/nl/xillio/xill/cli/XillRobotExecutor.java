@@ -34,6 +34,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
 
@@ -45,6 +46,7 @@ import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
  */
 public class XillRobotExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(XillRobotExecutor.class);
+    private static final String FILE_SEPARATOR_REPLACEMENT = Pattern.quote(File.separator);
     private final XillEnvironment xillEnvironment;
     private final Path projectRoot;
     private final InputStream stdIn;
@@ -148,7 +150,7 @@ public class XillRobotExecutor {
 
     private Path getPath(String robotName) throws RobotExecutionException {
         Path path = Paths.get(
-                robotName.replaceAll("\\.", File.separator) + ".xill"
+                robotName.replaceAll("\\.", FILE_SEPARATOR_REPLACEMENT) + ".xill"
         );
         Path absolutePath = projectRoot.resolve(path);
         if (Files.exists(absolutePath)) {
