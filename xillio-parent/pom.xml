@@ -503,6 +503,12 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>nl.xillio.xilll</groupId>
+                    <artifactId>xill-maven-plugin</artifactId>
+                    <version>${xill.version}</version>
+                    <extensions>true</extensions>
+                </plugin>
+                <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.19.1</version>
                 </plugin>
