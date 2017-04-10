@@ -147,5 +147,10 @@ public class XillCLITest {
         // Validate
         ProgramReturnCode returnCode = xillCLI.run();
         assertEquals(returnCode, ProgramReturnCode.OK);
+
+        // Delete project
+        Files.delete(robotFile);
+        Files.delete(robotFile.getParent());
+        Files.delete(projectDir);
     }
 }
