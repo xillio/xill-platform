@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package n.xillio.xill.cli;
+package nl.xillio.xill.cli;
 
 import nl.xillio.xill.api.Issue;
 import nl.xillio.xill.api.XillEnvironment;
@@ -34,7 +34,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
 

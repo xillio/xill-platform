@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package n.xillio.xill.cli;
+package nl.xillio.xill.cli;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
