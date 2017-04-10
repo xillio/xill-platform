@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package n.xillio.xill.cli;
+package nl.xillio.xill.cli;
 
 import nl.xillio.xill.api.Issue;
 import nl.xillio.xill.api.XillEnvironment;
@@ -46,6 +46,7 @@ import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
  */
 public class XillRobotExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(XillRobotExecutor.class);
+    private static final String FILE_SEPARATOR_REPLACEMENT = Pattern.quote(File.separator);
     private final XillEnvironment xillEnvironment;
     private final Path projectRoot;
     private final InputStream stdIn;
@@ -149,7 +150,7 @@ public class XillRobotExecutor {
 
     private Path getPath(String robotName) throws RobotExecutionException {
         Path path = Paths.get(
-                robotName.replaceAll("\\.", File.separator) + ".xill"
+                robotName.replaceAll("\\.", FILE_SEPARATOR_REPLACEMENT) + ".xill"
         );
         Path absolutePath = projectRoot.resolve(path);
         if (Files.exists(absolutePath)) {

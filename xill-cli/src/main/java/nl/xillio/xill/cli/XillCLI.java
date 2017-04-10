@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package n.xillio.xill.cli;
+package nl.xillio.xill.cli;
 
 import me.biesaart.utils.IOUtils;
 import nl.xillio.xill.XillEnvironmentImpl;
@@ -34,7 +34,7 @@ import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static n.xillio.xill.cli.OptionsFactory.*;
+import static nl.xillio.xill.cli.OptionsFactory.*;
 
 /**
  * This class represents the main command line application for Xill. It uses a lazy evaluation pattern where all
