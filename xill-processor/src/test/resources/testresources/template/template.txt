@@ -1,0 +1,1 @@
+<#list testObject as key, value>${key}, ${value}</#list>

@@ -59,8 +59,7 @@ If you want to pass a string containing a colon you could either escape the colo
         <example title="Usage">
             <header>Create a table and insert data</header>
             <code>
-                use MySQL;
-                use System;
+                use MySQL, System;
 
                 // First we connect to a database
                 MySQL.connect(
@@ -91,7 +90,7 @@ If you want to pass a string containing a colon you could either escape the colo
                 use MySQL;
 
                 // Connect to your database
-                MySQL.connect(
+                var connection = MySQL.connect(
                     "jdbc:mysql://localhost/my-database" ::
                     "?user=root" ::
                     "&amp;password=super1secret"
@@ -121,8 +120,7 @@ If you want to pass a string containing a colon you could either escape the colo
             </code>
             <header>Use a string containing a colon as a parameter</header>
             <code>
-                use MySQL;
-                use System;
+                use MySQL, System;
 
                 // Connect to your database
                 MySQL.connect(
