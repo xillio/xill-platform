@@ -142,24 +142,10 @@ public class XillCLITest {
 
         // Run by path
         XillCLI xillCLI = new XillCLI();
-        xillCLI.setArgs(new String[]{"fqn/Path.xill", "-p", projectDir.toString()});
+        xillCLI.setArgs(new String[]{"fqn.Path", "-p", projectDir.toString()});
 
         // Validate
         ProgramReturnCode returnCode = xillCLI.run();
         assertEquals(returnCode, ProgramReturnCode.OK);
-
-        // Run by fqn
-        xillCLI.setArgs(new String[]{"fqn.Path", "-p", projectDir.toString()});
-        returnCode = xillCLI.run();
-        assertEquals(returnCode, ProgramReturnCode.OK);
-
-        // Delete project
-        Files.delete(robotFile);
-        Files.delete(robotFile.getParent());
-        Files.delete(projectDir);
-
-        // Run again (file does not exist)
-        returnCode = xillCLI.run();
-        assertEquals(returnCode, ProgramReturnCode.EXECUTION_ERROR);
     }
 }
