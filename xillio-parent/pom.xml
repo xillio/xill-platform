@@ -615,6 +615,7 @@
                             <fxml>XML_STYLE</fxml>
                             <xill>JAVADOC_STYLE</xill>
                             <Jenkinsfile>JAVADOC_STYLE</Jenkinsfile>
+                            <adoc>DOUBLESLASH_STYLE</adoc>
                         </mapping>
                     </configuration>
                     <executions>
