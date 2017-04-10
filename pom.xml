@@ -123,60 +123,17 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>2.9</version>
                 <configuration>
-                    <header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
-                    <properties>
-                        <owner>Xillio</owner>
-                        <email>support@xillio.com</email>
-                    </properties>
-                    <strictCheck>true</strictCheck>
-                    <useDefaultExcludes>true</useDefaultExcludes>
-                    <aggregate>true</aggregate>
                     <excludes>
                         <exclude>xill-api/src/**/IdentityArrayList.java</exclude>
                         <exclude>xill-ide-core/src/main/resources/ace/**</exclude>
-                        <exclude>**/build.xml</exclude>
-                        <exclude>**/maven-build.xml</exclude>
-                        <exclude>**/maven-build.properties</exclude>
                         <exclude>xill-api/**/.mimetypes</exclude>
                         <exclude>xill-api/**/.extension_categories</exclude>
-                        <exclude>**/**.ttf</exclude>
-                        <exclude>**/**.xilt</exclude>
-                        <exclude>**/**.xlsx</exclude>
-                        <exclude>**/**.txt</exclude>
-                        <exclude>.gitattributes</exclude>
-                        <exclude>LICENSE</exclude>
                         <exclude>plugin-web/**/LICENSE.BSD</exclude>
                         <exclude>xill-plugin-archetype/src/main/**/archetype-resources/**</exclude>
-                        <exclude>**/*.icns</exclude>
-                        <exclude>**/*.unknown</exclude>
-                        <exclude>**/*.dat</exclude>
-                        <exclude>**/LICENSE</exclude>
                         <exclude>jdk/**</exclude>
                     </excludes>
-                    <mapping>
-                        <fxml>XML_STYLE</fxml>
-                        <xill>JAVADOC_STYLE</xill>
-                        <Jenkinsfile>JAVADOC_STYLE</Jenkinsfile>
-                    </mapping>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>validate-license-headers</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>generate-license-headers</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
