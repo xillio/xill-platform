@@ -46,7 +46,7 @@ import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
  */
 public class XillRobotExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(XillRobotExecutor.class);
-    private static final String FILE_SEPARATOR_REPLACEMENT = Pattern.quote(File.separator);
+    private static final String FILE_SEPARATOR_REPLACEMENT = "/";
     private final XillEnvironment xillEnvironment;
     private final Path projectRoot;
     private final InputStream stdIn;
