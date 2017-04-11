@@ -18,14 +18,14 @@
 -->
 <function>
     <description>
-Returns the index at which `string2` occurs in `string1`.
+Returns the index at which `needle` occurs in `haystack`.
     </description>
 	<parameterDescriptions>
-		<parameterDescription parameterName="string1">
+		<parameterDescription parameterName="haystack">
 The string that will be searched.
         </parameterDescription>
-		<parameterDescription parameterName="string2">
-The string that will be searched for in `string1`.
+		<parameterDescription parameterName="needle">
+The string that will be searched for in `haystack`.
         </parameterDescription>
 		<parameterDescription parameterName="startPos">
 The index at which the search will start (default is 0).

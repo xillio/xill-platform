@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Returns the last index at which `needle` occurs in `haystack`.
+    </description>
+    <parameterDescriptions>
+        <parameterDescription parameterName="haystack">
+The string that will be searched.
+        </parameterDescription>
+        <parameterDescription parameterName="needle">
+The string that will be searched for in `haystack`.
+        </parameterDescription>
+    </parameterDescriptions>
+    <longDescription>
+Returns -1 if the index could not be found.
+If an empty `needle` is provided, the length of the `haystack` will be returned.
+If either the `needle` or `haystack` is null, an error is thrown.
+    </longDescription>
+    <examples>
+        <example title="Usage">
+            <code>
+                use System, String;
+
+                System.print(String.lastIndexOf("ABBA", "A")); // Result: 3
+                System.print(String.lastIndexOf("ABBA", ""));  // Result: 4
+                System.print(String.lastIndexOf("ABBA", "C")); // Result: -1
+                System.print(String.lastIndexOf("document.doc", "doc")); // Result: 9
+            </code>
+        </example>
+    </examples>
+</function>

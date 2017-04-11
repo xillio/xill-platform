@@ -16,6 +16,7 @@
 package nl.xillio.xill.plugins.string.services.string;
 
 import org.testng.annotations.Test;
+import static nl.xillio.xill.plugins.string.services.string.UrlUtilityServiceImpl.*;
 
 import static org.testng.Assert.*;
 
@@ -29,6 +30,8 @@ public class UrlUtilityServiceImplTest {
         assertEquals(service.getProtocol("https://www.xillio.nl"), "https");
         assertEquals(service.getProtocol("ftp://xillio.nl"), "ftp");
         assertEquals(service.getProtocol("xyz://xillio.nl"), "xyz");
+        assertEquals(service.getProtocol(""), "");
+        assertEquals(service.getProtocol("www.xillio.nl"), "");
     }
 
     @Test
@@ -42,12 +45,30 @@ public class UrlUtilityServiceImplTest {
 
     @Test
     public void testGetParentURL(){
-        assertEquals(service.getParentUrl("http://www.xillio.nl/info/", ".."), "http://www.xillio.nl/");
-        assertEquals(service.getParentUrl("http://www.xillio.nl/info/", "../"), "http://www.xillio.nl/");
-        assertEquals(service.getParentUrl("http://www.xillio.nl/info/page1/", "../page2"), "http://www.xillio.nl/info/page2");
-        assertEquals(service.getParentUrl("abc://def.ghi.j/h/k/l/m/", "../../../.."), "abc://def.ghi.j/");
+        assertEquals(getParentUrl("http://www.xillio.nl/info/", ".."), "http://www.xillio.nl/");
+        assertEquals(getParentUrl("http://www.xillio.nl/info/", "../"), "http://www.xillio.nl/");
+        assertEquals(getParentUrl("http://www.xillio.nl/info/page1/", "../page2"), "http://www.xillio.nl/info/page2");
+        assertEquals(getParentUrl("abc://def.ghi.j/h/k/l/m/", "../../../.."), "abc://def.ghi.j/");
 
-        assertEquals(service.getParentUrl("http:/www.example.com/false", ".."), null); // malformed
+        assertEquals(getParentUrl("http:/www.example.com/false", ".."), null); // malformed
 
     }
+
+    @Test
+    public void testCleanupUrl(){
+        assertEquals(service.cleanupUrl("http://www.xillio.nl/./"), "http://www.xillio.nl/");
+        assertEquals(service.cleanupUrl("http://www.xillio.nl/info/../website.html"), "http://www.xillio.nl/website.html");
+        assertEquals(service.cleanupUrl("http://www.xillio.nl/info/./../website.html"), "http://www.xillio.nl/website.html");
+    }
+
+    @Test
+    public void testhasProtocol(){
+        assertTrue(service.hasProtocol("http://www.xillio.nl"));
+        assertTrue(service.hasProtocol("ftp://source.code.com"));
+        assertTrue(service.hasProtocol("https://www.xillio.com"));
+
+        assertFalse(service.hasProtocol("www.xillio.nl"));
+        assertFalse(service.hasProtocol(""));
+    }
+
 }

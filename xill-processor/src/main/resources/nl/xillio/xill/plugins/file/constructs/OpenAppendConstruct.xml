@@ -51,7 +51,7 @@ This will leave the file as-is or create a new file when none exists.
     <references>
         <reference>openRead</reference>
         <reference>openAppend</reference>
-        <reference>getText</reference>
+        <reference>Stream.getText</reference>
     </references>
     <tags>
         read, write, append, text, content, create

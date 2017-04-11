@@ -59,28 +59,27 @@ If you want to pass a string containing a colon you could either escape the colo
         <example title="Usage">
             <header>Create a table and insert data</header>
             <code>
-                use Oracle as db;
-                use System;
+                use Oracle, System;
 
                 // First we connect to a database
-                db.connect(
+                Oracle.connect(
                     "jdbc:oracle:thin:" ::
                     "scott/tiger" ::
                     "@//localhost:1521/myservicename"
                 );
 
                 // Then we create a table
-                db.query("CREATE TABLE test (id VARCHAR(20))");
+                Oracle.query("CREATE TABLE test (id VARCHAR(20))");
 
                 // And insert some data
                 var insertQuery = "INSERT INTO test (id) VALUES (?)";
-                var count = db.query(insertQuery, ["Hello"]);
-                count += db.query(insertQuery, ["World"]);
+                var count = Oracle.query(insertQuery, ["Hello"]);
+                count += Oracle.query(insertQuery, ["World"]);
 
                 System.print("Inserted " :: count :: " rows");
 
                 // Now we can query that data
-                var rows = db.query("SELECT * FROM test");
+                var rows = Oracle.query("SELECT * FROM test");
 
                 foreach(row in rows) {
                     System.print("Item: " :: row.id);
@@ -88,24 +87,24 @@ If you want to pass a string containing a colon you could either escape the colo
             </code>
             <header>Explicitly pass a connection</header>
             <code>
-                use Oracle as db;
+                use Oracle;
 
                 // Connect to your database
-                db.connect(
+                var connection = Oracle.connect(
                     "jdbc:oracle:thin:" ::
                     "scott/tiger" ::
                     "@//localhost:1521/myservicename"
                 );
 
                 // Now we can use this connection explicitly
-                db.query("INSERT INTO example (name) VALUES (?)", ["Doe"], 0, connection);
+                Oracle.query("INSERT INTO example (name) VALUES (?)", ["Doe"], 0, connection);
             </code>
             <header>Use an object as parameters</header>
             <code>
-                use Oracle as db;
+                use Oracle;
 
                 // Connect to your database
-                db.connect(
+                Oracle.connect(
                     "jdbc:oracle:thin:" ::
                     "scott/tiger" ::
                     "@//localhost:1521/myservicename"
@@ -117,22 +116,21 @@ If you want to pass a string containing a colon you could either escape the colo
                 };
 
                 // Insert a row. Notice that we now use a different notation for the parameters
-                db.query("INSERT INTO people (firstName, lastName) VALUES (:firstName, :lastName)", object);
+                Oracle.query("INSERT INTO people (firstName, lastName) VALUES (:firstName, :lastName)", object);
             </code>
             <header>Use a string containing a colon as a parameter</header>
             <code>
-                use Oracle as db;
-                use System;
+                use Oracle, System;
 
                 // Connect to your database
-                db.connect(
+                Oracle.connect(
                     "jdbc:oracle:thin:" ::
                     "scott/tiger" ::
                     "@//localhost:1521/myservicename"
                 );
 
                 // Select data from table where version contains a colon
-                var rows = db.query("SELECT * FROM software WHERE version = :myVersion" , {"myVersion" : "1.0:2"});
+                var rows = Oracle.query("SELECT * FROM software WHERE version = :myVersion" , {"myVersion" : "1.0:2"});
 
                 foreach(row in rows) {
                     System.print("Software: " :: row.name);

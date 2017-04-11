@@ -59,7 +59,7 @@ public class SetProgressConstruct extends Construct {
 
     MetaExpression process(final MetaExpression progressVar, final MetaExpression optionsVar, final ConstructContext context) {
         final Double progress = progressVar.getNumberValue().doubleValue();
-        if (progress.equals(Double.NaN) || progress.doubleValue() > 1) {
+        if (Double.isNaN(progress) || Double.compare(progress.doubleValue(),1.0) > 0) {
             throw new InvalidUserInputException("Invalid progress value type.", progressVar.getStringValue(), "The valid number from 0-1 for progress or any negative number for hiding the progress bar.", EXAMPLE);
         }
 

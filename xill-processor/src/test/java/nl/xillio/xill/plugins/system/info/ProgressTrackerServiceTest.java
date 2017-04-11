@@ -23,6 +23,7 @@ import java.time.Duration;
 import java.util.UUID;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -37,7 +38,7 @@ public class ProgressTrackerServiceTest {
     public void testGetProgress() {
         double progress = 0.26;
         ProgressTrackerService service = new ProgressTrackerService();
-        UUID csid = new UUID(1,1);
+        UUID csid = UUID.randomUUID();
         service.setProgress(csid, progress);
 
         // Run
@@ -67,7 +68,7 @@ public class ProgressTrackerServiceTest {
     @Test
     public void testRemove() {
         ProgressTrackerService service = new ProgressTrackerService();
-        UUID csid = new UUID(1,1);
+        UUID csid = UUID.randomUUID();
         service.setProgress(csid, 0.26);
 
         // Run
@@ -83,7 +84,7 @@ public class ProgressTrackerServiceTest {
     @Test
     public void testRemoveWhenEmpty() {
         ProgressTrackerService service = new ProgressTrackerService();
-        UUID csid = new UUID(1,1);
+        UUID csid = UUID.randomUUID();
 
         // Run
         boolean result = service.remove(csid);
@@ -99,7 +100,7 @@ public class ProgressTrackerServiceTest {
     public void testGetOnStopBehavior() {
         ProgressTracker.OnStopBehavior behavior = ProgressTracker.OnStopBehavior.ZERO;
         ProgressTrackerService service = new ProgressTrackerService();
-        UUID csid = new UUID(1,1);
+        UUID csid = UUID.randomUUID();
         service.setOnStopBehavior(csid, behavior);
 
         // Run
@@ -110,22 +111,53 @@ public class ProgressTrackerServiceTest {
     }
 
     /**
-     * Test getRemainingTime() under common circumstances.
+     * Test getOnStopBehavior() with null csid.
+     */
+    @Test
+    public void testGetOnStopBehaviorNull() {
+        ProgressTracker.OnStopBehavior behavior = ProgressTracker.OnStopBehavior.ZERO;
+        ProgressTrackerService service = new ProgressTrackerService();
+        service.setOnStopBehavior(null, behavior);
+
+        // Run
+        ProgressTracker.OnStopBehavior result = service.getOnStopBehavior(null);
+
+        // Verify
+        assertEquals(result, ProgressTracker.OnStopBehavior.NA);
+    }
+
+   /**
+     * Test getOnStopBehavior() with invalid csid.
+     */
+    @Test
+    public void testGetOnStopBehaviorInvalid() {
+        ProgressTracker.OnStopBehavior behavior = ProgressTracker.OnStopBehavior.ZERO;
+        ProgressTrackerService service = new ProgressTrackerService();
+        UUID csid = UUID.randomUUID();
+
+        // Run
+        ProgressTracker.OnStopBehavior result = service.getOnStopBehavior(csid);
+
+        // Verify
+        assertEquals(result, ProgressTracker.OnStopBehavior.NA);
+    }
+
+    /**
+     * Test getRemainingTime() after very small increment
      *
      * @throws InterruptedException
      */
     @Test
     public void testGetRemainingTime() throws InterruptedException {
         ProgressTrackerService service = new ProgressTrackerService();
-        UUID csid = new UUID(1,1);
+        UUID csid = UUID.randomUUID();
         service.setProgress(csid, 0);
-        service.setProgress(csid, 0.1);
+        service.setProgress(csid, 0.0000001);
 
         // Run
         Duration result = service.getRemainingTime(csid);
-
         // Verify
-        assertTrue(result != null);
+        assertNotNull(result);
     }
 
     /**
@@ -148,8 +180,8 @@ public class ProgressTrackerServiceTest {
     @Test
     public void testGetRemainingTimeNegativeProgress() {
         ProgressTrackerService service = new ProgressTrackerService();
-        UUID csid = new UUID(1,1);
-        service.setProgress(csid, -1);
+        UUID csid = UUID.randomUUID();
+        service.setProgress(csid, -0.6);
 
         // Run
         Duration result = service.getRemainingTime(csid);
@@ -164,9 +196,8 @@ public class ProgressTrackerServiceTest {
     @Test
     public void testGetRemainingTimeDoneProgress() {
         ProgressTrackerService service = new ProgressTrackerService();
-        UUID csid = new UUID(1,1);
-        service.setProgress(csid, 0.5);
-        service.setProgress(csid, 1);
+        UUID csid = UUID.randomUUID();
+        service.setProgress(csid, 1.0);
 
         // Run
         Duration result = service.getRemainingTime(csid);

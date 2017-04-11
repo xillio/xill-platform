@@ -35,7 +35,7 @@ import java.util.List;
  * @author Thomas Biesaart
  */
 @Singleton
-public class XillExecutionService {
+public class XillExecutionService implements AutoCloseable {
     private static final Logger LOGGER = Log.get();
     private XillEnvironment environment;
 
@@ -77,5 +77,10 @@ public class XillExecutionService {
         if (!isInitialized()) {
             throw new IllegalStateException("The execution service has not been initialized");
         }
+    }
+
+    @Override
+    public void close() {
+        environment.close();
     }
 }

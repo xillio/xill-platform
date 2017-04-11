@@ -40,9 +40,9 @@ Read more at: [Database URLs and Database Specifiers](http://docs.oracle.com/cd/
         <example title="Usage">
             <header>Connect to a local database</header>
             <code>
-                use Oracle as db;
+                use Oracle;
 
-                db.connect(
+                Oracle.connect(
                     "jdbc:oracle:thin:" ::
                     "scott/tiger" ::
                     "@//localhost:1521/myservicename"

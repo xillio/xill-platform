@@ -46,16 +46,16 @@ public class IndexOfConstruct extends Construct {
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         return new ConstructProcessor(
                 this::process,
-                new Argument("string1", ATOMIC),
-                new Argument("string2", ATOMIC),
+                new Argument("haystack", ATOMIC),
+                new Argument("needle", ATOMIC),
                 new Argument("startPos", fromValue(0), ATOMIC));
     }
 
-    private MetaExpression process(final MetaExpression string1, final MetaExpression string2, final MetaExpression value) {
-        assertNotNull(string1, "string1");
-        assertNotNull(string2, "string2");
+    private MetaExpression process(final MetaExpression haystack, final MetaExpression needle, final MetaExpression value) {
+        assertNotNull(haystack, "haystack");
+        assertNotNull(needle, "needle");
 
         return fromValue(stringService.indexOf(
-                string1.getStringValue(), string2.getStringValue(), value.getNumberValue().intValue()));
+                haystack.getStringValue(), needle.getStringValue(), value.getNumberValue().intValue()));
     }
 }

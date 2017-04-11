@@ -251,7 +251,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
             xill.lang.xill.Robot bot = (xill.lang.xill.Robot) object;
 
             for (UseStatement useStatement : bot.getUses()) {
-                String name = getName(useStatement);
+                String name = useStatement.getName();
 
                 boolean found = plugins
                         .stream()
@@ -286,7 +286,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
 
             if (object instanceof ConstructCall) {
                 ConstructCall call = (ConstructCall) object;
-                String plugin = getName(call.getPackage());
+                String plugin = call.getPackage().getName();
                 XillPlugin xillPlugin = plugins.stream()
                         .filter(p -> p.getName().equals(plugin))
                         .findAny()
@@ -305,10 +305,6 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
             }
         }
         return issues;
-    }
-
-    private String getName(UseStatement statement) {
-        return statement.getPlugin() == null ? statement.getName() : statement.getPlugin();
     }
 
     /**
