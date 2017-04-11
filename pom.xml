@@ -129,6 +129,8 @@
                         <exclude>xill-ide-core/src/main/resources/ace/**</exclude>
                         <exclude>xill-api/**/.mimetypes</exclude>
                         <exclude>xill-api/**/.extension_categories</exclude>
+                        <exclude>xill-processor/src/test/resources/testresources/**</exclude>
+                        <exclude>**/manual.txt</exclude>
                         <exclude>plugin-web/**/LICENSE.BSD</exclude>
                         <exclude>xill-plugin-archetype/src/main/**/archetype-resources/**</exclude>
                         <exclude>jdk/**</exclude>
