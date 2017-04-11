@@ -46,7 +46,6 @@ import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
  */
 public class XillRobotExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(XillRobotExecutor.class);
-    private static final String FILE_SEPARATOR_REPLACEMENT = "/";
     private final XillEnvironment xillEnvironment;
     private final Path projectRoot;
     private final InputStream stdIn;
@@ -150,7 +149,7 @@ public class XillRobotExecutor {
 
     private Path getPath(String robotName) throws RobotExecutionException {
         Path path = Paths.get(
-                robotName.replaceAll("\\.", FILE_SEPARATOR_REPLACEMENT) + ".xill"
+                robotName.replaceAll("\\.", "/") + ".xill"
         );
         Path absolutePath = projectRoot.resolve(path);
         if (Files.exists(absolutePath)) {
