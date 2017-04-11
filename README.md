@@ -11,10 +11,20 @@ Just by copying the entire folder in which you found this file to a location
 of your choice you are already done installing Xill. Please refer to the
 [Xillio Support Site](https://support.xillio.com/) for more information
 
+### What versions of the Java Runtime Environment are supported?
+
+* Xill IDE comes with a very recent Java 8 JRE, usually the latest.
+* If you run the .jar directly or you run Xill CLI, then you need either JRE 8u101 or JRE 8u152 or later
+
 ### How about the command line interface?
 
-To run .xill scripts on the command line, please add the location of
-`xill.bat` (Windows) or `xill.sh` (Mac/Unix) to your `PATH` environment variable.
+Currently you still need to download and install Xill CLI separately
+
+* Obtain Xill CLI from the same location where you found Xill IDE
+* Install the latest Java 8 Runtime Environment from https://java.com/
+* To run .xill scripts on the command line, please add the location of
+  `xill.bat` (Windows) or `xill.sh` (Mac/Unix) to your `PATH` environment
+  variable.
 
 Using Xill
 ----------
