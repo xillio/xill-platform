@@ -25,7 +25,6 @@ import org.eclipse.emf.common.util.WrappedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -34,7 +33,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
 
