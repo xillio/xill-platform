@@ -54,14 +54,22 @@ public interface StringUtilityService {
     String format(String text, List<Object> args);
 
     /**
-     * Returns the index of the first occurrance of the needle in the haystack, starting from an index.
+     * Returns the index of the first occurrence of the needle in the haystack, starting from an index.
      *
      * @param haystack The haystack we're searching through.
      * @param needle   The needle we're searching.
      * @param index    The index from which we start searching.
-     * @return The index of the first occurrance of the needle higher than the given index.
+     * @return The index of the first occurrence of the needle higher than the given index.
      */
     int indexOf(String haystack, String needle, int index);
+
+    /**
+     * Returns the index of the last occurrence of the needle in the haystack.
+     * @param haystack  The haystack we are searching in.
+     * @param needle    The needle we are looking for.
+     * @return The index of the last occurrence of the needle in the haystack.
+     */
+    int lastIndexOf(String haystack, String needle);
 
     /**
      * Joins an array of strings by a delimiter.
@@ -170,4 +178,5 @@ public interface StringUtilityService {
      * @return Returns the wrapped text.
      */
     String wrap(String text, int width, boolean wrapLongWords);
+
 }

@@ -49,9 +49,9 @@ You can also access your database from an external resource using a url.
         <example title="Usage">
             <header>Create an in-memory database</header>
             <code>
-                use SQLite as db;
+                use SQLite;
 
-                db.connect("jdbc:sqlite::memory:");
+                SQLite.connect("jdbc:sqlite::memory:");
 
                 // Now you can use the SQLite constructs
                 // To interact with the database

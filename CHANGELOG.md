@@ -8,10 +8,28 @@ All notable changes to this project will be documented in this file.
 * Store git credentials [CTC-1975]
 * Show status of changed files in git [CTC-1977]
 
-## [3.5.1] - unreleased
+### Change
+* Remove `as` keyword from `use` statement [CTC-1384]
+* Remove deprecated packages `Database` and `REST` [CTC-2102]
+* Remove deprecated constructs `File.getText()` and `Excel.setCell()` [CTC-2102]
+* Upgrade version of Freemarker library for `Template` plugin to 2.3.25 for more functionality [CTC-2109]  
+
+## [3.5.2] - unreleased
+
+### Add
+* `String.lastIndexOf()` to find the last occurrence of a substring in a string [CTC-1991]
+
+### Change
+* Decrease minimum height of help pane [CTC-2133]
+
+### Fix
+* Unexpected behaviour of `continue` statement, where code in outer loop might be skipped when using `continue` in a nested loop structure [CTC-1987]
+
+## [3.5.1] - 2017-02-28
 
 ### Add
 * XURL ntlm support [CTC-2004]
+
 
 ### Fix
 * Web.loadPage does not work with file:// protocol [CTC-1935]

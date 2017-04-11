@@ -40,9 +40,9 @@ Read more at: [What is the URL format used by jTDS?](http://jtds.sourceforge.net
         <example title="Usage">
             <header>Connect to a local database</header>
             <code>
-                use MSSQL as db;
+                use MSSQL;
 
-                db.connect(
+                MSSQL.connect(
                     "jdbc:jtds:sqlserver://localhost/Database" ::
                     ";user=MyUserName" ::
                     ";password=MyPassword"

@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 /*
-* Specification: An error MUST be thrown when a function with the same name
-            and amount of parameters is defined twice
-* Input: Including a robot that contains functions with the same name and parameter length
+* Specification: An error MUST be thrown when the 'as' keyword is used with the 'use' statement
+* Input: Including a robot that contains statement 'use' with 'as'.
 * Expected: An error is thrown when trying to compile this robot.
 */
 use Assert;
@@ -24,5 +23,5 @@ use Assert;
 do {
     callbot("testresources/core/keywords/include/IncludeQualifiedNameUse.xill");
 } success {
-    Assert.error("This robot should not be able to run.");
+    Assert.error("This robot should not compile.");
 }

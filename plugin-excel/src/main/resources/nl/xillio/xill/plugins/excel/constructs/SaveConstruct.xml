@@ -38,7 +38,7 @@ If no path is given the workbook will be saved to the same file it was read from
                 use Excel;
                 var workbook = Excel.loadWorkbook("workbook.xlsx");
                 var sheet = Excel.loadSheet(workbook, "firstsheet");
-                Excel.setCell(sheet, "A", 9, 42);
+                Excel.setCellValue(sheet, "A", 9, 42);
                 Excel.save(workbook);
             </code>
             <header>Saving the current workbook as a new file</header>
@@ -46,7 +46,7 @@ If no path is given the workbook will be saved to the same file it was read from
                 use Excel;
                 var workbook = Excel.loadWorkbook("workbook.xlsx");
                 var sheet = Excel.loadSheet(workbook, "firstsheet");
-                Excel.setCell(sheet, "A", 9, 42);
+                Excel.setCellValue(sheet, "A", 9, 42);
                 Excel.save(workbook, "newworkbook.xlsx");
             </code>
         </example>

@@ -13,19 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* Specification: openAppend MUST open an append stream for the file.
- * Input: A file containing "Text file" and a stream which writes "!"
- * Expected: "Text file!"
- */
+/*
+* Specification: An error MUST be thrown when a qualified include uses the same name as a 'use' statement
+* Input: Including a robot that contains a qualified include using the same name as a plugin.
+* Expected: An error is thrown when trying to compile this robot.
+*/
+use Assert;
 
-use Assert, File, Stream;
-
-var file = "testresources/file/file.txt";
-var stream = File.openAppend(file);
-Stream.write("!", stream);
-
-Assert.equal(Stream.getText(File.openRead(file)), "Text file!");
-
-// Reset the file.
-stream = File.openWrite(file);
-Stream.write("Text file", stream);
+do {
+    callbot("testresources/core/keywords/include/IncludeQualifiedNameUseDuplicate.xill");
+} success {
+    Assert.error("This robot should not compile.");
+}
