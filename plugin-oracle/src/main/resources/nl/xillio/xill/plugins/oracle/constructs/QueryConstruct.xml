@@ -59,8 +59,7 @@ If you want to pass a string containing a colon you could either escape the colo
         <example title="Usage">
             <header>Create a table and insert data</header>
             <code>
-                use Oracle;
-                use System;
+                use Oracle, System;
 
                 // First we connect to a database
                 Oracle.connect(
@@ -91,7 +90,7 @@ If you want to pass a string containing a colon you could either escape the colo
                 use Oracle;
 
                 // Connect to your database
-                Oracle.connect(
+                var connection = Oracle.connect(
                     "jdbc:oracle:thin:" ::
                     "scott/tiger" ::
                     "@//localhost:1521/myservicename"
@@ -121,8 +120,7 @@ If you want to pass a string containing a colon you could either escape the colo
             </code>
             <header>Use a string containing a colon as a parameter</header>
             <code>
-                use Oracle;
-                use System;
+                use Oracle, System;
 
                 // Connect to your database
                 Oracle.connect(

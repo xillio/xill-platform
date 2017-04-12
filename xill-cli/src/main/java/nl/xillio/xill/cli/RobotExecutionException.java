@@ -13,19 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* Specification: openAppend MUST open an append stream for the file.
- * Input: A file containing "Text file" and a stream which writes "!"
- * Expected: "Text file!"
+package nl.xillio.xill.cli;
+
+/**
+ * This exception is thrown when an attempt to run a Xill robot fails.
  */
+public class RobotExecutionException extends Exception {
+    public RobotExecutionException(String message) {
+        super(message);
+    }
 
-use Assert, File, Stream;
-
-var file = "testresources/file/file.txt";
-var stream = File.openAppend(file);
-Stream.write("!", stream);
-
-Assert.equal(Stream.getText(File.openRead(file)), "Text file!");
-
-// Reset the file.
-stream = File.openWrite(file);
-Stream.write("Text file", stream);
+    public RobotExecutionException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}

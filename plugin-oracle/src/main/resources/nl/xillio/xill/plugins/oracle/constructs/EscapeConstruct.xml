@@ -32,8 +32,7 @@ If you use parameters in your queries there is no need to escape them.
         <example title="Usage">
             <header>Escape a string</header>
             <code>
-                use Oracle;
-                use System;
+                use Oracle, System;
 
                 var string = 'Hello, this quote: " might be a problem';
                 var escaped = Oracle.escape(string);

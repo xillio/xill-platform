@@ -489,7 +489,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
             current = current.eContainer();
         }
 
-        CodePosition pos = pos(object);
+        CodePosition pos = pos(object); //NOSONAR - object is already checked for null value
         throw new XillParsingException("Could not detect robot for " + object, pos.getLineNumber(), pos.getRobotID());
     }
 
