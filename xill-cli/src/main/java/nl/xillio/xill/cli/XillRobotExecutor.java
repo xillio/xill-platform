@@ -83,7 +83,7 @@ public class XillRobotExecutor {
             XillProcessor processor = compile(robotName);
             processor.getRobot().process(processor.getDebugger());
         } catch (WrappedException e) {
-            throw new RobotExecutionException(e.getCause().getMessage(), e.getCause());
+            throw new RobotExecutionException(e.getCause().getMessage(), e.getCause()); //NOSONAR exception is correctly rethrown
         } catch (Exception e) {
             throw new RobotExecutionException(e.getMessage(), e);
         }
