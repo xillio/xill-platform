@@ -113,8 +113,6 @@ public class CallbotExpression implements Processable {
                 debugger.removeChild(childDebugger);
             }
 
-        } catch (IOException e) {
-            throw new RobotRuntimeException("Error while calling robot: " + e.getMessage(), e);
         } catch (XillParsingException e) {
             throw new RobotRuntimeException("Error while parsing robot: " + e.getMessage(), e);
         } catch (Exception e) {

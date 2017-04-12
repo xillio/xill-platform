@@ -31,6 +31,8 @@ import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import java.nio.file.StandardOpenOption;
+import java.util.Collections;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -104,11 +106,6 @@ public class XillCLITest {
         assertTrue(
                 text.contains("Usage")
         );
-
-        // Contains Information about streams
-        assertTrue(
-                text.contains("argument std;")
-        );
     }
 
     @Test
@@ -156,10 +153,6 @@ public class XillCLITest {
         Files.delete(robotFile);
         Files.delete(robotFile.getParent());
         Files.delete(projectDir);
-
-        // Run again (file does not exist)
-        returnCode = xillCLI.run();
-        assertEquals(returnCode, ProgramReturnCode.EXECUTION_ERROR);
     }
 
     @Test

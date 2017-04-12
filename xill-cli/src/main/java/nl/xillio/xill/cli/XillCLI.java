@@ -34,6 +34,7 @@ import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import static nl.xillio.xill.cli.OptionsFactory.*;
 
 /**
  * This class represents the main command line application for Xill. It uses a lazy evaluation pattern where all
@@ -44,7 +45,7 @@ import java.util.Arrays;
 public class XillCLI {
     private static final Logger LOGGER = LoggerFactory.getLogger(XillCLI.class);
     private static final String PROGRAM_DESCRIPTION = "Execute Xill robots from the command line.";
-    private static final String PROGAM_USAGE = "xill [-h | -v] [-q | -qq]  [-w <workingDirectory>] [-r | --robots <robotPaths>] <robotName>";
+    private static final String PROGRAM_USAGE = "xill [-h | -v] [-q | -qq]  [-w <workingDirectory>] [-r | --robots <robotPaths>] <robotName>";
 
     private CommandLineParser commandLineParser;
     private CommandLine commandLine;
@@ -86,22 +87,22 @@ public class XillCLI {
             CommandLine cli = getCommandLine();
 
             // Should we print the version?
-            if (cli.hasOption(OptionsFactory.OPTION_VERSION)) {
+            if (cli.hasOption(OPTION_VERSION)) {
                 getVersionPrinter().print();
                 return ProgramReturnCode.OK;
             }
 
             // Should we print the help message?
-            if (cli.hasOption(OptionsFactory.OPTION_HELP) || cli.getArgs().length == 0) {
+            if (cli.hasOption(OPTION_HELP) || cli.getArgs().length == 0) {
                 printHelp();
                 return ProgramReturnCode.OK;
             }
 
-            if (cli.hasOption(OptionsFactory.OPTION_QUIET)) {
+            if (cli.hasOption(OPTION_QUIET)) {
                 enableQuietLogging(Level.ERROR);
             }
 
-            if (cli.hasOption(OptionsFactory.OPTION_VERY_QUIET)) {
+            if (cli.hasOption(OPTION_VERY_QUIET)) {
                 enableQuietLogging(Level.OFF);
             }
 

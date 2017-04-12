@@ -56,7 +56,7 @@ public class ConfigurationFactory {
      * @return The default configuration with the defined templates directory
      */
     public Configuration buildDefaultConfiguration(Path templateDirectory, ConstructContext context) {
-        Configuration cfg = new Configuration(Configuration.VERSION_2_3_23);
+        Configuration cfg = new Configuration(Configuration.VERSION_2_3_25);
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         cfg.setLogTemplateExceptions(false);

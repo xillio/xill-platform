@@ -84,7 +84,6 @@
     </properties>
 
     <modules>
-        <module>plugin-database</module>
         <module>plugin-document</module>
         <module>plugin-excel</module>
         <module>plugin-exiftool</module>
@@ -94,7 +93,6 @@
         <module>plugin-mysql</module>
         <module>plugin-oracle</module>
         <module>plugin-properties</module>
-        <module>plugin-rest</module>
         <module>plugin-sqlite</module>
         <module>plugin-template</module>
         <module>plugin-web</module>

@@ -33,7 +33,7 @@ Assert.isTrue(doubleCheck, "The actual assertion for this test is not made.");
 function create() {
     var wb = Excel.createWorkbook(workbookName);
     var sheet = Excel.createSheet(wb, "testSheet");
-    Excel.setCell(sheet, 3, 5, "Hello World");
+    Excel.setCellValue(sheet, 3, 5, "Hello World");
     Excel.save(wb);
 }
 

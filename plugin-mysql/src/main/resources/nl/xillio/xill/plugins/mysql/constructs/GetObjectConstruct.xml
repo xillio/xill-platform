@@ -44,8 +44,7 @@ __NOTE__: Fields with `null` values are ignored in the search of objects.
         <example title="Usage">
         <header>Get an object by it's id</header>
         <code>
-            use MySQL;
-            use System;
+            use MySQL, System;
 
             // Connect to the database
             MySQL.connect(
@@ -61,8 +60,7 @@ __NOTE__: Fields with `null` values are ignored in the search of objects.
         </code>
         <header>Get an object by example</header>
         <code>
-            use MySQL;
-            use System;
+            use MySQL, System;
 
             // Connect to the database
             MySQL.connect(
