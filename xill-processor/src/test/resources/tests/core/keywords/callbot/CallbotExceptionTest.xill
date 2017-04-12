@@ -31,6 +31,6 @@ do {
 	error = e;
 }
 
-Assert.equal(error.message, "Cannot assign to atomic variable using a path.\n\tCaused by 'addOne.xill' (line 19)");
+Assert.equal(error.message, "Cannot assign to atomic variable using a path.\n\tCaused by 'testresources/core/keywords/callbot/addOne.xill' (line 19)");
 Assert.isNull(result);
 Assert.notNull(error);
