@@ -106,9 +106,11 @@ public class XillCLI {
             }
 
             for (String robot : cli.getArgs()) {
-                tryExecute(robot);
+                ProgramReturnCode returnCode = tryExecute(robot);
+                if ( returnCode != ProgramReturnCode.OK) {
+                    return returnCode;
+                }
             }
-
             return ProgramReturnCode.OK;
         } catch (ParseException e) {
             getStdErr().println(e.getMessage());
@@ -128,6 +130,7 @@ public class XillCLI {
             LOGGER.error("Execution Error: " + message, e);
             return ProgramReturnCode.EXECUTION_ERROR;
         }
+        return ProgramReturnCode.OK;
     }
 
     private void enableQuietLogging(Level level) {
