@@ -87,8 +87,7 @@ The return value of this construct is true if the operation finished successfull
             </code>
             <header>Update an item by id</header>
             <code>
-                use MySQL;
-                use File;
+                use MySQL, File;
 
                 // Connect to the database
                 MySQL.connect(
