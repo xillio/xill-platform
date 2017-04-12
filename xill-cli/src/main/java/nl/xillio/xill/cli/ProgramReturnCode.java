@@ -13,19 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* Specification: openAppend MUST open an append stream for the file.
- * Input: A file containing "Text file" and a stream which writes "!"
- * Expected: "Text file!"
+package nl.xillio.xill.cli;
+
+/**
+ * This enum represents the result of an execution of the {@link XillCLI Xill Command Line Interface}.
  */
-
-use Assert, File, Stream;
-
-var file = "testresources/file/file.txt";
-var stream = File.openAppend(file);
-Stream.write("!", stream);
-
-Assert.equal(Stream.getText(File.openRead(file)), "Text file!");
-
-// Reset the file.
-stream = File.openWrite(file);
-Stream.write("Text file", stream);
+public enum ProgramReturnCode {
+    OK,
+    INVALID_INPUT,
+    EXECUTION_ERROR
+}
