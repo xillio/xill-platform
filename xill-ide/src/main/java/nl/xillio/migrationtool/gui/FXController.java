@@ -74,13 +74,13 @@ public class FXController implements Initializable, EventHandler<Event> {
      * List of explicitly supported file extensions
      */
     private static final List<String> WHITE_LISTED_EXTENSIONS = Arrays.asList(
-            "xill", "xilt", "sbot",                     // Xillio
+            "xill", "xilt", "sbot",                     // Xill robots
             "txt", "properties", "md", "cfg", "ini",    // Plain text / configuration
             "html", "htm", "css",                       // Web
             "xslt", "xml",                              // XML
             "json", "js",                               // Javascript
             "bat", "sh",                                // Shell script
-            "ftl", "ftlh", "ftlx"                       // Templates
+            "ftl", "ftlh", "ftlx"                       // Freemarker templates
     );
 
     /**
