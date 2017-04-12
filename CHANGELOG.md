@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 ### Add
 * `String.lastIndexOf()` to find the last occurrence of a substring in a string [CTC-1991]
 * Xill Command Line Interface (released separately) [CTC-2201]
+* Add .ftl, .ftlh and .ftlx extensions to supported extensions [CTC-2131]
 
 ### Change
 * Decrease minimum height of help pane [CTC-2133]

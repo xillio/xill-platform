@@ -51,10 +51,7 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -69,6 +66,19 @@ public class FXController implements Initializable, EventHandler<Event> {
     public static final EventHost<String> OPEN_ROBOT_EVENT = new EventHost<>();
     public static final EventHost<StatusBar> ON_PROGRESS_ADD = new EventHost<>();
     public static final EventHost<StatusBar> ON_PROGRESS_REMOVE = new EventHost<>();
+
+    /**
+     * List of explicitly supported file extensions
+     */
+    private static final List<String> WHITE_LISTED_EXTENSIONS = Collections.unmodifiableList(Arrays.asList(
+            "xill", "xilt", "sbot",                     // Xill robots
+            "txt", "properties", "md", "cfg", "ini",    // Plain text / configuration
+            "html", "htm", "css",                       // Web
+            "xslt", "xml",                              // XML
+            "json", "js",                               // Javascript
+            "bat", "sh",                                // Shell script
+            "ftl", "ftlh", "ftlx"                       // Freemarker templates
+    ));
 
     /**
      * Instance of hotkeys handler
@@ -345,8 +355,8 @@ public class FXController implements Initializable, EventHandler<Event> {
                 AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING,
                         "Unsupported file type",
                         "The file '" + document.getName() + "' has an unsupported type.",
-                                "The editing of non-text-files is ill advised and may corrupt the file." + System.lineSeparator() +
-                        "Do you want to continue?",
+                        "The editing of non-text-files is ill advised and may corrupt the file." + System.lineSeparator() +
+                                "Do you want to continue?",
                         ButtonType.YES, ButtonType.NO);
 
                 dialog.showAndWait();
@@ -363,9 +373,12 @@ public class FXController implements Initializable, EventHandler<Event> {
         return tab;
     }
 
+    /**
+     * @param fileName Filename to be checked for compatibility
+     * @return true if the editor explicitly supports this file type
+     */
     private boolean isWhiteListed(String fileName) {
-        List<String> whiteList = Arrays.asList("xill", "txt", "properties", "html", "htm", "css", "xslt", "xml", "json", "js", "md", "cfg", "ini", "bat", "sh", "sbot");
-        return whiteList.contains(FilenameUtils.getExtension(fileName));
+        return WHITE_LISTED_EXTENSIONS.contains(FilenameUtils.getExtension(fileName));
     }
 
     @FXML
@@ -825,9 +838,9 @@ public class FXController implements Initializable, EventHandler<Event> {
     /**
      * Close a tab
      *
-     * @param tab The tab
+     * @param tab       The tab
      * @param removeTab True if tab will be removed
-     * @param silent True if tab will be closed silently without any further dialogs
+     * @param silent    True if tab will be closed silently without any further dialogs
      */
     public void closeTab(final Tab tab, final boolean removeTab, final boolean silent) {
         // Stop if we don't have a selected tab
