@@ -18,12 +18,14 @@ All notable changes to this project will be documented in this file.
 
 ### Add
 * `String.lastIndexOf()` to find the last occurrence of a substring in a string [CTC-1991]
+* Xill Command Line Interface (released separately) [CTC-2201]
 
 ### Change
 * Decrease minimum height of help pane [CTC-2133]
 
 ### Fix
 * Unexpected behaviour of `continue` statement, where code in outer loop might be skipped when using `continue` in a nested loop structure [CTC-1987]
+* (Asserted) error messages not displayed when calling a bot using `callbot()` [CTC-1986]
 
 ## [3.5.1] - 2017-02-28
 

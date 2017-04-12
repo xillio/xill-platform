@@ -15,19 +15,15 @@
  */
 package nl.xillio.xill.cli;
 
-import me.biesaart.wield.Wield;
-
 /**
- * This class represents the main application loader.
- *
- * @author Thomas Biesaart
+ * This exception is thrown when an attempt to run a Xill robot fails.
  */
-public class Application {
-    private Application() {
-        // This is just the bootloader class
+public class RobotExecutionException extends Exception {
+    public RobotExecutionException(String message) {
+        super(message);
     }
 
-    public static void main(String... args) {
-        Wield.the().power().run(args);
+    public RobotExecutionException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

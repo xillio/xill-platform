@@ -16,28 +16,17 @@
     limitations under the License.
 
 -->
-<Configuration>
+<Configuration strict="true" name="DefaultLoggingConfig">
     <Appenders>
-        <Console name="stdout" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{ISO8601} %p\t- (%F:%L) %m%n"/>
-            <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="ACCEPT"/>
-
-        </Console>
-        <Console name="stderr" target="SYSTEM_ERR">
-            <PatternLayout pattern="%d{ISO8601} %p\t- (%F:%L) %m%n" alwaysWriteExceptions="false" />
-            <Filters>
-                <MarkerFilter marker="NO_DEV" onMatch="DENY" onMismatch="ACCEPT"/>
-            </Filters>
-        </Console>
+        <Appender type="Console" name="STDOUT">
+            <Layout type="PatternLayout" pattern="%-5level{length=5} - %message%n" alwaysWriteExceptions="false"/>
+        </Appender>
     </Appenders>
+
     <Loggers>
-        <Logger name="nl.xillio" level="info">
-        </Logger>
-        <Logger name="robot" level="all">
-        </Logger>
-        <Root level="error">
-            <AppenderRef ref="stdout"/>
-            <AppenderRef ref="stderr" level="WARN" />
+        <Root level="info">
+            <AppenderRef ref="STDOUT"/>
         </Root>
     </Loggers>
+
 </Configuration>
