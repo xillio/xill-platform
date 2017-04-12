@@ -16,26 +16,49 @@
 package nl.xillio.xill.plugins.file.constructs;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import nl.xillio.xill.api.components.MetaExpression;
+import nl.xillio.xill.api.construct.Argument;
+import nl.xillio.xill.api.construct.Construct;
+import nl.xillio.xill.api.construct.ConstructContext;
+import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.services.resourceLibraries.ContentTypeLibrary;
 
-import java.io.IOException;
-import java.nio.file.Path;
+import java.util.Optional;
 
-@Singleton
-public class GetMimeTypeConstruct extends AbstractFilePropertyConstruct<String> {
+/**
+ *  Construct for extracting mime type from a file name. It does not check if a file exists.
+ *
+ *  @author Paul van der Zandt
+ */
+public class GetMimeTypeConstruct extends Construct {
+
+    private final ContentTypeLibrary contentTypeLibrary;
 
     @Inject
-    ContentTypeLibrary contentTypeLibrary;
-
-    @Override
-    protected String process(Path path) throws IOException {
-        return contentTypeLibrary.get(path).orElse(null);
+    public GetMimeTypeConstruct(ContentTypeLibrary contentTypeLibrary) {
+        this.contentTypeLibrary = contentTypeLibrary;
     }
 
     @Override
-    protected MetaExpression parse(String input) {
-        return fromValue(input);
+    public ConstructProcessor prepareProcess(ConstructContext context) {
+        return new ConstructProcessor(
+                path -> process(path),
+                new Argument("path", ATOMIC)
+        );
     }
+
+    private MetaExpression process(MetaExpression path) {
+        String filename = path.getStringValue();
+        return fromValue(getExtension(filename).orElse(null));
+    }
+
+    private Optional<String> getExtension(String filename) {
+        int index = filename.lastIndexOf('.');
+        if (index == -1) {
+            return Optional.empty();
+        }
+
+        return contentTypeLibrary.get(filename.substring(index).toLowerCase());
+    }
+
 }
