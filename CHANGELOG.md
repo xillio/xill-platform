@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file.
 * Unexpected behaviour of `continue` statement, where code in outer loop might be skipped when using `continue` in a nested loop structure [CTC-1987]
 * (Asserted) error messages not displayed when calling a bot using `callbot()` [CTC-1986]
 * File.getMimeType should not check if file exists [CTC-2128]
+* Dialogs take up entire container on alternative window managers [CTC-2205]
 
 ## [3.5.1] - 2017-02-28
 
