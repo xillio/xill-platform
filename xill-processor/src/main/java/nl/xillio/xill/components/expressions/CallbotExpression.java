@@ -28,7 +28,6 @@ import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.loaders.AbstractRobotLoader;
 import org.slf4j.Logger;
 
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;

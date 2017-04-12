@@ -23,10 +23,7 @@ import nl.xillio.xill.debugging.XillDebugger;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -170,5 +167,28 @@ public class ErrorInstructionTest {
         Collection<Processable> returnValue = instruction.getChildren();
 
         assertEquals(new HashSet<>(returnValue), new HashSet<>(children));
+    }
+
+   @Test
+    public void testNestedException() throws Exception {
+       result = (InstructionFlow<MetaExpression>) mock(InstructionFlow.class);
+       InstructionFlow<MetaExpression> resultError = (InstructionFlow<MetaExpression>) mock(InstructionFlow.class);
+       Throwable causedBy = new Throwable("Cause");
+       Throwable throwableMock = new Throwable("Identifying Exception", causedBy);
+       InstructionSet mockDoBlock = mock(InstructionSet.class);
+       InstructionSet mockErrorBlock = mock(InstructionSet.class);
+       Processable mockProcessable = mock(Processable.class);
+       VariableDeclaration cause = new VariableDeclaration(mockProcessable, "fail");
+
+       ErrorInstruction instruction = new ErrorInstruction(mockDoBlock, successBlock, errorBlock, finallyBlock, cause);
+       when(mockDoBlock.process(errorDebugger)).thenReturn(result);
+       when(mockErrorBlock.process(xillDebugger)).thenReturn(resultError);
+       when(errorDebugger.getError()).thenReturn(throwableMock);
+       when(result.hasValue()).thenReturn(false);
+       when(errorDebugger.hasError()).thenReturn(true);
+       InstructionFlow<MetaExpression> var = instruction.process(xillDebugger, errorDebugger);
+
+       Map<String, MetaExpression> status = cause.getVariable().getValue();
+       assertEquals(status.get("message").getStringValue(), "Cause\n\tIdentifying Exception");
     }
 }

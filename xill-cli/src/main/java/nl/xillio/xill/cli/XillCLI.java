@@ -107,24 +107,31 @@ public class XillCLI {
             }
 
             for (String robot : cli.getArgs()) {
-                try {
-                    getXillRobotExecutor().execute(robot);
-                } catch (RobotExecutionException e) {
-                    String message = e.getMessage();
-                    if (message == null) {
-                        message = e.getCause().getClass().getSimpleName();
-                    }
-                    LOGGER.error("Execution Error: " + message, e);
-                    return ProgramReturnCode.EXECUTION_ERROR;
+                ProgramReturnCode returnCode = tryExecute(robot);
+                if ( returnCode != ProgramReturnCode.OK) {
+                    return returnCode;
                 }
             }
-
             return ProgramReturnCode.OK;
         } catch (ParseException e) {
             getStdErr().println(e.getMessage());
             printHelp();
             return ProgramReturnCode.INVALID_INPUT;
         }
+    }
+
+    private ProgramReturnCode tryExecute(String robot) throws ParseException{
+        try {
+            getXillRobotExecutor().execute(robot);
+        } catch (RobotExecutionException e) {
+            String message = e.getMessage();
+            if (message == null) {
+                message = e.getCause().getClass().getSimpleName();
+            }
+            LOGGER.error("Execution Error: " + message, e);
+            return ProgramReturnCode.EXECUTION_ERROR;
+        }
+        return ProgramReturnCode.OK;
     }
 
     private void enableQuietLogging(Level level) {
@@ -195,6 +202,7 @@ public class XillCLI {
         return stdIn;
     }
 
+    @SuppressWarnings("squid:S106") //correct usage of System.out
     public PrintStream getStdOut() {
         if (stdOut == null) {
             stdOut = System.out;
@@ -206,6 +214,7 @@ public class XillCLI {
         this.stdOut = stdOut;
     }
 
+    @SuppressWarnings("squid:S106") //correct usage of System.err
     public PrintStream getStdErr() {
         if (stdErr == null) {
             stdErr = System.err;

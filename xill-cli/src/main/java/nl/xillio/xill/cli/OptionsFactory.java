@@ -31,6 +31,8 @@ public class OptionsFactory {
     public static final String OPTION_VERY_QUIET = "qq";
     public static final String OPTION_ROBOTS = "r";
 
+    public static final String CANNOT_BE_USED_IN_COMBINATION = "\nThis option cannot be used in combination with -";
+
     public Options buildOptions() {
         OptionGroup logging = new OptionGroup()
                 .addOption(
@@ -39,7 +41,7 @@ public class OptionsFactory {
                                 .desc(
                                         "Remove all logging from the output except errors. " +
                                                 "Enable this option if you need clean logs." +
-                                                "\nThis option cannot be used in combination with -" + OPTION_VERY_QUIET + "."
+                                                 CANNOT_BE_USED_IN_COMBINATION + OPTION_VERY_QUIET + "."
                                 )
                                 .build()
                 ).addOption(
@@ -48,7 +50,7 @@ public class OptionsFactory {
                                 .desc(
                                         "Remove all logging from the output including errors. " +
                                                 "Enable this option if you are using the output for data streams." +
-                                                "\nThis option cannot be used in combination with -" + OPTION_QUIET + "."
+                                                CANNOT_BE_USED_IN_COMBINATION + OPTION_QUIET + "."
                                 )
                                 .build()
                 );
@@ -59,7 +61,7 @@ public class OptionsFactory {
                                 .longOpt("help")
                                 .desc(
                                         "Display this message." +
-                                                "\nThis option cannot be used in combination with -" + OPTION_VERSION + "."
+                                                CANNOT_BE_USED_IN_COMBINATION + OPTION_VERSION + "."
                                 )
                                 .build()
                 ).addOption(
@@ -67,7 +69,7 @@ public class OptionsFactory {
                                 .longOpt("version")
                                 .desc(
                                         "Display version information about the Xill command line interface." +
-                                                "\nThis option cannot be used in combination with -" + OPTION_HELP + "."
+                                                CANNOT_BE_USED_IN_COMBINATION + OPTION_HELP + "."
                                 )
                                 .build()
                 );
