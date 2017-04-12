@@ -81,7 +81,7 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
      * @throws IOException if thrown if a file(-related) operation fails.
      */
     public XillProcessor(final File projectFolder, final File robotFile, final List<XillPlugin> plugins,
-                         final Debugger debugger) throws IOException {
+                         final Debugger debugger) {
         this.projectFolder = projectFolder;
         this.robotFile = robotFile;
         this.plugins = plugins;

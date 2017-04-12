@@ -57,8 +57,6 @@ class WorkerRobotFactory {
             processor = new XillProcessor(robotID.getProjectPath(), calledRobotFile, plugins, childDebugger);
             processor.setOutputHandler(outputHandler);
             processor.compileAsSubRobot(robotID);
-        } catch (IOException e) {
-            throw new WorkerCompileException("Could not read robot", e);
         } catch (XillParsingException e) {
             throw new WorkerCompileException("Could not parse robot", e);
         }
