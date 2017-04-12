@@ -65,7 +65,7 @@ public class WebServiceController {
     )
     @ResponseStatus(code = HttpStatus.OK)
     @ApiResponses({@ApiResponse(code = 200, message = "OK")})
-    public Map<String, String> ping() throws RobotNotFoundException {
+    public Map<String, String> ping() {
         final Map<String, String> info = new LinkedHashMap<>();
         info.put("Name", "Xill Microservice Server");
         info.put("Version", "0.1");
