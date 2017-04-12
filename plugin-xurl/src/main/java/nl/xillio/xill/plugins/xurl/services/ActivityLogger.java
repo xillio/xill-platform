@@ -21,8 +21,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.slf4j.Logger;
 
-import java.io.IOException;
-
 /**
  * This class is responsible for logging request and response information.
  *

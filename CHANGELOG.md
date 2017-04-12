@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fix
 * Unexpected behaviour of `continue` statement, where code in outer loop might be skipped when using `continue` in a nested loop structure [CTC-1987]
+* (Asserted) error messages not displayed when calling a bot using `callbot()` [CTC-1986]
 
 ## [3.5.1] - 2017-02-28
 
