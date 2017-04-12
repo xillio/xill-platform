@@ -140,7 +140,7 @@ public class XillCLI {
         getHelpFormatter().printHelp(
                 printWriter,
                 120,
-                PROGAM_USAGE,
+                PROGRAM_USAGE,
                 PROGRAM_DESCRIPTION,
                 getOptions(),
                 4,
