@@ -71,7 +71,7 @@
                         <configuration>
                             <programs>
                                 <program>
-                                    <mainClass>n.xillio.xill.cli.XillCLI</mainClass>
+                                    <mainClass>nl.xillio.xill.cli.XillCLI</mainClass>
                                     <id>xill</id>
                                 </program>
                             </programs>

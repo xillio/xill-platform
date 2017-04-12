@@ -15,7 +15,7 @@
  */
 package nl.xillio.xill.maven.services;
 
-import n.xillio.xill.cli.XillRobotExecutor;
+import nl.xillio.xill.cli.XillRobotExecutor;
 import nl.xillio.xill.api.XillEnvironment;
 
 import javax.inject.Singleton;

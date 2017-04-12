@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package n.xillio.xill.cli;
+package nl.xillio.xill.cli;
 
 import me.biesaart.utils.IOUtils;
 import nl.xillio.xill.XillEnvironmentImpl;
@@ -34,8 +34,6 @@ import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-
-import static n.xillio.xill.cli.OptionsFactory.*;
 
 /**
  * This class represents the main command line application for Xill. It uses a lazy evaluation pattern where all
@@ -88,22 +86,22 @@ public class XillCLI {
             CommandLine cli = getCommandLine();
 
             // Should we print the version?
-            if (cli.hasOption(OPTION_VERSION)) {
+            if (cli.hasOption(OptionsFactory.OPTION_VERSION)) {
                 getVersionPrinter().print();
                 return ProgramReturnCode.OK;
             }
 
             // Should we print the help message?
-            if (cli.hasOption(OPTION_HELP) || cli.getArgs().length == 0) {
+            if (cli.hasOption(OptionsFactory.OPTION_HELP) || cli.getArgs().length == 0) {
                 printHelp();
                 return ProgramReturnCode.OK;
             }
 
-            if (cli.hasOption(OPTION_QUIET)) {
+            if (cli.hasOption(OptionsFactory.OPTION_QUIET)) {
                 enableQuietLogging(Level.ERROR);
             }
 
-            if (cli.hasOption(OPTION_VERY_QUIET)) {
+            if (cli.hasOption(OptionsFactory.OPTION_VERY_QUIET)) {
                 enableQuietLogging(Level.OFF);
             }
 
@@ -270,8 +268,8 @@ public class XillCLI {
 
     public Path getProjectRoot() throws ParseException {
         if (projectRoot == null) {
-            if (getCommandLine().hasOption(OPTION_WORKING_DIR)) {
-                projectRoot = Paths.get(getCommandLine().getOptionValue(OPTION_WORKING_DIR));
+            if (getCommandLine().hasOption(OptionsFactory.OPTION_WORKING_DIR)) {
+                projectRoot = Paths.get(getCommandLine().getOptionValue(OptionsFactory.OPTION_WORKING_DIR));
             } else {
                 projectRoot = Paths.get(".");
             }
@@ -281,8 +279,8 @@ public class XillCLI {
 
     public Path[] getIncludePaths() throws ParseException {
         if (includePaths == null) {
-            if (getCommandLine().hasOption(OPTION_ROBOTS)) {
-                String[] paths = getCommandLine().getOptionValue(OPTION_ROBOTS).split("[:;]");
+            if (getCommandLine().hasOption(OptionsFactory.OPTION_ROBOTS)) {
+                String[] paths = getCommandLine().getOptionValue(OptionsFactory.OPTION_ROBOTS).split("[:;]");
                 includePaths = Arrays.stream(paths).map(Paths::get).toArray(Path[]::new);
             } else {
                 includePaths = new Path[0];

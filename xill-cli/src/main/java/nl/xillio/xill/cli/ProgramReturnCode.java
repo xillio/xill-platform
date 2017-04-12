@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package n.xillio.xill.cli;
+package nl.xillio.xill.cli;
 
 /**
- * This exception is thrown when an attempt to run a Xill robot fails.
+ * This enum represents the result of an execution of the {@link XillCLI Xill Command Line Interface}.
  */
-public class RobotExecutionException extends Exception {
-    public RobotExecutionException(String message) {
-        super(message);
-    }
-
-    public RobotExecutionException(String message, Throwable cause) {
-        super(message, cause);
-    }
+public enum ProgramReturnCode {
+    OK,
+    INVALID_INPUT,
+    EXECUTION_ERROR
 }

@@ -15,8 +15,8 @@
  */
 package nl.xillio.xill.maven.mojos;
 
-import n.xillio.xill.cli.RobotExecutionException;
-import n.xillio.xill.cli.XillRobotExecutor;
+import nl.xillio.xill.cli.RobotExecutionException;
+import nl.xillio.xill.cli.XillRobotExecutor;
 import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.api.XillProcessor;
 import nl.xillio.xill.api.components.RobotID;
