@@ -34,7 +34,7 @@ public class ActivityLogger {
         log(options, rootLogger, request.toString());
     }
 
-    public void handle(Request request, HttpResponse response, Options options, Logger rootLogger) throws IOException {
+    public void handle(Request request, HttpResponse response, Options options, Logger rootLogger) {
         log(options, rootLogger, "Response from {}: {} {}", request, response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
     }
 
