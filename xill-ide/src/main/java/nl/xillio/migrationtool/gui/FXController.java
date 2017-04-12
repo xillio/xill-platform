@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,10 +51,7 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -73,7 +70,7 @@ public class FXController implements Initializable, EventHandler<Event> {
     /**
      * List of explicitly supported file extensions
      */
-    private static final List<String> WHITE_LISTED_EXTENSIONS = Arrays.asList(
+    private static final List<String> WHITE_LISTED_EXTENSIONS = Collections.unmodifiableList(Arrays.asList(
             "xill", "xilt", "sbot",                     // Xill robots
             "txt", "properties", "md", "cfg", "ini",    // Plain text / configuration
             "html", "htm", "css",                       // Web
@@ -81,7 +78,7 @@ public class FXController implements Initializable, EventHandler<Event> {
             "json", "js",                               // Javascript
             "bat", "sh",                                // Shell script
             "ftl", "ftlh", "ftlx"                       // Freemarker templates
-    );
+    ));
 
     /**
      * Instance of hotkeys handler
@@ -358,8 +355,8 @@ public class FXController implements Initializable, EventHandler<Event> {
                 AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING,
                         "Unsupported file type",
                         "The file '" + document.getName() + "' has an unsupported type.",
-                                "The editing of non-text-files is ill advised and may corrupt the file." + System.lineSeparator() +
-                        "Do you want to continue?",
+                        "The editing of non-text-files is ill advised and may corrupt the file." + System.lineSeparator() +
+                                "Do you want to continue?",
                         ButtonType.YES, ButtonType.NO);
 
                 dialog.showAndWait();
