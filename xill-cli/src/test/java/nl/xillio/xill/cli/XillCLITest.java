@@ -158,12 +158,11 @@ public class XillCLITest {
     @Test
     public void testRunRobotWithIncludes() throws IOException {
         // Create a folder with a robot.
-        Path tempDir = Files.createDirectories(Paths.get("target/xill-cli-test"));
+        Path tempDir = Files.createTempDirectory("unit-test");
         Path projectDir = tempDir.resolve("project");
         Path includedDir = tempDir.resolve("includedDir");
         Files.createDirectories(projectDir);
         Files.createDirectories(includedDir);
-
 
         // Create an archive with a robot.
         Path includedArchive = tempDir.resolve("archive.xip");
