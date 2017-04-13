@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file.
 ### Change
 * Remove `as` keyword from `use` statement [CTC-1384]
 
-## [3.5.2] - unreleased
+## [3.5.2] - 2017-04-17
 
 ### Add
 * `String.lastIndexOf()` to find the last occurrence of a substring in a string [CTC-1991]
