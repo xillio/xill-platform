@@ -55,10 +55,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -74,6 +71,19 @@ public class FXController implements Initializable, EventHandler<Event> {
     public static final EventHost<String> OPEN_ROBOT_EVENT = new EventHost<>();
     public static final EventHost<StatusBar> ON_PROGRESS_ADD = new EventHost<>();
     public static final EventHost<StatusBar> ON_PROGRESS_REMOVE = new EventHost<>();
+
+    /**
+     * List of explicitly supported file extensions
+     */
+    private static final List<String> WHITE_LISTED_EXTENSIONS = Collections.unmodifiableList(Arrays.asList(
+            "xill", "xilt", "sbot",                     // Xill robots
+            "txt", "properties", "md", "cfg", "ini",    // Plain text / configuration
+            "html", "htm", "css",                       // Web
+            "xslt", "xml",                              // XML
+            "json", "js",                               // Javascript
+            "bat", "sh",                                // Shell script
+            "ftl", "ftlh", "ftlx"                       // Freemarker templates
+    ));
 
     /**
      * Instance of hotkeys handler
@@ -372,9 +382,12 @@ public class FXController implements Initializable, EventHandler<Event> {
         return tab;
     }
 
+    /**
+     * @param fileName Filename to be checked for compatibility
+     * @return true if the editor explicitly supports this file type
+     */
     private boolean isWhiteListed(String fileName) {
-        List<String> whiteList = Arrays.asList("xill", "txt", "properties", "html", "htm", "css", "xslt", "xml", "json", "js", "md", "cfg", "ini", "bat", "sh", "sbot");
-        return whiteList.contains(FilenameUtils.getExtension(fileName));
+        return WHITE_LISTED_EXTENSIONS.contains(FilenameUtils.getExtension(fileName));
     }
 
     @FXML
