@@ -67,7 +67,7 @@ public class Application extends javafx.application.Application {
 
     @Override
     public void start(final Stage stage) throws Exception {
-        primaryStage = stage;
+        primaryStage = stage; //NOSONAR - This is threadsafe, because Application.start() is only ever called once
         LOGGER.info("Loading IDE");
         // Try to load the IDE from the classpath first
         if (loadIDE(stage, null)) {
