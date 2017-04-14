@@ -14,7 +14,7 @@ All notable changes to this project will be documented in this file.
 * Remove deprecated constructs `File.getText()` and `Excel.setCell()` [CTC-2102]
 * Upgrade version of Freemarker library for `Template` plugin to 2.3.25 for more functionality [CTC-2109]  
 
-## [3.5.2] - unreleased
+## [3.5.2] - 2017-04-17
 
 ### Add
 * `String.lastIndexOf()` to find the last occurrence of a substring in a string [CTC-1991]
