@@ -18,14 +18,14 @@
 -->
 <function>
     <description>
-This construct merges a model with a template using the given engine and writes the result to the provided output.
+Merges `model` with the template specified by `templateName` and writes the result to `output`. Optionally an `engine` may be provided that will be used for processing. The `Template` plugin uses the Freemarker templating engine to generate text output based on templates and changing data.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="templateName">
 The name and extension of the template file. This file must be located in the `templatesDirectory` of the configured engine.
         </parameterDescription>
 		<parameterDescription parameterName="output">
-The stream which the template engine writes its output to. Use the File plugin to write the output to a file.
+The stream which the template engine writes its output to. Use the `File` plugin to write the output to a file.
         </parameterDescription>
 		<parameterDescription parameterName="model">
 The data necessary to process the given template. When not providing this parameter (or giving an empty object) this
@@ -38,8 +38,8 @@ construct or create a new default engine if there is no engine created yet.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-This plugin uses FreeMarker library to process the templates. For more information please check their
-[website](http://freemarker.org/docs/index.html).
+This plugin uses the FreeMarker library to process templates. For more information please check the
+[Freemarker Documentation](http://freemarker.org/docs/index.html).
 	</longDescription>
     <examples>
         <example title="Simple Usage">
@@ -52,7 +52,7 @@ placeholders.
             </code>
             <header format="MD">
 The engine can process a model and merge this with the template. The result of the template-processing is written to the
-outputFolder located at the project's root directory. The default engine is created by the Template plugin.
+`outputFolder` located in the project's root directory. The default engine is created by the Template plugin.
             </header>
             <code>
                 use Template;
@@ -73,9 +73,9 @@ outputFolder located at the project's root directory. The default engine is crea
         </example>
         <example title="Templates with iteration">
             <header format="MD">
-Freemarker defines an extensive templating language. This is an example on using iterations in a template. We create
+Freemarker defines an extensive templating language. This is an example of iterating in a template. We create
 a template that can be used to render a simple table in an html page. The `?html` suffix is used to make sure the data
-is correctly encoded for an html page.
+is correctly encoded.
             </header>
             <code>
                 &lt;!DOCTYPE html&gt;

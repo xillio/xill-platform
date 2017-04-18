@@ -18,19 +18,17 @@
 -->
 <function>
     <description>
-The Template plugin uses the Freemarker _templating engine_ to generate text output based on templates and changing
-data. This construct parses the given options parameter and returns a configured templating engine (or engine for short)
-that is ready for use.
+Parses `options` and returns a configured templating engine (or `engine` for short) that is ready for by `Template.process()`. The `Template` plugin uses the Freemarker templating engine to generate text output based on templates and changing data.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="options">
-The options parameter is an object that can be used to configure the templating engine:
+The options parameter is an object that can be used to configure the engine:
 
 | Option               | Values                                                                          | Description                                                                                                                              | Default    |
 |----------------------|---------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|------------|
 | templatesDirectory   | An ATOMIC containing a relative path from the project root or an absolute path. | The directory containing template files that can be used with this engine.                                                               | "."        |
 | encoding             | An ATOMIC containing a string.                                                  | This sets the encoding for the template that is provided in the process-construct.                                                       | "UTF-8"    |
-| noCaching            | An ATOMIC containing a boolean.                                                 | Disabling the caching will lead to decreased performance but it will optimize the memory footprint.                                      | false      |
+| noCaching            | An ATOMIC containing a boolean.                                                 | Disabling the caching will lead to decreased performance while reducing the memory footprint.                                            | false      |
 | strongCache          | An ATOMIC containing a number (from 0 to 2147483647).                           | This number instructs the engine to keep the specific number of hard references to templates. A hard reference is not garbage collected. | 0          |
 | softCache            | An ATOMIC containing a number (from 0 to 2147483647).                           | This number instructs the engine to keep the specific number of soft references to templates. A soft reference can be garbage collected. | 2147483647 |
 
@@ -43,20 +41,20 @@ true. When the `noCaching` option is set to true, the `strongCache` and `softCac
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-It is not required to first initialize the engine before processing templates and data. If the engine in not
+It is not necessary to initialize the engine before processing templates and data. If the engine in not
 initialized, it will create a new default engine.
 
-This plugin uses a third-party library named FreeMarker to process the templates. For more information please check
-their [website](http://freemarker.org/docs/index.html).
+This plugin uses the FreeMarker library to process templates. For more information please check the
+[Freemarker Documentation](http://freemarker.org/docs/index.html).
 	
-When encountering charset or encoding issues please read the
-[FreeMarker documentation](http://freemarker.org/docs/pgui_misc_charset.html) on this.
+When encountering charset or encoding issues please read
+[FreeMarker documentation - Charset issues](http://freemarker.org/docs/pgui_misc_charset.html).
 	</longDescription>
     <examples>
         <example title="Get the default engine">
             <header>
                 This returns an engine with its default settings (A.K.A. a default engine). This means the
-                engine will search the project root directory for tempate files.
+                engine will search the project root directory for template files.
             </header>
             <code>
                 use Template;
@@ -66,7 +64,7 @@ When encountering charset or encoding issues please read the
         </example>
         <example title="Specify more options">
             <header>
-                This returns an engine with given options.
+                This returns an engine with given `options`.
             </header>
             <code>
                 use Template;
