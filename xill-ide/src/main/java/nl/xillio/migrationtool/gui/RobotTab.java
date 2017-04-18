@@ -228,7 +228,7 @@ public class RobotTab extends FileTab implements Initializable {
     @Override
     protected boolean save(final boolean showDialog) {
         // Do not save the contents of other robots (i.e. included robots being debugged).
-        if (currentRobot != processor.getRobotID()) {
+        if (!currentRobot.equals(processor.getRobotID())) {
             return false;
         }
 
