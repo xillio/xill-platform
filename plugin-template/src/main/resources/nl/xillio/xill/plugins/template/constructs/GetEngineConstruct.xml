@@ -63,7 +63,7 @@ When encountering charset or encoding issues please read
             </code>
         </example>
         <example title="Specify more options">
-            <header>
+            <header format="MD">
                 This returns an engine with given `options`.
             </header>
             <code>
