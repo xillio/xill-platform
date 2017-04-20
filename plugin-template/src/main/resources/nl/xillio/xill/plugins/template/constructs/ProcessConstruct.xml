@@ -33,8 +33,8 @@ would result in processing the template without any data.
         </parameterDescription>
 		<parameterDescription parameterName="engine">
 The engine to use for processing the templates. This engine is the value returned from the `getEngine`-construct. When
-this parameter is omitted the Template plugin will either use the engine created by a previous Template.getEngine()
-construct or create a new default engine if there is no engine created yet.
+this parameter is omitted the Template plugin will create a new default engine. The configuration for this default engine 
+is documented in the `getEngine`-construct.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
