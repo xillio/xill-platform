@@ -18,11 +18,14 @@
 -->
 <function>
     <description>
-Merges `model` with the template specified by `templateName` and writes the result to `output`. Optionally an `engine` may be provided that will be used for processing. The `Template` plugin uses the Freemarker templating engine to generate text output based on templates and changing data.
+Merges `model` with the template specified by `templateName` and writes the result to `output`. Optionally an `engine`
+may be provided that will be used for processing. The `Template` plugin uses the Freemarker templating engine to
+generate text output based on templates and changing data.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="templateName">
-The name and extension of the template file. This file must be located in the `templatesDirectory` of the configured engine.
+The name and extension of the template file. This file must be located in the `templatesDirectory` of the configured
+engine.
         </parameterDescription>
 		<parameterDescription parameterName="output">
 The stream which the template engine writes its output to. Use the `File` plugin to write the output to a file.
@@ -33,8 +36,8 @@ would result in processing the template without any data.
         </parameterDescription>
 		<parameterDescription parameterName="engine">
 The engine to use for processing the templates. This engine is the value returned from the `getEngine`-construct. When
-this parameter is omitted the Template plugin will create a new default engine. The configuration for this default engine 
-is documented in the `getEngine`-construct.
+this parameter is omitted the Template plugin will create a new default engine. The configuration for this default
+engine is documented in the `getEngine`-construct.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

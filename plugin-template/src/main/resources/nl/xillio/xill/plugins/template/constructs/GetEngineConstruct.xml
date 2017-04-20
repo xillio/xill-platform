@@ -18,7 +18,9 @@
 -->
 <function>
     <description>
-Parses `options` and returns a configured templating engine (or `engine` for short) that is ready for by `Template.process()`. The `Template` plugin uses the Freemarker templating engine to generate text output based on templates and changing data.
+Parses `options` and returns a configured templating engine (or `engine` for short) that is ready for by
+`Template.process()`. The `Template` plugin uses the Freemarker templating engine to generate text output based on
+templates and changing data.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="options">
