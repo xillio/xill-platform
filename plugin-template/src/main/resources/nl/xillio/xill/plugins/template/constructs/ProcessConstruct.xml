@@ -18,32 +18,44 @@
 -->
 <function>
     <description>
-This construct combines a template and a model using the given engine and writes the result to the provided output.
+Merges `model` with the template specified by `templateName` and writes the result to `output`. Optionally an `engine`
+may be provided that will be used for processing. The `Template` plugin uses the Freemarker templating engine to
+generate text output based on templates and changing data.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="templateName">
-The name and extension of the template file. This file must be located in the `templatesDirectory` of the (given) engine.
+The name and extension of the template file. This file must be located in the `templatesDirectory` of the configured
+engine.
         </parameterDescription>
 		<parameterDescription parameterName="output">
-The stream which the template engine will be written to. When willing to write to a file, use the `File` plugin.
+The stream which the template engine writes its output to. Use the `File` plugin to write the output to a file.
         </parameterDescription>
 		<parameterDescription parameterName="model">
-The data necessary to process the given template. When not providing this parameter (or giving an empty object) this would result in processing the template without any data.
+The data necessary to process the given template. When not providing this parameter (or giving an empty object) this
+would result in processing the template without any data.
         </parameterDescription>
 		<parameterDescription parameterName="engine">
-The engine to be for processing the templates. This engine is the value given from the `getEngine`-construct. When not providing this parameter this would result in using the default engine as described in the `getEngine`-construct.
+The engine to use for processing the templates. This engine is the value returned from the `getEngine`-construct. When
+this parameter is omitted the Template plugin will create a new default engine. The configuration for this default
+engine is documented in the `getEngine`-construct.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-This plugin uses a third-party library named FreeMarker to process the templates. For more information please check their [website](http://freemarker.org/docs/index.html).
+This plugin uses the FreeMarker library to process templates. For more information please check the
+[Freemarker Documentation](http://freemarker.org/docs/index.html).
 	</longDescription>
     <examples>
-        <example title="Default Usage">
-            <header>
-                The template named template.txt is located at the project's root directory.
-                The template gets combined with the provided model.
-                The result of the template-processing is written to the outputFolder
-                located at the project's root directory. The default engine is used here.
+        <example title="Simple Usage">
+            <header format="MD">
+A template uses the `${...}` notation as placeholders for the data to be replaced. This template contains two of these
+placeholders.
+            </header>
+            <code>
+                ${key1} ${key2}!
+            </code>
+            <header format="MD">
+The engine can process a model and merge this with the template. The result of the template-processing is written to the
+`outputFolder` located in the project's root directory. The default engine is created by the Template plugin.
             </header>
             <code>
                 use Template;
@@ -51,29 +63,76 @@ This plugin uses a third-party library named FreeMarker to process the templates
 
                 var output = File.openWrite("outputFolder/output.txt");
                 var model = {
-                    "key1" : "value1",
-                    "key2" : "value2"
+                    "key1" : "Hello",
+                    "key2" : "world"
                 };
 
                 Template.process("template.txt", output , model);
             </code>
+            <header>The resulting file (outputFolder/output.txt) looks like this:</header>
+            <code>
+                Hello World!
+            </code>
         </example>
-        <example title="Process without model">
-            <header>
-                In this example no model is used and the template.txt will be parsed as is.
+        <example title="Templates with iteration">
+            <header format="MD">
+Freemarker defines an extensive templating language. This is an example of iterating in a template. We create
+a template that can be used to render a simple table in an html page. The `?html` suffix is used to make sure the data
+is correctly encoded.
+            </header>
+            <code>
+                &lt;!DOCTYPE html&gt;
+                &lt;html&gt;
+                &lt;body&gt;
+                    &lt;table&gt;
+                        &lt;tbody&gt;
+                &lt;#list movies as movie&gt;
+                            &lt;tr&gt;&lt;td&gt;${movie.name?html}&lt;/td&gt;&lt;td&gt;${movie.yearOfRelease}&lt;/td&gt;&lt;/tr&gt;
+                &lt;/#list&gt;
+                        &lt;/tbody&gt;
+                    &lt;/table&gt;
+                &lt;/body&gt;
+                &lt;/html&gt;
+            </code>
+            <header format="MD">
+The `&lt;#list...&gt; tag initiates a foreach loop over all movies within the model.
+Use the following script to generate a simple html page with a table.
             </header>
             <code>
                 use Template;
                 use File;
 
-                var output = File.openWrite("outputFolder/output.txt");
+                var output = File.openWrite("outputFolder/movies.html");
 
-                Template.process("template.txt", output);
+                var model = {"movies": [
+                    {"name":"Metropolis", "yearOfRelease": "1927"},
+                    {"name":"Of Mice &amp; Men", "yearOfRelease": "1939"},
+                    {"name":"War of the worlds", "yearOfRelease": "1953"}
+                ]};
+                Template.process("template.ftlh", output, model);
+            </code>
+            <header format="MD">
+Every occurence in the `movies` array is referenced as `movie`. Each attribute can be referenced by its name. The result
+is:
+            </header>
+            <code>
+                &lt;!DOCTYPE html&gt;
+                &lt;html&gt;
+                &lt;body&gt;
+                    &lt;table&gt;
+                        &lt;tbody&gt;
+                            &lt;tr&gt;&lt;td&gt;Metropolis&lt;/td&gt;&lt;td&gt;1927&lt;/td&gt;&lt;/tr&gt;
+                            &lt;tr&gt;&lt;td&gt;Of Mice &amp;amp; Men&lt;/td&gt;&lt;td&gt;1939&lt;/td&gt;&lt;/tr&gt;
+                            &lt;tr&gt;&lt;td&gt;War of the worlds&lt;/td&gt;&lt;td&gt;1953&lt;/td&gt;&lt;/tr&gt;
+                        &lt;/tbody&gt;
+                    &lt;/table&gt;
+                &lt;/body&gt;
+                &lt;/html&gt;
             </code>
         </example>
         <example title="Process with specified engine">
             <header>
-                This example uses a specified engine to process the templates with.
+                This example uses a configured engine to process the templates with.
             </header>
             <code>
                 use Template;
@@ -85,8 +144,8 @@ This plugin uses a third-party library named FreeMarker to process the templates
                 };
                 var output = File.openWrite("C:/tmp/output.txt");
                 var model = {
-                    "key1" : "value1",
-                    "key2" : "value2"
+                    "key1" : "Hello",
+                    "key2" : "world"
                 };
 
                 var config = Template.getEngine(options);

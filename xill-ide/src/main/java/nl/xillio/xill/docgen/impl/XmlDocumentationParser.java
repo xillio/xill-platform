@@ -58,7 +58,6 @@ public class XmlDocumentationParser implements DocumentationParser {
     private XPathExpression parameterDescriptionsXPath;
     private XPathExpression longDescriptionXPath;
     private XPathExpression exampleNodesXPathQuery;
-    private XPathExpression exampleHeaderMDXPathQuery;
     private XPathExpression referenceXPathQuery;
     // Enable all MD extensions except for the hardwraps (this converts linebreaks into <br />, which is unwanted)
     private static PegDownProcessor markdownProcessor = new PegDownProcessor(Extensions.ALL ^ (Extensions.HARDWRAPS | Extensions.ANCHORLINKS));
@@ -95,7 +94,6 @@ public class XmlDocumentationParser implements DocumentationParser {
         longDescriptionXPath = xPath.compile("/function/longDescription/text()");
         tagXPathQuery = xPath.compile("/function/tags");
         exampleNodesXPathQuery = xPath.compile("/function/examples/example");
-        exampleHeaderMDXPathQuery = xPath.compile("/function/examples/example/header[@format='MD']");
         referenceXPathQuery = xPath.compile("/function/references/reference");
     }
 
@@ -153,7 +151,7 @@ public class XmlDocumentationParser implements DocumentationParser {
      * @return Parsed markdown as HTML
      * @throws XPathExpressionException When the XPath query fails
      */
-    private String parseStringFromXPath(Document doc, XPathExpression query) throws XPathExpressionException {
+    private String parseStringFromXPath(Node doc, XPathExpression query) throws XPathExpressionException {
         return markdownProcessor.markdownToHtml((String) query.evaluate(doc, XPathConstants.STRING));
     }
 
@@ -208,8 +206,7 @@ public class XmlDocumentationParser implements DocumentationParser {
             Node item = exampleContent.item(t);
 
             if (checkMDHeader(item)) {
-                String md = parseStringFromXPath(doc, exampleHeaderMDXPathQuery);
-
+                String md = markdownProcessor.markdownToHtml(item.getTextContent());
                 example.addContent(
                         new ExampleNode(item.getNodeName(), md));
             } else if (item.getNodeName() != null && !item.getNodeName().startsWith("#")) {
