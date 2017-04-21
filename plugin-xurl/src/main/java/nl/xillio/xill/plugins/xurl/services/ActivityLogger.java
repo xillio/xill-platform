@@ -21,8 +21,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.slf4j.Logger;
 
-import java.io.IOException;
-
 /**
  * This class is responsible for logging request and response information.
  *
@@ -34,7 +32,7 @@ public class ActivityLogger {
         log(options, rootLogger, request.toString());
     }
 
-    public void handle(Request request, HttpResponse response, Options options, Logger rootLogger) throws IOException {
+    public void handle(Request request, HttpResponse response, Options options, Logger rootLogger) {
         log(options, rootLogger, "Response from {}: {} {}", request, response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
     }
 

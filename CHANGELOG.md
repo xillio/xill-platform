@@ -12,18 +12,24 @@ All notable changes to this project will be documented in this file.
 * Remove `as` keyword from `use` statement [CTC-1384]
 * Remove deprecated packages `Database` and `REST` [CTC-2102]
 * Remove deprecated constructs `File.getText()` and `Excel.setCell()` [CTC-2102]
-* Upgrade version of Freemarker library for `Template` plugin to 2.3.25 for more functionality [CTC-2109]  
+* Upgrade version of Freemarker library for `Template` plugin to 2.3.25 for more functionality [CTC-2109]
+* Casing of included libraries is now checked (update of Xill language) [CTC-1943]
 
-## [3.5.2] - unreleased
+## [3.5.2] - 2017-04-17
 
 ### Add
 * `String.lastIndexOf()` to find the last occurrence of a substring in a string [CTC-1991]
+* Xill Command Line Interface (released separately) [CTC-2201]
+* Add .ftl, .ftlh and .ftlx extensions to supported extensions [CTC-2131]
 
 ### Change
 * Decrease minimum height of help pane [CTC-2133]
 
 ### Fix
 * Unexpected behaviour of `continue` statement, where code in outer loop might be skipped when using `continue` in a nested loop structure [CTC-1987]
+* (Asserted) error messages not displayed when calling a bot using `callbot()` [CTC-1986]
+* File.getMimeType should not check if file exists [CTC-2128]
+* Dialogs take up entire container on alternative window managers [CTC-2205]
 
 ## [3.5.1] - 2017-02-28
 

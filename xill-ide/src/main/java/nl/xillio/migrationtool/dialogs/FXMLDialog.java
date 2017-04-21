@@ -24,6 +24,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import me.biesaart.utils.Log;
+import nl.xillio.contenttools.Application;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -45,6 +46,7 @@ public class FXMLDialog extends Stage {
     public FXMLDialog(final String url) {
         loadFXML(getClass().getResource(url));
         initModality(Modality.APPLICATION_MODAL);
+        initOwner(Application.getPrimaryStage().getScene().getWindow());
 
         try (InputStream image = this.getClass().getResourceAsStream("/icon.png")) {
             if (image != null) {

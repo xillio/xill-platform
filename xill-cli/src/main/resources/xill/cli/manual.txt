@@ -1,0 +1,14 @@
+Usage
+=====
+
+This program executes .xill scripts from the command line. If neither the -v or -h options are specified, this program
+will execute every robot that is passed as an argument.
+
+Run Test.xill:
+
+    xill Test.xill
+
+It is also possible to address a robot by its fully qualified name:
+
+    xill fully.qualified.Name
+
