@@ -18,32 +18,45 @@
 -->
 <function>
     <description>
-This construct parses the given options and returns the engine for the template plugin.
+Parses `options` and returns a configured templating engine (or `engine` for short) that is ready for by
+`Template.process()`. The `Template` plugin uses the Freemarker templating engine to generate text output based on
+templates and changing data.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="options">
-The engine could be configured using the following options:
+The options parameter is an object that can be used to configure the engine:
 
-| Option               | Values                                                                          | Description                                                                                                | Default    |
-|----------------------|---------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|------------|
-| templatesDirectory   | An ATOMIC containing a relative path from the project root or an absolute path. | The directory that contains all the templates that will be used with this engine.                          | "."        |
-| encoding             | An ATOMIC containing a string.                                                  | This sets the encoding for the template that will be provided in the process-construct.                    | "UTF-8"    |
-| noCaching            | An ATOMIC containing a boolean.                                                 | Set this to true to cache no templates at all (decreased performance and less memory usage).               | false      |
-| strongCache          | An ATOMIC containing a number (from 0 to 2147483647).                           | The amount of templates to hold a hard reference to so it will not be garbage collected.                   | 0          |
-| softCache            | An ATOMIC containing a number (from 0 to 2147483647).                           | The amount of templates to hold a soft reference to so it will be garbage collected when memory is needed. | 2147483647 |
+| Option               | Values                                                                          | Description                                                                                                                              | Default    |
+|----------------------|---------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|------------|
+| templatesDirectory   | An ATOMIC containing a relative path from the project root or an absolute path. | The directory containing template files that can be used with this engine.                                                               | "."        |
+| encoding             | An ATOMIC containing a string.                                                  | This sets the encoding for the template that is provided in the process-construct.                                                       | "UTF-8"    |
+| noCaching            | An ATOMIC containing a boolean.                                                 | Disabling the caching will lead to decreased performance while reducing the memory footprint.                                            | false      |
+| strongCache          | An ATOMIC containing a number (from 0 to 2147483647).                           | This number instructs the engine to keep the specific number of hard references to templates. A hard reference is not garbage collected. | 0          |
+| softCache            | An ATOMIC containing a number (from 0 to 2147483647).                           | This number instructs the engine to keep the specific number of soft references to templates. A soft reference can be garbage collected. | 2147483647 |
 
-`strongCache` and `softCache` could be combined. The engine will then place the most used templates in the `strongCache`. When `noCaching` is set, `strongCache` and `softCache` will have no meaning for the engine.
+The caching options are intended to be used in special cases, when there are performance issues or resourcing problems.
+If you have a lot of templates and a specific number of those templates is used a lot, increase the `strongCache`
+option to avoid that these most used templates are removed from memory after a while (garbage collect). The engine will
+then place the most used templates in the `strongCache` where they will not be garbage collected.
+When you run into specific memory problems, you can consider to disable the caching by setting the `noCaching` option to
+true. When the `noCaching` option is set to true, the `strongCache` and `softCache` options are ignored.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-This plugin uses a third-party library named FreeMarker to process the templates. For more information please check their [website](http://freemarker.org/docs/index.html).
+It is not necessary to initialize the engine before processing templates and data. If the engine in not
+initialized, it will create a new default engine.
+
+This plugin uses the FreeMarker library to process templates. For more information please check the
+[Freemarker Documentation](http://freemarker.org/docs/index.html).
 	
-When encountering charset or encoding issues please read the [FreeMarker documentation](http://freemarker.org/docs/pgui_misc_charset.html) on this.
+When encountering charset or encoding issues please read
+[FreeMarker documentation - Charset issues](http://freemarker.org/docs/pgui_misc_charset.html).
 	</longDescription>
     <examples>
         <example title="Get the default engine">
             <header>
-                This returns an engine with the templates directory pointed to the project root.
+                This returns an engine with its default settings (A.K.A. a default engine). This means the
+                engine will search the project root directory for template files.
             </header>
             <code>
                 use Template;
@@ -51,38 +64,9 @@ When encountering charset or encoding issues please read the [FreeMarker documen
                 var config = Template.getEngine();
             </code>
         </example>
-        <example title="Specify templates directory">
-            <header>
-                This returns a default engine with the templates directory specified to the given input.
-            </header>
-            <code>
-                use Template;
-
-                var options = {
-                    "templatesDirectory" : "C:/templates"
-                };
-
-                var config = Template.getEngine(options);
-            </code>
-        </example>
-        <example title="Do not cache templates">
-            <header>
-                This returns a template engine that does not cache the used templates.
-                This does decrease performance, but also its memory usage.
-            </header>
-            <code>
-                use Template;
-
-                var options = {
-                    "noCaching" : true
-                };
-
-                var config = Template.getEngine(options);
-            </code>
-        </example>
         <example title="Specify more options">
-            <header>
-                This returns an engine with given options.
+            <header format="MD">
+                This returns an engine with given `options`.
             </header>
             <code>
                 use Template;
