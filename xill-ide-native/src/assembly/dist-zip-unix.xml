@@ -25,23 +25,11 @@
 
     <files>
         <file>
-            <source>${project.basedir}/../README.md</source>
-            <outputDirectory></outputDirectory>
-        </file>
-        <file>
-            <source>${project.basedir}/../BUILD.md</source>
-            <outputDirectory></outputDirectory>
-        </file>
-        <file>
             <source>${project.basedir}/../LICENSE</source>
             <outputDirectory></outputDirectory>
         </file>
         <file>
             <source>${project.basedir}/../CHANGELOG.md</source>
-            <outputDirectory></outputDirectory>
-        </file>
-        <file>
-            <source>${project.basedir}/../CONTRIBUTING.md</source>
             <outputDirectory></outputDirectory>
         </file>
     </files>
@@ -52,13 +40,6 @@
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/../xill-ide/src/deploy/resources/</directory>
-            <outputDirectory></outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/src/deploy/resources</directory>
-            <includes>
-                <include>**/*</include>
-            </includes>
             <outputDirectory></outputDirectory>
         </fileSet>
     </fileSets>
