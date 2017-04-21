@@ -16,15 +16,16 @@
 /*
  * Specification: Including a library that uses different casing than the file on disk should fail.
  *
- * Scenario 1:
- * Input: A robot that uses proper casing for an include
- * Expected: No errors
+ * Scenario 2:
+ * Input: A robot that uses incorrect casing for an include
+ * Expected: A compile time error when attempting to run the robot
+ *
  */
 use Assert;
 
-var test1 = "testresources/core/keywords/includes/IncludeCasingEqualCheck.xill";
+var test2 = "testresources/core/keywords/includes/IncludeCasingNonEqualCheck.xill";
 do {
-    callbot(test1);
-} fail {
-    Assert.error("Correct include casing, this robot should compile: " :: test1);
+    callbot(test2);
+} success {
+    Assert.error("Incorrect include casing, this robot should not compile: " :: test2);
 }
