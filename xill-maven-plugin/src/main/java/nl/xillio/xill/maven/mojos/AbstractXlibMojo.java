@@ -83,10 +83,6 @@ public abstract class AbstractXlibMojo extends AbstractMojo {
         return workingDirectory.toPath();
     }
 
-    public void setWorkingDirectory(File workingDirectory) {
-        this.workingDirectory = workingDirectory;
-    }
-
     protected Path[] getRobotPaths(Collection<Artifact> artifacts) {
         Path[] dependencies = artifacts.stream().map(Artifact::getFile).map(File::toPath).toArray(Path[]::new);
         Path[] includePaths = new Path[dependencies.length + 1];

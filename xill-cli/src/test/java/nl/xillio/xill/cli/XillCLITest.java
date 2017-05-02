@@ -167,7 +167,7 @@ public class XillCLITest {
         // Create an archive with a robot.
         Path includedArchive = tempDir.resolve("archive.xip");
         ZipOutputStream archiveStream = new ZipOutputStream(new FileOutputStream(includedArchive.toFile()));
-        ZipEntry entry = new ZipEntry("ArchiveRobot.xill");
+        ZipEntry entry = new ZipEntry("robots/ArchiveRobot.xill");
         archiveStream.putNextEntry(entry);
         archiveStream.write("use System; function archive() { System.print('This is an included robot from an archive.'); }".getBytes());
         archiveStream.closeEntry();

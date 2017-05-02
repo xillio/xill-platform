@@ -15,12 +15,12 @@
  */
 package nl.xillio.xill.maven.mojos;
 
+import nl.xillio.xill.maven.services.FileSetFactory;
 import nl.xillio.xill.maven.services.XillEnvironmentService;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.*;
 import org.codehaus.plexus.archiver.Archiver;
-import org.codehaus.plexus.archiver.util.DefaultFileSet;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -42,13 +42,17 @@ public class XlibMojo extends AbstractXlibMojo {
     @Component(role = Archiver.class, hint = "zip")
     private Archiver archiver;
 
+    private FileSetFactory fileSetFactory;
+
     @Inject
-    public XlibMojo(XillEnvironmentService environmentService) {
+    public XlibMojo(XillEnvironmentService environmentService, FileSetFactory fileSetFactory) {
         super(environmentService);
+        this.fileSetFactory = fileSetFactory;
     }
 
-    public XlibMojo(XillEnvironmentService environmentService, Artifact artifact, String finalName, File outputDirectory, Archiver archiver) {
-        this(environmentService);
+    public XlibMojo(XillEnvironmentService environmentService, FileSetFactory fileSetFactory,
+                    Artifact artifact, String finalName, File outputDirectory, Archiver archiver) {
+        this(environmentService, fileSetFactory);
         this.artifact = artifact;
         this.finalName = finalName;
         this.outputDirectory = outputDirectory;
@@ -72,7 +76,7 @@ public class XlibMojo extends AbstractXlibMojo {
 
         // Set the destination file and add the files to the archive.
         archiver.setDestFile(archive);
-        archiver.addFileSet(new DefaultFileSet(getClassesDirectory().toFile()));
+        archiver.addFileSet(fileSetFactory.createFileSet(getClassesDirectory()));
 
         // Try to create the archive.
         try {
@@ -81,21 +85,5 @@ public class XlibMojo extends AbstractXlibMojo {
         } catch (IOException e) {
             throw new MojoExecutionException("Error assembling xlib.", e);
         }
-    }
-
-    public void setArtifact(Artifact artifact) {
-        this.artifact = artifact;
-    }
-
-    public void setFinalName(String finalName) {
-        this.finalName = finalName;
-    }
-
-    public void setOutputDirectory(File outputDirectory) {
-        this.outputDirectory = outputDirectory;
-    }
-
-    public void setArchiver(Archiver archiver) {
-        this.archiver = archiver;
     }
 }

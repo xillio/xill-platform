@@ -30,7 +30,7 @@ import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.debugging.XillDebugger;
 import nl.xillio.xill.loaders.AbstractRobotLoader;
 import nl.xillio.xill.loaders.DirectoryRobotLoader;
-import nl.xillio.xill.loaders.XipRobotLoader;
+import nl.xillio.xill.loaders.ArchiveRobotLoader;
 import nl.xillio.xill.services.ProgressTracker;
 import nl.xillio.xill.services.inject.DefaultInjectorModule;
 import org.slf4j.Logger;
@@ -174,7 +174,7 @@ public class XillEnvironmentImpl implements XillEnvironment {
         AbstractRobotLoader robotLoader = new DirectoryRobotLoader(null, workingDirectory);
         for (Path path : robotPath) {
             if (Files.isRegularFile(path)) {
-                robotLoader = new XipRobotLoader(robotLoader, path.toAbsolutePath());
+                robotLoader = new ArchiveRobotLoader(robotLoader, path.toAbsolutePath());
             } else {
                 robotLoader = new DirectoryRobotLoader(robotLoader, path.toAbsolutePath());
             }

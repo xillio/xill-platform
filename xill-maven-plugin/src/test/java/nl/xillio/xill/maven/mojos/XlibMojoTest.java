@@ -15,9 +15,11 @@
  */
 package nl.xillio.xill.maven.mojos;
 
+import nl.xillio.xill.maven.services.FileSetFactory;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.FileSet;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -31,6 +33,7 @@ public class XlibMojoTest {
     private String finalName = "final-name";
     private File outputDirectory = new File("target");
     private Archiver archiver;
+    private FileSet fileSet;
 
     private XlibMojo mojo;
 
@@ -38,8 +41,12 @@ public class XlibMojoTest {
     public void reset() {
         artifact = mock(Artifact.class);
         archiver = mock(Archiver.class);
+        FileSetFactory fileSetFactory = mock(FileSetFactory.class);
+        fileSet = mock(FileSet.class);
 
-        mojo = new XlibMojo(null, artifact, finalName, outputDirectory, archiver);
+        when(fileSetFactory.createFileSet(any())).thenReturn(fileSet);
+
+        mojo = new XlibMojo(null, fileSetFactory, artifact, finalName, outputDirectory, archiver);
         mojo.setClassesDirectory(new File("classes"));
     }
 
@@ -51,6 +58,7 @@ public class XlibMojoTest {
         mojo.execute();
 
         verify(archiver, times(1)).setDestFile(archive);
+        verify(archiver, times(1)).addFileSet(fileSet);
         verify(archiver, times(1)).createArchive();
         verify(artifact, times(1)).setFile(archive);
     }

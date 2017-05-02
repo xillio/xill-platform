@@ -39,8 +39,9 @@ import java.util.Map;
  *
  * @author Luca Scalzotto
  */
-public class XipRobotLoader extends AbstractRobotLoader {
+public class ArchiveRobotLoader extends AbstractRobotLoader {
     private static final Logger LOGGER = Log.get();
+    private static final String ROBOTS_DIRECTORY = "robots";
 
     private final Path xipFile;
     private final FileSystem archiveFs;
@@ -52,7 +53,7 @@ public class XipRobotLoader extends AbstractRobotLoader {
      * @param xipFile The xip archive to load resources from.
      * @throws IOException if an exception occurred while opening the archive
      */
-    public XipRobotLoader(RobotLoader parent, Path xipFile) throws IOException {
+    public ArchiveRobotLoader(RobotLoader parent, Path xipFile) throws IOException {
         super(parent);
         this.xipFile = xipFile.toAbsolutePath().normalize();
         Map<String, String> env = new HashMap<>();
@@ -62,7 +63,7 @@ public class XipRobotLoader extends AbstractRobotLoader {
 
     @Override
     protected URL doGetResource(String path) {
-        Path pathInArchive = archiveFs.getPath(path).normalize();
+        Path pathInArchive = archiveFs.getPath(ROBOTS_DIRECTORY, path).normalize();
         return Files.exists(pathInArchive) ? createUrl(pathInArchive) : null;
     }
 

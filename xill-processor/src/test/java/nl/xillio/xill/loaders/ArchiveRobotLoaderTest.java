@@ -33,11 +33,11 @@ import java.util.zip.ZipOutputStream;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
-public class XipRobotLoaderTest {
+public class ArchiveRobotLoaderTest {
     private Path dir;
 
-    private XipRobotLoader parentLoader;
-    private XipRobotLoader childLoader;
+    private ArchiveRobotLoader parentLoader;
+    private ArchiveRobotLoader childLoader;
     private URL parentFile;
 
     @BeforeClass
@@ -47,23 +47,23 @@ public class XipRobotLoaderTest {
         // Create the test files.
         Path childXip = dir.resolve("child.xip");
         ZipOutputStream childStream = new ZipOutputStream(new FileOutputStream(childXip.toFile()));
-        ZipEntry childEntry = new ZipEntry("sub/robot.xill");
+        ZipEntry childEntry = new ZipEntry("robots/sub/robot.xill");
         childStream.putNextEntry(childEntry);
         childStream.closeEntry();
         childStream.close();
         Path parentXip = dir.resolve("parent.xip");
         ZipOutputStream parentStream = new ZipOutputStream(new FileOutputStream(parentXip.toFile()));
-        ZipEntry parentEntry = new ZipEntry("sub/robot.xill");
+        ZipEntry parentEntry = new ZipEntry("robots/sub/robot.xill");
         parentStream.putNextEntry(parentEntry);
         parentStream.write("Parent robot".getBytes());
         parentStream.closeEntry();
         parentStream.close();
 
-        parentFile = new URL("jar:" + parentXip.toUri().toURL() + "!/sub/robot.xill");
+        parentFile = new URL("jar:" + parentXip.toUri().toURL() + "!/robots/sub/robot.xill");
 
         // Create the robot loaders.
-        parentLoader = new XipRobotLoader(null, parentXip);
-        childLoader = new XipRobotLoader(parentLoader, childXip);
+        parentLoader = new ArchiveRobotLoader(null, parentXip);
+        childLoader = new ArchiveRobotLoader(parentLoader, childXip);
     }
 
     @AfterClass
