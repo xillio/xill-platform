@@ -15,6 +15,7 @@
  */
 package nl.xillio.migrationtool.gui;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
@@ -38,6 +39,7 @@ import nl.xillio.migrationtool.dialogs.SaveBeforeClosingDialog;
 import nl.xillio.migrationtool.elasticconsole.ESConsoleClient;
 import nl.xillio.migrationtool.gui.EditorPane.DocumentState;
 import nl.xillio.xill.api.Issue;
+import nl.xillio.xill.api.ProjectFile;
 import nl.xillio.xill.api.XillProcessor;
 import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.components.RobotID;
@@ -48,9 +50,11 @@ import org.slf4j.Logger;
 import org.slf4j.MarkerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,6 +73,8 @@ public class RobotTab extends FileTab implements Initializable {
     // Status icons.
     private static final String PATH_STATUSICON_RUNNING = "M256,92.481c44.433,0,86.18,17.068,117.553,48.064C404.794,171.411,422,212.413,422,255.999 s-17.206,84.588-48.448,115.455c-31.372,30.994-73.12,48.064-117.552,48.064s-86.179-17.07-117.552-48.064 C107.206,340.587,90,299.585,90,255.999s17.206-84.588,48.448-115.453C169.821,109.55,211.568,92.481,256,92.481 M256,52.481 c-113.771,0-206,91.117-206,203.518c0,112.398,92.229,203.52,206,203.52c113.772,0,206-91.121,206-203.52 C462,143.599,369.772,52.481,256,52.481L256,52.481z M206.544,357.161V159.833l160.919,98.666L206.544,357.161z";
     private static final String PATH_STATUSICON_PAUSED = "M256,92.481c44.433,0,86.18,17.068,117.553,48.064C404.794,171.411,422,212.413,422,255.999 s-17.206,84.588-48.448,115.455c-31.372,30.994-73.12,48.064-117.552,48.064s-86.179-17.07-117.552-48.064 C107.206,340.587,90,299.585,90,255.999s17.206-84.588,48.448-115.453C169.821,109.55,211.568,92.481,256,92.481 M256,52.481 c-113.771,0-206,91.117-206,203.518c0,112.398,92.229,203.52,206,203.52c113.772,0,206-91.121,206-203.52 C462,143.599,369.772,52.481,256,52.481L256,52.481z M240.258,346h-52.428V166h52.428V346z M326.17,346h-52.428V166h52.428V346z";
+    private static final String PROJECT_FILE_NAME = ".project";
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final Group statusIconRunning = createIcon(PATH_STATUSICON_RUNNING);
     private final Group statusIconPaused = createIcon(PATH_STATUSICON_PAUSED);
     private final Path workingDirectory;
@@ -108,7 +114,7 @@ public class RobotTab extends FileTab implements Initializable {
 
         // Load the processor.
         try {
-            processor = Loader.getXill().buildProcessor(workingDirectory, robotID);
+            processor = Loader.getXill().buildProcessor(workingDirectory, robotID, readDependencies());
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -244,7 +250,7 @@ public class RobotTab extends FileTab implements Initializable {
 
         // Build the processor.
         try {
-            processor = Loader.getXill().buildProcessor(workingDirectory, robotID, processor.getDebugger());
+            processor = Loader.getXill().buildProcessor(workingDirectory, robotID, processor.getDebugger(), readDependencies());
         } catch (IOException e) {
             AlertDialog error = new AlertDialog(AlertType.ERROR, "Failed to save robot", "", e.getMessage());
             error.show();
@@ -256,6 +262,20 @@ public class RobotTab extends FileTab implements Initializable {
         validate();
 
         return true;
+    }
+
+    private Path[] readDependencies() {
+        Path projectFile = workingDirectory.resolve(PROJECT_FILE_NAME);
+        if (Files.exists(projectFile)) {
+            try (InputStream stream = Files.newInputStream(projectFile)) {
+                return objectMapper.readValue(stream, ProjectFile.class).getRobotPath();
+            } catch (IOException e) {
+                errorPopup(-1, e.getLocalizedMessage(), e.getClass().getSimpleName(), "Exception while getting dependencies.");
+                return new Path[0];
+            }
+        } else {
+            return new Path[0];
+        }
     }
 
     protected void validate() {
@@ -596,9 +616,9 @@ public class RobotTab extends FileTab implements Initializable {
         getEditorPane().getEditor().clearHighlight();
 
         // Clear all highlights in all related robot tabs.
-        for(int i = relatedHighlightTabs.size() - 1; i >= 0; i--) {
+        for (int i = relatedHighlightTabs.size() - 1; i >= 0; i--) {
             RobotTab tab = relatedHighlightTabs.remove(i);
-            if(getGlobalController().findTab(tab.getResourceUrl()) != null) {
+            if (getGlobalController().findTab(tab.getResourceUrl()) != null) {
                 tab.clearHighlight();
             }
         }

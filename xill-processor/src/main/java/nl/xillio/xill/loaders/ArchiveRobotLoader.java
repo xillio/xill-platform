@@ -25,10 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +41,7 @@ public class ArchiveRobotLoader extends AbstractRobotLoader {
     private static final String ROBOTS_DIRECTORY = "robots";
 
     private final Path xipFile;
-    private final FileSystem archiveFs;
+    private FileSystem archiveFs;
 
     /**
      * Create a new xip robot loader.
@@ -58,7 +55,11 @@ public class ArchiveRobotLoader extends AbstractRobotLoader {
         this.xipFile = xipFile.toAbsolutePath().normalize();
         Map<String, String> env = new HashMap<>();
         env.put("create", "true");
-        archiveFs = FileSystems.newFileSystem(URI.create("jar:" + this.xipFile.toUri()), env);
+        try {
+            archiveFs = FileSystems.newFileSystem(URI.create("jar:" + this.xipFile.toUri()), env);
+        } catch (FileSystemAlreadyExistsException e) {
+            archiveFs = FileSystems.getFileSystem(URI.create("jar:" + this.xipFile.toUri()));
+        }
     }
 
     @Override
