@@ -37,14 +37,11 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Collection;
 
-/**
- * Created by Dwight.Peters on 25-Apr-17.
- */
 @Mojo(name = "ide", defaultPhase = LifecyclePhase.INSTALL, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class IDEMojo extends AbstractXlibMojo {
     private static final String PROJECT_FILE_NAME = ".project";
     @Parameter(defaultValue = "src/main/resources", required = true)
-    private File outputDirectory;
+    private File projectDirectory;
     @Parameter(defaultValue = "${project.artifacts}", readonly = true, required = true)
     private Collection<Artifact> artifacts;
 
@@ -53,15 +50,15 @@ public class IDEMojo extends AbstractXlibMojo {
         super(environmentService);
     }
 
-    public IDEMojo(XillEnvironmentService environmentService, File outputDirectory, Collection<Artifact> artifacts) {
+    public IDEMojo(XillEnvironmentService environmentService, File projectDirectory, Collection<Artifact> artifacts) {
         this(environmentService);
-        this.outputDirectory = outputDirectory;
+        this.projectDirectory = projectDirectory;
         this.artifacts = artifacts;
     }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        try (OutputStream stream = Files.newOutputStream(outputDirectory.toPath().resolve(PROJECT_FILE_NAME), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+        try (OutputStream stream = Files.newOutputStream(projectDirectory.toPath().resolve(PROJECT_FILE_NAME), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             ProjectFile projectFile = new ProjectFile();
             projectFile.setRobotPath(
