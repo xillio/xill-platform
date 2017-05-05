@@ -55,10 +55,11 @@ public class ArchiveRobotLoader extends AbstractRobotLoader {
         this.xipFile = xipFile.toAbsolutePath().normalize();
         Map<String, String> env = new HashMap<>();
         env.put("create", "true");
+        URI xipURI = URI.create("jar:" + this.xipFile.toUri());
         try {
-            archiveFs = FileSystems.newFileSystem(URI.create("jar:" + this.xipFile.toUri()), env);
+            archiveFs = FileSystems.newFileSystem(xipURI, env);
         } catch (FileSystemAlreadyExistsException e) {
-            archiveFs = FileSystems.getFileSystem(URI.create("jar:" + this.xipFile.toUri()));
+            archiveFs = FileSystems.getFileSystem(xipURI);
         }
     }
 

@@ -266,7 +266,7 @@ public class RobotTab extends FileTab implements Initializable {
 
     private Path[] readDependencies() {
         Path projectFile = workingDirectory.resolve(PROJECT_FILE_NAME);
-        if (Files.exists(projectFile)) {
+        if (projectFile.toFile().isFile()) {
             try (InputStream stream = Files.newInputStream(projectFile)) {
                 return objectMapper.readValue(stream, ProjectFile.class).getRobotPath();
             } catch (IOException e) {
