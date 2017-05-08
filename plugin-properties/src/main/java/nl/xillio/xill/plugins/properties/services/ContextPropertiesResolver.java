@@ -35,7 +35,6 @@ public class ContextPropertiesResolver {
         ContextPropertiesResolver resolver = new ContextPropertiesResolver();
         resolver.register("xill.workingDirectory", context -> context.getWorkingDirectory().toString());
         resolver.register("xill.robotUrl", context -> context.getRobotID().getURL().toString());
-        resolver.register("xill.robotPath", context -> context.getRobotID().getResourcePath());
         return resolver;
     }
 

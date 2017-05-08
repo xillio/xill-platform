@@ -3,8 +3,15 @@ All notable changes to this project will be documented in this file.
 
 ## [3.7.0] - unreleased
 
+### Add
+* Add `resourcePath` field to `System.info()` construct [CTC-1971]
+* Add `qualifiedName` field to `System.info()` construct [CTC-1971]
+
 ### Change
 * Rename the `projectPath` field from `System.info()` to `workingDirectory` [CTC-2116]
+* Rename the `robotPath` field from `System.info()` to `robotUrl` [CTC-1971]
+* Rename the `rootRobotPath` field from `System.info()` to `rootRobotUrl` [CTC-1971]
+* Rename `robotPath` from Xill properties in the `Properties` plugin to `robotUrl` [CTC-2135]
 
 ## [3.6.0] - unreleased
 

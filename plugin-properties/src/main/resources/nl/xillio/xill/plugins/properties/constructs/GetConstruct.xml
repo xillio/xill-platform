@@ -69,7 +69,6 @@ By default some properties are already available.
 | --------------------- | ------------------------------------------------------------------ |
 | xill.plugin           | A list of all plugins loaded in the current environment            |
 | xill.workingDirectory | The path to the working directory of the currently executing robot |
-| xill.robotPath        | The relative path to the currently executing robot                 |
 | xill.robotUrl         | The url to the location of the currently executing robot           |
 
 ## Property Replacements

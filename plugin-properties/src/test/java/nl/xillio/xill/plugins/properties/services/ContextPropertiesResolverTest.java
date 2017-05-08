@@ -43,12 +43,10 @@ public class ContextPropertiesResolverTest {
         );
 
         String workingDirectory = resolver.resolve("xill.workingDirectory", context).get();
-        String robotPath = resolver.resolve("xill.robotPath", context).get();
         String robotUrl = resolver.resolve("xill.robotUrl", context).get();
 
         assertTrue(wdPath.endsWith(workingDirectory));
         assertTrue(robotUrl.contains("project/my/Robot.xill"));
-        assertTrue(robotPath.contains("my/Robot.xill"));
     }
 
     @Test
