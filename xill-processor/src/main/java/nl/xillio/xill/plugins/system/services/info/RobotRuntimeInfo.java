@@ -32,8 +32,8 @@ public class RobotRuntimeInfo implements PropertiesProvider {
     private static final Pattern FQN_PATTERN = Pattern.compile("[A-z_][0-9A-z_]*(\\.[A-z_][0-9A-z_]*)*");
 
     private final Map<String, Object> properties = new LinkedHashMap<>();
-    private final String robotPath;
-    private final String rootRobotPath;
+    private final String robotUrl;
+    private final String rootRobotUrl;
     private final String workingDirectory;
     private final String resourcePath;
     private final String qualifiedName;
@@ -44,16 +44,16 @@ public class RobotRuntimeInfo implements PropertiesProvider {
      * @param context the context
      */
     public RobotRuntimeInfo(final ConstructContext context) {
-        robotPath = context.getRobotID().getURL().toString();
-        rootRobotPath = context.getRootRobot().getURL().toString();
+        robotUrl = context.getRobotID().getURL().toString();
+        rootRobotUrl = context.getRootRobot().getURL().toString();
         workingDirectory = context.getWorkingDirectory().toString();
         resourcePath = context.getRobotID().getResourcePath();
         qualifiedName = getQualifiedName(context.getRobotID());
 
-        properties.put("robotPath", robotPath);
+        properties.put("robotUrl", robotUrl);
         properties.put("resourcePath", resourcePath);
         properties.put("qualifiedName", qualifiedName);
-        properties.put("rootRobotPath", rootRobotPath);
+        properties.put("rootRobotUrl", rootRobotUrl);
         properties.put("workingDirectory", workingDirectory);
     }
 
@@ -76,15 +76,15 @@ public class RobotRuntimeInfo implements PropertiesProvider {
     /**
      * @return the robotPath
      */
-    public String getRobotPath() {
-        return robotPath;
+    public String getRobotUrl() {
+        return robotUrl;
     }
 
     /**
      * @return the rootRobotPath
      */
-    public String getRootRobotPath() {
-        return rootRobotPath;
+    public String getRootRobotUrl() {
+        return rootRobotUrl;
     }
 
     /**
