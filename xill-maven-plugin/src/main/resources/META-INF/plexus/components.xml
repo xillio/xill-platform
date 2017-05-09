@@ -41,8 +41,7 @@
                                 org.apache.maven.plugins:maven-compiler-plugin:testCompile
                             </test-compile>
                             <package>
-                                ${project.groupId}:${project.artifactId}:xlib,
-                                org.apache.maven.plugins:maven-jar-plugin:jar
+                                ${project.groupId}:${project.artifactId}:xlib
                             </package>
                             <install>
                                 org.apache.maven.plugins:maven-install-plugin:install
