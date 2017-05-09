@@ -27,11 +27,7 @@
 
     <files>
         <file>
-            <source>${project.basedir}/../README.md</source>
-            <outputDirectory></outputDirectory>
-        </file>
-        <file>
-            <source>${project.basedir}/../BUILD.md</source>
+            <source>${project.basedir}/src/deploy/resources/README.md</source>
             <outputDirectory></outputDirectory>
         </file>
         <file>
@@ -40,10 +36,6 @@
         </file>
         <file>
             <source>${project.basedir}/../CHANGELOG.md</source>
-            <outputDirectory></outputDirectory>
-        </file>
-        <file>
-            <source>${project.basedir}/../CONTRIBUTING.md</source>
             <outputDirectory></outputDirectory>
         </file>
     </files>

@@ -1,0 +1,30 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+ * Specification: Including a library that uses different casing than the file on disk should fail.
+ *
+ * Scenario 1:
+ * Input: A robot that uses proper casing for an include
+ * Expected: No errors
+ */
+use Assert;
+
+var test1 = "testresources/core/keywords/includes/IncludeCasingEqualCheck.xill";
+do {
+    callbot(test1);
+} fail {
+    Assert.error("Correct include casing, this robot should compile: " :: test1);
+}
