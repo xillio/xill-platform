@@ -19,6 +19,7 @@
 <function>
     <description>
 This construct combines a template and a model using the given engine and writes the result to the provided output.
+If the template could not be found in the templates directory, `System.openResource` is used to load the template from a resource.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="templateName">
@@ -97,6 +98,7 @@ This plugin uses a third-party library named FreeMarker to process the templates
     <references>
         <reference>getEngine</reference>
         <reference>File.openWrite</reference>
+        <reference>System.openResource</reference>
     </references>
     <tags>
         template, freemarker, process
