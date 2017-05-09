@@ -18,7 +18,7 @@
 -->
 <function>
     <description>
-Returns a stream with read access to a resource at a given `path`, or `null` when the resource could not be found.
+Returns a stream with read access to a resource at a given `path`, or `null` if the resource could not be found.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="path">
@@ -32,13 +32,13 @@ The path to the resource that will be used. This has to be a relative path.
 				use System;
 				use Stream;
 	
-				// We create a stream that we can work with.
-				var path = "file.txt";
+				// Create a stream to the resource "resource.json".
+				var path = "resource.json";
 				var stream = System.openResource(path);
 				
 				var text = Stream.getText(stream);
 				System.print(text);
-				// This should print the contents of "file.txt".
+				// This prints the contents of "resource.json".
 			</code>
         </example>
     </examples>
@@ -47,6 +47,6 @@ The path to the resource that will be used. This has to be a relative path.
 		<reference>Stream.getText</reference>
     </references>
     <searchTags>
-        stream, read, resource
+        stream, read, resource, open
     </searchTags>
 </function>

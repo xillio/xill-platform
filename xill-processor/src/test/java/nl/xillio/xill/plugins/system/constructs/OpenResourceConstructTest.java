@@ -33,7 +33,7 @@ import static org.testng.Assert.assertSame;
 
 public class OpenResourceConstructTest extends TestUtils {
     private static final String path = "path/to/file";
-    private static final String errorPath = "ThrowErrors";
+    private static final String errorPath = "throw/exception";
     private ConstructContext context;
     private BufferedInputStream stream;
 
@@ -44,22 +44,18 @@ public class OpenResourceConstructTest extends TestUtils {
         when(context.getResourceLoader()).thenReturn(loader);
         stream = mock(BufferedInputStream.class);
         when(loader.getResourceAsStream(path)).thenReturn(stream);
-        when(loader.getResourceAsStream(errorPath)).thenThrow(new IOException(""));
+        when(loader.getResourceAsStream(errorPath)).thenThrow(new IOException());
     }
 
     @Test
     void testResource() throws Exception {
-
         MetaExpression result = OpenResourceConstruct.process(context, fromValue(path));
-
         assertSame(result.getBinaryValue().getInputStream(), stream);
     }
 
     @Test
     void testResourceNotExist() {
-
-        MetaExpression result = OpenResourceConstruct.process(context, fromValue("wrongPath"));
-
+        MetaExpression result = OpenResourceConstruct.process(context, fromValue("non/existent/resource"));
         Assert.assertEquals(result, NULL);
     }
 
@@ -67,5 +63,4 @@ public class OpenResourceConstructTest extends TestUtils {
     void testErrorHandling() {
         OpenResourceConstruct.process(context, fromValue(errorPath));
     }
-
 }
