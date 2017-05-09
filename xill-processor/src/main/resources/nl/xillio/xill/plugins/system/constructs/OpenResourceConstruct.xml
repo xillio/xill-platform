@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Returns a stream with read access to a resource at a given `path`, or `null` when the resource could not be found.
+    </description>
+	<parameterDescriptions>
+		<parameterDescription parameterName="path">
+The path to the resource that will be used. This has to be a relative path.
+        </parameterDescription>
+	</parameterDescriptions>
+    <examples>
+        <example title="Default usage">
+			<header>Open a stream and read the text content</header>
+			<code>
+				use System;
+				use Stream;
+	
+				// We create a stream that we can work with.
+				var path = "file.txt";
+				var stream = System.openResource(path);
+				
+				var text = Stream.getText(stream);
+				System.print(text);
+				// This should print the contents of "file.txt".
+			</code>
+        </example>
+    </examples>
+    <references>
+        <reference>print</reference>
+		<reference>Stream.getText</reference>
+    </references>
+    <searchTags>
+        stream, read, resource
+    </searchTags>
+</function>
