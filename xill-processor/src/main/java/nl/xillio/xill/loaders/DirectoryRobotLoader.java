@@ -22,6 +22,7 @@ import xill.RobotLoader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -53,6 +54,11 @@ public class DirectoryRobotLoader extends AbstractRobotLoader {
 
         // Check if the resource is not above the loader directory.
         if (!resource.startsWith(directory)) {
+            return null;
+        }
+
+        // Check if the file exists.
+        if (!Files.exists(resource)) {
             return null;
         }
 
