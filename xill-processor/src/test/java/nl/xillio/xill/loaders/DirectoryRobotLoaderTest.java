@@ -16,6 +16,7 @@
 package nl.xillio.xill.loaders;
 
 import me.biesaart.utils.FileUtils;
+import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -25,7 +26,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Scanner;
 
 import static org.testng.Assert.assertEquals;
@@ -46,7 +47,7 @@ public class DirectoryRobotLoaderTest {
         Path parentLoaderDir = Files.createDirectory(dir.resolve("parent"));
         Path parentSub = Files.createDirectory(parentLoaderDir.resolve("sub"));
         Path parentFile = Files.createFile(parentSub.resolve("robot.xill"));
-        Files.write(parentFile, Arrays.asList("Parent robot"));
+        Files.write(parentFile, Collections.singletonList("Parent robot"));
         parentUrl = parentFile.toUri().toURL();
         Path childLoaderDir = Files.createDirectory(dir.resolve("child"));
         Path childSub = Files.createDirectory(childLoaderDir.resolve("sub"));
@@ -124,5 +125,25 @@ public class DirectoryRobotLoaderTest {
     @Test
     public void testGetResourceUp() {
         assertNull(parentLoader.getResource("../child/sub/robot.xill"));
+    }
+
+    @Test
+    public void testGetResourceCaseSensitive() {
+        assertNull(parentLoader.getResource("sub/ROBOT.xill"));
+    }
+
+    @Test
+    public void testBackslashes() {
+        String os = System.getProperty("os.name");
+        if (!os.contains("indows")) {
+            throw new SkipException("Skipping Windows test on " + os);
+        }
+
+        assertEquals(parentLoader.getResource("sub\\robot.xill"), parentUrl);
+    }
+
+    @Test
+    public void testNormalize() {
+        assertEquals(parentLoader.getResource("sub/../sub/robot.xill"), parentUrl);
     }
 }

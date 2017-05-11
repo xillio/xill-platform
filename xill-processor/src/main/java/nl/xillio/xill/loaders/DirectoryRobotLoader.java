@@ -19,9 +19,11 @@ import me.biesaart.utils.Log;
 import org.slf4j.Logger;
 import xill.RobotLoader;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * A {@link RobotLoader} which loads resources from a given directory.
@@ -46,16 +48,22 @@ public class DirectoryRobotLoader extends AbstractRobotLoader {
 
     @Override
     protected URL doGetResource(String path) {
+        // Try to get the real path, this will throw an error if it does not exist.
         Path resource = directory.resolve(path).toAbsolutePath().normalize();
 
+        // Check if the resource is not above the loader directory.
         if (!resource.startsWith(directory)) {
             return null;
         }
 
         try {
-            return resource.toFile().exists() ? resource.toUri().toURL() : null;
+            // Check if the case matches, use String::endsWith instead of Path::endsWith to ensure case sensitivity.
+            return resource.toRealPath().toString().endsWith(Paths.get(path).normalize().toString()) ? resource.toUri().toURL() : null;
         } catch (MalformedURLException e) {
-            LOGGER.error("Malformed url for path: " + resource.toString(), e);
+            LOGGER.error("Malformed url for path: " + resource, e);
+            return null;
+        } catch (IOException e) {
+            LOGGER.error("Could not get real path for path: " + path, e);
             return null;
         }
     }
