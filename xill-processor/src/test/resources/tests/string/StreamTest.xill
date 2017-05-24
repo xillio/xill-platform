@@ -22,5 +22,8 @@
 use Assert, String, Stream;
 
 var text = "Stream me!";
+var specialText = "Hello: ☃";
+
 Assert.equal(Stream.getText(String.stream(text)), text);
+Assert.equal(Stream.getText(String.stream(specialText)), specialText);
 Assert.equal(Stream.getText(String.stream(null)), "");
