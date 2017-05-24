@@ -20,20 +20,33 @@ import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.io.SimpleIOStream;
+import org.apache.commons.io.IOUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.IOException;
 
 public class StreamConstruct extends Construct {
     @Override
     public ConstructProcessor prepareProcess(ConstructContext context) {
-        return new ConstructProcessor(StreamConstruct::process, new Argument("value", ATOMIC));
+        return new ConstructProcessor(this::process, new Argument("value", ATOMIC), new Argument("charset", fromValue("UTF-8")));
     }
 
-    static MetaExpression process(MetaExpression value) {
-        byte[] buffer = value.isNull() ? new byte[0] : value.getStringValue().getBytes();
-        InputStream stream = new ByteArrayInputStream(buffer);
-        return fromValue(new SimpleIOStream(stream, null));
+    private MetaExpression process(MetaExpression value, MetaExpression charset) {
+        String text = value.isNull() ? "" : value.getStringValue();
+
+        try {
+            return fromValue(new SimpleIOStream(
+                    IOUtils.toInputStream(text, charset.getStringValue()),
+                    "Streamed Text"
+            ));
+        } catch (IOException | IllegalArgumentException e) {
+            throw new InvalidUserInputException(
+                    "Unknown Character Set",
+                    charset.getStringValue(),
+                    "A valid character set such as 'UTF-8' or 'ISO-8859-1'",
+                    "String.Stream(\"Hello World\", \"UTF-8\");"
+            );
+        }
     }
 }

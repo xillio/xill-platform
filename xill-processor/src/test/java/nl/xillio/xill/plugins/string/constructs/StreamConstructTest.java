@@ -17,6 +17,7 @@ package nl.xillio.xill.plugins.string.constructs;
 
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
+import nl.xillio.xill.api.errors.RobotRuntimeException;
 import org.apache.commons.io.IOUtils;
 import org.testng.annotations.Test;
 
@@ -43,5 +44,16 @@ public class StreamConstructTest extends TestUtils {
         String resultString = IOUtils.toString(result.getBinaryValue().getInputStream());
 
         assertEquals(resultString, "");
+    }
+
+    @Test(expectedExceptions = RobotRuntimeException.class)
+    public void testIllegalCharsetName() throws IOException {
+        process(construct, fromValue("Hello World"), fromValue("no exist"));
+    }
+
+
+    @Test(expectedExceptions = RobotRuntimeException.class)
+    public void testNonExistingCharset() throws IOException {
+        process(construct, fromValue("Hello World"), fromValue("UTF-9"));
     }
 }
