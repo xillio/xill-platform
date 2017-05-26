@@ -56,4 +56,14 @@ public class StreamConstructTest extends TestUtils {
     public void testNonExistingCharset() throws IOException {
         process(construct, fromValue("Hello World"), fromValue("UTF-9"));
     }
+
+    @Test
+    public void testSpecialCharacters() throws IOException {
+        String value = "διακριτικός";
+
+        MetaExpression result = process(construct, fromValue(value), fromValue("UTF-8"));
+        String resultString = IOUtils.toString(result.getBinaryValue().getInputStream());
+
+        assertEquals(resultString, value);
+    }
 }
