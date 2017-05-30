@@ -47,7 +47,8 @@ public class StreamConstruct extends Construct {
                     "Unknown Character Set",
                     charset.getStringValue(),
                     "A valid character set such as 'UTF-8' or 'ISO-8859-1'",
-                    "String.Stream(\"Hello World\", \"UTF-8\");"
+                    "String.Stream(\"Hello World\", \"UTF-8\");",
+                    e
             );
         }
     }
