@@ -62,7 +62,7 @@ public class StreamConstructTest extends TestUtils {
         String value = "διακριτικός";
 
         MetaExpression result = process(construct, fromValue(value), fromValue("UTF-8"));
-        String resultString = IOUtils.toString(result.getBinaryValue().getInputStream());
+        String resultString = IOUtils.toString(result.getBinaryValue().getInputStream(), "UTF-8");
 
         assertEquals(resultString, value);
     }
