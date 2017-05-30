@@ -42,7 +42,7 @@ public class ContextPropertiesResolverTest {
                 null
         );
 
-        String workingDirectory = resolver.resolve("xill.workingDirectory", context).get();
+        String workingDirectory = resolver.resolve("xill.projectPath", context).get();
         String robotUrl = resolver.resolve("xill.robotUrl", context).get();
 
         assertTrue(wdPath.endsWith(workingDirectory));
