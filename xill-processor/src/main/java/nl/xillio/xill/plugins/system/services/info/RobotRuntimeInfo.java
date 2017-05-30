@@ -54,7 +54,7 @@ public class RobotRuntimeInfo implements PropertiesProvider {
         properties.put("resourcePath", resourcePath);
         properties.put("qualifiedName", qualifiedName);
         properties.put("rootRobotUrl", rootRobotUrl);
-        properties.put("workingDirectory", workingDirectory);
+        properties.put("projectPath", workingDirectory);
     }
 
     private String getQualifiedName(RobotID robotID) {
