@@ -24,6 +24,9 @@ Returns the contents of `value` as a stream. If `value` is `null`, then the stre
 		<parameterDescription parameterName="value">
 The value to create a stream from.
         </parameterDescription>
+        <parameterDescription parameterName="charset">
+The character set to use when creating the stream.
+        </parameterDescription>
 	</parameterDescriptions>
     <examples>
         <example title="Usage">
@@ -36,6 +39,19 @@ The value to create a stream from.
                 var text = Stream.getText(stream);
 
                 // This will print: Stream me!
+                System.print(text);
+            </code>
+        </example>
+        <example title="Using a specific charset">
+            <code>
+                use System;
+                use String;
+                use Stream;
+
+                var stream = String.stream("διακριτικός", "UTF-8");
+                var text = Stream.getText(stream);
+
+                // This will print: διακριτικός
                 System.print(text);
             </code>
         </example>
