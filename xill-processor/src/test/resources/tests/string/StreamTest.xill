@@ -1,0 +1,31 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+* Specification: stream MUST return a stream containing the given input, or an empty stream for null.
+* Input: A string and null.
+* Expected: The input or an empty stream for null.
+*/
+
+use Assert, String, Stream;
+
+var text = "Stream me!";
+var specialText = "Hello: ☃";
+var diacritics = "διακριτικός";
+
+Assert.equal(Stream.getText(String.stream(text)), text);
+Assert.equal(Stream.getText(String.stream(specialText)), specialText);
+Assert.equal(Stream.getText(String.stream(diacritics, "UTF-8")), diacritics);
+Assert.equal(Stream.getText(String.stream(null)), "");
