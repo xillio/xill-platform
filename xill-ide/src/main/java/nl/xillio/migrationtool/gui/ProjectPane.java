@@ -230,7 +230,7 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
             // Check the project repository status.
             repo = new JGitRepository(getCurrentProject().getValue().getKey());
-            menuVersionControl.setDisable(!repo.isInitialized());
+            menuVersionControl.setDisable((!repo.isInitialized()) || (!repo.hasRemote()));
         });
     }
 
