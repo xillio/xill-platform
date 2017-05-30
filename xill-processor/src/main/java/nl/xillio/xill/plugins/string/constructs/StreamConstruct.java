@@ -32,6 +32,8 @@ public class StreamConstruct extends Construct {
         return new ConstructProcessor(this::process, new Argument("value", ATOMIC), new Argument("charset", fromValue("UTF-8")));
     }
 
+    // The InputStream is closed by Xill resource management
+    @SuppressWarnings("squid:S2095")
     private MetaExpression process(MetaExpression value, MetaExpression charset) {
         String text = value.isNull() ? "" : value.getStringValue();
 
