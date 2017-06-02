@@ -25,6 +25,7 @@ var target = "testresources/file/folder/copy.txt";
 var contentCopied = false;
 
 // Copy
+File.delete(target); //clean up from previous run if applicable
 Assert.isFalse(File.exists(target), "File must not exist in target location.");
 
 File.copy(source, target);
