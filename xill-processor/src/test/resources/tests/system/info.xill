@@ -26,8 +26,7 @@ Assert.isTrue(Math.isNumber(info.memory.used));
 Assert.isFalse(Collection.containsKey(info, "robotPath"), "As of xill-platform 3.6.0 robotPath does not exist anymore");
 Assert.notNull(info.projectPath);
 Assert.notNull(info.robotUrl);
-Assert.isTrue(String.endsWith(info.robotUrl, "test/resources/tests/system/info.xill"));
+Assert.isTrue(String.endsWith(info.robotUrl, "info.xill"));
 Assert.notNull(info.rootRobotUrl);
 Assert.notNull(info.resourcePath);
 Assert.notNull(info.qualifiedName);
-
