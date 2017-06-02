@@ -27,10 +27,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import me.biesaart.utils.Log;
 import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.components.Instruction;
 import nl.xillio.xill.api.components.MetaExpression;
-import me.biesaart.utils.Log;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * This class represents a list of variables and their names
  */
-public class VariablePane extends AnchorPane implements RobotTabComponent, ListChangeListener<ObservableVariable> {
+public class VariablePane extends AnchorPane implements FileTabComponent, ListChangeListener<ObservableVariable> {
     private final ObservableList<ObservableVariable> observableStateList = FXCollections.observableArrayList();
     private ObservableVariable selectedItem = null;
 
@@ -143,8 +143,8 @@ public class VariablePane extends AnchorPane implements RobotTabComponent, ListC
     }
 
     @Override
-    public void initialize(final RobotTab tab) {
-        this.tab = tab;
+    public void initialize(final FileTab tab) {
+        this.tab = (RobotTab) tab;
         getDebugger().getOnRobotStop().addListener(e -> clear());
     }
 

@@ -75,6 +75,7 @@
                                     <id>xill</id>
                                 </program>
                             </programs>
+                            <extraJvmArguments>-Dfile.encoding=UTF-8</extraJvmArguments>
                         </configuration>
                     </execution>
                 </executions>

@@ -26,9 +26,10 @@ import org.apache.commons.cli.Options;
 public class OptionsFactory {
     public static final String OPTION_HELP = "h";
     public static final String OPTION_VERSION = "v";
-    public static final String OPTION_PROJECT = "p";
+    public static final String OPTION_WORKING_DIR = "w";
     public static final String OPTION_QUIET = "q";
     public static final String OPTION_VERY_QUIET = "qq";
+    public static final String OPTION_ROBOTS = "r";
 
     public static final String CANNOT_BE_USED_IN_COMBINATION = "\nThis option cannot be used in combination with -";
 
@@ -73,15 +74,23 @@ public class OptionsFactory {
                                 .build()
                 );
 
-
         return new Options()
                 .addOptionGroup(logging)
                 .addOptionGroup(action)
                 .addOption(
-                        Option.builder(OPTION_PROJECT)
-                                .longOpt("project")
-                                .desc("Set the project root directory for the Xill robots that should be run.")
-                                .argName("projectPath")
+                        Option.builder(OPTION_WORKING_DIR)
+                                .longOpt("working-directory")
+                                .desc("Set the working directory for the Xill robots that should be run.")
+                                .argName("workingDirectory")
+                                .hasArg()
+                                .build()
+                )
+                .addOption(
+                        Option.builder(OPTION_ROBOTS)
+                                .longOpt("robots")
+                                .desc("Set the directories to include when running Xill robots. " +
+                                        "The directories should be separated by a (semi)colon (':' or ';').")
+                                .argName("robotPaths")
                                 .hasArg()
                                 .build()
                 );

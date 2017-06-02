@@ -177,7 +177,7 @@ public class XillInitializer extends Thread {
      * @param entity    the entity to push the signature into
      */
     private void generateParameters(Construct construct, ConstructDocumentationEntity entity) {
-        ConstructContext context = new ConstructContext(RobotID.dummyRobot(), RobotID.dummyRobot(), construct, null, null, null, null);
+        ConstructContext context = new ConstructContext(Paths.get("."), RobotID.dummyRobot(), RobotID.dummyRobot(), construct, null, null, null, null, null);
         try (ConstructProcessor proc = construct.prepareProcess(context)) {
             List<Parameter> parameters = new ArrayList<>();
 
@@ -203,7 +203,7 @@ public class XillInitializer extends Thread {
 
         try {
             xill.addFolder(PLUGIN_FOLDER);
-            xill.buildProcessor(Paths.get("."), Paths.get("."));
+            xill.loadPlugins();
         } catch (IOException e) {
             LOGGER.error("Failed to create plugin dir", e);
         }

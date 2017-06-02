@@ -33,7 +33,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+import java.util.Arrays;
 import static nl.xillio.xill.cli.OptionsFactory.*;
 
 /**
@@ -45,7 +45,7 @@ import static nl.xillio.xill.cli.OptionsFactory.*;
 public class XillCLI {
     private static final Logger LOGGER = LoggerFactory.getLogger(XillCLI.class);
     private static final String PROGRAM_DESCRIPTION = "Execute Xill robots from the command line.";
-    private static final String PROGAM_USAGE = "xill [-h | -v] [-q | -qq]  [-p <projectPath>] <robotName>";
+    private static final String PROGRAM_USAGE = "xill [-h | -v] [-q | -qq]  [-w <workingDirectory>] [-r | --robots <robotPaths>] <robotName>";
 
     private CommandLineParser commandLineParser;
     private CommandLine commandLine;
@@ -62,6 +62,7 @@ public class XillCLI {
     private XillRobotExecutor xillRobotExecutor;
     private XillEnvironment xillEnvironment;
     private Path projectRoot;
+    private Path[] includePaths;
 
     public static void main(String[] args) {
         XillCLI cli = new XillCLI();
@@ -146,7 +147,7 @@ public class XillCLI {
         getHelpFormatter().printHelp(
                 printWriter,
                 120,
-                PROGAM_USAGE,
+                PROGRAM_USAGE,
                 PROGRAM_DESCRIPTION,
                 getOptions(),
                 4,
@@ -255,6 +256,7 @@ public class XillCLI {
             xillRobotExecutor = new XillRobotExecutor(
                     getXillEnvironment(),
                     getProjectRoot(),
+                    getIncludePaths(),
                     getStdIn(),
                     getStdOut(),
                     getStdErr()
@@ -276,12 +278,24 @@ public class XillCLI {
 
     public Path getProjectRoot() throws ParseException {
         if (projectRoot == null) {
-            if (getCommandLine().hasOption(OPTION_PROJECT)) {
-                projectRoot = Paths.get(getCommandLine().getOptionValue(OPTION_PROJECT));
+            if (getCommandLine().hasOption(OptionsFactory.OPTION_WORKING_DIR)) {
+                projectRoot = Paths.get(getCommandLine().getOptionValue(OptionsFactory.OPTION_WORKING_DIR));
             } else {
                 projectRoot = Paths.get(".");
             }
         }
         return projectRoot;
+    }
+
+    public Path[] getIncludePaths() throws ParseException {
+        if (includePaths == null) {
+            if (getCommandLine().hasOption(OptionsFactory.OPTION_ROBOTS)) {
+                String[] paths = getCommandLine().getOptionValue(OptionsFactory.OPTION_ROBOTS).split("[:;]");
+                includePaths = Arrays.stream(paths).map(Paths::get).toArray(Path[]::new);
+            } else {
+                includePaths = new Path[0];
+            }
+        }
+        return includePaths;
     }
 }

@@ -18,15 +18,30 @@
  * Expected: The file is copied and then deleted
  */
 
-use Assert, File;
+use Assert, File, Hash;
 
 var source = "testresources/file/file.txt";
 var target = "testresources/file/folder/copy.txt";
+var contentCopied = false;
 
-// Copy.
+// Copy
+File.delete(target); //clean up from previous run if applicable
+Assert.isFalse(File.exists(target), "File must not exist in target location.");
+
 File.copy(source, target);
-Assert.isTrue(File.exists(target));
 
-// Delete.
+Assert.isTrue(File.exists(target));
+Assert.isTrue(File.exists(source));
+
+do { // do block necessary to close streams after use (otherwise delete will fail)
+    var sourcestream = File.openRead(source);
+    var targetstream = File.openRead(target);
+    contentCopied = Hash.toMD5(sourcestream) == Hash.toMD5(targetstream);
+} finally {
+    Assert.isTrue(contentCopied, "After copying file, source hash must be equal to target hash.");
+}
+
+// Delete
 File.delete(target);
 Assert.isFalse(File.exists(target));
+Assert.isTrue(File.exists(source));

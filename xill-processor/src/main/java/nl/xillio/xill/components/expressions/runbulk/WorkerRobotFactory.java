@@ -22,9 +22,11 @@ import nl.xillio.xill.api.StoppableDebugger;
 import nl.xillio.xill.api.components.Robot;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.errors.XillParsingException;
+import nl.xillio.xill.loaders.AbstractRobotLoader;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -32,11 +34,13 @@ import java.util.List;
  */
 class WorkerRobotFactory {
 
+    private Path workingDirectory;
     private RobotID robotID;
     private List<XillPlugin> plugins;
     private OutputHandler outputHandler;
 
-    public WorkerRobotFactory(RobotID robotID, List<XillPlugin> plugins, OutputHandler outputHandler) {
+    public WorkerRobotFactory(final Path workingDirectory, RobotID robotID, List<XillPlugin> plugins, OutputHandler outputHandler) {
+        this.workingDirectory = workingDirectory;
         this.robotID = robotID;
         this.plugins = plugins;
         this.outputHandler = outputHandler;
@@ -45,16 +49,21 @@ class WorkerRobotFactory {
     /**
      * Compile a {@link Robot}.
      *
-     * @param calledRobotFile The file to compile
+     * @param robotPath     The path to the robot to compile
+     * @param loader        The robotLoader that is used
      * @param childDebugger The debugger to compile with
      * @return The compiled robot
-     * @throws IOException When the robot could not be read
+     * @throws IOException          When the robot could not be read
      * @throws XillParsingException When the robot could not be compiled
      */
-    public Robot construct(File calledRobotFile, StoppableDebugger childDebugger) throws WorkerCompileException {
+    public Robot construct(String robotPath, AbstractRobotLoader loader, StoppableDebugger childDebugger) throws WorkerCompileException {
         XillProcessor processor = null;
         try {
-            processor = new XillProcessor(robotID.getProjectPath(), calledRobotFile, plugins, childDebugger);
+            URL robotResource = loader.getResource(robotPath);
+            if (robotResource == null) {
+                throw new WorkerCompileException("Could not find robot: " + robotPath);
+            }
+            processor = new XillProcessor(workingDirectory, new RobotID(robotResource, robotPath), loader, plugins, childDebugger);
             processor.setOutputHandler(outputHandler);
             processor.compileAsSubRobot(robotID);
         } catch (XillParsingException e) {

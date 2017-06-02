@@ -16,10 +16,10 @@
 package nl.xillio.xill.components.expressions.runbulk;
 
 import nl.xillio.xill.api.Debugger;
+import nl.xillio.xill.loaders.AbstractRobotLoader;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.io.File;
+import xill.RobotLoader;
 
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.*;
@@ -34,13 +34,14 @@ public class RunBulkControlTest {
     private RunBulkControl control;
 
     private Debugger debugger;
-    private File robotFile;
+    private String robotFqn = "some.robot";
+    private AbstractRobotLoader loader;
 
     @BeforeMethod
     public void setupControl() {
         debugger = mock(Debugger.class);
-        robotFile = mock(File.class);
-        control = new RunBulkControl(debugger, robotFile);
+        loader = mock(AbstractRobotLoader.class);
+        control = new RunBulkControl(debugger, robotFqn, loader);
     }
 
     /**
@@ -52,11 +53,19 @@ public class RunBulkControlTest {
     }
 
     /**
-     * Test {@link RunBulkControl#getCalledRobotFile()}.
+     * Test {@link RunBulkControl#getCalledRobotFqn()}}.
      */
     @Test
-    public void testGetCalledRobotFile() {
-        assertSame(control.getCalledRobotFile(), robotFile);
+    public void testGetCalledRobotFqn() {
+        assertSame(control.getCalledRobotFqn(), robotFqn);
+    }
+
+    /**
+     * Test {@link RunBulkControl#getLoader()}}}.
+     */
+    @Test
+    public void testGetLoader() {
+        assertSame(control.getLoader(), loader);
     }
 
     /**

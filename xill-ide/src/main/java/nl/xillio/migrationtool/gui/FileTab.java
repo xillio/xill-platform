@@ -26,58 +26,55 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
+import me.biesaart.utils.IOUtils;
 import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.Loader;
 import nl.xillio.migrationtool.dialogs.AlertDialog;
 import nl.xillio.migrationtool.dialogs.SaveBeforeClosingDialog;
+import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.util.settings.Settings;
 import nl.xillio.xill.util.settings.SettingsHandler;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class FileTab extends Tab implements Initializable, ChangeListener<EditorPane.DocumentState> {
     protected static final SettingsHandler settings = SettingsHandler.getSettingsHandler();
     private static final Logger LOGGER = Log.get();
-    protected final FXController globalController;
+    private final FXController globalController;
     @FXML
-    protected EditorPane editorPane;
-    protected File projectPath;
-    protected File documentPath;
-    private Timeline autoSaveTimeline;
+    private EditorPane editorPane;
+    private final Timeline autoSaveTimeline;
+    private URL resourceUrl;
 
     /**
-     * Create a new FileTab that holds a file
+     * Create a new FileTab that holds a file.
      *
-     * @param projectPath      The project path
-     * @param documentPath     The full path to the file (absolute)
+     * @param resourceUrl      The full path to the file (absolute)
      * @param globalController The FXController
      */
-    public FileTab(final File projectPath, final File documentPath, final FXController globalController) {
-        this("/fxml/FileTabContent.fxml", projectPath, documentPath, globalController);
+    public FileTab(final URL resourceUrl, final FXController globalController) {
+        this("/fxml/FileTabContent.fxml", resourceUrl, globalController);
     }
 
     /**
-     * Create a new FileTab that holds a file
+     * Create a new FileTab that holds a file.
      *
      * @param fxml             The fxml file for this tab
-     * @param projectPath      The project path
-     * @param documentPath     The full path to the file (absolute)
+     * @param resourceUrl      The full path to the file (absolute)
      * @param globalController The FXController
      */
-    protected FileTab(final String fxml, final File projectPath, final File documentPath, final FXController globalController) {
+    protected FileTab(final String fxml, final URL resourceUrl, final FXController globalController) {
+        this.resourceUrl = resourceUrl;
         this.globalController = globalController;
-        this.projectPath = projectPath;
-        this.documentPath = documentPath;
-
-        if (!documentPath.isAbsolute()) {
-            throw new IllegalArgumentException("The provided document must be an absolute path.");
-        }
+        Objects.nonNull(resourceUrl);
 
         // Load the FXML.
         try {
@@ -95,7 +92,7 @@ public class FileTab extends Tab implements Initializable, ChangeListener<Editor
 
         autoSaveTimeline = new Timeline(new KeyFrame(Duration.millis(1000), ae -> save(false)));
 
-        this.setTooltip(new Tooltip(documentPath.toString()));
+        this.setTooltip(new Tooltip(resourceUrl.toString()));
     }
 
     /**
@@ -135,15 +132,7 @@ public class FileTab extends Tab implements Initializable, ChangeListener<Editor
         setText(getName());
 
         // Load code
-        if (documentPath.exists()) {
-            try {
-                String code = FileUtils.readFileToString(documentPath);
-                editorPane.setLastSavedCode(code);
-                editorPane.getEditor().setCode(code);
-            } catch (IOException e) {
-                LOGGER.info("Could not open " + documentPath, e);
-            }
-        }
+        reload();
 
         // Subscribe to events
         editorPane.getDocumentState().addListener(this);
@@ -173,19 +162,56 @@ public class FileTab extends Tab implements Initializable, ChangeListener<Editor
      * @return whether the document was saved successfully.
      */
     protected boolean save(final boolean showDialog) {
-        File document = documentPath;
-        File project = projectPath;
-
-        // Check if the project path exists.
-        if (!project.exists()) {
-            project = document.getParentFile();
-        }
+        URL saveDocument = resourceUrl;
 
         if (showDialog) {
-            // Show file picker.
+            saveDocument = pickFile();
+        }
+
+        if (saveDocument == null) {
+            // We have no target to save to, so the save failed.
+            return false;
+        }
+
+        String unescapeResource;
+        try {
+            unescapeResource = URLDecoder.decode(saveDocument.getFile().replace("+", "%2B"), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException("Unhandled character set found.", e);
+        }
+
+        return saveCodeTo(unescapeResource, saveDocument.getProtocol());
+    }
+
+    private boolean saveCodeTo(String url, String protocol) {
+        try {
+            if ("file".equals(protocol)) {
+                try (OutputStream output = new FileOutputStream(new File(url))) {
+                    String code = editorPane.getEditor().getCodeProperty().get();
+                    IOUtils.write(code, output);
+                    editorPane.setLastSavedCode(code);
+                }
+            } else {
+                throw new IllegalArgumentException("Failed to save file, invalid protocol: " + protocol);
+            }
+
+            return true;
+        } catch (IOException e) {
+            AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Failed to save file", "", e.getMessage() + ".");
+            error.show();
+            LOGGER.error("Failed to save file", e);
+            return false;
+        }
+    }
+
+    private URL pickFile() {
+        try {
+            File editingFile = new File(resourceUrl.toURI());
+            File parentFolder = editingFile.getParentFile();
+
             FileChooser chooser = new FileChooser();
-            chooser.setInitialDirectory(project);
-            String extension = FilenameUtils.getExtension(documentPath.toString());
+            chooser.setInitialDirectory(parentFolder);
+            String extension = FilenameUtils.getExtension(editingFile.getName());
             chooser.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter(extension + " file (*." + extension + ")", "*." + extension),
                     new FileChooser.ExtensionFilter("All files (*.*)", "*.*")
@@ -194,42 +220,30 @@ public class FileTab extends Tab implements Initializable, ChangeListener<Editor
             // Get the selected file.
             File selected = chooser.showSaveDialog(getContent().getScene().getWindow());
             if (selected == null) {
-                return false;
+                return null;
             }
-            document = selected;
+
+            // If the selected file has no extension, add the robot extension.
+            if (FilenameUtils.getExtension(selected.toString()).isEmpty()) {
+                selected = new File(selected.toString() + XillEnvironment.ROBOT_EXTENSION);
+            }
+
+            return selected.toURI().toURL();
+        } catch (URISyntaxException | MalformedURLException e) {
+            throw new IllegalArgumentException("Invalid URL", e);
         }
-
-        // Actually save.
-        try {
-            String code = editorPane.getEditor().getCodeProperty().get();
-            editorPane.setLastSavedCode(code);
-            FileUtils.write(document, code);
-            LOGGER.info("Saved file to " + document.getAbsolutePath());
-        } catch (IOException e) {
-            AlertDialog error = new AlertDialog(Alert.AlertType.ERROR, "Failed to save file", "", e.getMessage() + ".");
-            error.show();
-            LOGGER.error("Failed to save file", e);
-        }
-
-        // Update.
-        documentPath = document.getAbsoluteFile();
-        setText(getName());
-
-        return true;
-    }
-
-    /**
-     * @return the document
-     */
-    public File getDocument() {
-        return documentPath;
     }
 
     /**
      * @return the name of the tab
      */
     public String getName() {
-        return documentPath.getName();
+        try {
+            String unescapedPath = URLDecoder.decode(resourceUrl.getFile().replace("+", "%2B"), "UTF-8");
+            return FilenameUtils.getName(unescapedPath);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException("Unhandled character set found.", e);
+        }
     }
 
     /**
@@ -237,6 +251,10 @@ public class FileTab extends Tab implements Initializable, ChangeListener<Editor
      */
     public FXController getGlobalController() {
         return globalController;
+    }
+
+    public URL getResourceUrl() {
+        return resourceUrl;
     }
 
     protected void onClose(final Event event) {
@@ -288,26 +306,27 @@ public class FileTab extends Tab implements Initializable, ChangeListener<Editor
      * Replace the existing code in editor by the content that is in the file (it could be changed outside of editor)
      */
     public void reload() {
-        if (documentPath.exists()) {
-            try {
-                String code = FileUtils.readFileToString(documentPath);
-                editorPane.setLastSavedCode(code);
-                editorPane.getEditor().setCode(code);
-            } catch (IOException e) {
-                LOGGER.error("Could not open " + documentPath, e);
-            }
-        }
+        reload(resourceUrl, true);
     }
 
     /**
-     * Reset source of the tab
-     *
-     * @param documentPath New document path
-     * @param projectPath New project path
+     * Replace the existing code in editor by the content that is in the file (it could be changed outside of editor)
      */
-    public void resetSource(final File documentPath, final File projectPath) {
-        this.documentPath = documentPath;
-        this.projectPath = projectPath;
+    public void reload(URL resource, boolean resetLastSave) {
+        try (InputStream stream = resource.openStream()) {
+            String code = IOUtils.toString(stream);
+            if (resetLastSave) {
+                editorPane.setLastSavedCode(code);
+            }
+            editorPane.getEditor().setCode(code);
+        } catch (IOException e) {
+            LOGGER.info("Could not open " + resourceUrl, e);
+            Platform.runLater(() -> getGlobalController().closeTab(this));
+        }
+    }
+
+    public void resetSource(URL resourceUrl) {
+        this.resourceUrl = resourceUrl;
         reload();
     }
 }

@@ -21,6 +21,7 @@
 Merges `model` with the template specified by `templateName` and writes the result to `output`. Optionally an `engine`
 may be provided that will be used for processing. The `Template` plugin uses the Freemarker templating engine to
 generate text output based on templates and changing data.
+If the template could not be found in the templates directory, `System.openResource` is used to load the template from a resource.
     </description>
 	<parameterDescriptions>
 		<parameterDescription parameterName="templateName">
@@ -156,6 +157,7 @@ is:
     <references>
         <reference>getEngine</reference>
         <reference>File.openWrite</reference>
+        <reference>System.openResource</reference>
     </references>
     <tags>
         template, freemarker, process

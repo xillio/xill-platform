@@ -1,6 +1,25 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.7.0] - unreleased
+
+### Add
+* Add `resourcePath` field to `System.info()` construct [CTC-1971]
+* Add `qualifiedName` field to `System.info()` construct [CTC-1971]
+* Add Xill Command Line Interface (CLI) and manual [CTC-2115]
+* Add `xill.robotUrl` to Properties plugin [CTC-2135]
+
+### Change
+* Rename the `robotPath` field from `System.info()` to `robotUrl` [CTC-1971]
+* Rename the `rootRobotPath` field from `System.info()` to `rootRobotUrl` [CTC-1971]
+* Rename `robotPath` from Xill properties in the `Properties` plugin to `robotUrl` [CTC-2135]
+
+### Fix
+* Fixed issues where breakpoints would not trigger [CTC-2135]
+* Fixed an issue where breakpoints would reset after a robot was stopped manually [CTC-2138]
+* Correctly saving and loading the width and height of IDE panels (e.g. preview, console and editor) [CTC-2138]
+* Fixed an issue where validate calls lock the resource set [CTC-2121]
+
 ## [3.6.0] - unreleased
 
 ### Add

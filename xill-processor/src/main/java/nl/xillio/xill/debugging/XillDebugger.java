@@ -113,11 +113,12 @@ public class XillDebugger implements Debugger {
     }
 
     private void checkBreakpoints(Instruction instruction) {
-        breakpoints.forEach(bp -> {
-            if (bp.matches(instruction) && mode != Mode.STOPPED) {
-                mode = Mode.PAUSED;
-            }
-        });
+        if (mode != Mode.STOPPED) {
+            breakpoints.stream()
+                    .filter(bp -> bp.matches(instruction))
+                    .findAny()
+                    .ifPresent(bp -> this.mode = Mode.PAUSED);
+        }
     }
 
     @Override

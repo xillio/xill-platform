@@ -27,10 +27,12 @@ Returns an OBJECT variable containing:
 |-----|-----------|
 |`availableProcessors`|The number of available processors to this application|
 |`memory`|An OBJECT with information about the memory to this application|
-|`projectPath`|The path to the project of the current robot|
+|`projectPath`|The path to the working directory of the current robot|
 |`fileSystem`|An OBJECT with information about the current file system|
-|`rootRobotPath`|The path to the robot that is run first|
-|`robotPath`|The path to the robot that executes this function|
+|`rootRobotUrl`|The url to the robot that is run first|
+|`robotUrl`|The url to the robot that executes this function|
+|`qualifiedName`|The fully qualified name of the robot if it has one. Otherwise, null.|
+|`resourcePath`|The path from the project root to the robot|
 	</longDescription>
     <examples>
         <example title="Usage">
@@ -42,9 +44,11 @@ Returns an OBJECT variable containing:
                 /*
                     Outputs:
                         {
-                            "robotPath":"D:\\Code\\CT\\Xill 3.0\\projects\\tmp.xill",
-                            "rootRobotPath":"D:\\Code\\CT\\Xill 3.0\\projects\\tmp.xill",
+                            "robotUrl":"file://D:\\Code\\CT\\Xill 3.0\\projects\\tmp.xill",
+                            "rootRobotUrl":"file://D:\\Code\\CT\\Xill 3.0\\projects\\tmp.xill",
                             "projectPath":"D:\\Code\\CT\\Xill 3.0",
+                            "resourcePath": "projects/tmp.xill",
+                            "qualifiedName": "projects.tmp",
                             "availableProcessors":8,
                             "memory":{
                                 "free":281276656,
@@ -76,6 +80,6 @@ Returns an OBJECT variable containing:
         </example>
     </examples>
     <searchTags>
-        info, ram, memory, space, drive, project, path
+        info, ram, memory, space, drive, project, path, url
     </searchTags>
 </function>

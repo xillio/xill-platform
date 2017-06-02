@@ -30,7 +30,8 @@ Read more on this below.
 	</parameterDescriptions>
 	<longDescription>
 ## Properties Configuration
-The configuration file should exist in the root of the project and is called *xill.properties*. In here you can specify key-value properties using the following syntax: `[PROPERTY-KEY]=[PROPERTY-VALUE]`.
+The configuration file should exist in the root of the project and is called *xill.properties*.
+In here you can specify key-value properties using the following syntax: `[PROPERTY-KEY]=[PROPERTY-VALUE]`.
 
 An example of a file that contains 3 properties:
 
@@ -38,12 +39,16 @@ An example of a file that contains 3 properties:
     logging.level=debug
     server.host=localhost
 
-
 ## Defaults
-There are two ways to define a property's default value. Either through a *defaults.properties* file or through the *defaultValue* construct parameter. If you specify the default in construct parameter then the value in the *defaults.properties* file will be ignored.
+There are two ways to define a property's default value. Either through a *defaults.properties* file or through the
+*defaultValue* construct parameter. If you specify the default in construct parameter then the value in the
+*defaults.properties* file will be ignored.
 
 ### Defaults hierarchy
-You can create the *defaults.properties* file anywhere in your project. The defaults set in that file will then apply to all the robots in that folder and all it's subfolders. If a subfolder contains a *defaults.properties* file that defines the same property with a different value the value is overridden for all scripts under that folder.
+You can create the *defaults.properties* file anywhere in your project. The defaults set in that file will then apply
+to all the robots in that folder and all it's subfolders and sub-archives. If a subfolder or a sub-archive contains a
+*defaults.properties* file that defines the same property with a different value the value is overridden for all scripts
+under that folder.
 
 ## Context Properties
 By default some properties are already available.
@@ -60,11 +65,11 @@ By default some properties are already available.
 
 ### Xill properties
 
-| Name             | Description                                             |
-| ---------------- | ------------------------------------------------------- |
-| xill.plugin      | A list of all plugins loaded in the current environment |
-| xill.projectPath | The path to the currently executing project             |
-| xill.robotPath   | The path to the currently executing robot               |
+| Name                  | Description                                                        |
+| --------------------- | ------------------------------------------------------------------ |
+| xill.plugin           | A list of all plugins loaded in the current environment            |
+| xill.projectPath      | The path to the working directory of the currently executing robot |
+| xill.robotUrl         | The url to the location of the currently executing robot           |
 
 ## Property Replacements
 In the values of your properties you can use an expression syntax to substitute other properties.

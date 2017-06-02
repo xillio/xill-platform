@@ -13,30 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.plugins.properties.services;
+package nl.xillio.xill.maven.services;
 
-import com.google.inject.Singleton;
+import nl.xillio.xill.cli.XillRobotExecutor;
+import nl.xillio.xill.api.XillEnvironment;
 
-import java.io.IOException;
+import javax.inject.Singleton;
 import java.io.InputStream;
-import java.nio.file.Files;
+import java.io.PrintStream;
 import java.nio.file.Path;
 
-/**
- * This service allows other services to access the filesystem.
- * <p>
- * The main reason for the existence of this class is to remove IO responsibilities from
- * other services to make them more testable.
- *
- * @author Thomas Biesaart
- */
 @Singleton
-public class FileSystemAccess {
-    public boolean exists(Path file) {
-        return Files.exists(file);
-    }
-
-    public InputStream read(Path file) throws IOException {
-        return Files.newInputStream(file);
+public class XillRobotExecutorFactory {
+    public XillRobotExecutor getRobotExecutor(XillEnvironment xillEnvironment, Path projectRoot, Path[] includePaths, InputStream stdIn, PrintStream stdOut, PrintStream stdErr) {
+        return new XillRobotExecutor(xillEnvironment, projectRoot, includePaths, stdIn, stdOut, stdErr);
     }
 }

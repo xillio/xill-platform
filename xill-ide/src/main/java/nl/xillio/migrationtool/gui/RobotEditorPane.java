@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 /**
  * The editor pane for robots. Contains most of the UI, apart from the left panel.
  */
-public class RobotEditorPane extends EditorPane implements RobotTabComponent {
+public class RobotEditorPane extends EditorPane {
     private static final Logger LOGGER = Log.get();
 
     @FXML
@@ -62,10 +62,14 @@ public class RobotEditorPane extends EditorPane implements RobotTabComponent {
     }
 
     @Override
-    public void initialize(final RobotTab tab) {
+    public void initialize(final FileTab tab) {
         super.initialize(tab);
-        controls = new RobotControls(tab, btnRun, btnPause, btnStop, btnStepIn, btnStepOver, cmiError);
-        ESConsoleClient.getLogEvent(tab.getProcessor().getRobotID()).addListener(this::onLogMessage);
+
+        if (tab instanceof RobotTab) {
+            RobotTab robotTab = (RobotTab) tab;
+            controls = new RobotControls(robotTab, btnRun, btnPause, btnStop, btnStepIn, btnStepOver, cmiError);
+            ESConsoleClient.getLogEvent(robotTab.getProcessor().getRobotID()).addListener(this::onLogMessage);
+        }
     }
 
     private RobotTab robotTab() {

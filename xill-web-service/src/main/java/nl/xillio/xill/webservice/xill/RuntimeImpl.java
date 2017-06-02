@@ -113,7 +113,7 @@ public class RuntimeImpl implements Runtime, DisposableBean {
             throw new RobotNotFoundException("The robot does not exists: " + resolvedPath.toString());
         }
         try {
-            xillProcessor = xillEnvironment.buildProcessor(workDirectory, resolvedPath);
+            xillProcessor = xillEnvironment.buildProcessor(workDirectory, robotFQN);
             xillProcessor.setOutputHandler(outputHandler);
             // Ignore all errors since they will be picked up by the output handler
             xillProcessor.getDebugger().setErrorHandler(new RobotErrorHandler());
