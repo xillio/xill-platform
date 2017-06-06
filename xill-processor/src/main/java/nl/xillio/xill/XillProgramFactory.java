@@ -55,6 +55,7 @@ import nl.xillio.xill.components.operators.*;
 import nl.xillio.xill.components.operators.And;
 import nl.xillio.xill.components.operators.Or;
 import nl.xillio.xill.debugging.DebugInfo;
+import nl.xillio.xill.loaders.AbstractRobotLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.eclipse.emf.ecore.EObject;
@@ -64,9 +65,10 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import xill.lang.xill.*;
 import xill.lang.xill.Expression;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
+import java.net.URI;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -91,8 +93,10 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
     private final Map<Resource, RobotID> robotID = new HashMap<>();
     private final List<XillPlugin> plugins;
     private final Debugger debugger;
+    private final Path workingDirectory;
     private final RobotID rootRobot;
     private final Map<EObject, Map.Entry<RobotID, Robot>> compiledRobots = new HashMap<>();
+    private final AbstractRobotLoader robotLoader;
 
     /**
      * Events for signalling that a robot has started and that a robot has stopped
@@ -105,28 +109,34 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
     /**
      * Create a new {@link XillProgramFactory}
      *
-     * @param plugins  list of xill plug-ins.
-     * @param debugger debugger object necessary for processing the robot.
-     * @param robotID  the robot.
+     * @param workingDirectory the working directory
+     * @param plugins          list of xill plug-ins.
+     * @param debugger         debugger object necessary for processing the robot.
+     * @param robotID          the robot.
+     * @param robotLoader
      */
-    public XillProgramFactory(final List<XillPlugin> plugins, final Debugger debugger,
-                              final RobotID robotID, final OutputHandler outputHandler) {
-        this(plugins, debugger, robotID, outputHandler, false);
+    public XillProgramFactory(final Path workingDirectory, final List<XillPlugin> plugins, final Debugger debugger,
+                              final RobotID robotID, final OutputHandler outputHandler, AbstractRobotLoader robotLoader) {
+        this(workingDirectory, plugins, debugger, robotID, outputHandler, false, robotLoader);
     }
 
     /**
      * Create a new {@link XillProgramFactory}
      *
-     * @param plugins  list of xill plug-ins.
-     * @param debugger debugger object necessary for processing the robot.
-     * @param robotID  the robot.
-     * @param verbose  verbose logging for the compiler
+     * @param workingDirectory the working directory
+     * @param plugins          list of xill plug-ins.
+     * @param debugger         debugger object necessary for processing the robot.
+     * @param robotID          the robot.
+     * @param verbose          verbose logging for the compiler
+     * @param robotLoader
      */
-    public XillProgramFactory(final List<XillPlugin> plugins, final Debugger debugger, final RobotID robotID,
+    public XillProgramFactory(final Path workingDirectory, final List<XillPlugin> plugins, final Debugger debugger, final RobotID robotID,
                               final OutputHandler outputHandler,
-                              final boolean verbose) {
+                              final boolean verbose, AbstractRobotLoader robotLoader) {
+        this.workingDirectory = workingDirectory;
         this.debugger = debugger;
         rootRobot = robotID;
+        this.robotLoader = robotLoader;
         expressionParseInvoker.setVERBOSE(verbose);
         this.plugins = plugins;
         this.outputHandler = outputHandler;
@@ -134,7 +144,6 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
 
     @Override
     public void parse(final xill.lang.xill.Robot robot, final RobotID robotID) throws XillParsingException {
-
         this.robotID.put(robot.eResource(), robotID);
         DebugInfo info = new DebugInfo();
 
@@ -191,27 +200,27 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
             xill.lang.xill.Robot robotToken = (xill.lang.xill.Robot) token;
             Map.Entry<RobotID, Robot> pair = compiledRobots.get(robotToken);
             Robot robot = pair.getValue();
-            RobotID id = pair.getKey();
 
             // Get includes
             for (IncludeStatement include : robotToken.getIncludes()) {
                 // Build robotID
-                String path = StringUtils.join(include.getLibrary(), File.separator) + ".xill";
-                RobotID expectedID = RobotID.getInstance(new File(id.getProjectPath(), path),
-                        id.getProjectPath());
+                String fqn = StringUtils.join(include.getLibrary(), ".");
                 CodePosition pos = pos(include);
+                RobotID expectedID = new RobotID(robotLoader.getRobot(fqn), URI.create(RobotID.qualifiedNameToPath(fqn)));
 
                 // Find the matching robot
-                Optional<Entry<RobotID, Robot>> matchingRobot = compiledRobots.values().stream()
-                        .filter(entry -> entry.getKey() == expectedID).findAny();
-
-                if (!matchingRobot.isPresent()) {
-                    throw new XillParsingException("Could not resolve import", pos.getLineNumber(), pos.getRobotID());
-                }
+                Robot matchingRobot = compiledRobots.values()
+                        .stream()
+                        .filter(entry -> entry.getKey().equals(expectedID))
+                        .map(Entry::getValue)
+                        .findAny()
+                        .orElseThrow(
+                                () -> new XillParsingException("Could not resolve import", pos.getLineNumber(), pos.getRobotID())
+                        );
 
                 // Push the library
                 ((nl.xillio.xill.components.Robot) robot)
-                        .addLibrary((nl.xillio.xill.components.Robot) matchingRobot.get().getValue());
+                        .addLibrary((nl.xillio.xill.components.Robot) matchingRobot);
             }
         }
     }
@@ -489,7 +498,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
             current = current.eContainer();
         }
 
-        CodePosition pos = pos(object);
+        CodePosition pos = pos(object); //NOSONAR - object is already checked for null value
         throw new XillParsingException("Could not detect robot for " + object, pos.getLineNumber(), pos.getRobotID());
     }
 
@@ -951,7 +960,7 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
         }
 
         // Check argument count by mocking the input
-        ConstructContext constructContext = new ConstructContext(robotID.get(token.eResource()), rootRobot, construct, debugger, compilerSerialId, outputHandler, robotStartedEvent, robotStoppedEvent);
+        ConstructContext constructContext = new ConstructContext(workingDirectory, robotID.get(token.eResource()), rootRobot, construct, robotLoader, debugger, compilerSerialId, outputHandler, robotStartedEvent, robotStoppedEvent);
 
         try (ConstructProcessor processor = construct.prepareProcess(constructContext)) {
             return buildCall(construct, processor, arguments, constructContext, pos);
@@ -1117,9 +1126,9 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
      * @throws XillParsingException
      */
     Processable parseToken(final xill.lang.xill.CallbotExpression token) throws XillParsingException {
-        Processable path = parse(token.getPath());
+        Processable qualifiedName = parse(token.getPath());
 
-        CallbotExpression expression = new CallbotExpression(path, rootRobot, plugins, outputHandler);
+        CallbotExpression expression = new CallbotExpression(workingDirectory, qualifiedName, rootRobot, plugins, outputHandler, robotLoader);
 
         if (token.getArgument() != null) {
             expression.setArgument(parse(token.getArgument()));
@@ -1136,9 +1145,9 @@ public class XillProgramFactory implements LanguageFactory<xill.lang.xill.Robot>
      * @throws XillParsingException
      */
     Processable parseToken(final xill.lang.xill.RunBulkExpression token) throws XillParsingException {
-        Processable path = parse(token.getPath());
+        Processable qualifiedName = parse(token.getPath());
 
-        RunBulkExpression expression = new RunBulkExpression(path, rootRobot, plugins, outputHandler);
+        RunBulkExpression expression = new RunBulkExpression(workingDirectory, qualifiedName, rootRobot, plugins, outputHandler, robotLoader);
 
         if (token.getArgument() != null) {
             expression.setArgument(parse(token.getArgument()));

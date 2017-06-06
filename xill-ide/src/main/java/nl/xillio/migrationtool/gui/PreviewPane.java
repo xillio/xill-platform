@@ -40,14 +40,13 @@ import java.io.IOException;
  * This pane can show a visual representation of the Xill IDE Variable
  * classes.
  */
-public class PreviewPane extends AnchorPane implements RobotTabComponent {
+public class PreviewPane extends AnchorPane implements FileTabComponent {
     @FXML
     private AnchorPane apnPreviewPane;
     @FXML
     private SearchBar apnPreviewSearchBar;
     @FXML
     private ToggleButton tbnPreviewSearch;
-    private RobotTab tab;
     private final TextArea textView = new TextArea();
     private PreviewSearch previewSearch;
 
@@ -184,9 +183,8 @@ public class PreviewPane extends AnchorPane implements RobotTabComponent {
      * @param tab The current robot tab.
      */
     @Override
-    public void initialize(final RobotTab tab) {
-        this.tab = tab;
-        this.tab.getProcessor().getDebugger().getOnRobotStop().addListener(action -> clear());
+    public void initialize(final FileTab tab) {
+        ((RobotTab) tab).getProcessor().getDebugger().getOnRobotStop().addListener(action -> clear());
     }
 
     private class FocusCellFactory implements Callback<TreeTableColumn<Pair<String, MetaExpression>, MetaExpression>, TreeTableCell<Pair<String, MetaExpression>, MetaExpression>> {

@@ -66,7 +66,7 @@ public class ScanFolderConstruct extends Construct {
     }
 
     MetaExpression process(MetaExpression folderPath, MetaExpression projectionExpression, MetaExpression options, ConstructContext context) {
-        Path file = getFile(context, folderPath.getStringValue()).toPath();
+        Path file = getPath(context, folderPath);
         Projection projection = projectionFactory.build(projectionExpression);
 
         MetaExpression result = fromValue("exif[" + file.toAbsolutePath().toString() + "]");

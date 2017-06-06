@@ -4,6 +4,25 @@ Xill
 Xill makes it easy to perform content related operations like extraction,
 manipulation or generation using a domain specific scripting language.
 
+Using Xill
+----------
+
+### How do I write a Xill robot?
+
+To edit Xill robots, open the native xill-ide application applicable to your
+system:
+
+* Windows: `xill-ide.exe`
+* Mac: `xill-ide.app`
+* Unix: `xill-ide`
+
+### How do I run a Xill robot?
+
+To run a certain `.xill` robot, either:
+
+* open it in Xill IDE and press the play button
+* execute `xill [name of robot]` on the command line
+
 Building Xill
 -------------
 This repository contains all major components of the Xill platform. This
@@ -13,8 +32,8 @@ Take a look at the [build documentation](BUILD.md) to see how it works.
 Contributing
 ------------
 Xill is an open source project, this means that any contributions are
-more then welcome! Check out the [contribution guidelines](CONTRIBUTING.md)
-to see how you can help us make this platform better.
+more than welcome! Check out the [contribution guidelines](CONTRIBUTING.md)
+to see how you can help us improve this platform.
 
 FAQ
 ---
@@ -23,7 +42,7 @@ FAQ
 
 For more build information you should check out [BUILD.md](BUILD.md)
 
-### The build cannot resolve com.oracle:ojdbc7:12.1.0.1.0
+### The build cannot resolve `com.oracle:ojdbc7:12.1.0.1.0`
 
 Oracle does not allow this artifact to be published on our Maven repositories.
 To build this project you will have to set up your environment to pull the

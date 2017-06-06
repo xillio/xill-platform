@@ -50,11 +50,13 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -69,6 +71,19 @@ public class FXController implements Initializable, EventHandler<Event> {
     public static final EventHost<String> OPEN_ROBOT_EVENT = new EventHost<>();
     public static final EventHost<StatusBar> ON_PROGRESS_ADD = new EventHost<>();
     public static final EventHost<StatusBar> ON_PROGRESS_REMOVE = new EventHost<>();
+
+    /**
+     * List of explicitly supported file extensions
+     */
+    private static final List<String> WHITE_LISTED_EXTENSIONS = Collections.unmodifiableList(Arrays.asList(
+            "xill", "xilt", "sbot",                     // Xill robots
+            "txt", "properties", "md", "cfg", "ini",    // Plain text / configuration
+            "html", "htm", "css",                       // Web
+            "xslt", "xml",                              // XML
+            "json", "js",                               // Javascript
+            "bat", "sh",                                // Shell script
+            "ftl", "ftlh", "ftlx"                       // Freemarker templates
+    ));
 
     /**
      * Instance of hotkeys handler
@@ -192,7 +207,7 @@ public class FXController implements Initializable, EventHandler<Event> {
 
         Platform.runLater(() -> apnRoot.getScene().getWindow().focusedProperty().addListener((event, oldValue, newValue) -> {
                     if (newValue) {
-                        getTabs().forEach(e -> projectpane.fileChanged(e.getDocument()));
+                        getTabs().forEach(e -> projectpane.fileChanged(e.getResourceUrl()));
                     }
                 })
         );
@@ -258,7 +273,7 @@ public class FXController implements Initializable, EventHandler<Event> {
                 workspace = DEFAULT_OPEN_BOT.getAbsolutePath();
             }
 
-            if (!"".equals(workspace)) {
+            if (!workspace.isEmpty()) {
                 String[] files = workspace.split(";");
                 for (final String filename : files) {
                     openFile(new File(filename));
@@ -291,7 +306,7 @@ public class FXController implements Initializable, EventHandler<Event> {
             String activeTab = settings.simple().get(Settings.WORKSPACE, Settings.ACTIVE_TAB);
             if (activeTab != null && !"".equals(activeTab)) {
                 getTabs().stream()
-                        .filter(tab -> tab.getDocument().getAbsolutePath().equals(activeTab))
+                        .filter(tab -> tab.getResourceUrl().toString().equals(activeTab))
                         .forEach(tab -> tpnBots.getSelectionModel().select(tab));
             }
         });
@@ -310,16 +325,16 @@ public class FXController implements Initializable, EventHandler<Event> {
     /**
      * Switch focus to an existing tab for a certain file or create it.
      *
-     * @param document the file that should be visible in the tab
-     * @param project  the project folder for the robot
-     * @param isRobot  whether the file is a robot or regular file
+     * @param robotUrl         the file that should be visible in the tab
+     * @param workingDirectory the project folder for the robot
+     * @param isRobot          whether the file is a robot or regular file
      */
-    public void viewOrOpenRobot(File document, File project, boolean isRobot) {
-        FileTab tab = findTab(document);
+    public void viewOrOpenRobot(URL robotUrl, Path workingDirectory, boolean isRobot) {
+        FileTab tab = findTab(robotUrl);
 
         // Create a tab.
         if (tab == null) {
-            tab = createTab(document, project, isRobot);
+            tab = createTab(robotUrl, workingDirectory, isRobot);
         }
 
         // Open the tab.
@@ -331,22 +346,26 @@ public class FXController implements Initializable, EventHandler<Event> {
     /**
      * Try to make a tab and add it to the view.
      *
-     * @param document the file that should be visible in the tab
-     * @param project  the project folder for the robot
+     * @param resourceUrl the file that should be visible in the tab
+     * @param project     the project folder for the robot
      * @return the tab or null if it could not be created
      */
-    private FileTab createTab(File document, File project, boolean isRobot) {
+    private FileTab createTab(URL resourceUrl, Path project, boolean isRobot) {
         FileTab tab;
         if (isRobot) {
-            tab = new RobotTab(project, document, this);
+            try {
+                tab = new RobotTab(resourceUrl, project, this);
+            } catch (URISyntaxException e) {
+                throw new IllegalArgumentException("resourceUrl", e);
+            }
         } else {
             //check white list
-            if (!isWhiteListed(document.getName())) {
+            if (!isWhiteListed(resourceUrl.getFile())) {
                 AlertDialog dialog = new AlertDialog(Alert.AlertType.WARNING,
                         "Unsupported file type",
-                        "The file '" + document.getName() + "' has an unsupported type.",
-                                "The editing of non-text-files is ill advised and may corrupt the file." + System.lineSeparator() +
-                        "Do you want to continue?",
+                        "The file '" + FilenameUtils.getName(resourceUrl.getFile()) + "' has an unsupported type.",
+                        "The editing of non-text-files is ill advised and may corrupt the file." + System.lineSeparator() +
+                                "Do you want to continue?",
                         ButtonType.YES, ButtonType.NO);
 
                 dialog.showAndWait();
@@ -356,16 +375,19 @@ public class FXController implements Initializable, EventHandler<Event> {
                     return null;
                 }
             }
-            tab = new FileTab(project, document, this);
+            tab = new FileTab(resourceUrl, this);
         }
 
         tpnBots.getTabs().add(tab);
         return tab;
     }
 
+    /**
+     * @param fileName Filename to be checked for compatibility
+     * @return true if the editor explicitly supports this file type
+     */
     private boolean isWhiteListed(String fileName) {
-        List<String> whiteList = Arrays.asList("xill", "txt", "properties", "html", "htm", "css", "xslt", "xml", "json", "js", "md", "cfg", "ini", "bat", "sh", "sbot");
-        return whiteList.contains(FilenameUtils.getExtension(fileName));
+        return WHITE_LISTED_EXTENSIONS.contains(FilenameUtils.getExtension(fileName));
     }
 
     @FXML
@@ -395,67 +417,73 @@ public class FXController implements Initializable, EventHandler<Event> {
         }
     }
 
+
+    private FileTab openFile(File file) {
+        try {
+            return openFile(file.toURI().toURL());
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
     /**
      * Open a file
      *
-     * @param file the file to open
+     * @param resource the file to open
      * @return the tab that was opened or null if something went wrong
      */
-    public FileTab openFile(final File file) {
-        return doOpenFile(file, file.toString().endsWith(XillEnvironment.ROBOT_EXTENSION));
+    public FileTab openFile(URL resource) {
+        return doOpenFile(resource, resource.toString().endsWith(XillEnvironment.ROBOT_EXTENSION));
     }
 
     /**
      * Open a robot
      *
-     * @param file the file to open
+     * @param resourceUrl the resource to open
      * @return the tab that was opened or null if something went wrong
      */
-    public RobotTab openRobot(final File file) {
-        return (RobotTab) doOpenFile(file, true);
+    public RobotTab openRobot(URL resourceUrl) {
+        return (RobotTab) doOpenFile(resourceUrl, true);
     }
 
-    private FileTab doOpenFile(final File file, boolean isRobot) {
-        // Skip if the file doesn't exist
-        if (!file.exists() || !file.isFile()) {
-            LOGGER.error("Failed to open file `" + file.getAbsolutePath() + "`. File not found.");
-            return null;
-        }
+    private FileTab doOpenFile(URL resourceUrl, boolean isRobot) {
 
         // Verify file isn't open already
         for (Tab tab : tpnBots.getTabs()) {
             FileTab editor = (FileTab) tab;
-            try {
-                if (editor.getDocument() != null && editor.getDocument().getCanonicalPath().equals(file.getCanonicalPath())) {
-                    tpnBots.getSelectionModel().select(editor);
+            if (editor.getResourceUrl() != null && editor.getResourceUrl().equals(resourceUrl)) {
+                tpnBots.getSelectionModel().select(editor);
 
-                    showTab(editor);
-                    editor.requestFocus();
+                showTab(editor);
+                editor.requestFocus();
 
-                    return editor;
-                }
-            } catch (IOException e) {
-                LOGGER.error("Error while opening file: " + e.getMessage(), e);
-                return null;
+                return editor;
             }
         }
 
         // Try to get the project path. If there is no project, use the parent directory as the project path.
-        String projectPath = projectpane.getProjectPath(file).orElse(file.getParent());
+        try {
+            Path projectPath = projectpane
+                    .getProjectPath(resourceUrl.toURI().toURL())
+                    .map(Paths::get)
+                    .orElse(Paths.get(resourceUrl.toURI()).getParent());
 
-        //try to create the new tab
-        FileTab tab = createTab(file.getAbsoluteFile(), new File(projectPath), isRobot);
+            //try to create the new tab
+            FileTab tab = createTab(resourceUrl, projectPath, isRobot);
 
-        if (tab == null) {
-            return null;
+            if (tab == null) {
+                return null;
+            }
+
+            // Tab is not open yet: open new tab
+            settings.simple().save(Settings.FILE, Settings.LAST_FOLDER, projectPath.toString());
+
+            //open the new tab
+            tab.requestFocus();
+            return tab;
+        } catch (URISyntaxException | MalformedURLException e) {
+            throw new IllegalArgumentException(e);
         }
-
-        // Tab is not open yet: open new tab
-        settings.simple().save(Settings.FILE, Settings.LAST_FOLDER, file.getParent());
-
-        //open the new tab
-        tab.requestFocus();
-        return tab;
     }
 
     /**
@@ -564,14 +592,17 @@ public class FXController implements Initializable, EventHandler<Event> {
     }
 
     private boolean closeApplication() {
-        String openTabs = String.join(";", getTabs().stream().map(tab -> tab.getDocument().getAbsolutePath()).collect(Collectors.toList()));
+        String openTabs = getTabs().stream()
+                .map(FileTab::getResourceUrl)
+                .map(this::unescapePathUrl)
+                .collect(Collectors.joining(";"));
 
         // Save all tabs
         settings.simple().save(Settings.WORKSPACE, Settings.OPEN_TABS, openTabs, true);
 
         // Save active tab
         final String[] activeTab = {null};
-        getTabs().stream().filter(Tab::isSelected).forEach(tab -> activeTab[0] = tab.getDocument().getAbsolutePath());
+        getTabs().stream().filter(Tab::isSelected).forEach(tab -> activeTab[0] = tab.getResourceUrl().toString());
         if (activeTab[0] != null) {
             settings.simple().save(Settings.WORKSPACE, Settings.ACTIVE_TAB, activeTab[0], true);
         } else {
@@ -611,6 +642,14 @@ public class FXController implements Initializable, EventHandler<Event> {
         ESConsoleClient.getInstance().close();
         ApplicationKillThread.exit();
         return true;
+    }
+
+    private String unescapePathUrl(URL url) {
+        try {
+            return url.toURI().getPath();
+        } catch (URISyntaxException e) {
+            return url.toString();
+        }
     }
 
     private boolean showCloseAppDialog(int running) {
@@ -780,20 +819,10 @@ public class FXController implements Initializable, EventHandler<Event> {
                                 ((FileTab) tab).getEditorPane().requestFocus());
                         break;
                     case PULL:
-                        tpnBots.getTabs().filtered(Tab::isSelected).forEach(tab ->
-                                {
-                                    GitPullDialog dlg = new GitPullDialog(new JGitRepository(((FileTab) tab).projectPath));
-                                    dlg.showAndWait();
-                                }
-                        );
+                        performGitOperation(GitPullDialog::new);
                         break;
                     case PUSH:
-                        tpnBots.getTabs().filtered(Tab::isSelected).forEach(tab ->
-                                {
-                                    GitPushDialog dlg = new GitPushDialog(new JGitRepository(((FileTab) tab).projectPath));
-                                    dlg.showAndWait();
-                                }
-                        );
+                        performGitOperation(GitPushDialog::new);
                     default:
                         if (keyEvent.isControlDown() || keyEvent.isMetaDown()) {
                             // Check if other key is an integer, if so open that tab
@@ -813,6 +842,14 @@ public class FXController implements Initializable, EventHandler<Event> {
         }
     }
 
+    private void performGitOperation(Function<JGitRepository, GitDialog> constructor) {
+        projectpane.getProjectPath(((FileTab) tpnBots.getSelectionModel().getSelectedItem()).getResourceUrl())
+                .map(File::new)
+                .map(JGitRepository::new)
+                .map(constructor)
+                .ifPresent(GitDialog::show);
+    }
+
     /**
      * Close a tab
      *
@@ -825,9 +862,9 @@ public class FXController implements Initializable, EventHandler<Event> {
     /**
      * Close a tab
      *
-     * @param tab The tab
+     * @param tab       The tab
      * @param removeTab True if tab will be removed
-     * @param silent True if tab will be closed silently without any further dialogs
+     * @param silent    True if tab will be closed silently without any further dialogs
      */
     public void closeTab(final Tab tab, final boolean removeTab, final boolean silent) {
         // Stop if we don't have a selected tab
@@ -891,12 +928,12 @@ public class FXController implements Initializable, EventHandler<Event> {
     /**
      * Finds the tab according to filePath (~RobotID.path)
      *
-     * @param filePath filepath to robot (.xill) file
+     * @param resourceUrl url to robot (.xill) file
      * @return RobotTab if found, otherwise null
      */
-    public FileTab findTab(final File filePath) {
+    public FileTab findTab(final URL resourceUrl) {
         for (Tab tab : tpnBots.getTabs()) {
-            if (((FileTab) tab).getDocument().equals(filePath)) {
+            if (((FileTab) tab).getResourceUrl().equals(resourceUrl)) {
                 return (FileTab) tab;
             }
         }

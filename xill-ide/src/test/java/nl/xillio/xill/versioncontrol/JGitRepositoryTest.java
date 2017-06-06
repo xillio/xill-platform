@@ -19,6 +19,7 @@ import me.biesaart.utils.Log;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.RemoteRefUpdate;
@@ -284,5 +285,25 @@ public class JGitRepositoryTest {
         verify(branch, times(1)).setName(name);
         verify(branch, times(1)).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM);
         verify(branch, times(1)).call();
+    }
+
+    @Test
+    public void testGetRemoteURL() throws Exception {
+
+        //Mock
+        PushCommand pushCommand = mock(PushCommand.class);
+        when(pushCommand.getRemote()).thenReturn("origin");
+        Repository repo = mock(Repository.class);
+        StoredConfig config = mock(StoredConfig.class);
+        when(config.getString("remote", "origin", "url")).thenReturn("git.git");
+        when(repo.getConfig()).thenReturn(config);
+        when(git.push()).thenReturn(pushCommand);
+        when(git.getRepository()).thenReturn(repo);
+
+        //Run
+        assertEquals(repository.getRemoteURL(), "git.git");
+
+        //Verify
+        verify(config, times(1)).getString(anyString(),anyString(),anyString());
     }
 }

@@ -19,7 +19,6 @@ package nl.xillio.xill.integration;
 import me.biesaart.utils.Log;
 import nl.xillio.xill.XillEnvironmentImpl;
 import nl.xillio.xill.api.XillEnvironment;
-import nl.xillio.xill.api.XillLoader;
 import nl.xillio.xill.api.XillProcessor;
 import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.integration.embeddedmongo.EmbeddedMongoHelper;
@@ -109,11 +108,14 @@ public class RobotsIT {
             Files.delete(robotFile);
         }
 
+        // Get the fqn: replace slashes with dots and remove the extension.
+        String fqn = name.replaceAll("[\\\\/]", ".");
+        fqn = fqn.substring(0, fqn.length() - XillEnvironment.ROBOT_EXTENSION.length());
+
         Files.createDirectories(robotFile.getParent());
         Files.createFile(robotFile);
         Files.copy(robot.openStream(), robotFile, StandardCopyOption.REPLACE_EXISTING);
-
-        XillProcessor processor = xillEnvironment.buildProcessor(projectPath, robotFile);
+        XillProcessor processor = xillEnvironment.buildProcessor(projectPath, fqn);
 
         processor.compile();
         processor.getRobot().process(processor.getDebugger());

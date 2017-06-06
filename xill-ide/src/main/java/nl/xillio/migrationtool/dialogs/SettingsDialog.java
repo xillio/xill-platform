@@ -204,6 +204,8 @@ public class SettingsDialog extends FXMLDialog {
     }
 
     private void setShortcutHandler(final TextField tf) {
+        if(tf == null)
+            return;
         tf.addEventFilter(KeyEvent.ANY, this::handleShortcut);
         tf.setContextMenu(new ContextMenu()); // Disable context menu
     }

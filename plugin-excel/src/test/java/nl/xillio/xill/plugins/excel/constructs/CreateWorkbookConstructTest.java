@@ -49,8 +49,7 @@ public class CreateWorkbookConstructTest extends TestUtils {
         ConstructContext context = mock(ConstructContext.class);
 
         //Mocking file
-        RobotID id = mock(RobotID.class);
-        when(id.getPath()).thenReturn(new File("."));
+        RobotID id = RobotID.dummyRobot();
         when(context.getRobotID()).thenReturn(id);
         when(context.getRootRobot()).thenReturn(id);
 
@@ -73,8 +72,7 @@ public class CreateWorkbookConstructTest extends TestUtils {
 
 
         //Mocking file
-        RobotID id = mock(RobotID.class);
-        when(id.getPath()).thenReturn(new File("."));
+        RobotID id = RobotID.dummyRobot();
         when(context.getRobotID()).thenReturn(id);
         when(context.getRootRobot()).thenReturn(id);
 
@@ -97,8 +95,7 @@ public class CreateWorkbookConstructTest extends TestUtils {
         XillWorkbook workbook = mock(XillWorkbook.class);
 
         //Mock filesystem
-        RobotID id = mock(RobotID.class);
-        when(id.getPath()).thenReturn(new File("."));
+        RobotID id = RobotID.dummyRobot();
         when(context.getRobotID()).thenReturn(id);
         when(context.getRootRobot()).thenReturn(id);
         when(service.createWorkbook(any(File.class))).thenReturn(workbook);

@@ -55,14 +55,9 @@ BreakpointPool {
      * @param line
      */
     public void add(final RobotID robot, final int line) {
-        List<Integer> bpList = breakpoints.get(robot);
-
-        if (bpList == null) {
-            bpList = new ArrayList<>();
-            breakpoints.put(robot, bpList);
-        }
-
-        bpList.add(line);
+        breakpoints
+                .computeIfAbsent(robot, k -> new ArrayList<>())
+                .add(line);
     }
 
     /**
@@ -71,7 +66,7 @@ BreakpointPool {
     public List<Breakpoint> get() {
         List<Breakpoint> bpList = new ArrayList<>();
 
-        breakpoints.entrySet().forEach(entry -> entry.getValue().forEach(line -> bpList.add(new Breakpoint(entry.getKey(), line))));
+        breakpoints.forEach((key, value) -> value.forEach(line -> bpList.add(new Breakpoint(key, line))));
 
         return bpList;
     }

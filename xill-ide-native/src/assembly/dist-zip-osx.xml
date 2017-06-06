@@ -34,11 +34,7 @@
             <outputDirectory></outputDirectory>
         </file>
         <file>
-            <source>${project.basedir}/../CONTRIBUTING.md</source>
-            <outputDirectory></outputDirectory>
-        </file>
-        <file>
-            <source>${project.basedir}/target/jfx/native/Xill IDE-${project.version}.dmg</source>
+            <source>${project.basedir}/target/jfx/native/Xill IDE-${project.version}.pkg</source>
             <outputDirectory></outputDirectory>
         </file>
     </files>

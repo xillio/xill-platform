@@ -23,10 +23,10 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import me.biesaart.utils.Log;
 import nl.xillio.xill.util.HotkeysHandler.Hotkeys;
 import nl.xillio.xill.util.settings.Settings;
 import nl.xillio.xill.util.settings.SettingsHandler;
-import me.biesaart.utils.Log;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ import java.io.IOException;
 /**
  * A collapsible debug pane. Contains the variable and the preview panes.
  */
-public class DebugPane extends AnchorPane implements EventHandler<KeyEvent>, RobotTabComponent {
+public class DebugPane extends AnchorPane implements EventHandler<KeyEvent>, FileTabComponent {
     private static final SettingsHandler settings = SettingsHandler.getSettingsHandler();
     private static final Logger LOGGER = Log.get();
 
@@ -76,17 +76,18 @@ public class DebugPane extends AnchorPane implements EventHandler<KeyEvent>, Rob
     }
 
     @Override
-    public void initialize(final RobotTab tab) {
-        settings.simple().register(Settings.LAYOUT, Settings.PREVIEW_HEIGHT + getFullPath(tab), "0.6", "The height of the preview panel");
+    public void initialize(final FileTab tab) {
+        RobotTab robotTab = (RobotTab) tab;
+        settings.simple().register(Settings.LAYOUT, Settings.PREVIEW_HEIGHT + getFullPath(robotTab), "0.6", "The height of the preview panel");
         // Load the divider position
-        spnBotRight.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.PREVIEW_HEIGHT + getFullPath(tab))));
-        spnBotRight.getDividers().get(0).positionProperty().addListener((observable, prevPos, newPos) -> settings.simple().save(Settings.LAYOUT, Settings.PREVIEW_HEIGHT + getFullPath(tab), Double.toString(newPos.doubleValue())));
+        spnBotRight.setDividerPosition(0, Double.parseDouble(settings.simple().get(Settings.LAYOUT, Settings.PREVIEW_HEIGHT + getFullPath(robotTab))));
+        spnBotRight.getDividers().get(0).positionProperty().addListener((observable, prevPos, newPos) -> settings.simple().save(Settings.LAYOUT, Settings.PREVIEW_HEIGHT + getFullPath(robotTab), Double.toString(newPos.doubleValue())));
 
-        initializeChildren(tab);
+        initializeChildren(robotTab);
     }
 
     public String getFullPath(RobotTab tab) {
-        return tab.getProcessor().getRobotID().getPath().getAbsolutePath();
+        return tab.getProcessor().getRobotID().getURL().getPath();
     }
 
     /**

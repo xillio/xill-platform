@@ -16,8 +16,7 @@
 package nl.xillio.xill.components.expressions.runbulk;
 
 import nl.xillio.xill.api.Debugger;
-
-import java.io.File;
+import nl.xillio.xill.loaders.AbstractRobotLoader;
 
 /**
  * Controls the {@link RunBulkExpression} threads.
@@ -26,19 +25,25 @@ class RunBulkControl {
     private int runCount = 0;
     private boolean stop = false;
     private final Debugger debugger;
-    private final File calledRobotFile;
+    private final String calledRobotFqn;
+    private final AbstractRobotLoader loader;
 
-    public RunBulkControl(final Debugger debugger, final File calledRobotFile) {
+    public RunBulkControl(final Debugger debugger, final String calledRobotFqn, final AbstractRobotLoader loader) {
         this.debugger = debugger;
-        this.calledRobotFile = calledRobotFile;
+        this.calledRobotFqn = calledRobotFqn;
+        this.loader = loader;
     }
 
     public Debugger getDebugger() {
         return debugger;
     }
 
-    public File getCalledRobotFile() {
-        return calledRobotFile;
+    public String getCalledRobotFqn() {
+        return calledRobotFqn;
+    }
+
+    public AbstractRobotLoader getLoader() {
+        return loader;
     }
 
     public synchronized void incRunCount() {

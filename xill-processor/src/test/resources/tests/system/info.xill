@@ -13,13 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use System, Math, Assert;
+use System, Math, Assert, Collection, String;
 
 var info = System.info();
 
-Assert.isTrue(info.availableProcessors > 1);
+Assert.isTrue(Math.isNumber(info.availableProcessors));
 Assert.equal(System.typeOf(info.fileSystem), LIST);
 Assert.isTrue(Math.isNumber(info.memory.free));
 Assert.isTrue(Math.isNumber(info.memory.total));
 Assert.isTrue(Math.isNumber(info.memory.max));
 Assert.isTrue(Math.isNumber(info.memory.used));
+Assert.isFalse(Collection.containsKey(info, "robotPath"), "As of xill-platform 3.6.0 robotPath does not exist anymore");
+Assert.notNull(info.projectPath);
+Assert.notNull(info.robotUrl);
+Assert.isTrue(String.endsWith(info.robotUrl, "info.xill"));
+Assert.notNull(info.rootRobotUrl);
+Assert.notNull(info.resourcePath);
+Assert.notNull(info.qualifiedName);

@@ -59,7 +59,7 @@ import static nl.xillio.xill.util.HotkeysHandler.Hotkeys.*;
 /**
  * This pane displays the console log stored in elasticsearch
  */
-public class ConsolePane extends AnchorPane implements Searchable, EventHandler<KeyEvent>, RobotTabComponent {
+public class ConsolePane extends AnchorPane implements Searchable, EventHandler<KeyEvent>, FileTabComponent {
     private static final Logger LOGGER = Log.get();
     private static final int LOG_CACHE_SIZE = 500; // We need a sufficiently large number so that the UI thread can keep up, but not so big that it becomes too heavy on memory.
 
@@ -156,8 +156,7 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
 
     private static void performSelection(final TableView<LogEntry> table, final int index) {
         // Get the table anchor
-        @SuppressWarnings("unchecked")
-        final TablePositionBase<TableColumn<LogEntry, String>> anchor = CellBehaviorBase.getAnchor(table, table.getFocusModel().getFocusedCell());
+        @SuppressWarnings("unchecked") final TablePositionBase<TableColumn<LogEntry, String>> anchor = CellBehaviorBase.getAnchor(table, table.getFocusModel().getFocusedCell());
 
         // Get the min and max row index and select the rows in that range
         int minRowIndex = Math.min(anchor.getRow(), index);
@@ -169,8 +168,8 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
     }
 
     @Override
-    public void initialize(final RobotTab tab) {
-        this.tab = tab;
+    public void initialize(final FileTab tab) {
+        this.tab = (RobotTab) tab;
         if (FXController.settings.simple().getBoolean(Settings.SETTINGS_GENERAL, Settings.OPEN_BOT_WITH_CLEAN_CONSOLE)) {
             ESConsoleClient.getInstance().clearLog(getRobotID().toString());
         }

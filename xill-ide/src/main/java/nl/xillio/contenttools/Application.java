@@ -20,7 +20,6 @@ import me.biesaart.utils.Log;
 import nl.xillio.plugins.ContenttoolsPlugin;
 import nl.xillio.xill.XillEnvironmentImpl;
 import nl.xillio.xill.api.XillEnvironment;
-import nl.xillio.xill.api.XillLoader;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -39,6 +38,7 @@ public class Application extends javafx.application.Application {
     private static XillEnvironment environment;
 
     private static List<String> args;
+    private static Stage primaryStage;
 
     /**
      * Main method
@@ -61,8 +61,13 @@ public class Application extends javafx.application.Application {
         }
     }
 
+    public static Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
     @Override
     public void start(final Stage stage) throws Exception {
+        primaryStage = stage; //NOSONAR - This is threadsafe, because Application.start() is only ever called once
         LOGGER.info("Loading IDE");
         // Try to load the IDE from the classpath first
         if (loadIDE(stage, null)) {

@@ -32,8 +32,8 @@ import nl.xillio.xill.services.json.JsonException;
 import nl.xillio.xill.services.json.JsonParser;
 import nl.xillio.xill.services.json.PrettyJsonParser;
 
-import java.io.File;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -48,7 +48,7 @@ import static org.mockito.Mockito.*;
  * This class represents various utilities you could need during testing of a xill plugin
  */
 public class TestUtils extends ExpressionBuilderHelper {
-    public static final FileResolver CONSTRUCT_FILE_RESOLVER;
+    protected static final FileResolver CONSTRUCT_FILE_RESOLVER;
     private static final JsonParser jsonParser = new JacksonParser(true);
 
     static {
@@ -71,12 +71,7 @@ public class TestUtils extends ExpressionBuilderHelper {
         }
     }
 
-    public static void setFileResolverReturnValue(File file) {
-        doReturn(file).when(CONSTRUCT_FILE_RESOLVER).buildFile(any(), anyString());
-        doReturn(file.toPath()).when(CONSTRUCT_FILE_RESOLVER).buildPath(any(), any());
-    }
-
-    public static void setFileResolverReturnValue(Path file) {
+    protected static void setFileResolverReturnValue(Path file) {
         doReturn(file.toFile()).when(CONSTRUCT_FILE_RESOLVER).buildFile(any(), anyString());
         doReturn(file).when(CONSTRUCT_FILE_RESOLVER).buildPath(any(), any());
     }
@@ -117,7 +112,7 @@ public class TestUtils extends ExpressionBuilderHelper {
     }
 
     protected ConstructContext context(Construct construct) {
-        return new ConstructContext(RobotID.dummyRobot(), RobotID.dummyRobot(), construct, mock(Debugger.class, RETURNS_DEEP_STUBS), UUID.randomUUID(), new EventHost<>(), new EventHost<>());
+        return new ConstructContext(Paths.get("."), RobotID.dummyRobot(), RobotID.dummyRobot(), construct, mock(Debugger.class, RETURNS_DEEP_STUBS), UUID.randomUUID(), new EventHost<>(), new EventHost<>(), null);
     }
 
     protected MetaExpression process(Construct construct, MetaExpression... arguments) {

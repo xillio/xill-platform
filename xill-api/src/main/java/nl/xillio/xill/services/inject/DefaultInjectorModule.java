@@ -64,5 +64,4 @@ public class DefaultInjectorModule extends AbstractModule {
             LOGGER.error(e.getMessage(), e);
         }
     }
-
 }

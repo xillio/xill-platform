@@ -116,7 +116,7 @@ public class ForeachInstruction extends CompoundInstruction {
         if (value.hasMeta(MetaExpressionIterator.class)) {
             return doIterations(debugger, value.getMeta(MetaExpressionIterator.class), null);
         } else {
-            return processIteration(() -> ExpressionBuilderHelper.fromValue(0), value, debugger);
+            return doIterations(debugger, new SingletonIterator<>(value), null);
         }
     }
 
@@ -131,7 +131,7 @@ public class ForeachInstruction extends CompoundInstruction {
 
     //squid:S135 Two breaks keep the code readable, while adding code in between if blocks is not possible here
     //squid:S2095 suppress 'close this MetaExpression': The metaExpressions do not have to be closed here. They are closed somewhere else later.
-    @SuppressWarnings({"squid:S135","squid:S2095"})
+    @SuppressWarnings({"squid:S135", "squid:S2095"})
     private InstructionFlow<MetaExpression> doIterations(Debugger debugger, Iterator<MetaExpression> valueIterator, Set<String> keySet) {
         InstructionFlow<MetaExpression> result = InstructionFlow.doResume();
         int index = 0;
@@ -200,5 +200,43 @@ public class ForeachInstruction extends CompoundInstruction {
             return Arrays.asList(valueVar, keyVar, list, instructionSet);
         }
         return Arrays.asList(valueVar, list, instructionSet);
+    }
+
+
+    /**
+     * Implementation of an iterator that takes a single object which it will iterate over once
+     *
+     * @param <E> The object to iterate once
+     */
+    static class SingletonIterator<E> implements Iterator<E> {
+        private final E item;
+        private boolean gotItem = false;
+
+        SingletonIterator(final E item) {
+            this.item = item;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !this.gotItem;
+        }
+
+        @Override
+        public E next() {
+            if (this.gotItem) {
+                throw new NoSuchElementException();
+            }
+            this.gotItem = true;
+            return item;
+        }
+
+        @Override
+        public void remove() {
+            if (!this.gotItem) {
+                this.gotItem = true;
+            } else {
+                throw new NoSuchElementException();
+            }
+        }
     }
 }

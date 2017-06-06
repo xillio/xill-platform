@@ -43,7 +43,7 @@ public class Breakpoint {
      * @return whether there is a breakpoint on the instruction
      */
     public boolean matches(final Instruction next) {
-        return next.getRobotID() == robotID &&
+        return next.getRobotID().equals(robotID) &&
                 next.getLineNumber() == lineNumber;
     }
 }

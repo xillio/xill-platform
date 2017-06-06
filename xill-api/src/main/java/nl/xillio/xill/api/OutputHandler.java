@@ -17,7 +17,6 @@ package nl.xillio.xill.api;
 
 import nl.xillio.xill.api.components.Instruction;
 import nl.xillio.xill.api.components.RobotID;
-import org.slf4j.event.Level;
 
 /**
  * This interface represents an object that can receive various events related to the output of a Xill execution.
@@ -25,6 +24,11 @@ import org.slf4j.event.Level;
  * @author Thomas Biesaart
  */
 public interface OutputHandler {
+    String TRACE = "TRACE";
+    String DEBUG = "DEBUG";
+    String INFO = "INFO";
+    String WARN = "WARN";
+    String ERROR = "ERROR";
     /**
      * This method is called every time a message is logged to an slf4j {@link org.slf4j.Logger}.
      *
@@ -33,7 +37,7 @@ public interface OutputHandler {
      * @param message    the message pattern
      * @param parameters the parameters
      */
-    void handleLog(RobotID robotID, Level level, String message, Object... parameters);
+    void handleLog(RobotID robotID, String level, String message, Object... parameters);
 
     void inspect(Instruction instruction, Throwable e);
 }

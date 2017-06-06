@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* 
+/*
 * Specification: Callbot MUST execute the code in the called bot.
 * Input: A bot which returns the argument
 * Expected: The callbot call returns the given argument
