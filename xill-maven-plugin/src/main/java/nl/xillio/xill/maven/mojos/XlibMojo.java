@@ -104,10 +104,9 @@ public class XlibMojo extends AbstractXlibMojo {
     private void collectFatArchiveRobots() throws MojoExecutionException {
         List<Artifact> artifactList = new ArrayList<>(artifacts);
 
+        // Reverse for-loop to retain the correct overriding robot precedence.
         for (int i = artifactList.size() - 1; i >= 0; i--) {
             Artifact artifact = artifactList.get(i);
-
-            getLog().info("\n===============\n" + artifact.getId() + "\n===============");
 
             // Skip non-Xill dependencies.
             if (!"xlib".equals(artifact.getType())) {
@@ -124,6 +123,7 @@ public class XlibMojo extends AbstractXlibMojo {
     private void extractArchive(Path archive) throws MojoExecutionException {
         URI artifactUri = URI.create("jar:" + archive.toUri());
 
+        // Get the file system for the archive.
         FileSystem fs;
         try {
             Map<String, String> env = new HashMap<>();
