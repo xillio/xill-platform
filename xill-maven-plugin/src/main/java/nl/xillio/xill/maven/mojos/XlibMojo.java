@@ -29,6 +29,7 @@ import java.net.URI;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Mojo(name = "xlib", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class XlibMojo extends AbstractXlibMojo {
@@ -104,6 +105,9 @@ public class XlibMojo extends AbstractXlibMojo {
     private void collectFatArchiveRobots() throws MojoExecutionException {
         List<Artifact> artifactList = new ArrayList<>(artifacts);
 
+        // Get all resources from this project, these should not be overwritten.
+        Set<String> resourceSet = getFilesFromProject();
+
         // Reverse for-loop to retain the correct overriding robot precedence.
         for (int i = artifactList.size() - 1; i >= 0; i--) {
             Artifact artifact = artifactList.get(i);
@@ -116,11 +120,11 @@ public class XlibMojo extends AbstractXlibMojo {
 
             // Get the file system for the xlib.
             Path artifactPath = artifact.getFile().toPath();
-            extractArchive(artifactPath);
+            extractArchive(artifactPath, resourceSet);
         }
     }
 
-    private void extractArchive(Path archive) throws MojoExecutionException {
+    private void extractArchive(Path archive, Set<String> resourceSet) throws MojoExecutionException {
         URI artifactUri = URI.create("jar:" + archive.toUri());
 
         // Get the file system for the archive.
@@ -141,15 +145,32 @@ public class XlibMojo extends AbstractXlibMojo {
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     // Get the file name without the "robots/" prefix, copy the file.
                     String fileName = file.toString().substring(FileSetFactory.ROBOTS_DIRECTORY.length() + 1);
-                    Path target = classesDir.resolve(fileName);
-                    Files.createDirectories(target.getParent());
-                    Files.copy(file, target, StandardCopyOption.REPLACE_EXISTING);
+
+                    // If the file already existed in this project, don't overwrite it.
+                    if (!resourceSet.contains(fileName)) {
+                        Path target = classesDir.resolve(fileName);
+                        Files.createDirectories(target.getParent());
+                        Files.copy(file, target, StandardCopyOption.REPLACE_EXISTING);
+                    }
 
                     return FileVisitResult.CONTINUE;
                 }
             });
         } catch (IOException e) {
             throw new MojoExecutionException("Could not copy file from artifact: " + archive, e);
+        }
+    }
+
+    private Set<String> getFilesFromProject() throws MojoExecutionException {
+        int start = getClassesDirectory().toString().length() + 1;
+        try {
+            return Files.walk(getClassesDirectory())
+                    .filter(Files::isRegularFile)
+                    .map(Path::toString)
+                    .map(s -> s.substring(start))
+                    .collect(Collectors.toSet());
+        } catch (IOException e) {
+            throw new MojoExecutionException("Could not get list of files.");
         }
     }
 }
