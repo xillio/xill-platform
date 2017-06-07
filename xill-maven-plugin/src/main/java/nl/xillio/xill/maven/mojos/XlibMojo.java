@@ -49,8 +49,8 @@ public class XlibMojo extends AbstractXlibMojo {
     /**
      * Whether to create a fat archive containing all dependencies from this project.
      */
-    @Parameter(defaultValue = "false", required = true, property = "fatArchive")
-    private boolean fatArchive;
+    @Parameter(defaultValue = "false", required = true, property = "includeDependencies")
+    private boolean includeDependencies;
 
     @Component(role = Archiver.class, hint = "zip")
     private Archiver archiver;
@@ -79,7 +79,7 @@ public class XlibMojo extends AbstractXlibMojo {
             throw new MojoExecutionException("An artifact is already set for this project.");
         }
 
-        if (fatArchive) {
+        if (includeDependencies) {
             collectFatArchiveRobots();
         }
 
