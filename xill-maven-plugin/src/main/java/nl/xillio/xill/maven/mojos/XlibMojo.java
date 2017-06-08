@@ -170,7 +170,7 @@ public class XlibMojo extends AbstractXlibMojo {
                     .map(s -> s.substring(start))
                     .collect(Collectors.toSet());
         } catch (IOException e) {
-            throw new MojoExecutionException("Could not get list of files.");
+            throw new MojoExecutionException("Could not get list of files.", e);
         }
     }
 }
