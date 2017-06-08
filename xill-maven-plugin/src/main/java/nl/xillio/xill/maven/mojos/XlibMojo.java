@@ -125,22 +125,10 @@ public class XlibMojo extends AbstractXlibMojo {
     }
 
     private void extractArchive(Path archive, Set<String> resourceSet) throws MojoExecutionException {
-        URI artifactUri = URI.create("jar:" + archive.toUri());
-
-        // Get the file system for the archive.
-        FileSystem fs;
-        try {
-            Map<String, String> env = new HashMap<>();
-            env.put("create", "true");
-            fs = FileSystems.newFileSystem(artifactUri, env);
-        } catch (IOException e) {
-            throw new MojoExecutionException("Could not read from xlib: " + archive, e);
-        }
-
         // Copy all files.
         Path classesDir = getClassesDirectory();
-        try {
-            Files.walkFileTree(fs.getPath(FileSetFactory.ROBOTS_DIRECTORY), new SimpleFileVisitor<Path>() {
+        try(FileSystem fileSystem = openFileSystem(archive)) {
+            Files.walkFileTree(fileSystem.getPath(FileSetFactory.ROBOTS_DIRECTORY), new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     // Get the file name without the "robots/" prefix, copy the file.
@@ -158,6 +146,17 @@ public class XlibMojo extends AbstractXlibMojo {
             });
         } catch (IOException e) {
             throw new MojoExecutionException("Could not copy file from artifact: " + archive, e);
+        }
+    }
+
+    private FileSystem openFileSystem(Path archive) throws MojoExecutionException {
+        try {
+            URI artifactUri = URI.create("jar:" + archive.toUri());
+            Map<String, String> env = new HashMap<>();
+            env.put("create", "true");
+            return FileSystems.newFileSystem(artifactUri, env);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Could not read from xlib: " + archive, e);
         }
     }
 
