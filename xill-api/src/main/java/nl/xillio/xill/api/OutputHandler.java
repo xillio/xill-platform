@@ -23,6 +23,7 @@ import nl.xillio.xill.api.components.RobotID;
  *
  * @author Thomas Biesaart
  */
+@SuppressWarnings("squid:S1214")
 public interface OutputHandler {
     String TRACE = "TRACE";
     String DEBUG = "DEBUG";
