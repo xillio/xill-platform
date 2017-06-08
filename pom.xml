@@ -132,6 +132,19 @@
                         <exclude>plugin-web/**/LICENSE.BSD</exclude>
                         <exclude>xill-plugin-archetype/src/main/**/archetype-resources/**</exclude>
                         <exclude>jdk/**</exclude>
+                        <exclude>**/build.xml</exclude>
+                        <exclude>**/maven-build.xml</exclude>
+                        <exclude>**/maven-build.properties</exclude>
+                        <exclude>**/**.ttf</exclude>
+                        <exclude>**/**.xilt</exclude>
+                        <exclude>**/**.xlsx</exclude>
+                        <exclude>**/**.txt</exclude>
+                        <exclude>.gitattributes</exclude>
+                        <exclude>LICENSE</exclude>
+                        <exclude>**/*.icns</exclude>
+                        <exclude>**/*.unknown</exclude>
+                        <exclude>**/*.dat</exclude>
+                        <exclude>**/LICENSE</exclude>
                     </excludes>
                 </configuration>
             </plugin>
