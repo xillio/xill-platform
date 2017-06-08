@@ -15,15 +15,12 @@
  */
 package nl.xillio.xill.plugins.file.constructs;
 
-import com.google.inject.Inject;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
-import nl.xillio.xill.plugins.file.services.files.FileUtilities;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -31,7 +28,7 @@ import java.nio.file.Path;
  * Tests whether the file denoted by this abstract pathname is a normal file.
  *
  * @author Paul van der Zandt, Xillio
- * @author Thomas biesaart
+ * @author Thomas biesaart, Sander Visser
  */
 public class IsFileConstruct extends Construct {
 
@@ -47,6 +44,4 @@ public class IsFileConstruct extends Construct {
 
         return fromValue(Files.isRegularFile(file));
     }
-
-
 }

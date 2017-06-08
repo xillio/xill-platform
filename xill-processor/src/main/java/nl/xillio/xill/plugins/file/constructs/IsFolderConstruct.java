@@ -21,7 +21,6 @@ import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -29,7 +28,7 @@ import java.nio.file.Path;
  * Tests whether the file denoted by this abstract pathname is a folder.
  *
  * @author Paul van der Zandt, Xillio
- * @author Thomas biesaart
+ * @author Thomas biesaart, Sander Visser
  */
 public class IsFolderConstruct extends Construct {
     @Override
@@ -43,7 +42,5 @@ public class IsFolderConstruct extends Construct {
         Path file = getPath(context, path);
 
         return fromValue(Files.isDirectory(file));
-
     }
-
 }

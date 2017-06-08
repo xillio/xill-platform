@@ -50,7 +50,7 @@ public class IsFileConstructTest extends TestUtils {
 
     //Test using a path that exists and is a file
     @Test
-    public void testProcessNormalFile(){
+    public void testProcessNormalFile() {
 
         MetaExpression path = fromValue(testFile.toString());
 
@@ -65,7 +65,7 @@ public class IsFileConstructTest extends TestUtils {
     }
 
     @Test
-    public void testProcessNormalFolder(){
+    public void testProcessNormalFolder() {
         MetaExpression path = fromValue(testFolder.toString());
 
         ConstructProcessor processor = construct.prepareProcess(context(construct));
@@ -79,7 +79,7 @@ public class IsFileConstructTest extends TestUtils {
     }
 
     @Test
-    public void testProcessNonExistingFile(){
+    public void testProcessNonExistingFile() {
         MetaExpression path = fromValue(getClass().getSimpleName() + "/thisDoesNotExists");
 
         ConstructProcessor processor = construct.prepareProcess(context(construct));

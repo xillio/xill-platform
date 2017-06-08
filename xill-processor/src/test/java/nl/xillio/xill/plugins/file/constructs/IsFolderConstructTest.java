@@ -23,7 +23,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -51,7 +50,7 @@ public class IsFolderConstructTest extends TestUtils {
 
     //Test using a path that exists and is not a folder
     @Test
-    public void testProcessNormalFile(){
+    public void testProcessNormalFile() {
 
         MetaExpression path = fromValue(testFile.toString());
 
@@ -66,7 +65,7 @@ public class IsFolderConstructTest extends TestUtils {
     }
 
     @Test
-    public void testProcessNormalFolder(){
+    public void testProcessNormalFolder() {
         MetaExpression path = fromValue(testFolder.toString());
 
         ConstructProcessor processor = construct.prepareProcess(context(construct));
@@ -80,7 +79,7 @@ public class IsFolderConstructTest extends TestUtils {
     }
 
     @Test
-    public void testProcessNonExistingFolder(){
+    public void testProcessNonExistingFolder() {
         MetaExpression path = fromValue(getClass().getSimpleName() + "/thisDoesNotExists/");
 
         ConstructProcessor processor = construct.prepareProcess(context(construct));
