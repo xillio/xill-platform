@@ -1,7 +1,7 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
-## [3.6.1] - unreleased
+## [3.6.1] - 2017-06-13
 
 ### Add
 * Option for fat archives built by maven [CF-31]
