@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Add
 * Option for fat archives built by maven [CF-31]
+* Add `Date.isDate()` construct [CTC-2134]
 
 ### Change
 * `File.isFolder` no longer errors if file does not exist [CF-60]
