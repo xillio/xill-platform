@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file.
 * Add `Date.isDate()` construct [CTC-2134]
 
 ### Change
-* `File.isFolder` no longer errors if file does not exist [CF-60]
+* `File.isFolder()` no longer errors if file does not exist [CF-60]
 
 ## [3.6.0] - 2017-06-02
 
