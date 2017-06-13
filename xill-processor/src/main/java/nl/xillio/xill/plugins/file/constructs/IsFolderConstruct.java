@@ -15,7 +15,12 @@
  */
 package nl.xillio.xill.plugins.file.constructs;
 
-import java.io.IOException;
+import nl.xillio.xill.api.components.MetaExpression;
+import nl.xillio.xill.api.construct.Argument;
+import nl.xillio.xill.api.construct.Construct;
+import nl.xillio.xill.api.construct.ConstructContext;
+import nl.xillio.xill.api.construct.ConstructProcessor;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -23,12 +28,19 @@ import java.nio.file.Path;
  * Tests whether the file denoted by this abstract pathname is a folder.
  *
  * @author Paul van der Zandt, Xillio
- * @author Thomas biesaart
+ * @author Thomas biesaart, Sander Visser
  */
-public class IsFolderConstruct extends AbstractFlagConstruct {
-
+public class IsFolderConstruct extends Construct {
     @Override
-    protected Boolean process(Path path) throws IOException {
-        return Files.isDirectory(path);
+    public ConstructProcessor prepareProcess(ConstructContext context) {
+        return new ConstructProcessor(
+                path -> process(context, path),
+                new Argument("path", ATOMIC));
+    }
+
+    static MetaExpression process(final ConstructContext context, final MetaExpression path) {
+        Path file = getPath(context, path);
+
+        return fromValue(Files.isDirectory(file));
     }
 }
