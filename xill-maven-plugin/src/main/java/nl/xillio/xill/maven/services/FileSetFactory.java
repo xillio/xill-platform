@@ -21,7 +21,7 @@ import org.codehaus.plexus.archiver.util.DefaultFileSet;
 import java.nio.file.Path;
 
 public class FileSetFactory {
-    private static final String ROBOTS_DIRECTORY = "robots/";
+    public static final String ROBOTS_DIRECTORY = "robots/";
 
     public FileSet createFileSet(Path directory) {
         DefaultFileSet fileSet = new DefaultFileSet(directory.toFile());
