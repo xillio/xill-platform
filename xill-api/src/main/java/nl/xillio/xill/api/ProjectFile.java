@@ -23,7 +23,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 
 public class ProjectFile {
-    public String[] robotPath = new String[0];
+    private String[] robotPath = new String[0];
 
     @JsonIgnore
     public void setRobotPath(Path[] robotPath) {
