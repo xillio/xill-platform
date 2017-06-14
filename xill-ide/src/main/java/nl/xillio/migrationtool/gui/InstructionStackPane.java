@@ -24,12 +24,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.AnchorPane;
+import me.biesaart.utils.Log;
 import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.components.*;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.api.events.RobotPausedAction;
 import nl.xillio.xill.api.events.RobotStoppedAction;
-import me.biesaart.utils.Log;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 /**
  * This pane can show the current position in the stack
  */
-public class InstructionStackPane extends AnchorPane implements RobotTabComponent, ChangeListener<InstructionStackPane.Wrapper<Instruction>> {
+public class InstructionStackPane extends AnchorPane implements FileTabComponent, ChangeListener<InstructionStackPane.Wrapper<Instruction>> {
 
     private static final Logger LOGGER = Log.get();
     private static final int MAX_STACK = 40;
@@ -110,8 +110,8 @@ public class InstructionStackPane extends AnchorPane implements RobotTabComponen
     }
 
     @Override
-    public void initialize(final RobotTab tab) {
-        this.tab = tab;
+    public void initialize(final FileTab tab) {
+        this.tab = (RobotTab) tab;
 
         getDebugger().getOnRobotPause().addListener(this::onRobotPause);
         getDebugger().getOnRobotStop().addListener(this::onRobotStop);

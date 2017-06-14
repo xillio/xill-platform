@@ -57,7 +57,7 @@ public class ConfigurationFactoryTest extends TestUtils {
         ConfigurationFactory configurationFactory = new ConfigurationFactory();
 
         // Run
-        configurationFactory.buildDefaultConfiguration(path);
+        configurationFactory.buildDefaultConfiguration(path, context());
     }
 
 }

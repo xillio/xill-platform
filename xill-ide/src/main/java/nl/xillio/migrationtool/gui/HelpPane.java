@@ -31,6 +31,7 @@ import netscape.javascript.JSObject;
 import nl.xillio.migrationtool.Loader;
 import nl.xillio.migrationtool.XillInitializer;
 import nl.xillio.migrationtool.gui.editor.XillJSObject;
+import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.docgen.DocGenConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -115,7 +116,7 @@ public class HelpPane extends AnchorPane {
                         new XillJSObject(
                                 Loader.getXill().buildProcessor(
                                         Paths.get("."),
-                                        Paths.get(".")
+                                        RobotID.dummyRobot()
                                 )
                         )
                 );

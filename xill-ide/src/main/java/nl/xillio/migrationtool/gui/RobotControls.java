@@ -278,7 +278,7 @@ public class RobotControls implements EventHandler<KeyEvent>, ErrorHandlingPolic
 
         // Seems like the tab wasn't open so we open it. This has to be done in the JavaFX Thread.
         Platform.runLater(() -> {
-            RobotTab newTab = tab.getGlobalController().openRobot(id.getPath());
+            RobotTab newTab = tab.getGlobalController().openRobot(id.getURL());
 
             // Wait for the editor to load
             newTab.getEditorPane().getEditor().getOnDocumentLoaded().addListener(success ->

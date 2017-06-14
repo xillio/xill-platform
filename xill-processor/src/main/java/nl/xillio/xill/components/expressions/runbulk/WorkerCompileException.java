@@ -24,4 +24,8 @@ public class WorkerCompileException extends Exception {
     public WorkerCompileException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public WorkerCompileException(String message) {
+        super(message);
+    }
 }

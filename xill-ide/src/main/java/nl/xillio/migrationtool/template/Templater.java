@@ -121,8 +121,9 @@ public class Templater {
     public Path render(String templateName, Map<String, Object> model, Path output) throws IOException, TemplateException {
         if (templateName != null) {
             Template template = Templater.CONFIG.getTemplate(templateName);
-            OutputStreamWriter out = new FileWriter(output.toFile());
-            template.process(model, out);
+            try(OutputStreamWriter out = new FileWriter(output.toFile())) {
+                template.process(model, out);
+            }
         } else {
             FileUtils.write(output.toFile(), "", false);
         }

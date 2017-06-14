@@ -69,7 +69,7 @@ public class GetEngineConstructTest extends TestUtils {
         ConfigurationParser configurationParser = mock(ConfigurationParser.class);
         FileResolver fileResolver = mock(FileResolver.class);
 
-        when(configurationFactory.buildDefaultConfiguration(any(Path.class))).thenReturn(configuration1);
+        when(configurationFactory.buildDefaultConfiguration(any(Path.class), any())).thenReturn(configuration1);
         when(configurationParser.parseConfiguration(eq(configuration1), any())).thenReturn(configuration2);
 
         // Instantiate

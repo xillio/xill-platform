@@ -26,7 +26,11 @@ import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.XillEnvironment;
 import nl.xillio.xill.api.XillProcessor;
 import nl.xillio.xill.api.XillThreadFactory;
+import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.debugging.XillDebugger;
+import nl.xillio.xill.loaders.AbstractRobotLoader;
+import nl.xillio.xill.loaders.DirectoryRobotLoader;
+import nl.xillio.xill.loaders.ArchiveRobotLoader;
 import nl.xillio.xill.services.ProgressTracker;
 import nl.xillio.xill.services.inject.DefaultInjectorModule;
 import org.slf4j.Logger;
@@ -116,17 +120,66 @@ public class XillEnvironmentImpl implements XillEnvironment {
     }
 
     @Override
-    public XillProcessor buildProcessor(Path projectRoot, Path robotPath) throws IOException {
-        return buildProcessor(projectRoot, robotPath, new XillDebugger());
+    public XillProcessor buildProcessor(Path workingDirectory, String fullyQualifiedName, Path... robotPath) throws IOException {
+        return buildProcessor(workingDirectory, fullyQualifiedName, new XillDebugger(), robotPath);
     }
 
     @Override
-    public XillProcessor buildProcessor(Path projectRoot, Path robotPath, Debugger debugger) throws IOException {
+    public XillProcessor buildProcessor(Path workingDirectory, RobotID robotId, Path... robotPath) throws IOException {
+        return buildProcessor(workingDirectory, robotId, new XillDebugger(), robotPath);
+    }
+
+    @Override
+    public XillProcessor buildProcessor(Path workingDirectory, RobotID robotID, Debugger debugger, Path... robotPath) throws IOException {
+        return buildProcessor(
+                workingDirectory,
+                robotID,
+                debugger,
+                buildRobotLoader(workingDirectory, robotPath)
+        );
+    }
+
+    @Override
+    public XillProcessor buildProcessor(Path workingDirectory, String fullyQualifiedName, Debugger debugger, Path... robotPath) throws IOException {
+        AbstractRobotLoader robotLoader = buildRobotLoader(workingDirectory, robotPath);
+        URL resource = robotLoader.getRobot(fullyQualifiedName);
+        if (resource == null) {
+            throw new NoSuchFileException("'" + fullyQualifiedName + "' could not be resolved");
+        }
+        RobotID robotID = new RobotID(resource, RobotID.qualifiedNameToPath(fullyQualifiedName));
+
+        return buildProcessor(
+                workingDirectory,
+                robotID,
+                debugger,
+                robotLoader
+        );
+    }
+
+    private XillProcessor buildProcessor(Path workingDirectory, RobotID robotID, Debugger debugger, AbstractRobotLoader robotLoader) throws IOException {
         if (needLoad) {
             loadPlugins();
         }
 
-        return new nl.xillio.xill.XillProcessor(projectRoot.toFile(), robotPath.toFile(), new ArrayList<>(loadedPlugins.values()), debugger);
+        return new nl.xillio.xill.XillProcessor(
+                workingDirectory.toAbsolutePath(),
+                robotID,
+                robotLoader,
+                getPlugins(),
+                debugger
+        );
+    }
+
+    public AbstractRobotLoader buildRobotLoader(Path workingDirectory, Path... robotPath) throws IOException {
+        AbstractRobotLoader robotLoader = new DirectoryRobotLoader(null, workingDirectory);
+        for (Path path : robotPath) {
+            if (Files.isRegularFile(path)) {
+                robotLoader = new ArchiveRobotLoader(robotLoader, path.toAbsolutePath());
+            } else {
+                robotLoader = new DirectoryRobotLoader(robotLoader, path.toAbsolutePath());
+            }
+        }
+        return robotLoader;
     }
 
     @Override

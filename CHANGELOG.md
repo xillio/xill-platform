@@ -1,13 +1,26 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
-## [3.6.0] - unreleased
+## [3.6.1] - unreleased
+
+### Add
+* Option for fat archives built by maven [CF-31]
+* Add `Date.isDate()` construct [CTC-2134]
+
+### Change
+* `File.isFolder` no longer errors if file does not exist [CF-60]
+
+## [3.6.0] - 2017-06-02
 
 ### Add
 * Git integration. Push and pull can be done from the IDE [CTC-1919]
 * Store git credentials [CTC-1975]
 * Show status of changed files in git [CTC-1977]
 * New `String.stream` construct [CF-21]
+* Add `resourcePath` field to `System.info()` construct [CTC-1971]
+* Add `qualifiedName` field to `System.info()` construct [CTC-1971]
+* Add Xill Command Line Interface (CLI) and manual [CTC-2115]
+* Add `xill.robotUrl` to Properties plugin [CTC-2135]
 
 ### Change
 * Remove `as` keyword from `use` statement [CTC-1384]
@@ -15,7 +28,15 @@ All notable changes to this project will be documented in this file.
 * Remove deprecated constructs `File.getText()` and `Excel.setCell()` [CTC-2102]
 * Upgrade version of Freemarker library for `Template` plugin to 2.3.25 for more functionality [CTC-2109]
 * Casing of included libraries is now checked (update of Xill language) [CTC-1943]
-* Only enable version control buttons when a remote repo is found [CTC-2090]
+* Only enable version control buttons when a remote repo is found [CF-16]
+* Rename the `robotPath` field from `System.info()` to `robotUrl` (now always returns a URL to support resource loading) [CTC-1971]
+* Rename the `rootRobotPath` field from `System.info()` to `rootRobotUrl` (now always returns a URL to support resource loading) [CTC-1971]
+* Rename `robotPath` from Xill properties in the `Properties` plugin to `robotUrl` (now always contains an URL to support resource loading) [CTC-2135]
+
+### Fix
+* Fixed issues where breakpoints would not trigger [CTC-2135]
+* Fixed an issue where breakpoints would reset after a robot was stopped manually [CTC-2138]
+* Fixed an issue where validate calls lock the resource set [CTC-2121]
 
 ## [3.5.2] - 2017-04-17
 

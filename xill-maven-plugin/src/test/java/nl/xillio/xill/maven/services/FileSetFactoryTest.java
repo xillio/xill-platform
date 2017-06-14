@@ -13,17 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.migrationtool.gui;
+package nl.xillio.xill.maven.services;
 
-/**
- * This interface represents a child component of a robot tab
- */
-@FunctionalInterface
-public interface RobotTabComponent {
-    /**
-     * Initialize the component after loading and building the dom.
-     *
-     * @param tab the robot tab to use
-     */
-    void initialize(RobotTab tab);
+import org.codehaus.plexus.archiver.FileSet;
+import org.testng.annotations.Test;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static org.testng.Assert.assertEquals;
+
+public class FileSetFactoryTest {
+    private FileSetFactory factory = new FileSetFactory();
+
+    @Test
+    public void testGetFileSet() {
+        Path dir = Paths.get(".");
+        FileSet fileSet = factory.createFileSet(dir);
+
+        assertEquals(fileSet.getPrefix(), "robots/");
+        assertEquals(fileSet.getDirectory(), dir.toFile());
+    }
 }
