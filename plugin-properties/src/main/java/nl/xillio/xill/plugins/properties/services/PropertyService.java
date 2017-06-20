@@ -19,17 +19,18 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import me.biesaart.utils.Log;
-import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.construct.ConstructContext;
+import nl.xillio.xill.plugins.properties.PropertiesLoader;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,21 +40,18 @@ import java.util.regex.Pattern;
  * @author Thomas Biesaart
  */
 @Singleton
-public class PropertyService {
-    private static final String DEFAULTS_FILE = "defaults.properties";
+public class PropertyService implements PropertiesLoader {
+    public static final String DEFAULTS_FILE = "defaults.properties";
     private static final String PROPERTIES_FILE = "xill.properties";
     private static final Pattern VARIABLE_PATTERN = Pattern.compile("(?<!\\$)\\$\\{([^{}]+)}");
     private static final Logger LOGGER = Log.get();
     private final Properties defaultGlobalProperties;
-    private final Map<PathPair, Properties> defaultsPropertiesMap = new HashMap<>();
-    private final Map<Path, Properties> projectPropertiesMap = new HashMap<>();
-    private final FileSystemAccess fileSystemAccess;
     private final ContextPropertiesResolver contextPropertiesResolver;
+    private final Map<UUID, PropertiesCache> propertiesCache = new HashMap<>();
 
     @Inject
-    public PropertyService(@Named("defaults") Properties defaultGlobalProperties, FileSystemAccess fileSystemAccess, ContextPropertiesResolver contextPropertiesResolver) {
+    public PropertyService(@Named("defaults") Properties defaultGlobalProperties, ContextPropertiesResolver contextPropertiesResolver) {
         this.defaultGlobalProperties = defaultGlobalProperties;
-        this.fileSystemAccess = fileSystemAccess;
         this.contextPropertiesResolver = contextPropertiesResolver;
     }
 
@@ -69,6 +67,7 @@ public class PropertyService {
             String variable = matcher.group(1);
             String value = getFormattedProperty(variable, null, context);
             if (value == null) {
+                context.getRootLogger().debug("When requesting '{}' a missing property '{}' was used", name, variable);
                 value = "";
             }
             propertyValue = matcher.replaceFirst(value.replaceAll("\\\\", "\\\\\\\\").replaceAll("\\$", "\\\\$"));
@@ -79,135 +78,53 @@ public class PropertyService {
     }
 
     synchronized String getProperty(String name, String defaultValue, ConstructContext context) {
-        // First we check the project
-        Path projectFolder = context.getRobotID().getProjectPath().toPath();
-        if (!projectPropertiesMap.containsKey(projectFolder)) {
-            projectPropertiesMap.put(
-                    projectFolder,
-                    loadPropertiesFromFile(
-                            projectFolder.resolve(PROPERTIES_FILE),
-                            null,
-                            context.getRootLogger()
-                    )
-            );
-        }
-        Properties projectProperties = projectPropertiesMap.get(projectFolder);
-        if (projectProperties.containsKey(name)) {
-            // We have a project override
-            return projectProperties.getProperty(name);
-        }
+        PropertiesCache propertiesCache = getPropertiesCache(context);
 
-        // Check if this variable is available in the context resolver or a default value is provided
-        String contextProperty = contextPropertiesResolver.resolve(name, context).orElse(defaultValue);
+        // First we check the project and context defaults
+        String result = propertiesCache
+                .getProjectProperty(name)
+                .orElseGet(
+                        () -> propertiesCache.getContextProperty(name, context).orElse(defaultValue)
+                );
 
-        if (contextProperty != null) {
-            return contextProperty;
-        }
-
-        // Seems like we have to load a default
-        Properties properties = loadDefaultProperties(new PathPair(context.getRobotID()), context.getRootLogger());
-
-        return properties.getProperty(name);
-    }
-
-    private Properties loadDefaultProperties(PathPair pathPair, Logger warningLogger) {
-        if (defaultsPropertiesMap.containsKey(pathPair)) {
-            // Already cached
-            return defaultsPropertiesMap.get(pathPair);
-        }
-
-        // We need to load the properties
-        Properties properties;
-        if (pathPair.isProjectFolder()) {
-            LOGGER.info("Loading properties for project: {}", pathPair.projectFolder);
-            // This is the project root. Load from defaults.
-            properties = loadPropertiesFromFile(
-                    pathPair.projectFolder.resolve(DEFAULTS_FILE),
-                    defaultGlobalProperties,
-                    warningLogger
-            );
-        } else if (pathPair.isInProject()) {
-            // This is a folder from within the project so load parent folder first
-            Properties parentDefaults = loadDefaultProperties(
-                    pathPair.getParent(),
-                    warningLogger
-            );
-
-            properties = loadPropertiesFromFile(
-                    pathPair.robotFolder.resolve(DEFAULTS_FILE),
-                    parentDefaults,
-                    warningLogger
-            );
-        } else {
-            // This is a single robot called using callbot or concurrency and it exists outside of the project
-            // We load with defaults only
-            properties = new Properties(defaultGlobalProperties);
-        }
-        defaultsPropertiesMap.put(pathPair, properties);
-        return properties;
-    }
-
-    private Properties loadPropertiesFromFile(Path file, Properties defaults, Logger logger) {
-        Properties result = new Properties(defaults);
-        if (!fileSystemAccess.exists(file)) {
-            // If the file does not exist we will not load them
+        if (result != null) {
             return result;
         }
-        try (InputStreamReader reader = new InputStreamReader(fileSystemAccess.read(file))) {
-            result.load(reader);
-        } catch (IOException e) {
-            logger.warn("Failed to load properties from " + file + "\nReason: " + e.getMessage(), e);
-        }
 
+        return propertiesCache.getDefaultProperty(name, context).orElse(null);
+    }
+
+    private PropertiesCache getPropertiesCache(ConstructContext context) {
+        return propertiesCache.computeIfAbsent(context.getCompilerSerialId(), id -> {
+            PropertiesCache cache = new PropertiesCache(
+                    loadProperties(PROPERTIES_FILE, context, null),
+                    contextPropertiesResolver,
+                    this,
+                    defaultGlobalProperties
+            );
+            context.addRobotStoppedListener(event -> propertiesCache.remove(id));
+            return cache;
+        });
+    }
+
+    @Override
+    public Properties loadProperties(String resourcePath, ConstructContext context, Properties defaults) {
+        if (resourcePath == null || resourcePath.isEmpty()) {
+            throw new IllegalArgumentException("An empty resource folder was provided");
+        }
+        Properties result = new Properties(defaults);
+        try {
+            InputStream inputStream = context.getResourceLoader().getResourceAsStream(resourcePath);
+
+            if (inputStream != null) {
+                try (InputStreamReader stream = new InputStreamReader(inputStream, Charset.defaultCharset())) {
+                    result.load(stream);
+                }
+            }
+
+        } catch (IOException e) {
+            context.getRootLogger().warn("Failed to load properties from " + resourcePath + "\nReason: " + e.getMessage(), e);
+        }
         return result;
     }
-
-    public synchronized void clean() {
-        projectPropertiesMap.clear();
-        defaultsPropertiesMap.clear();
-    }
-
-    private class PathPair {
-        private final Path projectFolder;
-        private final Path robotFolder;
-
-        private PathPair(RobotID robotID) {
-            this(robotID.getProjectPath().toPath(), robotID.getPath().toPath().getParent());
-        }
-
-        private PathPair(Path projectFolder, Path robotFolder) {
-            this.projectFolder = projectFolder.toAbsolutePath().normalize();
-            this.robotFolder = robotFolder.toAbsolutePath().normalize();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == this) {
-                return true;
-            }
-            if (obj instanceof PathPair) {
-                PathPair other = (PathPair) obj;
-                return projectFolder.equals(other.projectFolder) && robotFolder.equals(other.robotFolder);
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(projectFolder, robotFolder);
-        }
-
-        private boolean isProjectFolder() {
-            return projectFolder.equals(robotFolder);
-        }
-
-        private boolean isInProject() {
-            return robotFolder.startsWith(projectFolder);
-        }
-
-        private PathPair getParent() {
-            return new PathPair(projectFolder, robotFolder.getParent());
-        }
-    }
-
 }

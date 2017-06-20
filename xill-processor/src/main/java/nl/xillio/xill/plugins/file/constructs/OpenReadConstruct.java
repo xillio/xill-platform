@@ -15,13 +15,18 @@
  */
 package nl.xillio.xill.plugins.file.constructs;
 
+import nl.xillio.xill.api.components.MetaExpression;
+import nl.xillio.xill.api.construct.ConstructContext;
+import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.api.io.IOStream;
+import nl.xillio.xill.api.io.SimpleIOStream;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 
 /**
- * This construct will open a file handle with write and append permissions.
+ * This construct will open a file or resource handle with read permissions.
  *
  * @author Thomas biesaart
  */
@@ -30,5 +35,27 @@ public class OpenReadConstruct extends AbstractOpenConstruct {
     @Override
     protected IOStream open(Path path) throws IOException {
         return fileStreamFactory.openRead(path);
+    }
+
+    @Override
+    protected IOStream openSystemStream(MetaExpression pathVar, ConstructContext context) {
+        String path = pathVar.getStringValue();
+        try {
+            InputStream stream = context.getResourceLoader().getResourceAsStream(path);
+
+            if (stream == null) {
+                return null;
+            }
+
+            return new SimpleIOStream(stream, "Resource: " + path);
+
+        } catch (IOException e) {
+            throw new OperationFailedException(
+                    "open a resource",
+                    e.getMessage(),
+                    "Make sure the resource exists",
+                    e
+            );
+        }
     }
 }

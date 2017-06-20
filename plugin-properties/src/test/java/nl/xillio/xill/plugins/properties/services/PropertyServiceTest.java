@@ -18,51 +18,44 @@ package nl.xillio.xill.plugins.properties.services;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.construct.ConstructContext;
+import nl.xillio.xill.api.io.ResourceLoader;
 import org.apache.commons.io.IOUtils;
 import org.testng.annotations.Test;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
 
 
 public class PropertyServiceTest extends TestUtils {
     @Test
     public void testGetPropertyFromProjectOverride() throws Exception {
         Path projectPath = Paths.get("project");
-        RobotID robotID = RobotID.getInstance(projectPath.resolve("robot.xill").toFile(), projectPath.toFile());
+        RobotID robotID = RobotID.dummyRobot();
 
-        // Mock the file system
-        FileSystemAccess fileSystemAccess = new FileSystemAccess() {
-            @Override
-            public boolean exists(Path file) {
-                return file.equals(projectPath.resolve("xill.properties"));
-            }
+        // Mock the ResourceLoader
+        ResourceLoader resourceLoader = mock(ResourceLoader.class);
+        when(resourceLoader.getResourceAsStream(anyString())).thenReturn(IOUtils.toInputStream("testProperty=Hello World"));
 
-            @Override
-            public InputStream read(Path file) throws IOException {
-                return IOUtils.toInputStream("testProperty=Hello World");
-            }
-        };
+        PropertyService propertyService = new PropertyService(new Properties(), new ContextPropertiesResolver());
 
-        PropertyService propertyService = new PropertyService(new Properties(), fileSystemAccess, new ContextPropertiesResolver());
-
-        String result = propertyService.getProperty("testProperty", null, new ConstructContext(
-                robotID,
-                robotID,
-                null,
-                null,
-                null,
-                null,
-                null
-        ));
+        String result = propertyService.getProperty("testProperty", null,
+                new ConstructContext(
+                        projectPath,
+                        robotID,
+                        robotID,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        resourceLoader));
 
         assertEquals(result, "Hello World");
     }
@@ -70,136 +63,89 @@ public class PropertyServiceTest extends TestUtils {
     @Test
     public void testGetPropertyFromProjectOverrideWithSpecialCharacters() throws Exception {
         Path projectPath = Paths.get("project");
-        RobotID robotID = RobotID.getInstance(projectPath.resolve("robot.xill").toFile(), projectPath.toFile());
+        RobotID robotID = RobotID.dummyRobot();
 
-        // Mock the file system
-        FileSystemAccess fileSystemAccess = new FileSystemAccess() {
-            @Override
-            public boolean exists(Path file) {
-                return file.equals(projectPath.resolve("xill.properties"));
-            }
+        // Mock the RobotLoader
+        ResourceLoader resourceLoader = mock(ResourceLoader.class);
+        when(resourceLoader.getResourceAsStream(anyString())).thenReturn(IOUtils.toInputStream("testProperty=¿Héllø Wœrld?"));
 
-            @Override
-            public InputStream read(Path file) throws IOException {
-                return IOUtils.toInputStream("testProperty=¿Héllø Wœrld?");
-            }
-        };
-
-        PropertyService propertyService = new PropertyService(new Properties(), fileSystemAccess, new ContextPropertiesResolver());
+        PropertyService propertyService = new PropertyService(new Properties(), new ContextPropertiesResolver());
 
         String result = propertyService.getProperty("testProperty", null, new ConstructContext(
+                projectPath,
                 robotID,
                 robotID,
                 null,
                 null,
                 null,
                 null,
-                null
-        ));
+                null,
+                resourceLoader));
 
         assertEquals(result, "¿Héllø Wœrld?");
     }
 
     @Test
-    public void testGetPropertyFromRobotOutsideOfProject() {
+    public void testGetPropertyDoesNotFailOnIOException() throws Exception {
         Path projectPath = Paths.get("project");
-        RobotID robotID = RobotID.getInstance(projectPath.resolve("../robot.xill").toFile(), projectPath.toFile());
+        RobotID robotID = RobotID.dummyRobot();
 
-        // Mock the file system
-        FileSystemAccess fileSystemAccess = new FileSystemAccess() {
-            @Override
-            public boolean exists(Path file) {
-                return file.equals(projectPath.resolve("defaults.properties"));
-            }
-
-            @Override
-            public InputStream read(Path file) throws IOException {
-                return IOUtils.toInputStream("testProperty=Hello World");
-            }
-        };
-
-        PropertyService propertyService = new PropertyService(new Properties(), fileSystemAccess, new ContextPropertiesResolver());
+        // Mock the RobotLoader
+        ResourceLoader resourceLoader = mock(ResourceLoader.class);
+        when(resourceLoader.getResourceAsStream(anyString())).thenThrow(new IOException("UNIT TEST"));
 
 
-        String result = propertyService.getProperty("testProperty", null, new ConstructContext(
-                robotID,
-                robotID,
-                null,
-                null,
-                null,
-                null,
-                null
-        ));
-
-        assertNull(result);
-    }
-
-    @Test
-    public void testGetPropertyDoesNotFailOnIOException() {
-        Path projectPath = Paths.get("project");
-        RobotID robotID = RobotID.getInstance(projectPath.resolve("../robot.xill").toFile(), projectPath.toFile());
-
-        // Mock the file system
-        FileSystemAccess fileSystemAccess = new FileSystemAccess() {
-            @Override
-            public boolean exists(Path file) {
-                return true;
-            }
-
-            @Override
-            public InputStream read(Path file) throws IOException {
-                throw new IOException("UNIT TEST");
-            }
-        };
-
-        PropertyService propertyService = new PropertyService(new Properties(), fileSystemAccess, new ContextPropertiesResolver());
+        PropertyService propertyService = new PropertyService(new Properties(), new ContextPropertiesResolver());
 
 
         propertyService.getProperty("testProperty", null, new ConstructContext(
+                projectPath,
                 robotID,
                 robotID,
                 null,
                 null,
                 null,
                 null,
-                null
-        ));
+                null,
+                resourceLoader));
     }
 
     @Test
-    public void testPropertySubstitution() {
+    public void testPropertySubstitution() throws Exception {
         Properties properties = new Properties();
         properties.put("name", "World");
         properties.put("greet", "Hello ${name}!");
 
-        String value = new PropertyService(properties, mock(FileSystemAccess.class), new ContextPropertiesResolver()).getFormattedProperty("greet", null, new ConstructContext(
-                RobotID.getInstance(new File("test/value.xill"), new File("test")),
+        String value = new PropertyService(properties, new ContextPropertiesResolver()).getFormattedProperty("greet", null, new ConstructContext(
+                Paths.get("test"),
+                RobotID.build("file://test", "value.xill"),
                 RobotID.dummyRobot(),
                 null,
                 null,
                 null,
                 null,
-                null
-        ));
+                null,
+                mock(ResourceLoader.class)));
 
         assertEquals(value, "Hello World!");
     }
 
     @Test
-    public void testEscapedPropertySubstitution() {
+    public void testEscapedPropertySubstitution() throws Exception {
         Properties properties = new Properties();
         properties.put("name", "World");
         properties.put("greet", "Hello $${name}!");
 
-        String value = new PropertyService(properties, mock(FileSystemAccess.class), new ContextPropertiesResolver()).getFormattedProperty("greet", null, new ConstructContext(
-                RobotID.getInstance(new File("test/value.xill"), new File("test")),
+        String value = new PropertyService(properties, new ContextPropertiesResolver()).getFormattedProperty("greet", null, new ConstructContext(
+                Paths.get("test"),
+                RobotID.build("file://test", "test.xill"),
                 RobotID.dummyRobot(),
                 null,
                 null,
                 null,
                 null,
-                null
-        ));
+                null,
+                mock(ResourceLoader.class)));
 
         assertEquals(value, "Hello $${name}!");
     }

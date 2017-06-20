@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* 
+/*
 * Specification: Errors in called bots MUST be thrown in the calling bot, callbot MUST return null and a message
 *                identifying the cause and origin of the error is added to the error object
 * Input: A robot which throws an error when given an ATOMIC as argument
@@ -31,6 +31,6 @@ do {
 	error = e;
 }
 
-Assert.equal(error.message, "Cannot assign to atomic variable using a path.\n\tCaused by 'addOne.xill' (line 19)");
+Assert.equal(error.message, "Cannot assign to atomic variable using a path.\n\tCaused by 'testresources/core/keywords/callbot/addOne.xill' (line 19)");
 Assert.isNull(result);
 Assert.notNull(error);

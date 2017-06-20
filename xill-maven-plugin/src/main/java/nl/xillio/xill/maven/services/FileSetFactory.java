@@ -13,30 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.plugins.properties.services;
+package nl.xillio.xill.maven.services;
 
-import com.google.inject.Singleton;
+import org.codehaus.plexus.archiver.FileSet;
+import org.codehaus.plexus.archiver.util.DefaultFileSet;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
-/**
- * This service allows other services to access the filesystem.
- * <p>
- * The main reason for the existence of this class is to remove IO responsibilities from
- * other services to make them more testable.
- *
- * @author Thomas Biesaart
- */
-@Singleton
-public class FileSystemAccess {
-    public boolean exists(Path file) {
-        return Files.exists(file);
-    }
+public class FileSetFactory {
+    public static final String ROBOTS_DIRECTORY = "robots/";
 
-    public InputStream read(Path file) throws IOException {
-        return Files.newInputStream(file);
+    public FileSet createFileSet(Path directory) {
+        DefaultFileSet fileSet = new DefaultFileSet(directory.toFile());
+        fileSet.setPrefix(ROBOTS_DIRECTORY);
+        return fileSet;
     }
 }

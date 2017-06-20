@@ -22,6 +22,8 @@ use Assert, File;
 
 var file = "testresources/file/file.txt";
 var dir = "testresources/file/folder";
+var nonExistingFolder = "testresources/file/someFolderThatdoesNotExistEver";
 
 Assert.isFalse(File.isFolder(file));
 Assert.isTrue(File.isFolder(dir));
+Assert.isFalse(File.isFolder(nonExistingFolder));

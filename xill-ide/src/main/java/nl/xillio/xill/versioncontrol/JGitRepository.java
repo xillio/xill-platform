@@ -66,6 +66,25 @@ public class JGitRepository implements GitRepository {
         return repository != null;
     }
 
+    /**
+     * Computes if the repository has a remote, or is only local.
+     * @return {@link Boolean}: {@code True} if this repository has a remote, {@code False} otherwise.
+     */
+    public boolean hasRemote() {
+        return !repository.getRepository().getRemoteNames().isEmpty();
+    }
+
+    /**
+     * Computes the URL of the selected remote of this repository.
+     * <br>
+     * NB: this is the URL of the <i>origin</i> unless the remote of choice has been set explicitly.
+     * @return {@link String}: the URL to the remote of this repository, or {@code Null} if no such URL can be found.
+     */
+    public String getRemoteURL(){
+        String remote = repository.push().getRemote();
+        return repository.getRepository().getConfig().getString("remote", remote, "url");
+    }
+
     @Override
     public void pushCommand() throws GitException {
         Iterable<PushResult> pushResults;

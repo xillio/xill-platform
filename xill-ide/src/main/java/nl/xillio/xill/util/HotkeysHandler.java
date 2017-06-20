@@ -94,7 +94,7 @@ public class HotkeysHandler {
 
     }
 
-    private HashMap<Hotkeys, Hotkey> hotkeys = new HashMap<>();
+    private Map<Hotkeys, Hotkey> hotkeys = new HashMap<>();
 
     /**
      * Constructor for HotkeysHandler
@@ -106,7 +106,7 @@ public class HotkeysHandler {
 
     private void init() {
         // Shortcut is Ctrl on Windows and Meta on Mac.
-        hotkeys.put(Hotkeys.ESCAPE, new Hotkey("Esc", Settings.ESCAPE, "Shortcut to escape back to the editor.", "tfrename"));
+        hotkeys.put(Hotkeys.ESCAPE, new Hotkey("Esc", Settings.ESCAPE, "Shortcut to escape back to the editor.", null));
         hotkeys.put(Hotkeys.NEW, new Hotkey("Shortcut+N", Settings.NEW_FILE, "Shortcut to New file", "tfnewfile"));
         hotkeys.put(Hotkeys.OPEN, new Hotkey("Shortcut+O", Settings.OPEN_FILE, "Shortcut to Open file", "tfopenfile"));
         hotkeys.put(Hotkeys.SAVE, new Hotkey("Shortcut+S", Settings.SAVE_FILE, "Shortcut to Save file", "tfsavefile"));
@@ -151,7 +151,9 @@ public class HotkeysHandler {
     public void setDialogFromSettings(final Scene scene, final SettingsHandler settings) {
         hotkeys.entrySet().forEach(hk -> {
             TextField tf = (TextField) scene.lookup(hk.getValue().getFxId());
-            tf.setText(settings.simple().get(Settings.SETTINGS_KEYBINDINGS, hk.getValue().getSettingsId()));
+            if (tf != null) {
+                tf.setText(settings.simple().get(Settings.SETTINGS_KEYBINDINGS, hk.getValue().getSettingsId()));
+            }
         });
     }
 
@@ -165,6 +167,7 @@ public class HotkeysHandler {
     public TextField findShortcutInDialog(final Scene scene, final String shortcut) {
         return hotkeys.entrySet().stream()
                 .map(hk -> (TextField) scene.lookup(hk.getValue().getFxId()))
+                .filter(tf -> tf != null)
                 .filter(tf -> tf.getText().equals(shortcut))
                 .findAny()
                 .orElse(null);
@@ -189,7 +192,9 @@ public class HotkeysHandler {
      * @param settings SettingsHandler instance
      */
     public void saveSettingsFromDialog(final Scene scene, final SettingsHandler settings) {
-        hotkeys.entrySet().stream().forEach(hk -> settings.simple().save(Settings.SETTINGS_KEYBINDINGS, hk.getValue().getSettingsId(), ((TextField) scene.lookup(hk.getValue().getFxId())).getText()));
+        hotkeys.entrySet().stream()
+                .filter(hk -> scene.lookup(hk.getValue().getFxId()) != null)
+                .forEach(hk -> settings.simple().save(Settings.SETTINGS_KEYBINDINGS, hk.getValue().getSettingsId(), ((TextField) scene.lookup(hk.getValue().getFxId())).getText()));
     }
 
     /**

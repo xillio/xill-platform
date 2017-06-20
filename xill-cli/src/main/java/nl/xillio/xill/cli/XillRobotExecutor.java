@@ -28,9 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -46,6 +44,7 @@ public class XillRobotExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(XillRobotExecutor.class);
     private final XillEnvironment xillEnvironment;
     private final Path projectRoot;
+    private final Path[] includePaths;
     private final InputStream stdIn;
     private final PrintStream stdOut;
     private final PrintStream stdErr;
@@ -63,24 +62,23 @@ public class XillRobotExecutor {
      * @param stdErr          The error stream for the robot. This stream will be exposed to the robot in the
      *                        <code>argument</code> parameter's <code>error</code> field.
      */
-    public XillRobotExecutor(XillEnvironment xillEnvironment, Path projectRoot, InputStream stdIn, PrintStream stdOut, PrintStream stdErr) {
+    public XillRobotExecutor(XillEnvironment xillEnvironment, Path projectRoot, Path[] includePaths, InputStream stdIn, PrintStream stdOut, PrintStream stdErr) {
         this.xillEnvironment = xillEnvironment;
         this.projectRoot = projectRoot;
+        this.includePaths = includePaths;
         this.stdIn = stdIn;
         this.stdOut = stdOut;
         this.stdErr = stdErr;
     }
 
     /**
-     * Execute a robot. Robots can be specified by either their fully qualified names or paths relative to the project
-     * root.
+     * Execute a robot. Robot can be specified by either their fully qualified names
      *
-     * @param robotName The robot qualified name or path
+     * @param robotName The robot fully qualified name
      * @throws RobotExecutionException when the robot does not complete successfully.
      */
     public void execute(String robotName) throws RobotExecutionException {
-        try {
-            XillProcessor processor = compile(robotName);
+        try (XillProcessor processor = compile(robotName)) {
             processor.getRobot().process(processor.getDebugger());
         } catch (WrappedException e) { //NOSONAR exception is correctly rethrown
             throw new RobotExecutionException(e.getCause().getMessage(), e.getCause());
@@ -100,13 +98,13 @@ public class XillRobotExecutor {
     private void log(Issue issue) {
         switch (issue.getSeverity()) {
             case ERROR:
-                LOGGER.error("Error in {} at line {}:\n\t{}", issue.getRobot().getPath(), issue.getLine(), issue.getMessage());
+                LOGGER.error("Error in {} at line {}:\n\t{}", issue.getRobot().getURL(), issue.getLine(), issue.getMessage());
                 break;
             case WARNING:
-                LOGGER.warn("Warning in {} at line {}:\n\t{}", issue.getRobot().getPath(), issue.getLine(), issue.getMessage());
+                LOGGER.warn("Warning in {} at line {}:\n\t{}", issue.getRobot().getURL(), issue.getLine(), issue.getMessage());
                 break;
             case INFO:
-                LOGGER.info("{} at line {}:\n\t{}", issue.getRobot().getPath(), issue.getLine(), issue.getMessage());
+                LOGGER.info("{} at line {}:\n\t{}", issue.getRobot().getURL(), issue.getLine(), issue.getMessage());
                 break;
         }
     }
@@ -125,7 +123,8 @@ public class XillRobotExecutor {
         try {
             return xillEnvironment.buildProcessor(
                     projectRoot,
-                    getPath(robotName)
+                    robotName,
+                    includePaths
             );
         } catch (IOException e) {
             throw new RobotExecutionException(
@@ -143,23 +142,5 @@ public class XillRobotExecutor {
         data.put("error", fromValue(new SimpleIOStream(stdErr, "ErrorStream")));
 
         return fromValue(data);
-    }
-
-    private Path getPath(String robotName) throws RobotExecutionException {
-        Path path = Paths.get(
-                robotName.replaceAll("\\.", "/") + ".xill"
-        );
-        Path absolutePath = projectRoot.resolve(path);
-        if (Files.exists(absolutePath)) {
-            // The robot seems to be passed by fqn
-            return absolutePath;
-        }
-        absolutePath = projectRoot.resolve(robotName);
-        if (Files.exists(absolutePath)) {
-            // The robot seems to be passed by file path
-            return absolutePath;
-        }
-
-        throw new RobotExecutionException("Could not start '" + robotName + "'. The file was not found.");
     }
 }

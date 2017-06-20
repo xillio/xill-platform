@@ -33,7 +33,9 @@ public class GitPullDialog extends GitDialog {
      */
     public GitPullDialog(final JGitRepository repo)  {
         super(repo, "Pull", "/fxml/dialogs/GitPull.fxml");
-        confirmText.setText("Pull from repository: " + repo.getRepositoryName() + "?");
+        String url = repo.getRemoteURL();
+        String remoteURL = url == null ? "" : " (" + url + ")";
+        confirmText.setText("Pull from repository" + remoteURL + "?");
     }
 
     @Override

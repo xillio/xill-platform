@@ -19,7 +19,8 @@ import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.construct.ConstructContext;
 import org.testng.annotations.Test;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.testng.Assert.*;
 
@@ -27,10 +28,13 @@ import static org.testng.Assert.*;
 public class ContextPropertiesResolverTest {
     @Test
     public void testDefaultXillResolver() throws Exception {
+        Path wdPath = Paths.get("this/is/a/project");
         ContextPropertiesResolver resolver = ContextPropertiesResolver.defaultXillResolver();
         ConstructContext context = new ConstructContext(
+                wdPath,
+                RobotID.build("file://project", "my/Robot.xill"),
                 RobotID.dummyRobot(),
-                RobotID.getInstance(new File("I AM A UNIT TEST"), new File("I AM A PROJECT")),
+                null,
                 null,
                 null,
                 null,
@@ -38,11 +42,11 @@ public class ContextPropertiesResolverTest {
                 null
         );
 
-        String projectPath = resolver.resolve("xill.projectPath", context).get();
-        String robotPath = resolver.resolve("xill.robotPath", context).get();
+        String workingDirectory = resolver.resolve("xill.projectPath", context).get();
+        String robotUrl = resolver.resolve("xill.robotUrl", context).get();
 
-        assertTrue(projectPath.contains("I AM A PROJECT"));
-        assertTrue(robotPath.contains("I AM A UNIT TEST"));
+        assertTrue(wdPath.endsWith(workingDirectory));
+        assertTrue(robotUrl.contains("project/my/Robot.xill"));
     }
 
     @Test

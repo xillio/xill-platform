@@ -50,10 +50,24 @@ abstract class AbstractOpenConstruct extends Construct {
     }
 
     MetaExpression process(MetaExpression pathVar, ConstructContext context) {
-        Path path = getPath(context, pathVar);
-        IOStream stream = tryOpen(path);
+        IOStream stream = openSystemStream(pathVar, context);
+
+        if (stream == null) {
+            Path path = getPath(context, pathVar);
+            stream = tryOpen(path);
+        }
 
         return fromValue(stream);
+    }
+
+    /**
+     * Get a system stream to the resource. The default implementation is a NO-OP.
+     * @param pathVar the path variable
+     * @param context the execution context
+     * @return a stream if available, otherwise null
+     */
+    protected IOStream openSystemStream(MetaExpression pathVar, ConstructContext context) {
+        return null;
     }
 
     protected IOStream tryOpen(Path path) {

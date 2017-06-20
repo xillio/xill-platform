@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* 
+/*
 * Specification: Callbot MUST throw an error and MUST return null when the called bot contains a syntax error.
 * Input: A bot with a syntax error
 * Expected: An error is thrown
