@@ -45,7 +45,7 @@ import static nl.xillio.xill.cli.OptionsFactory.*;
 public class XillCLI {
     private static final Logger LOGGER = LoggerFactory.getLogger(XillCLI.class);
     private static final String PROGRAM_DESCRIPTION = "Execute Xill robots from the command line.";
-    private static final String PROGRAM_USAGE = "xill [-h | -v] [-q | -qq]  [-w <workingDirectory>] [-r | --robots <robotPaths>] <robotName>";
+    private static final String PROGRAM_USAGE = "xill [-h | -v] [-q | -qq] [-i | --ignore-errors]  [-w <workingDirectory>] [-r | --robots <robotPaths>] <robotName>";
 
     private CommandLineParser commandLineParser;
     private CommandLine commandLine;
@@ -104,6 +104,10 @@ public class XillCLI {
 
             if (cli.hasOption(OPTION_VERY_QUIET)) {
                 enableQuietLogging(Level.OFF);
+            }
+
+            if (cli.hasOption(OPTION_IGNORE_ERRORS)) {
+
             }
 
             for (String robot : cli.getArgs()) {

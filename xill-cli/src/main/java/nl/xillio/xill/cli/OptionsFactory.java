@@ -30,6 +30,7 @@ public class OptionsFactory {
     public static final String OPTION_QUIET = "q";
     public static final String OPTION_VERY_QUIET = "qq";
     public static final String OPTION_ROBOTS = "r";
+    public static final String OPTION_IGNORE_ERRORS = "i";
 
     public static final String CANNOT_BE_USED_IN_COMBINATION = "\nThis option cannot be used in combination with -";
 
@@ -92,6 +93,12 @@ public class OptionsFactory {
                                         "The directories should be separated by a (semi)colon (':' or ';').")
                                 .argName("robotPaths")
                                 .hasArg()
+                                .build()
+                )
+                .addOption(
+                        Option.builder(OPTION_IGNORE_ERRORS)
+                                .longOpt("ignore-errors")
+                                .desc("Set the robot to continue even if errors occur.")
                                 .build()
                 );
     }
