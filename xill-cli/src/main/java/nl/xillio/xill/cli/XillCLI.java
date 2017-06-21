@@ -106,12 +106,8 @@ public class XillCLI {
                 enableQuietLogging(Level.OFF);
             }
 
-            if (cli.hasOption(OPTION_IGNORE_ERRORS)) {
-
-            }
-
             for (String robot : cli.getArgs()) {
-                ProgramReturnCode returnCode = tryExecute(robot);
+                ProgramReturnCode returnCode = tryExecute(robot, cli.hasOption(OPTION_IGNORE_ERRORS));
                 if ( returnCode != ProgramReturnCode.OK) {
                     return returnCode;
                 }
@@ -124,9 +120,9 @@ public class XillCLI {
         }
     }
 
-    private ProgramReturnCode tryExecute(String robot) throws ParseException{
+    private ProgramReturnCode tryExecute(String robot, boolean ignoreErrors) throws ParseException{
         try {
-            getXillRobotExecutor().execute(robot);
+            getXillRobotExecutor().execute(robot, ignoreErrors);
         } catch (RobotExecutionException e) {
             String message = e.getMessage();
             if (message == null) {

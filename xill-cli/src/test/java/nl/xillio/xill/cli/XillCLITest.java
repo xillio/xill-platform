@@ -52,7 +52,7 @@ public class XillCLITest {
         assertEquals(returnCode, ProgramReturnCode.OK);
 
         ArgumentCaptor<String> robotCaptor = ArgumentCaptor.forClass(String.class);
-        verify(executor).execute(robotCaptor.capture());
+        verify(executor).execute(robotCaptor.capture(), false);
         assertEquals(robotCaptor.getValue(), "MyRobot");
     }
 
@@ -111,7 +111,7 @@ public class XillCLITest {
     @Test
     public void testExecutionExceptionResult() throws RobotExecutionException {
         XillRobotExecutor executor = mock(XillRobotExecutor.class);
-        doThrow(new RobotExecutionException("This is a unit test")).when(executor).execute(anyString());
+        doThrow(new RobotExecutionException("This is a unit test")).when(executor).execute(anyString(), anyBoolean());
 
         XillCLI xillCLI = new XillCLI();
         xillCLI.setXillRobotExecutor(executor);
@@ -196,5 +196,28 @@ public class XillCLITest {
 
         // Delete project
         FileUtils.forceDeleteOnExit(tempDir.toFile());
+    }
+
+    @Test
+    public void testRunRobotIgnoringErrors() throws IOException{
+        // Create a folder with a robot
+        Path projectDir = Files.createTempDirectory("xill-cli-test");
+        Path robotFile = projectDir.resolve("fqn/Path.xill");
+        Files.createDirectories(robotFile.getParent());
+        Files.write(robotFile, Collections.singletonList("use System, Assert; System.print('Hello World. This is a test!'); Assert.isTrue(false);"), StandardOpenOption.CREATE);
+
+
+        // Run by path
+        XillCLI xillCLI = new XillCLI();
+        xillCLI.setArgs(new String[]{"fqn.Path", "-w", projectDir.toString(), "-i"});
+
+        // Validate
+        ProgramReturnCode returnCode = xillCLI.run();
+        assertEquals(returnCode, ProgramReturnCode.OK);
+
+        // Delete project
+        Files.delete(robotFile);
+        Files.delete(robotFile.getParent());
+        Files.delete(projectDir);
     }
 }

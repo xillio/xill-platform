@@ -77,8 +77,11 @@ public class XillRobotExecutor {
      * @param robotName The robot fully qualified name
      * @throws RobotExecutionException when the robot does not complete successfully.
      */
-    public void execute(String robotName) throws RobotExecutionException {
+    public void execute(String robotName, boolean ignoreErrors) throws RobotExecutionException {
         try (XillProcessor processor = compile(robotName)) {
+            if(ignoreErrors) {
+                processor.getDebugger().setErrorHandler(new NonStoppingErrorHandlingPolicy());
+            }
             processor.getRobot().process(processor.getDebugger());
         } catch (WrappedException e) { //NOSONAR exception is correctly rethrown
             throw new RobotExecutionException(e.getCause().getMessage(), e.getCause());
