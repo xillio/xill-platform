@@ -20,10 +20,7 @@ import org.apache.commons.io.FileUtils;
 import org.mockito.ArgumentCaptor;
 import org.testng.annotations.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -165,7 +162,7 @@ public class XillCLITest {
         Files.createDirectories(includedDir);
 
         // Create an archive with a robot.
-        Path includedArchive = tempDir.resolve("archive.xip");
+        Path includedArchive = tempDir.resolve("archive.xlib");
         ZipOutputStream archiveStream = new ZipOutputStream(new FileOutputStream(includedArchive.toFile()));
         ZipEntry entry = new ZipEntry("robots/ArchiveRobot.xill");
         archiveStream.putNextEntry(entry);
@@ -190,7 +187,7 @@ public class XillCLITest {
 
         // Run the robot.
         XillCLI xillCLI = new XillCLI();
-        xillCLI.setArgs(new String[]{"BaseRobot", "-w", projectDir.toString(), "-r", includedDir + ":" + includedArchive});
+        xillCLI.setArgs(new String[]{"BaseRobot", "-w", projectDir.toString(), "-r", projectDir + File.pathSeparator + includedDir + File.pathSeparator + includedArchive});
         ProgramReturnCode returnCode = xillCLI.run();
         assertEquals(returnCode, ProgramReturnCode.OK);
 

@@ -27,10 +27,7 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -290,7 +287,7 @@ public class XillCLI {
     public Path[] getIncludePaths() throws ParseException {
         if (includePaths == null) {
             if (getCommandLine().hasOption(OptionsFactory.OPTION_ROBOTS)) {
-                String[] paths = getCommandLine().getOptionValue(OptionsFactory.OPTION_ROBOTS).split("[:;]");
+                String[] paths = getCommandLine().getOptionValue(OptionsFactory.OPTION_ROBOTS).split(File.pathSeparator);
                 includePaths = Arrays.stream(paths).map(Paths::get).toArray(Path[]::new);
             } else {
                 includePaths = new Path[0];
