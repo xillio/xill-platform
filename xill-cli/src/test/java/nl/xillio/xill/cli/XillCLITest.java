@@ -52,7 +52,7 @@ public class XillCLITest {
         assertEquals(returnCode, ProgramReturnCode.OK);
 
         ArgumentCaptor<String> robotCaptor = ArgumentCaptor.forClass(String.class);
-        verify(executor).execute(robotCaptor.capture(), false);
+        verify(executor).execute(robotCaptor.capture(), anyBoolean());
         assertEquals(robotCaptor.getValue(), "MyRobot");
     }
 
@@ -214,6 +214,60 @@ public class XillCLITest {
         // Validate
         ProgramReturnCode returnCode = xillCLI.run();
         assertEquals(returnCode, ProgramReturnCode.OK);
+
+        // Delete project
+        Files.delete(robotFile);
+        Files.delete(robotFile.getParent());
+        Files.delete(projectDir);
+    }
+
+    @Test
+    public void testRunRobotIgnoringErrorsDoFail() throws IOException{
+        // Create a folder with a robot
+        Path projectDir = Files.createTempDirectory("xill-cli-test");
+        Path robotFile = projectDir.resolve("fqn/Path.xill");
+        Files.createDirectories(robotFile.getParent());
+        Files.write(robotFile, Collections.singletonList(
+                "use System, File, Assert;" +
+                "do {" +
+                "File.openRead(\"nonExistingPath\");" +
+                "} fail (e){" +
+                "File.openRead(\"nonExistingPath\");" +
+                "}"
+                ),
+                StandardOpenOption.CREATE);
+
+
+        // Run by path
+        XillCLI xillCLI = new XillCLI();
+        xillCLI.setArgs(new String[]{"fqn.Path", "-w", projectDir.toString(), "-i"});
+
+        // Validate
+        ProgramReturnCode returnCode = xillCLI.run();
+        assertEquals(returnCode, ProgramReturnCode.OK);
+
+        // Delete project
+        Files.delete(robotFile);
+        Files.delete(robotFile.getParent());
+        Files.delete(projectDir);
+    }
+
+    @Test
+    public void testRunRobotIgnoringErrorsCompileError() throws IOException{
+        // Create a folder with a robot
+        Path projectDir = Files.createTempDirectory("xill-cli-test");
+        Path robotFile = projectDir.resolve("fqn/Path.xill");
+        Files.createDirectories(robotFile.getParent());
+        Files.write(robotFile, Collections.singletonList("use System, Assert; System.print('Hello World. This is a test!'); Assert.IsTrue(false);"), StandardOpenOption.CREATE);
+
+
+        // Run by path
+        XillCLI xillCLI = new XillCLI();
+        xillCLI.setArgs(new String[]{"fqn.Path", "-w", projectDir.toString(), "-i"});
+
+        // Validate
+        ProgramReturnCode returnCode = xillCLI.run();
+        assertEquals(returnCode, ProgramReturnCode.EXECUTION_ERROR);
 
         // Delete project
         Files.delete(robotFile);
