@@ -20,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * This Error handling policy allows robots to keep running even when errors are thrown.
+ *
  * Created by Dwight.Peters on 20-Jun-17.
  */
 public class NonStoppingErrorHandlingPolicy implements ErrorHandlingPolicy {

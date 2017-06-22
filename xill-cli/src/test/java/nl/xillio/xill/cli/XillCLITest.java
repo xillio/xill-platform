@@ -23,13 +23,10 @@ import org.testng.annotations.Test;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import java.nio.file.StandardOpenOption;
-import java.util.Collections;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;

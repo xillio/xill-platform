@@ -164,35 +164,35 @@ public class XillCLI {
         }
     }
 
-    public OptionsFactory getOptionsFactory() {
+    private OptionsFactory getOptionsFactory() {
         if (optionsFactory == null) {
             optionsFactory = new OptionsFactory();
         }
         return optionsFactory;
     }
 
-    public Options getOptions() {
+    private Options getOptions() {
         if (options == null) {
             options = getOptionsFactory().buildOptions();
         }
         return options;
     }
 
-    public CommandLineParser getCommandLineParser() {
+    private CommandLineParser getCommandLineParser() {
         if (commandLineParser == null) {
             commandLineParser = new DefaultParser();
         }
         return commandLineParser;
     }
 
-    public CommandLine getCommandLine() throws ParseException {
+    private CommandLine getCommandLine() throws ParseException {
         if (commandLine == null) {
             commandLine = getCommandLineParser().parse(getOptions(), getArgs());
         }
         return commandLine;
     }
 
-    public InputStream getStdIn() {
+    private InputStream getStdIn() {
         if (stdIn == null) {
             stdIn = System.in;
         }
@@ -200,7 +200,7 @@ public class XillCLI {
     }
 
     @SuppressWarnings("squid:S106") //correct usage of System.out
-    public PrintStream getStdOut() {
+    private PrintStream getStdOut() {
         if (stdOut == null) {
             stdOut = System.out;
         }
@@ -212,7 +212,7 @@ public class XillCLI {
     }
 
     @SuppressWarnings("squid:S106") //correct usage of System.err
-    public PrintStream getStdErr() {
+    private PrintStream getStdErr() {
         if (stdErr == null) {
             stdErr = System.err;
         }
@@ -223,14 +223,14 @@ public class XillCLI {
         this.stdErr = stdErr;
     }
 
-    public HelpFormatter getHelpFormatter() {
+    private HelpFormatter getHelpFormatter() {
         if (helpFormatter == null) {
             helpFormatter = new HelpFormatter();
         }
         return helpFormatter;
     }
 
-    public String[] getArgs() {
+    private String[] getArgs() {
         if (args == null) {
             args = new String[0];
         }
@@ -241,14 +241,14 @@ public class XillCLI {
         this.args = args;
     }
 
-    public VersionPrinter getVersionPrinter() {
+    private VersionPrinter getVersionPrinter() {
         if (versionPrinter == null) {
             versionPrinter = new VersionPrinter(getStdOut());
         }
         return versionPrinter;
     }
 
-    public XillRobotExecutor getXillRobotExecutor() throws ParseException {
+    private XillRobotExecutor getXillRobotExecutor() throws ParseException {
         if (xillRobotExecutor == null) {
             xillRobotExecutor = new XillRobotExecutor(
                     getXillEnvironment(),
@@ -266,14 +266,14 @@ public class XillCLI {
         this.xillRobotExecutor = xillRobotExecutor;
     }
 
-    public XillEnvironment getXillEnvironment() {
+    private XillEnvironment getXillEnvironment() {
         if (xillEnvironment == null) {
             xillEnvironment = new XillEnvironmentImpl();
         }
         return xillEnvironment;
     }
 
-    public Path getProjectRoot() throws ParseException {
+    private Path getProjectRoot() throws ParseException {
         if (projectRoot == null) {
             if (getCommandLine().hasOption(OptionsFactory.OPTION_WORKING_DIR)) {
                 projectRoot = Paths.get(getCommandLine().getOptionValue(OptionsFactory.OPTION_WORKING_DIR));
@@ -284,7 +284,7 @@ public class XillCLI {
         return projectRoot;
     }
 
-    public Path[] getIncludePaths() throws ParseException {
+    private Path[] getIncludePaths() throws ParseException {
         if (includePaths == null) {
             if (getCommandLine().hasOption(OptionsFactory.OPTION_ROBOTS)) {
                 String[] paths = getCommandLine().getOptionValue(OptionsFactory.OPTION_ROBOTS).split(File.pathSeparator);
