@@ -72,9 +72,9 @@ public class XillRobotExecutor {
     }
 
     /**
-     * Execute a robot. Robot can be specified by either their fully qualified names
+     * Execute a robot by its fully qualified name.
      *
-     * @param robotName The robot fully qualified name
+     * @param robotName The robot's fully qualified name.
      * @param ignoreErrors Should the robot keep running after an error.
      * @throws RobotExecutionException when the robot does not complete successfully.
      */
@@ -92,9 +92,9 @@ public class XillRobotExecutor {
     }
 
     /**
-     * Execute a robot. Robot can be specified by either their fully qualified names
+     * Execute a robot by its fully qualified name.
      *
-     * @param robotName The robot fully qualified name
+     * @param robotName The robot's fully qualified name.
      * @throws RobotExecutionException when the robot does not complete successfully.
      */
     public void execute(String robotName) throws RobotExecutionException {

@@ -34,6 +34,6 @@ public class NonStoppingErrorHandlingPolicy implements ErrorHandlingPolicy {
             logger.error(e.getMessage(), e);
             return;
         }
-        logger.error("An error occured in one of the robots.", e);
+        logger.error("An error occurred in one of the robots.", e);
     }
 }
