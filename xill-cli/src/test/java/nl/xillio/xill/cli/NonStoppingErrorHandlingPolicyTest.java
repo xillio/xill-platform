@@ -16,6 +16,7 @@
 package nl.xillio.xill.cli;
 
 import org.testng.annotations.Test;
+
 import static org.mockito.Mockito.mock;
 
 public class NonStoppingErrorHandlingPolicyTest {
@@ -23,7 +24,7 @@ public class NonStoppingErrorHandlingPolicyTest {
     @Test
     public void testNoErrorMessage() {
         NonStoppingErrorHandlingPolicy policy = new NonStoppingErrorHandlingPolicy();
-        Throwable error = mock(Throwable.class);
+        Throwable error = new Exception();
         policy.handle(error);
     }
 }
