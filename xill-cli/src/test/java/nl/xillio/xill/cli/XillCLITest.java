@@ -20,19 +20,13 @@ import org.apache.commons.io.FileUtils;
 import org.mockito.ArgumentCaptor;
 import org.testng.annotations.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import java.nio.file.StandardOpenOption;
-import java.util.Collections;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -52,7 +46,7 @@ public class XillCLITest {
         assertEquals(returnCode, ProgramReturnCode.OK);
 
         ArgumentCaptor<String> robotCaptor = ArgumentCaptor.forClass(String.class);
-        verify(executor).execute(robotCaptor.capture());
+        verify(executor).execute(robotCaptor.capture(), anyBoolean());
         assertEquals(robotCaptor.getValue(), "MyRobot");
     }
 
@@ -111,7 +105,7 @@ public class XillCLITest {
     @Test
     public void testExecutionExceptionResult() throws RobotExecutionException {
         XillRobotExecutor executor = mock(XillRobotExecutor.class);
-        doThrow(new RobotExecutionException("This is a unit test")).when(executor).execute(anyString());
+        doThrow(new RobotExecutionException("This is a unit test")).when(executor).execute(anyString(), anyBoolean());
 
         XillCLI xillCLI = new XillCLI();
         xillCLI.setXillRobotExecutor(executor);
@@ -165,7 +159,7 @@ public class XillCLITest {
         Files.createDirectories(includedDir);
 
         // Create an archive with a robot.
-        Path includedArchive = tempDir.resolve("archive.xip");
+        Path includedArchive = tempDir.resolve("archive.xlib");
         ZipOutputStream archiveStream = new ZipOutputStream(new FileOutputStream(includedArchive.toFile()));
         ZipEntry entry = new ZipEntry("robots/ArchiveRobot.xill");
         archiveStream.putNextEntry(entry);
@@ -190,11 +184,88 @@ public class XillCLITest {
 
         // Run the robot.
         XillCLI xillCLI = new XillCLI();
-        xillCLI.setArgs(new String[]{"BaseRobot", "-w", projectDir.toString(), "-r", includedDir + ":" + includedArchive});
+        xillCLI.setArgs(new String[]{"BaseRobot", "-w", projectDir.toString(), "-r", projectDir + File.pathSeparator + includedDir + File.pathSeparator + includedArchive});
         ProgramReturnCode returnCode = xillCLI.run();
         assertEquals(returnCode, ProgramReturnCode.OK);
 
         // Delete project
         FileUtils.forceDeleteOnExit(tempDir.toFile());
+    }
+
+    @Test
+    public void testRunRobotIgnoringErrors() throws IOException{
+        // Create a folder with a robot
+        Path projectDir = Files.createTempDirectory("xill-cli-test");
+        Path robotFile = projectDir.resolve("fqn/Path.xill");
+        Files.createDirectories(robotFile.getParent());
+        Files.write(robotFile, Collections.singletonList("use System, Assert; System.print('Hello World. This is a test!'); Assert.isTrue(false);"), StandardOpenOption.CREATE);
+
+
+        // Run by path
+        XillCLI xillCLI = new XillCLI();
+        xillCLI.setArgs(new String[]{"fqn.Path", "-w", projectDir.toString(), "-i"});
+
+        // Validate
+        ProgramReturnCode returnCode = xillCLI.run();
+        assertEquals(returnCode, ProgramReturnCode.OK);
+
+        // Delete project
+        Files.delete(robotFile);
+        Files.delete(robotFile.getParent());
+        Files.delete(projectDir);
+    }
+
+    @Test
+    public void testRunRobotIgnoringErrorsDoFail() throws IOException{
+        // Create a folder with a robot
+        Path projectDir = Files.createTempDirectory("xill-cli-test");
+        Path robotFile = projectDir.resolve("fqn/Path.xill");
+        Files.createDirectories(robotFile.getParent());
+        Files.write(robotFile, Collections.singletonList(
+                "use System, File, Assert;" +
+                "do {" +
+                "File.openRead(\"nonExistingPath\");" +
+                "} fail (e){" +
+                "File.openRead(\"nonExistingPath\");" +
+                "}"
+                ),
+                StandardOpenOption.CREATE);
+
+
+        // Run by path
+        XillCLI xillCLI = new XillCLI();
+        xillCLI.setArgs(new String[]{"fqn.Path", "-w", projectDir.toString(), "-i"});
+
+        // Validate
+        ProgramReturnCode returnCode = xillCLI.run();
+        assertEquals(returnCode, ProgramReturnCode.OK);
+
+        // Delete project
+        Files.delete(robotFile);
+        Files.delete(robotFile.getParent());
+        Files.delete(projectDir);
+    }
+
+    @Test
+    public void testRunRobotIgnoringErrorsCompileError() throws IOException{
+        // Create a folder with a robot
+        Path projectDir = Files.createTempDirectory("xill-cli-test");
+        Path robotFile = projectDir.resolve("fqn/Path.xill");
+        Files.createDirectories(robotFile.getParent());
+        Files.write(robotFile, Collections.singletonList("use System, Assert; System.print('Hello World. This is a test!'); Assert.IsTrue(false);"), StandardOpenOption.CREATE);
+
+
+        // Run by path
+        XillCLI xillCLI = new XillCLI();
+        xillCLI.setArgs(new String[]{"fqn.Path", "-w", projectDir.toString(), "-i"});
+
+        // Validate
+        ProgramReturnCode returnCode = xillCLI.run();
+        assertEquals(returnCode, ProgramReturnCode.EXECUTION_ERROR);
+
+        // Delete project
+        Files.delete(robotFile);
+        Files.delete(robotFile.getParent());
+        Files.delete(projectDir);
     }
 }

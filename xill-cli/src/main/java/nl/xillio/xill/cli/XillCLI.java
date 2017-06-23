@@ -27,10 +27,7 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -45,7 +42,7 @@ import static nl.xillio.xill.cli.OptionsFactory.*;
 public class XillCLI {
     private static final Logger LOGGER = LoggerFactory.getLogger(XillCLI.class);
     private static final String PROGRAM_DESCRIPTION = "Execute Xill robots from the command line.";
-    private static final String PROGRAM_USAGE = "xill [-h | -v] [-q | -qq]  [-w <workingDirectory>] [-r | --robots <robotPaths>] <robotName>";
+    private static final String PROGRAM_USAGE = "xill [-h | -v] [-q | -qq] [-i | --ignore-errors]  [-w <workingDirectory>] [-r | --robots <robotPaths>] <robotName>";
 
     private CommandLineParser commandLineParser;
     private CommandLine commandLine;
@@ -107,7 +104,7 @@ public class XillCLI {
             }
 
             for (String robot : cli.getArgs()) {
-                ProgramReturnCode returnCode = tryExecute(robot);
+                ProgramReturnCode returnCode = tryExecute(robot, cli.hasOption(OPTION_IGNORE_ERRORS));
                 if ( returnCode != ProgramReturnCode.OK) {
                     return returnCode;
                 }
@@ -120,9 +117,9 @@ public class XillCLI {
         }
     }
 
-    private ProgramReturnCode tryExecute(String robot) throws ParseException{
+    private ProgramReturnCode tryExecute(String robot, boolean ignoreErrors) throws ParseException{
         try {
-            getXillRobotExecutor().execute(robot);
+            getXillRobotExecutor().execute(robot, ignoreErrors);
         } catch (RobotExecutionException e) {
             String message = e.getMessage();
             if (message == null) {
@@ -167,35 +164,35 @@ public class XillCLI {
         }
     }
 
-    public OptionsFactory getOptionsFactory() {
+    private OptionsFactory getOptionsFactory() {
         if (optionsFactory == null) {
             optionsFactory = new OptionsFactory();
         }
         return optionsFactory;
     }
 
-    public Options getOptions() {
+    private Options getOptions() {
         if (options == null) {
             options = getOptionsFactory().buildOptions();
         }
         return options;
     }
 
-    public CommandLineParser getCommandLineParser() {
+    private CommandLineParser getCommandLineParser() {
         if (commandLineParser == null) {
             commandLineParser = new DefaultParser();
         }
         return commandLineParser;
     }
 
-    public CommandLine getCommandLine() throws ParseException {
+    private CommandLine getCommandLine() throws ParseException {
         if (commandLine == null) {
             commandLine = getCommandLineParser().parse(getOptions(), getArgs());
         }
         return commandLine;
     }
 
-    public InputStream getStdIn() {
+    private InputStream getStdIn() {
         if (stdIn == null) {
             stdIn = System.in;
         }
@@ -203,7 +200,7 @@ public class XillCLI {
     }
 
     @SuppressWarnings("squid:S106") //correct usage of System.out
-    public PrintStream getStdOut() {
+    private PrintStream getStdOut() {
         if (stdOut == null) {
             stdOut = System.out;
         }
@@ -215,7 +212,7 @@ public class XillCLI {
     }
 
     @SuppressWarnings("squid:S106") //correct usage of System.err
-    public PrintStream getStdErr() {
+    private PrintStream getStdErr() {
         if (stdErr == null) {
             stdErr = System.err;
         }
@@ -226,14 +223,14 @@ public class XillCLI {
         this.stdErr = stdErr;
     }
 
-    public HelpFormatter getHelpFormatter() {
+    private HelpFormatter getHelpFormatter() {
         if (helpFormatter == null) {
             helpFormatter = new HelpFormatter();
         }
         return helpFormatter;
     }
 
-    public String[] getArgs() {
+    private String[] getArgs() {
         if (args == null) {
             args = new String[0];
         }
@@ -244,14 +241,14 @@ public class XillCLI {
         this.args = args;
     }
 
-    public VersionPrinter getVersionPrinter() {
+    private VersionPrinter getVersionPrinter() {
         if (versionPrinter == null) {
             versionPrinter = new VersionPrinter(getStdOut());
         }
         return versionPrinter;
     }
 
-    public XillRobotExecutor getXillRobotExecutor() throws ParseException {
+    private XillRobotExecutor getXillRobotExecutor() throws ParseException {
         if (xillRobotExecutor == null) {
             xillRobotExecutor = new XillRobotExecutor(
                     getXillEnvironment(),
@@ -269,14 +266,14 @@ public class XillCLI {
         this.xillRobotExecutor = xillRobotExecutor;
     }
 
-    public XillEnvironment getXillEnvironment() {
+    private XillEnvironment getXillEnvironment() {
         if (xillEnvironment == null) {
             xillEnvironment = new XillEnvironmentImpl();
         }
         return xillEnvironment;
     }
 
-    public Path getProjectRoot() throws ParseException {
+    private Path getProjectRoot() throws ParseException {
         if (projectRoot == null) {
             if (getCommandLine().hasOption(OptionsFactory.OPTION_WORKING_DIR)) {
                 projectRoot = Paths.get(getCommandLine().getOptionValue(OptionsFactory.OPTION_WORKING_DIR));
@@ -287,10 +284,10 @@ public class XillCLI {
         return projectRoot;
     }
 
-    public Path[] getIncludePaths() throws ParseException {
+    private Path[] getIncludePaths() throws ParseException {
         if (includePaths == null) {
             if (getCommandLine().hasOption(OptionsFactory.OPTION_ROBOTS)) {
-                String[] paths = getCommandLine().getOptionValue(OptionsFactory.OPTION_ROBOTS).split("[:;]");
+                String[] paths = getCommandLine().getOptionValue(OptionsFactory.OPTION_ROBOTS).split(File.pathSeparator);
                 includePaths = Arrays.stream(paths).map(Paths::get).toArray(Path[]::new);
             } else {
                 includePaths = new Path[0];
