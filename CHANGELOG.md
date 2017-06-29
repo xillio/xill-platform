@@ -1,7 +1,12 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
-## [3.6.1] - unreleased
+## [3.6.2] - unreleased
+
+### Change
+* Update Log4J version to 2.8.2 [XDE-78]
+
+## [3.6.1] - 2017-06-13
 
 ### Add
 * Option for fat archives built by maven [CF-31]
@@ -10,7 +15,6 @@ All notable changes to this project will be documented in this file.
 
 ### Change
 * `File.isFolder` no longer errors if file does not exist [CF-60]
-* Update Log4J version to 2.8.2 [XDE-78]
 
 ## [3.6.0] - 2017-06-02
 
