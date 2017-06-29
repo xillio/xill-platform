@@ -27,7 +27,7 @@
     <parent>
         <artifactId>xillio-parent</artifactId>
         <groupId>nl.xillio</groupId>
-        <version>3.6.1</version>
+        <version>3.6.2-SNAPSHOT</version>
         <relativePath>../xillio-parent</relativePath>
     </parent>
 
