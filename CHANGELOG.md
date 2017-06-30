@@ -1,7 +1,7 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
-## [3.6.2] - unreleased
+## [3.6.2] - 2017-06-30
 
 ### Change
 * Update Log4J version to 2.8.2 [XDE-78]
