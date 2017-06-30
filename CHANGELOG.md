@@ -1,12 +1,17 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
-## [3.6.1] - unreleased
+## [3.6.2] - unreleased
+
+### Change
+* Update Log4J version to 2.8.2 [XDE-78]
+
+## [3.6.1] - 2017-06-13
 
 ### Add
 * Option for fat archives built by maven [CF-31]
 * Add `Date.isDate()` construct [CTC-2134]
-* Add `-i`/`--ignore-errors` flagg to CLI to continue after errors [CF-110]
+* Add `-i`/`--ignore-errors` flag to CLI to continue after errors [CF-110]
 
 ### Change
 * `File.isFolder` no longer errors if file does not exist [CF-60]
