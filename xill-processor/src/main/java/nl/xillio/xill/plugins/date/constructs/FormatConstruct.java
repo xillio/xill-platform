@@ -37,17 +37,22 @@ public class FormatConstruct extends BaseDateConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
 
-        return new ConstructProcessor((dateVar, formatVar) -> process(dateVar, formatVar, getDateService()), new Argument("date"), new Argument("format", NULL));
+        return new ConstructProcessor((dateVar, formatVar, localeVar) -> process(dateVar, formatVar, localeVar, getDateService()),
+                new Argument("date"),
+                new Argument("format", NULL),
+                new Argument("locale" , fromValue("en-US"), ATOMIC));
     }
 
     static MetaExpression process(final MetaExpression dateVar,
-                                  final MetaExpression formatVar, DateService dateService) {
+                                  final MetaExpression formatVar,
+                                  final MetaExpression localeVar,
+                                  DateService dateService) {
 
         Date date = getDate(dateVar, "date");
 
         try {
             String formatString = formatVar.isNull() ? null : formatVar.getStringValue();
-            return fromValue(dateService.formatDate(date, formatString));
+            return fromValue(dateService.formatDate(date, formatString, localeVar.getStringValue()));
         } catch (DateTimeException | IllegalArgumentException e) {
             throw new OperationFailedException("format a date", e.getMessage(), e);
         }

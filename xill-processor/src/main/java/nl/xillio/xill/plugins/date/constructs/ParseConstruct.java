@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,11 +42,13 @@ public class ParseConstruct extends BaseDateConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
 
-        return new ConstructProcessor((dateVar, formatVar) -> process(dateVar, formatVar, getDateService()), new Argument("date", NULL, ATOMIC),
-                new Argument("format", NULL, ATOMIC));
+        return new ConstructProcessor((dateVar, formatVar, localeVar) -> process(dateVar, formatVar, localeVar, getDateService()),
+                new Argument("date", NULL, ATOMIC),
+                new Argument("format", NULL, ATOMIC),
+                new Argument("locale", fromValue("en-US"), ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression dateVar, final MetaExpression formatVar, DateService dateService) {
+    static MetaExpression process(final MetaExpression dateVar, final MetaExpression formatVar, final MetaExpression localeVar, DateService dateService) {
         // Process
         Date result = null;
 
@@ -56,7 +58,7 @@ public class ParseConstruct extends BaseDateConstruct {
 
             try {
                 String formatString = formatVar.isNull() ? null : formatVar.getStringValue();
-                result = dateService.parseDate(dateVar.getStringValue(), formatString);
+                result = dateService.parseDate(dateVar.getStringValue(), formatString, localeVar.getStringValue());
             } catch (DateTimeException | IllegalArgumentException e) {
                 log.error("Exception while parsing date", e);
                 throw new OperationFailedException("parse date", e.getMessage(), "Try to check if 'date' and 'format' are correct.", e);
