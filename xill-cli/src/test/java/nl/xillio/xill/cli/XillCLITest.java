@@ -286,4 +286,15 @@ public class XillCLITest {
         Files.delete(robotFile.getParent());
         Files.delete(projectDir);
     }
+
+    @Test
+    public void testRobotNotExists() {
+        // Run
+        XillCLI xillCLI = new XillCLI();
+        xillCLI.setArgs(new String[]{"non.existent.robot"});
+
+        // Validate
+        ProgramReturnCode returnCode = xillCLI.run();
+        assertEquals(returnCode, ProgramReturnCode.EXECUTION_ERROR);
+    }
 }
