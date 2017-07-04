@@ -43,48 +43,92 @@ public class ParseConstructTest extends TestUtils {
         parseConstruct.setDateService(new DateServiceImpl());
     }
 
-    @DataProvider(name = "dateFormat")
-    private Object[][] generateDateAndFormat() {
-        MetaExpression formatString = fromValue("yyyy-MM-dd");
-        MetaExpression dateString = fromValue("2015-08-03");
-        MetaExpression localeString = fromValue("nl-NL");
-        MetaExpression nullExpression = NULL;
+    @DataProvider
+    private Object[][] parametersWithLocale() {
         return new Object[][]{
-                {dateString, formatString, nullExpression},
-                {nullExpression, formatString, nullExpression},
-                {dateString, nullExpression, nullExpression},
-                {nullExpression, nullExpression, nullExpression},
-                {dateString, formatString, localeString},
-                {nullExpression, formatString, localeString},
-                {dateString, nullExpression, localeString},
-                {nullExpression, nullExpression, localeString}
-        };
+                {fromValue("2015-08-03"), fromValue("yyyy-MM-dd"), fromValue("nl-NL")},
+                {NULL, fromValue("yyyy-MM-dd"), fromValue("nl-NL")},
+                {fromValue("2015-08-03"), NULL, fromValue("nl-NL")},
+                {NULL, NULL, fromValue("nl-NL")}
+                };
+                }
+
+                @DataProvider
+    private Object[][] parametersWithoutLocale() {
+        return new Object[][]{
+                {fromValue("2015-08-03"), fromValue("yyyy-MM-dd")},
+                {NULL, fromValue("yyyy-MM-dd")},
+                {fromValue("2015-08-03"), NULL},
+                {NULL, NULL}};
     }
 
     /**
-     * Test the process method under normal circumstances
+     * Test the process method under normal circumstances with the default locale
      *
      * @param dateString   Date variable
      * @param formatString Format variable
      */
-    @Test(dataProvider = "dateFormat")
-    public void testProcess(MetaExpression dateString, MetaExpression formatString, MetaExpression localeString) {
+    @Test(dataProvider = "parametersWithoutLocale")
+    public void testProcessDefaultLocale(MetaExpression dateString, MetaExpression formatString) {
+        ParseConstruct parseConstruct = new ParseConstruct();
+
         // Mock
         DateService dateService = mock(DateService.class);
-        // ZonedDateTime is final, don't mock
+
         Date parsed = mock(Date.class);
         when(dateService.now()).thenReturn(parsed);
         when(dateService.parseDate(any(), any(), any())).thenReturn(parsed);
+        parseConstruct.setDateService(dateService);
 
         // Run
         MetaExpression parsedExpression = process(
-                parseConstruct, dateString, formatString, localeString
-        );
+                parseConstruct, dateString, formatString);
 
         // Verify
         if (dateString.isNull()) {
             verify(dateService).now();
             verify(dateService, never()).parseDate(any(), any(), any());
+        } else if (formatString.isNull()) {
+            verify(dateService, never()).now();
+            verify(dateService).parseDate(dateString.getStringValue(), null, fromValue("en-US").getStringValue());
+        } else {
+            verify(dateService, never()).now();
+            verify(dateService).parseDate(dateString.getStringValue(), formatString.getStringValue(), fromValue("en-US").getStringValue());
+        }
+
+        // Assert
+        assertSame(parsedExpression.getMeta(Date.class), parsed);
+    }
+
+    /**
+     * Test the process method under normal circumstances with the default locale
+     *
+     * @param dateString   Date variable
+     * @param formatString Format variable
+     * @param localeString Locale variable
+     */
+    @Test(dataProvider = "parametersWithLocale")
+    public void testProcessWithLocale(MetaExpression dateString, MetaExpression formatString, MetaExpression localeString) {
+        ParseConstruct parseConstruct = new ParseConstruct();
+
+        // Mock
+        DateService dateService = mock(DateService.class);
+
+        Date parsed = mock(Date.class);
+        when(dateService.now()).thenReturn(parsed);
+        when(dateService.parseDate(any(), any(), any())).thenReturn(parsed);
+        parseConstruct.setDateService(dateService);
+
+        // Run
+        MetaExpression parsedExpression = process(parseConstruct, dateString, formatString, localeString);
+
+        // Verify
+        if (dateString.isNull()) {
+            verify(dateService).now();
+            verify(dateService, never()).parseDate(any(), any(), any());
+        } else if (formatString.isNull()) {
+            verify(dateService, never()).now();
+            verify(dateService).parseDate(dateString.getStringValue(), null, localeString.getStringValue());
         } else {
             verify(dateService, never()).now();
             verify(dateService).parseDate(dateString.getStringValue(), formatString.getStringValue(), localeString.getStringValue());
