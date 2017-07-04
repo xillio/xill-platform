@@ -57,7 +57,8 @@ public class ParseConstructTest extends TestUtils {
                 {dateString, formatString, localeString},
                 {nullExpression, formatString, localeString},
                 {dateString, nullExpression, localeString},
-                {nullExpression, nullExpression, localeString}};
+                {nullExpression, nullExpression, localeString}
+        };
     }
 
     /**
@@ -77,7 +78,8 @@ public class ParseConstructTest extends TestUtils {
 
         // Run
         MetaExpression parsedExpression = process(
-                parseConstruct, dateString, formatString, localeString);
+                parseConstruct, dateString, formatString, localeString
+        );
 
         // Verify
         if (dateString.isNull()) {
