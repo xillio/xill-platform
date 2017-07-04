@@ -68,7 +68,7 @@ public class OfConstructTest extends TestUtils {
         values[0] = NULL;
 
         // Run
-        process(ofConstruct, mockParameters(zoneId));
+        process(ofConstruct, values);
     }
 
     /**
@@ -103,11 +103,11 @@ public class OfConstructTest extends TestUtils {
         return new MetaExpression[]{
                 fromValue(0),
                 fromValue(1),
+                fromValue(2),
                 fromValue(3),
                 fromValue(4),
                 fromValue(5),
                 fromValue(6),
-                fromValue(7),
                 fromValue(zoneId)
         };
     }
