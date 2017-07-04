@@ -21,10 +21,19 @@
 
 use Assert;
 
-var atomic = 7;
+var atomic = true;
+var object = {
+    "number": 8
+};
 
 do {
-    atomic.nope;
+    atomic.member;
 } success {
     Assert.error("Getting value from an ATOMIC did not throw an error.");
+}
+
+do {
+    object.number.member;
+} success {
+    Assert.error("Getting value from an ATOMIC in chain did not throw an error.");
 }

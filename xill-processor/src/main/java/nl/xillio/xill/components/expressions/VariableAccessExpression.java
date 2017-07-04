@@ -50,4 +50,8 @@ public class VariableAccessExpression implements Processable {
     public Collection<Processable> getChildren() {
         return Arrays.asList(declaration);
     }
+
+    public String getVariableName() {
+        return declaration.getName();
+    }
 }

@@ -19,6 +19,7 @@ import nl.xillio.xill.api.Debugger;
 import nl.xillio.xill.api.components.*;
 import nl.xillio.xill.api.errors.NotImplementedException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
+import nl.xillio.xill.components.expressions.VariableAccessExpression;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -86,10 +87,32 @@ public class FromList implements Processable {
                 }
                 return InstructionFlow.doResume(objectResult);
             case ATOMIC:
-                throw new RobotRuntimeException("Cannot get member '" + indexMeta.getStringValue() + "' from ATOMIC value.");
+                String message = "Cannot get member '" + indexMeta.getStringValue() + "' from ATOMIC value";
+
+                // Get the name of the atomic, check if it can be used.
+                String variableName = getVariableName(list);
+                if (variableName != null) {
+                    message += " " + variableName;
+                }
+                message += ".";
+
+                throw new RobotRuntimeException(message);
             default:
                 throw new NotImplementedException("This type has not been implemented.");
         }
+    }
+
+    private String getVariableName(Processable listProcessable) {
+        if (listProcessable instanceof VariableAccessExpression) {
+            // Get the name of the variable.
+            return "'" + ((VariableAccessExpression)listProcessable).getVariableName() + "'";
+        } else if (listProcessable instanceof FromList) {
+            // Try to get the name of the root element in the chain.
+            String rootName = getVariableName(((FromList)listProcessable).list);
+            return rootName != null ? "in chain starting with " + rootName : null;
+        }
+
+        return null;
     }
 
     @Override
