@@ -36,35 +36,40 @@ function foo() {
 // Tests.
 do {
     atomic.member;
-    Assert.error(noError);
 } fail(e) {
     Assert.equal(e.message, expectedPrefix :: " 'atomic'.");
+} success {
+    Assert.error(noError);
 }
 
 do {
     object.number.member;
-    Assert.error(noError);
 } fail(e) {
     Assert.equal(e.message, expectedPrefix :: " in chain starting with 'object'.");
+} success {
+    Assert.error(noError);
 }
 
 do {
     foo().member;
-    Assert.error(noError);
 } fail(e) {
     Assert.equal(e.message, expectedPrefix :: ".");
+} success {
+    Assert.error(noError);
 }
 
 do {
     false.member;
-    Assert.error(noError);
 } fail(e) {
     Assert.equal(e.message, expectedPrefix :: ".");
+} success {
+    Assert.error(noError);
 }
 
 do {
     null.member;
-    Assert.error(noError);
 } fail(e) {
     Assert.equal(e.message, expectedPrefix :: " (value is null).");
+} success {
+    Assert.error(noError);
 }
