@@ -15,7 +15,6 @@
  */
 package nl.xillio.xill.plugins.date.constructs;
 
-import me.biesaart.utils.Log;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
@@ -23,7 +22,6 @@ import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.date.BaseDateConstruct;
-import org.slf4j.Logger;
 
 import java.time.DateTimeException;
 
@@ -35,7 +33,6 @@ import java.time.DateTimeException;
  * @author Sander
  */
 public class ParseConstruct extends BaseDateConstruct {
-    private static final Logger log = Log.get();
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
