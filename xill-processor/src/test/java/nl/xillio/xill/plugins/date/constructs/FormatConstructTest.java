@@ -37,15 +37,11 @@ public class FormatConstructTest extends TestUtils {
     @DataProvider(name = "format")
     private Object[][] formatProvider() {
         ZonedDateTime date = ZonedDateTime.now();
-        //Date date = new nl.xillio.xill.plugins.date.data.Date(ZonedDateTime.now());
-        MetaExpression dateExpression = createDateTimeExpression(date);
-        MetaExpression localeString = fromValue("en-US");
-        MetaExpression nullExpression = NULL;
         return new Object[][]{
-                {dateExpression, fromValue("yyyy-MM-dd"), nullExpression},
-                {dateExpression, fromValue("yyyy-MM-dd"), localeString},
-                {dateExpression, NULL, nullExpression},
-                {dateExpression, NULL, localeString}};
+                {createDateTimeExpression(date), fromValue("yyyy-MM-dd"), NULL},
+                {createDateTimeExpression(date), fromValue("yyyy-MM-dd"), fromValue("en-US")},
+                {createDateTimeExpression(date), NULL, NULL},
+                {createDateTimeExpression(date), NULL, fromValue("en-US")}};
     }
 
     /**

@@ -18,7 +18,6 @@ package nl.xillio.xill.plugins.date.constructs;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.date.services.DateService;
-import nl.xillio.xill.plugins.date.services.DateServiceImpl;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -76,7 +75,7 @@ public class DiffConstructTest extends TestUtils {
         // Mock
         DateService dateService = mock(DateService.class);
         when(dateService.difference(any(), any(), anyBoolean())).thenReturn(differences);
-        diffConstruct.setDateService(new DateServiceImpl());
+        diffConstruct.setDateService(dateService);
 
         // Run
         MetaExpression difference = process(diffConstruct, date1Expression, date2Expression, absolute);
