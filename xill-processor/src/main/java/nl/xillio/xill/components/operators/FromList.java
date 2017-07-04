@@ -71,14 +71,14 @@ public class FromList implements Processable {
             case OBJECT:
                 return getMetaExpressionObjectInstructionFlow(listMeta, indexMeta);
             case ATOMIC:
-                String message = getMemberFromAtomicErrorMessage(indexMeta);
+                String message = getMemberFromAtomicErrorMessage(listMeta, indexMeta);
                 throw new RobotRuntimeException(message);
             default:
                 throw new NotImplementedException("This type has not been implemented.");
         }
     }
 
-    private String getMemberFromAtomicErrorMessage(MetaExpression indexMeta) {
+    private String getMemberFromAtomicErrorMessage(MetaExpression listMeta, MetaExpression indexMeta) {
         String message = "Cannot get member '" + indexMeta.getStringValue() + "' from ATOMIC value";
 
         // Get the name of the atomic, check if it can be used.
@@ -86,8 +86,13 @@ public class FromList implements Processable {
         if (variableName != null) {
             message += " " + variableName;
         }
-        message += ".";
-        return message;
+
+        // Check if the list is null.
+        if (listMeta.isNull()) {
+            message += " (value is null)";
+        }
+
+        return message + ".";
     }
 
     private InstructionFlow<MetaExpression> getMetaExpressionObjectInstructionFlow(MetaExpression listMeta, MetaExpression indexMeta) {
