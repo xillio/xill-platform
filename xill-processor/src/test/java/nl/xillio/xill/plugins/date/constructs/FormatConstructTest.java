@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.date.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.date.services.DateService;
 import org.testng.annotations.DataProvider;
@@ -32,7 +33,7 @@ import static org.testng.Assert.assertEquals;
  *
  * @author Geert Konijnendijk
  */
-public class FormatConstructTest {
+public class FormatConstructTest extends TestUtils {
 
     @DataProvider(name = "format")
     private Object[][] formatProvider() {

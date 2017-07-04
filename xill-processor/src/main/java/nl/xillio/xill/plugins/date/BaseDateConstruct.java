@@ -32,8 +32,7 @@ public abstract class BaseDateConstruct extends Construct {
     /**
      * Service used by all extending classes
      */
-    @Inject
-    private DateService dateService;
+    protected DateService dateService;
 
     /**
      * Get the date from a variable
@@ -73,7 +72,8 @@ public abstract class BaseDateConstruct extends Construct {
         return value;
     }
 
-    public DateService getDateService() {
-        return dateService;
+    @Inject
+    public void setDateService(DateService dateService) {
+        this.dateService = dateService;
     }
 }

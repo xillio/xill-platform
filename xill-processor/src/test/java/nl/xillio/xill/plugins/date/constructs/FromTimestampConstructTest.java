@@ -28,7 +28,7 @@ import static org.testng.Assert.assertSame;
 /**
  * Test the {@link FromTimestampConstruct}.
  */
-public class FromTimestampConstructTest {
+public class FromTimestampConstructTest extends TestUtils {
     @Test
     public void testProcess() {
         long timestamp = 123456;
@@ -39,7 +39,7 @@ public class FromTimestampConstructTest {
         when(dateService.fromTimestamp(timestamp)).thenReturn(parsed);
 
         // Process.
-        MetaExpression result = FromTimestampConstruct.process(TestUtils.fromValue(timestamp), dateService);
+        MetaExpression result = process(TestUtils.fromValue(timestamp), dateService);
 
         // Verify.
         verify(dateService).fromTimestamp(timestamp);

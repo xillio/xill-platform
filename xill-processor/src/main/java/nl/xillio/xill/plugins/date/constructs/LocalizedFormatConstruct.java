@@ -44,14 +44,15 @@ public class LocalizedFormatConstruct extends BaseDateConstruct {
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
 
-        return new ConstructProcessor((dateVar, localeVar, dateStyleVar, timeStyleVar) -> process(dateVar, localeVar, dateStyleVar, timeStyleVar, getDateService()),
-                new Argument("date"), new Argument("languageTag", NULL), new Argument("dateStyle", NULL),
-                new Argument("timeStyle", NULL));
+        return new ConstructProcessor(this::process,
+                new Argument("date"),
+                new Argument("languageTag", NULL),
+                new Argument("dateStyle", NULL),
+                new Argument("timeStyle", NULL)
+        );
     }
 
-    static MetaExpression process(final MetaExpression dateVar,
-                                  final MetaExpression localeVar, final MetaExpression languageTag, final MetaExpression timeStyleVar, DateService dateService) {
-
+    private MetaExpression process(final MetaExpression dateVar, final MetaExpression localeVar, final MetaExpression languageTag, final MetaExpression timeStyleVar) {
         Date date = getDate(dateVar, "date");
         FormatStyle dateStyle;
         FormatStyle timeStyle;

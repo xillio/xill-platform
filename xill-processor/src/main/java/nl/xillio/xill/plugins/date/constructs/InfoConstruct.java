@@ -21,7 +21,6 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.plugins.date.BaseDateConstruct;
-import nl.xillio.xill.plugins.date.services.DateService;
 
 import java.util.LinkedHashMap;
 
@@ -34,11 +33,12 @@ public class InfoConstruct extends BaseDateConstruct {
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
-        return new ConstructProcessor(dateVar -> process(dateVar, getDateService()), new Argument("date"));
-
+        return new ConstructProcessor(this::process,
+                new Argument("date")
+        );
     }
 
-    static MetaExpression process(final MetaExpression dateVar, DateService dateService) {
+    private MetaExpression process(final MetaExpression dateVar) {
         Date date = getDate(dateVar, "date");
 
         LinkedHashMap<String, MetaExpression> info = new LinkedHashMap<>();

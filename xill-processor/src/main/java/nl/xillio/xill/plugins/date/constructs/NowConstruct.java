@@ -30,10 +30,10 @@ public class NowConstruct extends BaseDateConstruct {
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
-        return new ConstructProcessor(() -> process(getDateService()));
+        return new ConstructProcessor(this::process);
     }
 
-    static MetaExpression process(DateService dateService) {
+    private MetaExpression process() {
         return fromValue(dateService.now());
     }
 }

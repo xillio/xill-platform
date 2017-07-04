@@ -36,19 +36,18 @@ import java.time.DateTimeException;
  * @author Sander
  */
 public class ParseConstruct extends BaseDateConstruct {
-
     private static final Logger log = Log.get();
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
 
-        return new ConstructProcessor((dateVar, formatVar, localeVar) -> process(dateVar, formatVar, localeVar, getDateService()),
+        return new ConstructProcessor(this::process,
                 new Argument("date", NULL, ATOMIC),
                 new Argument("format", NULL, ATOMIC),
                 new Argument("locale", fromValue("en-US"), ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression dateVar, final MetaExpression formatVar, final MetaExpression localeVar, DateService dateService) {
+    private MetaExpression process(final MetaExpression dateVar, final MetaExpression formatVar, final MetaExpression localeVar) {
         // Process
         Date result;
 

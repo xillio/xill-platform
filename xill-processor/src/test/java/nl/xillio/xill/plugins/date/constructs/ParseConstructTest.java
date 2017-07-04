@@ -15,9 +15,15 @@
  */
 package nl.xillio.xill.plugins.date.constructs;
 
+import nl.xillio.xill.TestUtils;
+import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.plugins.date.services.DateService;
+import nl.xillio.xill.plugins.date.services.DateServiceImpl;
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -32,7 +38,14 @@ import static org.testng.Assert.assertSame;
  *
  * @author Geert Konijnendijk
  */
-public class ParseConstructTest {
+public class ParseConstructTest extends TestUtils {
+
+    ParseConstruct parseConstruct = new ParseConstruct();
+
+    @BeforeClass
+    private void initializeConstruct() {
+        parseConstruct.setDateService(new DateServiceImpl());
+    }
 
     @DataProvider(name = "dateFormat")
     private Object[][] generateDateAndFormat() {
@@ -67,7 +80,8 @@ public class ParseConstructTest {
         when(dateService.parseDate(any(), any(), any())).thenReturn(parsed);
 
         // Run
-        MetaExpression parsedExpression = ParseConstruct.process(dateString, formatString, localeString, dateService);
+        MetaExpression parsedExpression = process(
+                parseConstruct, dateString, formatString, localeString);
 
         // Verify
         if (dateString.isNull()) {
@@ -80,5 +94,25 @@ public class ParseConstructTest {
 
         // Assert
         assertSame(parsedExpression.getMeta(Date.class), parsed);
+    }
+
+    @Test
+    private void testDefaultValueLocale() {
+        String format = "EEE MMM dd yyyy HH:mm:ss 'GMT'Z";
+
+        MetaExpression resultEnglish = process(
+                parseConstruct,
+                fromValue("Mon Jun 12 2017 09:52:45 GMT+0200"),
+                fromValue(format),
+                fromValue("en-US")
+        );
+
+        MetaExpression resultDefault = process(
+                parseConstruct,
+                fromValue("Mon Jun 12 2017 09:52:45 GMT+0200"),
+                fromValue(format)
+        );
+
+        Assert.assertEquals(resultEnglish, resultDefault);
     }
 }

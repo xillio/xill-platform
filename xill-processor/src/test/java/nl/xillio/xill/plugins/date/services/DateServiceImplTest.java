@@ -16,6 +16,7 @@
 package nl.xillio.xill.plugins.date.services;
 
 import nl.xillio.xill.api.data.Date;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -147,5 +148,11 @@ public class DateServiceImplTest {
         Date justAnotherDate = ds.constructDate(2015, 2, 13, 12, 32, 15, 12, ZoneId.of("GMT"));
         boolean isAfter = ds.isAfter(justOneDate, justAnotherDate);
         Assert.assertEquals(isAfter, true);
+    }
+
+    @Test(expectedExceptions = InvalidUserInputException.class)
+    public void testInvalidLocale() {
+        DateService ds = new DateServiceImpl();
+        ds.parseDate("2015-02-14 12:32:15.012 GMT", "yyyy-MM-dd HH:mm:ss.nnn z", "invalid-tag").getZoned();
     }
 }

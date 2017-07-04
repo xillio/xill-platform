@@ -15,8 +15,11 @@
  */
 package nl.xillio.xill.plugins.date.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.date.services.DateService;
+import nl.xillio.xill.plugins.date.services.DateServiceImpl;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -36,8 +39,7 @@ import static org.testng.Assert.assertEquals;
  *
  * @author Geert Konijnendijk
  */
-public class DiffConstructTest {
-
+public class DiffConstructTest extends TestUtils {
     /**
      * @return Data containing two maps (which should be returned from the mock {@link DateService#difference(nl.xillio.xill.api.data.Date, nl.xillio.xill.api.data.Date, boolean)}) for testing absolute
      * and relative difference.
@@ -75,13 +77,16 @@ public class DiffConstructTest {
         DateService dateService = mock(DateService.class);
         when(dateService.difference(any(), any(), anyBoolean())).thenReturn(differences);
 
+        DiffConstruct diffConstruct = new DiffConstruct();
+        diffConstruct.setDateService(dateService);
+
         // Run
-        MetaExpression difference = DiffConstruct.process(date1Expression, date2Expression, absolute, dateService);
+        MetaExpression difference = process(diffConstruct, date1Expression, date2Expression, absolute);
 
         // Verify
         verify(dateService).difference(any(), any(), anyBoolean());
 
         // Assert
-        ((Map<String, MetaExpression>) difference.getValue()).forEach((k, v) -> assertEquals(differences.get(k).doubleValue(), v.getNumberValue().doubleValue(), 10e-9));
+        (difference.<Map<String, MetaExpression>>getValue()).forEach((k, v) -> assertEquals(differences.get(k).doubleValue(), v.getNumberValue().doubleValue(), 10e-9));
     }
 }

@@ -30,11 +30,11 @@ public class IsDateConstruct extends BaseDateConstruct {
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
-        return new ConstructProcessor(IsDateConstruct::process,
+        return new ConstructProcessor(this::process,
                 new Argument("date", ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression dateVar) {
+    private MetaExpression process(final MetaExpression dateVar) {
         return fromValue(dateVar.getMeta(Date.class) != null);
     }
 }

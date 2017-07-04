@@ -16,11 +16,14 @@
 package nl.xillio.xill.plugins.date.constructs;
 
 import me.biesaart.utils.Log;
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.plugins.date.services.DateService;
+import nl.xillio.xill.plugins.date.services.DateServiceImpl;
 import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -36,15 +39,18 @@ import static org.testng.Assert.assertSame;
  *
  * @author Geert Konijnendijk
  */
-public class ChangeConstructTest {
-
-    private static final Logger log = Log.get();
-
+public class ChangeConstructTest extends TestUtils {
+    private ChangeConstruct changeConstruct = new ChangeConstruct();
     private DateService dateService;
     private Date date;
     private MetaExpression dateExpression;
     private LinkedHashMap<String, MetaExpression> changes;
     private MetaExpression changesExpression;
+
+    @BeforeClass
+    private void initializeConstruct() {
+
+    }
 
     /**
      * Setup for all tests in this class
@@ -53,6 +59,7 @@ public class ChangeConstructTest {
     public void setup() {
         // Mock DateService, simply returns the date passed in
         dateService = mock(DateService.class);
+        changeConstruct.setDateService(dateService);
 
         // Answer returning the first argument as a ZonedDateTime
         Answer<Date> returnAsZonedDateTime = invocation -> invocation.getArgumentAt(0, Date.class);
@@ -161,7 +168,7 @@ public class ChangeConstructTest {
     }
 
     private MetaExpression runProcess() {
-        return ChangeConstruct.process(log, dateExpression, changesExpression, dateService);
+        return process(changeConstruct, dateExpression, changesExpression);
     }
 
     private void assertEqualDate(MetaExpression newDate) {

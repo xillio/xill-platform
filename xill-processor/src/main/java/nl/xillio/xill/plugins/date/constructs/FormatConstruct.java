@@ -22,7 +22,6 @@ import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.date.BaseDateConstruct;
-import nl.xillio.xill.plugins.date.services.DateService;
 
 import java.time.DateTimeException;
 
@@ -36,18 +35,14 @@ public class FormatConstruct extends BaseDateConstruct {
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
-
-        return new ConstructProcessor((dateVar, formatVar, localeVar) -> process(dateVar, formatVar, localeVar, getDateService()),
+        return new ConstructProcessor(this::process,
                 new Argument("date"),
                 new Argument("format", NULL),
-                new Argument("locale" , fromValue("en-US"), ATOMIC));
+                new Argument("locale", fromValue("en-US"), ATOMIC)
+        );
     }
 
-    static MetaExpression process(final MetaExpression dateVar,
-                                  final MetaExpression formatVar,
-                                  final MetaExpression localeVar,
-                                  DateService dateService) {
-
+    private MetaExpression process(final MetaExpression dateVar, final MetaExpression formatVar, final MetaExpression localeVar) {
         Date date = getDate(dateVar, "date");
 
         try {
