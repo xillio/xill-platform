@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,19 +16,15 @@
 package nl.xillio.xill.plugins.date.constructs;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.plugins.date.services.DateService;
 import nl.xillio.xill.plugins.date.services.DateServiceImpl;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import static nl.xillio.xill.plugins.date.utils.MockUtils.mockNullExpression;
-import static nl.xillio.xill.plugins.date.utils.MockUtils.mockStringExpression;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertSame;
@@ -40,7 +36,7 @@ import static org.testng.Assert.assertSame;
  */
 public class ParseConstructTest extends TestUtils {
 
-    ParseConstruct parseConstruct = new ParseConstruct();
+    private ParseConstruct parseConstruct = new ParseConstruct();
 
     @BeforeClass
     private void initializeConstruct() {
@@ -49,10 +45,10 @@ public class ParseConstructTest extends TestUtils {
 
     @DataProvider(name = "dateFormat")
     private Object[][] generateDateAndFormat() {
-        MetaExpression formatString = mockStringExpression("yyyy-MM-dd");
-        MetaExpression dateString = mockStringExpression("2015-08-03");
-        MetaExpression localeString = mockStringExpression("nl-NL");
-        MetaExpression nullExpression = mockNullExpression();
+        MetaExpression formatString = fromValue("yyyy-MM-dd");
+        MetaExpression dateString = fromValue("2015-08-03");
+        MetaExpression localeString = fromValue("nl-NL");
+        MetaExpression nullExpression = NULL;
         return new Object[][]{
                 {dateString, formatString, nullExpression},
                 {nullExpression, formatString, nullExpression},

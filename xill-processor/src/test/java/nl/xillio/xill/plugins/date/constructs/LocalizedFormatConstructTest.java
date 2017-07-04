@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static nl.xillio.xill.plugins.date.utils.MockUtils.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertSame;
@@ -54,11 +53,11 @@ public class LocalizedFormatConstructTest extends TestUtils {
             for (int j = 0; j < formatStyles.length; j++) {
                 for (int k = 0; k < locales.length; k++) {
                     ArrayList<Object> permutation = new ArrayList<>();
-                    permutation.add(mockStringExpression(formatStyles[i]));
+                    permutation.add(fromValue(formatStyles[i]));
                     permutation.add(expectedStyles[i]);
-                    permutation.add(mockStringExpression(formatStyles[j]));
+                    permutation.add(fromValue(formatStyles[j]));
                     permutation.add(expectedStyles[j]);
-                    permutation.add(mockStringExpression(locales[k]));
+                    permutation.add(fromValue(locales[k]));
                     permutation.add(expectedLocales[k]);
 
                     permutations.add(permutation);
@@ -99,7 +98,8 @@ public class LocalizedFormatConstructTest extends TestUtils {
         String returnString = "2015-08-03 13:40";
         when(dateService.formatDateLocalized(any(), any(), any(), any())).thenReturn(returnString);
         Date date = mock(Date.class);
-        MetaExpression dateExpression = mockDateExpression(date);
+        MetaExpression dateExpression = fromValue("DATE");
+        dateExpression.storeMeta(date);
 
         // Run
         MetaExpression formatted = process(construct, dateExpression, localeExpression, dateStyleExpression, timeStyleExpression);
@@ -113,7 +113,7 @@ public class LocalizedFormatConstructTest extends TestUtils {
 
     @DataProvider(name = "wrongStyle")
     private Object[][] wrongStyleProvider() {
-        return new Object[][]{{mockStringExpression("Wrong"), mockNullExpression()}, {mockNullExpression(), mockStringExpression("Wrong")}};
+        return new Object[][]{{fromValue("Wrong"), NULL}, {NULL, fromValue("Wrong")}};
     }
 
     /**
@@ -128,7 +128,8 @@ public class LocalizedFormatConstructTest extends TestUtils {
         DateService dateService = mock(DateService.class);
         construct.setDateService(dateService);
         ZonedDateTime date = ZonedDateTime.now();
-        MetaExpression dateExpression = mockDateExpression(date);
+        MetaExpression dateExpression = fromValue("DATE");
+        dateExpression.storeMeta(new Date(date));
 
         // Run
         process(construct, dateExpression, NULL, dateStyleExpression, timeStyleExpression);
