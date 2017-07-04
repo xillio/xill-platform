@@ -52,7 +52,7 @@ public class FormatConstruct extends BaseDateConstruct {
 
         try {
             String formatString = formatVar.isNull() ? null : formatVar.getStringValue();
-            return fromValue(dateService.parseDate(dateVar.getStringValue(), formatString, localeVar.getStringValue()));
+            return fromValue(dateService.formatDate(date, formatString, localeVar.getStringValue()));
         } catch (DateTimeException | IllegalArgumentException e) {
             throw new OperationFailedException("format a date", e.getMessage(), e);
         }

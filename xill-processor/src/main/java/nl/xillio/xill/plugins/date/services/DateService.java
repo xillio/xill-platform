@@ -60,7 +60,8 @@ public interface DateService extends XillService {
      * Parse a {@link Date} from a String.
      *
      * @param date   The String to parse from.
-     * @param format The format String according to
+     * @param format The format String according to {@link DateTimeFormatter#ofPattern(String)}
+     * @param locale The locale to parse the date with
      * @return A new {@link Date}
      */
     Date parseDate(String date, String format, String locale);
@@ -78,7 +79,7 @@ public interface DateService extends XillService {
      * Change the timezone of a {@link Date}
      *
      * @param original Original date
-     * @param newZone  Timezone to chenge to
+     * @param newZone  Timezone to change to
      * @return A new {@link Date}
      */
     Date changeTimeZone(Date original, ZoneId newZone);
@@ -88,9 +89,10 @@ public interface DateService extends XillService {
      *
      * @param date   The date to format
      * @param format Format string according to {@link DateTimeFormatter#ofPattern(String)}
+     * @param locale The locale to format the date with
      * @return The formatted date
      */
-    String formatDate(Date date, String format);
+    String formatDate(Date date, String format, String locale);
 
     /**
      * Format a {@link Date} for a given locale
@@ -168,6 +170,4 @@ public interface DateService extends XillService {
      * @return True if the date1 is after date2, otherwise false
      */
     boolean isAfter(Date date1, Date date2);
-
-    boolean isValidLocale(String locale);
 }

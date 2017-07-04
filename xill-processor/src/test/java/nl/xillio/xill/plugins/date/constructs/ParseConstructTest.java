@@ -38,8 +38,17 @@ public class ParseConstructTest {
     private Object[][] generateDateAndFormat() {
         MetaExpression formatString = mockStringExpression("yyyy-MM-dd");
         MetaExpression dateString = mockStringExpression("2015-08-03");
+        MetaExpression localeString = mockStringExpression("nl-NL");
         MetaExpression nullExpression = mockNullExpression();
-        return new Object[][]{{dateString, formatString}, {nullExpression, formatString}, {dateString, nullExpression}, {nullExpression, nullExpression}};
+        return new Object[][]{
+                {dateString, formatString, nullExpression},
+                {nullExpression, formatString, nullExpression},
+                {dateString, nullExpression, nullExpression},
+                {nullExpression, nullExpression, nullExpression},
+                {dateString, formatString, localeString},
+                {nullExpression, formatString, localeString},
+                {dateString, nullExpression, localeString},
+                {nullExpression, nullExpression, localeString}};
     }
 
     /**
@@ -49,24 +58,24 @@ public class ParseConstructTest {
      * @param formatString Format variable
      */
     @Test(dataProvider = "dateFormat")
-    public void testProcess(MetaExpression dateString, MetaExpression formatString) {
+    public void testProcess(MetaExpression dateString, MetaExpression formatString, MetaExpression localeString) {
         // Mock
         DateService dateService = mock(DateService.class);
         // ZonedDateTime is final, don't mock
         Date parsed = mock(Date.class);
         when(dateService.now()).thenReturn(parsed);
-        when(dateService.parseDate(any(), any())).thenReturn(parsed);
+        when(dateService.parseDate(any(), any(), any())).thenReturn(parsed);
 
         // Run
-        MetaExpression parsedExpression = ParseConstruct.process(dateString, formatString, dateService);
+        MetaExpression parsedExpression = ParseConstruct.process(dateString, formatString, localeString, dateService);
 
         // Verify
         if (dateString.isNull()) {
             verify(dateService).now();
-            verify(dateService, never()).parseDate(any(), any());
+            verify(dateService, never()).parseDate(any(), any(), any());
         } else {
             verify(dateService, never()).now();
-            verify(dateService).parseDate(dateString.getStringValue(), formatString.getStringValue());
+            verify(dateService).parseDate(dateString.getStringValue(), formatString.getStringValue(), localeString.getStringValue());
         }
 
         // Assert

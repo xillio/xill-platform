@@ -20,6 +20,7 @@ import com.google.inject.Singleton;
 import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.data.DateFactory;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
+import org.apache.commons.lang3.LocaleUtils;
 
 import java.time.*;
 import java.time.chrono.Chronology;
@@ -57,7 +58,7 @@ public class DateServiceImpl implements DateService, DateFactory {
 
     @SuppressWarnings("squid:S1166")
         // DateTimeException is handled correctly
-    ZonedDateTime getValueOrDefaultZDT(TemporalAccessor parsed) {
+    private ZonedDateTime getValueOrDefaultZDT(TemporalAccessor parsed) {
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime _default = ZonedDateTime.of(now.toLocalDate(), LocalTime.MIN, now.getZone());
 
@@ -82,20 +83,18 @@ public class DateServiceImpl implements DateService, DateFactory {
 
     @Override
     public Date parseDate(String date, String format, String locale) {
-
-        if (!isValidLocale(locale))
-            throw new InvalidUserInputException("Invalid Locale", locale, "A valid Locale code.");
-
-        Locale loc = locale == null ? Locale.getDefault() : Locale.forLanguageTag(locale);
+        Locale loc = locale == null ? Locale.ENGLISH : parseLocale(locale);
         DateTimeFormatter formatter = createDateTimeFormatter(format, loc);
         TemporalAccessor parsed = formatter.parse(date);
         return new nl.xillio.xill.plugins.date.data.Date(getValueOrDefaultZDT(parsed));
     }
 
     private DateTimeFormatter createDateTimeFormatter(String format, Locale locale) {
-        return format == null ? DEFAULT_FORMATTER : DateTimeFormatter.ofPattern(format)
-                .withLocale(locale)
-                .withChronology(Chronology.ofLocale(locale));
+        if (format == null) {
+            return DEFAULT_FORMATTER.withLocale(locale).withChronology(Chronology.ofLocale(locale));
+        } else {
+            return DateTimeFormatter.ofPattern(format, locale);
+        }
     }
 
     @Override
@@ -113,8 +112,9 @@ public class DateServiceImpl implements DateService, DateFactory {
     }
 
     @Override
-    public String formatDate(Date date, String format) {
-        DateTimeFormatter formatter = createDateTimeFormatter(format, Locale.getDefault());
+    public String formatDate(Date date, String format, String locale) {
+        Locale loc = locale == null ? Locale.ENGLISH : parseLocale(locale);
+        DateTimeFormatter formatter = createDateTimeFormatter(format, loc);
         return formatter.format(date.getZoned());
     }
 
@@ -216,31 +216,17 @@ public class DateServiceImpl implements DateService, DateFactory {
         return date1.getZoned().isAfter(date2.getZoned());
     }
 
-    @Override
-    public boolean isValidLocale(String locale) {
-        String supportedLocales[] = {
-            "af-ZA","sq-AL","ar-DZ","ar-BH","ar-EG","ar-IQ","ar-JO","ar-KW","ar-LB",
-            "ar-LY","ar-MA","ar-OM","ar-QA","ar-SA","ar-SY","ar-TN","ar-AE","ar-YE",
-            "hy-AM","Cy-az-AZ","Lt-az-AZ","eu-ES","be-BY","bg-BG","ca-ES","zh-CN",
-            "zh-HK","zh-MO","zh-SG","zh-TW","zh-CHS","zh-CHT","hr-HR","cs-CZ","da-DK",
-            "div-MV","nl-BE","nl-NL","en-AU","en-BZ","en-CA","en-CB","en-IE","en-JM",
-            "en-NZ","en-PH","en-ZA","en-TT","en-GB","en-US","en-ZW","et-EE","fo-FO",
-            "fa-IR","fi-FI","fr-BE","fr-CA","fr-FR","fr-LU","fr-MC","fr-CH","gl-ES",
-            "ka-GE","de-AT","de-DE","de-LI","de-LU","de-CH","el-GR","gu-IN","he-IL",
-            "hi-IN","hu-HU","is-IS","id-ID","it-IT","it-CH","ja-JP","kn-IN","kk-KZ",
-            "kok-IN","ko-KR","ky-KZ","lv-LV","lt-LT","mk-MK","ms-BN","ms-MY","mr-IN",
-            "mn-MN","nb-NO","nn-NO","pl-PL","pt-BR","pt-PT","pa-IN","ro-RO","ru-RU",
-            "sa-IN","Cy-sr-SP","Lt-sr-SP","sk-SK","sl-SI","es-AR","es-BO","es-CL",
-            "es-CO","es-CR","es-DO","es-EC","es-SV","es-GT","es-HN","es-MX","es-NI",
-            "es-PA","es-PY","es-PE","es-PR","es-ES","es-UY","es-VE","sw-KE","sv-FI",
-            "sv-SE","syr-SY","ta-IN","tt-RU","te-IN","th-TH","tr-TR","uk-UA","ur-PK",
-            "Cy-uz-UZ","Lt-uz-UZ","vi-VN"
-        };
+    private Locale parseLocale(String localeString) {
+        Locale locale = Locale.forLanguageTag(localeString);
 
-        for (String loc: supportedLocales) {
-            if (loc.equals(locale)) return true;
+        if (!LocaleUtils.isAvailableLocale(locale)) {
+            throw new InvalidUserInputException(
+                    "The provided locale is not a valid locale according to standard: BCP-47",
+                    localeString,
+                    "A BCP-47 language tag (e.g. \"en-US\" or \"nl-NL\")");
         }
-        return false;
+
+        return locale;
     }
 
     /**
