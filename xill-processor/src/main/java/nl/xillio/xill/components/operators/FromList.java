@@ -59,9 +59,6 @@ public class FromList implements Processable {
         return result;
     }
 
-    @SuppressWarnings({
-            "unchecked"
-    })
     private InstructionFlow<MetaExpression> process(MetaExpression listMeta, MetaExpression indexMeta) {
 
         if (indexMeta.getType() != ExpressionDataType.ATOMIC || indexMeta.isNull()) {
@@ -94,7 +91,7 @@ public class FromList implements Processable {
     }
 
     private InstructionFlow<MetaExpression> getMetaExpressionObjectInstructionFlow(MetaExpression listMeta, MetaExpression indexMeta) {
-        MetaExpression objectResult = ((Map<String, MetaExpression>)listMeta.getValue()).get(indexMeta.getStringValue());
+        MetaExpression objectResult = listMeta.<Map<String, MetaExpression>>getValue().get(indexMeta.getStringValue());
         if (objectResult == null) {
             return InstructionFlow.doResume(ExpressionBuilderHelper.NULL);
         }
