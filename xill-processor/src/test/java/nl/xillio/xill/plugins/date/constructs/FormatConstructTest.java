@@ -39,24 +39,30 @@ public class FormatConstructTest {
         ZonedDateTime date = ZonedDateTime.now();
         //Date date = new nl.xillio.xill.plugins.date.data.Date(ZonedDateTime.now());
         MetaExpression dateExpression = mockDateExpression(date);
-        return new Object[][]{{dateExpression, mockStringExpression("yyyy-MM-dd")}, {dateExpression, mockNullExpression()}};
+        MetaExpression localeString = mockStringExpression("en-US");
+        MetaExpression nullExpression = mockNullExpression();
+        return new Object[][]{
+                {dateExpression, mockStringExpression("yyyy-MM-dd"), nullExpression},
+                {dateExpression, mockStringExpression("yyyy-MM-dd"), localeString},
+                {dateExpression, mockNullExpression(), nullExpression},
+                {dateExpression, mockNullExpression(), localeString}};
     }
 
     /**
      * Test the process method with both null and non-null format variable
      */
     @Test(dataProvider = "format")
-    public void testProcess(MetaExpression dateExpression, MetaExpression formatExpression) {
+    public void testProcess(MetaExpression dateExpression, MetaExpression formatExpression, MetaExpression localeExpression) {
         // Mock
         DateService dateService = mock(DateService.class);
         String returnString = "2015-8-3";
-        when(dateService.formatDate(any(), any())).thenReturn(returnString);
+        when(dateService.formatDate(any(), any(), any())).thenReturn(returnString);
 
         // Run
-        MetaExpression formatted = FormatConstruct.process(dateExpression, formatExpression, dateService);
+        MetaExpression formatted = FormatConstruct.process(dateExpression, formatExpression, localeExpression, dateService);
 
         // Verify
-        verify(dateService).formatDate(any(), any());
+        verify(dateService).formatDate(any(), any(), any());
 
         // Assert
         assertEquals(formatted.getStringValue(), returnString);
