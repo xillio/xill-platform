@@ -17,7 +17,10 @@ package nl.xillio.xill.plugins.date.constructs;
 
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
+import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.date.services.DateService;
+import nl.xillio.xill.plugins.date.services.DateServiceImpl;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -34,6 +37,13 @@ import static org.testng.Assert.assertEquals;
  * @author Geert Konijnendijk
  */
 public class FormatConstructTest extends TestUtils {
+    private FormatConstruct formatConstruct = new FormatConstruct();
+
+    @BeforeClass
+    public void initializeDateService() {
+        formatConstruct.setDateService(new DateServiceImpl());
+    }
+
     @DataProvider(name = "format")
     private Object[][] formatProvider() {
         ZonedDateTime date = ZonedDateTime.now();
@@ -65,5 +75,14 @@ public class FormatConstructTest extends TestUtils {
 
         // Assert
         assertEquals(formatted.getStringValue(), returnString);
+    }
+
+    @Test(expectedExceptions = OperationFailedException.class)
+    public void testIllegalFormat() {
+        process(
+                formatConstruct,
+                createDateTimeExpression(ZonedDateTime.now()),
+                fromValue("this is not a format")
+        );
     }
 }
