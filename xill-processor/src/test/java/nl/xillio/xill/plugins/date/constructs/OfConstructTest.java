@@ -18,9 +18,11 @@ package nl.xillio.xill.plugins.date.constructs;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.data.Date;
+import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.date.services.DateService;
-import org.testng.annotations.BeforeTest;
+import nl.xillio.xill.plugins.date.services.DateServiceImpl;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.time.ZoneId;
@@ -36,7 +38,10 @@ public class OfConstructTest extends TestUtils {
     private final String zoneId = "Europe/Amsterdam";
     private final Date date = mock(Date.class);
 
-    @BeforeTest
+    @BeforeClass
+    public void initializeDateService() {
+        ofConstruct.setDateService(new DateServiceImpl());
+    }
 
     /**
      * Test the process method under normal circumstances
@@ -80,6 +85,14 @@ public class OfConstructTest extends TestUtils {
 
         // Run
         process(ofConstruct, mockParameters("Wrong"));
+    }
+
+    /**
+     * Test the process method with an invalid range on one of the fields
+     */
+    @Test(expectedExceptions = OperationFailedException.class)
+    public void testProcessInvalidInputRange() {
+        process(ofConstruct, fromValue(1), fromValue(50), fromValue(1), fromValue(1), fromValue(1), fromValue(1));
     }
 
     /**

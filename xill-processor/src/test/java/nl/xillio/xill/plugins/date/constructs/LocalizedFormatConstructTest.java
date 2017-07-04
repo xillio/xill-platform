@@ -20,6 +20,8 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.plugins.date.data.Date;
 import nl.xillio.xill.plugins.date.services.DateService;
+import nl.xillio.xill.plugins.date.services.DateServiceImpl;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -40,6 +42,11 @@ import static org.testng.Assert.assertSame;
  */
 public class LocalizedFormatConstructTest extends TestUtils {
     private final LocalizedFormatConstruct construct = new LocalizedFormatConstruct();
+
+    @BeforeClass
+    public void initializeDateService() {
+        construct.setDateService(new DateServiceImpl());
+    }
 
     @DataProvider(name = "localeFormatPermutations")
     private Object[][] localeFormatProvider() {

@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.date.constructs;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.date.services.DateServiceImpl;
 import org.testng.annotations.BeforeClass;
@@ -30,7 +29,6 @@ import static org.testng.Assert.assertEquals;
 
 /**
  * Test the {@link FormatConstruct}
- *
  */
 public class FormatConstructTest extends TestUtils {
     private final FormatConstruct construct = new FormatConstruct();
