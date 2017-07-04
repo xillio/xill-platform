@@ -18,6 +18,7 @@ package nl.xillio.xill.plugins.date.constructs;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.data.Date;
+import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.date.services.DateService;
 import nl.xillio.xill.plugins.date.services.DateServiceImpl;
 import org.testng.Assert;
@@ -50,10 +51,10 @@ public class ParseConstructTest extends TestUtils {
                 {NULL, fromValue("yyyy-MM-dd"), fromValue("nl-NL")},
                 {fromValue("2015-08-03"), NULL, fromValue("nl-NL")},
                 {NULL, NULL, fromValue("nl-NL")}
-                };
-                }
+        };
+    }
 
-                @DataProvider
+    @DataProvider
     private Object[][] parametersWithoutLocale() {
         return new Object[][]{
                 {fromValue("2015-08-03"), fromValue("yyyy-MM-dd")},
@@ -156,5 +157,14 @@ public class ParseConstructTest extends TestUtils {
         );
 
         Assert.assertEquals(resultEnglish, resultDefault);
+    }
+
+    @Test(expectedExceptions = OperationFailedException.class)
+    public void testInvalidFormat() {
+        process(
+                parseConstruct,
+                fromValue("Mon Jun 12 2017 09:52:45 GMT+0200"),
+                fromValue("invalid format")
+        );
     }
 }

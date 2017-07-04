@@ -23,7 +23,6 @@ import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.date.BaseDateConstruct;
-import nl.xillio.xill.plugins.date.services.DateService;
 
 import java.time.DateTimeException;
 import java.time.ZoneId;
@@ -36,7 +35,8 @@ import java.time.ZoneId;
 public class OfConstruct extends BaseDateConstruct {
 
     @Override
-    @SuppressWarnings("squid:S2095")  // Suppress "Resources should be closed": Arguments do not need to be closed here, because ConstructProcessor closes them
+    @SuppressWarnings("squid:S2095")
+    // Suppress "Resources should be closed": Arguments do not need to be closed here, because ConstructProcessor closes them
     public ConstructProcessor prepareProcess(final ConstructContext context) {
         Argument args[] = {
                 new Argument("year"), new Argument("month"),
