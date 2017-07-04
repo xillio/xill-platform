@@ -97,7 +97,7 @@ public class ParseConstructTest extends TestUtils {
     }
 
     @Test
-    private void testDefaultValueLocale() {
+    public void testDefaultValueLocale() {
         String format = "EEE MMM dd yyyy HH:mm:ss 'GMT'Z";
 
         MetaExpression resultEnglish = process(

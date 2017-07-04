@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,9 +15,9 @@
  */
 package nl.xillio.xill.plugins.date.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
-import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.date.data.Date;
 import nl.xillio.xill.plugins.date.services.DateService;
 import org.testng.annotations.DataProvider;
@@ -39,7 +39,8 @@ import static org.testng.Assert.assertSame;
  *
  * @author Geert Konijnendijk
  */
-public class LocalizedFormatConstructTest {
+public class LocalizedFormatConstructTest extends TestUtils {
+    private final LocalizedFormatConstruct construct = new LocalizedFormatConstruct();
 
     @DataProvider(name = "localeFormatPermutations")
     private Object[][] localeFormatProvider() {
@@ -94,13 +95,14 @@ public class LocalizedFormatConstructTest {
 
         // Mock
         DateService dateService = mock(DateService.class);
+        construct.setDateService(dateService);
         String returnString = "2015-08-03 13:40";
         when(dateService.formatDateLocalized(any(), any(), any(), any())).thenReturn(returnString);
         Date date = mock(Date.class);
         MetaExpression dateExpression = mockDateExpression(date);
 
         // Run
-        MetaExpression formatted = LocalizedFormatConstruct.process(dateExpression, localeExpression, dateStyleExpression, timeStyleExpression, dateService);
+        MetaExpression formatted = process(construct, dateExpression, localeExpression, dateStyleExpression, timeStyleExpression);
 
         // Verify
         verify(dateService).formatDateLocalized(date, expectedDateStyle, expectedTimeStyle, expectedLocale);
@@ -124,16 +126,12 @@ public class LocalizedFormatConstructTest {
     public void testProcessWrongFormat(MetaExpression dateStyleExpression, MetaExpression timeStyleExpression) {
         // Mock
         DateService dateService = mock(DateService.class);
+        construct.setDateService(dateService);
         ZonedDateTime date = ZonedDateTime.now();
         MetaExpression dateExpression = mockDateExpression(date);
 
         // Run
-        MetaExpression formatted = LocalizedFormatConstruct.process(dateExpression, null, dateStyleExpression, timeStyleExpression, dateService);
-
-        // Verify
-        verify(dateService, never()).formatDateLocalized(any(), any(), any(), any());
-
-        // Assert
+        process(construct, dateExpression, NULL, dateStyleExpression, timeStyleExpression);
 
     }
 }

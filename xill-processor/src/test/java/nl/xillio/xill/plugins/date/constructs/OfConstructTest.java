@@ -15,10 +15,12 @@
  */
 package nl.xillio.xill.plugins.date.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.date.services.DateService;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.time.ZoneId;
@@ -29,11 +31,13 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertSame;
 
-public class OfConstructTest {
+public class OfConstructTest extends TestUtils {
 
-    String zoneId = "Europe/Amsterdam";
+    private final OfConstruct ofConstruct = new OfConstruct();
+    private final String zoneId = "Europe/Amsterdam";
+    private final Date date = mock(Date.class);
 
-    Date date = mock(Date.class);
+    @BeforeTest
 
     /**
      * Test the process method under normal circumstances
@@ -42,10 +46,9 @@ public class OfConstructTest {
     public void testProcess() {
         // Mock
         DateService dateService = mockDateService(date);
-        MetaExpression[] values = mockParameters(zoneId);
 
         // Run
-        MetaExpression dateExpression = OfConstruct.process(values, dateService);
+        MetaExpression dateExpression = process(ofConstruct, mockParameters(zoneId));
 
         // Verify
         verify(dateService).constructDate(0, 1, 2, 3, 4, 5, 6, ZoneId.of(zoneId));
@@ -60,17 +63,12 @@ public class OfConstructTest {
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "^.*cannot\\sbe\\snull.*$")
     public void testProcessInputNull() {
         // Mock
-        DateService dateService = mockDateService(date);
+        mockDateService(date);
         MetaExpression[] values = mockParameters(zoneId);
-        values[0] = mockNullExpression();
+        values[0] = NULL;
 
         // Run
-        MetaExpression dateExpression = OfConstruct.process(values, dateService);
-
-        // Verify
-        verify(dateService, never()).constructDate(anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), any());
-
-        // Assert
+        process(ofConstruct, mockParameters(zoneId));
     }
 
     /**
@@ -79,16 +77,10 @@ public class OfConstructTest {
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = "^.*Invalid\\szone\\sID.*$")
     public void testProcessInvalidZone() {
         // Mock
-        DateService dateService = mockDateService(date);
-        MetaExpression[] values = mockParameters("Wrong");
+        mockDateService(date);
 
         // Run
-        MetaExpression dateExpression = OfConstruct.process(values, dateService);
-
-        // Verify
-        verify(dateService, never()).constructDate(anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), any());
-
-        // Assert
+        process(ofConstruct, mockParameters("Wrong"));
     }
 
     /**
@@ -99,16 +91,24 @@ public class OfConstructTest {
     private DateService mockDateService(Date date) {
         DateService dateService = mock(DateService.class);
         when(dateService.constructDate(anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), any())).thenReturn(date);
+        ofConstruct.setDateService(dateService);
         return dateService;
     }
 
     /**
      * @param zoneId ZoneId to use in the parameters
-     * @return An array of input parameters for the {@link OfConstruct#process(MetaExpression[], DateService)} method
+     * @return An array of input parameters
      */
     private MetaExpression[] mockParameters(String zoneId) {
-        MetaExpression[] values =
-                {mockIntExpression(0), mockIntExpression(1), mockIntExpression(2), mockIntExpression(3), mockIntExpression(4), mockIntExpression(5), mockIntExpression(6), mockStringExpression(zoneId)};
-        return values;
+        return new MetaExpression[]{
+                fromValue(0),
+                fromValue(1),
+                fromValue(3),
+                fromValue(4),
+                fromValue(5),
+                fromValue(6),
+                fromValue(7),
+                fromValue(zoneId)
+        };
     }
 }
