@@ -19,7 +19,6 @@ import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.date.services.DateService;
 import nl.xillio.xill.plugins.date.services.DateServiceImpl;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -27,8 +26,7 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import static nl.xillio.xill.plugins.date.utils.MockUtils.mockBoolExpression;
-import static nl.xillio.xill.plugins.date.utils.MockUtils.mockDateExpression;
+import static nl.xillio.xill.plugins.date.constructs.IsBeforeConstructTest.createDateTimeExpression;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.*;
@@ -49,12 +47,12 @@ public class DiffConstructTest extends TestUtils {
         Map<String, Double> absoluteDifference = new HashMap<>();
         absoluteDifference.put("Unit1", 10.0);
         absoluteDifference.put("Unit2", 20.0);
-        MetaExpression trueExpression = mockBoolExpression(true);
+        MetaExpression trueExpression = fromValue(true);
 
         Map<String, Double> relativeDifference = new HashMap<>();
         relativeDifference.put("Unit1", -10.0);
         relativeDifference.put("Unit2", 20.0);
-        MetaExpression falseExpression = mockBoolExpression(false);
+        MetaExpression falseExpression = fromValue(false);
 
         return new Object[][]{{absoluteDifference, trueExpression}, {relativeDifference, falseExpression}};
     }
@@ -67,18 +65,18 @@ public class DiffConstructTest extends TestUtils {
      */
     @Test(dataProvider = "differences")
     public void testProcess(Map<String, Number> differences, MetaExpression absolute) {
-        // Mock
+        DiffConstruct diffConstruct = new DiffConstruct();
+
         ZonedDateTime date1 = ZonedDateTime.now();
         ZonedDateTime date2 = ZonedDateTime.now();
 
-        MetaExpression date1Expression = mockDateExpression(date1);
-        MetaExpression date2Expression = mockDateExpression(date2);
+        MetaExpression date1Expression = createDateTimeExpression(date1);
+        MetaExpression date2Expression = createDateTimeExpression(date2);
 
+        // Mock
         DateService dateService = mock(DateService.class);
         when(dateService.difference(any(), any(), anyBoolean())).thenReturn(differences);
-
-        DiffConstruct diffConstruct = new DiffConstruct();
-        diffConstruct.setDateService(dateService);
+        diffConstruct.setDateService(new DateServiceImpl());
 
         // Run
         MetaExpression difference = process(diffConstruct, date1Expression, date2Expression, absolute);
