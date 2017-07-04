@@ -70,36 +70,48 @@ public class FromList implements Processable {
 
         switch (listMeta.getType()) {
             case LIST:
-                if (Double.isNaN(indexMeta.getNumberValue().doubleValue())) {
-                    throw new RobotRuntimeException("The list does not contain any element called '" + indexMeta.getStringValue() + "' (a list does not have named elements).");
-                }
-                List<MetaExpression> listMetas = listMeta.getValue();
-                int intIndex = indexMeta.getNumberValue().intValue();
-                if (intIndex < 0 || intIndex >= listMetas.size()) {
-                    throw new RobotRuntimeException("Illegal value for list index: " + intIndex);
-                }
-                MetaExpression listResult = listMetas.get(intIndex);
-                return InstructionFlow.doResume(listResult);
+                return getMetaExpressionListInstructionFlow(listMeta, indexMeta);
             case OBJECT:
-                MetaExpression objectResult = ((Map<String, MetaExpression>)listMeta.getValue()).get(indexMeta.getStringValue());
-                if (objectResult == null) {
-                    return InstructionFlow.doResume(ExpressionBuilderHelper.NULL);
-                }
-                return InstructionFlow.doResume(objectResult);
+                return getMetaExpressionObjectInstructionFlow(listMeta, indexMeta);
             case ATOMIC:
-                String message = "Cannot get member '" + indexMeta.getStringValue() + "' from ATOMIC value";
-
-                // Get the name of the atomic, check if it can be used.
-                String variableName = getVariableName(list);
-                if (variableName != null) {
-                    message += " " + variableName;
-                }
-                message += ".";
-
+                String message = getMemberFromAtomicErrorMessage(indexMeta);
                 throw new RobotRuntimeException(message);
             default:
                 throw new NotImplementedException("This type has not been implemented.");
         }
+    }
+
+    private String getMemberFromAtomicErrorMessage(MetaExpression indexMeta) {
+        String message = "Cannot get member '" + indexMeta.getStringValue() + "' from ATOMIC value";
+
+        // Get the name of the atomic, check if it can be used.
+        String variableName = getVariableName(list);
+        if (variableName != null) {
+            message += " " + variableName;
+        }
+        message += ".";
+        return message;
+    }
+
+    private InstructionFlow<MetaExpression> getMetaExpressionObjectInstructionFlow(MetaExpression listMeta, MetaExpression indexMeta) {
+        MetaExpression objectResult = ((Map<String, MetaExpression>)listMeta.getValue()).get(indexMeta.getStringValue());
+        if (objectResult == null) {
+            return InstructionFlow.doResume(ExpressionBuilderHelper.NULL);
+        }
+        return InstructionFlow.doResume(objectResult);
+    }
+
+    private InstructionFlow<MetaExpression> getMetaExpressionListInstructionFlow(MetaExpression listMeta, MetaExpression indexMeta) {
+        if (Double.isNaN(indexMeta.getNumberValue().doubleValue())) {
+            throw new RobotRuntimeException("The list does not contain any element called '" + indexMeta.getStringValue() + "' (a list does not have named elements).");
+        }
+        List<MetaExpression> listMetas = listMeta.getValue();
+        int intIndex = indexMeta.getNumberValue().intValue();
+        if (intIndex < 0 || intIndex >= listMetas.size()) {
+            throw new RobotRuntimeException("Illegal value for list index: " + intIndex);
+        }
+        MetaExpression listResult = listMetas.get(intIndex);
+        return InstructionFlow.doResume(listResult);
     }
 
     private String getVariableName(Processable listProcessable) {
