@@ -63,7 +63,7 @@ public interface DateService extends XillService {
      * @param format The format String according to
      * @return A new {@link Date}
      */
-    Date parseDate(String date, String format);
+    Date parseDate(String date, String format, String locale);
 
     /**
      * Adds a number of different time units to a {@link Date}.
@@ -168,4 +168,6 @@ public interface DateService extends XillService {
      * @return True if the date1 is after date2, otherwise false
      */
     boolean isAfter(Date date1, Date date2);
+
+    boolean isValidLocale(String locale);
 }

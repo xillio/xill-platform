@@ -72,12 +72,18 @@ public class ConstructCall implements Processable {
                 debugger.handle(e);
             }
 
+            if (debugger.shouldStop())
+                return InstructionFlow.doReturn();
+
             if (!processor.setArgument(i, result)) {
                 throw new RobotRuntimeException("Wrong type for argument `" + processor.getArgumentName(i) + "` in " + processor.toString(construct.getName()) + " expected [" + processor.getArgumentType(i) + "] but received [" + result.getType() + "]");
             }
         }
 
         try {
+
+            if (debugger.shouldStop())
+                return InstructionFlow.doReturn();
 
             // Process
             return InstructionFlow.doResume(processor.process());
