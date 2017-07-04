@@ -18,6 +18,8 @@ package nl.xillio.xill.plugins.date.constructs;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.date.services.DateService;
+import nl.xillio.xill.plugins.date.services.DateServiceImpl;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -34,7 +36,6 @@ import static org.testng.Assert.assertEquals;
  * @author Geert Konijnendijk
  */
 public class FormatConstructTest extends TestUtils {
-
     @DataProvider(name = "format")
     private Object[][] formatProvider() {
         ZonedDateTime date = ZonedDateTime.now();
@@ -59,8 +60,11 @@ public class FormatConstructTest extends TestUtils {
         String returnString = "2015-8-3";
         when(dateService.formatDate(any(), any(), any())).thenReturn(returnString);
 
+        FormatConstruct formatConstruct = new FormatConstruct();
+        formatConstruct.setDateService(dateService);
+
         // Run
-        MetaExpression formatted = FormatConstruct.process(dateExpression, formatExpression, localeExpression, dateService);
+        MetaExpression formatted = process(formatConstruct, dateExpression, formatExpression, localeExpression);
 
         // Verify
         verify(dateService).formatDate(any(), any(), any());

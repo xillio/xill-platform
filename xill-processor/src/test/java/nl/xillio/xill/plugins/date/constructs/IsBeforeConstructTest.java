@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.date.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.date.services.DateService;
 import org.testng.annotations.Test;
@@ -26,12 +27,14 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
 
-public class IsBeforeConstructTest {
+public class IsBeforeConstructTest extends TestUtils {
     /**
      * Test the process method under normal circumstances
      */
     @Test
     public void testProcess() {
+        IsBeforeConstruct isBeforeConstruct = new IsBeforeConstruct();
+
         // Mock
         ZonedDateTime date1 = ZonedDateTime.now();
         ZonedDateTime date2 = ZonedDateTime.now();
@@ -41,9 +44,10 @@ public class IsBeforeConstructTest {
 
         DateService dateService = mock(DateService.class);
         when(dateService.isBefore(any(), any())).thenReturn(false);
+        isBeforeConstruct.setDateService(dateService);
 
         // Run
-        MetaExpression result = IsBeforeConstruct.process(date1Expression, date2Expression, dateService);
+        MetaExpression result = process(isBeforeConstruct, date1Expression, date2Expression);
 
         // Verify
         verify(dateService).isBefore(any(), any());
