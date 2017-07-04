@@ -39,14 +39,14 @@ public class FromList implements Processable {
     }
 
     @Override
-    public InstructionFlow<MetaExpression> process(final Debugger debugger) throws RobotRuntimeException {
+    public InstructionFlow<MetaExpression> process(final Debugger debugger) {
 
         MetaExpression listMeta = this.list.process(debugger).get();
         MetaExpression indexMeta = this.index.process(debugger).get();
         listMeta.registerReference();
         indexMeta.registerReference();
 
-        InstructionFlow<MetaExpression> result = process(listMeta, indexMeta, debugger);
+        InstructionFlow<MetaExpression> result = process(listMeta, indexMeta);
 
         result.get().preventDisposal();
 
@@ -61,7 +61,7 @@ public class FromList implements Processable {
     @SuppressWarnings({
             "unchecked"
     })
-    private InstructionFlow<MetaExpression> process(MetaExpression listMeta, MetaExpression indexMeta, Debugger debugger) {
+    private InstructionFlow<MetaExpression> process(MetaExpression listMeta, MetaExpression indexMeta) {
 
         if (indexMeta.getType() != ExpressionDataType.ATOMIC || indexMeta.isNull()) {
             return InstructionFlow.doResume(ExpressionBuilderHelper.NULL);
@@ -72,21 +72,21 @@ public class FromList implements Processable {
                 if (Double.isNaN(indexMeta.getNumberValue().doubleValue())) {
                     throw new RobotRuntimeException("The list does not contain any element called '" + indexMeta.getStringValue() + "' (a list does not have named elements).");
                 }
-                List<MetaExpression> list = listMeta.getValue();
-                int index = indexMeta.getNumberValue().intValue();
-                if (index < 0 || index >= list.size()) {
-                    throw new RobotRuntimeException("Illegal value for list index: " + index);
+                List<MetaExpression> listMetas = listMeta.getValue();
+                int intIndex = indexMeta.getNumberValue().intValue();
+                if (intIndex < 0 || intIndex >= listMetas.size()) {
+                    throw new RobotRuntimeException("Illegal value for list index: " + intIndex);
                 }
-                MetaExpression listResult = list.get(index);
+                MetaExpression listResult = listMetas.get(intIndex);
                 return InstructionFlow.doResume(listResult);
             case OBJECT:
-                MetaExpression objectResult = ((Map<String, MetaExpression>) listMeta.getValue()).get(indexMeta.getStringValue());
+                MetaExpression objectResult = ((Map<String, MetaExpression>)listMeta.getValue()).get(indexMeta.getStringValue());
                 if (objectResult == null) {
                     return InstructionFlow.doResume(ExpressionBuilderHelper.NULL);
                 }
                 return InstructionFlow.doResume(objectResult);
             case ATOMIC:
-                throw new RobotRuntimeException("Cannot get member of ATOMIC value.");
+                throw new RobotRuntimeException("Cannot get member '" + indexMeta.getStringValue() + "' from ATOMIC value.");
             default:
                 throw new NotImplementedException("This type has not been implemented.");
         }
