@@ -81,10 +81,9 @@ public class FromList implements Processable {
     private String getMemberFromAtomicErrorMessage(MetaExpression listMeta, MetaExpression indexMeta) {
         String message = "Cannot get member '" + indexMeta.getStringValue() + "' from ATOMIC value";
 
-        // Get the name of the atomic, check if it can be used.
-        String variableName = getVariableName(list);
-        if (variableName != null) {
-            message += " " + variableName;
+        // Check if the list is a variable, add the name to the message.
+        if (list instanceof VariableAccessExpression) {
+            message += " '" + ((VariableAccessExpression)list).getVariableName() + "'";
         }
 
         // Check if the list is null.
@@ -114,19 +113,6 @@ public class FromList implements Processable {
         }
         MetaExpression listResult = listMetas.get(intIndex);
         return InstructionFlow.doResume(listResult);
-    }
-
-    private String getVariableName(Processable listProcessable) {
-        if (listProcessable instanceof VariableAccessExpression) {
-            // Get the name of the variable.
-            return "'" + ((VariableAccessExpression)listProcessable).getVariableName() + "'";
-        } else if (listProcessable instanceof FromList) {
-            // Try to get the name of the root element in the chain.
-            String rootName = getVariableName(((FromList)listProcessable).list);
-            return rootName != null ? "in chain starting with " + rootName : null;
-        }
-
-        return null;
     }
 
     @Override

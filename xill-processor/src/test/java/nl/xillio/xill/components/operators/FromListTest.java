@@ -79,7 +79,7 @@ public class FromListTest extends TestUtils {
         process(process(createMap(key, "bar"), fromValue(key)), fromValue("member"));
     }
 
-    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*'member'.*in chain starting with 'obj'.*")
+    @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*'member'.*")
     private void TestGetValueFromAtomicInObjectVariable() {
         String key = "foo";
 

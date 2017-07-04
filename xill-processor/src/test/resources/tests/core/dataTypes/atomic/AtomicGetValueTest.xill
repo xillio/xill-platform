@@ -45,7 +45,7 @@ do {
 do {
     object.number.member;
 } fail(e) {
-    Assert.equal(e.message, expectedPrefix :: " in chain starting with 'object'.");
+    Assert.equal(e.message, expectedPrefix :: ".");
 } success {
     Assert.error(noError);
 }
@@ -72,4 +72,33 @@ do {
     Assert.equal(e.message, expectedPrefix :: " (value is null).");
 } success {
     Assert.error(noError);
+}
+
+foreach (key, value in object) {
+    do {
+        key.member;
+    } fail(e) {
+        Assert.equal(e.message, expectedPrefix :: " 'key'.");
+    } success {
+        Assert.error(noError);
+    }
+    
+    do {
+        value.member;
+    } fail(e) {
+        Assert.equal(e.message, expectedPrefix :: " 'value'.");
+    } success {
+        Assert.error(noError);
+    }
+}
+
+func(true);
+function func(variable) {
+    do {
+        variable.member;
+    } fail(e) {
+        Assert.equal(e.message, expectedPrefix :: " 'variable'.");
+    } success {
+        Assert.error(noError);
+    }
 }
