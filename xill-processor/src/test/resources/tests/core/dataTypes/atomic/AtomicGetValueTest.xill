@@ -61,3 +61,10 @@ do {
 } fail(e) {
     Assert.equal(e.message, expectedPrefix :: ".");
 }
+
+do {
+    null.member;
+    Assert.error(noError);
+} fail(e) {
+    Assert.equal(e.message, expectedPrefix :: " (value is null).");
+}
