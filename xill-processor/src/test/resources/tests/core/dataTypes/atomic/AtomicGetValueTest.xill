@@ -14,26 +14,50 @@
  * limitations under the License.
  */
 /*
-* Specification: Trying to get a value from an ATOMIC MUST throw an error
-* Input: An atomic
+* Specification: Trying to get a value from an ATOMIC MUST throw a descriptive error
+* Input: Different ATOMIC values
 * Expected: An error
 */
 
 use Assert;
 
+var noError = "Getting value from an ATOMIC did not throw an error.";
+var expectedPrefix = "Cannot get member 'member' from ATOMIC value";
+
+// Test data.
 var atomic = true;
 var object = {
     "number": 8
 };
+function foo() {
+    return "bar";
+}
 
+// Tests.
 do {
     atomic.member;
-} success {
-    Assert.error("Getting value from an ATOMIC did not throw an error.");
+    Assert.error(noError);
+} fail(e) {
+    Assert.equal(e.message, expectedPrefix :: " 'atomic'.");
 }
 
 do {
     object.number.member;
-} success {
-    Assert.error("Getting value from an ATOMIC in chain did not throw an error.");
+    Assert.error(noError);
+} fail(e) {
+    Assert.equal(e.message, expectedPrefix :: " in chain starting with 'object'.");
+}
+
+do {
+    foo().member;
+    Assert.error(noError);
+} fail(e) {
+    Assert.equal(e.message, expectedPrefix :: ".");
+}
+
+do {
+    false.member;
+    Assert.error(noError);
+} fail(e) {
+    Assert.equal(e.message, expectedPrefix :: ".");
 }
