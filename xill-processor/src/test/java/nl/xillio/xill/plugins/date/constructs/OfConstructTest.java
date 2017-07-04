@@ -22,7 +22,6 @@ import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.date.services.DateService;
 import nl.xillio.xill.plugins.date.services.DateServiceImpl;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.time.ZoneId;
@@ -37,11 +36,6 @@ public class OfConstructTest extends TestUtils {
     private final OfConstruct ofConstruct = new OfConstruct();
     private final String zoneId = "Europe/Amsterdam";
     private final Date date = mock(Date.class);
-
-    @BeforeClass
-    public void initializeDateService() {
-        ofConstruct.setDateService(new DateServiceImpl());
-    }
 
     /**
      * Test the process method under normal circumstances
@@ -92,6 +86,7 @@ public class OfConstructTest extends TestUtils {
      */
     @Test(expectedExceptions = OperationFailedException.class)
     public void testProcessInvalidInputRange() {
+        ofConstruct.setDateService(new DateServiceImpl());
         process(ofConstruct, fromValue(1), fromValue(50), fromValue(1), fromValue(1), fromValue(1), fromValue(1));
     }
 
