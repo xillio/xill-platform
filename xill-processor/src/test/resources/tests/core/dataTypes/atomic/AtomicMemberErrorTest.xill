@@ -1,0 +1,104 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+* Specification: Trying to get a value from an ATOMIC MUST throw a descriptive error
+* Input: Different ATOMIC values
+* Expected: An error
+*/
+
+use Assert;
+
+var noError = "Getting value from an ATOMIC did not throw an error.";
+var expectedPrefix = "Cannot get member 'member' from ATOMIC value";
+
+// Test data.
+var atomic = true;
+var object = {
+    "number": 8
+};
+function foo() {
+    return "bar";
+}
+
+// Tests.
+do {
+    atomic.member;
+} fail(e) {
+    Assert.equal(e.message, expectedPrefix :: " 'atomic'.");
+} success {
+    Assert.error(noError);
+}
+
+do {
+    object.number.member;
+} fail(e) {
+    Assert.equal(e.message, expectedPrefix :: ".");
+} success {
+    Assert.error(noError);
+}
+
+do {
+    foo().member;
+} fail(e) {
+    Assert.equal(e.message, expectedPrefix :: ".");
+} success {
+    Assert.error(noError);
+}
+
+do {
+    false.member;
+} fail(e) {
+    Assert.equal(e.message, expectedPrefix :: ".");
+} success {
+    Assert.error(noError);
+}
+
+do {
+    null.member;
+} fail(e) {
+    Assert.equal(e.message, expectedPrefix :: " (value is null).");
+} success {
+    Assert.error(noError);
+}
+
+foreach (key, value in object) {
+    do {
+        key.member;
+    } fail(e) {
+        Assert.equal(e.message, expectedPrefix :: " 'key'.");
+    } success {
+        Assert.error(noError);
+    }
+    
+    do {
+        value.member;
+    } fail(e) {
+        Assert.equal(e.message, expectedPrefix :: " 'value'.");
+    } success {
+        Assert.error(noError);
+    }
+}
+
+func(true);
+function func(variable) {
+    do {
+        variable.member;
+    } fail(e) {
+        Assert.equal(e.message, expectedPrefix :: " 'variable'.");
+    } success {
+        Assert.error(noError);
+    }
+}
