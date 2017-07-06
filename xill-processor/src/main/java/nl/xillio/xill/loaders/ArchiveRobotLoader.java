@@ -71,7 +71,7 @@ public class ArchiveRobotLoader extends AbstractRobotLoader {
 
     private URL createUrl(Path path) {
         try {
-            return path.toUri().toURL();
+            return URI.create("jar:" + xipFile.toUri() + "!/" + path).toURL();
         } catch (MalformedURLException e) {
             LOGGER.error("Malformed url for archive: " + xipFile.toString() + " and file: " + path, e);
             return null;
