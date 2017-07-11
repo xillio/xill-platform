@@ -21,7 +21,6 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.plugins.date.BaseDateConstruct;
-import nl.xillio.xill.plugins.date.services.DateService;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -37,10 +36,14 @@ public class DiffConstruct extends BaseDateConstruct {
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
-        return new ConstructProcessor((dateVar, otherVar, absolute) -> process(dateVar, otherVar, absolute, getDateService()), new Argument("date"), new Argument("other"), new Argument("absolute", TRUE));
+        return new ConstructProcessor(this::process,
+                new Argument("date"),
+                new Argument("other"),
+                new Argument("absolute", TRUE)
+        );
     }
 
-    static MetaExpression process(final MetaExpression dateVar, final MetaExpression otherVar, final MetaExpression absolute, DateService dateService) {
+    private MetaExpression process(final MetaExpression dateVar, final MetaExpression otherVar, final MetaExpression absolute) {
         Date date = getDate(dateVar, "date");
         Date other = getDate(otherVar, "other");
 

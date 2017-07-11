@@ -15,61 +15,67 @@
  */
 package nl.xillio.xill.plugins.date.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.data.Date;
+import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.date.services.DateService;
+import nl.xillio.xill.plugins.date.services.DateServiceImpl;
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import static nl.xillio.xill.plugins.date.utils.MockUtils.mockNullExpression;
-import static nl.xillio.xill.plugins.date.utils.MockUtils.mockStringExpression;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Test the {@link ParseConstruct}
  *
- * @author Geert Konijnendijk
  */
-public class ParseConstructTest {
+public class ParseConstructTest extends TestUtils {
 
-    @DataProvider(name = "dateFormat")
-    private Object[][] generateDateAndFormat() {
-        MetaExpression formatString = mockStringExpression("yyyy-MM-dd");
-        MetaExpression dateString = mockStringExpression("2015-08-03");
-        MetaExpression nullExpression = mockNullExpression();
-        return new Object[][]{{dateString, formatString}, {nullExpression, formatString}, {dateString, nullExpression}, {nullExpression, nullExpression}};
+    private ParseConstruct construct = new ParseConstruct();
+
+    @BeforeClass
+    private void initializeConstruct() {
+        construct.setDateService(new DateServiceImpl());
     }
 
-    /**
-     * Test the process method under normal circumstances
-     *
-     * @param dateString   Date variable
-     * @param formatString Format variable
-     */
-    @Test(dataProvider = "dateFormat")
-    public void testProcess(MetaExpression dateString, MetaExpression formatString) {
-        // Mock
-        DateService dateService = mock(DateService.class);
-        // ZonedDateTime is final, don't mock
-        Date parsed = mock(Date.class);
-        when(dateService.now()).thenReturn(parsed);
-        when(dateService.parseDate(any(), any())).thenReturn(parsed);
+    @Test
+    public void testParseDate() {
+        assertEquals(
+                process(
+                        construct,
+                        fromValue("maandag 10 juli"),
+                        fromValue("EEEE dd MMMM"),
+                        fromValue("nl-NL")
+                ).getMeta(Date.class).getZoned(),
+                ZonedDateTime.of(2017, 7, 10, 0, 0, 0, 0, ZoneId.systemDefault())
+        );
+    }
 
-        // Run
-        MetaExpression parsedExpression = ParseConstruct.process(dateString, formatString, dateService);
+    @Test
+    public void testTodayDefaultFormat() {
+        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime result = process(construct).getMeta(Date.class).getZoned();
 
-        // Verify
-        if (dateString.isNull()) {
-            verify(dateService).now();
-            verify(dateService, never()).parseDate(any(), any());
-        } else {
-            verify(dateService, never()).now();
-            verify(dateService).parseDate(dateString.getStringValue(), formatString.getStringValue());
-        }
+        assertTrue(now.isBefore(result.plusSeconds(1)));
+        assertTrue(now.isAfter(result.minusMinutes(1)));
+    }
 
-        // Assert
-        assertSame(parsedExpression.getMeta(Date.class), parsed);
+    @Test(expectedExceptions = OperationFailedException.class, expectedExceptionsMessageRegExp = ".*format.*")
+    public void testInvalidPattern() {
+        process(
+                construct,
+                fromValue("2016"),
+                fromValue("I DONT KNOW!")
+        );
     }
 }
