@@ -18,10 +18,11 @@ package nl.xillio.xill.maven.services;
 import org.codehaus.plexus.archiver.FileSet;
 import org.codehaus.plexus.archiver.util.DefaultFileSet;
 
+import java.io.File;
 import java.nio.file.Path;
 
 public class FileSetFactory {
-    public static final String ROBOTS_DIRECTORY = "robots/";
+    public static final String ROBOTS_DIRECTORY = "robots" + File.separator;
 
     public FileSet createFileSet(Path directory) {
         DefaultFileSet fileSet = new DefaultFileSet(directory.toFile());
