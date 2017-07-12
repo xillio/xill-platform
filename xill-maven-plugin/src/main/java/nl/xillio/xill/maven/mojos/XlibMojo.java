@@ -18,10 +18,10 @@ package nl.xillio.xill.maven.mojos;
 import nl.xillio.xill.maven.services.FileSetFactory;
 import nl.xillio.xill.maven.services.XillEnvironmentService;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.*;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.*;
-import org.apache.maven.plugins.annotations.Mojo;
 import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.ArchiverException;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -95,12 +95,19 @@ public class XlibMojo extends AbstractXlibMojo {
 
         // Set the destination file and add the files to the archive.
         archiver.setDestFile(archive);
-        archiver.addFileSet(fileSetFactory.createFileSet(robotsFolder.toPath()));
         archiver.addFileSet(fileSetFactory.createFileSet(getClassesDirectory()));
+        archiver.addFileSet(fileSetFactory.createFileSet(robotsFolder.toPath()));
+
         // Try to create the archive.
         try {
+            // Tell the archiver to leave the first file,
+            archiver.setDuplicateBehavior(Archiver.DUPLICATES_PRESERVE);
+
             archiver.createArchive();
             return archive;
+        } catch (ArchiverException e) {
+            e.printStackTrace();
+            throw new MojoExecutionException("Error copying files. ", e);
         } catch (IOException e) {
             throw new MojoExecutionException("Error assembling xlib.", e);
         }
