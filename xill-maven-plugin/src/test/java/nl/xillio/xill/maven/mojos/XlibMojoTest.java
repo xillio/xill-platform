@@ -25,6 +25,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import static org.mockito.Mockito.*;
 
@@ -46,7 +47,7 @@ public class XlibMojoTest {
 
         when(fileSetFactory.createFileSet(any())).thenReturn(fileSet);
 
-        mojo = new XlibMojo(null, fileSetFactory, artifact, finalName, outputDirectory, archiver);
+        mojo = new XlibMojo(null, fileSetFactory, artifact, finalName, outputDirectory, archiver, new File("/"));
         mojo.setClassesDirectory(new File("classes"));
     }
 
@@ -58,7 +59,7 @@ public class XlibMojoTest {
         mojo.execute();
 
         verify(archiver, times(1)).setDestFile(archive);
-        verify(archiver, times(1)).addFileSet(fileSet);
+        verify(archiver, times(2)).addFileSet(fileSet);
         verify(archiver, times(1)).createArchive();
         verify(artifact, times(1)).setFile(archive);
     }

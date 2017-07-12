@@ -18,8 +18,9 @@ package nl.xillio.xill.maven.mojos;
 import nl.xillio.xill.maven.services.FileSetFactory;
 import nl.xillio.xill.maven.services.XillEnvironmentService;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.*;
 import org.apache.maven.plugins.annotations.*;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.codehaus.plexus.archiver.Archiver;
 
 import javax.inject.Inject;
@@ -39,6 +40,8 @@ public class XlibMojo extends AbstractXlibMojo {
     private String finalName;
     @Parameter(defaultValue = "${project.artifacts}", readonly = true, required = true)
     private Collection<Artifact> artifacts;
+    @Parameter(defaultValue = "${project.build.directory}/robots", readonly= true, required = true)
+    private File robotsFolder;
 
     /**
      * The output directory to create the xlib archive in.
@@ -64,12 +67,13 @@ public class XlibMojo extends AbstractXlibMojo {
     }
 
     public XlibMojo(XillEnvironmentService environmentService, FileSetFactory fileSetFactory,
-                    Artifact artifact, String finalName, File outputDirectory, Archiver archiver) {
+                    Artifact artifact, String finalName, File outputDirectory, Archiver archiver, File robotsFolder) {
         this(environmentService, fileSetFactory);
         this.artifact = artifact;
         this.finalName = finalName;
         this.outputDirectory = outputDirectory;
         this.archiver = archiver;
+        this.robotsFolder = robotsFolder;
     }
 
     public void execute() throws MojoExecutionException {
@@ -91,8 +95,8 @@ public class XlibMojo extends AbstractXlibMojo {
 
         // Set the destination file and add the files to the archive.
         archiver.setDestFile(archive);
+        archiver.addFileSet(fileSetFactory.createFileSet(robotsFolder.toPath()));
         archiver.addFileSet(fileSetFactory.createFileSet(getClassesDirectory()));
-
         // Try to create the archive.
         try {
             archiver.createArchive();
@@ -104,9 +108,6 @@ public class XlibMojo extends AbstractXlibMojo {
 
     private void collectFatArchiveRobots() throws MojoExecutionException {
         List<Artifact> artifactList = new ArrayList<>(artifacts);
-
-        // Get all resources from this project, these should not be overwritten.
-        Set<String> resourceSet = getFilesFromProject();
 
         // Reverse for-loop to retain the correct overriding robot precedence.
         for (int i = artifactList.size() - 1; i >= 0; i--) {
@@ -120,13 +121,11 @@ public class XlibMojo extends AbstractXlibMojo {
 
             // Get the file system for the xlib.
             Path artifactPath = artifact.getFile().toPath();
-            extractArchive(artifactPath, resourceSet);
+            copyFromDependency(artifactPath);
         }
     }
 
-    private void extractArchive(Path archive, Set<String> resourceSet) throws MojoExecutionException {
-        // Copy all files.
-        Path classesDir = getClassesDirectory();
+    private void copyFromDependency(Path archive) throws MojoExecutionException {
         try(FileSystem fileSystem = openFileSystem(archive)) {
             Files.walkFileTree(fileSystem.getPath(FileSetFactory.ROBOTS_DIRECTORY), new SimpleFileVisitor<Path>() {
                 @Override
@@ -134,12 +133,9 @@ public class XlibMojo extends AbstractXlibMojo {
                     // Get the file name without the "robots/" prefix, copy the file.
                     String fileName = file.toString().substring(FileSetFactory.ROBOTS_DIRECTORY.length() + 1);
 
-                    // If the file already existed in this project, don't overwrite it.
-                    if (!resourceSet.contains(fileName)) {
-                        Path target = classesDir.resolve(fileName);
-                        Files.createDirectories(target.getParent());
-                        Files.copy(file, target, StandardCopyOption.REPLACE_EXISTING);
-                    }
+                    Path target = robotsFolder.toPath().resolve(fileName);
+                    Files.createDirectories(target.getParent());
+                    Files.copy(file, target, StandardCopyOption.REPLACE_EXISTING);
 
                     return FileVisitResult.CONTINUE;
                 }
