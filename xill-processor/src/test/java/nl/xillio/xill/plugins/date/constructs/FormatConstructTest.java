@@ -81,6 +81,56 @@ public class FormatConstructTest extends TestUtils {
         );
     }
 
+    @Test
+    public void testAllStyledDateFormat(){
+        //test full
+        assertEquals(
+                process(
+                        construct,
+                        createDateTimeExpression(
+                                ZonedDateTime.of(1532, 3, 4, 5, 3, 0, 0, ZoneId.of("UTC"))
+                        ),
+                        fromValue("full")
+                ),
+                fromValue("Friday, March 4, 1532 5:03:00 AM UTC")
+        );
+
+        //test long
+        assertEquals(
+                process(
+                        construct,
+                        createDateTimeExpression(
+                                ZonedDateTime.of(1532, 3, 4, 5, 3, 0, 0, ZoneId.of("UTC"))
+                        ),
+                        fromValue("long")
+                ),
+                fromValue("March 4, 1532 5:03:00 AM UTC")
+        );
+        //test medium
+        assertEquals(
+                process(
+                        construct,
+                        createDateTimeExpression(
+                                ZonedDateTime.of(1532, 3, 4, 5, 3, 0, 0, ZoneId.of("UTC"))
+                        ),
+                        fromValue("medium")
+                ),
+                fromValue("Mar 4, 1532 5:03:00 AM")
+        );
+
+        //test short
+        assertEquals(
+                process(
+                        construct,
+                        createDateTimeExpression(
+                                ZonedDateTime.of(1532, 3, 4, 5, 3, 0, 0, ZoneId.of("UTC"))
+                        ),
+                        fromValue("short")
+                ),
+                fromValue("3/4/32 5:03 AM")
+        );
+    }
+
     @Test(expectedExceptions = OperationFailedException.class)
     public void testInvalidPattern() {
         process(
