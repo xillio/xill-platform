@@ -28,18 +28,20 @@ import static org.testng.Assert.assertSame;
 /**
  * Test the {@link FromTimestampConstruct}.
  */
-public class FromTimestampConstructTest {
+public class FromTimestampConstructTest extends TestUtils {
     @Test
     public void testProcess() {
         long timestamp = 123456;
+        FromTimestampConstruct fromTimestampConstruct = new FromTimestampConstruct();
 
         // Mock.
         DateService dateService = mock(DateService.class);
         Date parsed = mock(Date.class);
         when(dateService.fromTimestamp(timestamp)).thenReturn(parsed);
+        fromTimestampConstruct.setDateService(dateService);
 
         // Process.
-        MetaExpression result = FromTimestampConstruct.process(TestUtils.fromValue(timestamp), dateService);
+        MetaExpression result = process(fromTimestampConstruct, fromValue(timestamp));
 
         // Verify.
         verify(dateService).fromTimestamp(timestamp);
@@ -50,7 +52,9 @@ public class FromTimestampConstructTest {
 
     @Test(expectedExceptions = OperationFailedException.class)
     public void testProcessNan() {
+        FromTimestampConstruct fromTimestampConstruct = new FromTimestampConstruct();
+
         // Process.
-        FromTimestampConstruct.process(TestUtils.fromValue("not a number"), null);
+        process(fromTimestampConstruct, fromValue("not a number"));
     }
 }

@@ -17,12 +17,13 @@ package nl.xillio.xill.plugins.date.services;
 
 import com.google.common.base.CaseFormat;
 import com.google.inject.Singleton;
-import me.biesaart.utils.Log;
 import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.data.DateFactory;
-import org.slf4j.Logger;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
+import org.apache.commons.lang3.LocaleUtils;
 
 import java.time.*;
+import java.time.chrono.Chronology;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.ChronoField;
@@ -57,7 +58,7 @@ public class DateServiceImpl implements DateService, DateFactory {
 
     @SuppressWarnings("squid:S1166")
         // DateTimeException is handled correctly
-    ZonedDateTime getValueOrDefaultZDT(TemporalAccessor parsed) {
+    private ZonedDateTime getValueOrDefaultZDT(TemporalAccessor parsed) {
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime _default = ZonedDateTime.of(now.toLocalDate(), LocalTime.MIN, now.getZone());
 
@@ -81,14 +82,19 @@ public class DateServiceImpl implements DateService, DateFactory {
     }
 
     @Override
-    public Date parseDate(String date, String format) {
-        DateTimeFormatter formatter = createDateTimeFormatter(format);
+    public Date parseDate(String date, String format, String locale) {
+        Locale loc = locale == null ? Locale.ENGLISH : parseLocale(locale);
+        DateTimeFormatter formatter = createDateTimeFormatter(format, loc);
         TemporalAccessor parsed = formatter.parse(date);
         return new nl.xillio.xill.plugins.date.data.Date(getValueOrDefaultZDT(parsed));
     }
 
-    private DateTimeFormatter createDateTimeFormatter(String format) {
-        return format != null ? DateTimeFormatter.ofPattern(format) : DEFAULT_FORMATTER;
+    private DateTimeFormatter createDateTimeFormatter(String format, Locale locale) {
+        if (format == null) {
+            return DEFAULT_FORMATTER.withLocale(locale).withChronology(Chronology.ofLocale(locale));
+        } else {
+            return DateTimeFormatter.ofPattern(format, locale);
+        }
     }
 
     @Override
@@ -106,8 +112,9 @@ public class DateServiceImpl implements DateService, DateFactory {
     }
 
     @Override
-    public String formatDate(Date date, String format) {
-        DateTimeFormatter formatter = createDateTimeFormatter(format);
+    public String formatDate(Date date, String format, String locale) {
+        Locale loc = locale == null ? Locale.ENGLISH : parseLocale(locale);
+        DateTimeFormatter formatter = createDateTimeFormatter(format, loc);
         return formatter.format(date.getZoned());
     }
 
@@ -207,6 +214,19 @@ public class DateServiceImpl implements DateService, DateFactory {
     @Override
     public boolean isAfter(Date date1, Date date2) {
         return date1.getZoned().isAfter(date2.getZoned());
+    }
+
+    private Locale parseLocale(String localeString) {
+        Locale locale = Locale.forLanguageTag(localeString);
+
+        if (!LocaleUtils.isAvailableLocale(locale)) {
+            throw new InvalidUserInputException(
+                    "The provided locale is not a valid locale according to standard: BCP-47",
+                    localeString,
+                    "A BCP-47 language tag (e.g. \"en-US\" or \"nl-NL\")");
+        }
+
+        return locale;
     }
 
     /**

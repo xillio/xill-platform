@@ -16,7 +16,6 @@
 package nl.xillio.xill.plugins.date.constructs;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.components.ExpressionBuilderHelper;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.date.data.Date;
 import org.testng.annotations.Test;
@@ -31,6 +30,8 @@ import static org.testng.Assert.assertEquals;
  * @author Pieter Dirk Soels
  */
 public class IsDateConstructTest extends TestUtils {
+    private final IsDateConstruct construct = new IsDateConstruct();
+
     /**
      * Test the process method under normal circumstances with a date expression
      */
@@ -41,10 +42,10 @@ public class IsDateConstructTest extends TestUtils {
         dateExpression.storeMeta(new Date(ZonedDateTime.now()));
 
         // Run
-        MetaExpression result = IsDateConstruct.process(dateExpression);
+        MetaExpression result = process(construct, dateExpression);
 
         // Assert
-        assertEquals(result.getBooleanValue(), true);
+        assertEquals(result, TRUE);
     }
 
     /**
@@ -53,10 +54,10 @@ public class IsDateConstructTest extends TestUtils {
     @Test
     public void testNotADate() {
         // Run
-        MetaExpression result = IsDateConstruct.process(fromValue(true));
+        MetaExpression result = process(construct, fromValue(true));
 
         // Assert
-        assertEquals(result.getBooleanValue(), false);
+        assertEquals(result, FALSE);
     }
 
     /**
@@ -65,9 +66,9 @@ public class IsDateConstructTest extends TestUtils {
     @Test
     public void testNullInputDate() {
         // Run
-        MetaExpression result = IsDateConstruct.process(ExpressionBuilderHelper.NULL);
+        MetaExpression result = process(construct, NULL);
 
         // Assert
-        assertEquals(result.getBooleanValue(), false);
+        assertEquals(result, FALSE);
     }
 }
