@@ -106,7 +106,6 @@ public class XlibMojo extends AbstractXlibMojo {
             archiver.createArchive();
             return archive;
         } catch (ArchiverException e) {
-            e.printStackTrace();
             throw new MojoExecutionException("Error copying files. ", e);
         } catch (IOException e) {
             throw new MojoExecutionException("Error assembling xlib.", e);
@@ -160,19 +159,6 @@ public class XlibMojo extends AbstractXlibMojo {
             return FileSystems.newFileSystem(artifactUri, env);
         } catch (IOException e) {
             throw new MojoExecutionException("Could not read from xlib: " + archive, e);
-        }
-    }
-
-    private Set<String> getFilesFromProject() throws MojoExecutionException {
-        int start = getClassesDirectory().toString().length() + 1;
-        try {
-            return Files.walk(getClassesDirectory())
-                    .filter(Files::isRegularFile)
-                    .map(Path::toString)
-                    .map(s -> s.substring(start))
-                    .collect(Collectors.toSet());
-        } catch (IOException e) {
-            throw new MojoExecutionException("Could not get list of files.", e);
         }
     }
 }
