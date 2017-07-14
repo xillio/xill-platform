@@ -16,6 +16,8 @@
 package nl.xillio.xill.maven.mojos;
 
 import nl.xillio.xill.maven.services.FileSetFactory;
+import nl.xillio.xill.maven.services.FileSystemFactory;
+import nl.xillio.xill.maven.services.FilesService;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.archiver.Archiver;
@@ -25,34 +27,34 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
+import java.net.URI;
+import java.nio.file.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 import static org.mockito.Mockito.*;
 
 public class XlibMojoTest {
-    private Artifact artifact;
-    private String finalName = "final-name";
-    private File outputDirectory = new File("target");
-    private Archiver archiver;
-    private FileSet fileSet;
-
-    private XlibMojo mojo;
-
-    @BeforeMethod
-    public void reset() {
-        artifact = mock(Artifact.class);
-        archiver = mock(Archiver.class);
-        FileSetFactory fileSetFactory = mock(FileSetFactory.class);
-        fileSet = mock(FileSet.class);
-
-        when(fileSetFactory.createFileSet(any())).thenReturn(fileSet);
-
-        mojo = new XlibMojo(null, fileSetFactory, artifact, finalName, outputDirectory, archiver, new File("/"));
-        mojo.setClassesDirectory(new File("classes"));
-    }
+    private final String finalName = "final-name";
+    private final File outputDirectory = new File("target");
 
     @Test
     public void testCreateArchive() throws MojoExecutionException, IOException {
+        Artifact artifact = mock(Artifact.class);
+        Archiver archiver = mock(Archiver.class);
+        FileSetFactory fileSetFactory = mock(FileSetFactory.class);
+        FileSystemFactory fileSystemFactory = mock(FileSystemFactory.class);
+        FilesService filesService = mock(FilesService.class);
+        FileSet fileSet = mock(FileSet.class);
+        FileSystem fileSystem = mock(FileSystem.class);
+
+        when(fileSetFactory.createFileSet(any())).thenReturn(fileSet);
+        when(fileSystemFactory.createFileSystem(any(), any())).thenReturn(fileSystem);
+
+        XlibMojo mojo = new XlibMojo(null, fileSetFactory, fileSystemFactory, filesService, artifact, null, finalName, outputDirectory, archiver, new File("/"), false);
+        mojo.setClassesDirectory(new File("classes"));
+
         File archive = new File(outputDirectory, finalName + ".xlib");
         when(artifact.getFile()).thenReturn(null);
 
@@ -66,17 +68,125 @@ public class XlibMojoTest {
 
     @Test(expectedExceptions = MojoExecutionException.class)
     public void testIOException() throws MojoExecutionException, IOException {
+        Artifact artifact = mock(Artifact.class);
+        Archiver archiver = mock(Archiver.class);
+        FileSetFactory fileSetFactory = mock(FileSetFactory.class);
+        FileSystemFactory fileSystemFactory = mock(FileSystemFactory.class);
+        FilesService filesService = mock(FilesService.class);
+        FileSet fileSet = mock(FileSet.class);
+        FileSystem fileSystem = mock(FileSystem.class);
+
+        when(fileSetFactory.createFileSet(any())).thenReturn(fileSet);
+        when(fileSystemFactory.createFileSystem(any(), any())).thenReturn(fileSystem);
+
+        XlibMojo mojo = new XlibMojo(null, fileSetFactory, fileSystemFactory, filesService, artifact, null, finalName, outputDirectory, archiver, new File("/"), false);
+        mojo.setClassesDirectory(new File("classes"));
+
         doThrow(new IOException()).when(archiver).createArchive();
 
         mojo.execute();
     }
 
     @Test(expectedExceptions = MojoExecutionException.class)
-    public void testArtifactHasFile() throws MojoExecutionException {
+    public void testArtifactHasFile() throws Exception {
+        Artifact artifact = mock(Artifact.class);
+        Archiver archiver = mock(Archiver.class);
+        FileSetFactory fileSetFactory = mock(FileSetFactory.class);
+        FileSystemFactory fileSystemFactory = mock(FileSystemFactory.class);
+        FilesService filesService = mock(FilesService.class);
+        FileSet fileSet = mock(FileSet.class);
+        FileSystem fileSystem = mock(FileSystem.class);
+
         File artifactFile = mock(File.class);
         when(artifact.getFile()).thenReturn(artifactFile);
         when(artifactFile.isFile()).thenReturn(true);
 
+        when(fileSetFactory.createFileSet(any())).thenReturn(fileSet);
+        when(fileSystemFactory.createFileSystem(any(), any())).thenReturn(fileSystem);
+
+        XlibMojo mojo = new XlibMojo(null, fileSetFactory, fileSystemFactory, filesService, artifact, null, finalName, outputDirectory, archiver, new File("/"), false);
+        mojo.setClassesDirectory(new File("classes"));
+
         mojo.execute();
+    }
+
+    @Test
+    public void testCreateFATArchive() throws MojoExecutionException, IOException {
+        Artifact artifact = mock(Artifact.class);
+        Archiver archiver = mock(Archiver.class);
+        FileSetFactory fileSetFactory = mock(FileSetFactory.class);
+        FileSystemFactory fileSystemFactory = mock(FileSystemFactory.class);
+        FilesService filesService = mock(FilesService.class);
+        FileSet fileSet = mock(FileSet.class);
+        FileSystem fileSystem = mock(FileSystem.class);
+        Collection artifacts = Arrays.asList(artifact, artifact);
+
+        when(fileSetFactory.createFileSet(any())).thenReturn(fileSet);
+        when(fileSystemFactory.createFileSystem(any(), any())).thenReturn(fileSystem);
+
+        XlibMojo includerMojo = new XlibMojo(null, fileSetFactory, fileSystemFactory, filesService, artifact, artifacts, finalName, outputDirectory, archiver, new File("/"), true);
+        includerMojo.setClassesDirectory(new File("classes"));
+
+        File archive = new File(outputDirectory, finalName + ".xlib");
+
+        when(artifact.getFile()).thenReturn(new File("testing"));
+        when(artifact.getType()).thenReturn("xlib");
+        when(fileSystem.getPath(any())).thenReturn(Paths.get("testing"));
+
+        includerMojo.execute();
+
+        verify(archiver, times(1)).setDestFile(archive);
+        verify(archiver, times(2)).addFileSet(fileSet);
+        verify(archiver, times(1)).createArchive();
+        verify(artifact, times(1)).setFile(archive);
+    }
+
+    @Test
+    public void testFileVisit() throws Exception{
+        Artifact artifact = mock(Artifact.class);
+        Archiver archiver = mock(Archiver.class);
+        FileSetFactory fileSetFactory = mock(FileSetFactory.class);
+        FileSystemFactory fileSystemFactory = mock(FileSystemFactory.class);
+        FilesService filesService = mock(FilesService.class);
+        Collection artifacts = Arrays.asList(artifact, artifact);
+
+        XlibMojo includerMojo = new XlibMojo(null, fileSetFactory, fileSystemFactory, filesService, artifact, artifacts, finalName, outputDirectory, archiver, new File("/"), true);
+        includerMojo.setClassesDirectory(new File("classes"));
+
+        Path path = Paths.get("robots","testing");
+        includerMojo.visitFile(path, null);
+
+        verify(filesService, times(1)).copy(path, Paths.get("/testing"), StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    @Test
+    public void testCreateFATArchiveNoXlib() throws MojoExecutionException, IOException {
+        Artifact artifact = mock(Artifact.class);
+        Archiver archiver = mock(Archiver.class);
+        FileSetFactory fileSetFactory = mock(FileSetFactory.class);
+        FileSystemFactory fileSystemFactory = mock(FileSystemFactory.class);
+        FilesService filesService = mock(FilesService.class);
+        FileSet fileSet = mock(FileSet.class);
+        FileSystem fileSystem = mock(FileSystem.class);
+        Collection artifacts = Arrays.asList(artifact, artifact);
+
+        when(fileSetFactory.createFileSet(any())).thenReturn(fileSet);
+        when(fileSystemFactory.createFileSystem(any(), any())).thenReturn(fileSystem);
+
+        XlibMojo includerMojo = new XlibMojo(null, fileSetFactory, fileSystemFactory, filesService, artifact, artifacts, finalName, outputDirectory, archiver, new File("/"), true);
+        includerMojo.setClassesDirectory(new File("classes"));
+
+        File archive = new File(outputDirectory, finalName + ".xlib");
+
+        when(artifact.getFile()).thenReturn(new File("testing"));
+        when(artifact.getType()).thenReturn("noXlib");
+        when(fileSystem.getPath(any())).thenReturn(Paths.get("testing"));
+
+        includerMojo.execute();
+
+        verify(archiver, times(1)).setDestFile(archive);
+        verify(archiver, times(2)).addFileSet(fileSet);
+        verify(archiver, times(1)).createArchive();
+        verify(artifact, times(1)).setFile(archive);
     }
 }
