@@ -15,7 +15,6 @@
  */
 package nl.xillio.xill.plugins.date.constructs;
 
-import me.biesaart.utils.Log;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
@@ -23,8 +22,6 @@ import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.date.BaseDateConstruct;
-import nl.xillio.xill.plugins.date.services.DateService;
-import org.slf4j.Logger;
 
 import java.time.DateTimeException;
 
@@ -37,18 +34,18 @@ import java.time.DateTimeException;
  */
 public class ParseConstruct extends BaseDateConstruct {
 
-    private static final Logger log = Log.get();
-
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
 
-        return new ConstructProcessor((dateVar, formatVar) -> process(dateVar, formatVar, getDateService()), new Argument("date", NULL, ATOMIC),
-                new Argument("format", NULL, ATOMIC));
+        return new ConstructProcessor(this::process,
+                new Argument("date", NULL, ATOMIC),
+                new Argument("format", NULL, ATOMIC),
+                new Argument("locale", fromValue("en-US"), ATOMIC));
     }
 
-    static MetaExpression process(final MetaExpression dateVar, final MetaExpression formatVar, DateService dateService) {
+    private MetaExpression process(final MetaExpression dateVar, final MetaExpression formatVar, final MetaExpression localeVar) {
         // Process
-        Date result = null;
+        Date result;
 
         if (dateVar.isNull()) {
             result = dateService.now();
@@ -56,9 +53,8 @@ public class ParseConstruct extends BaseDateConstruct {
 
             try {
                 String formatString = formatVar.isNull() ? null : formatVar.getStringValue();
-                result = dateService.parseDate(dateVar.getStringValue(), formatString);
+                result = dateService.parseDate(dateVar.getStringValue(), formatString, localeVar.getStringValue());
             } catch (DateTimeException | IllegalArgumentException e) {
-                log.error("Exception while parsing date", e);
                 throw new OperationFailedException("parse date", e.getMessage(), "Try to check if 'date' and 'format' are correct.", e);
             }
         }

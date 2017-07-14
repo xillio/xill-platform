@@ -23,7 +23,6 @@ import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.date.BaseDateConstruct;
-import nl.xillio.xill.plugins.date.services.DateService;
 
 import java.time.DateTimeException;
 import java.time.ZoneId;
@@ -36,18 +35,22 @@ import java.time.ZoneId;
 public class OfConstruct extends BaseDateConstruct {
 
     @Override
-    @SuppressWarnings("squid:S2095")  // Suppress "Resources should be closed": Arguments do not need to be closed here, because ConstructProcessor closes them
+    @SuppressWarnings("squid:S2095")
+    // Suppress "Resources should be closed": Arguments do not need to be closed here, because ConstructProcessor closes them
     public ConstructProcessor prepareProcess(final ConstructContext context) {
-        Argument args[] = {new Argument("year"), new Argument("month"),
+        Argument args[] = {
+                new Argument("year"), new Argument("month"),
                 new Argument("day"), new Argument("hour"),
                 new Argument("minute"), new Argument("second"),
-                new Argument("nano", fromValue(0)), new Argument("zone", fromValue(ZoneId.systemDefault().getId()))};
+                new Argument("nano", fromValue(0)),
+                new Argument("zone", fromValue(ZoneId.systemDefault().getId()))
+        };
 
-        return new ConstructProcessor(a -> process(a, getDateService()), args);
+        return new ConstructProcessor(this::process, args);
     }
 
     @SuppressWarnings("squid:S1166")
-    static MetaExpression process(final MetaExpression[] input, DateService dateService) {
+    private MetaExpression process(final MetaExpression[] input) {
         Date date;
         ZoneId zone;
 

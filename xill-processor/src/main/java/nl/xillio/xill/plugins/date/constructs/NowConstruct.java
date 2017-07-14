@@ -19,7 +19,6 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.plugins.date.BaseDateConstruct;
-import nl.xillio.xill.plugins.date.services.DateService;
 
 /**
  * Returns the current time
@@ -30,10 +29,10 @@ public class NowConstruct extends BaseDateConstruct {
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
-        return new ConstructProcessor(() -> process(getDateService()));
+        return new ConstructProcessor(this::process);
     }
 
-    static MetaExpression process(DateService dateService) {
+    private MetaExpression process() {
         return fromValue(dateService.now());
     }
 }
