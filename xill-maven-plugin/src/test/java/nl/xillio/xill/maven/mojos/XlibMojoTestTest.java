@@ -36,7 +36,7 @@ import java.util.Collection;
 
 import static org.mockito.Mockito.*;
 
-public class XlibMojoTest {
+public class XlibMojoTestTest {
     private final String finalName = "final-name";
     private final File outputDirectory = new File("target");
 
