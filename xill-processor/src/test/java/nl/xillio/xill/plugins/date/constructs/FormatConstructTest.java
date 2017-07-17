@@ -141,4 +141,18 @@ public class FormatConstructTest extends TestUtils {
                 fromValue("What Am I Doing?")
         );
     }
+
+    @Test
+    public void testShortFormat() {
+        assertEquals(
+                process(
+                        construct,
+                        createDateTimeExpression(
+                                ZonedDateTime.of(2016, 3, 4, 5, 3, 0, 0, ZoneId.of("Europe/Paris"))
+                        ),
+                        fromValue("short")
+                ),
+                fromValue("3/4/16 5:03 AM")
+        );
+    }
 }
