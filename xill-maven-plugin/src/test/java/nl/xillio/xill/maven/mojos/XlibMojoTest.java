@@ -169,15 +169,14 @@ public class XlibMojoTest {
     public void testFileVisit() throws Exception {
         Artifact artifact = mock(Artifact.class);
         Archiver archiver = mock(Archiver.class);
-        FileSetFactory fileSetFactory = mock(FileSetFactory.class);
         FileSystemFactory fileSystemFactory = mock(FileSystemFactory.class);
         FilesService filesService = mock(FilesService.class);
         Collection artifacts = Arrays.asList(artifact, artifact);
 
-        XlibMojo includerMojo = new XlibMojo(null, fileSetFactory, fileSystemFactory, filesService, artifact, artifacts, finalName, outputDirectory, archiver, new File("/"), true);
+        XlibMojo includerMojo = new XlibMojo(null, new FileSetFactory(), fileSystemFactory, filesService, artifact, artifacts, finalName, outputDirectory, archiver, new File("/"), true);
         includerMojo.setClassesDirectory(new File("classes"));
 
-        Path path = Paths.get("robots", "testing");
+        Path path = Paths.get("\\robots", "testing");
         includerMojo.visitFilePath(path);
 
         verify(filesService, times(1)).copy(path, Paths.get("/testing"), StandardCopyOption.REPLACE_EXISTING);
