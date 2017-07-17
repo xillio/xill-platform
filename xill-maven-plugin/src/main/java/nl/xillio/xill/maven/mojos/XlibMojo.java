@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
@@ -139,7 +140,7 @@ public class XlibMojo extends AbstractXlibMojo {
     }
 
     private void copyFromDependency(Path archive) throws MojoExecutionException {
-        try (FileSystem fileSystem = openFileSystem(archive)) {
+        try (FileSystem fileSystem = openFileSystem(archive.toUri())) {
 
             filesService.walkFileTree(fileSystem.getPath(FileSetFactory.ROBOTS_DIRECTORY), new SimpleFileVisitor<Path>() {
                 @Override
@@ -152,22 +153,21 @@ public class XlibMojo extends AbstractXlibMojo {
         }
     }
 
-    private FileSystem openFileSystem(Path archive) throws MojoExecutionException {
+    private FileSystem openFileSystem(URI archive) throws MojoExecutionException {
         try {
-            URI artifactUri = URI.create("jar:" + archive.toUri());
+            URI artifactUri = new URI("jar:" + archive.getScheme(), archive.getPath(), null);
             Map<String, String> env = new HashMap<>();
             env.put("create", "true");
             return fileSystemFactory.createFileSystem(artifactUri, env);
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             throw new MojoExecutionException("Could not read from xlib: " + archive, e);
         }
     }
 
     FileVisitResult visitFilePath(Path path) throws IOException {
         // Get the file name without the "robots/" prefix, copy the file.
-        String fileName = path.toString().substring(FileSetFactory.ROBOTS_DIRECTORY.length());
-
-        Path target = robotsFolder.toPath().resolve(fileName);
+        Path targetFolder = path.resolve("/" + FileSetFactory.ROBOTS_DIRECTORY);
+        Path target =  robotsFolder.toPath().resolve(targetFolder.relativize(path).toString());
         filesService.createDirectories(target.getParent());
         filesService.copy(path, target, StandardCopyOption.REPLACE_EXISTING);
 
