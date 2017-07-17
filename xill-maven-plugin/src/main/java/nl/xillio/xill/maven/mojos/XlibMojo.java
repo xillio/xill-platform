@@ -15,8 +15,6 @@
  */
 package nl.xillio.xill.maven.mojos;
 
-import me.biesaart.utils.FileUtils;
-import me.biesaart.utils.FileUtilsService;
 import nl.xillio.xill.maven.services.FileSetFactory;
 import nl.xillio.xill.maven.services.FileSystemFactory;
 import nl.xillio.xill.maven.services.FilesService;
@@ -34,7 +32,6 @@ import java.net.URI;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Mojo(name = "xlib", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class XlibMojo extends AbstractXlibMojo {
@@ -44,7 +41,7 @@ public class XlibMojo extends AbstractXlibMojo {
     private String finalName;
     @Parameter(defaultValue = "${project.artifacts}", readonly = true, required = true)
     private Collection<Artifact> artifacts;
-    @Parameter(defaultValue = "${project.build.directory}/robots", readonly= true, required = true)
+    @Parameter(defaultValue = "${project.build.directory}/robots", readonly = true, required = true)
     private File robotsFolder;
 
     /**
@@ -142,12 +139,12 @@ public class XlibMojo extends AbstractXlibMojo {
     }
 
     private void copyFromDependency(Path archive) throws MojoExecutionException {
-        try(FileSystem fileSystem = openFileSystem(archive)) {
+        try (FileSystem fileSystem = openFileSystem(archive)) {
 
             filesService.walkFileTree(fileSystem.getPath(FileSetFactory.ROBOTS_DIRECTORY), new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-                    return visitFile(path, attrs);
+                    return visitFilePath(path);
                 }
             });
         } catch (IOException e) {
@@ -166,7 +163,7 @@ public class XlibMojo extends AbstractXlibMojo {
         }
     }
 
-    FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException{
+    FileVisitResult visitFilePath(Path path) throws IOException {
         // Get the file name without the "robots/" prefix, copy the file.
         String fileName = path.toString().substring(FileSetFactory.ROBOTS_DIRECTORY.length());
 
