@@ -176,7 +176,7 @@ public class XlibMojoTest {
         XlibMojo includerMojo = new XlibMojo(null, new FileSetFactory(), fileSystemFactory, filesService, artifact, artifacts, finalName, outputDirectory, archiver, new File("/"), true);
         includerMojo.setClassesDirectory(new File("classes"));
 
-        Path path = Paths.get("\\robots", "testing");
+        Path path = Paths.get(File.separator + "robots", "testing");
         includerMojo.visitFilePath(path);
 
         verify(filesService, times(1)).copy(path, Paths.get("/testing"), StandardCopyOption.REPLACE_EXISTING);
