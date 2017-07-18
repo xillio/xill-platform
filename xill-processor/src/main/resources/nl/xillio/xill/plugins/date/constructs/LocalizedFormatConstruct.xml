@@ -18,7 +18,7 @@
 -->
 <function>
     <deprecated>
-        Use the Date.format construct with a locale instead.
+        `Date.LocalizedFormat()` has been deprecated. Use `Date.format()` with `locale` instead.
     </deprecated>
     <description>
 Converts the date to a date value corresponding to the provided `languageTag` parameter.
