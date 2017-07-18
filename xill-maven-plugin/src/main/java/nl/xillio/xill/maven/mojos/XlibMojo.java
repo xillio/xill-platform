@@ -124,9 +124,8 @@ public class XlibMojo extends AbstractXlibMojo {
         List<Artifact> artifactList = new ArrayList<>(artifacts);
 
         // Reverse for-loop to retain the correct overriding robot precedence.
-        for (int i = artifactList.size() - 1; i >= 0; i--) {
-            Artifact artifact = artifactList.get(i);
-
+        Collections.reverse(artifactList);
+        for (Artifact artifact : artifactList){
             // Skip non-Xill dependencies.
             if (!"xlib".equals(artifact.getType())) {
                 getLog().warn("Skipping non-xlib artifact: " + artifact.getId());
@@ -136,6 +135,7 @@ public class XlibMojo extends AbstractXlibMojo {
             // Get the file system for the xlib.
             Path artifactPath = artifact.getFile().toPath();
             copyFromDependency(artifactPath);
+
         }
     }
 
