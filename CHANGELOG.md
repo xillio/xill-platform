@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 ### Add
 * Add `locale` parameter to `Date.parse()` and `Date.format()` [CF-102].
 
+### Change
+* Deprecate `Date.localizedFormat()` construct [CON-14]
+
 ### Fix
 * Fixed encoding issue when maven local repository path contains spaces [CF-115]
 * Fix issue where robots could not be addressed by path in Xill CLI [CF-116]

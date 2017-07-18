@@ -36,6 +36,7 @@ import java.util.Locale;
  *
  * @author Sander
  */
+@Deprecated
 public class LocalizedFormatConstruct extends BaseDateConstruct {
 
     @Override

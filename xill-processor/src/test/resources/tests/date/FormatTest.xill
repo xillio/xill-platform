@@ -1,0 +1,71 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ /* Specification: Date.format MUST format a date with an optional locale return a String
+  * Input:
+     [
+         null,
+         "en-US",
+         "nl-NL",
+         "de-DE"
+     ]
+  * Expected:
+     [
+        null : ["7/17/17 12:00 PM", "Jul 17, 2017 12:00:00 PM", "July 17, 2017 12:00:00 PM CEST"],
+        "en-US" : ["7/17/17 12:00 PM", "Jul 17, 2017 12:00:00 PM", "July 17, 2017 12:00:00 PM CEST"],
+        "nl-NL" : [ "17-7-17 12:00", "17-jul-2017 12:00:00", "17 juli 2017 12:00:00 CEST" ],
+        "de-DE" : [ "17.07.17 12:00", "17.07.2017 12:00:00", "17. Juli 2017 12:00:00 MESZ" ]
+     ]
+  */
+use Assert, Date, System;
+
+var testDate = Date.of(2017, 7, 17, 12, 0, 0);
+foreach(locale in [null, "en-US", "nl-NL", "de-DE"]) {
+    testDatesWithLocales(locale);
+}
+
+function testDatesWithLocales(locale) {
+
+    // Default locale is "en-US"
+    if (locale == null) {
+        var date1 = Date.format(testDate, "short");
+        var date2 = Date.format(testDate, "medium");
+        var date3 = Date.format(testDate, "long");
+
+        Assert.equal(date1, "7/17/17 12:00 PM");
+        Assert.equal(date2, "Jul 17, 2017 12:00:00 PM");
+        Assert.equal(date3, "July 17, 2017 12:00:00 PM CEST");
+    } else {
+        var date1 = Date.format(testDate, "short", locale);
+        var date2 = Date.format(testDate, "medium", locale);
+        var date3 = Date.format(testDate, "long", locale);
+
+        if (locale == "en-US") {
+            Assert.equal(date1, "7/17/17 12:00 PM");
+            Assert.equal(date2, "Jul 17, 2017 12:00:00 PM");
+            Assert.equal(date3, "July 17, 2017 12:00:00 PM CEST");
+        }
+        if (locale == "nl-NL") {
+            Assert.equal(date1, "17-7-17 12:00");
+            Assert.equal(date2, "17-jul-2017 12:00:00");
+            Assert.equal(date3, "17 juli 2017 12:00:00 CEST");
+        }
+        if (locale == "de-DE") {
+            Assert.equal(date1, "17.07.17 12:00");
+            Assert.equal(date2, "17.07.2017 12:00:00");
+            Assert.equal(date3, "17. Juli 2017 12:00:00 MESZ");
+        }
+    }
+}

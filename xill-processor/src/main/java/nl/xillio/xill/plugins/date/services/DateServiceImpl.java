@@ -97,6 +97,16 @@ public class DateServiceImpl implements DateService, DateFactory {
         }
     }
 
+    private DateTimeFormatter createDateTimeFormatterWithStyle(String format, Locale locale) {
+        if (format == null) {
+            return DEFAULT_FORMATTER.withLocale(locale).withChronology(Chronology.ofLocale(locale));
+        } else if(format.matches("(full|long|medium|short)")) {
+            return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.valueOf(format.toUpperCase())).withLocale(locale);
+        }else{
+            return DateTimeFormatter.ofPattern(format, locale);
+        }
+    }
+
     @Override
     public Date add(Date original, Map<ChronoUnit, Long> toAdd) {
         ZonedDateTime value = original.getZoned();
@@ -114,7 +124,7 @@ public class DateServiceImpl implements DateService, DateFactory {
     @Override
     public String formatDate(Date date, String format, String locale) {
         Locale loc = locale == null ? Locale.ENGLISH : parseLocale(locale);
-        DateTimeFormatter formatter = createDateTimeFormatter(format, loc);
+        DateTimeFormatter formatter = createDateTimeFormatterWithStyle(format, loc);
         return formatter.format(date.getZoned());
     }
 
