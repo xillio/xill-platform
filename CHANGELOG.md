@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 * Fix issue where robots could not be addressed by path in Xill CLI [CF-116]
 * Improve error message when trying to get member of an atomic value [CF-61]
 * Fix issue where username and passwords were required for proxy in XURL [CF-49]
+* Fix issue where including dependencies in a package would overwrite project robots with dependency robots on Windows [CON-12]
 
 ## [3.6.2] - 2017-06-30
 
