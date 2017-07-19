@@ -151,6 +151,9 @@ public class Options {
         for (Header header : headers) {
             request.addHeader(header);
         }
+        if (proxyOptions != null) {
+            request.viaProxy(proxyOptions.getHttpHost());
+        }
     }
 
     public void apply(Executor executor) {
@@ -158,7 +161,7 @@ public class Options {
             executor.auth(basicAuth.getUsername(), basicAuth.getPassword());
         }
 
-        if(ntlmOptions != null) {
+        if (ntlmOptions != null) {
             executor.auth(ntlmOptions.getUsername(), ntlmOptions.getPassword(), getNTLMOptions().getWorkstation(), ntlmOptions.getDomain());
         }
 
