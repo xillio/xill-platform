@@ -16,20 +16,23 @@
 package nl.xillio.xill.maven.mojos;
 
 import nl.xillio.xill.maven.services.FileSetFactory;
+import nl.xillio.xill.maven.services.FileSystemFactory;
+import nl.xillio.xill.maven.services.FilesService;
 import nl.xillio.xill.maven.services.XillEnvironmentService;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.*;
 import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.ArchiverException;
 
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Mojo(name = "xlib", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class XlibMojo extends AbstractXlibMojo {
@@ -39,6 +42,8 @@ public class XlibMojo extends AbstractXlibMojo {
     private String finalName;
     @Parameter(defaultValue = "${project.artifacts}", readonly = true, required = true)
     private Collection<Artifact> artifacts;
+    @Parameter(defaultValue = "${project.build.directory}/robots", readonly = true, required = true)
+    private File robotsFolder;
 
     /**
      * The output directory to create the xlib archive in.
@@ -56,20 +61,27 @@ public class XlibMojo extends AbstractXlibMojo {
     private Archiver archiver;
 
     private FileSetFactory fileSetFactory;
+    private FileSystemFactory fileSystemFactory;
+    private FilesService filesService;
 
     @Inject
-    public XlibMojo(XillEnvironmentService environmentService, FileSetFactory fileSetFactory) {
+    public XlibMojo(XillEnvironmentService environmentService, FileSetFactory fileSetFactory, FileSystemFactory fileSystemFactory, FilesService filesService) {
         super(environmentService);
         this.fileSetFactory = fileSetFactory;
+        this.fileSystemFactory = fileSystemFactory;
+        this.filesService = filesService;
     }
 
-    public XlibMojo(XillEnvironmentService environmentService, FileSetFactory fileSetFactory,
-                    Artifact artifact, String finalName, File outputDirectory, Archiver archiver) {
-        this(environmentService, fileSetFactory);
+    public XlibMojo(XillEnvironmentService environmentService, FileSetFactory fileSetFactory, FileSystemFactory fileSystemFactory, FilesService filesService,
+                    Artifact artifact, Collection<Artifact> artifacts, String finalName, File outputDirectory, Archiver archiver, File robotsFolder, boolean includeDependencies) {
+        this(environmentService, fileSetFactory, fileSystemFactory, filesService);
         this.artifact = artifact;
+        this.artifacts = artifacts;
         this.finalName = finalName;
         this.outputDirectory = outputDirectory;
         this.archiver = archiver;
+        this.robotsFolder = robotsFolder;
+        this.includeDependencies = includeDependencies;
     }
 
     public void execute() throws MojoExecutionException {
@@ -92,11 +104,17 @@ public class XlibMojo extends AbstractXlibMojo {
         // Set the destination file and add the files to the archive.
         archiver.setDestFile(archive);
         archiver.addFileSet(fileSetFactory.createFileSet(getClassesDirectory()));
+        archiver.addFileSet(fileSetFactory.createFileSet(robotsFolder.toPath()));
 
         // Try to create the archive.
         try {
+            // Tell the archiver to leave the first file,
+            archiver.setDuplicateBehavior(Archiver.DUPLICATES_PRESERVE);
+
             archiver.createArchive();
             return archive;
+        } catch (ArchiverException e) {
+            throw new MojoExecutionException("Error copying files. ", e);
         } catch (IOException e) {
             throw new MojoExecutionException("Error assembling xlib.", e);
         }
@@ -105,13 +123,9 @@ public class XlibMojo extends AbstractXlibMojo {
     private void collectFatArchiveRobots() throws MojoExecutionException {
         List<Artifact> artifactList = new ArrayList<>(artifacts);
 
-        // Get all resources from this project, these should not be overwritten.
-        Set<String> resourceSet = getFilesFromProject();
-
         // Reverse for-loop to retain the correct overriding robot precedence.
-        for (int i = artifactList.size() - 1; i >= 0; i--) {
-            Artifact artifact = artifactList.get(i);
-
+        Collections.reverse(artifactList);
+        for (Artifact artifact : artifactList){
             // Skip non-Xill dependencies.
             if (!"xlib".equals(artifact.getType())) {
                 getLog().warn("Skipping non-xlib artifact: " + artifact.getId());
@@ -120,28 +134,18 @@ public class XlibMojo extends AbstractXlibMojo {
 
             // Get the file system for the xlib.
             Path artifactPath = artifact.getFile().toPath();
-            extractArchive(artifactPath, resourceSet);
+            copyFromDependency(artifactPath);
+
         }
     }
 
-    private void extractArchive(Path archive, Set<String> resourceSet) throws MojoExecutionException {
-        // Copy all files.
-        Path classesDir = getClassesDirectory();
-        try(FileSystem fileSystem = openFileSystem(archive)) {
-            Files.walkFileTree(fileSystem.getPath(FileSetFactory.ROBOTS_DIRECTORY), new SimpleFileVisitor<Path>() {
+    private void copyFromDependency(Path archive) throws MojoExecutionException {
+        try (FileSystem fileSystem = openFileSystem(archive.toUri())) {
+
+            filesService.walkFileTree(fileSystem.getPath(FileSetFactory.ROBOTS_DIRECTORY), new SimpleFileVisitor<Path>() {
                 @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    // Get the file name without the "robots/" prefix, copy the file.
-                    String fileName = file.toString().substring(FileSetFactory.ROBOTS_DIRECTORY.length() + 1);
-
-                    // If the file already existed in this project, don't overwrite it.
-                    if (!resourceSet.contains(fileName)) {
-                        Path target = classesDir.resolve(fileName);
-                        Files.createDirectories(target.getParent());
-                        Files.copy(file, target, StandardCopyOption.REPLACE_EXISTING);
-                    }
-
-                    return FileVisitResult.CONTINUE;
+                public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+                    return visitFilePath(path);
                 }
             });
         } catch (IOException e) {
@@ -149,27 +153,24 @@ public class XlibMojo extends AbstractXlibMojo {
         }
     }
 
-    private FileSystem openFileSystem(Path archive) throws MojoExecutionException {
+    private FileSystem openFileSystem(URI archive) throws MojoExecutionException {
         try {
-            URI artifactUri = URI.create("jar:" + archive.toUri());
+            URI artifactUri = new URI("jar:" + archive.getScheme(), archive.getPath(), null);
             Map<String, String> env = new HashMap<>();
             env.put("create", "true");
-            return FileSystems.newFileSystem(artifactUri, env);
-        } catch (IOException e) {
+            return fileSystemFactory.createFileSystem(artifactUri, env);
+        } catch (IOException | URISyntaxException e) {
             throw new MojoExecutionException("Could not read from xlib: " + archive, e);
         }
     }
 
-    private Set<String> getFilesFromProject() throws MojoExecutionException {
-        int start = getClassesDirectory().toString().length() + 1;
-        try {
-            return Files.walk(getClassesDirectory())
-                    .filter(Files::isRegularFile)
-                    .map(Path::toString)
-                    .map(s -> s.substring(start))
-                    .collect(Collectors.toSet());
-        } catch (IOException e) {
-            throw new MojoExecutionException("Could not get list of files.", e);
-        }
+    FileVisitResult visitFilePath(Path path) throws IOException {
+        // Get the file name without the "robots/" prefix, copy the file.
+        Path targetFolder = path.resolve("/" + FileSetFactory.ROBOTS_DIRECTORY);
+        Path target =  robotsFolder.toPath().resolve(targetFolder.relativize(path).toString());
+        filesService.createDirectories(target.getParent());
+        filesService.copy(path, target, StandardCopyOption.REPLACE_EXISTING);
+
+        return FileVisitResult.CONTINUE;
     }
 }
