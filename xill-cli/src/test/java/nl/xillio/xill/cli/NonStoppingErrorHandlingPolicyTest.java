@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.maven.services;
+package nl.xillio.xill.cli;
 
-import org.codehaus.plexus.archiver.FileSet;
-import org.codehaus.plexus.archiver.util.DefaultFileSet;
+import org.testng.annotations.Test;
 
-import java.io.File;
-import java.nio.file.Path;
+import static org.mockito.Mockito.mock;
 
-public class FileSetFactory {
-    public static final String ROBOTS_DIRECTORY = "robots" + File.separator;
+public class NonStoppingErrorHandlingPolicyTest {
 
-    public FileSet createFileSet(Path directory) {
-        DefaultFileSet fileSet = new DefaultFileSet(directory.toFile());
-        fileSet.setPrefix(ROBOTS_DIRECTORY);
-        return fileSet;
+    @Test
+    public void testNoErrorMessage() {
+        NonStoppingErrorHandlingPolicy policy = new NonStoppingErrorHandlingPolicy();
+        Throwable error = new Exception();
+        policy.handle(error);
     }
 }

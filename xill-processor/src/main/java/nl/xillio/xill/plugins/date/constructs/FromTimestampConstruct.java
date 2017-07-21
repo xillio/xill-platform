@@ -21,7 +21,6 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.date.BaseDateConstruct;
-import nl.xillio.xill.plugins.date.services.DateService;
 
 /**
  * Creates a date from a Unix timestamp.
@@ -29,12 +28,12 @@ import nl.xillio.xill.plugins.date.services.DateService;
 public class FromTimestampConstruct extends BaseDateConstruct {
     @Override
     public ConstructProcessor prepareProcess(ConstructContext context) {
-        return new ConstructProcessor(timestampVar -> process(timestampVar, getDateService()),
+        return new ConstructProcessor(this::process,
                 new Argument("timestamp", ATOMIC)
         );
     }
 
-    static MetaExpression process(final MetaExpression timestampVar, DateService dateService) {
+    private MetaExpression process(final MetaExpression timestampVar) {
         Number num = timestampVar.getNumberValue();
 
         // Check if the timestamp is a number.

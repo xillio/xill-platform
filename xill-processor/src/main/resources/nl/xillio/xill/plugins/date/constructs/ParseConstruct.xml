@@ -45,9 +45,29 @@ The Symbol column in the table lists the symbols that may directly be used in th
 
 The `format` parameter can also include other characters that are not used for representing date values (except for: ',[,],#,{,}). For example: using "HH.mm" results in "16.14". Text can be shown by putting single quotation marks around it. For example: "'Current Year: 'YYYY" results in "Current Year: 2016".
         </parameterDescription>
+        <parameterDescription parameterName="locale">
+The `locale` parameter is following IETF's BCP 47 standard. Some of the most commonly locales are listed in the table below. The default locale is: "en-US".
+
+| Language tag | Description                                                               |
+| ------------ | ------------------------------------------------------------------------- |
+| de-DE        | Standard German                                                           |
+| de-CH        | Swiss German                                                              |
+| en-US        | American English                                                          |
+| en-GB        | British English                                                           |
+| es-ES        | Castillian Spanish (Spain)                                                |
+| es-MX        | Mexican Spanish (Standing for Latin American Spanish)                     |
+| fr-FR        | Parisian French (France)                                                  |
+| fr-CA        | Canadian French                                                           |
+| nl-NL        | Dutch                                                                     |
+| pt-BR        | Brazillian Portuguese (standard)                                          |
+| zh-CN        | Mandarin Chinese (China) (see also zh-Hans for Simplified Chinese)        |
+| zh-TW        | Mandarin Chinese (Taiwan) (see also zh-Hant for Traditional Chinese)      |
+| zh-HK        | Cantonese (Hong Kong)                                                     |
+
+        </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-If no parameters are passed, Date.now() is used. The default format for string date values is ISO.
+If no parameters are passed, Date.now() is used. The default format for string date values is ISO. The default locale is "en-US".
 	</longDescription>
     <examples>
         <example title="Usage">
@@ -58,6 +78,13 @@ use Date;
 var date = Date.parse("1986-04-08 12:30", "yyyy-MM-dd HH:mm");
 System.print(date);
             </code>
+            <header>Parsing date and time with a Dutch locale.</header>
+            <code>
+use System;
+use Date;
+var date = Date.parse("maandag augustus 2016 13:37", "EEEE MMMM yyyy HH:mm", "nl-NL");
+System.print(date);
+            </code>
         </example>
     </examples>
     <references>
@@ -66,6 +93,6 @@ System.print(date);
         <reference>format</reference>
     </references>
 	    <tags>
-        date, time, parse, datetime, timezone, now
+        date, time, parse, datetime, timezone, now, locale
     </tags>
 </function>

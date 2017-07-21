@@ -21,11 +21,8 @@ import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.errors.InvalidUserInputException;
-import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.plugins.date.BaseDateConstruct;
-import nl.xillio.xill.plugins.date.services.DateService;
 
-import java.time.DateTimeException;
 import java.time.format.FormatStyle;
 import java.util.Locale;
 
@@ -39,19 +36,21 @@ import java.util.Locale;
  *
  * @author Sander
  */
+@Deprecated
 public class LocalizedFormatConstruct extends BaseDateConstruct {
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
 
-        return new ConstructProcessor((dateVar, localeVar, dateStyleVar, timeStyleVar) -> process(dateVar, localeVar, dateStyleVar, timeStyleVar, getDateService()),
-                new Argument("date"), new Argument("languageTag", NULL), new Argument("dateStyle", NULL),
-                new Argument("timeStyle", NULL));
+        return new ConstructProcessor(this::process,
+                new Argument("date"),
+                new Argument("languageTag", NULL),
+                new Argument("dateStyle", NULL),
+                new Argument("timeStyle", NULL)
+        );
     }
 
-    static MetaExpression process(final MetaExpression dateVar,
-                                  final MetaExpression localeVar, final MetaExpression languageTag, final MetaExpression timeStyleVar, DateService dateService) {
-
+    private MetaExpression process(final MetaExpression dateVar, final MetaExpression localeVar, final MetaExpression languageTag, final MetaExpression timeStyleVar) {
         Date date = getDate(dateVar, "date");
         FormatStyle dateStyle;
         FormatStyle timeStyle;
@@ -82,13 +81,6 @@ public class LocalizedFormatConstruct extends BaseDateConstruct {
         }
 
         Locale locale = localeVar.isNull() ? null : Locale.forLanguageTag(localeVar.getStringValue());
-        MetaExpression result;
-        try {
-            result = fromValue(dateService.formatDateLocalized(date, dateStyle, timeStyle, locale));
-        } catch (DateTimeException | IllegalArgumentException e) {
-            throw new OperationFailedException("format the date", e.getMessage(), e);
-        }
-        return result;
-
+        return fromValue(dateService.formatDateLocalized(date, dateStyle, timeStyle, locale));
     }
 }

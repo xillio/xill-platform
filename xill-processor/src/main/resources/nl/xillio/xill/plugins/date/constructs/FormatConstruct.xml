@@ -25,7 +25,7 @@ Converts a given date to a value with the provided `format`.
 The date that will be formated.
         </parameterDescription>
 		<parameterDescription parameterName="format">
-The `format` parameter can be composed using various symbols. The most commonly used symbols are listed in the table below. The default format is: "yyyy-MM-dd HH:mm:ss".
+`format` is a standard Java date format string. The most commonly used symbols are listed in the table below. The default format is: "yyyy-MM-dd HH:mm:ss".
 
 | Symbol | Meaning                  | Presentation  | Example                |
 | ------ | ---------                | ------------- | ---------------------- |
@@ -39,12 +39,39 @@ The `format` parameter can be composed using various symbols. The most commonly 
 | s      | second-of-minute         | number        | 30                     |
 | a      | am/pm                    | text          | PM;                    |
 | \'     | escape for text ('text') | delimiter     |                        |
-| \"     | literal \'               | literal       | \'                      |
+| \"     | literal \'               | literal       | \'                     |
 
-The Symbol column in the table lists the symbols that may directly be used in the `format` parameter. The way the value that corresponds to the symbol is represented, depends on the number of characters used in the symbol. For example: using "M" would result in "8", while "MM" results in "08" and "MMM" results in "Aug". A more thorough description of how these values are represented and what other options are available, can be found in [Java's pattern definition](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns).
+The Symbol column in the table lists the symbols that may directly be used in `format`.
+The representation of a certain value, depends on the number of characters used in the symbol.
+For example: using "M" would result in "8", while "MM" results in "08" and "MMM" results in "Aug".
+For more information see: [Java's pattern definition](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns).
 
-The `format` parameter can also include other characters that are not used for representing date values (except for: ',[,],#,{,}). For example: using "HH.mm" results in "16.14". Text can be shown by putting single quotation marks around it. For example: "'Current Year: 'YYYY" results in "Current Year: 2016".
+`format` can also include other characters that are not used for representing date values (except for: ',[,],#,{,}).
+For example: using "HH.mm" results in "16.14".
+Text is added by enclosing it in single quotation marks. For example: "'Current Year: 'YYYY" results in "Current Year: 2016".
+
+It is also possible to give the following style tags: `full`, `long`, `medium` and `short` instead of a custom format. These tags will format the date according to the given locale standards.
         </parameterDescription>
+        <parameterDescription parameterName="locale">
+The `locale` parameter is following IETF's BCP 47 standard. Some of the most commonly locales are listed in the table below. The default locale is: "en-US".
+
+| Language tag | Description                                                               |
+| ------------ | ------------------------------------------------------------------------- |
+| de-DE        | Standard German                                                           |
+| de-CH        | Swiss German                                                              |
+| en-US        | American English                                                          |
+| en-GB        | British English                                                           |
+| es-ES        | Castillian Spanish (Spain)                                                |
+| es-MX        | Mexican Spanish (Standing for Latin American Spanish)                     |
+| fr-FR        | Parisian French (France)                                                  |
+| fr-CA        | Canadian French                                                           |
+| nl-NL        | Dutch                                                                     |
+| pt-BR        | Brazillian Portuguese (standard)                                          |
+| zh-CN        | Mandarin Chinese (China) (see also zh-Hans for Simplified Chinese)        |
+| zh-TW        | Mandarin Chinese (Taiwan) (see also zh-Hant for Traditional Chinese)      |
+| zh-HK        | Cantonese (Hong Kong)                                                     |
+
+    </parameterDescription>
 	</parameterDescriptions>
     <examples>
         <example title="Usage">
@@ -62,8 +89,40 @@ use Date;
 var date = Date.now();
 var format = Date.format(date, "QQQ:yyyy E dd MMMM H'h'mm\"ss''");
 System.print(format);
-// Results in the form:
+// Results in the form (not the exact date):
 // "Q1:2016 Thu 31 March 10h59"39'"
+            </code>
+            <header>A more complex format using a Swiss locale</header>
+            <code>
+use System;
+use Date;
+var date = Date.now();
+var format = Date.format(date, "QQQ:yyyy E dd MMMM H'h'mm\"ss''", "de-CH");
+System.print(format);
+// Results in the form (not the exact date):
+// "Q3:2017 Di 04 Juli 13h37"00'"
+            </code>
+            <header>Format using the style tags</header>
+            <code>
+                use Date,System;
+                var date = Date.now();
+
+                var formattedDate_full = Date.format(date, "full");
+                var formattedDate_long = Date.format(date, "long");
+                var formattedDate_medium = Date.format(date, "medium");
+                var formattedDate_short = Date.format(date, "short");
+
+                System.print(formattedDate_full);
+                //prints: Wednesday, July 12, 2017 3:29:23 PM CEST
+
+                System.print(formattedDate_long);
+                //prints: July 12, 2017 3:29:23 PM CEST
+
+                System.print(formattedDate_medium);
+                //prints: Jul 12, 2017 3:29:23 PM
+
+                System.print(formattedDate_short);
+                //prints: 7/12/17 3:29 PM
             </code>
         </example>
     </examples>
@@ -71,6 +130,6 @@ System.print(format);
         <reference>info</reference>
     </references>
 	    <tags>
-        date, time, datetime, format
+        date, time, datetime, format, locale
     </tags>
 </function>

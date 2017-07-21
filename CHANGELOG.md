@@ -1,14 +1,35 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
-## [3.6.1] - unreleased
+## [3.6.3] - unreleased
+
+### Add
+* Add `locale` parameter to `Date.parse()` and `Date.format()` [CF-102].
+
+### Change
+* Deprecate `Date.localizedFormat()` construct [CON-14]
+
+### Fix
+* Fixed encoding issue when maven local repository path contains spaces [CF-115]
+* Fix issue where robots could not be addressed by path in Xill CLI [CF-116]
+* Improve error message when trying to get member of an atomic value [CF-61]
+* Fix issue where username and passwords were required for proxy in XURL [CF-49]
+* Fix issue where including dependencies in a package would overwrite project robots with dependency robots on Windows [CON-12]
+
+## [3.6.2] - 2017-06-30
+
+### Change
+* Update Log4J version to 2.8.2 [XDE-78]
+
+## [3.6.1] - 2017-06-13
 
 ### Add
 * Option for fat archives built by maven [CF-31]
 * Add `Date.isDate()` construct [CTC-2134]
+* Add `-i`/`--ignore-errors` flag to CLI to continue after errors [CF-110]
 
 ### Change
-* `File.isFolder` no longer errors if file does not exist [CF-60]
+* `File.isFolder()` no longer errors if file does not exist [CF-60]
 
 ## [3.6.0] - 2017-06-02
 

@@ -15,50 +15,144 @@
  */
 package nl.xillio.xill.plugins.date.constructs;
 
-import nl.xillio.xill.api.components.MetaExpression;
-import nl.xillio.xill.plugins.date.services.DateService;
-import org.testng.annotations.DataProvider;
+import nl.xillio.xill.TestUtils;
+import nl.xillio.xill.api.errors.OperationFailedException;
+import nl.xillio.xill.plugins.date.services.DateServiceImpl;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import static nl.xillio.xill.plugins.date.utils.MockUtils.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static nl.xillio.xill.plugins.date.constructs.IsBeforeConstructTest.createDateTimeExpression;
 import static org.testng.Assert.assertEquals;
 
 /**
  * Test the {@link FormatConstruct}
- *
- * @author Geert Konijnendijk
  */
-public class FormatConstructTest {
+public class FormatConstructTest extends TestUtils {
+    private final FormatConstruct construct = new FormatConstruct();
 
-    @DataProvider(name = "format")
-    private Object[][] formatProvider() {
-        ZonedDateTime date = ZonedDateTime.now();
-        //Date date = new nl.xillio.xill.plugins.date.data.Date(ZonedDateTime.now());
-        MetaExpression dateExpression = mockDateExpression(date);
-        return new Object[][]{{dateExpression, mockStringExpression("yyyy-MM-dd")}, {dateExpression, mockNullExpression()}};
+    @BeforeClass
+    public void initializeConstruct() {
+        construct.setDateService(new DateServiceImpl());
     }
 
-    /**
-     * Test the process method with both null and non-null format variable
-     */
-    @Test(dataProvider = "format")
-    public void testProcess(MetaExpression dateExpression, MetaExpression formatExpression) {
-        // Mock
-        DateService dateService = mock(DateService.class);
-        String returnString = "2015-8-3";
-        when(dateService.formatDate(any(), any())).thenReturn(returnString);
+    @Test
+    public void testDateFormat() {
+        assertEquals(
+                process(
+                        construct,
+                        createDateTimeExpression(
+                                ZonedDateTime.of(1532, 3, 4, 5, 3, 0, 0, ZoneId.of("Europe/Paris"))
+                        ),
+                        fromValue("yyyy-MM-dd")
+                ),
+                fromValue("1532-03-04")
+        );
+    }
 
-        // Run
-        MetaExpression formatted = FormatConstruct.process(dateExpression, formatExpression, dateService);
+    @Test
+    public void testDateFormatWithLocale() {
+        assertEquals(
+                process(
+                        construct,
+                        createDateTimeExpression(
+                                ZonedDateTime.of(1532, 3, 4, 5, 3, 0, 0, ZoneId.of("Europe/Paris"))
+                        ),
+                        fromValue("EEEE"),
+                        fromValue("fr-FR")
+                ),
+                fromValue("vendredi")
+        );
+    }
 
-        // Verify
-        verify(dateService).formatDate(any(), any());
+    @Test
+    public void testDefaultDateFormat() {
 
-        // Assert
-        assertEquals(formatted.getStringValue(), returnString);
+        assertEquals(
+                process(
+                        construct,
+                        createDateTimeExpression(
+                                ZonedDateTime.of(2020, 12, 12, 5, 5, 0, 0, ZoneId.of("UTC"))
+                        )
+                ),
+                fromValue("2020-12-12 05:05:00")
+        );
+    }
+
+    @Test
+    public void testAllStyledDateFormat(){
+        //test full
+        assertEquals(
+                process(
+                        construct,
+                        createDateTimeExpression(
+                                ZonedDateTime.of(1532, 3, 4, 5, 3, 0, 0, ZoneId.of("UTC"))
+                        ),
+                        fromValue("full")
+                ),
+                fromValue("Friday, March 4, 1532 5:03:00 AM UTC")
+        );
+
+        //test long
+        assertEquals(
+                process(
+                        construct,
+                        createDateTimeExpression(
+                                ZonedDateTime.of(1532, 3, 4, 5, 3, 0, 0, ZoneId.of("UTC"))
+                        ),
+                        fromValue("long")
+                ),
+                fromValue("March 4, 1532 5:03:00 AM UTC")
+        );
+        //test medium
+        assertEquals(
+                process(
+                        construct,
+                        createDateTimeExpression(
+                                ZonedDateTime.of(1532, 3, 4, 5, 3, 0, 0, ZoneId.of("UTC"))
+                        ),
+                        fromValue("medium")
+                ),
+                fromValue("Mar 4, 1532 5:03:00 AM")
+        );
+
+        //test short
+        assertEquals(
+                process(
+                        construct,
+                        createDateTimeExpression(
+                                ZonedDateTime.of(1532, 3, 4, 5, 3, 0, 0, ZoneId.of("UTC"))
+                        ),
+                        fromValue("short")
+                ),
+                fromValue("3/4/32 5:03 AM")
+        );
+    }
+
+    @Test(expectedExceptions = OperationFailedException.class)
+    public void testInvalidPattern() {
+        process(
+                construct,
+                createDateTimeExpression(
+                        ZonedDateTime.now()
+                ),
+                fromValue("What Am I Doing?")
+        );
+    }
+
+    @Test
+    public void testShortFormat() {
+        assertEquals(
+                process(
+                        construct,
+                        createDateTimeExpression(
+                                ZonedDateTime.of(2016, 3, 4, 5, 3, 0, 0, ZoneId.of("Europe/Paris"))
+                        ),
+                        fromValue("short")
+                ),
+                fromValue("3/4/16 5:03 AM")
+        );
     }
 }

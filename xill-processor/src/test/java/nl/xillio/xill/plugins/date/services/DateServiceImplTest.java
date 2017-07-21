@@ -16,6 +16,7 @@
 package nl.xillio.xill.plugins.date.services;
 
 import nl.xillio.xill.api.data.Date;
+import nl.xillio.xill.api.errors.InvalidUserInputException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -35,15 +36,15 @@ public class DateServiceImplTest {
     public void testBaseDateServiceMethods() {
         DateService ds = new DateServiceImpl();
         Date justOneDate = ds.constructDate(2015, 2, 14, 12, 32, 15, 12, ZoneId.of("GMT"));
-        Assert.assertEquals(ds.formatDate(justOneDate, null), "2015-02-14 12:32:15");
-        Assert.assertEquals(ds.formatDate(justOneDate, "yyyy-MM-dd HH:mm:ss.nnn z"), "2015-02-14 12:32:15.012 GMT");
+        Assert.assertEquals(ds.formatDate(justOneDate, null, null), "2015-02-14 12:32:15");
+        Assert.assertEquals(ds.formatDate(justOneDate, "yyyy-MM-dd HH:mm:ss.nnn z", null), "2015-02-14 12:32:15.012 GMT");
     }
 
     @Test
     public void testParseDate() {
         DateService ds = new DateServiceImpl();
         Date justOneDate = ds.constructDate(2015, 2, 14, 12, 32, 15, 12, ZoneId.of("GMT"));
-        Assert.assertEquals(ds.parseDate("2015-02-14 12:32:15.012 GMT", "yyyy-MM-dd HH:mm:ss.nnn z").getZoned(), justOneDate.getZoned());
+        Assert.assertEquals(ds.parseDate("2015-02-14 12:32:15.012 GMT", "yyyy-MM-dd HH:mm:ss.nnn z", null).getZoned(), justOneDate.getZoned());
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "No dateStyle or timeStyle was provided")
@@ -64,8 +65,8 @@ public class DateServiceImplTest {
         Map<ChronoUnit, Long> addValues = new HashMap<>();
         addValues.put(ChronoUnit.HOURS, 12L);
         Date newDate = ds.add(justOneDate, addValues);
-        Assert.assertEquals(ds.formatDate(justOneDate, null), "2015-02-14 12:32:15");
-        Assert.assertEquals(ds.formatDate(newDate, null), "2015-02-15 00:32:15");
+        Assert.assertEquals(ds.formatDate(justOneDate, null, null), "2015-02-14 12:32:15");
+        Assert.assertEquals(ds.formatDate(newDate, null, null), "2015-02-15 00:32:15");
     }
 
     @Test
@@ -73,8 +74,8 @@ public class DateServiceImplTest {
         DateService ds = new DateServiceImpl();
         Date justOneDate = ds.constructDate(2015, 2, 14, 12, 32, 15, 12, ZoneId.of("GMT"));
         Date newDate = ds.changeTimeZone(justOneDate, ZoneId.of("CET"));
-        Assert.assertEquals(ds.formatDate(justOneDate, null), "2015-02-14 12:32:15");
-        Assert.assertEquals(ds.formatDate(newDate, null), "2015-02-14 13:32:15");
+        Assert.assertEquals(ds.formatDate(justOneDate, null, "en-US"), "2015-02-14 12:32:15");
+        Assert.assertEquals(ds.formatDate(newDate, null, null), "2015-02-14 13:32:15");
     }
 
     @Test
@@ -128,7 +129,7 @@ public class DateServiceImplTest {
     public void testFromTimestamp() {
         DateService ds = new DateServiceImpl();
         Date date = ds.fromTimestamp(1469179600);
-        Assert.assertEquals(ds.formatDate(date, null), "2016-07-22 11:26:40");
+        Assert.assertEquals(ds.formatDate(date, null, null), "2016-07-22 11:26:40");
     }
 
     @Test
@@ -147,5 +148,11 @@ public class DateServiceImplTest {
         Date justAnotherDate = ds.constructDate(2015, 2, 13, 12, 32, 15, 12, ZoneId.of("GMT"));
         boolean isAfter = ds.isAfter(justOneDate, justAnotherDate);
         Assert.assertEquals(isAfter, true);
+    }
+
+    @Test(expectedExceptions = InvalidUserInputException.class)
+    public void testInvalidLocale() {
+        DateService ds = new DateServiceImpl();
+        ds.parseDate("2015-02-14 12:32:15.012 GMT", "yyyy-MM-dd HH:mm:ss.nnn z", "invalid-tag").getZoned();
     }
 }

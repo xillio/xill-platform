@@ -36,9 +36,12 @@ How the results will be sorted.
 		<parameterDescription parameterName="options">
 The `options` parameter may contain the following options:
 
-| Option       | Description |
-| ------------ | ----------- |
-| `maxTime`    | The maximum execution time in milliseconds for this operation. |
+| Option            | Description |
+| ----------------- | ----------- |
+| `limit`           | The maximum number of documents in the result set. |
+| `skip`            | The starting point of the results set. |
+| `maxTime`         | The maximum execution time in milliseconds for this operation. |
+| `noCursorTimeout` | Avoids closing a cursor automatically after a period of inactivity. |
         </parameterDescription>
 		<parameterDescription parameterName="database">
 The database that will be used.

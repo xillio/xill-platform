@@ -18,6 +18,7 @@ package nl.xillio.xill.maven.services;
 import org.codehaus.plexus.archiver.FileSet;
 import org.testng.annotations.Test;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -31,7 +32,7 @@ public class FileSetFactoryTest {
         Path dir = Paths.get(".");
         FileSet fileSet = factory.createFileSet(dir);
 
-        assertEquals(fileSet.getPrefix(), "robots/");
+        assertEquals(fileSet.getPrefix(), "robots" + File.separator);
         assertEquals(fileSet.getDirectory(), dir.toFile());
     }
 }

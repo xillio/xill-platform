@@ -97,6 +97,18 @@ public class OptionsTest {
     }
 
     @Test
+    public void testApplyProxyRequestViaProxy() {
+        Options options = new Options();
+        ProxyOptions proxyOptions = new ProxyOptions(new HttpHost("britain"), null);
+        options.setProxyOptions(proxyOptions);
+
+        Request request = mock(Request.class);
+        options.apply(request);
+
+        verify(request).viaProxy(proxyOptions.getHttpHost());
+    }
+
+    @Test
     public void testGetBodyContentType() throws Exception {
         Options options = new Options();
 

@@ -15,18 +15,26 @@
  */
 package nl.xillio.xill.maven.services;
 
-import org.codehaus.plexus.archiver.FileSet;
-import org.codehaus.plexus.archiver.util.DefaultFileSet;
-
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.CopyOption;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
 
-public class FileSetFactory {
-    public static final String ROBOTS_DIRECTORY = "robots" + File.separator;
+/**
+ * Created by Dwight.Peters on 14-Jul-17.
+ */
+public class FilesService {
+    public Path walkFileTree(Path start, FileVisitor<? super Path> visitor) throws IOException {
+        return Files.walkFileTree(start, visitor);
+    }
 
-    public FileSet createFileSet(Path directory) {
-        DefaultFileSet fileSet = new DefaultFileSet(directory.toFile());
-        fileSet.setPrefix(ROBOTS_DIRECTORY);
-        return fileSet;
+    public Path createDirectories(Path dir, FileAttribute<?>... attrs) throws IOException{
+        return Files.createDirectories(dir, attrs);
+    }
+
+    public Path copy(Path source, Path target, CopyOption... options) throws IOException{
+        return Files.copy(source, target, options);
     }
 }
