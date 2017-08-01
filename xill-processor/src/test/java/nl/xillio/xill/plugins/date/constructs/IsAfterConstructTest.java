@@ -15,35 +15,38 @@
  */
 package nl.xillio.xill.plugins.date.constructs;
 
+import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.date.services.DateService;
 import org.testng.annotations.Test;
 
 import java.time.ZonedDateTime;
 
-import static nl.xillio.xill.plugins.date.utils.MockUtils.mockDateExpression;
+import static nl.xillio.xill.plugins.date.constructs.IsBeforeConstructTest.createDateTimeExpression;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
 
-public class IsAfterConstructTest {
+public class IsAfterConstructTest extends TestUtils {
     /**
      * Test the process method under normal circumstances
      */
     @Test
     public void testProcess() {
         // Mock
+        IsAfterConstruct isAfterConstruct = new IsAfterConstruct();
         ZonedDateTime date1 = ZonedDateTime.now();
         ZonedDateTime date2 = ZonedDateTime.now();
 
-        MetaExpression date1Expression = mockDateExpression(date1);
-        MetaExpression date2Expression = mockDateExpression(date2);
+        MetaExpression date1Expression = createDateTimeExpression(date1);
+        MetaExpression date2Expression = createDateTimeExpression(date2);
 
         DateService dateService = mock(DateService.class);
         when(dateService.isAfter(any(), any())).thenReturn(false);
+        isAfterConstruct.setDateService(dateService);
 
         // Run
-        MetaExpression result = IsAfterConstruct.process(date1Expression, date2Expression, dateService);
+        MetaExpression result = process(isAfterConstruct, date1Expression, date2Expression);
 
         // Verify
         verify(dateService).isAfter(any(), any());
@@ -51,4 +54,4 @@ public class IsAfterConstructTest {
         // Assert
         assertEquals(result.getBooleanValue(), false);
     }
- }
+}

@@ -120,8 +120,8 @@ public class XillEnvironmentImpl implements XillEnvironment {
     }
 
     @Override
-    public XillProcessor buildProcessor(Path workingDirectory, String fullyQualifiedName, Path... robotPath) throws IOException {
-        return buildProcessor(workingDirectory, fullyQualifiedName, new XillDebugger(), robotPath);
+    public XillProcessor buildProcessor(Path workingDirectory, String robot, Path... robotPath) throws IOException {
+        return buildProcessor(workingDirectory, robot, new XillDebugger(), robotPath);
     }
 
     @Override
@@ -140,13 +140,25 @@ public class XillEnvironmentImpl implements XillEnvironment {
     }
 
     @Override
-    public XillProcessor buildProcessor(Path workingDirectory, String fullyQualifiedName, Debugger debugger, Path... robotPath) throws IOException {
+    public XillProcessor buildProcessor(Path workingDirectory, String robot, Debugger debugger, Path... robotPath) throws IOException {
         AbstractRobotLoader robotLoader = buildRobotLoader(workingDirectory, robotPath);
-        URL resource = robotLoader.getRobot(fullyQualifiedName);
+
+        // Try to load by fqn.
+        URL resource = robotLoader.getRobot(robot);
+        String resourcePath = RobotID.qualifiedNameToPath(robot);
+
+        // If loading by fqn failed, try loading by path.
         if (resource == null) {
-            throw new NoSuchFileException("'" + fullyQualifiedName + "' could not be resolved");
+            resource = robotLoader.getResource(robot);
+            resourcePath = robot;
         }
-        RobotID robotID = new RobotID(resource, RobotID.qualifiedNameToPath(fullyQualifiedName));
+
+        // Check if no robot was found.
+        if (resource == null) {
+            throw new NoSuchFileException("'" + robot + "' could not be resolved");
+        }
+
+        RobotID robotID = new RobotID(resource, resourcePath);
 
         return buildProcessor(
                 workingDirectory,

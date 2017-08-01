@@ -42,7 +42,7 @@ public class ArchiveRobotLoaderTest {
 
     @BeforeClass
     private void beforeClass() throws IOException {
-        dir = Files.createTempDirectory(getClass().getSimpleName());
+        dir = Files.createTempDirectory(getClass().getSimpleName() + " space ");
 
         // Create the test files.
         Path childXip = dir.resolve("child.xip");

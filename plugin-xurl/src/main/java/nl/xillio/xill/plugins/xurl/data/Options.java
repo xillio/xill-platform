@@ -30,13 +30,16 @@ import static nl.xillio.xill.plugins.xurl.services.OptionsFactory.parseContentTy
  * @author Thomas Biesaart
  */
 public class Options {
+    // Five minutes
+    private static final int DEFAULT_TIMEOUT = 300000;
+
     private Credentials basicAuth;
     private ProxyOptions proxyOptions;
     private NTLMOptions ntlmOptions;
     private boolean insecure;
     private boolean multipart = false;
     private ContentType responseContentType;
-    private int timeout;
+    private int timeout = DEFAULT_TIMEOUT;
     private Header[] headers = new Header[0];
     private String logging;
     private boolean enableRedirect = true;
@@ -151,6 +154,9 @@ public class Options {
         for (Header header : headers) {
             request.addHeader(header);
         }
+        if (proxyOptions != null) {
+            request.viaProxy(proxyOptions.getHttpHost());
+        }
     }
 
     public void apply(Executor executor) {
@@ -158,7 +164,7 @@ public class Options {
             executor.auth(basicAuth.getUsername(), basicAuth.getPassword());
         }
 
-        if(ntlmOptions != null) {
+        if (ntlmOptions != null) {
             executor.auth(ntlmOptions.getUsername(), ntlmOptions.getPassword(), getNTLMOptions().getWorkstation(), ntlmOptions.getDomain());
         }
 

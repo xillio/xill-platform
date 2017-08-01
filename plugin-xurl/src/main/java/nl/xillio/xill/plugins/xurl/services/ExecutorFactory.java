@@ -85,7 +85,10 @@ public class ExecutorFactory {
         } else if (options.isNTLMEnabled()) {
             id = options.getNTLMOptions().getUsername() + "@" + options.getNTLMOptions().getDomain();
         } else if (options.isProxyEnabled()) {
-            id = options.getProxyOptions().getUsername() + "@" + options.getProxyOptions().getHttpHost().toHostString();
+            id = options.getProxyOptions().getHttpHost().toHostString();
+            if (options.getProxyOptions().getCredentials() != null) {
+                id = options.getProxyOptions().getUsername() + "@" + id;
+            }
         } else {
             id = DEFAULT_CLIENT_ID;
         }

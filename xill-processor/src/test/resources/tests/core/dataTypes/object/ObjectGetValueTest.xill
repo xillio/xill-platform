@@ -15,15 +15,24 @@
  */
 /*
 * Specification: Object.x MUST return the right value at that key
-* Input: {"1": 1, "2":"test","a":"test-a", "b": "test-b"}
-* Expected: 1 , 2 , "test-a", "test-b"
+* Input: See object
+* Expected: See object
 */
 
 use Assert;
 
-var object = {"1": 1, "2":"test","a":"test-a", "b": "test-b"};
+var object = {
+    "1": 1,
+    "2": "test",
+    "a": "test-a",
+    "b": "test-b",
+    "sub": {
+        "some": "value"
+    }
+};
 
-Assert.equal(object[1],1);
-Assert.equal(object[1+1],"test");
-Assert.equal(object["a"],"test-a");
-Assert.equal(object.b,"test-b");
+Assert.equal(object[1], 1);
+Assert.equal(object[1+1], "test");
+Assert.equal(object["a"], "test-a");
+Assert.equal(object.b, "test-b");
+Assert.equal(object.sub.some, "value");

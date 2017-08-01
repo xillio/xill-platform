@@ -70,8 +70,15 @@
         <div class="package">
         <ul>
             <#list constructs as construct>
-            <li>
-                <a href="${construct.identity}.html"><strong>${construct.identity}</strong>(<#list construct.parameters as parameter><#if parameter?index != 0>, </#if><span class="parameter">${parameter.name}</span></#list>);</a>
+            <li <#if construct.deprecated>class="deprecated"</#if>>
+                <a href="${construct.identity}.html">
+                    <#if construct.deprecated>${construct.identity}
+                    <#else><strong>${construct.identity}</strong></#if>
+                    (<#list construct.parameters as parameter>
+                    <#if parameter?index != 0>, </#if>
+                    <span class="parameter">${parameter.name}</span>
+                </#list>);
+                </a>
             </li>
             </#list>
         </ul>

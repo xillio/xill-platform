@@ -1,6 +1,22 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.6.3] - 2017-08-01
+
+### Add
+* Add `locale` parameter to `Date.parse()` and `Date.format()` [CF-102].
+* Add `timeout` parameter to `XURL.get()` and set default to 5 minutes [XDE-64]
+
+### Change
+* Deprecate `Date.localizedFormat()` construct [CON-14]
+
+### Fix
+* Fixed encoding issue when maven local repository path contains spaces [CF-115]
+* Fix issue where robots could not be addressed by path in Xill CLI [CF-116]
+* Improve error message when trying to get member of an atomic value [CF-61]
+* Fix issue where username and passwords were required for proxy in XURL [CF-49]
+* Fix issue where including dependencies in a package would overwrite project robots with dependency robots on Windows [CON-12]
+
 ## [3.6.2] - 2017-06-30
 
 ### Change

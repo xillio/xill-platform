@@ -16,7 +16,12 @@
 if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /\d+(\.(\d+|x))+/) {
     println 'This commit is on the master or a release branch. A full test and deployment will be executed...'
 
-    String nativeProfile = '-P build-native'
+    //skip building native executables on master, since nobody is using the nightlies and this costs a lot of extra
+    //time (and space on Artifactory)
+    String nativeProfile = ''
+    if (env.BRANCH_NAME ==~ /\d+(\.(\d+|x))+/) {
+        nativeProfile = '-P build-native'
+    }
 
     currentBuild.displayName = "${env.BRANCH_NAME}: ${currentBuild.number}"
 

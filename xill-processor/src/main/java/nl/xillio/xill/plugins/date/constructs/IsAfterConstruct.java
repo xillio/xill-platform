@@ -20,7 +20,6 @@ import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.plugins.date.BaseDateConstruct;
-import nl.xillio.xill.plugins.date.services.DateService;
 
 /**
  * Determines if the date is after other date
@@ -29,12 +28,13 @@ public class IsAfterConstruct extends BaseDateConstruct {
 
     @Override
     public ConstructProcessor prepareProcess(final ConstructContext context) {
-        return new ConstructProcessor((dateVar, otherVar) -> process(dateVar, otherVar, getDateService()),
+        return new ConstructProcessor(this::process,
                 new Argument("date", ATOMIC),
-                new Argument("other", ATOMIC));
+                new Argument("other", ATOMIC)
+        );
     }
 
-    static MetaExpression process(final MetaExpression dateVar, final MetaExpression otherVar, DateService dateService) {
+    private MetaExpression process(final MetaExpression dateVar, final MetaExpression otherVar) {
         return fromValue(dateService.isAfter(getDate(dateVar, "date"), getDate(otherVar, "other")));
     }
 }
