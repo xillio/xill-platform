@@ -1,7 +1,10 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
-## [3.6.3] - unreleased
+## [3.7.0] - unreleased
+
+
+## [3.6.3] - 2017-08-01
 
 ### Add
 * Add `locale` parameter to `Date.parse()` and `Date.format()` [CF-102].
