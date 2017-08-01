@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Add
 * Add `locale` parameter to `Date.parse()` and `Date.format()` [CF-102].
+* Add `timeout` parameter to `XURL.get()` and set default to 5 minutes [XDE-64]
 
 ### Change
 * Deprecate `Date.localizedFormat()` construct [CON-14]
