@@ -60,7 +60,8 @@ public class ConstructContext {
 
     /**
      * Creates a new {@link ConstructContext} for a specific robot.
-     *  @param workingDirectory  the workingDirectory of the current robot
+     *
+     * @param workingDirectory  the workingDirectory of the current robot
      * @param robot             the robotID of the current robot
      * @param rootRobot         the robotID of the root robot
      * @param construct         the construct that will be using this context
@@ -86,7 +87,8 @@ public class ConstructContext {
 
     /**
      * Creates a new {@link ConstructContext} for a specific robot.
-     *  @param workingDirectory  the workingDirectory of the current robot
+     *
+     * @param workingDirectory  the workingDirectory of the current robot
      * @param robot             the robotID of the current robot
      * @param rootRobot         the robotID of the root robot
      * @param construct         the construct that will be using this context
@@ -232,17 +234,22 @@ public class ConstructContext {
     /**
      * Create a processor using the current debugger as the parent.
      *
-     * @param robot           the robot that should be compiled
+     * @param robotPath       the robot that should be compiled
      * @param xillEnvironment the xill environment
      * @return the processor
      * @throws IOException if an IO error occurs
      */
     public XillProcessor createChildProcessor(String robotPath, XillEnvironment xillEnvironment) throws IOException {
         URL robotURL = resourceLoader.getResource(robotPath);
-        RobotID robotID = new RobotID(robotURL, robotPath);
 
         Path[] basePaths = resourceLoader.getBasePaths().toArray(new Path[0]);
-        XillProcessor processor = xillEnvironment.buildProcessor(workingDirectory, robotID, debugger.createChild(), basePaths);
+        XillProcessor processor = xillEnvironment.buildProcessor(
+                workingDirectory,
+                new RobotID(robotURL, robotPath),
+                debugger.createChild(),
+                basePaths
+        );
+
         processor.setOutputHandler(outputHandler);
         return processor;
     }
