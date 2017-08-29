@@ -18,6 +18,8 @@ package nl.xillio.xill.api.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Path;
+import java.util.List;
 
 /**
  * The interface for retrieving resources (URL and InputStream) for a given path.
@@ -47,4 +49,14 @@ public interface ResourceLoader {
      * @throws IOException              if the stream could not be opened
      */
     InputStream getResourceAsStream(String path) throws IOException;
+
+    /**
+     * Get the base paths that this loader operates on.
+     *
+     * These paths are used by implementations to resolve resources against using {@link #getResource(String)}
+     * {@link #getResourceAsStream(String)}.
+     *
+     * @return the base paths
+     */
+    List<Path> getBasePaths();
 }

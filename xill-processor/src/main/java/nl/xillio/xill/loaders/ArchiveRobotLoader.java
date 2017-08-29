@@ -50,7 +50,7 @@ public class ArchiveRobotLoader extends AbstractRobotLoader {
      * @param xipFile The xip archive to load resources from.
      * @throws IOException if an exception occurred while opening the archive
      */
-    public ArchiveRobotLoader(RobotLoader parent, Path xipFile) throws IOException {
+    public ArchiveRobotLoader(AbstractRobotLoader parent, Path xipFile) throws IOException {
         super(parent);
         this.xipFile = xipFile.toAbsolutePath().normalize();
         Map<String, String> env = new HashMap<>();
@@ -89,6 +89,11 @@ public class ArchiveRobotLoader extends AbstractRobotLoader {
         URLConnection uc = resource.openConnection();
         uc.setUseCaches(false);
         return uc.getInputStream();
+    }
+
+    @Override
+    protected Path getBasePath() {
+        return xipFile;
     }
 
     /**

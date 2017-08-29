@@ -22,6 +22,9 @@ import xill.RobotLoader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The abstract base class for robot loaders.
@@ -30,14 +33,14 @@ import java.net.URL;
  * @author Luca Scalzotto
  */
 public abstract class AbstractRobotLoader implements ResourceLoader, RobotLoader {
-    private RobotLoader parent;
+    private AbstractRobotLoader parent;
 
     /**
      * Create a new robot loader.
      *
      * @param parent The parent robot loader.
      */
-    public AbstractRobotLoader(RobotLoader parent) {
+    public AbstractRobotLoader(AbstractRobotLoader parent) {
         this.parent = parent;
     }
 
@@ -82,6 +85,20 @@ public abstract class AbstractRobotLoader implements ResourceLoader, RobotLoader
      * @return the resource or null if none was found
      */
     protected abstract URL doGetResource(String path);
+
+    @Override
+    public List<Path> getBasePaths() {
+        List<Path> parentPaths = parent == null ? new ArrayList<>() : parent.getBasePaths();
+        parentPaths.add(getBasePath());
+        return  parentPaths;
+    }
+
+    /**
+     * Get the path this loader uses to resolver robots and resources against.
+     *
+     * @return the base path
+     */
+    protected abstract Path getBasePath();
 
     @Override
     public void close() throws IOException {

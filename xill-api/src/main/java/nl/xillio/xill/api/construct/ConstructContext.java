@@ -240,7 +240,9 @@ public class ConstructContext {
     public XillProcessor createChildProcessor(String robotPath, XillEnvironment xillEnvironment) throws IOException {
         URL robotURL = resourceLoader.getResource(robotPath);
         RobotID robotID = new RobotID(robotURL, robotPath);
-        XillProcessor processor = xillEnvironment.buildProcessor(workingDirectory, robotID, debugger.createChild());
+
+        Path[] basePaths = resourceLoader.getBasePaths().toArray(new Path[0]);
+        XillProcessor processor = xillEnvironment.buildProcessor(workingDirectory, robotID, debugger.createChild(), basePaths);
         processor.setOutputHandler(outputHandler);
         return processor;
     }
