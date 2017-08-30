@@ -25,6 +25,7 @@ import nl.xillio.xill.api.io.ResourceLoader;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -59,7 +60,8 @@ public class ConstructContext {
 
     /**
      * Creates a new {@link ConstructContext} for a specific robot.
-     *  @param workingDirectory  the workingDirectory of the current robot
+     *
+     * @param workingDirectory  the workingDirectory of the current robot
      * @param robot             the robotID of the current robot
      * @param rootRobot         the robotID of the root robot
      * @param construct         the construct that will be using this context
@@ -85,7 +87,8 @@ public class ConstructContext {
 
     /**
      * Creates a new {@link ConstructContext} for a specific robot.
-     *  @param workingDirectory  the workingDirectory of the current robot
+     *
+     * @param workingDirectory  the workingDirectory of the current robot
      * @param robot             the robotID of the current robot
      * @param rootRobot         the robotID of the root robot
      * @param construct         the construct that will be using this context
@@ -226,6 +229,29 @@ public class ConstructContext {
      */
     public UUID getCompilerSerialId() {
         return compilerSerialId;
+    }
+
+    /**
+     * Create a processor using the current debugger as the parent.
+     *
+     * @param robotPath       the robot that should be compiled
+     * @param xillEnvironment the xill environment
+     * @return the processor
+     * @throws IOException if an IO error occurs
+     */
+    public XillProcessor createChildProcessor(String robotPath, XillEnvironment xillEnvironment) throws IOException {
+        URL robotURL = resourceLoader.getResource(robotPath);
+
+        Path[] basePaths = resourceLoader.getBasePaths().toArray(new Path[0]);
+        XillProcessor processor = xillEnvironment.buildProcessor(
+                workingDirectory,
+                new RobotID(robotURL, robotPath),
+                debugger.createChild(),
+                basePaths
+        );
+
+        processor.setOutputHandler(outputHandler);
+        return processor;
     }
 
     /**
