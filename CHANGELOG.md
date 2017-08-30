@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [3.7.0] - unreleased
 
+## [3.6.4] - 2017-08-30
+
+###Fix
+* Fix incompatibility of `Concurrency` plugin with xill-platform 3.6.x [CF-132]
 
 ## [3.6.3] - 2017-08-01
 
