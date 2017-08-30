@@ -42,7 +42,7 @@ public class DirectoryRobotLoader extends AbstractRobotLoader {
      * @param parent    The parent robot loader.
      * @param directory The directory to load resources from.
      */
-    public DirectoryRobotLoader(RobotLoader parent, Path directory) {
+    public DirectoryRobotLoader(AbstractRobotLoader parent, Path directory) {
         super(parent);
         this.directory = directory.toAbsolutePath().normalize();
     }
@@ -72,5 +72,10 @@ public class DirectoryRobotLoader extends AbstractRobotLoader {
             LOGGER.error("Could not get real path for path: " + path, e);
             return null;
         }
+    }
+
+    @Override
+    protected Path getBasePath() {
+        return directory;
     }
 }
