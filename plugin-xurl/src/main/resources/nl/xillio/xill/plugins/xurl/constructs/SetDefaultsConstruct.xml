@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Sets default options for all subsequent usages of the XURL plugin.
+    </description>
+    <parameterDescriptions>
+        <parameterDescription parameterName="options">
+To set various options for all requests you can use the options parameter. The passed value should be an object containing option names as keys and their respective values as values. Check out the code examples for more information about the options.
+
+| Option Name           | Value                                                                                                   | Description                                                           |
+| --------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| basicAuth             | An OBJECT containing `username` and `password` fields                                                   | Set these credentials to perform basic authentication                 |
+| proxy                 | An OBJECT containing at least a `host` field but optionally `port` or `username` and `password` fields  | Set these options to connect through a proxy                          |
+| ntlm                  | An OBJECT containing `username`, `password` and `domain` fields and optionally a `workstation` field    | Set these options to authenticate using NTLM                          |
+| timeout               | An ATOMIC that represents the timeout in milliseconds, 5 minutes by default                             | Set this option to limit the time a request can take, or 0 to disable |
+| headers               | An OBJECT containing the headers                                                                        | Set this option to add custom headers to your request                 |
+| insecure              | An ATOMIC *default: false*                                                                              | Set to true if you want to skip hostname validation                   |
+| enableRedirect        | An ATOMIC *default: true*                                                                               | Set to false if you do not want to automatically follow redirects     |
+| responseContentType   | An ATOMIC describing a content type                                                                     | Set this option to override the response type auto detector           |
+| logging               | An ATOMIC (debug, info, warn or error) *default: null*                                                  | Set this option to enable logging of requests and responses           |
+| ignoreConnectionCache | An ATOMIC *default: false*                                                                              | Set to true to disable the connection cache                           |
+
+        </parameterDescription>
+    </parameterDescriptions>
+    <longDescription>
+Sets default options for all subsequent usages of the XURL plugin. These defaults can be overridden per call by specifying different options as detailed in the relevant construct documentation.
+    </longDescription>
+    <examples>
+        <example title="Usage">
+            <header>Set defaults for the XURL plugin</header>
+            <code>
+                use XURL;
+                use System;
+
+                XURL.setDefaults({"ignoreConnectionCache": "true", "logging" : "debug", "enableRedirect": "true"});
+
+                System.print(XURL.getDefaults());
+            </code>
+        </example>
+        <example title="Override defaults">
+            <header>Override defaults for the XURL plugin</header>
+            <code>
+                use XURL;
+                use System;
+
+                XURL.setDefaults({"ignoreConnectionCache": "true", "logging" : "debug", "enableRedirect": "true"});
+
+                // this GET request will not log request and response payloads
+                var res = XURL.get("http://google.com", {"logging" : null});
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>getDefaults</reference>
+    </references>
+    <tags>
+        REST, options, default
+    </tags>
+</function>

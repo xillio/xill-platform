@@ -16,28 +16,20 @@
 package nl.xillio.xill.plugins.date.constructs;
 
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.errors.OperationFailedException;
-import nl.xillio.xill.plugins.date.services.DateService;
 import nl.xillio.xill.plugins.date.services.DateServiceImpl;
-import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 /**
  * Test the {@link ParseConstruct}
- *
  */
 public class ParseConstructTest extends TestUtils {
 
@@ -53,8 +45,8 @@ public class ParseConstructTest extends TestUtils {
         assertEquals(
                 process(
                         construct,
-                        fromValue("maandag 10 juli"),
-                        fromValue("EEEE dd MMMM"),
+                        fromValue("maandag 10 juli 2017"),
+                        fromValue("EEEE dd MMMM yyyy"),
                         fromValue("nl-NL")
                 ).getMeta(Date.class).getZoned(),
                 ZonedDateTime.of(2017, 7, 10, 0, 0, 0, 0, ZoneId.systemDefault())

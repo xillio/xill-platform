@@ -58,7 +58,7 @@ public class ExecutorFactory {
         String uuid = getSessionID(options);
 
         Executor executor;
-        if (executors.containsKey(uuid)) {
+        if (executors.containsKey(uuid) && !options.isIgnoreConnectionCache()) {
             executor = executors.get(uuid);
         } else {
             executor = Executor.newInstance(buildClient(defaultBuilder(), options));

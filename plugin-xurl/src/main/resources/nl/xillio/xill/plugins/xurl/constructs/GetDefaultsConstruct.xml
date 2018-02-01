@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+Gets the default options for all usages of the XURL plugin.
+    </description>
+    <parameterDescriptions>
+    </parameterDescriptions>
+    <longDescription>
+Returns the default global options, as set on the XURL plugin. The options are as follows:
+
+| Option Name           | Value                                                                                                   | Description                                                |
+| --------------------- | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| basicAuth             | An OBJECT containing `username` and `password` fields                                                   | Credentials to perform basic authentication                |
+| proxy                 | An OBJECT containing at least a `host` field but optionally `port` or `username` and `password` fields  | Connects through a proxy                                   |
+| ntlm                  | An OBJECT containing `username`, `password` and `domain` fields and optionally a `workstation` field    | Authenticates using NTLM                                   |
+| timeout               | An ATOMIC that represents the timeout in milliseconds, 5 minutes by default                             | Limits the time a request can take, or 0 to disable        |
+| headers               | An OBJECT containing the headers                                                                        | Adds custom headers to your request                        |
+| insecure              | An ATOMIC *default: false*                                                                              | True if you want to skip hostname validation               |
+| enableRedirect        | An ATOMIC *default: true*                                                                               | False if you do not want to automatically follow redirects |
+| responseContentType   | An ATOMIC describing a content type                                                                     | Overrides the response type auto detector                  |
+| logging               | An ATOMIC (debug, info, warn or error) *default: null*                                                  | Enables logging of requests and responses                  |
+| ignoreConnectionCache | An ATOMIC *default: false*                                                                              | Disables the connection cache                              |
+
+    </longDescription>
+    <examples>
+        <example title="Usage">
+            <header>Get defaults for the XURL plugin</header>
+            <code>
+                use XURL;
+                use System;
+
+                System.print(XURL.getDefaults());
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>setDefaults</reference>
+    </references>
+    <tags>
+        REST, options, default
+    </tags>
+</function>
