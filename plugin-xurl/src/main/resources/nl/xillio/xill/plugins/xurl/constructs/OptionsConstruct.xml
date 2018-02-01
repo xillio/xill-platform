@@ -27,17 +27,20 @@ The URL that the request will be sent to.
 		<parameterDescription parameterName="options">
 To set various options for the request you can use the options parameter. The passed value should be an object containing option names as keys and their respective values as values. Check out the code examples for more information about the options.
 
-| Option Name         | Value                                                                                                   | Description                                                                       |
-| ------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| basicAuth           | An OBJECT containing `username` and `password` fields                                                   | Set these credentials to perform basic authentication                             |
-| proxy               | An OBJECT containing at least a `host` field but optionally `port` or `username` and `password` fields  | Set these options to connect through a proxy                                      |
-| ntlm                | An OBJECT containing `username`, `password` and `domain` fields and optionally a `workstation` field    | Set these options to authenticate using NTLM                                      |
-| timeout             | An ATOMIC that represents the timeout in milliseconds, 5 minutes by default                             | Set this option to limit the time a request can take, or 0 to disable             |
-| headers             | An OBJECT containing the headers                                                                        | Set this option to add custom headers to your request                             |
-| insecure            | An ATOMIC *default: false*                                                                              | Set this option to true if you want to skip hostname validation                   |
-| enableRedirect      | An ATOMIC *default: true*                                                                               | Set this option to false if you do not want to automatically follow redirects     |
-| responseContentType | An ATOMIC describing a content type                                                                     | Set this option to override the response type auto detector                       |
-| logging             | An ATOMIC (debug, info, warn or error) *default: null*                                                  | Set this option to enable logging of requests and responses                       |
+| Option Name           | Value                                                                                                   | Description                                                                   |
+| --------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| basicAuth             | An OBJECT containing `username` and `password` fields                                                   | Set these credentials to perform basic authentication                         |
+| proxy                 | An OBJECT containing at least a `host` field but optionally `port` or `username` and `password` fields  | Set these options to connect through a proxy                                  |
+| ntlm                  | An OBJECT containing `username`, `password` and `domain` fields and optionally a `workstation` field    | Set these options to authenticate using NTLM                                  |
+| timeout               | An ATOMIC that represents the timeout in milliseconds, 5 minutes by default                             | Set this option to limit the time a request can take, or 0 to disable         |
+| headers               | An OBJECT containing the headers                                                                        | Set this option to add custom headers to your request                         |
+| insecure              | An ATOMIC *default: false*                                                                              | Set this option to true if you want to skip hostname validation               |
+| enableRedirect        | An ATOMIC *default: true*                                                                               | Set this option to false if you do not want to automatically follow redirects |
+| responseContentType   | An ATOMIC describing a content type                                                                     | Set this option to override the response type auto detector                   |
+| logging               | An ATOMIC (debug, info, warn or error) *default: null*                                                  | Set this option to enable logging of requests and responses                   |
+| ignoreConnectionCache | An ATOMIC *default: false*                                                                              | Set this option to disable the connection cache                               |
+
+The ignoreConnectionCache can be useful when when the server redirects POST requests, since the default caching mechanism will be to return this redirection to any subsequent calls to the same host.
 
         </parameterDescription>
 	</parameterDescriptions>

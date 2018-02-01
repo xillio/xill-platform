@@ -43,6 +43,32 @@ public class Options {
     private Header[] headers = new Header[0];
     private String logging;
     private boolean enableRedirect = true;
+    private boolean ignoreConnectionCache = false;
+
+    /**
+     * Default constructor.
+     */
+    public Options() {
+    }
+
+    /**
+     * Copy constructor.
+     *
+     * @param original otpins to copy
+     */
+    public Options(Options original) {
+        this.basicAuth = original.basicAuth;
+        this.proxyOptions = original.proxyOptions;
+        this.ntlmOptions = original.ntlmOptions;
+        this.insecure = original.insecure;
+        this.multipart = original.multipart;
+        this.responseContentType = original.responseContentType;
+        this.timeout = original.timeout;
+        this.headers = original.headers;
+        this.logging = original.logging;
+        this.enableRedirect = original.enableRedirect;
+        this.ignoreConnectionCache = original.ignoreConnectionCache;
+    }
 
     public Credentials getBasicAuth() {
         return basicAuth;
@@ -134,6 +160,14 @@ public class Options {
 
     public void setEnableRedirect(boolean enableRedirect) {
         this.enableRedirect = enableRedirect;
+    }
+
+    public boolean isIgnoreConnectionCache() {
+        return ignoreConnectionCache;
+    }
+
+    public void setIgnoreConnectionCache(boolean ignoreConnectionCache) {
+        this.ignoreConnectionCache = ignoreConnectionCache;
     }
 
     public Optional<ContentType> getBodyContentType() {

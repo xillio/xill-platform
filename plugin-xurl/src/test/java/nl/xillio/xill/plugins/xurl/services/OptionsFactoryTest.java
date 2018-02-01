@@ -28,13 +28,12 @@ import java.util.LinkedHashMap;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-public class    OptionsFactoryTest extends TestUtils {
-    private OptionsFactory optionsFactory = new OptionsFactory();
-
+public class OptionsFactoryTest extends TestUtils {
     private final String USERNAME = "user";
     private final String PASSWORD = "password";
     private final String WORKSTATION = "workstation";
     private final String DOMAIN = "domain.com";
+    private OptionsFactory optionsFactory = new OptionsFactory();
 
     @Test(expectedExceptions = RobotRuntimeException.class)
     public void testUnknownOption() {
@@ -118,10 +117,31 @@ public class    OptionsFactoryTest extends TestUtils {
     }
 
     @Test
+    public void testIgnoreConnectionCache() throws Exception {
+        MetaExpression input = createMap("ignoreConnectionCache", fromValue(true));
+        Options options = optionsFactory.build(input);
+        assertEquals(options.isIgnoreConnectionCache(), true);
+    }
+
+    @Test
     public void testInsecure() {
         MetaExpression input = createMap("insecure", fromValue(true));
         Options options = optionsFactory.build(input);
         assertTrue(options.isInsecure());
+    }
+
+    @Test
+    public void testMultipart() {
+        MetaExpression input = createMap("multipart", fromValue(true));
+        Options options = optionsFactory.build(input);
+        assertTrue(options.isMultipart());
+    }
+
+    @Test
+    public void testEnableRedirect() {
+        MetaExpression input = createMap("enableRedirect", fromValue(true));
+        Options options = optionsFactory.build(input);
+        assertTrue(options.isEnableRedirect());
     }
 
     @Test
@@ -208,9 +228,7 @@ public class    OptionsFactoryTest extends TestUtils {
         MetaExpression input2 = createNTLMObjectNoDomain(USERNAME, PASSWORD, WORKSTATION);
 
         optionsFactory.build(input2);
-
     }
-
 
     private MetaExpression createNTLMObjectNoDomain(String username, String password, String workspace) {
         MetaExpression auth = createMap(
@@ -242,7 +260,4 @@ public class    OptionsFactoryTest extends TestUtils {
         MetaExpression input = createMap("ntlm", auth);
         return input;
     }
-
-
-
 }

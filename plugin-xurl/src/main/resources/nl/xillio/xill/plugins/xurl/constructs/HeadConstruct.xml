@@ -38,6 +38,8 @@ To set various options for the request you can use the options parameter. The pa
 | enableRedirect      | An ATOMIC *default: true*                                                                               | Set this option to false if you do not want to automatically follow redirects     |
 | responseContentType | An ATOMIC describing a content type                                                                     | Set this option to override the response type auto detector                       |
 | logging             | An ATOMIC (debug, info, warn or error) *default: null*                                                  | Set this option to enable logging of requests and responses                       |
+| ignoreConnectionCache | An ATOMIC *default: false*                                                                            | Set to true to disable the connection cache                                       |
+
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>

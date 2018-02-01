@@ -38,32 +38,12 @@ import java.util.Map;
  * This class is responsible for applying options to a request.
  *
  * @author Thomas Biesaart
+ * @author Andrea Parrilli
  */
 @Singleton
 public class OptionsFactory {
     private static final String NO_NULL_MESSAGE = "The %s option cannot be null";
-
-    /**
-     * Build an {@link nl.xillio.xill.plugins.xurl.data.Options} object from a MetaExpression.
-     *
-     * @param options the expression
-     * @return the options
-     */
-    public Options build(MetaExpression options) {
-        Map<String, MetaExpression> optionsMap = toMap(options, "options");
-
-        Options result = new Options();
-        for (Map.Entry<String, MetaExpression> entry : optionsMap.entrySet()) {
-            String key = entry.getKey();
-            MetaExpression value = entry.getValue();
-
-            // Apply this option if it exists, otherwise throw error
-            Option option = OptionsEnum.ofLabel(Option.class, key)
-                    .orElseThrow(() -> new RobotRuntimeException("Provided option [" + key + "] was not recognized."));
-            option.apply(result, value);
-        }
-        return result;
-    }
+    private Options defaultOptions = new Options();
 
     private static int getInt(MetaExpression value, String label) {
         assertValue(value, "The %s option must contain a number", label);
@@ -118,7 +98,6 @@ public class OptionsFactory {
         }
     }
 
-
     public static ContentType parseContentType(String value) {
         try {
             return ContentType.parse(value);
@@ -127,6 +106,41 @@ public class OptionsFactory {
         } catch (ParseException e) {
             throw new RobotRuntimeException("Could not parse content type " + value + ": " + e.getMessage(), e);
         }
+    }
+
+    @SuppressWarnings("squid:S2095") // Sonar expects MetaExpressions to be closed, which is done by our GC mechanism
+    private static MetaExpression getWorkstation(String workstation) {
+        return MetaExpression.parseObject("myworkstation");
+    }
+
+    /**
+     * Build an {@link nl.xillio.xill.plugins.xurl.data.Options} object from a MetaExpression.
+     *
+     * @param options the expression
+     * @return the options
+     */
+    public Options build(MetaExpression options) {
+        Map<String, MetaExpression> optionsMap = toMap(options, "options");
+
+        Options result = new Options(defaultOptions);
+        for (Map.Entry<String, MetaExpression> entry : optionsMap.entrySet()) {
+            String key = entry.getKey();
+            MetaExpression value = entry.getValue();
+
+            // Apply this option if it exists, otherwise throw error
+            Option option = OptionsEnum.ofLabel(Option.class, key)
+                    .orElseThrow(() -> new RobotRuntimeException("Provided option [" + key + "] was not recognized."));
+            option.apply(result, value);
+        }
+        return result;
+    }
+
+    public Options getDefaultOptions() {
+        return defaultOptions;
+    }
+
+    public void setDefaultOptions(Options options) {
+        this.defaultOptions = options;
     }
 
     public enum Option implements OptionsEnum {
@@ -219,7 +233,7 @@ public class OptionsFactory {
         LOGGING {
             @Override
             void apply(Options options, MetaExpression value) {
-                options.setLogging(getString(value, label()));
+                options.setLogging(value.isNull() ? null : value.getStringValue());
             }
         },
         NTLM {
@@ -232,7 +246,7 @@ public class OptionsFactory {
                 Credentials credentials = getCredentials(value, label());
 
                 MetaExpression workstation = proxyObject.get("workstation");
-                if(workstation == null || workstation.isNull()) {
+                if (workstation == null || workstation.isNull()) {
                     workstation = getWorkstation("myworkstation");
                 }
 
@@ -241,14 +255,14 @@ public class OptionsFactory {
 
                 options.setNTLMOptions(new NTLMOptions(credentials, workstation.getStringValue(), domain.getStringValue()));
             }
-        }
-        ;
+        },
+        IGNORE_CONNECTION_CACHE {
+            @Override
+            void apply(Options options, MetaExpression value) {
+                options.setIgnoreConnectionCache(getBoolean(value, label()));
+            }
+        };
 
         abstract void apply(Options options, MetaExpression value);
-    }
-
-    @SuppressWarnings("squid:S2095") // Sonar expects MetaExpressions to be closed, which is done by our GC mechanism
-    private static MetaExpression getWorkstation(String workstation) {
-        return MetaExpression.parseObject("myworkstation");
     }
 }

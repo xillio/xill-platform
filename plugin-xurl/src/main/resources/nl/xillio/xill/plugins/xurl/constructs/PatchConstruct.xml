@@ -53,6 +53,8 @@ To set various options for the request you can use the options parameter. The pa
 | multipart           | An ATOMIC *default: false*                                                                              | Set this option to true if you want to build a multipart/form-data request        |
 | responseContentType | An ATOMIC describing a content type                                                                     | Set this option to override the response type auto detector                       |
 | logging             | An ATOMIC (debug, info, warn or error) *default: null*                                                  | Set this option to enable logging of requests and responses                       |
+| ignoreConnectionCache | An ATOMIC *default: false*                                                                            | Set to true to disable the connection cache                                       |
+
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
