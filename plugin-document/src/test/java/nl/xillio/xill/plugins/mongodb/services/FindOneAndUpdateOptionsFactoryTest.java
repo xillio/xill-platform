@@ -19,6 +19,9 @@ import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
+import nl.xillio.xill.plugins.mongodb.services.serializers.MongoIdSerializer;
+import nl.xillio.xill.plugins.mongodb.services.serializers.ObjectIdSerializer;
+import nl.xillio.xill.plugins.mongodb.services.serializers.UUIDSerializer;
 import org.testng.annotations.Test;
 
 import java.util.LinkedHashMap;
@@ -29,7 +32,7 @@ import static org.testng.Assert.*;
 public class FindOneAndUpdateOptionsFactoryTest extends TestUtils {
     @Test
     public void testBuildOptions() {
-        MongoConverter mongoConverter = new MongoConverter(new ObjectIdSerializer());
+        MongoConverter mongoConverter = new MongoConverter(new MongoIdSerializer(new ObjectIdSerializer(), new UUIDSerializer()));
         FindOneAndUpdateOptionsFactory findOneAndUpdateOptionsFactory = new FindOneAndUpdateOptionsFactory(mongoConverter);
         LinkedHashMap<String, MetaExpression> object = new LinkedHashMap<>();
 

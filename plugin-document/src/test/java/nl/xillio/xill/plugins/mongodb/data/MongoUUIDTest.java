@@ -15,32 +15,27 @@
  */
 package nl.xillio.xill.plugins.mongodb.data;
 
-import org.bson.types.ObjectId;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotSame;
 
-/**
- * Tests for {@link MongoObjectId}
- *
- * @author Geert Konijnendijk
- */
-public class MongoObjectIdTest {
+public class MongoUUIDTest {
 
-    /**
-     * Test {@link MongoObjectId#copy()}
-     */
     @Test
     public void testCopy() {
-        MongoObjectId mongoObjectId = new MongoObjectId(new ObjectId());
+        MongoUUID id = new MongoUUID("e98a7da1-fab2-4b29-9cc4-24a7b5b3d0d4");
+        MongoUUID copy = id.copy();
+        assertEquals(id.getUuid(), copy.getUuid());
+        assertNotSame(id, copy);
+    }
 
-        // Run
-        MongoObjectId copy = mongoObjectId.copy();
-
-        // Assert
-
-        // An ObjectID is immutable, so should not be cloned
-        assertSame(mongoObjectId.getObjectId(), copy.getObjectId());
+    @Test
+    public void testToString() {
+        assertEquals(
+                new MongoUUID("e98a7da1-fab2-4b29-9cc4-24a7b5b3d0d4").toString(),
+                "e98a7da1-fab2-4b29-9cc4-24a7b5b3d0d4"
+        );
     }
 
 }

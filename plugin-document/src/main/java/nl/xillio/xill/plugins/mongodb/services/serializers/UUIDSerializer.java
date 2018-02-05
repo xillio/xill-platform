@@ -13,36 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.xillio.xill.plugins.mongodb.services;
+package nl.xillio.xill.plugins.mongodb.services.serializers;
 
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.components.MetaExpressionDeserializer;
 import nl.xillio.xill.api.components.MetaExpressionSerializer;
-import nl.xillio.xill.plugins.mongodb.data.MongoObjectId;
-import org.bson.types.ObjectId;
+import nl.xillio.xill.plugins.mongodb.data.MongoUUID;
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.UUID;
 
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
 
-/**
- * Provides a deserializer for a MongoObjectId.
- */
-public class ObjectIdSerializer implements MetaExpressionSerializer, MetaExpressionDeserializer {
+public class UUIDSerializer implements MetaExpressionSerializer, MetaExpressionDeserializer {
 
     @Override
     public MetaExpression parseObject(Object object) {
-        if (!(object instanceof ObjectId)) {
+        if (!(object instanceof UUID)) {
             return null;
         }
         MetaExpression result = fromValue(object.toString());
-        result.storeMeta(new MongoObjectId(object.toString()));
+        result.storeMeta(new MongoUUID(object.toString()));
         return result;
     }
 
     @Override
-    public Object extractValue(MetaExpression metaExpression) {
-        MongoObjectId result = metaExpression.getMeta(MongoObjectId.class);
+    public Binary extractValue(MetaExpression metaExpression) {
+        MongoUUID result = metaExpression.getMeta(MongoUUID.class);
         if (result != null) {
-            return result.getObjectId();
+            UUID uuid = result.getUuid();
+
+            byte[] bytes = new byte[16];
+            ByteBuffer buffer = ByteBuffer.wrap(bytes);
+            buffer.order(ByteOrder.BIG_ENDIAN);
+            buffer.putLong(uuid.getMostSignificantBits());
+            buffer.putLong(uuid.getLeastSignificantBits());
+
+            return new Binary(BsonBinarySubType.UUID_STANDARD, buffer.array());
         }
         return null;
     }

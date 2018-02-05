@@ -21,6 +21,7 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.data.DateFactory;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
+import nl.xillio.xill.plugins.mongodb.services.serializers.ObjectIdSerializer;
 import org.bson.BsonDocument;
 import org.bson.BsonValue;
 
