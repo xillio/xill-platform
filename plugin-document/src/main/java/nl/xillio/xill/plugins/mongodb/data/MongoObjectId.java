@@ -27,10 +27,10 @@ public class MongoObjectId implements CopyableMetadataExpression<MongoObjectId> 
     private final ObjectId objectId;
 
     /**
-     * Creates a new ObjectId
+     * Creates a new MongoObjectId with the given ObjectId.
      */
-    public MongoObjectId() {
-        objectId = new ObjectId();
+    public MongoObjectId(ObjectId objectId) {
+        this.objectId = objectId;
     }
 
     /**
@@ -40,14 +40,6 @@ public class MongoObjectId implements CopyableMetadataExpression<MongoObjectId> 
      */
     public MongoObjectId(String objectIdHex) {
         objectId = new ObjectId(objectIdHex);
-    }
-
-    /**
-     * Copy constructor
-     * @param objectId The object ID
-     */
-    private MongoObjectId(ObjectId objectId) {
-        this.objectId = objectId;
     }
 
     @Override

@@ -20,16 +20,14 @@ import nl.xillio.xill.api.construct.Argument;
 import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
-import nl.xillio.xill.plugins.mongodb.data.MongoObjectId;
-import org.bson.types.ObjectId;
+import nl.xillio.xill.plugins.mongodb.data.MongoUUID;
+
+import java.util.UUID;
 
 /**
- * Creates a Mongo ObjectId from a 24 character hexadecimal string
- *
- * @author Titus Nachbauer
+ * Creates a UUID from a string.
  */
-public class ObjectIdConstruct extends Construct {
-
+public class UuidConstruct extends Construct {
     @Override
     public ConstructProcessor prepareProcess(ConstructContext context) {
         return new ConstructProcessor(this::process, new Argument("string", NULL, ATOMIC));
@@ -37,10 +35,10 @@ public class ObjectIdConstruct extends Construct {
 
     @SuppressWarnings("squid:UnusedPrivateMethod") // Sonar does not do method references
     private MetaExpression process(MetaExpression string) {
-        ObjectId objectId = string.isNull() ? new ObjectId() : new ObjectId(string.getStringValue());
+        UUID uuid = string.isNull() ? UUID.randomUUID() : UUID.fromString(string.getStringValue());
 
-        MetaExpression result = fromValue(objectId.toHexString());
-        result.storeMeta(new MongoObjectId(objectId));
+        MetaExpression result = fromValue(uuid.toString());
+        result.storeMeta(new MongoUUID(uuid));
         return result;
     }
 }

@@ -159,4 +159,11 @@
             </modules>
         </profile>
     </profiles>
+
+    <repositories>
+        <repository>
+            <id>xillio-oss</id>
+            <url>https://maven.xillio.com/artifactory/oss-libs-release/</url>
+        </repository>
+    </repositories>
 </project>

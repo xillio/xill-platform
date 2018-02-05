@@ -3,7 +3,13 @@ All notable changes to this project will be documented in this file.
 
 ## [3.7.0] - unreleased
 
-## [3.6.5] - 2017-02-01
+## [3.6.6] - 2018-02-05
+
+### Add
+
+* Add support for Mongo UUID types by introducing the `Mongo.uuid` construct [CTC-2306]
+
+## [3.6.5] - 2018-02-01
 
 ### Add
 

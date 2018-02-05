@@ -19,13 +19,13 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.data.DateFactory;
 import nl.xillio.xill.plugins.mongodb.data.MongoObjectId;
+import nl.xillio.xill.plugins.mongodb.services.serializers.ObjectIdSerializer;
 import nl.xillio.xill.services.json.JacksonParser;
 import org.bson.*;
 import org.bson.types.ObjectId;
 import org.testng.annotations.Test;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.Collections;
 
 import static nl.xillio.xill.api.components.ExpressionBuilder.*;

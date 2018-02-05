@@ -27,7 +27,7 @@ import nl.xillio.xill.plugins.mongodb.ConnectionFailedException;
 import nl.xillio.xill.plugins.mongodb.services.BsonValueConverter;
 import nl.xillio.xill.plugins.mongodb.services.ConnectionManager;
 import nl.xillio.xill.plugins.mongodb.services.MongoConverter;
-import nl.xillio.xill.plugins.mongodb.services.ObjectIdSerializer;
+import nl.xillio.xill.plugins.mongodb.services.serializers.ObjectIdSerializer;
 import org.bson.BsonValue;
 import org.bson.Document;
 

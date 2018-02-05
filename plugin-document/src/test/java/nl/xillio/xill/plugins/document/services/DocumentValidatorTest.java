@@ -19,18 +19,16 @@ import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.mongodb.services.MongoConverter;
-import nl.xillio.xill.plugins.mongodb.services.ObjectIdSerializer;
+import nl.xillio.xill.plugins.mongodb.services.serializers.MongoIdSerializer;
+import nl.xillio.xill.plugins.mongodb.services.serializers.ObjectIdSerializer;
+import nl.xillio.xill.plugins.mongodb.services.serializers.UUIDSerializer;
 import nl.xillio.xill.services.json.JsonException;
 import org.apache.commons.io.IOUtils;
 import org.bson.Document;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Map;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -143,7 +141,7 @@ public class DocumentValidatorTest extends TestUtils {
 
         MetaExpression expression = parseJson(IOUtils.toString(getClass().getResourceAsStream("/example-invalid-document-missing-version.json")));
         Document result = documentValidator.validateDocument(context(), "default", expression);
-        assertEquals(((Document)((Document)result.get("source")).get("current")).get("version").toString(), "1");
+        assertEquals(((Document) ((Document) result.get("source")).get("current")).get("version").toString(), "1");
     }
 
     @Test
@@ -154,7 +152,7 @@ public class DocumentValidatorTest extends TestUtils {
         MetaExpression expression = parseJson(IOUtils.toString(getClass().getResourceAsStream("/example-incomplete-document.json")));
         Document result = documentValidator.validateDocument(context(), "default", expression);
 
-        assertEquals(((Document)((Document)((Document)result.get("source")).get("current")).get("user")).size(), 0);
+        assertEquals(((Document) ((Document) ((Document) result.get("source")).get("current")).get("user")).size(), 0);
     }
 
     @Test
@@ -165,7 +163,7 @@ public class DocumentValidatorTest extends TestUtils {
         MetaExpression expression = parseJson(IOUtils.toString(getClass().getResourceAsStream("/example-document-null-value.json")));
         Document result = documentValidator.validateDocument(context(), "default", expression);
 
-        assertEquals(((Document)((Document)((Document)result.get("source")).get("current")).get("user")).size(), 1);
+        assertEquals(((Document) ((Document) ((Document) result.get("source")).get("current")).get("user")).size(), 1);
     }
 
 
@@ -179,7 +177,7 @@ public class DocumentValidatorTest extends TestUtils {
         return new DocumentValidator(
                 contentTypeService,
                 new ObjectIdSerializer(),
-                new MongoConverter(new ObjectIdSerializer())
+                new MongoConverter(new MongoIdSerializer(new ObjectIdSerializer(), new UUIDSerializer()))
         );
     }
 
@@ -193,7 +191,7 @@ public class DocumentValidatorTest extends TestUtils {
         return new DocumentValidator(
                 contentTypeService,
                 new ObjectIdSerializer(),
-                new MongoConverter(new ObjectIdSerializer())
+                new MongoConverter(new MongoIdSerializer(new ObjectIdSerializer(), new UUIDSerializer()))
         );
     }
 
@@ -211,7 +209,7 @@ public class DocumentValidatorTest extends TestUtils {
         return new DocumentValidator(
                 contentTypeService,
                 new ObjectIdSerializer(),
-                new MongoConverter(new ObjectIdSerializer())
+                new MongoConverter(new MongoIdSerializer(new ObjectIdSerializer(), new UUIDSerializer()))
         );
     }
 

@@ -18,25 +18,22 @@
 -->
 <function>
     <description>
-Creates a Mongo ObjectId based on a 24 character hexadecimal string or generated a new one. This ObjectId can then be used to identify Mongo documents.
+Creates a UUID based on a 36 character string or generates a new one. This UUID can then be used to identify Mongo documents.
     </description>
 	<parameterDescriptions>
         <parameterDescription parameterName="string">
-The string that will be used.
+The string that will be used. Leave this null to generate a random UUID.
         </parameterDescription>
     </parameterDescriptions>
-	<longDescription>
-More information about MongoDB objectId can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/ObjectId/).
-	</longDescription>
     <examples>
         <example title="Usage">
-            <header>Find a document with a known objectId</header>
+            <header>Find a document with a known uuid</header>
             <code>
                 use Mongo;
                 use System;
                 Mongo.connect("udm_default");
 
-                var id = { "_id": Mongo.objectId("567a73d9cfa9040e40700949") };
+                var id = { "_id": Mongo.uuid("a7a72bf8-c29c-4e0b-a13a-578f94ea55f1") };
                 var document = Mongo.findOne("assets", id);
 
                 System.print(document.name);

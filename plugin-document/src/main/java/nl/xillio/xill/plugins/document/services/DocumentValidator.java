@@ -22,7 +22,7 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.mongodb.services.MongoConverter;
-import nl.xillio.xill.plugins.mongodb.services.ObjectIdSerializer;
+import nl.xillio.xill.plugins.mongodb.services.serializers.ObjectIdSerializer;
 import org.bson.Document;
 
 import java.util.Date;

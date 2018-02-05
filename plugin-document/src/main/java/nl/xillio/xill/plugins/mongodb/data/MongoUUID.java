@@ -15,32 +15,33 @@
  */
 package nl.xillio.xill.plugins.mongodb.data;
 
-import org.bson.types.ObjectId;
-import org.testng.annotations.Test;
+import nl.xillio.xill.api.components.CopyableMetadataExpression;
 
-import static org.testng.Assert.assertSame;
+import java.util.UUID;
 
-/**
- * Tests for {@link MongoObjectId}
- *
- * @author Geert Konijnendijk
- */
-public class MongoObjectIdTest {
+public class MongoUUID implements CopyableMetadataExpression<MongoUUID> {
+    private final UUID uuid;
 
-    /**
-     * Test {@link MongoObjectId#copy()}
-     */
-    @Test
-    public void testCopy() {
-        MongoObjectId mongoObjectId = new MongoObjectId(new ObjectId());
-
-        // Run
-        MongoObjectId copy = mongoObjectId.copy();
-
-        // Assert
-
-        // An ObjectID is immutable, so should not be cloned
-        assertSame(mongoObjectId.getObjectId(), copy.getObjectId());
+    public MongoUUID(String uuid) {
+        this.uuid = UUID.fromString(uuid);
     }
 
+    public MongoUUID(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    @Override
+    public String toString() {
+        return uuid.toString();
+    }
+
+    @Override
+    public MongoUUID copy() {
+        // UUID is immutable.
+        return new MongoUUID(uuid);
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
 }

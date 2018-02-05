@@ -93,6 +93,7 @@
         <plexus.version>3.4</plexus.version>
         <maven.version>3.3.9</maven.version>
         <maven.plugin.tools.version>3.5</maven.plugin.tools.version>
+        <mongo-java-driver.version>3.6.1</mongo-java-driver.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -384,6 +385,11 @@
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-archiver</artifactId>
                 <version>${plexus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongo-java-driver</artifactId>
+                <version>${mongo-java-driver.version}</version>
             </dependency>
             <!-- Internal Project Dependencies -->
             <dependency>

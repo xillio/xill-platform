@@ -22,6 +22,7 @@ import nl.xillio.xill.plugins.date.services.DateServiceImpl;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.time.Year;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -45,11 +46,11 @@ public class ParseConstructTest extends TestUtils {
         assertEquals(
                 process(
                         construct,
-                        fromValue("maandag 10 juli 2017"),
-                        fromValue("EEEE dd MMMM yyyy"),
+                        fromValue("maandag 10 juli"),
+                        fromValue("EEEE dd MMMM"),
                         fromValue("nl-NL")
                 ).getMeta(Date.class).getZoned(),
-                ZonedDateTime.of(2017, 7, 10, 0, 0, 0, 0, ZoneId.systemDefault())
+                ZonedDateTime.of(Year.now().getValue(), 7, 10, 0, 0, 0, 0, ZoneId.systemDefault())
         );
     }
 
