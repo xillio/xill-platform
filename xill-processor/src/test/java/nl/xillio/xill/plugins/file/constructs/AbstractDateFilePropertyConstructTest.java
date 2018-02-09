@@ -63,7 +63,7 @@ public class AbstractDateFilePropertyConstructTest extends TestUtils {
         assertEquals(result, Files.readAttributes(testFile, BasicFileAttributes.class).creationTime());
     }
 
-    private class MockConstruct extends AbstractDateFilePropertyConstruct {
+    private static class MockConstruct extends AbstractDateFilePropertyConstruct {
         @Override
         protected FileTime process(Path path) throws IOException {
             return attributes(path).creationTime();

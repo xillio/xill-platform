@@ -15,13 +15,14 @@
  */
 package nl.xillio.plugins;
 
-import com.google.common.reflect.ClassPath;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import me.biesaart.utils.Log;
 import nl.xillio.xill.api.construct.Construct;
 import org.apache.commons.lang3.text.WordUtils;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -29,10 +30,7 @@ import java.io.InputStream;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.jar.Manifest;
 
 /**
@@ -230,19 +228,25 @@ public abstract class XillPlugin extends AbstractModule implements AutoCloseable
      * This is where the package can add all the constructs. If this method is not overridden it will load all constructs in the subpackage 'construct'.
      */
     public void loadConstructs() {
-        //Load all constructs
-        try {
-            ClassPath classPath = ClassPath.from(getClass().getClassLoader());
-            for (ClassPath.ClassInfo classInfo : classPath.getTopLevelClasses(getClass().getPackage().getName() + ".constructs")) {
-                Class<?> constructClass = classInfo.load();
-                if (Construct.class.isAssignableFrom(constructClass) && !Modifier.isAbstract(constructClass.getModifiers())) {
-                    //This is a construct
-                    add((Construct) injector.getInstance(constructClass));
-                }
-            }
-        } catch (IOException e) {
-            LOGGER.error("Error while auto loading constructs", e);
-        }
+
+        new Reflections(getClass().getPackage().getName() + ".constructs", new ResourcesScanner())
+                .getResources(name -> name.endsWith("Construct.class"))
+                .stream()
+                .map(resource -> resource.substring(0, resource.length() - ".class".length()).replace('/', '.'))
+                .map(name -> {
+                    try {
+                        return getClass().getClassLoader().loadClass(name);
+                    } catch (ClassNotFoundException e) {
+                        LOGGER.debug("No class found for plugin: " + name, e);
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .filter(Construct.class::isAssignableFrom)
+                .map(clazz -> (Class<Construct>)clazz)
+                .filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
+                .map(injector::getInstance)
+                .forEach(this::add);
     }
 
     /**

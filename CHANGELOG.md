@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 ## [3.7.0] - unreleased
 
+## [3.6.7] - 2018-02-09
+
+### Fix
+
+* Fix issue where specialized classloaders did not load constructs
+
 ## [3.6.6] - 2018-02-05
 
 ### Add
