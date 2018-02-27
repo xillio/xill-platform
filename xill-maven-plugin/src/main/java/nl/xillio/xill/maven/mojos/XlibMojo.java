@@ -104,7 +104,9 @@ public class XlibMojo extends AbstractXlibMojo {
         // Set the destination file and add the files to the archive.
         archiver.setDestFile(archive);
         archiver.addFileSet(fileSetFactory.createFileSet(getClassesDirectory()));
-        archiver.addFileSet(fileSetFactory.createFileSet(robotsFolder.toPath()));
+        if (robotsFolder.exists()) {
+            archiver.addFileSet(fileSetFactory.createFileSet(robotsFolder.toPath()));
+        }
 
         // Try to create the archive.
         try {
@@ -125,7 +127,7 @@ public class XlibMojo extends AbstractXlibMojo {
 
         // Reverse for-loop to retain the correct overriding robot precedence.
         Collections.reverse(artifactList);
-        for (Artifact artifact : artifactList){
+        for (Artifact artifact : artifactList) {
             // Skip non-Xill dependencies.
             if (!"xlib".equals(artifact.getType())) {
                 getLog().warn("Skipping non-xlib artifact: " + artifact.getId());
@@ -167,7 +169,7 @@ public class XlibMojo extends AbstractXlibMojo {
     FileVisitResult visitFilePath(Path path) throws IOException {
         // Get the file name without the "robots/" prefix, copy the file.
         Path targetFolder = path.resolve("/" + FileSetFactory.ROBOTS_DIRECTORY);
-        Path target =  robotsFolder.toPath().resolve(targetFolder.relativize(path).toString());
+        Path target = robotsFolder.toPath().resolve(targetFolder.relativize(path).toString());
         filesService.createDirectories(target.getParent());
         filesService.copy(path, target, StandardCopyOption.REPLACE_EXISTING);
 

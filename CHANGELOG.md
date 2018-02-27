@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 ## [3.7.0] - unreleased
 
+## [3.6.8] - 2018-02-027
+
+## Fix
+
+* Fix issue where constructs were not loaded from external plugins
+* Fix issue where xill projects without dependencies failed to package
+
 ## [3.6.7] - 2018-02-09
 
 ### Fix
