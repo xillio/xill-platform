@@ -229,7 +229,7 @@ public abstract class XillPlugin extends AbstractModule implements AutoCloseable
      */
     public void loadConstructs() {
 
-        new Reflections(getClass().getPackage().getName() + ".constructs", new ResourcesScanner())
+        new Reflections(getClass().getPackage().getName() + ".constructs", new ResourcesScanner(), getClass().getClassLoader())
                 .getResources(name -> name.endsWith("Construct.class"))
                 .stream()
                 .map(resource -> resource.substring(0, resource.length() - ".class".length()).replace('/', '.'))
@@ -243,7 +243,7 @@ public abstract class XillPlugin extends AbstractModule implements AutoCloseable
                 })
                 .filter(Objects::nonNull)
                 .filter(Construct.class::isAssignableFrom)
-                .map(clazz -> (Class<Construct>)clazz)
+                .map(clazz -> (Class<Construct>) clazz)
                 .filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
                 .map(injector::getInstance)
                 .forEach(this::add);
