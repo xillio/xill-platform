@@ -19,6 +19,7 @@ import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.mongodb.services.MongoConverter;
+import nl.xillio.xill.plugins.mongodb.services.serializers.BinarySerializer;
 import nl.xillio.xill.plugins.mongodb.services.serializers.MongoIdSerializer;
 import nl.xillio.xill.plugins.mongodb.services.serializers.ObjectIdSerializer;
 import nl.xillio.xill.plugins.mongodb.services.serializers.UUIDSerializer;
@@ -177,7 +178,7 @@ public class DocumentValidatorTest extends TestUtils {
         return new DocumentValidator(
                 contentTypeService,
                 new ObjectIdSerializer(),
-                new MongoConverter(new MongoIdSerializer(new ObjectIdSerializer(), new UUIDSerializer()))
+                new MongoConverter(new MongoIdSerializer(new ObjectIdSerializer(), new UUIDSerializer(), new BinarySerializer()))
         );
     }
 
@@ -191,7 +192,7 @@ public class DocumentValidatorTest extends TestUtils {
         return new DocumentValidator(
                 contentTypeService,
                 new ObjectIdSerializer(),
-                new MongoConverter(new MongoIdSerializer(new ObjectIdSerializer(), new UUIDSerializer()))
+                new MongoConverter(new MongoIdSerializer(new ObjectIdSerializer(), new UUIDSerializer(), new BinarySerializer()))
         );
     }
 
@@ -209,7 +210,7 @@ public class DocumentValidatorTest extends TestUtils {
         return new DocumentValidator(
                 contentTypeService,
                 new ObjectIdSerializer(),
-                new MongoConverter(new MongoIdSerializer(new ObjectIdSerializer(), new UUIDSerializer()))
+                new MongoConverter(new MongoIdSerializer(new ObjectIdSerializer(), new UUIDSerializer(), new BinarySerializer()))
         );
     }
 
