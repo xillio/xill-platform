@@ -21,6 +21,7 @@ import nl.xillio.xill.api.components.MetaExpressionDeserializer;
 import nl.xillio.xill.api.components.MetaExpressionSerializer;
 import nl.xillio.xill.api.errors.OperationFailedException;
 import nl.xillio.xill.api.io.SimpleIOStream;
+import org.bson.BsonBinary;
 import org.bson.types.Binary;
 
 import java.io.ByteArrayInputStream;
@@ -33,12 +34,16 @@ public class BinarySerializer implements MetaExpressionSerializer, MetaExpressio
 
     @Override
     public MetaExpression parseObject(Object object) {
-        if (!(object instanceof Binary)) {
-            return null;
+        if (object instanceof Binary) {
+            return transformBytes(((Binary) object).getData());
+        } else if (object instanceof BsonBinary) {
+            return transformBytes(((BsonBinary) object).getData());
         }
-        Binary binary = (Binary) object;
+        return null;
+    }
 
-        InputStream stream = new ByteArrayInputStream(binary.getData());
+    private MetaExpression transformBytes(byte[] bytes) {
+        InputStream stream = new ByteArrayInputStream(bytes);
         return fromValue(new SimpleIOStream(stream, "Mongo binary stream"));
     }
 

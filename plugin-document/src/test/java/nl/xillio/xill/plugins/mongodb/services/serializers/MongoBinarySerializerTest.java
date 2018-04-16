@@ -29,7 +29,7 @@ import java.util.Base64;
 import static org.testng.Assert.*;
 
 public class MongoBinarySerializerTest extends TestUtils {
-    private MongoIdSerializer serializer = new MongoIdSerializer(new ObjectIdSerializer(), new UUIDSerializer(), new BinarySerializer());
+    private MongoSerializer serializer = new MongoSerializer(new ObjectIdSerializer(), new UUIDSerializer(), new BinarySerializer());
 
     @Test
     public void testParseStringStream() throws IOException {
