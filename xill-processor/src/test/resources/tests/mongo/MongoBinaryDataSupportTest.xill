@@ -18,17 +18,25 @@ use Assert, Mongo, File, Hash, String, Stream;
 var connection = Mongo.connect("xill-IT");
 
 // Insert some binary data
-var binaryStream = File.openRead("testresources/mongo/binary.file");
+var file = File.openRead("testresources/mongo/binary.file");
 Mongo.insertOne("bin", {
-    "file": binaryStream,
+    "file": file,
     "string" : String.stream("test"),
     "tag": "tag"});
 
 // Find the binary data
 var mongoResult = Mongo.findOne("bin", {"tag": "tag"});
 
-// Compare the binary data
-var check = File.openRead("testresources/mongo/binary.file");
+// Find using distinct
+var distinctResult = Mongo.distinct("bin", "file");
 
-Assert.equal(Hash.toSHA256(check), Hash.toSHA256(mongoResult.file));
+// Verify
+file = File.openRead("testresources/mongo/binary.file");
+Assert.equal(Hash.toSHA256(file), Hash.toSHA256(mongoResult.file));
+
+file = File.openRead("testresources/mongo/binary.file");
+foreach(value in distinctResult) {
+    Assert.equal(Hash.toSHA256(file), Hash.toSHA256(value));
+}
+
 Assert.equal("test", Stream.getText(mongoResult.string));
