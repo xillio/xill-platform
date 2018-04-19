@@ -18,7 +18,8 @@ package nl.xillio.xill.plugins.mongodb.services;
 import com.mongodb.client.model.FindOneAndDeleteOptions;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
-import nl.xillio.xill.plugins.mongodb.services.serializers.MongoIdSerializer;
+import nl.xillio.xill.plugins.mongodb.services.serializers.BinarySerializer;
+import nl.xillio.xill.plugins.mongodb.services.serializers.MongoSerializer;
 import nl.xillio.xill.plugins.mongodb.services.serializers.ObjectIdSerializer;
 import nl.xillio.xill.plugins.mongodb.services.serializers.UUIDSerializer;
 import org.testng.annotations.Test;
@@ -31,7 +32,7 @@ import static org.testng.Assert.*;
 public class FindOneAndDeleteOptionsFactoryTest extends TestUtils {
     @Test
     public void testBuildOptions() {
-        MongoConverter mongoConverter = new MongoConverter(new MongoIdSerializer(new ObjectIdSerializer(), new UUIDSerializer()));
+        MongoConverter mongoConverter = new MongoConverter(new MongoSerializer(new ObjectIdSerializer(), new UUIDSerializer(), new BinarySerializer()));
         FindOneAndDeleteOptionsFactory findOneAndDeleteOptionsFactory = new FindOneAndDeleteOptionsFactory(mongoConverter);
         LinkedHashMap<String, MetaExpression> object = new LinkedHashMap<>();
 
