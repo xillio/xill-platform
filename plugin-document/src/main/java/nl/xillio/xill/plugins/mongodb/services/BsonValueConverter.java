@@ -21,6 +21,7 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.data.DateFactory;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
+import nl.xillio.xill.plugins.mongodb.services.serializers.BinarySerializer;
 import nl.xillio.xill.plugins.mongodb.services.serializers.ObjectIdSerializer;
 import org.bson.BsonDocument;
 import org.bson.BsonValue;
@@ -42,11 +43,13 @@ public class BsonValueConverter {
 
     private final DateFactory dateFactory;
     private final ObjectIdSerializer objectIdSerializer;
+    private final BinarySerializer binarySerializer;
 
     @Inject
-    public BsonValueConverter(DateFactory dateFactory, ObjectIdSerializer objectIdSerializer) {
+    public BsonValueConverter(DateFactory dateFactory, ObjectIdSerializer objectIdSerializer, BinarySerializer binarySerializer) {
         this.dateFactory = dateFactory;
         this.objectIdSerializer = objectIdSerializer;
+        this.binarySerializer = binarySerializer;
     }
 
     public MetaExpression convert(BsonValue value) {
@@ -94,7 +97,13 @@ public class BsonValueConverter {
         }
 
         if (value.isObjectId()) {
-            return objectIdSerializer.parseObject(value.asObjectId().getValue());
+            MetaExpression objectId = objectIdSerializer.parseObject(value.asObjectId().getValue());
+            return objectId == null ? NULL : objectId;
+        }
+
+        if (value.isBinary()) {
+            MetaExpression binary = binarySerializer.parseObject(value.asBinary());
+            return binary == null ? NULL : binary;
         }
 
         throw new RobotRuntimeException("No conversion codex found for bson type " + value.getClass().getSimpleName());
@@ -103,7 +112,7 @@ public class BsonValueConverter {
     private LinkedHashMap<String, MetaExpression> convertDocument(BsonValue value) {
         LinkedHashMap<String, MetaExpression> result = new LinkedHashMap<>();
         BsonDocument doc = value.asDocument();
-        doc.keySet().stream().forEach(key -> result.put(key, convert(doc.get(key))));
+        doc.keySet().forEach(key -> result.put(key, convert(doc.get(key))));
         return result;
     }
 

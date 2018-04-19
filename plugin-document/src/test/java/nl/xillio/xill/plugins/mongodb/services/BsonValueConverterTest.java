@@ -19,9 +19,12 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.data.DateFactory;
 import nl.xillio.xill.plugins.mongodb.data.MongoObjectId;
+import nl.xillio.xill.plugins.mongodb.services.serializers.BinarySerializer;
 import nl.xillio.xill.plugins.mongodb.services.serializers.ObjectIdSerializer;
 import nl.xillio.xill.services.json.JacksonParser;
+import org.apache.commons.io.IOUtils;
 import org.bson.*;
+import org.bson.types.Binary;
 import org.bson.types.ObjectId;
 import org.testng.annotations.Test;
 
@@ -39,7 +42,7 @@ public class BsonValueConverterTest {
 
     @Test
     public void testConvert() throws Exception {
-        BsonValueConverter converter = new BsonValueConverter(null, null);
+        BsonValueConverter converter = new BsonValueConverter(null, null, null);
         JacksonParser parser = new JacksonParser(false);
 
         assertEquals(converter.convert(new BsonString("Hello")), fromValue("Hello"));
@@ -59,7 +62,7 @@ public class BsonValueConverterTest {
         Date result = mock(Date.class);
         when(dateFactory.from(any())).thenReturn(result);
 
-        BsonValueConverter converter = new BsonValueConverter(dateFactory, null);
+        BsonValueConverter converter = new BsonValueConverter(dateFactory, null, null);
 
         MetaExpression timestampDate = converter.convert(new BsonTimestamp(1000, 0));
         assertEquals(timestampDate.getMeta(Date.class), result);
@@ -73,11 +76,20 @@ public class BsonValueConverterTest {
     @Test
     public void testConvertObjectId() throws Exception {
         ObjectIdSerializer objectIdSerializer = new ObjectIdSerializer();
-        BsonValueConverter converter = new BsonValueConverter(null, objectIdSerializer);
+        BsonValueConverter converter = new BsonValueConverter(null, objectIdSerializer, null);
         ObjectId objectId = new ObjectId();
         MetaExpression expression = converter.convert(new BsonObjectId(objectId));
         assertNotNull(expression.getMeta(MongoObjectId.class));
         assertEquals(expression.getMeta(MongoObjectId.class).getObjectId(), objectId);
+    }
+
+    @Test
+    public void testConvertBinary() throws Exception {
+        BinarySerializer binarySerializer = new BinarySerializer();
+        BsonValueConverter converter = new BsonValueConverter(null, null, binarySerializer);
+        BsonBinary binary = new BsonBinary("test".getBytes());
+        MetaExpression expression = converter.convert(binary);
+        assertEquals(IOUtils.toString(expression.getBinaryValue().getInputStream()), "test");
     }
 
 }
