@@ -3,9 +3,15 @@ All notable changes to this project will be documented in this file.
 
 ## [3.7.0] - unreleased
 
-## [3.6.8] - 2018-02-027
+## [3.6.9] - 2018-04-19
 
-## Fix
+### Add
+
+* Add binary support for the Mongo plugin 
+
+## [3.6.8] - 2018-02-27
+
+### Fix
 
 * Fix issue where constructs were not loaded from external plugins
 * Fix issue where xill projects without dependencies failed to package
