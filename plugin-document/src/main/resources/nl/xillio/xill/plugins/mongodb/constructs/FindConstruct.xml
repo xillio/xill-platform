@@ -42,6 +42,7 @@ The `options` parameter may contain the following options:
 | `skip`            | The starting point of the results set. |
 | `maxTime`         | The maximum execution time in milliseconds for this operation. |
 | `noCursorTimeout` | Avoids closing a cursor automatically after a period of inactivity. |
+| `batchSize`       | Set the number of documents internally transferred from a cursor during a read operation. |
         </parameterDescription>
 		<parameterDescription parameterName="database">
 The database that will be used.
