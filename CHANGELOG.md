@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [3.7.0] - unreleased
 
+## Fix
+
+* [XP_5] Add Mongo.find "batchSize" option documentation
+
 ## [3.6.8] - 2018-02-027
 
 ## Fix
