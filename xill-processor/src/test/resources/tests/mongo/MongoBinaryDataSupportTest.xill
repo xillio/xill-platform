@@ -1,0 +1,42 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+use Assert, Mongo, File, Hash, String, Stream;
+
+var connection = Mongo.connect("xill-IT");
+
+// Insert some binary data
+var file = File.openRead("testresources/mongo/binary.file");
+Mongo.insertOne("bin", {
+    "file": file,
+    "string" : String.stream("test"),
+    "tag": "tag"});
+
+// Find the binary data
+var mongoResult = Mongo.findOne("bin", {"tag": "tag"});
+
+// Find using distinct
+var distinctResult = Mongo.distinct("bin", "file");
+
+// Verify
+file = File.openRead("testresources/mongo/binary.file");
+Assert.equal(Hash.toSHA256(file), Hash.toSHA256(mongoResult.file));
+
+file = File.openRead("testresources/mongo/binary.file");
+foreach(value in distinctResult) {
+    Assert.equal(Hash.toSHA256(file), Hash.toSHA256(value));
+}
+
+Assert.equal("test", Stream.getText(mongoResult.string));

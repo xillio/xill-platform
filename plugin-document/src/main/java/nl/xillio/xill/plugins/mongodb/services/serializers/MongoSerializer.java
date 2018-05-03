@@ -23,16 +23,18 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MongoIdSerializer implements MetaExpressionSerializer, MetaExpressionDeserializer {
+public class MongoSerializer implements MetaExpressionSerializer, MetaExpressionDeserializer {
     private final List<MetaExpressionDeserializer> deserializers = new ArrayList<>();
     private final List<MetaExpressionSerializer> serializers = new ArrayList<>();
 
     @Inject
-    public MongoIdSerializer(ObjectIdSerializer objectIdSerializer, UUIDSerializer uuidSerializer) {
+    public MongoSerializer(ObjectIdSerializer objectIdSerializer, UUIDSerializer uuidSerializer, BinarySerializer binarySerializer) {
         deserializers.add(objectIdSerializer);
         serializers.add(objectIdSerializer);
         deserializers.add(uuidSerializer);
         serializers.add(uuidSerializer);
+        deserializers.add(binarySerializer);
+        serializers.add(binarySerializer);
     }
 
     @Override
