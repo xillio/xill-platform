@@ -254,9 +254,9 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
 
     private List<Issue> doValidate(final Resource resource, final RobotID robotID) {
         // Validate
-        List<org.eclipse.xtext.validation.Issue> rawIssues
+        List<org.eclipse.xtext.validation.Issue> rawIssues;
         synchronized (XTEXT_LOCK) {
-            rawIssues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl)
+            rawIssues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
         }
 
         List<Issue> issues = rawIssues.stream().map(issue -> {
