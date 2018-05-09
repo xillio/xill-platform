@@ -254,25 +254,29 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
 
     private List<Issue> doValidate(final Resource resource, final RobotID robotID) {
         // Validate
-        List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl).stream()
-                .map(issue -> {
-                    IssueImpl impl = (IssueImpl) issue;
-                    Issue.Type type;
+        List<org.eclipse.xtext.validation.Issue> rawIssues
+        synchronized (XTEXT_LOCK) {
+            rawIssues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl)
+        }
 
-                    switch (impl.getSeverity()) {
-                        case ERROR:
-                            type = Issue.Type.ERROR;
-                            break;
-                        case WARNING:
-                            type = Issue.Type.WARNING;
-                            break;
-                        default:
-                            type = Issue.Type.INFO;
-                            break;
-                    }
+        List<Issue> issues = rawIssues.stream().map(issue -> {
+            IssueImpl impl = (IssueImpl) issue;
+            Issue.Type type;
 
-                    return new Issue(impl.getMessage(), impl.getLineNumber(), type, robotID);
-                }).collect(Collectors.toList());
+            switch (impl.getSeverity()) {
+                case ERROR:
+                    type = Issue.Type.ERROR;
+                    break;
+                case WARNING:
+                    type = Issue.Type.WARNING;
+                    break;
+                default:
+                    type = Issue.Type.INFO;
+                    break;
+            }
+
+            return new Issue(impl.getMessage(), impl.getLineNumber(), type, robotID);
+        }).collect(Collectors.toList());
 
         // Add warnings to issues
         resource.getWarnings().forEach(warning -> issues.add(new Issue(warning.getMessage(), warning.getLine(), Issue.Type.WARNING, robotID)));
