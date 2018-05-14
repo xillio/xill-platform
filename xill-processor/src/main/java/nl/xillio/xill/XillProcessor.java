@@ -27,6 +27,7 @@ import nl.xillio.xill.api.construct.ConstructProcessor;
 import nl.xillio.xill.api.errors.XillParsingException;
 import nl.xillio.xill.loaders.AbstractRobotLoader;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
@@ -60,6 +61,10 @@ import java.util.stream.Collectors;
  */
 public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     private static final Logger LOGGER = Log.get();
+
+    // Calls to XText are not thread-safe, use this object to synchronize them
+    private static final Object XTEXT_LOCK = new Object();
+
     /**
      * The supported file extension
      */
@@ -139,7 +144,13 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
         xill.lang.xill.Robot mainRobotToken = null;
 
         // Parse all resources
-        for (Resource currentResource : resourceSet.getResources()) {
+
+        EList<Resource> resources;
+        synchronized (XTEXT_LOCK) {
+            resources = resourceSet.getResources();
+        }
+
+        for (Resource currentResource : resources) {
             for (EObject rootToken : currentResource.getContents()) {
                 if (rootToken instanceof xill.lang.xill.Robot) {
 
@@ -188,12 +199,17 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
     }
 
     private RobotID toRobotID(Resource resource) {
-        String resourceUri = resourceSet.getInternalResourcePath(resource.getURI());
+        String resourceUri;
+        synchronized (XTEXT_LOCK) {
+            resourceUri = resourceSet.getInternalResourcePath(resource.getURI());
+        }
         return new RobotID(toURL(resource.getURI()), resourceUri);
     }
 
     private Resource findResource(RobotID robotID) {
-        return resourceSet.getResource(robotID.getResourcePath());
+        synchronized (XTEXT_LOCK) {
+            return resourceSet.getResource(robotID.getResourcePath());
+        }
     }
 
     @Override
@@ -238,25 +254,29 @@ public class XillProcessor implements nl.xillio.xill.api.XillProcessor {
 
     private List<Issue> doValidate(final Resource resource, final RobotID robotID) {
         // Validate
-        List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl).stream()
-                .map(issue -> {
-                    IssueImpl impl = (IssueImpl) issue;
-                    Issue.Type type;
+        List<org.eclipse.xtext.validation.Issue> rawIssues;
+        synchronized (XTEXT_LOCK) {
+            rawIssues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
+        }
 
-                    switch (impl.getSeverity()) {
-                        case ERROR:
-                            type = Issue.Type.ERROR;
-                            break;
-                        case WARNING:
-                            type = Issue.Type.WARNING;
-                            break;
-                        default:
-                            type = Issue.Type.INFO;
-                            break;
-                    }
+        List<Issue> issues = rawIssues.stream().map(issue -> {
+            IssueImpl impl = (IssueImpl) issue;
+            Issue.Type type;
 
-                    return new Issue(impl.getMessage(), impl.getLineNumber(), type, robotID);
-                }).collect(Collectors.toList());
+            switch (impl.getSeverity()) {
+                case ERROR:
+                    type = Issue.Type.ERROR;
+                    break;
+                case WARNING:
+                    type = Issue.Type.WARNING;
+                    break;
+                default:
+                    type = Issue.Type.INFO;
+                    break;
+            }
+
+            return new Issue(impl.getMessage(), impl.getLineNumber(), type, robotID);
+        }).collect(Collectors.toList());
 
         // Add warnings to issues
         resource.getWarnings().forEach(warning -> issues.add(new Issue(warning.getMessage(), warning.getLine(), Issue.Type.WARNING, robotID)));

@@ -42,6 +42,7 @@ The `options` parameter may contain the following options:
 | `skip`            | The starting point of the results set. |
 | `maxTime`         | The maximum execution time in milliseconds for this operation. |
 | `noCursorTimeout` | Avoids closing a cursor automatically after a period of inactivity. |
+| `batchSize`       | Set the number of documents internally transferred from a cursor during a read operation. |
         </parameterDescription>
 		<parameterDescription parameterName="database">
 The database that will be used.
@@ -49,6 +50,9 @@ The database that will be used.
     </parameterDescriptions>
 	<longDescription>
 If `query` is not empty it will only select documents that match the query. Using the `projection` parameter you can select fields to include or exclude. By default all fields are included.
+
+The options `batchSize` and `noCursorTimeout` have an influence in the way cursors are managed between the mongo server and the client.
+The usage of `noCursorTimeout` is discouraged unless strictly necessary as it will leave orphan cursors unless explicitly closed or exhausted.
 
 More information about MongoDB find can be found in the [MongoDB manual](https://docs.mongodb.com/v3.2/reference/method/db.collection.find/).
 	</longDescription>
