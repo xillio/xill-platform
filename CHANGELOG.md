@@ -5,7 +5,8 @@ All notable changes to this project will be documented in this file.
 
 ## Fix
 
-* Add Mongo.find "batchSize" option documentation [XP_5]
+* Add `Mongo.find` `batchSize` option documentation 
+* Deadlock when compiling multiple robots at the same time
 
 ## [3.6.9] - 2018-04-19
 
