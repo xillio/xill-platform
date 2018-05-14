@@ -5,14 +5,14 @@ All notable changes to this project will be documented in this file.
 
 ## Fix
 
-* Add `Mongo.find` `batchSize` option documentation 
-* Deadlock when compiling multiple robots at the same time
+* Add `Mongo.find` `batchSize` option documentation [#5]
+* Deadlock when compiling multiple robots at the same time [#8]
 
 ## [3.6.9] - 2018-04-19
 
 ### Add
 
-* Add binary support for the Mongo plugin 
+* Add binary support for the Mongo plugin [#1]
 
 ## [3.6.8] - 2018-02-27
 
