@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [3.7.0] - unreleased
 
+
+## [3.6.10] - 2018-05-14
+
 ## Fix
 
 * Add `Mongo.find` `batchSize` option documentation [#5]
