@@ -50,6 +50,9 @@ public class AggregateIterableFactory extends MongoIterableFactory {
             case "allowDiskUsage":
                 iterable.allowDiskUse(value.getBooleanValue());
                 break;
+             case "allowDiskUse" :
+                 iterable.allowDiskUse(value.getBooleanValue());
+                 break;
             case "maxTime":
                 iterable.maxTime(value.getNumberValue().longValue(), TimeUnit.MILLISECONDS);
                 break;

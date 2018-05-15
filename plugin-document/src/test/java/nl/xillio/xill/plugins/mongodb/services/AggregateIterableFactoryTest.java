@@ -36,10 +36,10 @@ import static org.testng.Assert.assertSame;
 public class AggregateIterableFactoryTest extends TestUtils {
     @Test
     public void testAggregateIterableOptions() {
-        // Test adding allowDiskUsage option
+        // Test adding allowDiskUse option
         AggregateIterableFactory aggregateIterableFactory = new AggregateIterableFactory();
         LinkedHashMap<String, MetaExpression> object = new LinkedHashMap<>();
-        object.put("allowDiskUsage", fromValue(true));
+        object.put("allowDiskUse", fromValue(true));
 
         AggregateIterable iterable = mock(AggregateIterable.class);
 
