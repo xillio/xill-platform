@@ -19,10 +19,7 @@ import com.mongodb.client.model.FindOneAndReplaceOptions;
 import com.mongodb.client.model.ReturnDocument;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
-import nl.xillio.xill.plugins.mongodb.services.serializers.BinarySerializer;
-import nl.xillio.xill.plugins.mongodb.services.serializers.MongoSerializer;
-import nl.xillio.xill.plugins.mongodb.services.serializers.ObjectIdSerializer;
-import nl.xillio.xill.plugins.mongodb.services.serializers.UUIDSerializer;
+import nl.xillio.xill.plugins.mongodb.services.serializers.*;
 import org.testng.annotations.Test;
 
 import java.util.LinkedHashMap;
@@ -33,7 +30,11 @@ import static org.testng.Assert.*;
 public class FindOneAndReplaceOptionsFactoryTest extends TestUtils {
     @Test
     public void testBuildOptions() {
-        MongoConverter mongoConverter = new MongoConverter(new MongoSerializer(new ObjectIdSerializer(), new UUIDSerializer(), new BinarySerializer()));
+        MongoConverter mongoConverter = new MongoConverter(new MongoSerializer(
+                new ObjectIdSerializer(),
+                new UUIDSerializer(),
+                new MongoRegexSerializer(),
+                new BinarySerializer()));
         FindOneAndReplaceOptionsFactory findOneAndReplaceOptionsFactory = new FindOneAndReplaceOptionsFactory(mongoConverter);
         LinkedHashMap<String, MetaExpression> object = new LinkedHashMap<>();
 
@@ -69,7 +70,6 @@ public class FindOneAndReplaceOptionsFactoryTest extends TestUtils {
         assertEquals(options.getMaxTime(TimeUnit.MILLISECONDS), 0);
         object.put("maxTime", fromValue(2000));
         options = findOneAndReplaceOptionsFactory.build(fromValue(object));
-        assertNotNull(options.getMaxTime(TimeUnit.MILLISECONDS));
         assertEquals(MetaExpression.parseObject(options.getMaxTime(TimeUnit.MILLISECONDS)), object.get("maxTime"));
     }
 }

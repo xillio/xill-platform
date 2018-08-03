@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [3.7.0] - unreleased
 
+### Add
+
+* Add `Mongo.regex` construct
 
 ## [3.6.10] - 2018-05-14
 
