@@ -28,11 +28,16 @@ public class MongoSerializer implements MetaExpressionSerializer, MetaExpression
     private final List<MetaExpressionSerializer> serializers = new ArrayList<>();
 
     @Inject
-    public MongoSerializer(ObjectIdSerializer objectIdSerializer, UUIDSerializer uuidSerializer, BinarySerializer binarySerializer) {
+    public MongoSerializer(ObjectIdSerializer objectIdSerializer,
+                           UUIDSerializer uuidSerializer,
+                           MongoRegexSerializer mongoRegexSerializer,
+                           BinarySerializer binarySerializer) {
         deserializers.add(objectIdSerializer);
         serializers.add(objectIdSerializer);
         deserializers.add(uuidSerializer);
         serializers.add(uuidSerializer);
+        deserializers.add(mongoRegexSerializer);
+        serializers.add(mongoRegexSerializer);
         deserializers.add(binarySerializer);
         serializers.add(binarySerializer);
     }
