@@ -18,7 +18,10 @@ package nl.xillio.xill.plugins.mongodb.services;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.mongodb.data.MongoObjectId;
-import nl.xillio.xill.plugins.mongodb.services.serializers.*;
+import nl.xillio.xill.plugins.mongodb.services.serializers.BinarySerializer;
+import nl.xillio.xill.plugins.mongodb.services.serializers.MongoSerializer;
+import nl.xillio.xill.plugins.mongodb.services.serializers.ObjectIdSerializer;
+import nl.xillio.xill.plugins.mongodb.services.serializers.UUIDSerializer;
 import nl.xillio.xill.services.json.JacksonParser;
 import nl.xillio.xill.services.json.JsonException;
 import nl.xillio.xill.services.json.JsonParser;
@@ -46,11 +49,7 @@ public class MongoConverterTest extends TestUtils {
 
     @Test
     public void testParseMetaExpression() throws JsonException {
-        MongoConverter mongoConverter = new MongoConverter(new MongoSerializer(
-                new ObjectIdSerializer(),
-                new UUIDSerializer(),
-                new MongoRegexSerializer(),
-                new BinarySerializer()));
+        MongoConverter mongoConverter = new MongoConverter(new MongoSerializer(new ObjectIdSerializer(), new UUIDSerializer(), new BinarySerializer()));
         MetaExpression expression = parse("{ \"$set\": { \"test\" : 2 } }");
         Document document = mongoConverter.parse(expression);
 
@@ -60,13 +59,9 @@ public class MongoConverterTest extends TestUtils {
     }
 
     @Test
-    public void testParseMetaExpressionWithObjectId() {
+    public void testParseMetaExpressionWithObjectId() throws JsonException {
         String id = "567a6f35cfa90423ac88865e";
-        MongoConverter mongoConverter = new MongoConverter(new MongoSerializer(
-                new ObjectIdSerializer(),
-                new UUIDSerializer(),
-                new MongoRegexSerializer(),
-                new BinarySerializer()));
+        MongoConverter mongoConverter = new MongoConverter(new MongoSerializer(new ObjectIdSerializer(), new UUIDSerializer(), new BinarySerializer()));
         LinkedHashMap<String, MetaExpression> object = new LinkedHashMap<>();
         MetaExpression objectId = fromValue(id);
         objectId.storeMeta(new MongoObjectId(id));

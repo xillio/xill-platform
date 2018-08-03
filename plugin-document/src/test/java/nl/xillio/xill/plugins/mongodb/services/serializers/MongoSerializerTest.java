@@ -29,12 +29,7 @@ import java.util.UUID;
 import static org.testng.Assert.*;
 
 public class MongoSerializerTest extends TestUtils {
-
-    private MongoSerializer serializer = new MongoSerializer(
-            new ObjectIdSerializer(),
-            new UUIDSerializer(),
-            new MongoRegexSerializer(),
-            new BinarySerializer());
+    private MongoSerializer serializer = new MongoSerializer(new ObjectIdSerializer(), new UUIDSerializer(), new BinarySerializer());
 
     @Test
     public void testExtractObjectId() {
