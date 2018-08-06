@@ -19,13 +19,11 @@ import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.mongodb.services.MongoConverter;
-import nl.xillio.xill.plugins.mongodb.services.serializers.BinarySerializer;
-import nl.xillio.xill.plugins.mongodb.services.serializers.MongoSerializer;
-import nl.xillio.xill.plugins.mongodb.services.serializers.ObjectIdSerializer;
-import nl.xillio.xill.plugins.mongodb.services.serializers.UUIDSerializer;
+import nl.xillio.xill.plugins.mongodb.services.serializers.*;
 import nl.xillio.xill.services.json.JsonException;
 import org.apache.commons.io.IOUtils;
 import org.bson.Document;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -40,11 +38,22 @@ import static org.testng.Assert.assertEquals;
 
 public class DocumentValidatorTest extends TestUtils {
 
+    private MongoConverter converter;
+    private ContentTypeService contentTypeService;
+
+    @BeforeMethod
+    public void setUp() {
+        converter = new MongoConverter(new MongoSerializer(
+                new ObjectIdSerializer(),
+                new UUIDSerializer(),
+                new MongoRegexSerializer(),
+                new BinarySerializer()));
+        contentTypeService = mock(ContentTypeService.class);
+    }
+
     @Test
     public void testValidateDocumentNormalPath() throws JsonException, IOException {
-        ContentTypeService contentTypeService = mock(ContentTypeService.class);
         DocumentValidator documentValidator = mockValidator(contentTypeService);
-
         MetaExpression expression = makeMetaExpressionDocument("/example-valid-document.json");
 
         Document document = documentValidator.validateDocument(context(), "default", expression);
@@ -64,8 +73,6 @@ public class DocumentValidatorTest extends TestUtils {
 
     @Test(expectedExceptions = RobotRuntimeException.class)
     public void testValidateDocumentNonExistentContentType() throws JsonException, IOException {
-        ContentTypeService contentTypeService = mock(ContentTypeService.class);
-        // get a content type service which will never find anything
         DocumentValidator documentValidator = mockValidatorNoContentType(contentTypeService);
 
         MetaExpression expression = makeMetaExpressionDocument("/example-invalid-document-malformed-decorator.json");
@@ -74,7 +81,6 @@ public class DocumentValidatorTest extends TestUtils {
 
     @Test(expectedExceptions = RobotRuntimeException.class)
     public void testValidateDocumentMalformedDecorator() throws JsonException, IOException {
-        ContentTypeService contentTypeService = mock(ContentTypeService.class);
         DocumentValidator documentValidator = mockValidator(contentTypeService);
 
         MetaExpression expression = parseJson(IOUtils.toString(getClass().getResourceAsStream("/example-invalid-document-malformed-decorator.json")));
@@ -83,7 +89,6 @@ public class DocumentValidatorTest extends TestUtils {
 
     @Test(expectedExceptions = RobotRuntimeException.class)
     public void testValidateDocumentMissingContentType() throws JsonException, IOException {
-        ContentTypeService contentTypeService = mock(ContentTypeService.class);
         DocumentValidator documentValidator = mockValidator(contentTypeService);
 
         MetaExpression expression = parseJson(IOUtils.toString(getClass().getResourceAsStream("/example-invalid-document-missing-content-type.json")));
@@ -92,7 +97,6 @@ public class DocumentValidatorTest extends TestUtils {
 
     @Test(expectedExceptions = RobotRuntimeException.class)
     public void testValidateDocumentMissingDecorator() throws JsonException, IOException {
-        ContentTypeService contentTypeService = mock(ContentTypeService.class);
         DocumentValidator documentValidator = mockValidator(contentTypeService);
 
         MetaExpression expression = parseJson(IOUtils.toString(getClass().getResourceAsStream("/example-invalid-document-missing-decorator.json")));
@@ -101,7 +105,6 @@ public class DocumentValidatorTest extends TestUtils {
 
     @Test(expectedExceptions = RobotRuntimeException.class)
     public void testValidateDocumentEmptyDecorator() throws JsonException, IOException {
-        ContentTypeService contentTypeService = mock(ContentTypeService.class);
         DocumentValidator documentValidator = mockValidator(contentTypeService);
 
         MetaExpression expression = parseJson(IOUtils.toString(getClass().getResourceAsStream("/example-invalid-document-empty-decorator.json")));
@@ -110,7 +113,6 @@ public class DocumentValidatorTest extends TestUtils {
 
     @Test(expectedExceptions = RobotRuntimeException.class)
     public void testValidateDocumentMissingVersions() throws JsonException, IOException {
-        ContentTypeService contentTypeService = mock(ContentTypeService.class);
         DocumentValidator documentValidator = mockValidator(contentTypeService);
 
         MetaExpression expression = parseJson(IOUtils.toString(getClass().getResourceAsStream("/example-invalid-document-missing-versions.json")));
@@ -119,7 +121,6 @@ public class DocumentValidatorTest extends TestUtils {
 
     @Test(expectedExceptions = RobotRuntimeException.class)
     public void testValidateDocumentMissingTarget() throws JsonException, IOException {
-        ContentTypeService contentTypeService = mock(ContentTypeService.class);
         DocumentValidator documentValidator = mockValidator(contentTypeService);
 
         MetaExpression expression = parseJson(IOUtils.toString(getClass().getResourceAsStream("/example-invalid-document-missing-target.json")));
@@ -128,7 +129,6 @@ public class DocumentValidatorTest extends TestUtils {
 
     @Test(expectedExceptions = RobotRuntimeException.class)
     public void testValidateDocumentMissingSource() throws JsonException, IOException {
-        ContentTypeService contentTypeService = mock(ContentTypeService.class);
         DocumentValidator documentValidator = mockValidator(contentTypeService);
 
         MetaExpression expression = parseJson(IOUtils.toString(getClass().getResourceAsStream("/example-invalid-document-missing-source.json")));
@@ -137,7 +137,6 @@ public class DocumentValidatorTest extends TestUtils {
 
     @Test
     public void testValidateDocumentMissingVersion() throws JsonException, IOException {
-        ContentTypeService contentTypeService = mock(ContentTypeService.class);
         DocumentValidator documentValidator = mockValidator(contentTypeService);
 
         MetaExpression expression = parseJson(IOUtils.toString(getClass().getResourceAsStream("/example-invalid-document-missing-version.json")));
@@ -147,7 +146,6 @@ public class DocumentValidatorTest extends TestUtils {
 
     @Test
     public void testInsertOptionalFieldNotSpecified() throws JsonException, IOException {
-        ContentTypeService contentTypeService = mock(ContentTypeService.class);
         DocumentValidator documentValidator = mockValidatorOptionalField(contentTypeService);
 
         MetaExpression expression = parseJson(IOUtils.toString(getClass().getResourceAsStream("/example-incomplete-document.json")));
@@ -158,7 +156,6 @@ public class DocumentValidatorTest extends TestUtils {
 
     @Test
     public void testInsertFieldNullValue() throws JsonException, IOException {
-        ContentTypeService contentTypeService = mock(ContentTypeService.class);
         DocumentValidator documentValidator = mockValidatorOptionalField(contentTypeService);
 
         MetaExpression expression = parseJson(IOUtils.toString(getClass().getResourceAsStream("/example-document-null-value.json")));
@@ -178,8 +175,7 @@ public class DocumentValidatorTest extends TestUtils {
         return new DocumentValidator(
                 contentTypeService,
                 new ObjectIdSerializer(),
-                new MongoConverter(new MongoSerializer(new ObjectIdSerializer(), new UUIDSerializer(), new BinarySerializer()))
-        );
+                converter);
     }
 
     private DocumentValidator mockValidatorNoContentType(ContentTypeService contentTypeService) {
@@ -192,8 +188,7 @@ public class DocumentValidatorTest extends TestUtils {
         return new DocumentValidator(
                 contentTypeService,
                 new ObjectIdSerializer(),
-                new MongoConverter(new MongoSerializer(new ObjectIdSerializer(), new UUIDSerializer(), new BinarySerializer()))
-        );
+                converter);
     }
 
     private DocumentValidator mockValidatorOptionalField(ContentTypeService contentTypeService) {
@@ -210,8 +205,7 @@ public class DocumentValidatorTest extends TestUtils {
         return new DocumentValidator(
                 contentTypeService,
                 new ObjectIdSerializer(),
-                new MongoConverter(new MongoSerializer(new ObjectIdSerializer(), new UUIDSerializer(), new BinarySerializer()))
-        );
+                converter);
     }
 
 
