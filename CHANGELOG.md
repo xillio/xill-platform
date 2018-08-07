@@ -14,6 +14,10 @@ All notable changes to this project will be documented in this file.
 * Add `Mongo.find` `batchSize` option documentation [#5]
 * Deadlock when compiling multiple robots at the same time [#8]
 
+### Fix
+
+* XML Plugins's XSD validator fails on Linux [#1933]
+
 ## [3.6.9] - 2018-04-19
 
 ### Add

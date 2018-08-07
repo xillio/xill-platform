@@ -68,7 +68,7 @@ public class XsdServiceImpl implements XsdService, ErrorHandler {
     public boolean xsdCheck(final Path xmlFile, final Path xsdFile, final Logger logger) {
         messages.clear();
 
-        dbf.setAttribute(JAXP_SCHEMA_SOURCE, xsdFile);
+        dbf.setAttribute(JAXP_SCHEMA_SOURCE, xsdFile.toAbsolutePath().toString());
         try (InputStream stream = Files.newInputStream(xmlFile, StandardOpenOption.READ)) {
 
             DocumentBuilder db = dbf.newDocumentBuilder();
