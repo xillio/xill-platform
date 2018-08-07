@@ -32,10 +32,10 @@ The `options` parameter may contain the following options:
 
 | Option           | Description |
 | ---------------- | ----------- |
-| `allowDiskUsage` | Setting to `true` enables writing to temporary files, which allows for the handling of large datasets. |
+| `allowDiskUse`   | Setting to `true` enables writing to temporary files, which allows for the handling of large datasets. |
 | `maxTime`        | The maximum execution time in milliseconds for this operation. |
-| `limit`           | The maximum number of documents in the result set. |
-| `skip`            | The starting point of the results set. |
+| `limit`          | The maximum number of documents in the result set. |
+| `skip`           | The starting point of the results set. |
 | `noCursorTimeout` | Avoids closing a cursor automatically after a period of inactivity. |
 | `batchSize`       | The number of documents internally transferred from a cursor during a read operation. |
         </parameterDescription>
@@ -76,7 +76,7 @@ More information about MongoDB aggregation can be found in the [MongoDB manual](
                     }
                 ];
 
-                var options = {"allowDiskUsage": true};
+                var options = {"allowDiskUse": true};
                 var contentTypes = Mongo.aggregate("documents", pipeline, options);
 
                 foreach(result in contentTypes) {
