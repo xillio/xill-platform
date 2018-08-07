@@ -27,7 +27,8 @@
             </s:parent>
             <s:file>
                 <s:rawExtension>csv</s:rawExtension>
-                <s:path>C:\\projects\\All_Connector_Projects\\TESTSET_CONNECTORS\\csv\\20090803_Mapping_owinsp.csv</s:path>
+                <s:path>C:\\projects\\All_Connector_Projects\\TESTSET_CONNECTORS\\csv\\20090803_Mapping_owinsp.csv
+                </s:path>
                 <s:extension>csv</s:extension>
                 <s:size type="NumberLong">1189928</s:size>
                 <s:name>20090803_Mapping_owinsp.csv</s:name>
@@ -66,7 +67,8 @@
             </t:parent>
             <t:file>
                 <t:rawExtension>csv</t:rawExtension>
-                <t:path>C:\\projects\\All_Connector_Projects\\TESTSET_CONNECTORS\\csv\\20090803_Mapping_owinsp.csv</t:path>
+                <t:path>C:\\projects\\All_Connector_Projects\\TESTSET_CONNECTORS\\csv\\20090803_Mapping_owinsp.csv
+                </t:path>
                 <t:extension>csv</t:extension>
                 <t:size type="NumberLong">1189928</t:size>
                 <t:name>20090803_Mapping_owinsp.csv</t:name>

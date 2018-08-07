@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [3.7.0] - unreleased
 
+### Fix
+
+* XML Plugins's XSD validator fails on Linux [#1933]
+
 ## [3.6.9] - 2018-04-19
 
 ### Add
