@@ -22,12 +22,14 @@ import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.data.DateFactory;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.mongodb.services.serializers.BinarySerializer;
+import nl.xillio.xill.plugins.mongodb.services.serializers.MongoRegexSerializer;
 import nl.xillio.xill.plugins.mongodb.services.serializers.ObjectIdSerializer;
 import org.bson.BsonDocument;
 import org.bson.BsonValue;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static nl.xillio.xill.api.components.ExpressionBuilder.NULL;
@@ -43,12 +45,14 @@ public class BsonValueConverter {
 
     private final DateFactory dateFactory;
     private final ObjectIdSerializer objectIdSerializer;
+    private final MongoRegexSerializer mongoRegexSerializer;
     private final BinarySerializer binarySerializer;
 
     @Inject
-    public BsonValueConverter(DateFactory dateFactory, ObjectIdSerializer objectIdSerializer, BinarySerializer binarySerializer) {
+    public BsonValueConverter(DateFactory dateFactory, ObjectIdSerializer objectIdSerializer, MongoRegexSerializer mongoRegexSerializer, BinarySerializer binarySerializer) {
         this.dateFactory = dateFactory;
         this.objectIdSerializer = objectIdSerializer;
+        this.mongoRegexSerializer = mongoRegexSerializer;
         this.binarySerializer = binarySerializer;
     }
 
@@ -99,6 +103,11 @@ public class BsonValueConverter {
         if (value.isObjectId()) {
             MetaExpression objectId = objectIdSerializer.parseObject(value.asObjectId().getValue());
             return objectId == null ? NULL : objectId;
+        }
+
+        if (value.isRegularExpression()) {
+            MetaExpression regex = mongoRegexSerializer.parseObject(Pattern.compile(value.asRegularExpression().getPattern()));
+            return regex == null ? NULL : regex;
         }
 
         if (value.isBinary()) {

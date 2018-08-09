@@ -47,9 +47,12 @@ public class AggregateIterableFactory extends MongoIterableFactory {
 
     public void processOption(String option, MetaExpression value, AggregateIterable<Document> iterable) {
         switch (option) {
-            case "allowDiskUsage":
+            case "allowDiskUsage": // left here for backwards compatibility of xill code, should be deprecated eventually
                 iterable.allowDiskUse(value.getBooleanValue());
                 break;
+             case "allowDiskUse":
+                 iterable.allowDiskUse(value.getBooleanValue());
+                 break;
             case "maxTime":
                 iterable.maxTime(value.getNumberValue().longValue(), TimeUnit.MILLISECONDS);
                 break;

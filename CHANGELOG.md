@@ -1,12 +1,31 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.6.11] - 2018-08-09
+
+### Add
+
+* Add `Mongo.regex` construct
+
+## Fix
+
+* Fix a bug in `XML.xsdCheck`
+
+## Change
+
+* In the `Mongo.Aggregate` construct, the option `allowDiskUsage` is renamed to `allowDiskUse`.
+The old option still works, but is deprecated and should be replaced eventually.
+
 ## [3.6.10] - 2018-05-14
 
 ## Fix
 
 * Add `Mongo.find` `batchSize` option documentation [#5]
 * Deadlock when compiling multiple robots at the same time [#8]
+
+### Fix
+
+* XML Plugins's XSD validator fails on Linux [#1933]
 
 ## [3.6.9] - 2018-04-19
 
