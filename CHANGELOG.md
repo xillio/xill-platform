@@ -7,6 +7,15 @@ All notable changes to this project will be documented in this file.
 
 * Add `Mongo.regex` construct
 
+## Fix
+
+* Fix a bug in `XML.xsdCheck`
+
+## Change
+
+* In the `Mongo.Aggregate` construct, the option `allowDiskUsage` is renamed to `allowDiskUse`.
+The old option still works, but is deprecated and should be replaced eventually.
+
 ## [3.6.10] - 2018-05-14
 
 ## Fix
