@@ -58,7 +58,7 @@ public class XsdCheckConstructTest extends TestUtils {
         when(xsdService.xsdCheck(any(), any(), any())).thenReturn(true);
 
         // Run
-        MetaExpression result = XsdCheckConstruct.process(context, xsdFilenameVar, xmlFilenameVar, xsdService, logger);
+        MetaExpression result = XsdCheckConstruct.process(context, xsdFilenameVar, xmlFilenameVar, fromValue(false), xsdService, logger);
 
         // Verify
         verify(xsdService).xsdCheck(any(), any(), any());

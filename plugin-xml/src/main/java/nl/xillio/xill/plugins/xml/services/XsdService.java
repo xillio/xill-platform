@@ -20,13 +20,13 @@ import nl.xillio.xill.plugins.xml.XMLXillPlugin;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * This interface represents some of the operations for the {@link XMLXillPlugin}.
  *
  * @author Zbynek Hochmann
  */
-
 @ImplementedBy(XsdServiceImpl.class)
 public interface XsdService {
     /**
@@ -38,4 +38,14 @@ public interface XsdService {
      * @return true if XML file is valid, otherwise false
      */
     boolean xsdCheck(final Path xmlFilePath, final Path xsdFilePath, final Logger logger);
+
+    /**
+     * Verifies if the XML file is valid according to XSD specification and returns all validation errors.
+     *
+     * @param xmlFilePath XML file path document
+     * @param xsdFilePath XSD file path
+     * @param logger      CT logger
+     * @return true if XML file is valid, otherwise false
+     */
+    List<String> xsdCheckGetIssueList(final Path xmlFilePath, final Path xsdFilePath, final Logger logger);
 }

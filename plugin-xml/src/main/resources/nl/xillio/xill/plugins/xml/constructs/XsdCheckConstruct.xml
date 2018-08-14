@@ -27,9 +27,13 @@ The XML file that will be validated.
 		<parameterDescription parameterName="xsdFile">
 The xsd file that will be validated.
         </parameterDescription>
+        <parameterDescription parameterName="outputAsList">
+When `false`, the default, the method will return `true` if the XML is valid against the XSD and log the issues as warnings.
+When `true` the method will return the list of issues, if any: an empty list means the XML is valid.
+        </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-Returns true if the xml file is valid, returns false and a warning when it is not.
+Validates the given XLM file against the given XSD, allowing to determine whether the XML is valid and/or get the list of validation issues.
 	</longDescription>
     <examples>
         <example title="Usage">
@@ -41,6 +45,19 @@ Returns true if the xml file is valid, returns false and a warning when it is no
                 if (XML.xsdCheck("d:/temp/books.xml", "d:/temp/books.xsd")) {
                     System.print("File is valid!");
                 }
+            </code>
+        </example>
+        <example title="Usage">
+            <header>Get the list of validation issues</header>
+            <code>
+                use XML, System, File, Assert, Collection;
+
+                var xmlFileValid = "data/xsdValidationValid.xml";
+                var xmlFileInvalid = "data/xsdValidationInvalid.xml";
+                var xsdFile = "data/xsdValidation.xsd";
+
+
+                System.print(XML.xsdCheck(xmlFileInvalid, xsdFile, true));
             </code>
         </example>
     </examples>

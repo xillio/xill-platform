@@ -31,6 +31,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class is the main implementation of the {@link XsdService}
@@ -66,20 +68,7 @@ public class XsdServiceImpl implements XsdService, ErrorHandler {
 
     @Override
     public boolean xsdCheck(final Path xmlFile, final Path xsdFile, final Logger logger) {
-        messages.clear();
-
-        dbf.setAttribute(JAXP_SCHEMA_SOURCE, xsdFile.toAbsolutePath().toString());
-        try (InputStream stream = Files.newInputStream(xmlFile, StandardOpenOption.READ)) {
-
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            db.setErrorHandler(this);
-            db.parse(stream);
-        } catch (IOException e) {
-            throw new RobotRuntimeException("XSD check error\n" + e.getMessage(), e);
-        } catch (Exception e) {
-            logger.warn("XSD check failed\n" + e.getMessage() + (e.getCause() != null ? e.getCause().getMessage() : ""), e);
-            return false;
-        }
+        doValidate(xmlFile, xsdFile, logger);
 
         boolean result = messages.isEmpty();
         if (!result) {
@@ -91,6 +80,13 @@ public class XsdServiceImpl implements XsdService, ErrorHandler {
             logger.warn(text[0]);
         }
         return result;
+    }
+
+    @Override
+    public List<String> xsdCheckGetIssueList(Path xmlFilePath, Path xsdFilePath, Logger logger) {
+        doValidate(xmlFilePath, xsdFilePath, logger);
+
+        return messages.stream().collect(Collectors.toList());
     }
 
     @Override
@@ -110,6 +106,22 @@ public class XsdServiceImpl implements XsdService, ErrorHandler {
 
     private void message(final SAXParseException e) {
         messages.add("Line " + e.getLineNumber() + ", Char " + e.getColumnNumber() + ": " + e.getMessage());
+    }
+
+    private void doValidate(Path xmlFile, Path xsdFile, Logger logger) {
+        messages.clear();
+
+        dbf.setAttribute(JAXP_SCHEMA_SOURCE, xsdFile.toAbsolutePath().toString());
+        try (InputStream stream = Files.newInputStream(xmlFile, StandardOpenOption.READ)) {
+
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            db.setErrorHandler(this);
+            db.parse(stream);
+        } catch (IOException e) {
+            throw new RobotRuntimeException("XSD check error\n" + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RobotRuntimeException("XSD check failed\n" + e.getMessage() + (e.getCause() != null ? e.getCause().getMessage() : ""), e);
+        }
     }
 
 }
