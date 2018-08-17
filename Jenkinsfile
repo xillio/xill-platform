@@ -41,11 +41,6 @@ pipeline {
                                             "--fail-at-end"
                                 }
                             }
-                            post {
-                                always {
-                                    junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
-                                }
-                            }
                         }
                         stage('Sonar Analysis') {
                             when {
@@ -66,6 +61,11 @@ pipeline {
                                             'sonar:sonar'
                                 }
                             }
+                        }
+                    }
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
                         }
                     }
                 }
