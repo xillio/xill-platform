@@ -32,3 +32,9 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
+# Set timezone
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get install -y tzdata && ln -fs /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime && \
+    dpkg-reconfigure --frontend noninteractive tzdata
+
+
