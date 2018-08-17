@@ -17,7 +17,7 @@
 FROM ubuntu:bionic
 
 # Install Dependencies
-RUN apt-get update && apt-get install -y software-properties-common debconf-utils
+RUN apt-get update && apt-get install -y software-properties-common debconf-utils git maven curl
 
 # Accept Oracle TOS
 RUN echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | debconf-set-selections
