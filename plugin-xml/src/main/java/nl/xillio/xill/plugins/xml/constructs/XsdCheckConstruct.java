@@ -33,20 +33,11 @@ import java.util.stream.Collectors;
  * In case of validation errors, it will show each problem as warning message
  *
  * @author Zbynek Hochmann
+ * @author @Deprecated
  */
 public class XsdCheckConstruct extends Construct {
     @Inject
     private XsdService xsdService;
-
-    @Override
-    public ConstructProcessor prepareProcess(ConstructContext context) {
-        return new ConstructProcessor(
-                (xmlFile, xsdFile, outputAsList) -> process(context, xmlFile, xsdFile, outputAsList, xsdService, context.getRootLogger()),
-                new Argument("xmlFile", ATOMIC),
-                new Argument("xsdFile", ATOMIC),
-                new Argument("outputAsList", fromValue(false), ATOMIC)
-        );
-    }
 
     static MetaExpression process(final ConstructContext context,
                                   MetaExpression xmlFileName,
@@ -60,13 +51,23 @@ public class XsdCheckConstruct extends Construct {
 
         if (isOutputList) {
             return fromValue(
-                    service.xsdCheckGetIssueList(xmlFile, xsdFile, logger).stream()
+                    service.xsdCheckGetIssueList(xmlFile, xsdFile).stream()
                             .map(ExpressionBuilderHelper::fromValue)
                             .collect(Collectors.toList())
             );
         } else {
             return fromValue(service.xsdCheck(xmlFile, xsdFile, logger));
         }
+    }
+
+    @Override
+    public ConstructProcessor prepareProcess(ConstructContext context) {
+        return new ConstructProcessor(
+                (xmlFile, xsdFile, outputAsList) -> process(context, xmlFile, xsdFile, outputAsList, xsdService, context.getRootLogger()),
+                new Argument("xmlFile", ATOMIC),
+                new Argument("xsdFile", ATOMIC),
+                new Argument("outputAsList", fromValue(false), ATOMIC)
+        );
     }
 
 }

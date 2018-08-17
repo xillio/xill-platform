@@ -24,6 +24,7 @@ import org.testng.annotations.Test;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 import static org.testng.Assert.*;
 
@@ -37,9 +38,13 @@ public class XsdServiceImplTest {
 
     @BeforeClass
     public void prepare() throws URISyntaxException {
-        xsdFile = Paths.get(getClass().getClassLoader().getResource("xsdValidation.xsd").toURI());
-        xmlValid = Paths.get(getClass().getClassLoader().getResource("xsdValidationValid.xml").toURI());
-        xmlInvalid = Paths.get(getClass().getClassLoader().getResource("xsdValidationInvalid.xml").toURI());
+        xsdFile = getFile("xsdValidation.xsd");
+        xmlValid = getFile("xsdValidationValid.xml");
+        xmlInvalid = getFile("xsdValidationInvalid.xml");
+    }
+
+    private Path getFile(String fileName) throws URISyntaxException {
+        return Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource(fileName)).toURI());
     }
 
     @BeforeMethod
@@ -54,7 +59,7 @@ public class XsdServiceImplTest {
 
     @Test
     public void testXsdCheckGetIssueListValid() {
-        assertTrue(xsdService.xsdCheckGetIssueList(xmlValid, xsdFile, LOGGER).isEmpty());
+        assertTrue(xsdService.xsdCheckGetIssueList(xmlValid, xsdFile).isEmpty());
     }
 
     @Test
@@ -64,6 +69,7 @@ public class XsdServiceImplTest {
 
     @Test
     public void testXsdCheckGetIssueListInvalid() {
-        assertEquals(xsdService.xsdCheckGetIssueList(xmlInvalid, xsdFile, LOGGER).size(), 2);
+        assertEquals(xsdService.xsdCheckGetIssueList(xmlInvalid, xsdFile).size(), 2);
     }
+
 }

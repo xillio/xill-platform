@@ -24,10 +24,8 @@ import org.slf4j.Logger;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEqualsNoOrder;
@@ -87,19 +85,18 @@ public class XsdCheckConstructTest extends TestUtils {
     public void testProcessList() {
         String issue1 = "issue1";
         String issue2 = "issue2";
-        List<String> expectResult = new ArrayList();
+        List<String> expectResult = new ArrayList<>();
         expectResult.add(issue1);
         expectResult.add(issue2);
 
-        when(xsdService.xsdCheckGetIssueList(any(), any(), any())).thenReturn(expectResult);
+        when(xsdService.xsdCheckGetIssueList(any(), any())).thenReturn(expectResult);
 
         // Run
         MetaExpression result = XsdCheckConstruct.process(context, xsdFilenameVar, xmlFilenameVar, fromValue(true), xsdService, Logger);
-        List<String> resultList = result.<List<MetaExpression>>getValue().stream()
-                .map(MetaExpression::getStringValue)
-                .collect(Collectors.toList());
+        Object[] resultList = result.<List<MetaExpression>>getValue().stream()
+                .map(MetaExpression::getStringValue).toArray();
 
         // Assert
-        assertEqualsNoOrder(resultList.toArray(), expectResult.toArray());
+        assertEqualsNoOrder(resultList, expectResult.toArray());
     }
 }
