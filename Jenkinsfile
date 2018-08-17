@@ -14,6 +14,17 @@
  * limitations under the License.
  */
 
+def mvn(args) {
+    configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+        def command = "mvn -s \"${env.MAVEN_SETTINGS}\" -B ${args}";
+        if (isUnix()) {
+            sh command
+        } else {
+            cmd command
+        }
+    }
+}
+
 pipeline {
     agent none
     stages {
@@ -26,7 +37,7 @@ pipeline {
                         }
                     }
                     steps {
-                        sh 'env'
+                        mvn 'verify'
                     }
                 }
             }
