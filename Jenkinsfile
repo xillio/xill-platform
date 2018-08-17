@@ -37,7 +37,7 @@ pipeline {
                         }
                     }
                     steps {
-                        mvn 'verify'
+                        mvn 'verify --fail-at-end'
                     }
                 }
             }
