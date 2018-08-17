@@ -90,6 +90,10 @@ public class BsonValueConverter {
             return fromValue(value.asDouble().getValue());
         }
 
+        if (value.isDecimal128()) {
+            return fromValue(value.asDecimal128().doubleValue());
+        }
+
         if (value.isTimestamp()) {
             Instant instant = Instant.ofEpochSecond(value.asTimestamp().getTime());
             return parseDate(instant);

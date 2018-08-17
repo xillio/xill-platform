@@ -44,4 +44,11 @@
         </dependency>
     </dependencies>
 
+    <repositories>
+        <repository>
+            <id>libs-third-party</id>
+            <url>https://maven.xillio.com/artifactory/libs-third-party</url>
+        </repository>
+    </repositories>
+
 </project>

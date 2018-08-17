@@ -31,7 +31,8 @@ public class MongoSerializer implements MetaExpressionSerializer, MetaExpression
     public MongoSerializer(ObjectIdSerializer objectIdSerializer,
                            UUIDSerializer uuidSerializer,
                            MongoRegexSerializer mongoRegexSerializer,
-                           BinarySerializer binarySerializer) {
+                           BinarySerializer binarySerializer,
+                           Decimal128Serializer decimal128Serializer) {
         deserializers.add(objectIdSerializer);
         serializers.add(objectIdSerializer);
         deserializers.add(uuidSerializer);
@@ -40,6 +41,7 @@ public class MongoSerializer implements MetaExpressionSerializer, MetaExpression
         serializers.add(mongoRegexSerializer);
         deserializers.add(binarySerializer);
         serializers.add(binarySerializer);
+        deserializers.add(decimal128Serializer);
     }
 
     @Override
