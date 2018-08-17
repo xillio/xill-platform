@@ -32,7 +32,13 @@ pipeline {
                         stage('Maven Build') {
                             steps {
                                 configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-                                    sh "mvn -s '${params.BUILD_NATIVE ? '-P build-native' : ''}' -B  ${arguments} verify --fail-at-end"
+                                    sh "mvn " +
+                                            "${params.BUILD_NATIVE ? '-P build-native' : ''} " +
+                                            "-s ${env.MAVEN_SETTINGS} " +
+                                            "-B  " +
+                                            "${arguments} " +
+                                            "verify " +
+                                            "--fail-at-end"
                                 }
                             }
                             post {
