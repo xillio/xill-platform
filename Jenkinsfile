@@ -26,18 +26,22 @@ def mvn(args) {
 }
 
 pipeline {
-    agent none
+    agent {
+        dockerfile {
+            dir 'buildagent'
+        }
+    }
     stages {
         stage('Build') {
             parallel {
                 stage('Build on Linux') {
-                    agent {
-                        dockerfile {
-                            dir 'buildagent'
-                        }
-                    }
                     steps {
                         mvn 'verify --fail-at-end'
+                    }
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
+                        }
                     }
                 }
             }
