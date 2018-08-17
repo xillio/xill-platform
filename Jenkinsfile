@@ -20,27 +20,52 @@ pipeline {
             dir 'buildagent'
         }
     }
+    parameters {
+        booleanParam(name: 'NO_SONAR', defaultValue: false, description: 'Skip sonar analysis')
+        booleanParam(name: 'BUILD_NATIVE', defaultValue: false, description: 'Build a native distribution')
+    }
     stages {
         stage('Build') {
             parallel {
                 stage('Build on Linux') {
-                    environment {
-                        SONARCLOUD_LOGIN = credentials('SONARCLOUD_LOGIN')
-                    }
-                    steps {
-                        configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-                            sh 'mvn -s "$MAVEN_SETTINGS" -B verify --fail-at-end'
-                            sh 'mvn -s "$MAVEN_SETTINGS" -B ' +
-                                    '-Dsonar.login="$SONARCLOUD_LOGIN" ' +
-                                    '-Dsonar.host.url=https://sonarcloud.io ' +
-                                    '-Dsonar.organization=xillio ' +
-                                    '-Dsonar.branch.name="$GIT_BRANCH" ' +
-                                    'sonar:sonar'
+                    stages {
+                        stage('Maven Build') {
+                            steps {
+                                configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                                    def arguments = ""
+
+                                    if (params.BUILD_NATIVE) {
+                                        arguments = "-P build-native"
+                                    }
+
+                                    sh "mvn -s '${env.MAVEN_SETTINGS}' -B  ${arguments} verify --fail-at-end"
+                                }
+                            }
+                            post {
+                                always {
+                                    junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
+                                }
+                            }
                         }
-                    }
-                    post {
-                        always {
-                            junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
+                        stage('Sonar Analysis') {
+                            when {
+                                expression {
+                                    !params.NO_SONAR
+                                }
+                            }
+                            environment {
+                                SONARCLOUD_LOGIN = credentials('SONARCLOUD_LOGIN')
+                            }
+                            steps {
+                                configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                                    sh 'mvn -s "$MAVEN_SETTINGS" -B ' +
+                                            "-Dsonar.login='${env.SONARCLOUD_LOGIN}' " +
+                                            '-Dsonar.host.url=https://sonarcloud.io ' +
+                                            '-Dsonar.organization=xillio ' +
+                                            "-Dsonar.branch.name='${env.GIT_BRANCH}' " +
+                                            'sonar:sonar'
+                                }
+                            }
                         }
                     }
                 }
