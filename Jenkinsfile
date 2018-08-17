@@ -35,8 +35,15 @@ pipeline {
         stage('Build') {
             parallel {
                 stage('Build on Linux') {
+                    environment {
+                        SONARCLOUD_LOGIN = credentials('SONARCLOUD_LOGIN')
+                    }
                     steps {
                         mvn 'verify --fail-at-end'
+                        mvn "-Dsonar.login=${env.SONARCLOUD_LOGIN} " +
+                                "-Dsonar.host.url=https://sonarcloud.io " +
+                                "-Dsonar.organization=xillio " +
+                                "sonar:sonar"
                     }
                     post {
                         always {
