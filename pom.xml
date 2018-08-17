@@ -123,6 +123,7 @@
                 <artifactId>license-maven-plugin</artifactId>
                 <configuration>
                     <excludes>
+                        <exclude>**/.m2/**</exclude>
                         <exclude>xill-api/src/**/IdentityArrayList.java</exclude>
                         <exclude>xill-ide-core/src/main/resources/ace/**</exclude>
                         <exclude>xill-api/**/.mimetypes</exclude>
