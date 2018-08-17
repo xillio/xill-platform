@@ -36,7 +36,6 @@ pipeline {
                                             "${params.BUILD_NATIVE ? '-P build-native' : ''} " +
                                             "-s ${env.MAVEN_SETTINGS} " +
                                             "-B  " +
-                                            "${arguments} " +
                                             "verify " +
                                             "--fail-at-end"
                                 }
