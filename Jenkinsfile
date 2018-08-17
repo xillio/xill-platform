@@ -22,9 +22,7 @@ pipeline {
                 stage('Build on Linux') {
                     agent {
                         dockerfile {
-                            dir 'buildagent' {
-
-                            }
+                            dir 'buildagent'
                         }
                     }
                     steps {
