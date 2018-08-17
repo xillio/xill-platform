@@ -14,17 +14,6 @@
  * limitations under the License.
  */
 
-def mvn(args) {
-    configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-        def command = "mvn -s \"${env.MAVEN_SETTINGS}\" -B ${args}";
-        if (isUnix()) {
-            sh command
-        } else {
-            cmd command
-        }
-    }
-}
-
 pipeline {
     agent {
         dockerfile {
@@ -39,11 +28,15 @@ pipeline {
                         SONARCLOUD_LOGIN = credentials('SONARCLOUD_LOGIN')
                     }
                     steps {
-                        mvn 'verify --fail-at-end'
-                        mvn "-Dsonar.login=${env.SONARCLOUD_LOGIN} " +
-                                "-Dsonar.host.url=https://sonarcloud.io " +
-                                "-Dsonar.organization=xillio " +
-                                "sonar:sonar"
+                        configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                            sh 'mvn -s "$MAVEN_SETTINGS" -B verify --fail-at-end'
+                            sh 'mvn -s "$MAVEN_SETTINGS" -B ' +
+                                    '-Dsonar.login="$SONARCLOUD_LOGIN" ' +
+                                    '-Dsonar.host.url=https://sonarcloud.io ' +
+                                    '-Dsonar.organization=xillio ' +
+                                    '-Dsonar.branch.name="$GIT_BRANCH" ' +
+                                    'sonar:sonar'
+                        }
                     }
                     post {
                         always {
