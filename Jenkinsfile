@@ -52,7 +52,7 @@ pipeline {
                 stage('Windows') {
                     agent {
                         node {
-                            label 'windows&&xill-platform'
+                            label 'windows && xill-platform'
                         }
                     }
                     steps {
