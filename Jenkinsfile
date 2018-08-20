@@ -57,14 +57,14 @@ pipeline {
                     }
                     steps {
                        configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-                           sh "mvn " +
+                           cmd "mvn " +
                                    "${params.BUILD_NATIVE ? '-P build-native' : ''} " +
                                    "-s ${env.MAVEN_SETTINGS} " +
                                    "-B  " +
                                    "verify " +
                                    "--fail-at-end"
-                           sh "ls xill-ide/target"
-                           sh "ls xill-clgi/target"
+                           cmd "dir xill-ide/target"
+                           cmd "dir xill-clgi/target"
                        }
                     }
                 }
