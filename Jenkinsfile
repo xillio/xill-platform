@@ -18,7 +18,7 @@ pipeline {
     agent {
         dockerfile {
             dir 'buildagent'
-            label 'dockerhost && linux'
+            label 'docker && linux'
         }
     }
     parameters {
@@ -58,14 +58,14 @@ pipeline {
                     }
                     steps {
                        configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-                           cmd "mvn " +
+                           bat "mvn " +
                                    "${params.BUILD_NATIVE ? '-P build-native' : ''} " +
                                    "-s ${env.MAVEN_SETTINGS} " +
                                    "-B  " +
                                    "verify " +
                                    "--fail-at-end"
-                           cmd "dir xill-ide/target"
-                           cmd "dir xill-clgi/target"
+                           bat "dir xill-ide/target"
+                           bat "dir xill-clgi/target"
                        }
                     }
                 }
