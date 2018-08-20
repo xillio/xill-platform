@@ -65,13 +65,11 @@ pipeline {
                                    "-B  " +
                                    "verify " +
                                    "--fail-at-end"
-                           bat "dir xill-ide\\target"
-                           bat "dir xill-cli\\target"
                        }
                     }
                     post {
                         success {
-                            archiveArtifacts allowEmptyArchive: true, artifacts: 'xill-ide-native\target\xill-ide-*-win.zip'
+                            archiveArtifacts allowEmptyArchive: true, artifacts: 'xill-ide-native\\target\\xill-ide-*-win.zip'
                         }
                         always {
                             junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
