@@ -18,6 +18,7 @@ pipeline {
     agent {
         dockerfile {
             dir 'buildagent'
+            label 'dockerhost && linux'
         }
     }
     parameters {
