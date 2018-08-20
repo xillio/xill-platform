@@ -65,8 +65,8 @@ pipeline {
                                    "-B  " +
                                    "verify " +
                                    "--fail-at-end"
-                           bat "dir xill-ide/target"
-                           bat "dir xill-cli/target"
+                           bat "dir xill-ide\\target"
+                           bat "dir xill-cli\\target"
                        }
                     }
                 }
