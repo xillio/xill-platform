@@ -25,27 +25,46 @@ pipeline {
         booleanParam(name: 'BUILD_NATIVE', defaultValue: false, description: 'Build a native distribution')
     }
     stages {
-        stage('Maven Build') {
-            steps {
-                configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-                    sh "mvn " +
-                            "${params.BUILD_NATIVE ? '-P build-native' : ''} " +
-                            "-s ${env.MAVEN_SETTINGS} " +
-                            "-B  " +
-                            "verify " +
-                            "--fail-at-end"
-                    sh "ls xill-ide/target"
-                    sh "ls xill-cli/target"
+        stage('Build') {
+            parallel {
+                stage('Linux') {
+                    steps {
+                        configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                            sh "mvn " +
+                                    "${params.BUILD_NATIVE ? '-P build-native' : ''} " +
+                                    "-s ${env.MAVEN_SETTINGS} " +
+                                    "-B  " +
+                                    "verify " +
+                                    "--fail-at-end"
+                        }
+                    }
+                    post {
+                        success {
+                            archiveArtifacts allowEmptyArchive: true, artifacts: 'xill-ide/target/xill-ide-*-multiplatform.zip'
+                            archiveArtifacts allowEmptyArchive: true, artifacts: 'xill-cli/target/xill-cli-*.zip'
+                            archiveArtifacts allowEmptyArchive: true, artifacts: 'xill-cli/target/xill-cli-*.tar.gz'
+                        }
+                        always {
+                            junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
+                        }
+                    }
                 }
-            }
-            post {
-                success {
-                    archiveArtifacts allowEmptyArchive: true, artifacts: 'xill-ide/target/xill-ide-*-multiplatform.zip'
-                    archiveArtifacts allowEmptyArchive: true, artifacts: 'xill-cli/target/xill-cli-*.zip'
-                    archiveArtifacts allowEmptyArchive: true, artifacts: 'xill-cli/target/xill-cli-*.tar.gz'
-                }
-                always {
-                    junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
+                stage('Windows') {
+                    agent {
+                        labels 'windows&&xill-platform'
+                    }
+                    steps {
+                       configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                           sh "mvn " +
+                                   "${params.BUILD_NATIVE ? '-P build-native' : ''} " +
+                                   "-s ${env.MAVEN_SETTINGS} " +
+                                   "-B  " +
+                                   "verify " +
+                                   "--fail-at-end"
+                           sh "ls xill-ide/target"
+                           sh "ls xill-clgi/target"
+                       }
+                    }
                 }
             }
         }
