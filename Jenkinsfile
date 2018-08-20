@@ -15,6 +15,7 @@
  */
 
 pipeline {
+    agent any
     parameters {
         booleanParam(name: 'NO_SONAR', defaultValue: false, description: 'Skip sonar analysis')
         booleanParam(name: 'BUILD_NATIVE', defaultValue: false, description: 'Build a native distribution')
