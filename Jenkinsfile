@@ -39,6 +39,11 @@ pipeline {
                 }
             }
             post {
+                success {
+                    archiveArtifacts allowEmptyArchive: true, artifacts: 'xill-ide/target/xill-ide-*-multiplatform.zip'
+                    archiveArtifacts allowEmptyArchive: true, artifacts: 'xill-cli/target/xill-cli-*.zip'
+                    archiveArtifacts allowEmptyArchive: true, artifacts: 'xill-cli/target/xill-cli-*.tar.gz'
+                }
                 always {
                     junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
                 }
