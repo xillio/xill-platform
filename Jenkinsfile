@@ -15,12 +15,6 @@
  */
 
 pipeline {
-    agent {
-        dockerfile {
-            dir 'buildagent'
-            label 'docker && linux'
-        }
-    }
     parameters {
         booleanParam(name: 'NO_SONAR', defaultValue: false, description: 'Skip sonar analysis')
         booleanParam(name: 'BUILD_NATIVE', defaultValue: false, description: 'Build a native distribution')
@@ -29,6 +23,12 @@ pipeline {
         stage('Build') {
             parallel {
                 stage('Linux') {
+                    agent {
+                        dockerfile {
+                            dir 'buildagent'
+                            label 'docker && linux'
+                        }
+                    }
                     steps {
                         configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
                             sh "mvn " +
@@ -65,13 +65,19 @@ pipeline {
                                    "verify " +
                                    "--fail-at-end"
                            bat "dir xill-ide/target"
-                           bat "dir xill-clgi/target"
+                           bat "dir xill-cli/target"
                        }
                     }
                 }
             }
         }
         stage('Sonar Analysis') {
+            agent {
+                dockerfile {
+                    dir 'buildagent'
+                    label 'docker && linux'
+                }
+            }
             when {
                 expression {
                     !params.NO_SONAR
