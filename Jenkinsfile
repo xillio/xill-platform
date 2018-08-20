@@ -69,6 +69,14 @@ pipeline {
                            bat "dir xill-cli\\target"
                        }
                     }
+                    post {
+                        success {
+                            archiveArtifacts allowEmptyArchive: true, artifacts: 'xill-ide-native\target\xill-ide-*-win.zip'
+                        }
+                        always {
+                            junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
+                        }
+                    }
                 }
             }
         }
