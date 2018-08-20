@@ -78,29 +78,44 @@ pipeline {
                 }
             }
         }
-        stage('Sonar Analysis') {
-            agent {
-                dockerfile {
-                    dir 'buildagent'
-                    label 'docker && linux'
+        stage('Post Build') {
+            parallel {
+                stage('Sonar Analysis') {
+                    agent {
+                        dockerfile {
+                            dir 'buildagent'
+                            label 'docker && linux'
+                        }
+                    }
+                    when {
+                        expression {
+                            !params.NO_SONAR
+                        }
+                    }
+                    environment {
+                        SONARCLOUD_LOGIN = credentials('SONARCLOUD_LOGIN')
+                    }
+                    steps {
+                        configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                            sh 'mvn -s "$MAVEN_SETTINGS" -B ' +
+                                    "-Dsonar.login='${env.SONARCLOUD_LOGIN}' " +
+                                    '-Dsonar.host.url=https://sonarcloud.io ' +
+                                    '-Dsonar.organization=xillio ' +
+                                    "-Dsonar.branch.name='${env.GIT_BRANCH}' " +
+                                    'sonar:sonar'
+                        }
+                    }
                 }
-            }
-            when {
-                expression {
-                    !params.NO_SONAR
-                }
-            }
-            environment {
-                SONARCLOUD_LOGIN = credentials('SONARCLOUD_LOGIN')
-            }
-            steps {
-                configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-                    sh 'mvn -s "$MAVEN_SETTINGS" -B ' +
-                            "-Dsonar.login='${env.SONARCLOUD_LOGIN}' " +
-                            '-Dsonar.host.url=https://sonarcloud.io ' +
-                            '-Dsonar.organization=xillio ' +
-                            "-Dsonar.branch.name='${env.GIT_BRANCH}' " +
-                            'sonar:sonar'
+                stage('Publish Artifacts') {
+                    agent {
+                        dockerfile {
+                            dir 'buildagent'
+                            label 'docker && linux'
+                        }
+                    }
+                    steps {
+                        sh 'find .'
+                    }
                 }
             }
         }
