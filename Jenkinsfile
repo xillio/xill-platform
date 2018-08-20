@@ -107,12 +107,6 @@ pipeline {
                     }
                 }
                 stage('Publish Artifacts') {
-                    agent {
-                        dockerfile {
-                            dir 'buildagent'
-                            label 'docker && linux'
-                        }
-                    }
                     steps {
                         sh 'find .'
                     }
