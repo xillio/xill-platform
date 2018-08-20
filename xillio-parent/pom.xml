@@ -105,26 +105,6 @@
             <url>https://jcenter.bintray.com</url>
         </repository>
         <repository>
-            <id>xillio-releases</id>
-            <url>https://maven.xillio.com/artifactory/libs-release</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>xillio-snapshots</id>
-            <url>https://maven.xillio.com/artifactory/libs-snapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>xillio-third-party</id>
             <url>https://maven.xillio.com/artifactory/libs-third-party</url>
             <releases>
