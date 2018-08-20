@@ -34,6 +34,8 @@ pipeline {
                             "-B  " +
                             "verify " +
                             "--fail-at-end"
+                    sh "ls xill-ide/target"
+                    sh "ls xill-cli/target"
                 }
             }
             post {
