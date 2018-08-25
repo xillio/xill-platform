@@ -55,12 +55,6 @@ public class OptionsFactory {
         return value.getNumberValue().intValue();
     }
 
-    private static String getString(MetaExpression value, String label) {
-        assertValue(value, "The %s option must contain a string", label);
-
-        return value.getStringValue();
-    }
-
     private static boolean getBoolean(MetaExpression value, String label) {
         assertValue(value, NO_NULL_MESSAGE, label);
         return value.getBooleanValue();
@@ -106,11 +100,6 @@ public class OptionsFactory {
         } catch (ParseException e) {
             throw new RobotRuntimeException("Could not parse content type " + value + ": " + e.getMessage(), e);
         }
-    }
-
-    @SuppressWarnings("squid:S2095") // Sonar expects MetaExpressions to be closed, which is done by our GC mechanism
-    private static MetaExpression getWorkstation(String workstation) {
-        return MetaExpression.parseObject("myworkstation");
     }
 
     /**
@@ -247,7 +236,7 @@ public class OptionsFactory {
 
                 MetaExpression workstation = proxyObject.get("workstation");
                 if (workstation == null || workstation.isNull()) {
-                    workstation = getWorkstation("myworkstation");
+                    workstation = MetaExpression.parseObject("myworkstation");
                 }
 
                 MetaExpression domain = proxyObject.get("domain");
