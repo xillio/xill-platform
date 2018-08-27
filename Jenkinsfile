@@ -134,6 +134,7 @@ pipeline {
                         }
                     }
                     steps {
+                        sh 'echo placeholder'
                     }
                 }
             }
