@@ -15,7 +15,7 @@
  */
 
 def uploadFile(String file, String fileName) {
-    sh "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
+    return "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
          "-X PUT https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/${fileName} " +
          "-H 'Content-Type: application/json' " +
          "-H 'X-Bintray-Package:DeployTest' " +
