@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-final BINTRAY_REPOSITORY = "Xill-Platform"
-final BINTRAY_PACKAGE = "DeployTest"
-
 def uploadFile(String file, String fileName) {
     sh "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
          "-X PUT https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/${fileName} " +
@@ -77,15 +74,12 @@ pipeline {
                             label 'windows && xill-platform'
                         }
                     }
-                    steps {
-                       configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-                           bat "mvn " +
-                                   "-P build-native" +
-                                   "-s ${env.MAVEN_SETTINGS} " +
-                                   "-B  " +
-                                   "verify " +
-                                   "--fail-at-end"
-                       }
+                    steps {bat "mvn " +
+                                                              "-P build-native" +
+                                                              "-s ${env.MAVEN_SETTINGS} " +
+                                                              "-B  " +
+                                                              "verify " +
+                                                              "--fail-at-end"
                     }
                     post {
                         always {
