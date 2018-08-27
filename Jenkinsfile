@@ -32,8 +32,8 @@ pipeline {
     stages {
         stage('Prepare Release') {
             steps {
-                sh "curl --verbose -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
-                   "-X POST https://api.bintray.com/api/xillio/Xill-Platform/DeployTest/versions " +
+                sh "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
+                   "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/DeployTest/versions " +
                    "-H 'Content-Type: application/json' " +
                    "-d '{\"name\": \"${env.MAVEN_VERSION}\"}'"
             }
