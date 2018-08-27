@@ -73,6 +73,7 @@ pipeline {
                         node {
                             label 'windows && xill-platform'
                         }
+                        dockerfile null
                     }
                     steps {
                        configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
