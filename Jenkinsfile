@@ -24,12 +24,7 @@ def uploadFile(String file, String fileName) {
 }
 
 pipeline {
-    agent {
-        dockerfile {
-            dir 'buildagent'
-            label 'docker && linux'
-        }
-    }
+    agent none
     parameters {
         booleanParam(name: 'NO_SONAR', defaultValue: false, description: 'Skip sonar analysis')
     }
@@ -38,7 +33,7 @@ pipeline {
         BINTRAY = credentials("BINTRAY_LOGIN")
     }
     stages {
-        stage('Prepare Release') {
+        stage('Build on Linux') {
             agent {
                 dockerfile {
                     dir 'buildagent'
@@ -50,91 +45,68 @@ pipeline {
                    "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/DeployTest/versions " +
                    "-H 'Content-Type: application/json' " +
                    "-d '{\"name\": \"${env.MAVEN_VERSION}\"}'"
-            }
-        }
-        stage('Build') {
-            parallel {
-                stage('Linux') {
-                    agent {
-                        dockerfile {
-                            dir 'buildagent'
-                            label 'docker && linux'
-                        }
-                    }
-                    steps {
-                        configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-                            sh "mvn " +
-                                    "-s ${MAVEN_SETTINGS} " +
-                                    "-B  " +
-                                    "verify " +
-                                    "--fail-at-end"
+                   configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                        sh "mvn " +
+                              "-s ${MAVEN_SETTINGS} " +
+                              "-B  " +
+                              "verify " +
+                              "--fail-at-end"
 
-                            sh uploadFile("xill-ide/target/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip", "xill-ide-${env.MAVEN_VERSION}-multiplatform.zip")
-                            sh uploadFile("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.zip", "xill-cli-${env.MAVEN_VERSION}.zip")
-                            sh uploadFile("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.tar.gz", "xill-cli-${env.MAVEN_VERSION}.tar.gz")
-                        }
-                    }
-                    post {
-                        always {
-                            junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
-                        }
-                    }
-                }
-                stage('Windows') {
-                    agent {
-                        label 'windows && xill-platform'
-                    }
-                    steps {
-                       configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-                           bat "mvn " +
-                                   "-P build-native " +
-                                   "-s ${MAVEN_SETTINGS} " +
-                                   "-B  " +
-                                   "verify " +
-                                   "--fail-at-end"
-                       }
-                    }
-                    post {
-                        always {
-                            //sh upload("xill-ide-native/target/xill-ide-${env.MAVEN_VERSION}-win.zip", "xill-ide-${env.MAVEN_VERSION}-win.zip")
-                            junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
-                        }
-                    }
+                   }
+                   sh uploadFile("xill-ide/target/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip", "xill-ide-${env.MAVEN_VERSION}-multiplatform.zip")
+                   sh uploadFile("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.zip", "xill-cli-${env.MAVEN_VERSION}.zip")
+                   sh uploadFile("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.tar.gz", "xill-cli-${env.MAVEN_VERSION}.tar.gz")
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
                 }
             }
         }
-        stage('Post Build') {
-            parallel {
-                stage('Sonar Analysis') {
-                    agent {
-                        dockerfile {
-                            dir 'buildagent'
-                            label 'docker && linux'
-                        }
-                    }
-                    when {
-                        expression {
-                            !params.NO_SONAR
-                        }
-                    }
-                    environment {
-                        SONARCLOUD_LOGIN = credentials('SONARCLOUD_LOGIN')
-                    }
-                    steps {
-                        configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-                            sh 'mvn -s "$MAVEN_SETTINGS" -B ' +
-                                    "-Dsonar.login='${env.SONARCLOUD_LOGIN}' " +
-                                    '-Dsonar.host.url=https://sonarcloud.io ' +
-                                    '-Dsonar.organization=xillio ' +
-                                    "-Dsonar.branch.name='${env.GIT_BRANCH}' " +
-                                    'sonar:sonar'
-                        }
-                    }
+        stage('Windows') {
+            agent {
+                label 'windows && xill-platform'
+            }
+            steps {
+                configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                    bat "mvn " +
+                        "-P build-native " +
+                        "-s ${MAVEN_SETTINGS} " +
+                        "-B  " +
+                        "verify " +
+                        "--fail-at-end"
                 }
-                stage('Publish Artifacts') {
-                    steps {
-                        sh 'echo placeholder'
-                    }
+                bat uploadFile("xill-ide-native/target/xill-ide-${env.MAVEN_VERSION}-win.zip", "xill-ide-${env.MAVEN_VERSION}-win.zip")
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
+                }
+            }
+        }
+        stage('Sonar Analysis') {
+            agent {
+                dockerfile {
+                    dir 'buildagent'
+                    label 'docker && linux'
+                }
+            }
+            when {
+                expression {
+                    !params.NO_SONAR
+                }
+            }
+            environment {
+                SONARCLOUD_LOGIN = credentials('SONARCLOUD_LOGIN')
+            }
+            steps {
+                configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                    sh 'mvn -s "$MAVEN_SETTINGS" -B ' +
+                            "-Dsonar.login='${env.SONARCLOUD_LOGIN}' " +
+                            '-Dsonar.host.url=https://sonarcloud.io ' +
+                            '-Dsonar.organization=xillio ' +
+                            "-Dsonar.branch.name='${env.GIT_BRANCH}' " +
+                            'sonar:sonar'
                 }
             }
         }
