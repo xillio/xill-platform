@@ -31,11 +31,6 @@ pipeline {
     }
     stages {
         stage('Prepare Release') {
-            when {
-                expression {
-                    MAVEN_VERSION.contains("SNAPSHOT")
-                }
-            }
             steps {
                 sh "curl -u '${BINTRAY_USR}:${BINTRAY_PSW}' " +
                    "-X POST https://api.bintray.com/api/xillio/Xill-Platform/DeployTest/versions" +
