@@ -14,6 +14,18 @@
  * limitations under the License.
  */
 
+final BINTRAY_REPOSITORY = "Xill-Platform"
+final BINTRAY_PACKAGE = "DeployTest"
+
+def uploadFile(String file, String fileName) {
+    sh "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
+         "-X PUT https://api.bintray.com/content/xillio/${BINTRAY_REPOSITORY}/${BINTRAY_PACKAGE}/${env.MAVEN_VERSION}/${fileName} " +
+         "-H 'Content-Type: application/json' " +
+         "-H 'X-Bintray-Package:${BINTRAY_PACKAGE}' " +
+         "-H 'X-Bintray-Version:${env.MAVEN_VERSION}' " +
+         "-T '${file}'"
+}
+
 pipeline {
     agent {
         dockerfile {
@@ -33,7 +45,7 @@ pipeline {
         stage('Prepare Release') {
             steps {
                 sh "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
-                   "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/DeployTest/versions " +
+                   "-X POST https://api.bintray.com/packages/xillio/${BINTRAY_REPOSITORY}/${BINTRAY_PACKAGE}/versions " +
                    "-H 'Content-Type: application/json' " +
                    "-d '{\"name\": \"${env.MAVEN_VERSION}\"}'"
             }
@@ -49,18 +61,13 @@ pipeline {
                                     "verify " +
                                     "--fail-at-end"
 
-                           sh "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
-                                     "-X PUT https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip " +
-                                     "-H 'Content-Type: application/json' " +
-                                     "-H 'X-Bintray-Package:DeployTest' " +
-                                     "-H 'X-Bintray-Version:${env.MAVEN_VERSION}' " +
-                                     "-T 'xill-ide/target/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip'"
+                            sh uploadFile("xill-ide/target/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip", "xill-ide-${env.MAVEN_VERSION}-multiplatform.zip")
+                            sh uploadFile("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.zip", "xill-cli-${env.MAVEN_VERSION}.zip")
+                            sh uploadFile("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.tar.gz", "xill-cli-${env.MAVEN_VERSION}.tar.gz")
                         }
                     }
                     post {
                         always {
-                            //sh upload("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.zip", "xill-cli-${env.MAVEN_VERSION}.zip")
-                            //sh upload("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.tar.gz", "xill-cli-${env.MAVEN_VERSION}.tar.gz")
                             junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
                         }
                     }
