@@ -38,6 +38,7 @@ pipeline {
                 dockerfile {
                     dir 'buildagent'
                     label 'docker && linux'
+                    args '-u 0:0'
                 }
             }
             steps {
@@ -89,6 +90,7 @@ pipeline {
                 dockerfile {
                     dir 'buildagent'
                     label 'docker && linux'
+                    args '-u 0:0'
                 }
             }
             when {
