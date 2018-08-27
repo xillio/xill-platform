@@ -41,12 +41,6 @@ pipeline {
         stage('Build') {
             parallel {
                 stage('Linux') {
-                    agent {
-                        dockerfile {
-                            dir 'buildagent'
-                            label 'docker && linux'
-                        }
-                    }
                     steps {
                         configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
                             sh "mvn " +
@@ -98,12 +92,6 @@ pipeline {
         stage('Post Build') {
             parallel {
                 stage('Sonar Analysis') {
-                    agent {
-                        dockerfile {
-                            dir 'buildagent'
-                            label 'docker && linux'
-                        }
-                    }
                     when {
                         expression {
                             !params.NO_SONAR
