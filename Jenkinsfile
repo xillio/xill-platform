@@ -19,9 +19,9 @@ final BINTRAY_PACKAGE = "DeployTest"
 
 def uploadFile(String file, String fileName) {
     sh "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
-         "-X PUT https://api.bintray.com/content/xillio/${BINTRAY_REPOSITORY}/${BINTRAY_PACKAGE}/${env.MAVEN_VERSION}/${fileName} " +
+         "-X PUT https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/${fileName} " +
          "-H 'Content-Type: application/json' " +
-         "-H 'X-Bintray-Package:${BINTRAY_PACKAGE}' " +
+         "-H 'X-Bintray-Package:DeployTest' " +
          "-H 'X-Bintray-Version:${env.MAVEN_VERSION}' " +
          "-T '${file}'"
 }
@@ -35,7 +35,6 @@ pipeline {
     }
     parameters {
         booleanParam(name: 'NO_SONAR', defaultValue: false, description: 'Skip sonar analysis')
-        booleanParam(name: 'BUILD_NATIVE', defaultValue: false, description: 'Build a native distribution')
     }
     environment {
         MAVEN_VERSION = readMavenPom().getVersion()
@@ -45,7 +44,7 @@ pipeline {
         stage('Prepare Release') {
             steps {
                 sh "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
-                   "-X POST https://api.bintray.com/packages/xillio/${BINTRAY_REPOSITORY}/${BINTRAY_PACKAGE}/versions " +
+                   "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/DeployTest/versions " +
                    "-H 'Content-Type: application/json' " +
                    "-d '{\"name\": \"${env.MAVEN_VERSION}\"}'"
             }
