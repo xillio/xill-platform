@@ -52,7 +52,7 @@ pipeline {
                     steps {
                         configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
                             sh "mvn " +
-                                    "-s ${env.MAVEN_SETTINGS} " +
+                                    "-s ${MAVEN_SETTINGS} " +
                                     "-B  " +
                                     "verify " +
                                     "--fail-at-end"
@@ -74,12 +74,15 @@ pipeline {
                             label 'windows && xill-platform'
                         }
                     }
-                    steps {bat "mvn " +
-                                                              "-P build-native" +
-                                                              "-s ${env.MAVEN_SETTINGS} " +
-                                                              "-B  " +
-                                                              "verify " +
-                                                              "--fail-at-end"
+                    steps {
+                       configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                           bat "mvn " +
+                                   "-P build-native " +
+                                   "-s ${MAVEN_SETTINGS} " +
+                                   "-B  " +
+                                   "verify " +
+                                   "--fail-at-end"
+                       }
                     }
                     post {
                         always {
