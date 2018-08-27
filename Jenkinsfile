@@ -29,7 +29,6 @@ pipeline {
         booleanParam(name: 'NO_SONAR', defaultValue: false, description: 'Skip sonar analysis')
     }
     environment {
-        MAVEN_VERSION = readMavenPom().getVersion()
         BINTRAY = credentials("BINTRAY_LOGIN")
     }
     stages {
@@ -40,6 +39,9 @@ pipeline {
                     label 'docker && linux'
                     args '-u 0:0'
                 }
+            }
+            environment {
+                MAVEN_VERSION = readMavenPom().getVersion()
             }
             steps {
                 sh "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
@@ -67,6 +69,9 @@ pipeline {
         stage('Windows') {
             agent {
                 label 'windows && xill-platform'
+            }
+            environment {
+                MAVEN_VERSION = readMavenPom().getVersion()
             }
             steps {
                 configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
