@@ -37,4 +37,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get install -y tzdata && ln -fs /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime && \
     dpkg-reconfigure --frontend noninteractive tzdata
 
+# Install Docker
+RUN curl -sSL get.docker.com | bash
 

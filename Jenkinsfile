@@ -15,7 +15,12 @@
  */
 
 pipeline {
-    agent none
+    agent {
+        dockerfile {
+            dir 'buildagent'
+            label 'docker && linux'
+        }
+    }
     parameters {
         booleanParam(name: 'NO_SONAR', defaultValue: false, description: 'Skip sonar analysis')
         booleanParam(name: 'BUILD_NATIVE', defaultValue: false, description: 'Build a native distribution')
@@ -26,12 +31,6 @@ pipeline {
     }
     stages {
         stage('Prepare Release') {
-            agent {
-                dockerfile {
-                    dir 'buildagent'
-                    label 'docker && linux'
-                }
-            }
             steps {
                 sh "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
                    "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/DeployTest/versions " +
@@ -42,12 +41,6 @@ pipeline {
         stage('Build') {
             parallel {
                 stage('Linux') {
-                    agent {
-                        dockerfile {
-                            dir 'buildagent'
-                            label 'docker && linux'
-                        }
-                    }
                     steps {
                         configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
                             sh "mvn " +
@@ -62,6 +55,8 @@ pipeline {
                            sh "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
                                      "-X POST https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip " +
                                      "-H 'Content-Type: application/json' " +
+                                     "-H 'X-Bintray-Package:DeployTest' " +
+                                     "-H 'X-Bintray-Version:${env.MAVEN_VERSION}' " +
                                      "-T 'xill-ide/target/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip'"
                         }
                         always {
@@ -99,12 +94,6 @@ pipeline {
         stage('Post Build') {
             parallel {
                 stage('Sonar Analysis') {
-                    agent {
-                        dockerfile {
-                            dir 'buildagent'
-                            label 'docker && linux'
-                        }
-                    }
                     when {
                         expression {
                             !params.NO_SONAR
@@ -125,12 +114,6 @@ pipeline {
                     }
                 }
                 stage('Publish Artifacts') {
-                    agent {
-                        dockerfile {
-                            dir 'buildagent'
-                            label 'docker && linux'
-                        }
-                    }
                     steps {
                         sh 'echo placeholder'
                     }
