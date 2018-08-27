@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
+def upload(sourceFile, targetName) {
+    sh "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
+       "-X POST https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/${targetName} " +
+       "-H 'Content-Type: application/json' " +
+       "-T '${targetName}'"
+}
+
 pipeline {
     agent {
         dockerfile {
@@ -44,7 +51,6 @@ pipeline {
                     steps {
                         configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
                             sh "mvn " +
-                                    "${params.BUILD_NATIVE ? '-P build-native' : ''} " +
                                     "-s ${env.MAVEN_SETTINGS} " +
                                     "-B  " +
                                     "verify " +
@@ -53,9 +59,9 @@ pipeline {
                     }
                     post {
                         success {
-                            archiveArtifacts allowEmptyArchive: true, artifacts: 'xill-ide/target/xill-ide-*-multiplatform.zip'
-                            archiveArtifacts allowEmptyArchive: true, artifacts: 'xill-cli/target/xill-cli-*.zip'
-                            archiveArtifacts allowEmptyArchive: true, artifacts: 'xill-cli/target/xill-cli-*.tar.gz'
+                            upload("xill-ide/target/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip", "xill-ide-${env.MAVEN_VERSION}-multiplatform.zip")
+                            upload("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.zip", "xill-cli-${env.MAVEN_VERSION}.zip")
+                            upload("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.tar.gz", "xill-cli-${env.MAVEN_VERSION}.tar.gz")
                         }
                         always {
                             junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
@@ -71,7 +77,7 @@ pipeline {
                     steps {
                        configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
                            bat "mvn " +
-                                   "${params.BUILD_NATIVE ? '-P build-native' : ''} " +
+                                   "-P build-native" +
                                    "-s ${env.MAVEN_SETTINGS} " +
                                    "-B  " +
                                    "verify " +
@@ -80,7 +86,7 @@ pipeline {
                     }
                     post {
                         success {
-                            archiveArtifacts allowEmptyArchive: true, artifacts: 'xill-ide-native\\target\\xill-ide-*-win.zip'
+                            upload("xill-ide-native/target/xill-ide-${env.MAVEN_VERSION}-win.zip", "xill-ide-${env.MAVEN_VERSION}-win.zip")
                         }
                         always {
                             junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
