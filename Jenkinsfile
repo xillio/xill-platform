@@ -70,10 +70,7 @@ pipeline {
                 }
                 stage('Windows') {
                     agent {
-                        node {
-                            label 'windows && xill-platform'
-                        }
-                        dockerfile null
+                        label 'windows && xill-platform'
                     }
                     steps {
                        configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
