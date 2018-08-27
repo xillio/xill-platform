@@ -15,10 +15,11 @@
  */
 
 def upload(sourceFile, targetName) {
-    sh "[ -f '${sourceFile}' ] && curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
-       "-X POST https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/${targetName} " +
+    sh "[ -f '${sourceFile}' ] && " +
+       'curl -f -u "${BINTRAY_USR}:${BINTRAY_PSW}" ' +
+       '-X POST https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${MAVEN_VERSION}/' + targetName + ' ' +
        "-H 'Content-Type: application/json' " +
-       "-T '${targetName}'"
+       "-T '${sourceFile}'"
 }
 
 pipeline {
