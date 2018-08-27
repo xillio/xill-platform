@@ -28,7 +28,6 @@ pipeline {
     environment {
         MAVEN_VERSION = readMavenPom().getVersion()
         BINTRAY = credentials("BINTRAY_LOGIN")
-        BINTRAY_API_KEY = credentials("BINTRAY_API_KEY")
     }
     stages {
         stage('Prepare Release') {
@@ -38,7 +37,7 @@ pipeline {
                 }
             }
             steps {
-                sh "curl -u '${BINTRAY_USR}:${BINTRAY_API_KEY}' " +
+                sh "curl -u '${BINTRAY_USR}:${BINTRAY_PSW}' " +
                    "-X POST https://api.bintray.com/api/xillio/Xill-Platform/DeployTest/versions" +
                    "-H 'Content-Type: application/json'" +
                    "-d '{\"name\": \"${env.MAVEN_VERSION}\"}'"
