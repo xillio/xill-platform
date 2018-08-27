@@ -14,13 +14,6 @@
  * limitations under the License.
  */
 
-def upload(sourceFile, targetName) {
-    return "[ -f '${sourceFile}' ] && curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
-       "-X POST https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/${targetName} " +
-       "-H 'Content-Type: application/json' " +
-       "-T '${targetName}'"
-}
-
 pipeline {
     agent none
     parameters {
@@ -65,10 +58,15 @@ pipeline {
                         }
                     }
                     post {
+                        success {
+                           sh "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
+                                     "-X POST https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip " +
+                                     "-H 'Content-Type: application/json' " +
+                                     "-T 'xill-ide/target/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip'"
+                        }
                         always {
-                            sh upload("xill-ide/target/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip", "xill-ide-${env.MAVEN_VERSION}-multiplatform.zip")
-                            sh upload("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.zip", "xill-cli-${env.MAVEN_VERSION}.zip")
-                            sh upload("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.tar.gz", "xill-cli-${env.MAVEN_VERSION}.tar.gz")
+                            //sh upload("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.zip", "xill-cli-${env.MAVEN_VERSION}.zip")
+                            //sh upload("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.tar.gz", "xill-cli-${env.MAVEN_VERSION}.tar.gz")
                             junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
                         }
                     }
@@ -91,7 +89,7 @@ pipeline {
                     }
                     post {
                         always {
-                            sh upload("xill-ide-native/target/xill-ide-${env.MAVEN_VERSION}-win.zip", "xill-ide-${env.MAVEN_VERSION}-win.zip")
+                            //sh upload("xill-ide-native/target/xill-ide-${env.MAVEN_VERSION}-win.zip", "xill-ide-${env.MAVEN_VERSION}-win.zip")
                             junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
                         }
                     }
