@@ -22,12 +22,7 @@ def upload(sourceFile, targetName) {
 }
 
 pipeline {
-    agent {
-        dockerfile {
-            dir 'buildagent'
-            label 'docker && linux'
-        }
-    }
+    agent none
     parameters {
         booleanParam(name: 'NO_SONAR', defaultValue: false, description: 'Skip sonar analysis')
         booleanParam(name: 'BUILD_NATIVE', defaultValue: false, description: 'Build a native distribution')
@@ -38,6 +33,12 @@ pipeline {
     }
     stages {
         stage('Prepare Release') {
+            agent {
+                dockerfile {
+                    dir 'buildagent'
+                    label 'docker && linux'
+                }
+            }
             steps {
                 sh "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
                    "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/DeployTest/versions " +
@@ -48,6 +49,12 @@ pipeline {
         stage('Build') {
             parallel {
                 stage('Linux') {
+                    agent {
+                        dockerfile {
+                            dir 'buildagent'
+                            label 'docker && linux'
+                        }
+                    }
                     steps {
                         configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
                             sh "mvn " +
@@ -96,6 +103,12 @@ pipeline {
             }
         }
         stage('Post Build') {
+            agent {
+                dockerfile {
+                    dir 'buildagent'
+                    label 'docker && linux'
+                }
+            }
             parallel {
                 stage('Sonar Analysis') {
                     when {
