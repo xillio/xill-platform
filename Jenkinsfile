@@ -48,10 +48,7 @@ pipeline {
                                     "-B  " +
                                     "verify " +
                                     "--fail-at-end"
-                        }
-                    }
-                    post {
-                        success {
+
                            sh "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
                                      "-X PUT https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip " +
                                      "-H 'Content-Type: application/json' " +
@@ -59,6 +56,8 @@ pipeline {
                                      "-H 'X-Bintray-Version:${env.MAVEN_VERSION}' " +
                                      "-T 'xill-ide/target/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip'"
                         }
+                    }
+                    post {
                         always {
                             //sh upload("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.zip", "xill-cli-${env.MAVEN_VERSION}.zip")
                             //sh upload("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.tar.gz", "xill-cli-${env.MAVEN_VERSION}.tar.gz")
