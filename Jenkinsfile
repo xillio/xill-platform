@@ -53,7 +53,7 @@ pipeline {
                     post {
                         success {
                            sh "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
-                                     "-X POST https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip " +
+                                     "-X PUT https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip " +
                                      "-H 'Content-Type: application/json' " +
                                      "-H 'X-Bintray-Package:DeployTest' " +
                                      "-H 'X-Bintray-Version:${env.MAVEN_VERSION}' " +
