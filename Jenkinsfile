@@ -15,12 +15,35 @@
  */
 
 pipeline {
-    agent any
+    agent {
+        dockerfile {
+            dir 'buildagent'
+            label 'docker && linux'
+        }
+    }
     parameters {
         booleanParam(name: 'NO_SONAR', defaultValue: false, description: 'Skip sonar analysis')
         booleanParam(name: 'BUILD_NATIVE', defaultValue: false, description: 'Build a native distribution')
     }
+    environment {
+        MAVEN_VERSION = readMavenPom().getVersion()
+        BINTRAY = credentials("BINTRAY_LOGIN")
+        BINTRAY_API_KEY = credentials("BINTRAY_API_KEY")
+    }
     stages {
+        stage('Prepare Release') {
+            when {
+                expression {
+                    MAVEN_VERSION.contains("SNAPSHOT")
+                }
+            }
+            steps {
+                sh "curl -u '${BINTRAY_USR}:${BINTRAY_API_KEY}' " +
+                   "-X POST https://api.bintray.com/api/xillio/Xill-Platform/DeployTest/versions" +
+                   "-H 'Content-Type: application/json'" +
+                   "-d '{\"name\": \"${env.MAVEN_VERSION}\"}'"
+            }
+        }
         stage('Build') {
             parallel {
                 stage('Linux') {
