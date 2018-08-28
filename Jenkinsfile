@@ -32,22 +32,18 @@ def uploadFileToBintray(String packageName, String file, String fileName) {
             "-X PUT " +
             "https://api.bintray.com/content/xillio/Xill-Platform/${packageName}/${env.MAVEN_VERSION}/${fileName}?publish=1 " +
             "-H \"Content-Type: application/json\" " +
-            "-T \"${file}\" && " +
-            "curl -fsS -u \"${env.BINTRAY_USR}:${env.BINTRAY_PSW}\" " +
-            "-X PUT " +
-            "https://api.bintray.com/file_metadata/xillio/Xill-Platform/${packageName}/${fileName} " +
-            "-H \"Content-Type: application/json\" " +
-            '-d "{\\\"list_in_downloads\\\":true}"'
+            "-T \"${file}\""
 }
 
 def isRelease() {
-    return env.MAVEN_VERSION.contains('SNAPSHOT');
+    return !env.MAVEN_VERSION.contains('SNAPSHOT') || params.PUBLISH_BUILD;
 }
 
 pipeline {
     agent none
     parameters {
         booleanParam(name: 'NO_SONAR', defaultValue: false, description: 'Skip sonar analysis')
+        booleanParam(name: 'PUBLISH_BUILD', defaultValue: false, description: 'Publish this build to bintray')
     }
     environment {
         BINTRAY = credentials("BINTRAY_LOGIN")
