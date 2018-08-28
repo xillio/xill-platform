@@ -30,6 +30,9 @@ git commit -m "Bump version to ${NEW_VERSION} for release"
 git tag ${NEW_VERSION}
 git push
 
+echo "Waiting for 20 seconds for jenkins to pick up the commit"
+sleep 20s
+
 # Bump the version again
 mvn versions:set -DnewVersion="${DEVELOP_VERSION}" -pl xillio-parent
 git add -A
