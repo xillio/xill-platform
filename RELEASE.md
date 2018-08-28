@@ -16,27 +16,7 @@ To release a specific version we have a few steps.
 6. Set the maven version number to the next patch release suffixed with `-SNAPSHOT`
 7. Commit & push the changes
 
-Script:
-```bash
-
-echo "What is going to be the release version number?"
-read PATCH_VERSION
-echo "What is going to be the new development version number?"
-read DEVELOP_VERSION
-
-echo "So you want to release ${PATCH_VERSION} and keep developing as ${DEVELOP_VERSION}? ('yes' to confirm)"
-read CONFIRM
-
-if [ "${CONFIRM}" != "yes" ]
-then
-    echo "Aborting..."
-    exit 1
-fi
-
-mvn versions:set 
-
-
-```
+Script: [Version Dance](version-dance.sh)
 
 Patch Release
 -------------
