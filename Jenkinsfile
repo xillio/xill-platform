@@ -25,8 +25,7 @@ def createBintrayVersion() {
 def uploadFileToBintray(String file, String fileName) {
     return "curl -fsS -u \"${env.BINTRAY_USR}:${env.BINTRAY_PSW}\" " +
             "-X PUT " +
-            "https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/${fileName}" +
-            "?publish=1&override=1 " +
+            "https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/${fileName}?publish=1 " +
             "-H \"Content-Type: application/json\" " +
             "-T \"${file}\""
 }
