@@ -13,160 +13,141 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-if ('master' == env.BRANCH_NAME || env.BRANCH_NAME ==~ /\d+(\.(\d+|x))+/) {
-    println 'This commit is on the master or a release branch. A full test and deployment will be executed...'
 
-    //skip building native executables on master, since nobody is using the nightlies and this costs a lot of extra
-    //time (and space on Artifactory)
-    String nativeProfile = ''
-    if (env.BRANCH_NAME ==~ /\d+(\.(\d+|x))+/) {
-        nativeProfile = '-P build-native'
-    }
-
-    currentBuild.displayName = "${env.BRANCH_NAME}: ${currentBuild.number}"
-
-    parallel(
-            "Windows": {
-                buildOn(
-                        platform: 'windows',
-                        mavenArgs: nativeProfile,
-                        buildPhase: 'deploy'
-                )
-            },
-
-            "Linux": {
-                buildOn(
-                        platform: 'linux',
-                        mavenArgs: nativeProfile,
-                        buildPhase: 'deploy'
-                )
-            },
-
-            "Mac OSX": {
-                buildOn(
-                        platform: 'mac',
-                        mavenArgs: nativeProfile,
-                        // We only run sonar on a single node
-                        runSonar: true,
-                        buildPhase: 'deploy'
-                )
-            }
-    )
-
-} else {
-    println 'This commit is not on a release branch. Skipping deployment.'
-
-    String issueNumber = getIssueNumberFromBranchName()
-
-    if(issueNumber != null) {
-        currentBuild.displayName = "${issueNumber}: ${currentBuild.number}"
-    }
-
-    buildOn(
-            platform: 'slave',
-            runSonar: true,
-            buildPhase: 'verify'
-    )
+def createBintrayVersion() {
+    return "curl -fsS " +
+            "-u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
+            "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/Xill-CLI/versions " +
+            "-H 'Content-Type: application/json' " +
+            "-d '{\"name\": \"${env.MAVEN_VERSION}\"}' && " +
+            "curl -fsS " +
+            "-u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
+            "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/Xill-IDE/versions " +
+            "-H 'Content-Type: application/json' " +
+            "-d '{\"name\": \"${env.MAVEN_VERSION}\"}'"
 }
 
-/**
- * This function will configure a node to run a build.
- * @param platform the os to run on (node label)
- * @param runSonar set to true to run a sonar analysis
- * @param buildPhase the main phase that should run for this job
- * @param mavenArgs additional arguments to pass to maven
- * @return void
- */
-void buildOn(Map args) {
-    String platform = args.platform ?: 'linux'
-    boolean runSonar = args.runSonar ?: false
-    String mavenArgs = args.mavenArgs ?: ''
-    String buildPhase = args.buildPhase ?: 'verify'
+def uploadFileToBintray(String packageName, String file, String fileName) {
+    return "curl -fsS -u \"${env.BINTRAY_USR}:${env.BINTRAY_PSW}\" " +
+            "-X PUT " +
+            "https://api.bintray.com/content/xillio/Xill-Platform/${packageName}/${env.MAVEN_VERSION}/${fileName}?publish=1 " +
+            "-H \"Content-Type: application/json\" " +
+            "-T \"${file}\""
+}
 
-    if (runSonar) {
-        buildPhase = "$buildPhase sonar:sonar"
+def isRelease() {
+    return !env.MAVEN_VERSION.contains('SNAPSHOT') || params.PUBLISH_BUILD;
+}
+
+pipeline {
+    agent none
+    parameters {
+        booleanParam(name: 'NO_SONAR', defaultValue: false, description: 'Skip sonar analysis')
+        booleanParam(name: 'PUBLISH_BUILD', defaultValue: false, description: 'Publish this build to bintray')
     }
-
-    node("xill-platform && ${platform}") {
-
-        // Gather all required tools
-        // Note the escaped quotes to make this work with spaces
-        String m2Tool = tool 'mvn-3'
-        String javaTool = tool 'java-1.8'
-
-        if ('mac' == platform) {
-            // On mac we have to create a symlink because it is a hard requirement to have Contents/Home in the
-            // JAVA_HOME path.
-            sh "rm -rf jdk && mkdir -p target && mkdir -p jdk/Contents && cp -R $javaTool jdk/Contents/Home"
-            javaTool = "${pwd()}/jdk/Contents/Home"
-        }
-
-        withEnv(["M2_HOME=$m2Tool", "JAVA_HOME=$javaTool"]) {
-
-            // Inject maven settings file
-            configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-                String[] mvnOptions = [
-                        // Use the provided settings.xml
-                        "-s \"$MAVEN_SETTINGS\"",
-                        // Run in batch mode (headless)
-                        "-B",
-                        // Pass the sonar url
-                        "-Dsonar.host.url=https://sonaross.xillio.com",
-                        // And the sonar branch
-                        "-Dsonar.branch=${env.BRANCH_NAME}",
-                        // Uncomment this to enable verbose builds
-                        //"-X"
-                ]
-
-                String mvn = "\"$m2Tool/bin/mvn\" ${mvnOptions.join(' ')} $mavenArgs"
-
-                // Run the build and clean
-                stage("Run 'mvn $buildPhase' on $platform") {
-                    try {
-                        checkout scm
-                        cli "$mvn clean"
-                        cli "$mvn $buildPhase"
-                    } finally {
-                        // make sure the integration test report is *always* published.
-                        publishHTML([allowMissing: true, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'xill-processor/target/failsafe-reports', reportFiles: 'index.html', reportName: 'Integration tests'])
+    environment {
+        BINTRAY = credentials("BINTRAY_LOGIN")
+    }
+    stages {
+        stage('Build') {
+            parallel {
+                stage('Linux') {
+                    agent {
+                        dockerfile {
+                            dir 'buildagent'
+                            label 'docker && linux'
+                            args '-u 0:0'
+                        }
+                    }
+                    environment {
+                        MAVEN_VERSION = readMavenPom().getVersion()
+                    }
+                    steps {
+                        script {
+                            configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                                if (isRelease()) {
+                                    sh createBintrayVersion()
+                                    sh "mvn " +
+                                            "-s ${MAVEN_SETTINGS} " +
+                                            "-B  " +
+                                            "deploy " +
+                                            "--fail-at-end"
+                                    sh uploadFileToBintray("Xill-IDE", "xill-ide/target/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip", "xill-ide-${env.MAVEN_VERSION}-multiplatform.zip")
+                                    sh uploadFileToBintray("Xill-CLI", "xill-cli/target/xill-cli-${env.MAVEN_VERSION}.zip", "xill-cli-${env.MAVEN_VERSION}.zip")
+                                    sh uploadFileToBintray("Xill-CLI", "xill-cli/target/xill-cli-${env.MAVEN_VERSION}.tar.gz", "xill-cli-${env.MAVEN_VERSION}.tar.gz")
+                                } else {
+                                    sh "mvn " +
+                                            "-s ${MAVEN_SETTINGS} " +
+                                            "-B  " +
+                                            "verify " +
+                                            "--fail-at-end"
+                                }
+                            }
+                        }
+                    }
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
+                        }
+                    }
+                }
+                stage('Windows') {
+                    agent {
+                        label 'windows && xill-platform'
+                    }
+                    environment {
+                        MAVEN_VERSION = readMavenPom().getVersion()
+                    }
+                    steps {
+                        configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                            bat "mvn " +
+                                    "-P build-native " +
+                                    "-s ${MAVEN_SETTINGS} " +
+                                    "-B  " +
+                                    "verify " +
+                                    "--fail-at-end"
+                        }
+                        script {
+                            if (isRelease()) {
+                                bat uploadFileToBintray("Xill-IDE", "xill-ide-native/target/xill-ide-${env.MAVEN_VERSION}-win.zip", "xill-ide-${env.MAVEN_VERSION}-win.zip")
+                            }
+                        }
+                    }
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
+                        }
                     }
                 }
             }
         }
-    }
-}
 
-/**
- * This function will extract the issue number from the current branch name. If it cannot be extracted it will
- * return null.
- * @return the issue id or null
- */
-String getIssueNumberFromBranchName() {
-    String branchName = env.BRANCH_NAME
-    String[] parts = branchName.split('-')
-
-    if(parts.length < 3) {
-        // This does not have the format: XXXX-1234-name
-        return null;
-    }
-
-    if(!parts[1].isInteger()) {
-        // The second part is not an issue number
-        return null;
-    }
-
-    return "${parts[0]}-${parts[1]}"
-}
-
-/**
- * This function will delegate arguments to the platform specific command line interface.
- * @param args
- * @return void
- */
-void cli(String args) {
-    if (isUnix()) {
-        sh args
-    } else {
-        bat args
+        stage('Sonar Analysis') {
+            agent {
+                dockerfile {
+                    dir 'buildagent'
+                    label 'docker && linux'
+                    args '-u 0:0'
+                }
+            }
+            when {
+                expression {
+                    !params.NO_SONAR
+                }
+            }
+            environment {
+                SONARCLOUD_LOGIN = credentials('SONARCLOUD_LOGIN')
+            }
+            steps {
+                configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                    sh 'mvn -s "$MAVEN_SETTINGS" -B ' +
+                            "-Dsonar.login='${env.SONARCLOUD_LOGIN}' " +
+                            '-Dsonar.host.url=https://sonarcloud.io ' +
+                            '-Dsonar.organization=xillio ' +
+                            "-Dsonar.branch.name='${env.GIT_BRANCH}' " +
+                            'sonar:sonar'
+                }
+            }
+        }
     }
 }
