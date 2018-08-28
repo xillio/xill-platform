@@ -16,19 +16,23 @@
 
 def createBintrayVersion() {
     return "curl -f " +
-        "-u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
-        "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/DeployTest/versions " +
-        "-H 'Content-Type: application/json' " +
-        "-d '{\"name\": \"${env.MAVEN_VERSION}\"}'"
+            "-u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
+            "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/DeployTest/versions " +
+            "-H 'Content-Type: application/json' " +
+            "-d '{\"name\": \"${env.MAVEN_VERSION}\"}'"
 }
 
 def uploadFileToBintray(String file, String fileName) {
     return "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
-         "-X PUT https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/${fileName} " +
-         "-H \"Content-Type: application/json\" " +
-         "-H \"X-Bintray-Package:DeployTest\" " +
-         "-H \"X-Bintray-Version:${env.MAVEN_VERSION}\" " +
-         "-T \"${file}\""
+            "-X PUT https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/${fileName} " +
+            "-H \"Content-Type: application/json\" " +
+            "-H \"X-Bintray-Package:DeployTest\" " +
+            "-H \"X-Bintray-Version:${env.MAVEN_VERSION}\" " +
+            "-T \"${file}\""
+}
+
+def isRelease() {
+    return env.MAVEN_VERSION.contains('SNAPSHOT');
 }
 
 pipeline {
@@ -40,60 +44,79 @@ pipeline {
         BINTRAY = credentials("BINTRAY_LOGIN")
     }
     stages {
-        stage('Build on Linux') {
-            agent {
-                dockerfile {
-                    dir 'buildagent'
-                    label 'docker && linux'
-                    args '-u 0:0'
+        stage('Build') {
+            parallel {
+                stage('Linux') {
+                    agent {
+                        dockerfile {
+                            dir 'buildagent'
+                            label 'docker && linux'
+                            args '-u 0:0'
+                        }
+                    }
+                    environment {
+                        MAVEN_VERSION = readMavenPom().getVersion()
+                    }
+                    steps {
+                        script {
+                            configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                                if(isRelease()) {
+                                    sh createBintrayVersion()
+                                    sh "mvn " +
+                                            "-s ${MAVEN_SETTINGS} " +
+                                            "-B  " +
+                                            "deploy " +
+                                            "--fail-at-end"
+                                    sh uploadFileToBintray("xill-ide/target/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip", "xill-ide-${env.MAVEN_VERSION}-multiplatform.zip")
+                                    sh uploadFileToBintray("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.zip", "xill-cli-${env.MAVEN_VERSION}.zip")
+                                    sh uploadFileToBintray("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.tar.gz", "xill-cli-${env.MAVEN_VERSION}.tar.gz")
+                                } else {
+                                    sh "mvn " +
+                                            "-s ${MAVEN_SETTINGS} " +
+                                            "-B  " +
+                                            "verify " +
+                                            "--fail-at-end"
+                                }
+                            }
+                        }
+                    }
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
+                        }
+                    }
                 }
-            }
-            environment {
-                MAVEN_VERSION = readMavenPom().getVersion()
-            }
-            steps {
-                sh createBintrayVersion()
-                configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-                    sh "mvn " +
-                        "-s ${MAVEN_SETTINGS} " +
-                        "-B  " +
-                        "verify " +
-                        "--fail-at-end"
-                }
-                sh uploadFileToBintray("xill-ide/target/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip", "xill-ide-${env.MAVEN_VERSION}-multiplatform.zip")
-                sh uploadFileToBintray("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.zip", "xill-cli-${env.MAVEN_VERSION}.zip")
-                sh uploadFileToBintray("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.tar.gz", "xill-cli-${env.MAVEN_VERSION}.tar.gz")
-            }
-            post {
-                always {
-                    junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
+                stage('Windows') {
+                    agent {
+                        label 'windows && xill-platform'
+                    }
+                    environment {
+                        MAVEN_VERSION = readMavenPom().getVersion()
+                    }
+                    steps {
+                        configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                            bat "mvn " +
+                                    "-P build-native " +
+                                    "-s ${MAVEN_SETTINGS} " +
+                                    "-B  " +
+                                    "verify " +
+                                    "--fail-at-end"
+                        }
+                        script {
+                            if(isRelease()) {
+                                bat uploadFileToBintray("xill-ide-native/target/xill-ide-${env.MAVEN_VERSION}-win.zip", "xill-ide-${env.MAVEN_VERSION}-win.zip")
+                            }
+                        }
+                    }
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
+                        }
+                    }
                 }
             }
         }
-        stage('Windows') {
-            agent {
-                label 'windows && xill-platform'
-            }
-            environment {
-                MAVEN_VERSION = readMavenPom().getVersion()
-            }
-            steps {
-                configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-                    bat "mvn " +
-                        "-P build-native " +
-                        "-s ${MAVEN_SETTINGS} " +
-                        "-B  " +
-                        "verify " +
-                        "--fail-at-end"
-                }
-                bat uploadFileToBintray("xill-ide-native/target/xill-ide-${env.MAVEN_VERSION}-win.zip", "xill-ide-${env.MAVEN_VERSION}-win.zip")
-            }
-            post {
-                always {
-                    junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
-                }
-            }
-        }
+
         stage('Sonar Analysis') {
             agent {
                 dockerfile {
