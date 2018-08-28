@@ -15,7 +15,7 @@
  */
 
 def createBintrayVersion() {
-    return "curl -f " +
+    return "curl -fsS" +
             "-u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
             "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/DeployTest/versions " +
             "-H 'Content-Type: application/json' " +
@@ -23,11 +23,11 @@ def createBintrayVersion() {
 }
 
 def uploadFileToBintray(String file, String fileName) {
-    return "curl -f -u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
-            "-X PUT https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/${fileName} " +
+    return "curl -fsS -u \"${env.BINTRAY_USR}:${env.BINTRAY_PSW}\" " +
+            "-X PUT " +
+            "https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/${fileName}" +
+            "?publish=1&override=1 " +
             "-H \"Content-Type: application/json\" " +
-            "-H \"X-Bintray-Package:DeployTest\" " +
-            "-H \"X-Bintray-Version:${env.MAVEN_VERSION}\" " +
             "-T \"${file}\""
 }
 
@@ -60,7 +60,7 @@ pipeline {
                     steps {
                         script {
                             configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-                                if(isRelease()) {
+                                if (isRelease()) {
                                     sh createBintrayVersion()
                                     sh "mvn " +
                                             "-s ${MAVEN_SETTINGS} " +
@@ -103,7 +103,7 @@ pipeline {
                                     "--fail-at-end"
                         }
                         script {
-                            if(isRelease()) {
+                            if (isRelease()) {
                                 bat uploadFileToBintray("xill-ide-native/target/xill-ide-${env.MAVEN_VERSION}-win.zip", "xill-ide-${env.MAVEN_VERSION}-win.zip")
                             }
                         }
