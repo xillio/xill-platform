@@ -15,7 +15,7 @@
  */
 
 def createBintrayVersion() {
-    return "curl -fsS" +
+    return "curl -fsS " +
             "-u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
             "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/DeployTest/versions " +
             "-H 'Content-Type: application/json' " +
