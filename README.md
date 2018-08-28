@@ -36,10 +36,6 @@ FAQ
 
 For more build information you should check out [BUILD.md](BUILD.md)
 
-### How do I release this project?
-
-For more build information you should check out [RELEASE.md](RELEASE.md)
-
 ### The build cannot resolve `com.oracle:ojdbc7:12.1.0.1.0`
 
 Oracle does not allow this artifact to be published on our Maven repositories.
