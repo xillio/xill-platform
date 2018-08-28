@@ -17,23 +17,27 @@
 def createBintrayVersion() {
     return "curl -fsS " +
             "-u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
-            "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/DeployTest/versions " +
+            "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/Xill-CLI/versions " +
+            "-H 'Content-Type: application/json' " +
+            "-d '{\"name\": \"${env.MAVEN_VERSION}\"}' && " +
+            "curl -fsS " +
+            "-u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
+            "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/Xill-IDE/versions " +
             "-H 'Content-Type: application/json' " +
             "-d '{\"name\": \"${env.MAVEN_VERSION}\"}'"
 }
 
-def uploadFileToBintray(String file, String fileName) {
+def uploadFileToBintray(String packageName, String file, String fileName) {
     return "curl -fsS -u \"${env.BINTRAY_USR}:${env.BINTRAY_PSW}\" " +
             "-X PUT " +
-            "https://api.bintray.com/content/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/${fileName}?publish=1 " +
+            "https://api.bintray.com/content/xillio/Xill-Platform/${packageName}/${env.MAVEN_VERSION}/${fileName}?publish=1 " +
             "-H \"Content-Type: application/json\" " +
             "-T \"${file}\" && " +
             "curl -fsS -u \"${env.BINTRAY_USR}:${env.BINTRAY_PSW}\" " +
             "-X PUT " +
-            "https://api.bintray.com/file_metadata/xillio/Xill-Platform/DeployTest/${env.MAVEN_VERSION}/${fileName}?publish=1 " +
+            "https://api.bintray.com/file_metadata/xillio/Xill-Platform/${packageName}/${fileName} " +
             "-H \"Content-Type: application/json\" " +
             '-d "{\\\"list_in_downloads\\\":true}"'
-
 }
 
 def isRelease() {
@@ -72,9 +76,9 @@ pipeline {
                                             "-B  " +
                                             "deploy " +
                                             "--fail-at-end"
-                                    sh uploadFileToBintray("xill-ide/target/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip", "xill-ide-${env.MAVEN_VERSION}-multiplatform.zip")
-                                    sh uploadFileToBintray("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.zip", "xill-cli-${env.MAVEN_VERSION}.zip")
-                                    sh uploadFileToBintray("xill-cli/target/xill-cli-${env.MAVEN_VERSION}.tar.gz", "xill-cli-${env.MAVEN_VERSION}.tar.gz")
+                                    sh uploadFileToBintray("Xill-IDE", "xill-ide/target/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip", "xill-ide-${env.MAVEN_VERSION}-multiplatform.zip")
+                                    sh uploadFileToBintray("Xill-CLI", "xill-cli/target/xill-cli-${env.MAVEN_VERSION}.zip", "xill-cli-${env.MAVEN_VERSION}.zip")
+                                    sh uploadFileToBintray("Xill-CLI", "xill-cli/target/xill-cli-${env.MAVEN_VERSION}.tar.gz", "xill-cli-${env.MAVEN_VERSION}.tar.gz")
                                 } else {
                                     sh "mvn " +
                                             "-s ${MAVEN_SETTINGS} " +
@@ -109,7 +113,7 @@ pipeline {
                         }
                         script {
                             if (isRelease()) {
-                                bat uploadFileToBintray("xill-ide-native/target/xill-ide-${env.MAVEN_VERSION}-win.zip", "xill-ide-${env.MAVEN_VERSION}-win.zip")
+                                bat uploadFileToBintray("Xill-IDE", "xill-ide-native/target/xill-ide-${env.MAVEN_VERSION}-win.zip", "xill-ide-${env.MAVEN_VERSION}-win.zip")
                             }
                         }
                     }
