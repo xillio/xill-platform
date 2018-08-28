@@ -29,18 +29,16 @@ This repository contains all major components of the Xill platform. This
 means the build can get quite complex for Maven beginners.
 Take a look at the [build documentation](BUILD.md) to see how it works.
 
-Contributing
-------------
-Xill is an open source project, this means that any contributions are
-more than welcome! Check out the [contribution guidelines](CONTRIBUTING.md)
-to see how you can help us improve this platform.
-
 FAQ
 ---
 
 ### How do I build this project?
 
 For more build information you should check out [BUILD.md](BUILD.md)
+
+### How do I release this project?
+
+For more build information you should check out [RELEASE.md](RELEASE.md)
 
 ### The build cannot resolve `com.oracle:ojdbc7:12.1.0.1.0`
 
