@@ -1,6 +1,8 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
+## [next] - next
+
 ## [3.6.12] - 2018-08-29
 
 ### Add
