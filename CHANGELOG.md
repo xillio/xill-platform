@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Fix
 
 * Fix a bug where starting with a corrupted settings file would result in an immediate crash
+* Add support for `Decimal128` type in the Mongo plugin
 
 ## [3.6.11] - 2018-08-09
 

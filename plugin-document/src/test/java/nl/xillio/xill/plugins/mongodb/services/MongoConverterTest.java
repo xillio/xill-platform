@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.mongodb.services;
 
+import com.google.inject.Guice;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.mongodb.data.MongoObjectId;
@@ -34,6 +35,7 @@ import static org.testng.Assert.assertTrue;
 
 public class MongoConverterTest extends TestUtils {
     private JsonParser parser = new JacksonParser(false);
+    private MongoConverter mongoConverter = Guice.createInjector().getInstance(MongoConverter.class);
 
     @Test
     public void testParseEmptyMetaExpression() throws JsonException {
@@ -46,11 +48,6 @@ public class MongoConverterTest extends TestUtils {
 
     @Test
     public void testParseMetaExpression() throws JsonException {
-        MongoConverter mongoConverter = new MongoConverter(new MongoSerializer(
-                new ObjectIdSerializer(),
-                new UUIDSerializer(),
-                new MongoRegexSerializer(),
-                new BinarySerializer()));
         MetaExpression expression = parse("{ \"$set\": { \"test\" : 2 } }");
         Document document = mongoConverter.parse(expression);
 
@@ -62,11 +59,6 @@ public class MongoConverterTest extends TestUtils {
     @Test
     public void testParseMetaExpressionWithObjectId() {
         String id = "567a6f35cfa90423ac88865e";
-        MongoConverter mongoConverter = new MongoConverter(new MongoSerializer(
-                new ObjectIdSerializer(),
-                new UUIDSerializer(),
-                new MongoRegexSerializer(),
-                new BinarySerializer()));
         LinkedHashMap<String, MetaExpression> object = new LinkedHashMap<>();
         MetaExpression objectId = fromValue(id);
         objectId.storeMeta(new MongoObjectId(id));

@@ -15,10 +15,12 @@
  */
 package nl.xillio.xill.plugins.mongodb.services.serializers;
 
+import com.google.inject.Guice;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.mongodb.data.MongoObjectId;
 import nl.xillio.xill.plugins.mongodb.data.MongoUUID;
+import nl.xillio.xill.plugins.mongodb.services.MongoConverter;
 import org.bson.types.Binary;
 import org.bson.types.ObjectId;
 import org.testng.annotations.Test;
@@ -30,11 +32,7 @@ import static org.testng.Assert.*;
 
 public class MongoSerializerTest extends TestUtils {
 
-    private MongoSerializer serializer = new MongoSerializer(
-            new ObjectIdSerializer(),
-            new UUIDSerializer(),
-            new MongoRegexSerializer(),
-            new BinarySerializer());
+    private MongoSerializer serializer = Guice.createInjector().getInstance(MongoSerializer.class);
 
     @Test
     public void testExtractObjectId() {

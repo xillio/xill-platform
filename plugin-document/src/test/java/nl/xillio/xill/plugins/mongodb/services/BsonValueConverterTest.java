@@ -26,9 +26,11 @@ import nl.xillio.xill.plugins.mongodb.services.serializers.ObjectIdSerializer;
 import nl.xillio.xill.services.json.JacksonParser;
 import org.apache.commons.io.IOUtils;
 import org.bson.*;
+import org.bson.types.Decimal128;
 import org.bson.types.ObjectId;
 import org.testng.annotations.Test;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.regex.Pattern;
@@ -52,6 +54,7 @@ public class BsonValueConverterTest {
         assertEquals(converter.convert(new BsonInt64(13423L)), fromValue(13423L));
         assertEquals(converter.convert(new BsonBoolean(false)), FALSE);
         assertEquals(converter.convert(new BsonNull()), NULL);
+        assertEquals(converter.convert(new BsonDecimal128(new Decimal128(new BigDecimal(50.50)))), fromValue(50.50));
         assertEquals(converter.convert(new BsonDocument("key", new BsonString("value"))).toString(parser), "{\"key\":\"value\"}");
         assertEquals(converter.convert(new BsonArray(Collections.singletonList(new BsonString("hello world")))).toString(parser), "[\"hello world\"]");
     }
