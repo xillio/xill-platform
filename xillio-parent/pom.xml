@@ -23,7 +23,7 @@
 
     <groupId>nl.xillio</groupId>
     <artifactId>xillio-parent</artifactId>
-    <version>3.7.0-SNAPSHOT</version>
+    <version>3.6.12-SNAPSHOT</version>
     <inceptionYear>2004</inceptionYear>
     <packaging>pom</packaging>
 
@@ -103,26 +103,6 @@
         <repository>
             <id>jcenter</id>
             <url>https://jcenter.bintray.com</url>
-        </repository>
-        <repository>
-            <id>xillio-releases</id>
-            <url>https://maven.xillio.com/artifactory/libs-release</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>xillio-snapshots</id>
-            <url>https://maven.xillio.com/artifactory/libs-snapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
         </repository>
         <repository>
             <id>xillio-third-party</id>
