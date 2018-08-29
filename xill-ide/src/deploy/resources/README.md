@@ -8,12 +8,15 @@ Installation
 ------------
 
 ### Windows
-Just by copying the entire folder in which you found this file to a location
-of your choice you are already done installing Xill. Run it by double-clicking `Xill IDE.exe`
+* Copy the contents of this folder to a location of your choice (may also be
+  your install folder of Xill IDE)
+* double-click `Xill IDE.exe`
 
 ### Other platforms
-Copy the entire folder in which you found this file to a location
-of your choice and install a Java 8 compatible Java Runtime environment. Then run the `xill-ide` script in the `bin` folder.
+* Copy the contents of this folder to a location of your choice (may also be
+  your install folder of Xill IDE)
+* Install the latest Java 8 Runtime Environment from https://java.com/
+* Run the `xill-ide` shell script (Mac/Unix)
 
 ### More information
 
