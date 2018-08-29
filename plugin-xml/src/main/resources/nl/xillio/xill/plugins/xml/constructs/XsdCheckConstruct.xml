@@ -28,7 +28,7 @@ The XML file that will be validated.
 The xsd file that will be validated.
         </parameterDescription>
         <parameterDescription parameterName="outputAsList">
-When `false`, the default, the method will return `true` if the XML is valid against the XSD and log the issues as warnings.
+When `false`, which is default, the method will return `true` if the XML is valid against the XSD and log the issues as warnings.
 When `true` the method will return the list of issues, if any: an empty list means the XML is valid.
         </parameterDescription>
 	</parameterDescriptions>
