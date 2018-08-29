@@ -3,9 +3,17 @@ All notable changes to this project will be documented in this file.
 
 ## [next] - date
 
+### Add
+
+* Add an additional parameter to the `XML.xsdCheck` construct, to output the list of errors if the XML is invalid:
+    * name: `outputAsList`
+    * type: `ATOMIC` (boolean)
+    * _optional_
+    * default: `false`
+
 ### Fix
 
-* Fix a bug where starting with a corrupted settings file would result in an immediate crash
+* Fix a bug when starting with a corrupted settings file would result in an immediate crash
 * Add support for `Decimal128` type in the Mongo plugin
 
 ## [3.6.11] - 2018-08-09

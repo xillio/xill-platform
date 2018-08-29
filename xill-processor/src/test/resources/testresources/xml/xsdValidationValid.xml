@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Copyright (C) 2014 Xillio (support@xillio.com)
@@ -16,17 +16,7 @@
     limitations under the License.
 
 -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-    <!-- definition of simple elements -->
-    <xs:element name="orderperson" type="xs:string"/>
-
-    <xs:element name="shiporder">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="orderperson"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-</xs:schema>
+<shiporder>
+    <orderperson>John Smith</orderperson>
+</shiporder>
