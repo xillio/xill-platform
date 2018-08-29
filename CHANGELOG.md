@@ -1,6 +1,12 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
+## [next] - date
+
+### Fix
+
+* Fix a bug where starting with a corrupted settings file would result in an immediate crash
+
 ## [3.6.11] - 2018-08-09
 
 ### Add

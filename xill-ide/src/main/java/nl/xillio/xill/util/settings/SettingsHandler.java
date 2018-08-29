@@ -31,22 +31,15 @@ import java.io.IOException;
  */
 public class SettingsHandler {
 
-    private final static File SETTINGS_FILE = new File(XillioHomeFolder.forXillIDE(), "settings.cfg");
-    private final static File SETTINGS_FILE_BACKUP = new File(XillioHomeFolder.forXillIDE(), "settings.cfg.bak");
-
-    private ContentHandlerImpl content;
-    private static SettingsHandler settings;
-    private SimpleVariableHandler simple;
-    private ProjectSettingsHandler project;
-
+    private static final String SETTINGS_FILE_NAME = "settings.cfg";
+    private static final File SETTINGS_FILE = new File(XillioHomeFolder.forXillIDE(), SETTINGS_FILE_NAME);
+    private static final File SETTINGS_FILE_BACKUP = new File(XillioHomeFolder.forXillIDE(), SETTINGS_FILE_NAME + ".bak");
     private static final Logger LOGGER = Log.get();
 
-    /**
-     * @return The instance of settings handler
-     */
-    public static SettingsHandler getSettingsHandler() {
-        return settings;
-    }
+    private static SettingsHandler settings;
+    private ContentHandlerImpl content;
+    private SimpleVariableHandler simple;
+    private ProjectSettingsHandler project;
 
     private SettingsHandler() throws IOException {// singleton class
 
@@ -55,6 +48,51 @@ public class SettingsHandler {
 
         this.simple = new SimpleVariableHandler(this.content);
         this.project = new ProjectSettingsHandler(this.content);
+    }
+
+    /**
+     * @return The instance of settings handler
+     */
+    public static SettingsHandler getSettingsHandler() {
+        return settings;
+    }
+
+    /**
+     * Load settings from the settings file.
+     * <p>
+     * This method should be called once before the settings are used and can be called when the settings need to be reloaded.
+     * <p>
+     * When loading of settings succeeds, a backup is written. This backup can be recoverd using {@link SettingsHandler#recoverSettings()}
+     *
+     * @throws IOException When the settings file cannot be parsed
+     */
+    public static void loadSettings() throws IOException {
+        settings = new SettingsHandler();
+
+        // Write a backup copy of the settings
+        // Exceptions thrown here should not be propagated (the IDE should just continue loading)
+        try {
+            FileUtils.copyFile(SETTINGS_FILE, SETTINGS_FILE_BACKUP);
+        } catch (IOException e) {
+            LOGGER.error("Could not write settings backup", e);
+        }
+    }
+
+    /**
+     * Overwrite the settings file by a previously created backup
+     * @throws IOException When recovery fails
+     */
+    public static void recoverSettings() throws IOException {
+        FileUtils.copyFile(SETTINGS_FILE_BACKUP, SETTINGS_FILE);
+    }
+
+    /**
+     * Overwrite the current settings by the defaults and load them
+     * @throws IOException When writing default settings or loading them fails
+     */
+    public static void forceDefaultSettings() throws IOException {
+        FileUtils.forceDelete(SETTINGS_FILE);
+        loadSettings();
     }
 
     /**
@@ -85,44 +123,5 @@ public class SettingsHandler {
      */
     public void commit() {
         this.content.commit();
-    }
-
-    /**
-     * Load settings from the settings file.
-     * <p>
-     * This method should be called once before the settings are used and can be called when the settings need to be reloaded.
-     * <p>
-     * When loading of settings succeeds, a backup is written. This backup can be recoverd using {@link SettingsHandler#recoverSettings()}
-     *
-     * @throws IOException When the settings file cannot be parsed
-     */
-    public static void loadSettings() throws IOException {
-        settings = new SettingsHandler();
-
-        // Write a backup copy of the settings
-        // Exceptions thrown here should not be propagated (the IDE should just continue loading)
-        try {
-            FileUtils.copyFile(SETTINGS_FILE, SETTINGS_FILE_BACKUP);
-        }
-        catch(IOException e) {
-            LOGGER.error("Could not write settings backup", e);
-        }
-    }
-
-    /**
-     * Overwrite the settings file by a previously created backup
-     * @throws IOException When recovery fails
-     */
-    public static void recoverSettings() throws IOException{
-        FileUtils.copyFile(SETTINGS_FILE_BACKUP, SETTINGS_FILE);
-    }
-
-    /**
-     * Overwrite the current settings by the defaults and load them
-     * @throws IOException When writing default settings or loading them fails
-     */
-    public static void forceDefaultSettings() throws IOException {
-        FileUtils.forceDelete(SETTINGS_FILE);
-        loadSettings();
     }
 }
