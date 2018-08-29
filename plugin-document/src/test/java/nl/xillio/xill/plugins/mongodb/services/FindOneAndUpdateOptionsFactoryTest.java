@@ -15,11 +15,11 @@
  */
 package nl.xillio.xill.plugins.mongodb.services;
 
+import com.google.inject.Guice;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
-import nl.xillio.xill.plugins.mongodb.services.serializers.*;
 import org.testng.annotations.Test;
 
 import java.util.LinkedHashMap;
@@ -30,11 +30,7 @@ import static org.testng.Assert.*;
 public class FindOneAndUpdateOptionsFactoryTest extends TestUtils {
     @Test
     public void testBuildOptions() {
-        MongoConverter mongoConverter = new MongoConverter(new MongoSerializer(
-                new ObjectIdSerializer(),
-                new UUIDSerializer(),
-                new MongoRegexSerializer(),
-                new BinarySerializer()));
+        MongoConverter mongoConverter = Guice.createInjector().getInstance(MongoConverter.class);
         FindOneAndUpdateOptionsFactory findOneAndUpdateOptionsFactory = new FindOneAndUpdateOptionsFactory(mongoConverter);
         LinkedHashMap<String, MetaExpression> object = new LinkedHashMap<>();
 

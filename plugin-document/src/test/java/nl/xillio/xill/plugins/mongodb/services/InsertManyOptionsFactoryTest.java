@@ -15,9 +15,9 @@
  */
 package nl.xillio.xill.plugins.mongodb.services;
 
+import com.google.inject.Guice;
 import com.mongodb.client.model.InsertManyOptions;
 import nl.xillio.xill.TestUtils;
-import nl.xillio.xill.plugins.mongodb.services.serializers.*;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertFalse;
@@ -26,11 +26,7 @@ import static org.testng.Assert.assertTrue;
 public class InsertManyOptionsFactoryTest extends TestUtils {
     @Test
     public void testBuildOptions() {
-        MongoConverter mongoConverter = new MongoConverter(new MongoSerializer(
-                new ObjectIdSerializer(),
-                new UUIDSerializer(),
-                new MongoRegexSerializer(),
-                new BinarySerializer()));
+        MongoConverter mongoConverter = Guice.createInjector().getInstance(MongoConverter.class);
         InsertManyOptionsFactory insertManyOptionsFactory = new InsertManyOptionsFactory(mongoConverter);
 
         InsertManyOptions options = insertManyOptionsFactory.build(TRUE);
