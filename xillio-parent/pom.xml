@@ -23,7 +23,7 @@
 
     <groupId>nl.xillio</groupId>
     <artifactId>xillio-parent</artifactId>
-    <version>3.6.13-SNAPSHOT</version>
+    <version>3.6.13</version>
     <inceptionYear>2004</inceptionYear>
     <packaging>pom</packaging>
 

@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 ## [next] - next
 
+## [3.6.13] - 2018-09-06
+
+### Change
+
+* Update native installation guide
+
 ## [3.6.12] - 2018-08-29
 
 ### Add
