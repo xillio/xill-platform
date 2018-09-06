@@ -27,7 +27,7 @@
     <parent>
         <groupId>nl.xillio.xill</groupId>
         <artifactId>xill-parent</artifactId>
-        <version>3.6.13</version>
+        <version>3.6.14-SNAPSHOT</version>
         <relativePath>../xill-parent</relativePath>
     </parent>
 
@@ -141,29 +141,6 @@
             </activation>
             <properties>
                 <os.classifier>win</os.classifier>
-            </properties>
-        </profile>
-        <profile>
-            <id>mac</id>
-            <activation>
-                <os>
-                    <family>mac</family>
-                </os>
-            </activation>
-            <properties>
-                <os.classifier>osx</os.classifier>
-            </properties>
-        </profile>
-        <profile>
-            <id>unix</id>
-            <activation>
-                <os>
-                    <name>!mac os x</name>
-                    <family>unix</family>
-                </os>
-            </activation>
-            <properties>
-                <os.classifier>unix</os.classifier>
             </properties>
         </profile>
     </profiles>
