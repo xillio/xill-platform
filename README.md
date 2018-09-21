@@ -23,6 +23,10 @@ To run a certain `.xill` robot, either:
 * open it in Xill IDE and press the play button
 * execute `xill [name of robot]` on the command line
 
+Getting Xill
+------------
+The built packages are available on [bintray](https://bintray.com/xillio/Xill-Platform).
+
 Building Xill
 -------------
 This repository contains all major components of the Xill platform. This
