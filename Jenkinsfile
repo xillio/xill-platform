@@ -101,7 +101,7 @@ pipeline {
                     }
                     steps {
                         configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
-                            bat "mvn clean"
+                            bat "mvn clean -P build-native"
                             bat "mvn " +
                                     "-P build-native " +
                                     "-s ${MAVEN_SETTINGS} " +

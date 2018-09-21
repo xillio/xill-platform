@@ -54,3 +54,4 @@ mvn versions:set -DnewVersion="${DEVELOP_VERSION}" -pl xillio-parent
 git add -A
 git commit -m "Bump version to ${DEVELOP_VERSION} for development"
 git push
+mvn versions:commit
