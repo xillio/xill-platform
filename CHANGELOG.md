@@ -1,7 +1,15 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
-## [next] - next
+## [3.6.14] - 2018-09-21
+
+### Change
+
+* Remove java version warning at startup
+
+### Fix
+
+* Lock version of eclipse-codegen to prevent security bugs which crash newly opened tab
 
 ## [3.6.13] - 2018-09-06
 

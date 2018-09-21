@@ -94,6 +94,7 @@
         <maven.version>3.3.9</maven.version>
         <maven.plugin.tools.version>3.5</maven.plugin.tools.version>
         <mongo-java-driver.version>3.6.1</mongo-java-driver.version>
+        <eclipse-codegen.version>2.11.0-v20150806-0404</eclipse-codegen.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -105,6 +106,10 @@
             <url>https://jcenter.bintray.com</url>
         </repository>
         <repository>
+            <id>xillio-oss</id>
+            <url>https://maven.xillio.com/artifactory/oss-libs-release/</url>
+        </repository>
+        <repository>
             <id>xillio-third-party</id>
             <url>https://maven.xillio.com/artifactory/libs-third-party</url>
             <releases>
@@ -113,6 +118,18 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
+        </repository>
+        <repository>
+            <id>xillio-releases</id>
+            <url>https://maven.xillio.com/artifactory/libs-release</url>
+        </repository>
+        <repository>
+            <id>xillio-snapshots</id>
+            <url>https://maven.xillio.com/artifactory/libs-snapshot</url>
+        </repository>
+        <repository>
+            <id>xillio-remote</id>
+            <url>https://maven.xillio.com/artifactory/remote-release</url>
         </repository>
     </repositories>
 
@@ -370,6 +387,11 @@
                 <groupId>org.mongodb</groupId>
                 <artifactId>mongo-java-driver</artifactId>
                 <version>${mongo-java-driver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.emf</groupId>
+                <artifactId>org.eclipse.emf.codegen</artifactId>
+                <version>${eclipse-codegen.version}</version>
             </dependency>
             <!-- Internal Project Dependencies -->
             <dependency>
