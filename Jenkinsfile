@@ -65,6 +65,7 @@ pipeline {
                     steps {
                         script {
                             configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                                sh "mvn clean"
                                 if (isRelease()) {
                                     sh createBintrayVersion()
                                     sh "mvn " +
@@ -100,6 +101,7 @@ pipeline {
                     }
                     steps {
                         configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                            bat "mvn clean"
                             bat "mvn " +
                                     "-P build-native " +
                                     "-s ${MAVEN_SETTINGS} " +
