@@ -20,12 +20,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import me.biesaart.utils.Log;
 import nl.xillio.migrationtool.dialogs.AlertDialog;
@@ -137,12 +135,6 @@ public class Loader implements ContenttoolsPlugin {
     @Override
     @SuppressWarnings("squid:S1147") // Exit methods should not be called.
     public void start(final Stage primaryStage, final XillEnvironment xill) {
-        try {
-            checkJRE();
-        } catch (IOException e) {
-            LOGGER.error("JRE Check Failed", e);
-            alert("Something went wrong while starting the application: " + e.getLocalizedMessage());
-        }
         Loader.xill = xill;
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
@@ -181,27 +173,29 @@ public class Loader implements ContenttoolsPlugin {
 
         dialog.showAndWait();
 
-        if (dialog.getResult().get() == ButtonType.YES) {
-            try {
-                // Recover from backup settings
-                SettingsHandler.recoverSettings();
-                // Reload the settings after recovery
-                SettingsHandler.loadSettings();
-            } catch (IOException e) {
-                LOGGER.error("Could not recover settings, writing defaults", e);
+        dialog.getResult().ifPresent(btn -> {
+            if (btn == ButtonType.YES) {
                 try {
-                    // Try to write the default settings when the backup settings cannot be loaded
-                    SettingsHandler.forceDefaultSettings();
-                } catch (IOException e1) {
-                    LOGGER.error("Could not write default settings, exiting", e);
-                    // System.exit is appropriate here since there is a fatal error.
-                    System.exit(1);
+                    // Recover from backup settings
+                    SettingsHandler.recoverSettings();
+                    // Reload the settings after recovery
+                    SettingsHandler.loadSettings();
+                } catch (IOException e) {
+                    LOGGER.error("Could not recover settings, writing defaults", e);
+                    try {
+                        // Try to write the default settings when the backup settings cannot be loaded
+                        SettingsHandler.forceDefaultSettings();
+                    } catch (IOException e1) {
+                        LOGGER.error("Could not write default settings, exiting", e);
+                        // System.exit is appropriate here since there is a fatal error.
+                        System.exit(1);
+                    }
                 }
+            } else {
+                // Simply exit when the user chooses not to recover the settings
+                Platform.exit();
             }
-        } else {
-            // Simply exit when the user chooses not to recover the settings
-            Platform.exit();
-        }
+        });
 
         // When recovery succeeds, continue starting the IDE
         startIDE(primaryStage);
@@ -253,25 +247,5 @@ public class Loader implements ContenttoolsPlugin {
         primaryStage.show();
 
         Platform.runLater(() -> primaryStage.getScene().lookup("#apnRoot").setVisible(true));
-    }
-
-    private void checkJRE() throws IOException {
-        // If we are not running from a jar, i.e. this is a development version, do not run the check
-        if (MANIFEST == null)
-            return;
-
-        String expectedVersion = MANIFEST.getMainAttributes().getValue("Build-Jdk");
-        if (expectedVersion == null) {
-            throw new IOException("No java version was found. This is not a build.");
-        }
-        String actualVersion = System.getProperty("java.version");
-
-        if (!actualVersion.equals(expectedVersion)) {
-            throw new IOException("The application was built with java version " + expectedVersion + " but is running with " + actualVersion + ".");
-        }
-    }
-
-    private void alert(String message) {
-        new AlertDialog(AlertType.ERROR, "Warning", "", message).showAndWait();
     }
 }
