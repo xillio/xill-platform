@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import nl.xillio.engine.configuration.Configuration;
 import nl.xillio.engine.connector.Connector;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -34,16 +35,17 @@ public class XillioEngineService {
     }
 
     public Connector createConnectorInstance(String connectorName) throws ClassNotFoundException {
-        String lowerCaseName = connectorName.toLowerCase();
-        String fullyQualifiedConnectorClassName = "nl.xillio.engine.connectors." +
-                lowerCaseName + "." + connectorName + "Connector";
+        String lowercaseConnectorName = connectorName.toLowerCase();
+        String titleCaseConnectorName = StringUtils.capitalize(connectorName.toLowerCase());
+        String fullyQualifiedConnectorClassName = "nl.xillio.engine.connector." +
+                lowercaseConnectorName + "." + titleCaseConnectorName + "Connector";
         Class<? extends Connector> connectorClass = Class.forName(fullyQualifiedConnectorClassName).asSubclass(Connector.class);
 
         return injector.getInstance(connectorClass);
     }
 
     public Configuration createConfiguration(Connector connector, Map<String, ?> configuration) throws ClassNotFoundException {
-        String fullyQualifiedConfigurationClassName = connector.getClass().getSimpleName() + "Configuration";
+        String fullyQualifiedConfigurationClassName = connector.getClass().getCanonicalName() + "Configuration";
         Class<? extends Configuration> configurationClass = Class
                 .forName(fullyQualifiedConfigurationClassName)
                 .asSubclass(Configuration.class);

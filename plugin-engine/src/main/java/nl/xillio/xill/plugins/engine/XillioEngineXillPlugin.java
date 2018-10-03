@@ -15,7 +15,16 @@
  */
 package nl.xillio.xill.plugins.engine;
 
+import com.google.inject.Injector;
+import nl.xillio.engine.connector.dropbox.DropboxConnector;
 import nl.xillio.plugins.XillPlugin;
 
+import javax.inject.Inject;
+
 public class XillioEngineXillPlugin extends XillPlugin {
+//    @Override
+//    public void configure() {
+//        super.configure();
+//        bind(DropboxConnector.class)
+//    }
 }
