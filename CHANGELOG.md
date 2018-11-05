@@ -1,6 +1,12 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
+## [next] - next
+
+### Fix
+
+* Correct the documentation of the `Document.save` construct
+
 ## [3.6.15] - 2018-09-21
 
 ### Change
