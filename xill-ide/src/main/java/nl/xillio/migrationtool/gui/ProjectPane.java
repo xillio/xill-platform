@@ -27,11 +27,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -57,13 +57,12 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.io.*;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.WatchEvent;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
@@ -836,30 +835,43 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
     }
 
     /**
-     * Creates a new project from source
+     * Creates a new project from source.
      *
      * @param name   the name of the new project
      * @param folder the folder representing the project
      * @return whether creating the project was successful
      */
     public boolean loadOrCreateProject(final String name, final String folder) {
-        boolean projectExist = settings.project().getAll().parallelStream().map(ProjectSettings::getFolder).anyMatch(n -> n.equalsIgnoreCase(folder));
-        boolean nameTaken = settings.project().getAll().parallelStream().map(ProjectSettings::getName).anyMatch(n -> n.equalsIgnoreCase(name));
+        List<ProjectSettings> existingProjects = settings.project().getAll();
+
+        boolean projectExist = existingProjects.stream().map(ProjectSettings::getFolder).anyMatch(n -> n.equalsIgnoreCase(folder));
+        boolean nameTaken = existingProjects.stream().map(ProjectSettings::getName).anyMatch(n -> n.equalsIgnoreCase(name));
 
         if (projectExist) {
-            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "The selected folder is already a project. \nTo create a new project an empty folder must be selected.");
+            return showDefaultErrorDialog("The selected folder is already a project. \nTo create a new project an empty folder must be selected.");
         }
 
         if (nameTaken) {
-            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Make sure the name is not already in use.");
+            return showDefaultErrorDialog("Make sure the name is not already in use.");
         }
 
         if ("".equals(folder)) {
-            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Make sure the \"folder\" field is not empty.");
+            return showDefaultErrorDialog("Make sure the \"folder\" field is not empty.");
         }
 
         if ("".equals(name)) {
-            return showAlertDialog(Alert.AlertType.ERROR, "Error", "", "Make sure the name is not empty.");
+            return showDefaultErrorDialog("Make sure the name is not empty.");
+        }
+
+        // Check whether new project isn't parent or children of an existing project
+        Optional<String> other = existingProjects.stream()
+                .filter(setting -> folder.startsWith(setting.getFolder()) || setting.getFolder().startsWith(folder))
+                .findAny()
+                .map(ProjectSettings::getName);
+
+        if (other.isPresent()) {
+            return showDefaultErrorDialog("A project cannot be a parent or children of an already existing project." +
+                    " The project you are trying to add is related to '" + other.get() + "'.");
         }
 
         ProjectSettings project = new ProjectSettings(name, folder, "");
@@ -951,10 +963,14 @@ public class ProjectPane extends AnchorPane implements FolderListener, ListChang
 
     /* End of projects */
 
-    public boolean showAlertDialog(Alert.AlertType type, String title, String header, String content) {
+    private boolean showAlertDialog(Alert.AlertType type, String title, String header, String content) {
         AlertDialog error = new AlertDialog(type, title, header, content, ButtonType.OK);
         error.show();
         return false;
+    }
+
+    private boolean showDefaultErrorDialog(String content) {
+        return showAlertDialog(Alert.AlertType.ERROR, "Error", "", content);
     }
 
     /* Selection of TreeItems */

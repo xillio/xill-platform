@@ -5,7 +5,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fix
 
-* Correct the documentation of the `Document.save` construct
+* Correct the documentation of the `Document.save` construct (ticket 1970)
+* Add check for ancestors/descendants during project creation (ticket 1971)
 
 ## [3.6.15] - 2018-09-21
 
