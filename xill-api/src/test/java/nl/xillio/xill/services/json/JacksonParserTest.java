@@ -20,6 +20,7 @@ import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
 import static org.testng.Assert.*;
@@ -30,7 +31,7 @@ public class JacksonParserTest {
      * Test if this json parser parses an integer to an integer and not a double.
      */
     @Test
-    public void testFromJsonParsesIntegerToInteger() throws Exception {
+    public void testFromJsonParsesIntegerToInteger() throws JsonException {
         MetaExpression listWithInteger = fromValue(Collections.singletonList(fromValue(42)));
         JsonParser parser = new JacksonParser(false);
 
@@ -38,7 +39,7 @@ public class JacksonParserTest {
 
         assertFalse(json.contains("."));
 
-        ArrayList<?> result = parser.fromJson(json, ArrayList.class);
+        List<?> result = parser.fromJson(json, List.class);
 
         assertEquals(result.size(), 1);
         assertEquals(result.get(0), 42);
@@ -46,9 +47,9 @@ public class JacksonParserTest {
     }
 
     @Test(expectedExceptions = {JsonException.class})
-    public void testParserCircularReference() throws Exception {
+    public void testParserCircularReference() throws JsonException {
         MetaExpression list = fromValue(new ArrayList<>());
-        list.<ArrayList>getValue().add(list);
+        list.<List<MetaExpression>>getValue().add(list);
 
         JsonParser parser = new JacksonParser(false);
         parser.toJson(list);
