@@ -1,7 +1,11 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
-## [next] - next
+## [3.6.17] - 2018-11-09
+
+### Fix
+
+* Update version of Jackson library
 
 ## [3.6.16] - 2018-11-06
 
