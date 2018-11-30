@@ -17,6 +17,8 @@ package nl.xillio.xill.api.components;
 
 
 import nl.xillio.xill.api.data.MetadataExpression;
+import nl.xillio.xill.api.errors.RobotRuntimeException;
+import org.apache.commons.lang3.SerializationException;
 
 import java.util.Iterator;
 import java.util.function.Function;
@@ -58,7 +60,11 @@ public class MetaExpressionIterator<E> implements Iterator<MetaExpression>, Meta
 
     @Override
     public boolean hasNext() {
-        return iterator.hasNext();
+        try {
+            return iterator.hasNext();
+        } catch (RuntimeException e) {
+            throw new RobotRuntimeException("Something went wrong while iterating", e);
+        }
     }
 
     @Override
