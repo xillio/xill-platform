@@ -19,6 +19,6 @@
 
 use System, Web, Assert;
 
-var page = Web.loadPage("http://developers.xillio.com/test.html");
+var page = Web.loadPage("https://www-eng-x.llnl.gov/documents/tests/txt.html");
 var title = Web.xPath(page,"//h1/text()");
-Assert.equal(title, "This is a test page");
+Assert.equal(title, "Plain Text Test");
