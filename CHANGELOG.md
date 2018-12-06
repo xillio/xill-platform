@@ -1,7 +1,11 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
-## [next] - next
+## [3.6.18] - 2018-12-06
+
+### Fix
+
+* Fix a bug in iterators ([ticket 1981](https://support.xillio.com/a/tickets/1981))
 
 ## [3.6.17] - 2018-11-09
 

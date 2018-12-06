@@ -26,14 +26,14 @@
 
     <groupId>nl.xillio.xill</groupId>
     <artifactId>xill-build</artifactId>
-    <version>3.6.18-SNAPSHOT</version>
+    <version>3.6.18</version>
     <packaging>pom</packaging>
     <inceptionYear>2014</inceptionYear>
 
     <parent>
         <groupId>nl.xillio</groupId>
         <artifactId>xillio-parent</artifactId>
-        <version>3.6.18-SNAPSHOT</version>
+        <version>3.6.18</version>
         <relativePath>xillio-parent</relativePath>
     </parent>
 
