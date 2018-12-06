@@ -18,7 +18,6 @@ package nl.xillio.xill.api.components;
 
 import nl.xillio.xill.api.data.MetadataExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
-import org.apache.commons.lang3.SerializationException;
 
 import java.util.Iterator;
 import java.util.function.Function;
