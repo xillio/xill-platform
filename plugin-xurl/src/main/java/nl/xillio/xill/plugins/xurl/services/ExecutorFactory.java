@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import javax.net.ssl.SSLContext;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -104,11 +105,15 @@ public class ExecutorFactory {
     public static HttpClient buildClient(HttpClientBuilder builder, Options options) {
 
         if (options.isInsecure()) {
-            builder.setSSLHostnameVerifier(new NoopHostnameVerifier());
+            builder = builder.setSSLHostnameVerifier(new NoopHostnameVerifier());
         }
 
         if (!options.isEnableRedirect()) {
-            builder.disableRedirectHandling();
+            builder = builder.disableRedirectHandling();
+        }
+
+        if (options.isRemoveAcceptEncoding()) {
+            builder = builder.disableContentCompression();
         }
 
         return builder.build();

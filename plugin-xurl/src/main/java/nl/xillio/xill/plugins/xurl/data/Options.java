@@ -44,6 +44,7 @@ public class Options {
     private String logging;
     private boolean enableRedirect = true;
     private boolean ignoreConnectionCache = false;
+    private boolean removeAcceptEncoding = false;
 
     /**
      * Default constructor.
@@ -68,6 +69,7 @@ public class Options {
         this.logging = original.logging;
         this.enableRedirect = original.enableRedirect;
         this.ignoreConnectionCache = original.ignoreConnectionCache;
+        this.removeAcceptEncoding = original.removeAcceptEncoding;
     }
 
     public Credentials getBasicAuth() {
@@ -168,6 +170,14 @@ public class Options {
 
     public void setIgnoreConnectionCache(boolean ignoreConnectionCache) {
         this.ignoreConnectionCache = ignoreConnectionCache;
+    }
+
+    public boolean isRemoveAcceptEncoding() {
+        return removeAcceptEncoding;
+    }
+
+    public void setRemoveAcceptEncoding(boolean removeAcceptEncoding) {
+        this.removeAcceptEncoding = removeAcceptEncoding;
     }
 
     public Optional<ContentType> getBodyContentType() {

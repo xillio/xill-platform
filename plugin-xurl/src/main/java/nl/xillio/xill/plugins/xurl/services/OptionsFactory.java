@@ -261,6 +261,12 @@ public class OptionsFactory {
             void apply(Options options, MetaExpression value) {
                 options.setIgnoreConnectionCache(getBoolean(value, label()));
             }
+        },
+        DISABLE_ACCEPT_ENCODING {
+            @Override
+            void apply(Options options, MetaExpression value) {
+                options.setRemoveAcceptEncoding(getBoolean(value, label()));
+            }
         };
 
         abstract void apply(Options options, MetaExpression value);
