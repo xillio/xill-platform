@@ -25,8 +25,7 @@ import org.testng.annotations.Test;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.*;
 
 public class OptionsTest {
 
@@ -131,6 +130,16 @@ public class OptionsTest {
         Executor executor = mock(Executor.class);
         options.apply(executor);
 
-        verify(executor).auth(auth.getUsername(), auth.getPassword(),auth.getWorkstation(), auth.getDomain());
+        verify(executor).auth(auth.getUsername(), auth.getPassword(), auth.getWorkstation(), auth.getDomain());
+    }
+
+    @Test
+    public void testRemoveAcceptEncoding() {
+        Options options = new Options();
+
+        assertFalse(options.isRemoveAcceptEncoding());
+
+        options.setRemoveAcceptEncoding(true);
+        assertTrue(options.isRemoveAcceptEncoding());
     }
 }

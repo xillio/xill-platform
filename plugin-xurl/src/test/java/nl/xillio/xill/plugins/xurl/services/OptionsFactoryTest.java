@@ -184,6 +184,15 @@ public class OptionsFactoryTest extends TestUtils {
         assertEquals(options.getNTLMOptions().getDomain(), DOMAIN);
     }
 
+    @Test
+    public void testRemoveAcceptEncoding() {
+        MetaExpression option = createMap("disableAcceptEncoding", true);
+
+        Options options = optionsFactory.build(option);
+
+        assertTrue(options.isRemoveAcceptEncoding());
+    }
+
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*OBJECT.*")
     public void testNTLMNotObject() {
         MetaExpression input = createMap("ntlm", fromValue(""));

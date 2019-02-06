@@ -18,6 +18,7 @@ package nl.xillio.xill.plugins.xurl.services;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.plugins.xurl.data.Options;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.testng.Assert;
@@ -74,6 +75,21 @@ public class ExecutorFactoryTest extends TestUtils {
 
     }
 
+    /**
+     * Test that disable accept encoding option is used when provided
+     */
+    @Test
+    public void testOptionAcceptEncoding() {
+        // See the comments regarding mocking final methods above
+
+        // Test that isEnableRedirect is requested
+        HttpClientBuilder builder1 = ExecutorFactory.defaultBuilder();
+        Options options1 = mock(Options.class);
+        when(options1.isRemoveAcceptEncoding()).thenReturn(true);
+        HttpClient client = ExecutorFactory.buildClient(builder1, options1);
+        verify(options1, times(1)).isRemoveAcceptEncoding();
+    }
+
 
 
     /*
@@ -84,7 +100,7 @@ public class ExecutorFactoryTest extends TestUtils {
 
     /**
      * Test ID when no options are provided -> always same connection
-      */
+     */
     @Test
     public void testIDBase() {
         MetaExpression input = emptyMap();
@@ -267,6 +283,7 @@ public class ExecutorFactoryTest extends TestUtils {
      * The following tests verify that the caching mechanism is returning an existing session when required as well as
      * creating a new session when the options have changed such that a new connection is required.
      */
+
     /**
      * Test that connections with same id are cached
      */
