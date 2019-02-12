@@ -66,6 +66,10 @@ public abstract class XillPlugin extends AbstractModule implements AutoCloseable
     public void configure() {
     }
 
+    public Injector getInjector() {
+        return injector;
+    }
+
     /**
      * Gets a construct from this package.
      *

@@ -42,13 +42,13 @@
         <dependency>
             <groupId>nl.xillio.engine</groupId>
             <artifactId>xillio-engine-core</artifactId>
-            <version>2.1.37-SNAPSHOT</version>
+            <version>2.1.42-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>nl.xillio.engine.connectors</groupId>
             <artifactId>connector-dropbox</artifactId>
-            <version>2.1.37-SNAPSHOT</version>
+            <version>2.1.42-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

@@ -37,15 +37,14 @@ public class XillioEngineService {
     public Connector createConnectorInstance(String connectorName) throws ClassNotFoundException {
         String lowercaseConnectorName = connectorName.toLowerCase();
         String titleCaseConnectorName = StringUtils.capitalize(connectorName.toLowerCase());
-        String fullyQualifiedConnectorClassName = "nl.xillio.engine.connector." +
-                lowercaseConnectorName + "." + titleCaseConnectorName + "Connector";
-        Class<? extends Connector> connectorClass = Class.forName(fullyQualifiedConnectorClassName).asSubclass(Connector.class);
+        String fullyQualifiedConnectorStubClassName = "nl.xillio.xill.plugins.engine.stubs." + titleCaseConnectorName + "ConnectorStub";
+        Class<? extends Connector> connectorClass = Class.forName(fullyQualifiedConnectorStubClassName).asSubclass(Connector.class);
 
         return injector.getInstance(connectorClass);
     }
 
     public Configuration createConfiguration(Connector connector, Map<String, ?> configuration) throws ClassNotFoundException {
-        String fullyQualifiedConfigurationClassName = connector.getClass().getCanonicalName() + "Configuration";
+        String fullyQualifiedConfigurationClassName = connector.getClass().getSuperclass().getCanonicalName() + "Configuration";
         Class<? extends Configuration> configurationClass = Class
                 .forName(fullyQualifiedConfigurationClassName)
                 .asSubclass(Configuration.class);
