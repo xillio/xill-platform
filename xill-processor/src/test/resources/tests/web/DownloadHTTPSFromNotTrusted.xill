@@ -22,7 +22,7 @@
 use Web;
 use Assert;
 
-var testURL = "https://bugs.xillio.nl";
+var testURL = "https://www.xillio.com/hubfs/css-includes/logo-xillio-white.png";
 var invalidURL = "x";
 var fileName = "WebPluginDownloadHTTPSNotTrusted.txt";
 var errorMsgInvalidURL = "<empty>";
