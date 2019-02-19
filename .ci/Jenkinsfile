@@ -100,7 +100,7 @@ pipeline {
                         MAVEN_VERSION = readMavenPom().getVersion()
                     }
                     steps {
-                        configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                        configFileProvider([configFile(fileId: '913ac216-d52d-41b0-94f9-cc51e28bd431', variable: 'MAVEN_SETTINGS')]) {
                             bat "mvn clean -P build-native"
                             bat "mvn " +
                                     "-P build-native " +
