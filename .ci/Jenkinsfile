@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2014 Xillio (support@xillio.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,7 +46,7 @@ pipeline {
         booleanParam(name: 'PUBLISH_BUILD', defaultValue: false, description: 'Publish this build to bintray')
     }
     environment {
-        BINTRAY = credentials("BINTRAY_LOGIN")
+        BINTRAY = credentials("ef205e51-11e9-4ff0-b1a8-e9354fcc4eae")
     }
     stages {
         stage('Build') {
