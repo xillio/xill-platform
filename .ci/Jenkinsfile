@@ -55,7 +55,7 @@ pipeline {
                     agent {
                         dockerfile {
                             dir 'buildagent'
-                            label 'docker && linux'
+                            label 'docker'
                             args '-u 0:0'
                         }
                     }
@@ -94,7 +94,7 @@ pipeline {
                 }
                 stage('Windows') {
                     agent {
-                        label 'windows && xill-platform'
+                        label 'windows'
                     }
                     environment {
                         MAVEN_VERSION = readMavenPom().getVersion()
@@ -128,7 +128,7 @@ pipeline {
             agent {
                 dockerfile {
                     dir 'buildagent'
-                    label 'docker && linux'
+                    label 'docker'
                     args '-u 0:0'
                 }
             }
