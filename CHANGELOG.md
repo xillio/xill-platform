@@ -1,7 +1,11 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
-## [next] - next
+## [3.6.19] - 2019-02-21
+
+### Fix
+
+* Collection.remove documentation now shows that no value is returned
 
 ## [3.6.18] - 2018-12-06
 
