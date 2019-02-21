@@ -35,12 +35,14 @@ The key or index of the item that will be removed.
                 use Collection;
 
                 var list = ["a","b","c","d"];
-                System.print(Collection.remove(list,2));
+                Collection.remove(list,2);
+                System.print(list);
                 
                 // Result: ["a","b","d"] 
                 
                 var object = {"a":"first","b":"second","c":"third"};
-                System.print(Collection.remove(object,"b"));
+                Collection.remove(object,"b");
+                System.print(object);
                 
                 // Result: {"a":"first,"c":"third"}
                 

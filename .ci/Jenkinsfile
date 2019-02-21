@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2014 Xillio (support@xillio.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,7 +46,7 @@ pipeline {
         booleanParam(name: 'PUBLISH_BUILD', defaultValue: false, description: 'Publish this build to bintray')
     }
     environment {
-        BINTRAY = credentials("BINTRAY_LOGIN")
+        BINTRAY = credentials("ef205e51-11e9-4ff0-b1a8-e9354fcc4eae")
     }
     stages {
         stage('Build') {
@@ -55,7 +55,7 @@ pipeline {
                     agent {
                         dockerfile {
                             dir 'buildagent'
-                            label 'docker && linux'
+                            label 'docker'
                             args '-u 0:0'
                         }
                     }
@@ -64,7 +64,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                            configFileProvider([configFile(fileId: '913ac216-d52d-41b0-94f9-cc51e28bd431', variable: 'MAVEN_SETTINGS')]) {
                                 sh "mvn clean"
                                 if (isRelease()) {
                                     sh createBintrayVersion()
@@ -100,7 +100,7 @@ pipeline {
                         MAVEN_VERSION = readMavenPom().getVersion()
                     }
                     steps {
-                        configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                        configFileProvider([configFile(fileId: '913ac216-d52d-41b0-94f9-cc51e28bd431', variable: 'MAVEN_SETTINGS')]) {
                             bat "mvn clean -P build-native"
                             bat "mvn " +
                                     "-P build-native " +
@@ -128,7 +128,7 @@ pipeline {
             agent {
                 dockerfile {
                     dir 'buildagent'
-                    label 'docker && linux'
+                    label 'docker'
                     args '-u 0:0'
                 }
             }
@@ -138,14 +138,12 @@ pipeline {
                 }
             }
             environment {
-                SONARCLOUD_LOGIN = credentials('SONARCLOUD_LOGIN')
+                SONARCLOUD_LOGIN = credentials('aaf177ed-92f7-4dd7-a482-b6b407be60ae')
             }
             steps {
-                configFileProvider([configFile(fileId: 'xill-platform/settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                configFileProvider([configFile(fileId: '913ac216-d52d-41b0-94f9-cc51e28bd431', variable: 'MAVEN_SETTINGS')]) {
                     sh 'mvn -s "$MAVEN_SETTINGS" -B ' +
                             "-Dsonar.login='${env.SONARCLOUD_LOGIN}' " +
-                            '-Dsonar.host.url=https://sonarcloud.io ' +
-                            '-Dsonar.organization=xillio ' +
                             "-Dsonar.branch.name='${env.GIT_BRANCH}' " +
                             'sonar:sonar'
                 }
