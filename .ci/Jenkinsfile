@@ -61,6 +61,7 @@ pipeline {
                     }
                     environment {
                         MAVEN_VERSION = readMavenPom().getVersion()
+                        SONARCLOUD_LOGIN = credentials('aaf177ed-92f7-4dd7-a482-b6b407be60ae')
                     }
                     steps {
                         script {
@@ -83,6 +84,14 @@ pipeline {
                                             "verify " +
                                             "--fail-at-end"
                                 }
+                            }
+                        }
+                        configFileProvider([configFile(fileId: '913ac216-d52d-41b0-94f9-cc51e28bd431', variable: 'MAVEN_SETTINGS')]) {
+                            if (!params.NO_SONAR) {
+                                sh 'mvn -s "$MAVEN_SETTINGS" -B ' +
+                                        "-Dsonar.login='${env.SONARCLOUD_LOGIN}' " +
+                                        "-Dsonar.branch.name='${env.GIT_BRANCH}' " +
+                                        'sonar:sonar'
                             }
                         }
                     }
@@ -120,32 +129,6 @@ pipeline {
                             junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
                         }
                     }
-                }
-            }
-        }
-
-        stage('Sonar Analysis') {
-            agent {
-                dockerfile {
-                    dir 'buildagent'
-                    label 'docker'
-                    args '-u 0:0'
-                }
-            }
-            when {
-                expression {
-                    !params.NO_SONAR
-                }
-            }
-            environment {
-                SONARCLOUD_LOGIN = credentials('aaf177ed-92f7-4dd7-a482-b6b407be60ae')
-            }
-            steps {
-                configFileProvider([configFile(fileId: '913ac216-d52d-41b0-94f9-cc51e28bd431', variable: 'MAVEN_SETTINGS')]) {
-                    sh 'mvn -s "$MAVEN_SETTINGS" -B ' +
-                            "-Dsonar.login='${env.SONARCLOUD_LOGIN}' " +
-                            "-Dsonar.branch.name='${env.GIT_BRANCH}' " +
-                            'sonar:sonar'
                 }
             }
         }
