@@ -84,14 +84,12 @@ pipeline {
                                             "verify " +
                                             "--fail-at-end"
                                 }
-                            }
-                        }
-                        configFileProvider([configFile(fileId: '913ac216-d52d-41b0-94f9-cc51e28bd431', variable: 'MAVEN_SETTINGS')]) {
-                            if (!params.NO_SONAR) {
-                                sh 'mvn -s "$MAVEN_SETTINGS" -B ' +
-                                        "-Dsonar.login='${env.SONARCLOUD_LOGIN}' " +
-                                        "-Dsonar.branch.name='${env.GIT_BRANCH}' " +
-                                        'sonar:sonar'
+                                if (!params.NO_SONAR) {
+                                    sh 'mvn -s "$MAVEN_SETTINGS" -B ' +
+                                            "-Dsonar.login='${env.SONARCLOUD_LOGIN}' " +
+                                            "-Dsonar.branch.name='${env.GIT_BRANCH}' " +
+                                            'sonar:sonar'
+                                }
                             }
                         }
                     }
