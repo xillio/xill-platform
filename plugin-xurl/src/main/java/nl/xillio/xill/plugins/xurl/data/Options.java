@@ -45,6 +45,7 @@ public class Options {
     private boolean enableRedirect = true;
     private boolean ignoreConnectionCache = false;
     private boolean removeAcceptEncoding = false;
+    private boolean forceContentLength = false;
 
     /**
      * Default constructor.
@@ -70,6 +71,7 @@ public class Options {
         this.enableRedirect = original.enableRedirect;
         this.ignoreConnectionCache = original.ignoreConnectionCache;
         this.removeAcceptEncoding = original.removeAcceptEncoding;
+        this.forceContentLength = original.forceContentLength;
     }
 
     public Credentials getBasicAuth() {
@@ -178,6 +180,14 @@ public class Options {
 
     public void setRemoveAcceptEncoding(boolean removeAcceptEncoding) {
         this.removeAcceptEncoding = removeAcceptEncoding;
+    }
+
+    public boolean isForceContentLength() {
+        return forceContentLength;
+    }
+
+    public void setForceContentLength(boolean forceContentLength) {
+        this.forceContentLength = forceContentLength;
     }
 
     public Optional<ContentType> getBodyContentType() {

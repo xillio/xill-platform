@@ -77,7 +77,7 @@ public class BodyFactory {
             // This is a single part request
             Optional<ContentType> type = options.getBodyContentType();
             BodyType bodyType = BodyType.of(expression);
-            bodyType.apply(request, type.orElse(bodyType.getDefaultType()), expression);
+            bodyType.apply(request, type.orElse(bodyType.getDefaultType()), expression, options.isForceContentLength());
         }
     }
 
@@ -109,10 +109,10 @@ public class BodyFactory {
     /**
      * This method will build a single body part from an expression and add it to a builder.
      *
-     * @param name     the name of the part
-     * @param bodyPart the expression
-     * @param context  the construct context
-     * @param builder  the builder
+     * @param objectName    the name of the part
+     * @param bodyPart      the expression
+     * @param context       the construct context
+     * @param builder       the builder
      */
     private void buildPart(String objectName, MetaExpression bodyPart, ConstructContext context, MultipartEntityBuilder builder) {
         if (bodyPart.getType() != OBJECT) {
@@ -249,26 +249,34 @@ public class BodyFactory {
     private enum BodyType {
         STREAM(ContentType.DEFAULT_BINARY) {
             @Override
-            void apply(Request request, ContentType type, MetaExpression value) {
-                request.bodyStream(getInputStream(value), type);
+            void apply(Request request, ContentType type, MetaExpression value, boolean forceContentLength) {
+                if (forceContentLength) {
+                    try {
+                        request.bodyString(org.apache.commons.io.IOUtils.toString(getInputStream(value)), type);
+                    } catch (IOException e) {
+                        throw new RobotRuntimeException("There was an error reading the stream from" + value, e);
+                    }
+                } else {
+                    request.bodyStream(getInputStream(value), type);
+                }
             }
         },
         TEXT(ContentType.DEFAULT_TEXT) {
             @Override
-            void apply(Request request, ContentType contentType, MetaExpression value) {
+            void apply(Request request, ContentType contentType, MetaExpression value, boolean forceContentLength) {
                 request.bodyString(value.getStringValue(), contentType);
             }
         },
         XML(ContentType.APPLICATION_XML) {
             @Override
-            void apply(Request request, ContentType contentType, MetaExpression value) {
+            void apply(Request request, ContentType contentType, MetaExpression value, boolean forceContentLength) {
                 XmlNode xmlNode = value.getMeta(XmlNode.class);
                 request.bodyString(xmlNode.getXmlContent(), contentType);
             }
         },
         JSON(ContentType.APPLICATION_JSON) {
             @Override
-            void apply(Request request, ContentType contentType, MetaExpression value) {
+            void apply(Request request, ContentType contentType, MetaExpression value, boolean forceContentLength) {
                 request.bodyString(value.getStringValue(), contentType);
             }
         };
@@ -279,7 +287,7 @@ public class BodyFactory {
             this.defaultType = defaultType;
         }
 
-        abstract void apply(Request request, ContentType contentType, MetaExpression value);
+        abstract void apply(Request request, ContentType contentType, MetaExpression value, boolean forceContentLength);
 
         public ContentType getDefaultType() {
             return defaultType;

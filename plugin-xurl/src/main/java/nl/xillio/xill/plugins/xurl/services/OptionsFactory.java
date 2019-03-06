@@ -267,6 +267,12 @@ public class OptionsFactory {
             void apply(Options options, MetaExpression value) {
                 options.setRemoveAcceptEncoding(getBoolean(value, label()));
             }
+        },
+        FORCE_CONTENT_LENGTH {
+            @Override
+            void apply(Options options, MetaExpression value) {
+                options.setForceContentLength(getBoolean(value, label()));
+            }
         };
 
         abstract void apply(Options options, MetaExpression value);
