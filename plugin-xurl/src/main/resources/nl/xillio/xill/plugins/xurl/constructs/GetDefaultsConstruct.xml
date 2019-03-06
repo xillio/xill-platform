@@ -37,6 +37,8 @@ Returns the default global options, as set on the XURL plugin. The options are a
 | responseContentType   | An ATOMIC describing a content type                                                                     | Overrides the response type auto detector                  |
 | logging               | An ATOMIC (debug, info, warn or error) *default: null*                                                  | Enables logging of requests and responses                  |
 | ignoreConnectionCache | An ATOMIC *default: false*                                                                              | Disables the connection cache                              |
+| removeAcceptEncoding  | An ATOMIC *default: false*                                                                              | Set this option to keep the Accept-Encoding header from being set             |
+| forceContentLength    | An ATOMIC *default: false*                                                                              | Set this option to force the Content-length header to be set                  |
 
     </longDescription>
     <examples>

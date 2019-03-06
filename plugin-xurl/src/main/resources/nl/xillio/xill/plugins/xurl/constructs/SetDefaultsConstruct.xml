@@ -36,6 +36,8 @@ To set various options for all requests you can use the options parameter. The p
 | responseContentType   | An ATOMIC describing a content type                                                                     | Set this option to override the response type auto detector           |
 | logging               | An ATOMIC (debug, info, warn or error) *default: null*                                                  | Set this option to enable logging of requests and responses           |
 | ignoreConnectionCache | An ATOMIC *default: false*                                                                              | Set to true to disable the connection cache                           |
+| removeAcceptEncoding  | An ATOMIC *default: false*                                                                              | Set this option to keep the Accept-Encoding header from being set             |
+| forceContentLength    | An ATOMIC *default: false*                                                                              | Set this option to force the Content-length header to be set                  |
 
         </parameterDescription>
     </parameterDescriptions>
