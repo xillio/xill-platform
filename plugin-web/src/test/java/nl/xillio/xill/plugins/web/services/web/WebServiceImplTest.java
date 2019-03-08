@@ -34,6 +34,7 @@ import org.openqa.selenium.WebDriver.TargetLocator;
 import org.openqa.selenium.WebDriver.Timeouts;
 import org.openqa.selenium.WebDriver.Window;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.remote.UnreachableBrowserException;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -979,6 +980,21 @@ public class WebServiceImplTest {
 
         // run
         implementation.download(url, file, null, 1000);
+    }
+
+    @Test(expectedExceptions = UnreachableBrowserException.class)
+    public void testPoolNotFillingUp() throws Exception {
+        WebServiceImpl implementation = spy(new WebServiceImpl());
+
+        PhantomJSPool pool = mock(PhantomJSPool.class);
+
+        when(pool.createIdentifier(any())).thenReturn(null);
+        when(pool.get(any(), any())).thenThrow(new UnreachableBrowserException("test"));
+
+        implementation.getEntityFromPool(pool, null);
+
+        verify(pool, times(1)).close();
+
     }
 
     /**

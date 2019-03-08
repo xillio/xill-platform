@@ -142,10 +142,11 @@ public class PhantomJSPool implements AutoCloseable {
             try {
                 instance.dispose();
             } catch (UnreachableBrowserException e) {
-                LOGGER.error("Could not reach the instance. The instance will now be dropped without shuting down.");
-                instance.close();
+                LOGGER.error("Could not reach the instance. The instance will now be dropped without shutting down.");
             } catch (Exception e) {
                 LOGGER.error("Error when closing PhantomJS instances! " + e.getMessage(), e);
+            } finally {
+                instance.close();
             }
         }
         poolEntities.clear();
