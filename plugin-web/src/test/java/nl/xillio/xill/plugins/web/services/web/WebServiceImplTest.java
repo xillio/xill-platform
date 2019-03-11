@@ -982,8 +982,12 @@ public class WebServiceImplTest {
         implementation.download(url, file, null, 1000);
     }
 
+    /**
+     * Test that the PhantomJSPool is closed if one of the Instances crashes.
+     * @throws Exception
+     */
     @Test(expectedExceptions = UnreachableBrowserException.class)
-    public void testPoolNotFillingUp() throws Exception {
+    public void testPoolCloseOnCrash() throws Exception {
         WebServiceImpl implementation = spy(new WebServiceImpl());
 
         PhantomJSPool pool = mock(PhantomJSPool.class);
