@@ -361,17 +361,21 @@ public class WebServiceImpl implements WebService {
 
     @Override
     public PhantomJSPool.Entity getEntityFromPool(final PhantomJSPool pool, final Options options) {
-        PhantomJSPool.Entity pjsInstance = null;
+        PhantomJSPool.Entity pjsInstance = getEntity(pool, options);
 
+        if (pjsInstance == null) {
+            throw new OperationFailedException("get PhantomJS Entity.", "PhantomJS pool is fully used and cannot provide another instance!");
+        }
+        return pjsInstance;
+    }
+
+    private PhantomJSPool.Entity getEntity(PhantomJSPool pool, Options options) {
+        PhantomJSPool.Entity pjsInstance;
         try {
             pjsInstance = pool.get(pool.createIdentifier(options), this);
         } catch (UnreachableBrowserException e) {
             pool.close();
             pjsInstance = pool.get(pool.createIdentifier(options), this);
-        }
-
-        if (pjsInstance == null) {
-            throw new OperationFailedException("get PhantomJS Entity.", "PhantomJS pool is fully used and cannot provide another instance!");
         }
         return pjsInstance;
     }
