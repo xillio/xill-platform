@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 ## [next] - next
 
+## [3.6.20] - 2019-04-08
+
+### Fix
+
+* Web plugin will no longer run out of entities because of Windows errors.
+
 ## [3.6.19] - 2019-02-21
 
 ### Fix
