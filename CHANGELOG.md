@@ -1,8 +1,6 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
-## [next] - next
-
 ## [3.6.20] - 2019-04-08
 
 ### Fix
