@@ -57,6 +57,14 @@ pipeline {
         stage('Build') {
             parallel {
                 stage('Linux') {
+                    agent {
+                        dockerfile {
+                            dir 'buildagent'
+                            label 'docker'
+                            args '-u 0:0'
+                            reuseNode true
+                        }
+                    }
                     environment {
                         MAVEN_VERSION = readMavenPom().getVersion()
                     }
@@ -123,6 +131,14 @@ pipeline {
         }
 
         stage('Sonar Analysis') {
+            agent {
+                dockerfile {
+                    dir 'buildagent'
+                    label 'docker'
+                    args '-u 0:0'
+                    reuseNode true
+                }
+            }
             when {
                 expression {
                     !params.NO_SONAR
