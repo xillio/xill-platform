@@ -39,7 +39,13 @@ def isRelease() {
 }
 
 pipeline {
-    agent none
+    agent {
+        dockerfile {
+            dir 'buildagent'
+            label 'docker'
+            args '-u 0:0'
+        }
+    }
     parameters {
         booleanParam(name: 'NO_SONAR', defaultValue: false, description: 'Skip sonar analysis')
         booleanParam(name: 'PUBLISH_BUILD', defaultValue: false, description: 'Publish this build to bintray')
@@ -51,13 +57,6 @@ pipeline {
         stage('Build') {
             parallel {
                 stage('Linux') {
-                    agent {
-                        dockerfile {
-                            dir 'buildagent'
-                            label 'docker'
-                            args '-u 0:0'
-                        }
-                    }
                     environment {
                         MAVEN_VERSION = readMavenPom().getVersion()
                     }
@@ -124,13 +123,6 @@ pipeline {
         }
 
         stage('Sonar Analysis') {
-            agent {
-                dockerfile {
-                    dir 'buildagent'
-                    label 'docker'
-                    args '-u 0:0'
-                }
-            }
             when {
                 expression {
                     !params.NO_SONAR
