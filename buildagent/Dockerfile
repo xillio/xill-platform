@@ -27,4 +27,3 @@ RUN apt-get install -y tzdata && ln -fs /usr/share/zoneinfo/Europe/Amsterdam /et
 
 # Install Docker
 RUN curl -sSL get.docker.com | bash
-

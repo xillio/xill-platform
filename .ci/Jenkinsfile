@@ -104,7 +104,7 @@ pipeline {
                 }
                 stage('Windows') {
                     agent {
-                        node('windows && xill-platform')
+                        label 'windows && xill-platform'
                     }
                     environment {
                         MAVEN_VERSION = readMavenPom().getVersion()
