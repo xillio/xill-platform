@@ -80,6 +80,7 @@
         <elasticsearch.version>1.6.0</elasticsearch.version>
         <selenium.version>2.45.0</selenium.version>
         <phantomjs.version>1.2.1</phantomjs.version>
+        <mariadb-java-client.version>2.4.1</mariadb-java-client.version>
         <phantomjs.binary.version>2.1.1</phantomjs.binary.version>
         <httpclient.version>4.5.1</httpclient.version>
         <jsoup.version>1.8.3</jsoup.version>
@@ -135,14 +136,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <!-- Import dependency management from Spring Boot -->
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>1.4.1.RELEASE</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
@@ -265,18 +258,7 @@
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <!-- Force version of jackson-annotations as <2.9.0 does not compile with jackson-bom >2.9.0-->
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
             <dependency>
@@ -398,6 +380,11 @@
                 <groupId>org.eclipse.emf</groupId>
                 <artifactId>org.eclipse.emf.codegen</artifactId>
                 <version>${eclipse-codegen.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>${mariadb-java-client.version}</version>
             </dependency>
             <!-- Internal Project Dependencies -->
             <dependency>
