@@ -39,13 +39,7 @@ def isRelease() {
 }
 
 pipeline {
-    agent {
-        dockerfile {
-            dir 'buildagent'
-            label 'docker'
-            args '-u 0:0'
-        }
-    }
+    agent none
     parameters {
         booleanParam(name: 'NO_SONAR', defaultValue: false, description: 'Skip sonar analysis')
         booleanParam(name: 'PUBLISH_BUILD', defaultValue: false, description: 'Publish this build to bintray')
@@ -57,8 +51,16 @@ pipeline {
         stage('Build') {
             parallel {
                 stage('Linux') {
+                    agent {
+                        dockerfile {
+                            dir 'buildagent'
+                            label 'docker'
+                            args '-u 0:0'
+                        }
+                    }
                     environment {
                         MAVEN_VERSION = readMavenPom().getVersion()
+                        SONARCLOUD_LOGIN = credentials('aaf177ed-92f7-4dd7-a482-b6b407be60ae')
                     }
                     steps {
                         script {
@@ -80,6 +82,16 @@ pipeline {
                                             "-B  " +
                                             "verify " +
                                             "--fail-at-end"
+                                }
+                            }
+                        }
+                        script {
+                            if (!params.NO_SONAR) {
+                                configFileProvider([configFile(fileId: '913ac216-d52d-41b0-94f9-cc51e28bd431', variable: 'MAVEN_SETTINGS')]) {
+                                    sh 'mvn -s "$MAVEN_SETTINGS" -B ' +
+                                            "-Dsonar.login='${env.SONARCLOUD_LOGIN}' " +
+                                            "-Dsonar.branch.name='${env.GIT_BRANCH}' " +
+                                            'sonar:sonar'
                                 }
                             }
                         }
@@ -118,25 +130,6 @@ pipeline {
                             junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
                         }
                     }
-                }
-            }
-        }
-
-        stage('Sonar Analysis') {
-            when {
-                expression {
-                    !params.NO_SONAR
-                }
-            }
-            environment {
-                SONARCLOUD_LOGIN = credentials('aaf177ed-92f7-4dd7-a482-b6b407be60ae')
-            }
-            steps {
-                configFileProvider([configFile(fileId: '913ac216-d52d-41b0-94f9-cc51e28bd431', variable: 'MAVEN_SETTINGS')]) {
-                    sh 'mvn -s "$MAVEN_SETTINGS" -B ' +
-                            "-Dsonar.login='${env.SONARCLOUD_LOGIN}' " +
-                            "-Dsonar.branch.name='${env.GIT_BRANCH}' " +
-                            'sonar:sonar'
                 }
             }
         }
