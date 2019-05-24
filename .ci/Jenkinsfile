@@ -86,12 +86,12 @@ pipeline {
                             }
                         }
                         script {
-                            if (!params.NO_SONAR){
+                            if (!params.NO_SONAR) {
                                 configFileProvider([configFile(fileId: '913ac216-d52d-41b0-94f9-cc51e28bd431', variable: 'MAVEN_SETTINGS')]) {
                                     sh 'mvn -s "$MAVEN_SETTINGS" -B ' +
-                                    "-Dsonar.login='${env.SONARCLOUD_LOGIN}' " +
-                                    "-Dsonar.branch.name='${env.GIT_BRANCH}' " +
-                                    'sonar:sonar'
+                                            "-Dsonar.login='${env.SONARCLOUD_LOGIN}' " +
+                                            "-Dsonar.branch.name='${env.GIT_BRANCH}' " +
+                                            'sonar:sonar'
                                 }
                             }
                         }
