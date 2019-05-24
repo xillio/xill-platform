@@ -90,31 +90,32 @@ pipeline {
                         }
                     }
                 }
-                node('windows && xill-platform') {
-                    stage('Windows') {
-                        environment {
-                            MAVEN_VERSION = readMavenPom().getVersion()
+                stage('Windows') {
+                    agent {
+                        node('windows && xill-platform')
+                    }
+                    environment {
+                        MAVEN_VERSION = readMavenPom().getVersion()
+                    }
+                    steps {
+                        configFileProvider([configFile(fileId: '913ac216-d52d-41b0-94f9-cc51e28bd431', variable: 'MAVEN_SETTINGS')]) {
+                            bat "mvn clean -P build-native"
+                            bat "mvn " +
+                                    "-P build-native " +
+                                    "-s ${MAVEN_SETTINGS} " +
+                                    "-B  " +
+                                    "verify " +
+                                    "--fail-at-end"
                         }
-                        steps {
-                            configFileProvider([configFile(fileId: '913ac216-d52d-41b0-94f9-cc51e28bd431', variable: 'MAVEN_SETTINGS')]) {
-                                bat "mvn clean -P build-native"
-                                bat "mvn " +
-                                        "-P build-native " +
-                                        "-s ${MAVEN_SETTINGS} " +
-                                        "-B  " +
-                                        "verify " +
-                                        "--fail-at-end"
-                            }
-                            script {
-                                if (isRelease()) {
-                                    bat uploadFileToBintray("Xill-IDE", "xill-ide-native/target/xill-ide-${env.MAVEN_VERSION}-win.zip", "xill-ide-${env.MAVEN_VERSION}-win.zip")
-                                }
+                        script {
+                            if (isRelease()) {
+                                bat uploadFileToBintray("Xill-IDE", "xill-ide-native/target/xill-ide-${env.MAVEN_VERSION}-win.zip", "xill-ide-${env.MAVEN_VERSION}-win.zip")
                             }
                         }
-                        post {
-                            always {
-                                junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
-                            }
+                    }
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
                         }
                     }
                 }
