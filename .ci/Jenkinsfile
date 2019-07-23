@@ -15,19 +15,19 @@
  */
 def createBintrayVersion() {
     return "curl " +
-            "-u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
+            "-u ':${env.BINTRAY_PSW}' " +
             "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/Xill-CLI/versions " +
             "-H 'Content-Type: application/json' " +
             "-d '{\"name\": \"${env.MAVEN_VERSION}\"}' && " +
             "curl " +
-            "-u '${env.BINTRAY_USR}:${env.BINTRAY_PSW}' " +
+            "-u ':${env.BINTRAY_PSW}' " +
             "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/Xill-IDE/versions " +
             "-H 'Content-Type: application/json' " +
             "-d '{\"name\": \"${env.MAVEN_VERSION}\"}'"
 }
 
 def uploadFileToBintray(String packageName, String file, String fileName) {
-    return "curl -u \"${env.BINTRAY_USR}:${env.BINTRAY_PSW}\" " +
+    return "curl -u \":${env.BINTRAY_PSW}\" " +
             "-X PUT " +
             "https://api.bintray.com/content/xillio/Xill-Platform/${packageName}/${env.MAVEN_VERSION}/${fileName}?publish=1 " +
             "-H \"Content-Type: application/json\" " +
