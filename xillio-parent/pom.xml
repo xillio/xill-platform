@@ -424,11 +424,6 @@
             </dependency>
             <dependency>
                 <groupId>nl.xillio.xill</groupId>
-                <artifactId>plugin-postgres</artifactId>
-                <version>${xill.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.xillio.xill</groupId>
                 <artifactId>plugin-properties</artifactId>
                 <version>${xill.version}</version>
             </dependency>

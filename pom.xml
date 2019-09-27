@@ -111,7 +111,6 @@
         <!--module>xill-web-service</module-->
         <module>xillio-parent</module>
         <module>xill-maven-plugin</module>
-        <module>plugin-postgres</module>
     </modules>
 
     <build>
