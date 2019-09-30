@@ -33,7 +33,7 @@ format of the connection string is:
 
 Example:
 
-    jdbc:postgresql://db-server:4743/myDatabase?user=myUserName&amp;password=myPassWord&ssl=true
+    jdbc:postgresql://db-server:4743/myDatabase?user=myUserName&amp;password=myPassWord&amp;ssl=true
 
 Read more at: [Database URLs and Database
 Specifiers](https://jdbc.postgresql.org/documentation/80/connect.html)
