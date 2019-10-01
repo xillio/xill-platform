@@ -15,19 +15,12 @@
  */
 package nl.xillio.xill.plugins.jdbc.constructs;
 
-import com.google.inject.Inject;
-import nl.xillio.xill.api.data.Date;
-import nl.xillio.xill.plugins.jdbc.services.TemporalConversionService;
+import org.testng.annotations.BeforeMethod;
 
-/**
- * Converts a {@link Date} as created by the {@code Date} plugin into a java type suitable to be bound to a {@code TIMESTAMP} column.
- *
- * @author Andrea Parrilli
- */
-public class ToTimestampConstruct extends BaseTemporalConversionConstruct {
-
-    @Inject
-    public ToTimestampConstruct(TemporalConversionService temporalConversionService) {
-        super(temporalConversionService::toTimestamp);
+public class ToTimestampConstructTest extends TemporalConversionConstructTestBase {
+    @BeforeMethod
+    public void setUp() {
+        super.setUp();
+        construct = new ToTimestampConstruct(temporalConversionService);
     }
 }

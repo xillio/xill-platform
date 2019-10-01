@@ -19,6 +19,13 @@ import nl.xillio.xill.plugins.jdbc.JDBCXillPlugin;
 import nl.xillio.xill.plugins.jdbc.services.ConnectionFactory;
 import nl.xillio.xill.plugins.jdbc.services.StatementSyntaxFactory;
 
+/**
+ * Xill Plugin for PostgreSQL.
+ * <p>
+ * Extends and customizes the base {@link JDBCXillPlugin}
+ *
+ * @author Andrea Parrilli
+ */
 public class PostgresXillPlugin extends JDBCXillPlugin {
     @Override
     protected Class<? extends StatementSyntaxFactory> selectStatementFactory() {

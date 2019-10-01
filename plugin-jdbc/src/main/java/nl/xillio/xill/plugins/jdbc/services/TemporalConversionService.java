@@ -19,11 +19,28 @@ import nl.xillio.xill.api.data.Date;
 
 import java.time.temporal.Temporal;
 
+/**
+ * A service to convert {@link Date}s to different {@link Temporal} types by their usual ANSI SQL name.
+ *
+ * @author Andrea Parrilli
+ */
 public class TemporalConversionService {
+    /**
+     * Convert to {@code DATE}.
+     *
+     * @param date the date to convert
+     * @return the date as a Java type compatible with SQL {@code DATE}
+     */
     public Temporal toDate(Date date) {
         return date.getZoned().toLocalDate();
     }
 
+    /**
+     * Convert to {@code TIMESTAMP}.
+     *
+     * @param date the date to convert
+     * @return the date as a Java type compatible with SQL {@code TIMESTAMP}
+     */
     public Temporal toTimestamp(Date date) {
         return date.getZoned().toLocalDateTime();
     }

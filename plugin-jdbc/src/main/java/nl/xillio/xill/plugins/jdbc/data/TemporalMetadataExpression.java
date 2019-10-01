@@ -15,10 +15,18 @@
  */
 package nl.xillio.xill.plugins.jdbc.data;
 
+import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.api.data.MetadataExpression;
 
 import java.time.temporal.Temporal;
 
+/**
+ * {@link MetadataExpression} that can hold a {@link Temporal} value.
+ *
+ * This can be used to associate a specific Java type to a {@link Date} for usage with the JDBC layer.
+ *
+ * @author Andrea Parrilli
+ */
 public class TemporalMetadataExpression implements MetadataExpression {
     private final Temporal data;
 

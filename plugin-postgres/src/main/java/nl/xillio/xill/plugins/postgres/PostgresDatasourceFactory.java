@@ -24,6 +24,11 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.Map;
 
+/**
+ * Produces a {@link DataSource} for PostgreSQL.
+ *
+ * @author Andrea Parrilli
+ */
 public class PostgresDatasourceFactory extends DatasourceFactory {
     @Override
     protected DataSource buildSource(ConstructContext context, String connectionString, Map<String, MetaExpression> options) throws SQLException {

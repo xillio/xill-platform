@@ -19,6 +19,11 @@ import nl.xillio.xill.plugins.jdbc.services.StatementSyntaxFactoryImpl;
 
 import java.util.Arrays;
 
+/**
+ * Tweaks the syntax used to issue specific SQL statements to PostgreSQL.
+ *
+ * @author Andrea Parrilli
+ */
 public class PostgresStatementSyntaxFactory extends StatementSyntaxFactoryImpl {
     @Override
     protected String selectOne(String escapedTableName, String constraints) {
