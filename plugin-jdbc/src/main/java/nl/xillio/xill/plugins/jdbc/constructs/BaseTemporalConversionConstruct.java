@@ -27,7 +27,6 @@ import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.plugins.jdbc.data.TemporalMetadataExpression;
 import nl.xillio.xill.plugins.jdbc.services.TemporalConversionService;
 
-import java.net.URL;
 import java.time.temporal.Temporal;
 import java.util.function.Function;
 
