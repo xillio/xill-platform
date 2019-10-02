@@ -26,7 +26,7 @@ The string that will be used to connect to the database.
         </parameterDescription>
 	</parameterDescriptions>
 	<longDescription>
-To connect to a MySQLserver you need to provide a connection string that contains all the required information. The simple format of the connection string is:
+To connect to a MySQL server you need to provide a connection string that contains all the required information. The simple format of the connection string is:
 
     jdbc:mysql://[host]/[database]?[properties]
 

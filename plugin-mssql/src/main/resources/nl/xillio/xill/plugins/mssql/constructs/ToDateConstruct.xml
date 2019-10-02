@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+This construct provides a convenient way to convert a date made by the Date plugin to the specific DATE ANSI SQL datatype.
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="source">
+The date to convert.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+To insert a date value into an RDBMS column of a DATE datatype, it is sometimes necessary to explicitly cast that value
+to DATE in order for the DB to correctly process the data.
+
+This construct helps with that but it can only use dates made by the Date plugin.
+	</longDescription>
+    <examples>
+        <example title="Usage">
+            <header>Insert a new row with a DATE column</header>
+            <code>
+                use MSSQL;
+
+                // Connect to the database
+                MSSQL.connect("jdbc:jtds:sqlserver://localhost/Finance;instance=sqlexpress;user=MyUserName;password=MyPassword");
+
+                var document = {
+                    "title": "Report",
+                    "publicationDate" : MSSQL.toDate(Date.now())
+                };
+
+                MSSQL.storeObject("publications", document);
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>connect</reference>
+        <reference>storeObject</reference>
+    </references>
+</function>
