@@ -16,8 +16,11 @@
 package nl.xillio.xill.plugins.jdbc.constructs;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import nl.xillio.xill.api.data.Date;
 import nl.xillio.xill.plugins.jdbc.services.TemporalConversionService;
+
+import java.net.URL;
 
 /**
  * Converts a {@link Date} as created by the {@code Date} plugin into a java type suitable to be bound to a {@code DATE} column.
@@ -26,7 +29,20 @@ import nl.xillio.xill.plugins.jdbc.services.TemporalConversionService;
  */
 public class ToDateConstruct extends BaseTemporalConversionConstruct {
     @Inject
-    public ToDateConstruct(TemporalConversionService temporalConversionService) {
-        super(temporalConversionService::toDate);
+    public ToDateConstruct(TemporalConversionService temporalConversionService, @Named("docRoot") String docRoot) {
+        super(temporalConversionService::toDate, docRoot);
+    }
+
+    @Override
+    public URL getDocumentationResource() {
+        if (docRoot != null) {
+            String stringUrl = docRoot + getClass().getSimpleName() + ".xml";
+            URL url = getClass().getResource(stringUrl);
+            if (url != null) {
+                return url;
+            }
+        }
+
+        return super.getDocumentationResource();
     }
 }

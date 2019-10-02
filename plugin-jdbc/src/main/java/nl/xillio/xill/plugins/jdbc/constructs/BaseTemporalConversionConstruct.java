@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.jdbc.constructs;
 
+import com.google.inject.name.Named;
 import nl.xillio.xill.api.components.ExpressionDataType;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.construct.Argument;
@@ -26,6 +27,7 @@ import nl.xillio.xill.api.errors.InvalidUserInputException;
 import nl.xillio.xill.plugins.jdbc.data.TemporalMetadataExpression;
 import nl.xillio.xill.plugins.jdbc.services.TemporalConversionService;
 
+import java.net.URL;
 import java.time.temporal.Temporal;
 import java.util.function.Function;
 
@@ -41,10 +43,12 @@ import java.util.function.Function;
  * @author Andrea Parrilli
  */
 public class BaseTemporalConversionConstruct extends Construct {
+    protected final String docRoot;
     private final Function<Date, Temporal> toTargetType;
 
-    protected BaseTemporalConversionConstruct(Function<Date, Temporal> toTargetType) {
+    protected BaseTemporalConversionConstruct(Function<Date, Temporal> toTargetType, @Named("docRoot") String docRoot) {
         this.toTargetType = toTargetType;
+        this.docRoot = docRoot;
     }
 
     @Override

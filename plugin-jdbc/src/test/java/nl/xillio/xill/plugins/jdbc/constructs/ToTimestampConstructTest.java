@@ -21,6 +21,6 @@ public class ToTimestampConstructTest extends TemporalConversionConstructTestBas
     @BeforeMethod
     public void setUp() {
         super.setUp();
-        construct = new ToTimestampConstruct(temporalConversionService);
+        construct = new ToTimestampConstruct(temporalConversionService, "");
     }
 }

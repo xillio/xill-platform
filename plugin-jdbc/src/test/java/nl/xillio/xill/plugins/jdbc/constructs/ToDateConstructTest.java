@@ -27,7 +27,7 @@ public class ToDateConstructTest extends TemporalConversionConstructTestBase {
     @BeforeMethod
     public void setUp() {
         super.setUp();
-        construct = new ToDateConstruct(temporalConversionService);
+        construct = new ToDateConstruct(temporalConversionService, "");
     }
 
     @Test
