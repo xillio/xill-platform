@@ -1,6 +1,11 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.6.23] - 2019-10-03
+
+### Add
+* PostgreSQL Plugin
+
 ## [3.6.22] - 2019-07-23
 
 ### Fix
