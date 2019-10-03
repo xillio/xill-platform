@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.plugins.jdbc.constructs;
 
+import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import nl.xillio.xill.api.components.ExpressionDataType;
 import nl.xillio.xill.api.components.MetaExpression;
@@ -41,11 +42,11 @@ import java.util.function.Function;
  *
  * @author Andrea Parrilli
  */
-public class BaseTemporalConversionConstruct extends Construct {
+public abstract class BaseTemporalConversionConstruct extends Construct {
     protected final String docRoot;
     private final Function<Date, Temporal> toTargetType;
 
-    protected BaseTemporalConversionConstruct(Function<Date, Temporal> toTargetType, @Named("docRoot") String docRoot) {
+    protected BaseTemporalConversionConstruct(Function<Date, Temporal> toTargetType, String docRoot) {
         this.toTargetType = toTargetType;
         this.docRoot = docRoot;
     }
