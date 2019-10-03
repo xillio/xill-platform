@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+This construct provides a convenient way to insert or update a row in the database.
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="table">
+The table that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="object">
+The object that will be inserted/updated.
+		</parameterDescription>
+		<parameterDescription parameterName="keys">
+The key(s) of the object(s).
+        </parameterDescription>
+		<parameterDescription parameterName="allowUpdate">
+You can prevent updates from happening by setting the allowUpdate parameter to false. If you do this and an entry is found in the database this construct will throw an error.
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database parameter is optional. The last made connection will be used if no database is given.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+## What operation will be performed?
+| Scenario                                   | Operation |
+| ------------------------------------------ | --------- |
+| No keys are provided                       | Insert    |
+| A matching row is found based on the keys  | Update    |
+| No matching row is found based on the keys | Insert    |
+
+The return value of this construct is true if the operation finished successfully. Otherwise it will throw an error and return null.
+	</longDescription>
+    <examples>
+        <example title="Usage">
+            <header>Insert a new row</header>
+            <code>
+                use Postgres;
+
+                // Connect to the database
+                Postgres.connect("jdbc:postgresql://localhost:5432/test?user=postgres");
+
+                var person = {
+                    "firstName": "John",
+                    "lastName": "Doe"
+                };
+
+                Postgres.storeObject("people", person);
+            </code>
+            <header>Update a person if it exists otherwise insert</header>
+            <code>
+                use Postgres;
+
+                // Connect to the database
+                Postgres.connect("jdbc:postgresql://localhost:5432/test?user=postgres");
+
+                var person = {
+                    "firstName": "John",
+                    "lastName": "Doe"
+                };
+
+                Postgres.storeObject("people", person, ["firstName", "lastName"]);
+            </code>
+            <header>Update an item by id</header>
+            <code>
+                use Postgres, File;
+
+                // Connect to the database
+                Postgres.connect("jdbc:postgresql://localhost:5432/test?user=postgres");
+
+                var file = {
+                    "id": 246354246,
+                    "data": File.openRead("path/to/file.pdf")
+                };
+
+                Postgres.storeObject("documents", file, ["id"]);
+            </code>
+        </example>
+    </examples>
+    <references>
+        <reference>connect</reference>
+        <reference>query</reference>
+        <reference>getObject</reference>
+    </references>
+</function>

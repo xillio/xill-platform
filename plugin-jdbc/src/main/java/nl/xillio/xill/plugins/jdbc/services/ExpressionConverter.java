@@ -21,16 +21,14 @@ import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.api.io.IOStream;
 import nl.xillio.xill.api.io.SimpleIOStream;
+import nl.xillio.xill.plugins.jdbc.data.TemporalMetadataExpression;
 import org.slf4j.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static nl.xillio.xill.api.components.ExpressionBuilderHelper.fromValue;
@@ -154,6 +152,25 @@ public class ExpressionConverter {
      */
     public Object extract(MetaExpression expression) {
         return extractValue(expression, this::extractBinary);
+    }
+
+    public Map<String, Object> extractFromObject(MetaExpression object) {
+        Map<String, MetaExpression> mapMeta = object.getValue();
+        Map<String, Object> result = new HashMap<>();
+
+        for (Map.Entry<String, MetaExpression> entry : mapMeta.entrySet()) {
+            Object value;
+
+            if (entry.getValue().getMeta(TemporalMetadataExpression.class) != null) {
+                value = entry.getValue().getMeta(TemporalMetadataExpression.class).getData();
+            } else {
+                value = extractValue(entry.getValue(), this::extractBinary);
+            }
+
+            result.put(entry.getKey(), value);
+        }
+
+        return result;
     }
 
     @SuppressWarnings("squid:UnusedPrivateMethod") // Sonar does not recognize method references

@@ -30,9 +30,7 @@ import java.sql.SQLException;
 import java.sql.SQLInvalidAuthorizationSpecException;
 import java.util.LinkedHashMap;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
 

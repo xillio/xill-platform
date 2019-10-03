@@ -18,39 +18,36 @@
 -->
 <function>
     <description>
-Connect to a MySQL server.
+Connect to a PostgreSQL Server
     </description>
-	<parameterDescriptions>
+    <parameterDescriptions>
         <parameterDescription parameterName="connectionString">
 The string that will be used to connect to the database.
         </parameterDescription>
-	</parameterDescriptions>
-	<longDescription>
-To connect to a MySQL server you need to provide a connection string that contains all the required information. The simple format of the connection string is:
+    </parameterDescriptions>
+    <longDescription>
+To connect to PostgreSQL you need to provide a connection string that contains all the required information. The
+format of the connection string is:
 
-    jdbc:mysql://[host]/[database]?[properties]
+    jdbc:postgresql:[//host[:port]/]database?user=myUserName&amp;password=myPassWord
 
-Some examples:
+Example:
 
-    jdbc:mysql://localhost:3306/test
-    jdbc:mysql://localhost/test?user=root&amp;password=root
+    jdbc:postgresql://db-server:4743/myDatabase?user=myUserName&amp;password=myPassWord&amp;ssl=true
 
-Read more at the: [MySQL Connection String Specification](https://dev.mysql.com/doc/connector-j/en/connector-j-usagenotes-connect-drivermanager.html#connector-j-examples-connection-drivermanager)
+Read more at: [Database URLs and Database
+Specifiers](https://jdbc.postgresql.org/documentation/80/connect.html)
     </longDescription>
     <examples>
         <example title="Usage">
-            <header>Connect to a database using credentials</header>
+            <header>Connect to a local default database</header>
             <code>
-                use MySQL;
+                use Postgres;
 
-                MySQL.connect(
-                    "jdbc:mysql://localhost/my-database" ::
-                    "?user=root" ::
-                    "&amp;password=super1secret"
-                );
+                Postgres.connect("jdbc:postgresql://localhost:5432/test?user=postgres");
 
-                // Now you can use the MySQL constructs
-                // to interact with the database
+                // Now you can use the Postgres constructs
+                // To interact with the database
             </code>
         </example>
     </examples>
@@ -58,6 +55,6 @@ Read more at the: [MySQL Connection String Specification](https://dev.mysql.com/
         <reference>query</reference>
     </references>
     <searchTags>
-        MySQL, connection, database
+        Postgres, connection, database
     </searchTags>
 </function>

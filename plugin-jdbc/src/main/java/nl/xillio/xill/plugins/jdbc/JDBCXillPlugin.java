@@ -24,6 +24,7 @@ import nl.xillio.xill.plugins.jdbc.constructs.*;
 import nl.xillio.xill.plugins.jdbc.services.ConnectionFactory;
 import nl.xillio.xill.plugins.jdbc.services.StatementSyntaxFactory;
 import nl.xillio.xill.plugins.jdbc.services.StatementSyntaxFactoryImpl;
+import nl.xillio.xill.plugins.jdbc.services.TemporalConversionService;
 
 /**
  * This XillPlugin provides a base implementation for any jdbc driver.
@@ -40,6 +41,8 @@ public abstract class JDBCXillPlugin extends XillPlugin {
         add(localInjector.getInstance(getObjectConstruct()));
         add(localInjector.getInstance(storeObjectConstruct()));
         add(localInjector.getInstance(escapeConstruct()));
+        add(localInjector.getInstance(toDateTimeConstruct()));
+        add(localInjector.getInstance(toTimestampConstruct()));
     }
 
     private Class<? extends Construct> queryConstruct() {
@@ -62,11 +65,23 @@ public abstract class JDBCXillPlugin extends XillPlugin {
         return EscapeConstruct.class;
     }
 
+    protected Class<? extends Construct> toDateTimeConstruct() {
+        return ToDateConstruct.class;
+    }
+
+    protected Class<? extends Construct> toTimestampConstruct() {
+        return ToTimestampConstruct.class;
+    }
+
     protected Class<? extends StatementSyntaxFactory> selectStatementFactory() {
         return StatementSyntaxFactoryImpl.class;
     }
 
     protected abstract Class<? extends ConnectionFactory> connectionFactory();
+
+    protected Class<? extends TemporalConversionService> temporalConversionService() {
+        return TemporalConversionService.class;
+    }
 
     @Inject
     void setInjector(Injector injector) {
