@@ -1,0 +1,136 @@
+/**
+ * Copyright (C) 2014 Xillio (support@xillio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+def createBintrayVersion() {
+    return "curl " +
+            "-u '${BINTRAY_USR}:${env.BINTRAY_PSW}' " +
+            "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/Xill-CLI/versions " +
+            "-H 'Content-Type: application/json' " +
+            "-d '{\"name\": \"${env.MAVEN_VERSION}\"}' && " +
+            "curl " +
+            "-u '${BINTRAY_USR}:${env.BINTRAY_PSW}' " +
+            "-X POST https://api.bintray.com/packages/xillio/Xill-Platform/Xill-IDE/versions " +
+            "-H 'Content-Type: application/json' " +
+            "-d '{\"name\": \"${env.MAVEN_VERSION}\"}'"
+}
+
+def uploadFileToBintray(String packageName, String file, String fileName) {
+    return "curl -u '${BINTRAY_USR}:${env.BINTRAY_PSW}' " +
+            "-X PUT https://api.bintray.com/content/xillio/Xill-Platform/${packageName}/${env.MAVEN_VERSION}/${fileName}?publish=1 " +
+            "-H \"Content-Type:application/json\" " +
+            "-T \"${file}\""
+}
+
+def isRelease() {
+    return !env.MAVEN_VERSION.contains('SNAPSHOT') || params.PUBLISH_BUILD;
+}
+
+pipeline {
+    agent none
+    parameters {
+        booleanParam(name: 'NO_SONAR', defaultValue: false, description: 'Skip sonar analysis')
+        booleanParam(name: 'PUBLISH_BUILD', defaultValue: false, description: 'Publish this build to bintray')
+    }
+    environment {
+        BINTRAY = credentials("ef205e51-11e9-4ff0-b1a8-e9354fcc4eae")
+    }
+    stages {
+        stage('Build') {
+            parallel {
+                stage('Linux') {
+                    agent {
+                        dockerfile {
+                            dir 'buildagent'
+                            label 'docker'
+                            args '-u 0:0'
+                        }
+                    }
+                    environment {
+                        MAVEN_VERSION = readMavenPom().getVersion()
+                        SONARCLOUD_LOGIN = credentials('aaf177ed-92f7-4dd7-a482-b6b407be60ae')
+                    }
+                    steps {
+                        script {
+                            configFileProvider([configFile(fileId: '913ac216-d52d-41b0-94f9-cc51e28bd431', variable: 'MAVEN_SETTINGS')]) {
+                                sh "mvn clean"
+                                if (isRelease()) {
+                                    sh createBintrayVersion()
+                                    sh "mvn " +
+                                            "-s ${MAVEN_SETTINGS} " +
+                                            "-B  " +
+                                            "deploy " +
+                                            "--fail-at-end"
+                                    sh uploadFileToBintray("Xill-IDE", "xill-ide/target/xill-ide-${env.MAVEN_VERSION}-multiplatform.zip", "xill-ide-${env.MAVEN_VERSION}-multiplatform.zip")
+                                    sh uploadFileToBintray("Xill-CLI", "xill-cli/target/xill-cli-${env.MAVEN_VERSION}.zip", "xill-cli-${env.MAVEN_VERSION}.zip")
+                                    sh uploadFileToBintray("Xill-CLI", "xill-cli/target/xill-cli-${env.MAVEN_VERSION}.tar.gz", "xill-cli-${env.MAVEN_VERSION}.tar.gz")
+                                } else {
+                                    sh "mvn " +
+                                            "-s ${MAVEN_SETTINGS} " +
+                                            "-B  " +
+                                            "verify " +
+                                            "--fail-at-end"
+                                }
+                            }
+                        }
+                        script {
+                            if (!params.NO_SONAR) {
+                                configFileProvider([configFile(fileId: '913ac216-d52d-41b0-94f9-cc51e28bd431', variable: 'MAVEN_SETTINGS')]) {
+                                    sh 'mvn -s "$MAVEN_SETTINGS" -B ' +
+                                            "-Dsonar.login='${env.SONARCLOUD_LOGIN}' " +
+                                            "-Dsonar.branch.name='${env.GIT_BRANCH}' " +
+                                            'sonar:sonar'
+                                }
+                            }
+                        }
+                    }
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
+                        }
+                    }
+                }
+                stage('Windows') {
+                    agent {
+                        label 'windows && xill-platform'
+                    }
+                    environment {
+                        MAVEN_VERSION = readMavenPom().getVersion()
+                    }
+                    steps {
+                        configFileProvider([configFile(fileId: '913ac216-d52d-41b0-94f9-cc51e28bd431', variable: 'MAVEN_SETTINGS')]) {
+                            bat "mvn clean -P build-native"
+                            bat "mvn " +
+                                    "-P build-native " +
+                                    "-s ${MAVEN_SETTINGS} " +
+                                    "-B  " +
+                                    "verify " +
+                                    "--fail-at-end"
+                        }
+                        script {
+                            if (isRelease()) {
+                                bat uploadFileToBintray("Xill-IDE", "xill-ide-native/target/xill-ide-${env.MAVEN_VERSION}-win.zip", "xill-ide-${env.MAVEN_VERSION}-win.zip")
+                            }
+                        }
+                    }
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

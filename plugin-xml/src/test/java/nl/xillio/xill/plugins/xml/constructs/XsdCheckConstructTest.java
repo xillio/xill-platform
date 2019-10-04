@@ -21,11 +21,14 @@ import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.plugins.xml.services.XsdService;
 import org.slf4j.Logger;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
+import static org.testng.Assert.assertEqualsNoOrder;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -35,35 +38,65 @@ import static org.testng.Assert.assertTrue;
  */
 public class XsdCheckConstructTest extends TestUtils {
 
-    /**
-     * Test the process method under normal circumstances
-     */
-    @Test
-    public void testProcess() {
-        // Mock
-        Logger logger = mock(Logger.class);
-        XsdService xsdService = mock(XsdService.class);
+    private Logger Logger;
+    private XsdService xsdService;
+    private MetaExpression xsdFilenameVar;
+    private MetaExpression xmlFilenameVar;
+    private RobotID robotId;
+    private ConstructContext context;
 
-        MetaExpression xsdFilenameVar = mock(MetaExpression.class);
+    @BeforeMethod
+    public void setUp() {
+        Logger = mock(Logger.class);
+        xsdService = mock(XsdService.class);
+        robotId = RobotID.dummyRobot();
+
+        xsdFilenameVar = mock(MetaExpression.class);
         when(xsdFilenameVar.getStringValue()).thenReturn(".");
-        MetaExpression xmlFilenameVar = mock(MetaExpression.class);
+
+        xmlFilenameVar = mock(MetaExpression.class);
         when(xmlFilenameVar.getStringValue()).thenReturn(".");
 
-        File file = mock(File.class);
-        RobotID id = RobotID.dummyRobot();
+        context = mock(ConstructContext.class);
+        when(context.getRobotID()).thenReturn(robotId);
+    }
 
-        ConstructContext context = mock(ConstructContext.class);
-        when(context.getRobotID()).thenReturn(id);
-
+    /**
+     * Test the process method for a straight true/false answer.
+     */
+    @Test
+    public void testProcessBoolean() {
         when(xsdService.xsdCheck(any(), any(), any())).thenReturn(true);
 
         // Run
-        MetaExpression result = XsdCheckConstruct.process(context, xsdFilenameVar, xmlFilenameVar, xsdService, logger);
+        MetaExpression result = XsdCheckConstruct.process(context, xsdFilenameVar, xmlFilenameVar, fromValue(false), xsdService, Logger);
 
         // Verify
         verify(xsdService).xsdCheck(any(), any(), any());
 
         // Assert
         assertTrue(result.getBooleanValue());
+    }
+
+    /**
+     * Test the process method for a list of issues.
+     */
+    @Test
+    public void testProcessList() {
+        String issue1 = "issue1";
+        String issue2 = "issue2";
+        List<String> expectResult = new ArrayList<>();
+        expectResult.add(issue1);
+        expectResult.add(issue2);
+
+        when(xsdService.xsdCheckGetIssueList(any(), any())).thenReturn(expectResult);
+
+        // Run
+        MetaExpression result = XsdCheckConstruct.process(context, xsdFilenameVar, xmlFilenameVar, fromValue(true), xsdService, Logger);
+        Object[] resultList = result.<List<MetaExpression>>getValue().stream()
+                .map(MetaExpression::getStringValue).toArray();
+
+        // Assert
+        assertEqualsNoOrder(resultList, expectResult.toArray());
     }
 }

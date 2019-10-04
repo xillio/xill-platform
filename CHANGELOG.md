@@ -1,6 +1,85 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.6.26] - 2019-10-03
+
+### Add
+* PostgreSQL Plugin
+
+## [3.6.22] - 2019-07-23
+
+### Fix
+
+* Update version of Jackson library
+
+## [3.6.21] - 2019-05-24
+
+### Fix
+
+* Update version of Jackson library
+
+## [3.6.20] - 2019-04-08
+
+### Fix
+
+* Web plugin will no longer run out of entities because of Windows errors.
+
+## [3.6.19] - 2019-02-21
+
+### Fix
+
+* Collection.remove documentation now shows that no value is returned
+
+## [3.6.18] - 2018-12-06
+
+### Fix
+
+* Fix a bug in iterators ([ticket 1981](https://support.xillio.com/a/tickets/1981))
+
+## [3.6.17] - 2018-11-09
+
+### Fix
+
+* Update version of Jackson library
+
+## [3.6.16] - 2018-11-06
+
+### Fix
+
+* Correct the documentation of the `Document.save` construct (ticket 1970)
+* Add check for ancestors/descendants during project creation (ticket 1971)
+
+## [3.6.15] - 2018-09-21
+
+### Change
+
+* Remove java version warning at startup
+
+### Fix
+
+* Lock version of eclipse-codegen to prevent security bugs which crash newly opened tab
+
+## [3.6.13] - 2018-09-06
+
+### Change
+
+* Update native installation guide
+
+## [3.6.12] - 2018-08-29
+
+### Add
+
+* Add an additional parameter to the `XML.xsdCheck` construct, to output the list of errors if the XML is invalid:
+    * name: `outputAsList`
+    * type: `ATOMIC` (boolean)
+    * _optional_
+    * default: `false`
+
+### Fix
+
+* Fix a bug when starting with a corrupted settings file would result in an immediate crash
+* Add support for `Decimal128` type in the Mongo plugin
+
 ## [3.6.11] - 2018-08-09
 
 ### Add

@@ -20,7 +20,10 @@ import nl.xillio.xill.api.errors.InvalidUserInputException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.time.Instant;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
@@ -129,7 +132,12 @@ public class DateServiceImplTest {
     public void testFromTimestamp() {
         DateService ds = new DateServiceImpl();
         Date date = ds.fromTimestamp(1469179600);
-        Assert.assertEquals(ds.formatDate(date, null, null), "2016-07-22 11:26:40");
+        Assert.assertEquals(
+                ds.formatDate(date, null, null),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(
+                        ZonedDateTime.ofInstant(Instant.ofEpochMilli(1469179600000L), ZoneId.systemDefault())
+                )
+        );
     }
 
     @Test

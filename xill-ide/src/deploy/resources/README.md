@@ -7,11 +7,22 @@ manipulation or generation using a domain specific scripting language.
 Installation
 ------------
 
-Just by copying the entire folder in which you found this file to a location
-of your choice you are already done installing Xill. Please refer to the
-[Xillio Support Site](https://support.xillio.com/) for more information
+### Windows
+* Copy the contents of this folder to a location of your choice (may also be
+  your install folder of Xill IDE)
+* double-click `Xill IDE.exe`
 
-Get started by reading https://support.xillio.com/support/solutions/folders/6000135504
+### Other platforms
+* Copy the contents of this folder to a location of your choice (may also be
+  your install folder of Xill IDE)
+* Install the latest Java 8 Runtime Environment from https://java.com/
+* Run the `xill-ide` shell script (Mac/Unix)
+
+### More information
+
+Please refer to the [Xillio Support Site](https://support.xillio.com/) for more information on usage.
+
+Get started by reading [Getting started with Xill IDE](https://support.xillio.com/support/solutions/folders/6000135504)
 
 ### How to use the Unified Data Model
 
@@ -29,8 +40,8 @@ If you need to tweak any configuration or logging, please take a look at
 
 ### What versions of the Java Runtime Environment are supported?
 
-* Xill IDE comes with a very recent Java 8 JRE, usually the latest.
-* If you run the .jar directly then you need either JRE 8u101 or JRE 8u152 or later
+* Xill IDE for Windows comes with a very recent Java 8 JRE.
+* If you run the .jar directly then you need JRE 8u151 or later
 
 ### How about the command line interface?
 
@@ -62,11 +73,11 @@ Using Xill
 
 ### How do I write a Xill robot?
 
-To edit Xill robots, open the native xill-ide application applicable to your
+To edit Xill robots, open the native xill-ide application or run the script applicable to your
 system:
 
-* Windows: `xill-ide.exe`
-* Mac: `xill-ide.app`
+* Windows: `xill-ide.exe` or `xill-ide.bat`
+* Mac: `xill-ide`
 * Unix: `xill-ide`
 
 ### How do I run a Xill robot?
@@ -99,8 +110,6 @@ File System Analysis plugin, a Concurrency plugin and a Deduplicator.
 ### Where to get support?
 
 Commercial support is available via https://support.xillio.com/
-
-The open source community around Xill has it's home at http://xill.io/
 
 License
 -------

@@ -26,6 +26,8 @@ import nl.xillio.xill.api.components.RobotID;
 import nl.xillio.xill.api.construct.Construct;
 import nl.xillio.xill.api.construct.ConstructContext;
 import nl.xillio.xill.api.construct.ConstructProcessor;
+import nl.xillio.xill.api.data.Date;
+import nl.xillio.xill.api.data.MetadataExpression;
 import nl.xillio.xill.services.files.FileResolver;
 import nl.xillio.xill.services.json.JacksonParser;
 import nl.xillio.xill.services.json.JsonException;
@@ -54,6 +56,13 @@ public class TestUtils extends ExpressionBuilderHelper {
     static {
         CONSTRUCT_FILE_RESOLVER = mock(FileResolver.class);
         Guice.createInjector(new TestModule());
+    }
+
+    public static MetaExpression makeMeta(MetadataExpression date) {
+        MetaExpression result = fromValue(date.toString());
+        result.storeMeta(date);
+
+        return result;
     }
 
     public static MetaExpression parseJson(String json) throws JsonException {

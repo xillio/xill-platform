@@ -53,11 +53,10 @@ The identity parameter determines which database will be used. For example, when
 
             <header>Create a new document</header>
             <code>
-                use System;
-                use Document;
+                use System, ContentType, Document;
 
                 // Create an empty content type
-                Document.saveContentType("CustomPage", []);
+                ContentType.save("CustomPage", []);
 
                 // Build the document
                 var doc = Document.new(

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2014 Xillio (support@xillio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<function>
+    <description>
+This construct provides a convenient way to perform a query-by-example that results in a single row.
+    </description>
+	<parameterDescriptions>
+        <parameterDescription parameterName="table">
+The table that will be used.
+        </parameterDescription>
+		<parameterDescription parameterName="keys">
+The key(s) to search for, i.e. the field values of the desired row.
+        </parameterDescription>
+		<parameterDescription parameterName="database">
+The database parameter is optional. The last made connection will be used if no database is given.
+        </parameterDescription>
+	</parameterDescriptions>
+	<longDescription>
+It is equivalent to executing:
+
+    SELECT * FROM [table] WHERE [key=value [key=value]] LIMIT 1
+
+This function returns a new object with all its values.
+
+__NOTE__: Fields with `null` values are ignored in the search of objects.
+	</longDescription>
+    <examples>
+        <example title="Usage">
+        <header>Get an object by it's id</header>
+        <code>
+            use Postgres, System;
+
+            // Connect to the database
+            Postgres.connect("jdbc:postgresql://localhost:5432/paradise?user=adam&amp;password=eve");
+
+            var object = Postgres.getObject("people", {"id": 5346});
+
+            var json = System.toJSON(object, true);
+            System.print(json);
+        </code>
+        <header>Get an object by example</header>
+        <code>
+            use Postgres, System;
+
+            // Connect to the database
+            Postgres.connect("jdbc:postgresql://localhost:5432/paradise?user=adam&amp;password=eve");
+
+            var example = {
+                "firstName": "John",
+                "lastName": "Doe"
+            };
+
+            var row = Postgres.getObject("people", example);
+
+            var json = System.toJSON(row, true);
+            System.print(json);
+        </code>
+    </example>
+    </examples>
+    <references>
+        <reference>connect</reference>
+        <reference>query</reference>
+        <reference>storeObject</reference>
+    </references>
+</function>

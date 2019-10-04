@@ -55,7 +55,7 @@ public abstract class ConnectionFactory {
     public Connection createAndStore(ConstructContext context, String connectionString, Map<String, MetaExpression> options) throws SQLException {
         UUID id = context.getCompilerSerialId();
         Connection connection = buildConnection(context, connectionString, options);
-        if(connection == null){
+        if (connection == null) {
             throw new SQLException("Connection String is incorrect");
         }
         connections.put(id, connection);

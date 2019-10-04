@@ -77,7 +77,7 @@ public class StoreObjectConstruct extends Construct {
         assertNotNull(object, "object");
         assertNotNull(keys, "keys");
 
-        Map<String, Object> data = extractFromObject(object);
+        Map<String, Object> data = expressionConverter.extractFromObject(object);
         if (data.isEmpty()) {
             throw new RobotRuntimeException("The provided object contained no fields. Cannot execute this query");
         }
@@ -116,12 +116,6 @@ public class StoreObjectConstruct extends Construct {
         } catch (SQLException e) {
             throw new RobotRuntimeException(e.getMessage(), e);
         }
-    }
-
-
-    @SuppressWarnings("unchecked")
-    private Map<String, Object> extractFromObject(MetaExpression object) {
-        return (Map<String, Object>) expressionConverter.extract(object);
     }
 
     private Map<String, Object> getConstraints(MetaExpression object, MetaExpression keys) {

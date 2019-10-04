@@ -15,11 +15,12 @@
  */
 package nl.xillio.xill.plugins.document.services;
 
+import com.google.inject.Guice;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import nl.xillio.xill.plugins.mongodb.services.MongoConverter;
-import nl.xillio.xill.plugins.mongodb.services.serializers.*;
+import nl.xillio.xill.plugins.mongodb.services.serializers.ObjectIdSerializer;
 import nl.xillio.xill.services.json.JsonException;
 import org.apache.commons.io.IOUtils;
 import org.bson.Document;
@@ -43,11 +44,7 @@ public class DocumentValidatorTest extends TestUtils {
 
     @BeforeMethod
     public void setUp() {
-        converter = new MongoConverter(new MongoSerializer(
-                new ObjectIdSerializer(),
-                new UUIDSerializer(),
-                new MongoRegexSerializer(),
-                new BinarySerializer()));
+        converter = Guice.createInjector().getInstance(MongoConverter.class);
         contentTypeService = mock(ContentTypeService.class);
     }
 

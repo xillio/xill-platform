@@ -20,7 +20,6 @@ import me.biesaart.utils.Log;
 import nl.xillio.xill.api.errors.RobotRuntimeException;
 import org.slf4j.Logger;
 import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -30,19 +29,22 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This class is the main implementation of the {@link XsdService}
  *
  * @author Zbynek Hochmann
+ * @author @Deprecated
  */
 
 @Singleton
 public class XsdServiceImpl implements XsdService, ErrorHandler {
-    static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
-    static final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
-    static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
+    private static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
+    private static final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
+    private static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
     private static final Logger LOGGER = Log.get();
 
     private final DocumentBuilderFactory dbf;
@@ -66,20 +68,7 @@ public class XsdServiceImpl implements XsdService, ErrorHandler {
 
     @Override
     public boolean xsdCheck(final Path xmlFile, final Path xsdFile, final Logger logger) {
-        messages.clear();
-
-        dbf.setAttribute(JAXP_SCHEMA_SOURCE, xsdFile.toAbsolutePath().toString());
-        try (InputStream stream = Files.newInputStream(xmlFile, StandardOpenOption.READ)) {
-
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            db.setErrorHandler(this);
-            db.parse(stream);
-        } catch (IOException e) {
-            throw new RobotRuntimeException("XSD check error\n" + e.getMessage(), e);
-        } catch (Exception e) {
-            logger.warn("XSD check failed\n" + e.getMessage() + (e.getCause() != null ? e.getCause().getMessage() : ""), e);
-            return false;
-        }
+        doValidate(xmlFile, xsdFile);
 
         boolean result = messages.isEmpty();
         if (!result) {
@@ -94,22 +83,45 @@ public class XsdServiceImpl implements XsdService, ErrorHandler {
     }
 
     @Override
-    public void error(final SAXParseException e) throws SAXException {
+    public List<String> xsdCheckGetIssueList(Path xmlFilePath, Path xsdFilePath) {
+        doValidate(xmlFilePath, xsdFilePath);
+
+        return new ArrayList<>(messages);
+    }
+
+    @Override
+    public void error(final SAXParseException e) {
         message(e);
     }
 
     @Override
-    public void fatalError(final SAXParseException e) throws SAXException {
+    public void fatalError(final SAXParseException e) {
         message(e);
     }
 
     @Override
-    public void warning(final SAXParseException e) throws SAXException {
+    public void warning(final SAXParseException e) {
         message(e);
     }
 
     private void message(final SAXParseException e) {
         messages.add("Line " + e.getLineNumber() + ", Char " + e.getColumnNumber() + ": " + e.getMessage());
+    }
+
+    private void doValidate(Path xmlFile, Path xsdFile) {
+        messages.clear();
+
+        dbf.setAttribute(JAXP_SCHEMA_SOURCE, xsdFile.toAbsolutePath().toString());
+        try (InputStream stream = Files.newInputStream(xmlFile, StandardOpenOption.READ)) {
+
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            db.setErrorHandler(this);
+            db.parse(stream);
+        } catch (IOException e) {
+            throw new RobotRuntimeException("XSD check error\n" + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RobotRuntimeException("XSD check failed\n" + e.getMessage() + (e.getCause() != null ? e.getCause().getMessage() : ""), e);
+        }
     }
 
 }

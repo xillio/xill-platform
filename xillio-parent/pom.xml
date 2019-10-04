@@ -16,14 +16,14 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>nl.xillio</groupId>
     <artifactId>xillio-parent</artifactId>
-    <version>3.7.0-SNAPSHOT</version>
+    <version>3.6.27-SNAPSHOT</version>
     <inceptionYear>2004</inceptionYear>
     <packaging>pom</packaging>
 
@@ -64,7 +64,7 @@
         <commons.version>1.5.0</commons.version>
         <commons.cli.version>1.4</commons.cli.version>
         <guice.version>4.0</guice.version>
-        <jackson.version>2.6.3</jackson.version>
+        <jackson.version>2.9.9.1</jackson.version>
         <guava.version>18.0</guava.version>
         <poi.version>3.13</poi.version>
         <log4j.version>2.8.2</log4j.version>
@@ -80,6 +80,7 @@
         <elasticsearch.version>1.6.0</elasticsearch.version>
         <selenium.version>2.45.0</selenium.version>
         <phantomjs.version>1.2.1</phantomjs.version>
+        <mariadb-java-client.version>2.4.1</mariadb-java-client.version>
         <phantomjs.binary.version>2.1.1</phantomjs.binary.version>
         <httpclient.version>4.5.1</httpclient.version>
         <jsoup.version>1.8.3</jsoup.version>
@@ -94,6 +95,7 @@
         <maven.version>3.3.9</maven.version>
         <maven.plugin.tools.version>3.5</maven.plugin.tools.version>
         <mongo-java-driver.version>3.6.1</mongo-java-driver.version>
+        <eclipse-codegen.version>2.11.0-v20150806-0404</eclipse-codegen.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -105,24 +107,8 @@
             <url>https://jcenter.bintray.com</url>
         </repository>
         <repository>
-            <id>xillio-releases</id>
-            <url>https://maven.xillio.com/artifactory/libs-release</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>xillio-snapshots</id>
-            <url>https://maven.xillio.com/artifactory/libs-snapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <id>xillio-oss</id>
+            <url>https://maven.xillio.com/artifactory/oss-libs-release/</url>
         </repository>
         <repository>
             <id>xillio-third-party</id>
@@ -134,18 +120,22 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>xillio-releases</id>
+            <url>https://maven.xillio.com/artifactory/libs-release</url>
+        </repository>
+        <repository>
+            <id>xillio-snapshots</id>
+            <url>https://maven.xillio.com/artifactory/libs-snapshot</url>
+        </repository>
+        <repository>
+            <id>xillio-remote</id>
+            <url>https://maven.xillio.com/artifactory/remote-release</url>
+        </repository>
     </repositories>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <!-- Import dependency management from Spring Boot -->
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>1.4.1.RELEASE</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
@@ -268,11 +258,6 @@
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
@@ -391,6 +376,16 @@
                 <artifactId>mongo-java-driver</artifactId>
                 <version>${mongo-java-driver.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.eclipse.emf</groupId>
+                <artifactId>org.eclipse.emf.codegen</artifactId>
+                <version>${eclipse-codegen.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>${mariadb-java-client.version}</version>
+            </dependency>
             <!-- Internal Project Dependencies -->
             <dependency>
                 <groupId>nl.xillio.xill</groupId>
@@ -425,6 +420,11 @@
             <dependency>
                 <groupId>nl.xillio.xill</groupId>
                 <artifactId>plugin-oracle</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-postgres</artifactId>
                 <version>${xill.version}</version>
             </dependency>
             <dependency>
@@ -499,7 +499,7 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>nl.xillio.xilll</groupId>
+                    <groupId>nl.xillio.xill</groupId>
                     <artifactId>xill-maven-plugin</artifactId>
                     <version>${xill.version}</version>
                     <extensions>true</extensions>

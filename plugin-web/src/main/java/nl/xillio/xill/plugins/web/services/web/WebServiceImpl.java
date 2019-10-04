@@ -35,6 +35,9 @@ import org.apache.http.ssl.SSLContexts;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.remote.UnreachableBrowserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
@@ -51,11 +54,14 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+
 /**
  * The implementation of the {@link WebService} interface.
  */
 @Singleton
 public class WebServiceImpl implements WebService {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(WebServiceImpl.class);
 
     @Override
     public void click(final WebVariable node) {
@@ -355,9 +361,21 @@ public class WebServiceImpl implements WebService {
 
     @Override
     public PhantomJSPool.Entity getEntityFromPool(final PhantomJSPool pool, final Options options) {
-        PhantomJSPool.Entity pjsInstance = pool.get(pool.createIdentifier(options), this);
+        PhantomJSPool.Entity pjsInstance = getEntity(pool, options);
+
         if (pjsInstance == null) {
             throw new OperationFailedException("get PhantomJS Entity.", "PhantomJS pool is fully used and cannot provide another instance!");
+        }
+        return pjsInstance;
+    }
+
+    private PhantomJSPool.Entity getEntity(PhantomJSPool pool, Options options) {
+        PhantomJSPool.Entity pjsInstance;
+        try {
+            pjsInstance = pool.get(pool.createIdentifier(options), this);
+        } catch (UnreachableBrowserException e) {
+            pool.close();
+            pjsInstance = pool.get(pool.createIdentifier(options), this);
         }
         return pjsInstance;
     }
@@ -381,7 +399,7 @@ public class WebServiceImpl implements WebService {
         try {
             Files.createDirectories(targetFilePath.getParent());
         } catch (IOException e) {
-            throw new OperationFailedException("copy file to target location", "Was unable to create new folder in path: " + targetFilePath.getParent().toAbsolutePath() + ".", "Check if the supplied path is correct.",e);
+            throw new OperationFailedException("copy file to target location", "Was unable to create new folder in path: " + targetFilePath.getParent().toAbsolutePath() + ".", "Check if the supplied path is correct.", e);
         }
         Files.copy(stream, targetFilePath, StandardCopyOption.REPLACE_EXISTING);
     }

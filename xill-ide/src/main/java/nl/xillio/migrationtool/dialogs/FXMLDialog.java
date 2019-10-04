@@ -46,7 +46,8 @@ public class FXMLDialog extends Stage {
     public FXMLDialog(final String url) {
         loadFXML(getClass().getResource(url));
         initModality(Modality.APPLICATION_MODAL);
-        initOwner(Application.getPrimaryStage().getScene().getWindow());
+        Scene scene = Application.getPrimaryStage().getScene();
+        initOwner(scene == null ? null : scene.getWindow());
 
         try (InputStream image = this.getClass().getResourceAsStream("/icon.png")) {
             if (image != null) {

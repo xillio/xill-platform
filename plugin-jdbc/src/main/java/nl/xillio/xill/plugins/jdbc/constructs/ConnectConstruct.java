@@ -73,7 +73,8 @@ public class ConnectConstruct extends Construct {
      *
      * @return an array containing the arguments for this construct
      */
-    @SuppressWarnings("squid:S2095")  // Suppress "Resources should be closed": Arguments do not need to be closed here, because ConstructProcessor closes them
+    @SuppressWarnings("squid:S2095")
+    // Suppress "Resources should be closed": Arguments do not need to be closed here, because ConstructProcessor closes them
     protected Argument[] buildArguments() {
         return new Argument[]{
                 new Argument("connectionString", ATOMIC)

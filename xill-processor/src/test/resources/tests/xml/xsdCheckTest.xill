@@ -14,14 +14,23 @@
  * limitations under the License.
  */
 /**
- * Tests that the xsd validator validates the proivided XML file with the given XSD
+ * Tests that the xsd validator validates the provided XML file with the given XSD
  */
-use XML, System, File, Assert;
+use XML, System, File, Assert, Collection;
 
-var xmlFile = "testresources/xml/xsdValidation.xml";
+var xmlFileValid = "testresources/xml/xsdValidationValid.xml";
+var xmlFileInvalid = "testresources/xml/xsdValidationInvalid.xml";
 var xsdFile = "testresources/xml/xsdValidation.xsd";
 
-Assert.isTrue(File.exists(xmlFile), "Cannot find XML file for testing");
+Assert.isTrue(File.exists(xmlFileValid), "Cannot find valid XML file for testing");
+Assert.isTrue(File.exists(xmlFileInvalid), "Cannot find invalid XML file for testing");
 Assert.isTrue(File.exists(xsdFile), "Cannot find XSD file for testing");
 
-Assert.isTrue(XML.xsdCheck(xmlFile, xsdFile), "XML should be valid against the XSD");
+Assert.isTrue(XML.xsdCheck(xmlFileValid, xsdFile), "XML should be valid against the XSD");
+Assert.isTrue(XML.xsdCheck(xmlFileValid, xsdFile, false), "XML should be valid against the XSD");
+
+Assert.isFalse(XML.xsdCheck(xmlFileInvalid, xsdFile), "XML should be invalid against the XSD");
+Assert.isFalse(XML.xsdCheck(xmlFileInvalid, xsdFile, false), "XML should be invalid against the XSD");
+
+Assert.isTrue(Collection.length(XML.xsdCheck(xmlFileValid, xsdFile, true)) == 0);
+Assert.isTrue(Collection.length(XML.xsdCheck(xmlFileInvalid, xsdFile, true)) == 2);
