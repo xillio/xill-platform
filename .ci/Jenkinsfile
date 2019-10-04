@@ -33,6 +33,13 @@ def uploadFileToBintray(String packageName, String file, String fileName) {
             "-T \"${file}\""
 }
 
+def uploadFileToBintrayWin(String packageName, String file, String fileName) {
+    return "curl -u ${BINTRAY_USR}:${env.BINTRAY_PSW} " +
+            "-X PUT https://api.bintray.com/content/xillio/Xill-Platform/${packageName}/${env.MAVEN_VERSION}/${fileName}?publish=1 " +
+            "-H \"Content-Type:application/json\" " +
+            "-T \"${file}\""
+}
+
 def isRelease() {
     return !env.MAVEN_VERSION.contains('SNAPSHOT') || params.PUBLISH_BUILD;
 }
@@ -120,7 +127,7 @@ pipeline {
                         }
                         script {
                             if (isRelease()) {
-                                bat uploadFileToBintray("Xill-IDE", "xill-ide-native/target/xill-ide-${env.MAVEN_VERSION}-win.zip", "xill-ide-${env.MAVEN_VERSION}-win.zip")
+                                bat uploadFileToBintrayWin("Xill-IDE", "xill-ide-native/target/xill-ide-${env.MAVEN_VERSION}-win.zip", "xill-ide-${env.MAVEN_VERSION}-win.zip")
                             }
                         }
                     }
