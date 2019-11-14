@@ -74,6 +74,11 @@
         </dependency>
         <dependency>
             <groupId>nl.xillio.xill</groupId>
+            <artifactId>plugin-http-server</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>nl.xillio.xill</groupId>
             <artifactId>plugin-mariadb</artifactId>
             <scope>runtime</scope>
         </dependency>

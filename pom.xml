@@ -99,6 +99,7 @@
         <module>plugin-web</module>
         <module>plugin-xml</module>
         <module>plugin-xurl</module>
+        <module>plugin-http-server</module>
         <module>xill-api</module>
         <module>xill-assemblies</module>
         <module>xill-cli</module>

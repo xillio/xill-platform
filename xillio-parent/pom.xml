@@ -399,6 +399,11 @@
             </dependency>
             <dependency>
                 <groupId>nl.xillio.xill</groupId>
+                <artifactId>plugin-http-server</artifactId>
+                <version>${xill.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.xillio.xill</groupId>
                 <artifactId>plugin-exiftool</artifactId>
                 <version>${xill.version}</version>
             </dependency>
