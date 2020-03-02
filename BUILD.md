@@ -27,8 +27,12 @@ You can now find your native application at `xill-ide-native/target/jfx/native`.
 Updating the Project Version
 ----------------------------
 To update the project versions in the poms you run 
-`mvn versions:set -DnewVersion=X.XX.XX -pl xillio-parent -P build-native` 
-in the project directory.
+`mvn versions:set -DnewVersion=X.XX.XX-SNAPSHOT -pl xillio-parent -P build-native` 
+in the project directory. 
+
+**CAUTION!!!:** *If `SNAPSHOT` is NOT in de version a release gets triggered even if it is not the master branch!!*
+
+[read more](https://xillio.atlassian.net/wiki/spaces/DEV/pages/72657715/Creating+a+Release+with+master+release+Branches)
 
 [xill-parent/pom.xml]: xill-parent/pom.xml
 [nl.xillio.contenttools.Application]: xill-ide-launcher/src/main/java/nl/xillio/contenttools/Application.java

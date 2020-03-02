@@ -15,7 +15,8 @@
  */
 package nl.xillio.xill.plugins.mssql;
 
-import net.sourceforge.jtds.jdbc.Driver;
+import com.microsoft.sqlserver.jdbc.SQLServerDriver;
+
 import nl.xillio.xill.plugins.jdbc.services.ConnectionStringFactory;
 
 
@@ -26,8 +27,8 @@ import nl.xillio.xill.plugins.jdbc.services.ConnectionStringFactory;
  */
 class MSSQLConnectionStringFactory extends ConnectionStringFactory {
 
-    @Override
-    protected Class<Driver> driver() {
-        return Driver.class;
+     @Override
+     protected Class<SQLServerDriver> driver() {
+         return SQLServerDriver.class;
     }
 }
