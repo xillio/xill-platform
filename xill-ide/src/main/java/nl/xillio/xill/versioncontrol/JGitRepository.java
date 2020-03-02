@@ -216,7 +216,7 @@ public class JGitRepository implements GitRepository {
             changes.addAll(status.getChanged().stream().map(s -> "*    " + s).collect(Collectors.toList()));
             changes.addAll(status.getConflicting().stream().map(s -> "#    " + s).collect(Collectors.toList()));
         } catch (GitAPIException | NoWorkTreeException e) {
-            LOGGER.error("Error retrieving changed files.", e);
+            //LOGGER.error("Error retrieving changed files.", e);
         }
         return changes;
     }

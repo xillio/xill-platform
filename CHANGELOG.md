@@ -1,5 +1,18 @@
 # Xill Platform - Change Log
+
 All notable changes to this project will be documented in this file.
+
+## [3.6.30] - 2020-03-03
+
+### Fix 
+
+* Better support for Microsoft Azure
+
+### Change
+
+* Connection string for the construct `MSSQL.connect` has changed:
+    * `jdbc:jtds:sqlserver` -> `jdbc:sqlserver`
+    * `[/database]` -> `;database=[database name]`
 
 ## [3.6.26] - 2019-10-03
 

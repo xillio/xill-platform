@@ -38,7 +38,7 @@ This construct helps with that but it can only use dates made by the Date plugin
                 use MSSQL;
 
                 // Connect to the database
-                MSSQL.connect("jdbc:jtds:sqlserver://localhost/Finance;instance=sqlexpress;user=MyUserName;password=MyPassword");
+                MSSQL.connect("jdbc:sqlserver://localhost;database=Database;instance=sqlexpress;user=MyUserName;password=MyPassword");
 
                 var document = {
                     "title": "Report",

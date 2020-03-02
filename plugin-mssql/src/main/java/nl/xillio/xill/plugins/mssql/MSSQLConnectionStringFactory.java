@@ -15,19 +15,20 @@
  */
 package nl.xillio.xill.plugins.mssql;
 
-import net.sourceforge.jtds.jdbc.Driver;
+import com.microsoft.sqlserver.jdbc.SQLServerDriver;
+
 import nl.xillio.xill.plugins.jdbc.services.ConnectionStringFactory;
 
 
 /**
  * This is the simple connection factory for mssql databases. It fetched the driver and uses jdbc to parseExpression the connection string.
  *
- * @author Thomas Biesaart
+ * @author Thomas Biesaart & Daan Gosman
  */
 class MSSQLConnectionStringFactory extends ConnectionStringFactory {
 
-    @Override
-    protected Class<Driver> driver() {
-        return Driver.class;
+     @Override
+     protected Class<SQLServerDriver> driver() {
+         return SQLServerDriver.class;
     }
 }

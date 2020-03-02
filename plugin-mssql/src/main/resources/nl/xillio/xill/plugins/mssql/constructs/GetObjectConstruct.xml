@@ -48,7 +48,8 @@ __NOTE__: Fields with `null` values are ignored in the search of objects.
 
             // Connect to the database
             MSSQL.connect(
-                "jdbc:jtds:sqlserver://localhost/Database" ::
+                "jdbc:sqlserver://localhost" ::
+                ";database=Database" ::
                 ";user=MyUserName" ::
                 ";password=MyPassword"
             );
@@ -64,7 +65,8 @@ __NOTE__: Fields with `null` values are ignored in the search of objects.
 
             // Connect to the database
             MSSQL.connect(
-                "jdbc:jtds:sqlserver://localhost/Database" ::
+                "jdbc:sqlserver://localhost" ::
+                ";database=Database" ::
                 ";user=MyUserName" ::
                 ";password=MyPassword"
             );
