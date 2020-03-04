@@ -131,6 +131,6 @@ public class OptionsTest {
         Executor executor = mock(Executor.class);
         options.apply(executor);
 
-        verify(executor).auth(auth.getUsername(), auth.getPassword(),auth.getWorkstation(), auth.getDomain());
+        verify(executor).auth(auth.getUsername(), auth.getPassword(), auth.getWorkstation(), auth.getDomain());
     }
 }

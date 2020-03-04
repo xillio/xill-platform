@@ -201,7 +201,7 @@ public class ResponseParser {
             String cookieString = cookieHeader.getValue();
             String[] cookieParts = cookieString.split(";");
             String cookieDefinition = cookieParts[0];
-            int cookieNameIndex = cookieDefinition.indexOf("=");
+            int cookieNameIndex = cookieDefinition.indexOf('=');
             String cookieName = cookieDefinition.substring(0, cookieNameIndex).trim();
             String cookieValue = cookieDefinition.substring(cookieNameIndex + 1).trim();
 
@@ -220,17 +220,14 @@ public class ResponseParser {
         // Other properties
         for (int i = 1; i < cookieParts.length; i++) {
             String cookiePartDef = cookieParts[i];
-            int cookiePartDefIndex = cookiePartDef.indexOf("=");
+            int cookiePartDefIndex = cookiePartDef.indexOf('=');
             if (cookiePartDefIndex >= 0) {
                 cookie.put(
                         cookiePartDef.substring(0, cookiePartDefIndex).trim().toLowerCase(),
                         fromValue(cookiePartDef.substring(cookiePartDefIndex + 1).trim())
                 );
             } else {
-                cookie.put(
-                        cookiePartDef.toLowerCase().trim(),
-                        TRUE
-                );
+                cookie.put(cookiePartDef.toLowerCase().trim(), TRUE);
             }
         }
         return fromValue(cookie);
