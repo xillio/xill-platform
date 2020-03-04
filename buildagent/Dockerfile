@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-FROM openjdk:8u242-jdk
+FROM openjdk:8u161-jdk
 #FROM amazoncorretto:8u242
 
 
