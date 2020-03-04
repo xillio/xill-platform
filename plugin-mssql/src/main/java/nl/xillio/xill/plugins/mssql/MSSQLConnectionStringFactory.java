@@ -23,7 +23,7 @@ import nl.xillio.xill.plugins.jdbc.services.ConnectionStringFactory;
 /**
  * This is the simple connection factory for mssql databases. It fetched the driver and uses jdbc to parseExpression the connection string.
  *
- * @author Thomas Biesaart & Daan Gosman
+ * @author Thomas Biesaart
  */
 class MSSQLConnectionStringFactory extends ConnectionStringFactory {
 
