@@ -16,10 +16,6 @@
 
 FROM openjdk:8u171-jdk
 
-# Install Dependencies
-RUN apt-get update && apt-get install -y software-properties-common debconf-utils git maven curl build-essential \
-    chrpath libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev openjfx
-
 # # Install Dependencies
 RUN apt-get update && apt-get install -y software-properties-common debconf-utils git maven curl build-essential \
     chrpath libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev \
@@ -30,7 +26,5 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get install -y tzdata && ln -fs /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime && \
     dpkg-reconfigure --frontend noninteractive tzdata
 
-
 # Install Docker
 RUN curl -sSL get.docker.com | bash
-
