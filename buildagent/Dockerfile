@@ -15,8 +15,6 @@
 #
 
 FROM openjdk:8u171-jdk
-#FROM amazoncorretto:8u242
-
 
 # # Install Dependencies
 RUN apt-get update && apt-get install -y software-properties-common debconf-utils git maven curl build-essential \
@@ -27,17 +25,6 @@ RUN apt-get update && apt-get install -y software-properties-common debconf-util
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get install -y tzdata && ln -fs /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime && \
     dpkg-reconfigure --frontend noninteractive tzdata
-
-# Do update 
-#RUN yum update -y
-
-# Install a lot
-# RUN yum install -y software-properties-common debconf-utils git maven curl build-essential \
-#     chrpath libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev
-
-# Install Docker
-
-# RUN yum install -y "https://get.docker.com/rpm/1.7.1/centos-6/RPMS/x86_64/docker-engine-1.7.1-1.el6.x86_64.rpm"
 
 # Install Docker
 RUN curl -sSL get.docker.com | bash
