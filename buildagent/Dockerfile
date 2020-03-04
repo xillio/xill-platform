@@ -16,9 +16,13 @@
 
 FROM openjdk:8
 
+
+# Add apt to sources.list
+RUN  echo 'deb http://de.archive.ubuntu.com/ubuntu/ bionic universe' >> /etc/apt/sources.list 
+
 # Install Dependencies
 RUN apt-get update && apt-get install -y software-properties-common debconf-utils git maven curl build-essential \
-    chrpath libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev openjfx
+    chrpath libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev openjfx=8u161-b12-1ubuntu2 libopenjfx-java=8u161-b12-1ubuntu2 libopenjfx-jni=8u161-b12-1ubuntu2 openjfx-source=8u161-b12-1ubuntu2
 
 # Set timezone
 ENV DEBIAN_FRONTEND=noninteractive
