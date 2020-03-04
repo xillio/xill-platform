@@ -14,34 +14,31 @@
 # limitations under the License.
 #
 
-#FROM openjdk:8
-FROM amazoncorretto:8u242
+FROM openjdk:8u242-jdk
+#FROM amazoncorretto:8u242
 
 
 # # Install Dependencies
-# RUN apt-get update && apt-get install -y software-properties-common debconf-utils git maven curl build-essential \
-#     chrpath libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev \
-#     openjfx=8u161-b12-1ubuntu2 libopenjfx-java=8u161-b12-1ubuntu2 libopenjfx-jni=8u161-b12-1ubuntu2 \
-#     openjfx-source=8u161-b12-1ubuntu2
+RUN apt-get update && apt-get install -y software-properties-common debconf-utils git maven curl build-essential \
+    chrpath libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev \
+    openjfx
 
 # # Set timezone
-# ENV DEBIAN_FRONTEND=noninteractive
-# RUN apt-get install -y tzdata && ln -fs /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime && \
-#     dpkg-reconfigure --frontend noninteractive tzdata
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get install -y tzdata && ln -fs /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime && \
+    dpkg-reconfigure --frontend noninteractive tzdata
 
 # Do update 
-RUN yum update -y
+#RUN yum update -y
 
 # Install a lot
-RUN yum install -y software-properties-common debconf-utils git maven curl build-essential \
-    chrpath libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev
+# RUN yum install -y software-properties-common debconf-utils git maven curl build-essential \
+#     chrpath libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev
 
 # Install Docker
 
-RUN yum install -y "https://get.docker.com/rpm/1.7.1/centos-6/RPMS/x86_64/docker-engine-1.7.1-1.el6.x86_64.rpm"
+# RUN yum install -y "https://get.docker.com/rpm/1.7.1/centos-6/RPMS/x86_64/docker-engine-1.7.1-1.el6.x86_64.rpm"
 
-# # Start the Docker Service
-# RUN service docker start
+# Install Docker
+RUN curl -sSL get.docker.com | bash
 
-# # Add the ec2-user to the docker group 
-# RUN usermod -a -G docker ec2-user
