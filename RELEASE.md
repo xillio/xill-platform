@@ -9,3 +9,5 @@ true:
 ![Release Flow](buildagent/releaseflow.png "Release Flow")
 
 > **Note:** According to the diagram above, we DO NOT create a release branch unless we need to patch a historic release.
+
+[read more](https://xillio.atlassian.net/wiki/spaces/DEV/pages/72657715/Creating+a+Release+with+master+release+Branches)
