@@ -32,10 +32,13 @@ FROM amazoncorretto:8u242
 # Do update 
 RUN yum update -y
 
+# Install a lot
+RUN yum install -y software-properties-common debconf-utils git maven curl build-essential \
+    chrpath libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev
 
 # Install Docker
 
-RUN yum install "https://get.docker.com/rpm/1.7.1/centos-6/RPMS/x86_64/docker-engine-1.7.1-1.el6.x86_64.rpm" -y
+RUN yum install -y "https://get.docker.com/rpm/1.7.1/centos-6/RPMS/x86_64/docker-engine-1.7.1-1.el6.x86_64.rpm"
 
 # # Start the Docker Service
 # RUN service docker start
