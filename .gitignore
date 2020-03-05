@@ -46,3 +46,4 @@ xill-ide/src/main/conf/log4j2-developer_mod.xml
 
 # VS Code
 .vscode/settings.json
+*.factorypath
