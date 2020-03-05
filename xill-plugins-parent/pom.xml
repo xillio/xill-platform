@@ -24,11 +24,7 @@
     <parent>
         <groupId>nl.xillio.xill</groupId>
         <artifactId>xill-parent</artifactId>
-<<<<<<< HEAD
-        <version>3.6.31</version>
-=======
         <version>3.6.30-SNAPSHOT</version>
->>>>>>> 1da3697f... Bump version to 3.6.30-SNAPSHOT for development
         <relativePath>../xill-parent</relativePath>
     </parent>
 

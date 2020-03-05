@@ -27,11 +27,7 @@
     <parent>
         <artifactId>xillio-parent</artifactId>
         <groupId>nl.xillio</groupId>
-<<<<<<< HEAD
-        <version>3.6.31</version>
-=======
         <version>3.6.30-SNAPSHOT</version>
->>>>>>> 1da3697f... Bump version to 3.6.30-SNAPSHOT for development
         <relativePath>../xillio-parent</relativePath>
     </parent>
 
