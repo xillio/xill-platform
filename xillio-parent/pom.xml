@@ -75,7 +75,6 @@
         <sqlite.verion>3.8.11.2</sqlite.verion>
         <sqlserver.version>6.2.2.jre8</sqlserver.version>
         <oracle.version>12.1.0.1.0</oracle.version>
-        <jtds.version>1.3.1</jtds.version>
         <freemarker.version>2.3.25-incubating</freemarker.version>
         <pegdown.version>1.6.0</pegdown.version>
         <elasticsearch.version>1.6.0</elasticsearch.version>
@@ -191,11 +190,6 @@
                 <groupId>org.freemarker</groupId>
                 <artifactId>freemarker</artifactId>
                 <version>${freemarker.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sourceforge.jtds</groupId>
-                <artifactId>jtds</artifactId>
-                <version>${jtds.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.microsoft.sqlserver</groupId>

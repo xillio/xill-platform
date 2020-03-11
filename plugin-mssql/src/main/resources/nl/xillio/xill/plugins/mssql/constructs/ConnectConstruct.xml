@@ -28,13 +28,13 @@ The string that will be used to connect to the database.
 	<longDescription>
 To connect to MSSQL you need to provide a connection string that contains all the required information. The simple format of the connection string is:
 
-    jdbc:sqlserver://[server][:port][;[property]=[value][;...]]
+    jdbc:sqlserver://[serverName[\instanceName][:portNumber]][;property=value[;property=value]]
 
 Example:
 
-    jdbc:sqlserver://localhost/;database=Finance;instance=sqlexpress;user=MyUserName;password=MyPassword
+    jdbc:sqlserver://localhost;databaseName=AdventureWorks;integratedSecurity=true;applicationName=MyApp;
 
-Read more at: [What is the URL format used by jTDS?](http://jtds.sourceforge.net/faq.html#urlFormat)
+Read more at: [What is the URL format used by MSSQL?](https://docs.microsoft.com/en-us/sql/connect/jdbc/building-the-connection-url?view=sql-server-ver15)
 	</longDescription>
     <examples>
         <example title="Usage">
