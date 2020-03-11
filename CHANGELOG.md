@@ -12,10 +12,8 @@ All notable changes to this project will be documented in this file.
 
 ### Change
 
-* Connection string for the construct `MSSQL.connect` has changed:
-    * `jdbc:jtds:sqlserver` -> `jdbc:sqlserver`
-    * `[/database]` -> `;database=[database name]`
-    * Available properties might have been changed, see [MSSQL connection URL documentation](https://docs.microsoft.com/en-us/sql/connect/jdbc/building-the-connection-url?view=sql-server-ver15)
+* Properties of the connection string for the construct `MSSQL.connect` might have been changed, 
+    see [MSSQL connection URL documentation](https://docs.microsoft.com/en-us/sql/connect/jdbc/building-the-connection-url?view=sql-server-ver15)
 
 ## [3.6.26] - 2019-10-03
 
