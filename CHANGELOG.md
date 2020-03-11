@@ -2,17 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.6.30] - 2020-03-03
+## [3.6.30] - 2020-03-12
 
 ### Fix 
 
-* Better support for Microsoft Azure
-
-### Change
-
-* Connection string for the construct `MSSQL.connect` has changed:
-    * `jdbc:jtds:sqlserver` -> `jdbc:sqlserver`
-    * `[/database]` -> `;database=[database name]`
+* MSSQL plugin closed connection on Azure databases (ticket 77075, XD-171, #69)
+* MSSQL plugin retrieval of `ntext` and `nvarchar` content (#26) 
+* `File.openWrite` example code was missing `use`-statement (ticket 77093)
 
 ## [3.6.26] - 2019-10-03
 
