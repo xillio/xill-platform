@@ -27,7 +27,7 @@ public class MSSQLConnectionStringFactoryTest {
     public void parseJTDSConnectionString() {
         String input = "jdbc:jtds:sqlserver://localhost/Finance;instance=sqlexpress;user=MyUserName";
         String output = connectionFactory.parseConnectionString(input);
-        assertEquals(output, "jdbc:sqlserver://localhost/;database=Finance;instance=sqlexpress;user=MyUserName");
+        assertEquals(output, "jdbc:sqlserver://localhost;database=Finance;instance=sqlexpress;user=MyUserName");
     }
 
     @Test

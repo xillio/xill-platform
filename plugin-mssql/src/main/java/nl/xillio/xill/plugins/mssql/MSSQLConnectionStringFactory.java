@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2014 Xillio (support@xillio.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -70,12 +70,17 @@ class MSSQLConnectionStringFactory extends ConnectionStringFactory {
         }
 
         protocolIndex = connectionString.indexOf("://") + 3;
-        int pathIndex = protocolIndex + connectionString.substring(protocolIndex).indexOf("/");
+        int pathIndex = connectionString.indexOf('/', protocolIndex);
         int propertyIndex = connectionString.indexOf(';');
-        String database = connectionString.substring(pathIndex, propertyIndex);
-        String databaseProperty = ";database=".concat(database.substring(1)); // remove preceding /
-        return connectionString.substring(0, pathIndex)
-                .concat(databaseProperty)
-                .concat(connectionString.substring(propertyIndex));
+        if (pathIndex > protocolIndex && pathIndex < propertyIndex) {
+            // There is a path part between the host and the properties, convert that to the database property
+            String database = connectionString.substring(pathIndex, propertyIndex);
+            String databaseProperty = ";database=".concat(database.substring(1)); // remove preceding /
+            connectionString = connectionString.substring(0, pathIndex)
+                    .concat(databaseProperty)
+                    .concat(connectionString.substring(propertyIndex));
+        }
+
+        return connectionString;
     }
 }
