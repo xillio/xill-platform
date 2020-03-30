@@ -63,7 +63,8 @@ If you want to pass a string containing a colon you could either escape the colo
 
                 // First we connect to a database
                 MSSQL.connect(
-                    "jdbc:jtds:sqlserver://localhost/Database" ::
+                    "jdbc:sqlserver://localhost" ::
+                    ";database=Database" ::
                     ";user=MyUserName" ::
                     ";password=MyPassword"
                 );
@@ -89,9 +90,10 @@ If you want to pass a string containing a colon you could either escape the colo
             <code>
                 use MSSQL;
 
-                // Connect to your database
+                // Connect to the database
                 var connection = MSSQL.connect(
-                    "jdbc:jtds:sqlserver://localhost/Database" ::
+                    "jdbc:sqlserver://localhost" ::
+                    ";database=Database" ::
                     ";user=MyUserName" ::
                     ";password=MyPassword"
                 );
@@ -103,9 +105,10 @@ If you want to pass a string containing a colon you could either escape the colo
             <code>
                 use MSSQL;
 
-                // Connect to your database
+                // Connect to the database
                 MSSQL.connect(
-                    "jdbc:jtds:sqlserver://localhost/Database" ::
+                    "jdbc:sqlserver://localhost" ::
+                    ";database=Database" ::
                     ";user=MyUserName" ::
                     ";password=MyPassword"
                 );
@@ -122,9 +125,10 @@ If you want to pass a string containing a colon you could either escape the colo
             <code>
                 use MSSQL, System;
 
-                // Connect to your database
+                // Connect to the database
                 MSSQL.connect(
-                    "jdbc:jtds:sqlserver://localhost/Database" ::
+                    "jdbc:sqlserver://localhost" ::
+                    ";database=Database" ::
                     ";user=MyUserName" ::
                     ";password=MyPassword"
                 );

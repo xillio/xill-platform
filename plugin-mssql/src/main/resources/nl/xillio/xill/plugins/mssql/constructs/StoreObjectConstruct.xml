@@ -55,7 +55,8 @@ The return value of this construct is true if the operation finished successfull
 
                 // Connect to the database
                 MSSQL.connect(
-                    "jdbc:jtds:sqlserver://localhost/Database" ::
+                    "jdbc:sqlserver://localhost" ::
+                    ";database=Database" ::
                     ";user=MyUserName" ::
                     ";password=MyPassword"
                 );
@@ -73,7 +74,8 @@ The return value of this construct is true if the operation finished successfull
 
                 // Connect to the database
                 MSSQL.connect(
-                    "jdbc:jtds:sqlserver://localhost/Database" ::
+                    "jdbc:sqlserver://localhost" ::
+                    ";database=Database" ::
                     ";user=MyUserName" ::
                     ";password=MyPassword"
                 );
@@ -91,7 +93,8 @@ The return value of this construct is true if the operation finished successfull
 
                 // Connect to the database
                 MSSQL.connect(
-                    "jdbc:jtds:sqlserver://localhost/Database" ::
+                    "jdbc:sqlserver://localhost" ::
+                    ";database=Database" ::
                     ";user=MyUserName" ::
                     ";password=MyPassword"
                 );

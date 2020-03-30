@@ -34,6 +34,7 @@ This will clear the file contents when invoked.
             <code>
                 use File;
                 use System;
+                use Stream;
 
                 // Open the file
                 var target = File.openWrite("target.txt");
