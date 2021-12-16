@@ -50,10 +50,10 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <url>http://www.sno.phy.queensu.ca/~phil/exiftool/exiftool-10.21.zip</url>
+                            <url>https://exiftool.org/exiftool-12.37.zip</url>
                             <unpack>true</unpack>
                             <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                            <md5>3fb9d87e560e9a3ba1352636f4e30931</md5>
+                            <md5>939eaf0906efab467b1d8ef4f545fd71</md5>
                         </configuration>
                     </execution>
                 </executions>
