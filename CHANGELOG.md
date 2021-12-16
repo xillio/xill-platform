@@ -1,6 +1,18 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.6.30] - 2021-12-16
+
+### Fix
+
+* Update version of following libraries:
+  - log4j
+  - Jackson
+  - httpclient
+  - poi
+  - jsoup
+  - mysql
+
 ## [3.6.26] - 2019-10-03
 
 ### Add
