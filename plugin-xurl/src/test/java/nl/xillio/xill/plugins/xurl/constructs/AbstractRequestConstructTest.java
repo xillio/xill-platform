@@ -76,7 +76,7 @@ public class AbstractRequestConstructTest extends TestUtils {
 
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*host.*")
     public void testExecuteHostConnectException() throws IOException {
-        construct.execute(executor(new HttpHostConnectException(new IOException(), new HttpHost(""))), null);
+        construct.execute(executor(new HttpHostConnectException(new IOException(), new HttpHost("https://fakeurl.com"))), null);
     }
 
     @Test(expectedExceptions = RobotRuntimeException.class, expectedExceptionsMessageRegExp = ".*failed.*")

@@ -82,9 +82,9 @@
         <phantomjs.version>1.2.1</phantomjs.version>
         <mariadb-java-client.version>2.4.1</mariadb-java-client.version>
         <phantomjs.binary.version>2.1.1</phantomjs.binary.version>
-        <httpclient.version>4.5.1</httpclient.version>
+        <httpclient.version>4.5.13</httpclient.version>
         <jsoup.version>1.14.2</jsoup.version>
-        <mysql.version>6.0.2</mysql.version>
+        <mysql.version>8.0.16</mysql.version>
         <flapdoodle.version>1.50.5</flapdoodle.version>
         <asm.version>5.0.1</asm.version>
         <jgit.version>4.5.0.201609210915-r</jgit.version>
