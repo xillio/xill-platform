@@ -15,14 +15,12 @@
  */
 package nl.xillio.xill.plugins.string.constructs;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import nl.xillio.xill.TestUtils;
 import nl.xillio.xill.api.components.MetaExpression;
-import nl.xillio.xill.plugins.string.services.string.StringUtilityService;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 /**
  * Test the {@link RepeatConstruct}.
