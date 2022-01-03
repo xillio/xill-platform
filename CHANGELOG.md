@@ -1,6 +1,12 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.6.31] - 2022-01-03
+
+### Fix
+
+* Update version of log4j to 2.17.1
+
 ## [3.6.30] - 2021-12-16
 
 ### Fix
