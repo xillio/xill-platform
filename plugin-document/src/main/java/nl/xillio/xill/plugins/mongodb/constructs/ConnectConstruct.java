@@ -44,24 +44,26 @@ public class ConnectConstruct extends Construct {
     @Override
     public ConstructProcessor prepareProcess(ConstructContext context) {
         return new ConstructProcessor(
-                (database, host, port, username, password) ->
-                        process(database, host, port, username, password, context),
+                (database, host, port, username, password, sslEnabled) ->
+                        process(database, host, port, username, password, sslEnabled, context),
                 new Argument("database", ATOMIC),
                 new Argument("host", fromValue("localhost"), ATOMIC),
                 new Argument("port", fromValue(ConnectionInfo.getDefaultPort()), ATOMIC),
                 new Argument("username", NULL, ATOMIC),
-                new Argument("password", NULL, ATOMIC)
+                new Argument("password", NULL, ATOMIC),
+                new Argument("sslEnabled", NULL, ATOMIC)
         );
     }
 
-    MetaExpression process(MetaExpression databaseExpression, MetaExpression hostExpression, MetaExpression portExpression, MetaExpression usernameExpression, MetaExpression passwordExpression, ConstructContext context) {
+    MetaExpression process(MetaExpression databaseExpression, MetaExpression hostExpression, MetaExpression portExpression, MetaExpression usernameExpression, MetaExpression passwordExpression, MetaExpression sslEnabledExpression, ConstructContext context) {
         // Get the information
         String host = hostExpression.getStringValue();
         int port = portExpression.getNumberValue().intValue();
         String database = databaseExpression.getStringValue();
         String username = usernameExpression.isNull() ? null : usernameExpression.getStringValue();
         String password = passwordExpression.isNull() ? null : passwordExpression.getStringValue();
-        ConnectionInfo info = new ConnectionInfo(host, port, database, username, password);
+        boolean sslEnabled = sslEnabledExpression.isNull() ? false : sslEnabledExpression.getBooleanValue();
+        ConnectionInfo info = new ConnectionInfo(host, port, database, username, password, sslEnabled);
 
         // Create/Get the connection
         MetaExpression result = fromValue(info.toString());

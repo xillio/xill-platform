@@ -35,7 +35,7 @@ public class ConnectionManagerTest {
     public void testGetConnectionWithInfo() throws ConnectionFailedException {
         ConnectionFactory factory = mockFactory(1);
         ConnectionManager manager = new ConnectionManager(factory);
-        ConnectionInfo info = new ConnectionInfo("localhost", 2345, "database", "username", "password");
+        ConnectionInfo info = new ConnectionInfo("localhost", 2345, "database", "username", "password", false);
         ConstructContext context = context();
 
         Connection connection = manager.getConnection(context, info);
@@ -47,7 +47,7 @@ public class ConnectionManagerTest {
     public void testGetConnectionRecreateClosed() throws ConnectionFailedException {
         ConnectionFactory factory = mockFactory(2);
         ConnectionManager manager = new ConnectionManager(factory);
-        ConnectionInfo info = new ConnectionInfo("localhost", 2345, "database", "username", "password");
+        ConnectionInfo info = new ConnectionInfo("localhost", 2345, "database", "username", "password", false);
         ConstructContext context = context();
 
         // Close the connection
@@ -74,7 +74,7 @@ public class ConnectionManagerTest {
         ConnectionFactory factory = mockFactory(2);
 
         ConnectionManager manager = new ConnectionManager(factory);
-        ConnectionInfo info = new ConnectionInfo("localhost", 2345, "database", "username", "password");
+        ConnectionInfo info = new ConnectionInfo("localhost", 2345, "database", "username", "password", false);
         ConstructContext context = context(UUID.randomUUID());
 
         // Create the connection

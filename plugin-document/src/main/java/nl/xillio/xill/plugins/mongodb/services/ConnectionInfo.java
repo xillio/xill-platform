@@ -37,6 +37,7 @@ public class ConnectionInfo {
     private final String username;
     private final String password;
     private final String identity;
+    private final boolean sslEnabled;
 
 
     public ConnectionInfo() {
@@ -57,6 +58,7 @@ public class ConnectionInfo {
         this.username = null;
         this.password = null;
         this.identity = identity;
+        this.sslEnabled = false;
     }
 
     public static int getDefaultPort() {
@@ -70,16 +72,17 @@ public class ConnectionInfo {
     }
 
     public ConnectionInfo(String host, int port, String database) {
-        this(host, port, database, null, null);
+        this(host, port, database, null, null, false);
     }
 
-    public ConnectionInfo(String host, int port, String database, String username, String password) {
+    public ConnectionInfo(String host, int port, String database, String username, String password, boolean sslEnabled) {
         this.host = host;
         this.port = port;
         this.database = database;
         this.username = username;
         this.password = password;
         this.identity = "";
+        this.sslEnabled = sslEnabled;
     }
 
     public String getHost() {
@@ -104,6 +107,10 @@ public class ConnectionInfo {
 
     public String getIdentity() {
         return identity;
+    }
+
+    public boolean isSslEnabled() {
+        return sslEnabled;
     }
 
     private static String composeDbNameFromIdentity(String identity) {
