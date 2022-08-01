@@ -16,8 +16,6 @@
 package nl.xillio.migrationtool.gui;
 
 import com.sun.javafx.scene.control.behavior.CellBehaviorBase;
-import com.sun.javafx.scene.control.skin.TableViewSkin;
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,6 +26,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.skin.TableViewSkin;
+import javafx.scene.control.skin.VirtualFlow;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
@@ -555,8 +555,8 @@ public class ConsolePane extends AnchorPane implements Searchable, EventHandler<
         }
 
         VirtualFlow<?> flow = (VirtualFlow) skin.getChildren().get(1);
-        if (flow != null && flow.getFirstVisibleCellWithinViewPort() != null && flow.getLastVisibleCellWithinViewPort() != null) {
-            return new int[]{flow.getFirstVisibleCellWithinViewPort().getIndex(), flow.getLastVisibleCellWithinViewPort().getIndex()};
+        if (flow != null && flow.getFirstVisibleCell() != null && flow.getLastVisibleCell() != null) {
+            return new int[]{flow.getFirstVisibleCell().getIndex(), flow.getLastVisibleCell().getIndex()};
         } else {
             return new int[]{0, 0};
         }

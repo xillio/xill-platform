@@ -46,8 +46,8 @@
 
     <repositories>
         <repository>
-            <id>libs-third-party</id>
-            <url>https://maven.xillio.com/artifactory/libs-third-party</url>
+            <id>xillio-releases</id>
+            <url>https://maven.xillio.com/artifactory/libs-release</url>
         </repository>
     </repositories>
 

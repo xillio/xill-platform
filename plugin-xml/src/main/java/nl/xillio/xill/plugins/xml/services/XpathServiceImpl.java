@@ -136,7 +136,7 @@ public class XpathServiceImpl implements XpathService {
         }
 
         @Override
-        public Iterator<?> getPrefixes(final String arg0) {
+        public Iterator<String> getPrefixes(final String arg0) {
             return null;
         }
 
