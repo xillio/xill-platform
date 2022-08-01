@@ -74,7 +74,14 @@
         <plugins>
             <plugin>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.5</version>
+                <version>3.6.4</version>
+                <configuration>
+                    <expectedProvidedScopeExclusions>
+                        <exclusion>
+                            ["org.apache.maven:maven-archiver", "org.apache.maven:maven-jxr, org.openjfx:javafx-graphics"]
+                        </exclusion>
+                    </expectedProvidedScopeExclusions>
+                </configuration>
             </plugin>
             <plugin>
                 <!-- For some unknown reason we need to configure the Jacoco plugin to make sure it is picked by sonar -->

@@ -94,6 +94,7 @@
         <plexus.version>3.4</plexus.version>
         <maven.version>3.3.9</maven.version>
         <maven.plugin.tools.version>3.5</maven.plugin.tools.version>
+        <maven-plugin-plugin.version>3.6.4</maven-plugin-plugin.version>
         <mongo-java-driver.version>3.6.1</mongo-java-driver.version>
         <eclipse-codegen.version>2.11.0-v20150806-0404</eclipse-codegen.version>
 
@@ -367,6 +368,11 @@
                 <version>${maven.plugin.tools.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>${maven-plugin-plugin.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-archiver</artifactId>
                 <version>${plexus.version}</version>
@@ -492,6 +498,27 @@
                 <artifactId>xill-cli</artifactId>
                 <version>${xill.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-fxml</artifactId>
+                <version>18.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-web</artifactId>
+                <version>18.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-graphics</artifactId>
+                <version>18.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-controls</artifactId>
+                <version>18.0.2</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

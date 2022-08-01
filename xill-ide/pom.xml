@@ -91,6 +91,26 @@
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -142,10 +162,12 @@
                         <configuration>
                             <repositoryLayout>flat</repositoryLayout>
                             <repositoryName>libs</repositoryName>
-                            <includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
+                            <includeConfigurationDirectoryInClasspath>true
+                            </includeConfigurationDirectoryInClasspath>
                             <copyConfigurationDirectory>true</copyConfigurationDirectory>
                             <configurationDirectory>conf</configurationDirectory>
-                            <configurationSourceDirectory>${project.basedir}/src/main/conf</configurationSourceDirectory>
+                            <configurationSourceDirectory>${project.basedir}/src/main/conf
+                            </configurationSourceDirectory>
                             <useWildcardClassPath>true</useWildcardClassPath>
                             <programs>
                                 <program>
