@@ -4,6 +4,13 @@ Xill
 Xill makes it easy to perform content related operations like extraction,
 manipulation or generation using a domain specific scripting language.
 
+Legacy notice
+----------
+
+Please be aware that this project is no longer being actively maintained. As such, the automated builds via Jenkins no longer work due to JavaFX issues.
+Currently, the only way to build the project is to use a Windows machine with Oracle Java 8 JDK, and follow the [build instructions](BUILD.md).
+This also means that any new release needs to be done completely manually.
+
 Using Xill
 ----------
 
@@ -53,5 +60,3 @@ jar file from their repository: [Take me to the instructions!](http://docs.oracl
 License
 -------
 The Xill platform is licensed under the [Apache License, Version 2](LICENSE).
-
-
