@@ -19,7 +19,9 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 import nl.xillio.migrationtool.dialogs.AlertDialog;
-import nl.xillio.xill.versioncontrol.*;
+import nl.xillio.xill.versioncontrol.GitException;
+import nl.xillio.xill.versioncontrol.JGitAuth;
+import nl.xillio.xill.versioncontrol.JGitRepository;
 
 /**
  * A generic task class which executes Git operations. Override the {@link #execute} method with actual Git functionality.
