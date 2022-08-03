@@ -46,6 +46,7 @@ public class ConnectConstructTest extends TestUtils {
                 fromValue(1423),
                 fromValue("username"),
                 fromValue("password123"),
+                fromValue(false),
                 context);
 
         assertEquals(result.getStringValue(), "Mongo[username@localhost:1423/database]");

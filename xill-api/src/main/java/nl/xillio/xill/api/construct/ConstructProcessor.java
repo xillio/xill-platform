@@ -15,6 +15,7 @@
  */
 package nl.xillio.xill.api.construct;
 
+import nl.xillio.util.HexaFunction;
 import nl.xillio.util.PentaFunction;
 import nl.xillio.util.QuadFunction;
 import nl.xillio.util.TriFunction;
@@ -106,6 +107,22 @@ public class ConstructProcessor implements AutoCloseable {
     public ConstructProcessor(final PentaFunction<MetaExpression, MetaExpression, MetaExpression, MetaExpression, MetaExpression, MetaExpression> processor, final Argument firstArgument,
                               final Argument secondArgument, final Argument thirdArgument, final Argument forthArgument, final Argument fifthArgument) {
         this(args -> processor.apply(args[0], args[1], args[2], args[3], args[4]), new Argument[]{firstArgument, secondArgument, thirdArgument, forthArgument, fifthArgument});
+    }
+
+    /**
+     * Creates a six-argument processor from input and operation.
+     *
+     * @param processor      the function used to process the input
+     * @param firstArgument  the first parameter
+     * @param secondArgument the second parameter
+     * @param thirdArgument  the third parameter
+     * @param forthArgument  the forth parameter
+     * @param fifthArgument  the fifth parameter
+     * @param sixthArgument  the fifth parameter
+     */
+    public ConstructProcessor(final HexaFunction<MetaExpression, MetaExpression, MetaExpression, MetaExpression, MetaExpression, MetaExpression, MetaExpression> processor, final Argument firstArgument,
+                              final Argument secondArgument, final Argument thirdArgument, final Argument forthArgument, final Argument fifthArgument, final Argument sixthArgument) {
+        this(args -> processor.apply(args[0], args[1], args[2], args[3], args[4], args[5]), new Argument[]{firstArgument, secondArgument, thirdArgument, forthArgument, fifthArgument, sixthArgument});
     }
 
     /**

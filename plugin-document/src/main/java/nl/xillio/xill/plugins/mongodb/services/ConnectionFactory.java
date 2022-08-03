@@ -52,23 +52,22 @@ public class ConnectionFactory {
         // Create the Codecs to be able to handle BigIntegers and BigDecimals
         Codec<BigInteger> bigIntegerCodec = new BigIntegerCodecImpl();
         Codec<BigDecimal> bigDecimalCodec = new BigDecimalCodecImpl();
-        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(MongoClient.getDefaultCodecRegistry(), CodecRegistries.fromCodecs(bigIntegerCodec, bigDecimalCodec));
+        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(MongoClient.getDefaultCodecRegistry(),
+                CodecRegistries.fromCodecs(bigIntegerCodec, bigDecimalCodec));
 
         MongoClientOptions mongoOptions = MongoClientOptions.builder() // Add options
                 .serverSelectionTimeout(3000)
                 .codecRegistry(codecRegistry)
+                .sslEnabled(info.isSslEnabled())
                 .build();
         if (info.getUsername() == null) {
             return new MongoClient(address, mongoOptions);
         } else {
-            List<MongoCredential> credentials = Collections.singletonList(
-                    MongoCredential.createCredential(
-                            info.getUsername(),
-                            info.getDatabase(),
-                            info.getPassword().toCharArray()
-                    )
-            );
-            return new MongoClient(address, credentials, mongoOptions);
+            MongoCredential credential = MongoCredential.createCredential(
+                    info.getUsername(),
+                    info.getDatabase(),
+                    info.getPassword().toCharArray());
+            return new MongoClient(address, credential, mongoOptions);
         }
     }
 }
