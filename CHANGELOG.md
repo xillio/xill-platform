@@ -1,6 +1,12 @@
 # Xill Platform - Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.6.32] - 2022-08-03
+
+### Add
+
+* Implement SSL for Mongo connection
+
 ## [3.6.31] - 2022-01-03
 
 ### Fix
