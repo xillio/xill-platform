@@ -91,7 +91,7 @@
         <springboot.version>1.4.1.RELEASE</springboot.version>
         <springfox.version>2.6.1</springfox.version>
         <awaitility.version>2.0.0</awaitility.version>
-        <plexus.version>3.4</plexus.version>
+        <plexus.version>3.6.0</plexus.version>
         <maven.version>3.3.9</maven.version>
         <maven.plugin.tools.version>3.5</maven.plugin.tools.version>
         <mongo-java-driver.version>3.6.1</mongo-java-driver.version>
